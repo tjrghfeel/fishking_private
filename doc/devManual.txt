@@ -1,0 +1,17 @@
+
+1. 문서 웹경로 : localhost:8082/swagger-ui.html
+2. 웹 port: 8082
+3. DTO는 대문자로 한다.
+4. controller => service => repository
+5. tide-time: 물때
+   fishing-diary: 조황일지
+6. 개발서버 DB 정보
+   url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
+    username: fishking      #sa        # username: fishluck
+    password: fishking12#$  #P@ssw0rd  # password: fishluck123!
+
+
+
+
+
+

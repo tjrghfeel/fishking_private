@@ -1,0 +1,28 @@
+package com.tobe.fishking.v2.enums.fishing;
+
+public enum TideTime {
+
+    one("1물"),
+    two("2물"),
+    three("3물"),
+    four("4물"),
+    five("5물"),
+    six("6물"),
+    seven("7물"),
+    eight("8물"),
+    nine("9물"),
+    ten("10물"),
+    eleven("11물"),
+    twelve("12물"),
+    little("조금"),
+    ignore("무시");
+
+    private String value;
+    TideTime(String value) {
+        this.value = value;
+    }
+    public String getValue() {
+        return this.value;
+    }
+
+}
