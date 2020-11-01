@@ -1,7 +1,6 @@
 package com.tobe.fishking.v2.entity.auth;
 
 import com.tobe.fishking.v2.entity.BaseTime;
-import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
@@ -17,7 +16,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Builder
-@Entity(name = "Member")
+@Entity
 @Table(name = "member")
 public class Member extends BaseTime implements Serializable {
     @Id
@@ -25,7 +24,7 @@ public class Member extends BaseTime implements Serializable {
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', member, 'COLUMN' id
     public Long id;
 
-    @Column(nullable = false, unique = true, length = 50, columnDefinition = " comment '코드' ")
+    @Column(nullable = false, unique = true,  columnDefinition = "nvarchar(50) comment '코드' ")
     public String uid;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'이름', 'USER', DBO, 'TABLE', member, 'COLUMN' username

@@ -30,7 +30,7 @@ public class FileEntity extends BaseTime {
     private int pid;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'번호', 'USER', DBO, 'TABLE', files, 'COLUMN',  bid
-    @Column(nullable = false , columnDefinition = "int  comment '번호'  ")
+    @Column(nullable = false , columnDefinition = "int  comment '번호 : board_id'  ")
     private int bid;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'순번', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_no
