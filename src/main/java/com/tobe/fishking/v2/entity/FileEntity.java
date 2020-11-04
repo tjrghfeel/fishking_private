@@ -27,11 +27,12 @@ public class FileEntity extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상위번호', 'USER', DBO, 'TABLE', files, 'COLUMN',  bid
     @Column(columnDefinition = "int   comment '상위번호'  ")
+    private int parent_id;
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'상위번호', 'USER', DBO, 'TABLE', files, 'COLUMN',  bid
+    @Column(columnDefinition = "int   comment '번호 - board'  ")
     private int pid;
 
-    // EXEC sp_addextendedproperty 'MS_Description', N'번호', 'USER', DBO, 'TABLE', files, 'COLUMN',  bid
-    @Column(nullable = false , columnDefinition = "int  comment '번호 : board_id'  ")
-    private int bid;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'순번', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_no
     @Column(nullable = false , columnDefinition = "int default 0  comment  '순번'  ")
@@ -45,20 +46,23 @@ public class FileEntity extends BaseTime {
 
 
 
+    //_socer => soccer.jpg
     // EXEC sp_addextendedproperty 'MS_Description', N'파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_name
     @Column(columnDefinition = "varchar(100) comment '파일명'  ")
     private String fileName;
 
-
-
+    //_org
     // EXEC sp_addextendedproperty 'MS_Description', N'원본파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  original_file
     @Column(columnDefinition = "varchar(100) comment '원본파일명'  ")
     private String originalFile;
 
+    //_adfdfdfdsfdsfdsfd.jpg
 
    // EXEC sp_addextendedproperty 'MS_Description', N'파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  stored_file
    @Column(columnDefinition = "varchar(50) comment '저장파일명'  ")
     private String  storedFile;
+
+   //_thumb.jpg
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  thumname_file

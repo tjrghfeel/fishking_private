@@ -85,7 +85,7 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'초보가능여부', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_close
     @Column(nullable = false, columnDefinition = "bit default 1 comment  '초보가능여부'") //comment '초보가능여부'  ")
-    private boolean begginerPossible;
+    private boolean isBegginerPossible;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(nullable = false,  columnDefinition = "bit default 0  comment  '상태(노출여부)'  ")
