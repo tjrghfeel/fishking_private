@@ -3,9 +3,11 @@ package com.tobe.fishking.v2.entity.board;
 
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import lombok.*;
+import org.aspectj.weaver.patterns.TypePatternQuestions;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -39,6 +41,13 @@ public class Post extends BaseTime {
     @Column(columnDefinition = "int comment '채널타입' ", nullable = false)
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private ChannelType channelType;
+
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'작성자이름', 'USER', DBO, 'TABLE', post, 'COLUMN',  writer_name
+    @Column(columnDefinition = "int comment '문의유형' ", nullable = false)
+    @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
+    private QuestionType questionType;
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'제목', 'USER', DBO, 'TABLE', post, 'COLUMN',  title
     @Column(nullable = false , columnDefinition = " varchar(100) comment '제목' ")
