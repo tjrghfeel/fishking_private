@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-public enum FishSpecies {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum FishSpecies implements IEnumModel {
 
 
 
@@ -57,19 +59,26 @@ public enum FishSpecies {
 
 
 
-        mackerel("고등어"),
-        hairtail("갈치");
+    mackerel("고등어"),
+    hairtail("갈치");
 
 
-        private String value;
+    private String value;
 
-        FishSpecies(String value) {
-            this.value = value;
-        }
+    FishSpecies(String value) {
+        this.value = value;
+    }
 
-        public String getValue() {
-            return this.value;
-        }
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
+    public String getValue() {
+        return this.value;
+    }
 
 
 }

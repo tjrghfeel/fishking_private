@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-public enum SNSType {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum SNSType implements IEnumModel {
 
     kakao("카카오톡"),
     navaer("네이버"),
@@ -13,8 +15,16 @@ public enum SNSType {
         this.value = value;
     }
 
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }
+
 
 }

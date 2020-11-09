@@ -21,6 +21,7 @@ public class BaseRepositoryImpl<T,ID extends Serializable> extends SimpleJpaRepo
         return findAll(null, pageable, totalElements, Sort.unsorted());
     }
 
+
     @Override
     public Page<T> findAll(Specification<T> spec, Pageable pageable, Integer totalElements) {
         return findAll(spec, pageable, totalElements, Sort.unsorted());

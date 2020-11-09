@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-public enum TideTime {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum TideTime implements IEnumModel {
 
     one("1물"),
     two("2물"),
@@ -21,6 +23,14 @@ public enum TideTime {
     TideTime(String value) {
         this.value = value;
     }
+
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }

@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-public enum SortType {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum SortType  implements IEnumModel {
     createDate("최신순"),
     readCount("조회순"),
     popular("인기순"),
@@ -15,7 +17,15 @@ public enum SortType {
     SortType(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }
+
 }

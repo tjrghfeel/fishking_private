@@ -1,10 +1,11 @@
 package com.tobe.fishking.v2.enums.auth;
 
 
+import com.tobe.fishking.v2.enums.IEnumModel;
 import lombok.Getter;
 
 @Getter
-public enum Gender {
+public enum Gender implements IEnumModel {
 
     boy("남"),
     girl("여");
@@ -15,8 +16,15 @@ public enum Gender {
         this.value = value;
     }
 
-    public String getValue() {
-        return this.value;
+    @Override
+    public String getKey() {
+        return name();
     }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
 
 }

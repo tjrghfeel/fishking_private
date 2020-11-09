@@ -1,10 +1,11 @@
 package com.tobe.fishking.v2.enums.board;
 
 
+import com.tobe.fishking.v2.enums.IEnumModel;
 import lombok.Getter;
 
 @Getter
-public enum ReturnType {
+public enum ReturnType implements IEnumModel {
 
     email("이메일"),
     tel("연락처");
@@ -15,8 +16,15 @@ public enum ReturnType {
         this.value = value;
     }
 
-    public String getValue() {
-        return this.value;
+    @Override
+    public String getKey() {
+        return name();
     }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
 
 }

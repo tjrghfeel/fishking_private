@@ -30,7 +30,7 @@ public class Accuse extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', accuse, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = "bigint  NOT NULL   comment '생성자'  ")
+    @JoinColumn(name="created_by" , updatable= false , columnDefinition = "bigint  NOT NULL   comment '생성자'  ")
     private Member createdBy;
 
 

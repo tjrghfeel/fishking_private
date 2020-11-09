@@ -3,15 +3,19 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.enums.fishing.FishSpecies;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
+import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -23,9 +27,9 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', goods, 'COLUMN',  id
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
+    @GeneratedValue(strategy = GenerationType.AUTO) // IDENTITY //mssql
     // @Column(columnDefinition = "comment 'id'  ")
-    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable = false, nullable = false, columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상품명', 'USER', DBO, 'TABLE', goods, 'COLUMN',  name
@@ -76,34 +80,39 @@ public class Goods extends BaseTime {
     private boolean isClose;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'예약인수', 'USER', DBO, 'TABLE', goods, 'COLUMN',  notice
-    @Column( columnDefinition = "float comment '예약인수'  ")
-    private double orderPersonnel;
+    @Column(columnDefinition = "float comment '예약인수'  ")
+    private double reservationPersonnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'대기인', 'USER', DBO, 'TABLE', goods, 'COLUMN',  notice
-    @Column( columnDefinition = "float comment '대기인수'  ")
-    private double watingPersonnel;
+    @Column(columnDefinition = "float comment '대기인수'  ")
+    private double waitingPersonnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'초보가능여부', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_close
     @Column(nullable = false, columnDefinition = "bit default 1 comment  '초보가능여부'") //comment '초보가능여부'  ")
-    private boolean isBegginerPossible;
+    private boolean isBeginnerPossible;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
-    @Column(nullable = false,  columnDefinition = "bit default 0  comment  '상태(노출여부)'  ")
+    @Column(nullable = false, columnDefinition = "bit default 0  comment  '상태(노출여부)'  ")
     private boolean isVisible;
 
-    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_fish_species", columnDefinition = " comment  '상품 어종'  ")
-    private final List<CommonCode> fishSpecies = new ArrayList<>();
+    @Builder.Default
+    private List<CommonCode> fishSpecies = new ArrayList<>();
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'선상-상품목록', 'USER', DBO, 'TABLE', goods, 'COLUMN',  fishing_goods
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "goods_ship_id", columnDefinition = "bigint   not null comment '선상-상품목록'  ")
-    private Ship  ship ;
+
+    private Ship ship;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상품정보-미끼목록', 'USER', DBO, 'TABLE', goods, 'COLUMN',  lure
-    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_fish_lure ", columnDefinition = " comment  '루어낚시'  ")
-    private final List<CommonCode> lure = new ArrayList<>();
+    @Builder.Default
+    private List<CommonCode> fishingLures = new ArrayList<>();
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'전체평균평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  total_average
     @Column(columnDefinition = "float  default 0.0 comment  '전체평균평점'  ")
@@ -134,24 +143,128 @@ public class Goods extends BaseTime {
     private String onSitePurchase;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'기타', 'USER', DBO, 'TABLE', goods, 'COLUMN',  notice
-    @Column( columnDefinition = "varchar(1000) comment '기타'  ")
+    @Column(columnDefinition = "varchar(1000) comment '기타'  ")
     private String etc;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'장소 소개', 'USER', DBO, 'TABLE', coupon_member, 'COLUMN',  orders_id
-    @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="goods_place_id" , columnDefinition = "bigint comment  '장소 소개'")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goods_place_id", columnDefinition = "bigint comment  '장소 소개'")
     private Places places;
+
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
+    @Column(nullable = false, columnDefinition = "bit default 1  comment  '사용여부'  ")
+    private boolean isUse;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null comment '생성자'")
+    @JoinColumn(name = "created_by", insertable = false, updatable = false, columnDefinition = " bigint not null comment '생성자'")
     private Member createdBy;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name = "modified_by", insertable = false, updatable = false, columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
+
+
+    // 생성자
+    public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {
+        this.createdBy = member;
+        this.modifiedBy = member;
+        this.name = paramsGoods.getGoodsName();
+        this.fishingType = paramsGoods.getFishingType();
+        this.fishingDate = paramsGoods.getFishingDate();
+        this.shipStartTime = paramsGoods.getShipStartTime();
+        this.meridiem = paramsGoods.getMeridiem();
+        this.fishingStartTime = paramsGoods.getFishingStartTime();
+        this.fishingEndTime = paramsGoods.getFishingEndTime();
+        this.totalAmount = paramsGoods.getTotalAmount();
+        this.minPersonnel = paramsGoods.getMinPersonnel();
+        this.maxPersonnel = paramsGoods.getMaxPersonnel();
+        this.isClose = paramsGoods.isClose();
+        this.reservationPersonnel = paramsGoods.getReservationPersonnel();
+        this.waitingPersonnel = paramsGoods.getWaitingPersonnel();
+        this.isBeginnerPossible = paramsGoods.isBeginnerPossible();
+        this.isVisible = paramsGoods.isVisible();
+        this.ship = ship;
+
+        //this.fishSpecies = paramsGoods.getFishSpecies();
+        //this.fishingLures = paramsGoods.getFishingLures();
+
+        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
+        this.tasteByReview = paramsGoods.getTasteByReview();
+        this.serviceByReview = paramsGoods.getServiceByReview();
+        this.cleanByReview = paramsGoods.getCleanByReview();
+        this.accumulatePoint = paramsGoods.getAccumulatePoint();
+        this.notice = paramsGoods.getNotice();
+        this.onSitePurchase = paramsGoods.getOnSitePurchase();
+        this.etc = paramsGoods.getEtc();
+        this.places = places;
+    }
+
+    public void setFishSpecies(List<CommonCode> fishSpecies) {
+        this.fishSpecies = fishSpecies;
+    }
+
+    public void setFishingLures(List<CommonCode> fishingLures) {
+        this.fishingLures = fishingLures;
+    }
+
+    public Goods() {
+
+    }
+
+    public Goods(Member member,  Ship ship,  String name, FishingType fishingType, List<CommonCode> arrFishSpecies ) {
+
+        this.modifiedBy = member;
+
+        this.name = name;
+        this.fishingType = fishingType;
+        this.ship = ship;
+
+    }
+
+
+
+
+
+    // 수정시 데이터 처리
+    public Goods setUpdate(Member member, Ship ship, Places places, ParamsGoods paramsGoods) {
+
+        this.modifiedBy = member;
+
+        this.name = paramsGoods.getGoodsName();
+        this.fishingType = paramsGoods.getFishingType();
+        this.fishingDate = paramsGoods.getFishingDate();
+        this.shipStartTime = paramsGoods.getShipStartTime();
+        this.meridiem = paramsGoods.getMeridiem();
+        this.fishingStartTime = paramsGoods.getFishingStartTime();
+        this.fishingEndTime = paramsGoods.getFishingEndTime();
+        this.totalAmount = paramsGoods.getTotalAmount();
+        this.minPersonnel = paramsGoods.getMinPersonnel();
+        this.maxPersonnel = paramsGoods.getMaxPersonnel();
+        this.isClose = paramsGoods.isClose();
+        this.reservationPersonnel = paramsGoods.getReservationPersonnel();
+        this.waitingPersonnel = paramsGoods.getWaitingPersonnel();
+        this.isBeginnerPossible = paramsGoods.isBeginnerPossible();
+        this.isVisible = paramsGoods.isVisible();
+        this.ship = ship;
+
+        //this.fishSpecies = paramsGoods.getFishSpecies();
+        //this.fishingLures = paramsGoods.getFishingLures();
+
+        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
+        this.tasteByReview = paramsGoods.getTasteByReview();
+        this.serviceByReview = paramsGoods.getServiceByReview();
+        this.cleanByReview = paramsGoods.getCleanByReview();
+        this.accumulatePoint = paramsGoods.getAccumulatePoint();
+        this.notice = paramsGoods.getNotice();
+        this.onSitePurchase = paramsGoods.getOnSitePurchase();
+        this.etc = paramsGoods.getEtc();
+        this.places = places;
+        return this;
+    }
 
 
 

@@ -3,7 +3,8 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.enums.common.ByRegion;
+
+import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import lombok.*;
 
 import javax.persistence.*;
@@ -58,7 +59,7 @@ public class Ship extends BaseTime {  //선상
     // EXEC sp_addextendedproperty 'MS_Description', N'지역별', 'USER', DBO, 'TABLE', ship, 'COLUMN',  by_region
     @Column(columnDefinition = "int comment '지역별' ", nullable = false)
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
-    private ByRegion byRegion;
+    private SeaDirection seaDirection;
     
     
 
@@ -81,7 +82,7 @@ public class Ship extends BaseTime {  //선상
     private boolean isRecommend;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사장님한마디', 'USER', DBO, 'TABLE', ship, 'COLUMN',  owner_wording
-    @Column(nullable = false, columnDefinition = "varchar(500)   comment '사장님한마디'  ")
+    @Column(columnDefinition = "varchar(500) comment '사장님한마디'  ")
     private String ownerWording;
 
     //녹화영상 FileEntity
@@ -94,7 +95,7 @@ public class Ship extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'실시간영상', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
     @OneToMany
-    @JoinColumn(name = "ship_rtvideos_id" , columnDefinition = "bigint  not null   comment '실시간영상'  ")
+    @JoinColumn(name = "ship_rtvideos_id" , columnDefinition = "bigint  comment '실시간영상'  ")
     //  @Builder.Default
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();
 
@@ -106,14 +107,22 @@ public class Ship extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null comment '생성자'")
+    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
     private Member createdBy;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    public Ship(String shipName, Company company, Member member, SeaDirection seaDirection ) {
+        this.shipName = shipName;
+        this.company = company;
+        this.createdBy = member;
+        this.modifiedBy = member;
+        this.seaDirection = seaDirection;
 
+
+    }
 }

@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-public enum TakeType {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum TakeType  implements IEnumModel {
 
     goods("상품"),
     ship("업체"),
@@ -13,6 +15,13 @@ public enum TakeType {
     TakeType(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }

@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-public enum FishingTechnic {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum FishingTechnic implements IEnumModel {
 
     downshot("다운샷"),
     lure("루어"),
@@ -19,6 +21,13 @@ public enum FishingTechnic {
     FishingTechnic(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }
