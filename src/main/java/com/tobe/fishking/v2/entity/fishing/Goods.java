@@ -25,6 +25,7 @@ import java.util.Set;
 @Table(name = "goods") //상품정보
 public class Goods extends BaseTime {
 
+
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', goods, 'COLUMN',  id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO) // IDENTITY //mssql
