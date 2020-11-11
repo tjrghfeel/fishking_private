@@ -73,10 +73,12 @@ public class Company extends BaseTime {  //선상
     // EXEC sp_addextendedproperty 'MS_Description', N'정산계좌번호', 'USER', DBO, 'TABLE', company, 'COLUMN',  account_no
     @Column(columnDefinition = "varchar(20)   comment '정산계좌번호'  ")
     private String accountNo ;
+/*
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사장님한마디', 'USER', DBO, 'TABLE', company, 'COLUMN',  owner_wording
-    @Column(columnDefinition = "varchar(500)  not null  comment '사장님한마디'  ")
+    @Column(columnDefinition = "varchar(500)  comment '사장님한마디'  ")
     private String ownerWording;
+*/
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'영업상태', 'USER', DBO, 'TABLE', company, 'COLUMN',  is_open
@@ -104,16 +106,18 @@ public class Company extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', company, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null  comment '생성자'")
+    @JoinColumn(name="created_by", updatable= false , columnDefinition  = " bigint not null  comment '생성자'")
     private Member createdBy;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', company, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name="modified_by", columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
-
-
-
+    public Company(String companyName, Member member) {
+        this.companyName = companyName;
+        this.createdBy = member;
+        this.modifiedBy =  member ;
+    }
 }

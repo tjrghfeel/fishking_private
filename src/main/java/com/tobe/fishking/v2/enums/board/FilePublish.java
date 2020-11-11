@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.board;
 
-public enum FilePublish {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum FilePublish implements IEnumModel {
 
 
     ship("선상"),
@@ -19,8 +21,14 @@ public enum FilePublish {
         this.value = value;
     }
 
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
-        return this.value;
+        return value;
     }
 
 

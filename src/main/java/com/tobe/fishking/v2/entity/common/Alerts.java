@@ -51,7 +51,7 @@ public class Alerts  {
     //생성만 있다.삭제시에는 바로 Row 삭제
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', alerts, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '생성자'  ")
+    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint NOT NULL   comment '생성자'  ")
     private Member createdBy;
 
 

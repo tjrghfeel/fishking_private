@@ -3,7 +3,7 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
-import com.tobe.fishking.v2.enums.fishing.PayMethod;
+import com.tobe.fishking.v2.enums.fishing.PaymentGroup;
 import lombok.*;
 
 import javax.persistence.*;
@@ -51,7 +51,7 @@ public class Orders extends BaseTime {
  // EXEC sp_addextendedproperty 'MS_Description', N'결제수단', 'USER', DBO, 'TABLE', orders, 'COLUMN',  pay_method
     @Column(columnDefinition = "int comment '결제수단'  ")
     @Enumerated(EnumType.ORDINAL)
-    private PayMethod payMethod;
+    private PaymentGroup paymentGroup;
 
     //결제여부
     // EXEC sp_addextendedproperty 'MS_Description', N'결제여부', 'USER', DBO, 'TABLE', orders, 'COLUMN',  is_pay
@@ -77,16 +77,16 @@ public class Orders extends BaseTime {
   - 계약일
   - 주문일 (계약일과 동일: 임시저장 기능이 없다.)
 */
-
+    // insertable = false, updatable = false 추가로 선언하면 MappingException은 발생하지 않는다.
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', orders, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null comment '생성자'")
+    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
     private Member createdBy;
 
-
+    // insertable = false, updatable = false 추가로 선언하면 MappingException은 발생하지 않는다.
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', orders, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
 

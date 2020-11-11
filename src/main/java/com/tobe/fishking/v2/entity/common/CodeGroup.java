@@ -19,16 +19,20 @@ public class CodeGroup extends BaseTime {
         // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  id
         @Id
         @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
-    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
-    private Long id;
+        @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+       private Long id;
 
+        // EXEC sp_addextendedproperty 'MS_Description', N'명칭', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  name
+        @Column(columnDefinition = "varchar(50)   comment '코드'  ")
+        private String code;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'명칭', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  name
         @Column(columnDefinition = "varchar(200)   comment '명칭'  ")
         private String name;
 
-        // EXEC sp_addextendedproperty 'MS_Description', N'설명', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  description
-        @Column(columnDefinition = "varchar(500)   comment '명칭'  ")
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'설명', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  description
+        @Column(columnDefinition = "varchar(500)   comment '설명'  ")
         private String description;
 
 
@@ -38,14 +42,18 @@ public class CodeGroup extends BaseTime {
 
         // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  created_by
         @ManyToOne
-        @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '생성자'  ")
+        @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint NOT NULL   comment '생성자'  ")
         private Member createdBy;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  modified_by
         @ManyToOne
-        @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+        @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
         private Member modifiedBy;
 
-
-
+        public CodeGroup(String code, String name, String description, Member createdBy) {
+            this.code = code;
+            this.name = name;
+            this.description = description;
+            this.createdBy = createdBy;
+        }
 }

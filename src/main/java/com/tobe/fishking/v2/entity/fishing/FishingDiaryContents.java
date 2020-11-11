@@ -119,21 +119,21 @@ public class FishingDiaryContents extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
     @OneToMany
-    @JoinColumn(name = "fishing_diary_scrab_by" , columnDefinition = "bigint not null   comment '스크랩 사용자'  ")
-    //  @Builder.Default
-    private final List<Member> scrabMembers = new ArrayList<>();
+    @JoinColumn(name = "fishing_diary_scrab_by" , columnDefinition = "bigint comment '스크랩 사용자'  ")
+    @Builder.Default
+    private List<Member> scrabMembers = new ArrayList<>();
 
 
 
     //사진및 동영상은 File로.. 구분자(FilePublish) 조황일지
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null comment '생성자' ")
+    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자' ")
     private Member createdBy;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
 

@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-public enum AdType {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum AdType implements IEnumModel {
 
     premium("프리미엄"),
     recommend("추천");
@@ -9,8 +11,15 @@ public enum AdType {
     AdType(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
-        return this.value;
+        return value;
     }
 
 }

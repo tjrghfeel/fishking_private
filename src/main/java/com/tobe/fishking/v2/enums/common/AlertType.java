@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-public enum AlertType {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum AlertType implements IEnumModel {
 
     mmmber("사용자");
 
@@ -8,6 +10,14 @@ public enum AlertType {
     AlertType(String value) {
         this.value = value;
     }
+
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }

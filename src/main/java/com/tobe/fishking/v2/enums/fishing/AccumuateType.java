@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-public enum AccumuateType {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum AccumuateType implements IEnumModel {
 
     use("사용"),
     accumulate("적립");
@@ -9,8 +11,16 @@ public enum AccumuateType {
     AccumuateType(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }
+
 
 }

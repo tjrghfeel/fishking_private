@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.board;
 
-public enum FileType {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum FileType implements IEnumModel {
         /* sql
      update board set board_type = 'free' ;
      update board set board_type = 'notice' where id  = 6;
@@ -16,9 +18,15 @@ public enum FileType {
         this.value = value;
     }
 
-    public String getValue() {
-        return this.value;
+
+    @Override
+    public String getKey() {
+        return name();
     }
 
+    @Override
+    public String getValue() {
+        return value;
+    }
 
 }

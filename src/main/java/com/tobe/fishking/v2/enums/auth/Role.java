@@ -1,15 +1,16 @@
 package com.tobe.fishking.v2.enums.auth;
 
 
+import com.tobe.fishking.v2.enums.IEnumModel;
 import lombok.Getter;
 
 @Getter
-public enum Role {
+public enum Role  implements IEnumModel {
 
-    ADMIN("ROLE_ADMIN"),
-    SHIPOWNER("ROLE_SHIPOWNER"),
-    MEMBER("ROLE_MEMBER"),
-    GUEST("ROLE_GUEST");
+    admin("관리자"),
+    shipowner("선주"),
+    member("회원"),
+    guest("게스트");
 
     private String value;
 
@@ -17,8 +18,16 @@ public enum Role {
         this.value = value;
     }
 
-    public String getValue() {
-        return this.value;
+
+    @Override
+    public String getKey() {
+        return name();
     }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
 
 }

@@ -109,12 +109,12 @@ public class Post extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', post, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" , insertable= false ,  updatable= false , columnDefinition = "bigint  NOT NULL   comment '생성자'  ")
+    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint  NOT NULL   comment '생성자'  ")
     private Member createdBy;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', post, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
     public Post(Member member, Board board, String authorName , String title, String contents) {
