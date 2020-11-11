@@ -2,20 +2,16 @@ package com.tobe.fishking.v2.enums.common;
 
 import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum SortType  implements IEnumModel {
+public enum SearchPublish implements IEnumModel {
 
-    distance("거리순"),
-    createDate("최신순"),
-    readCount("조회순"),
-    popular("인기순"),
-    lowPrice("낮은가격순"),
-    highPrice("높은가격순"),
-    review("리뷰순"),
-    sell("판매순");
-
+    TOTAL("통합"),
+    COMPANY("업체"),
+    TV("어복TV"),
+    FISHINGDIARY("조황일지"),
+    FISHINGDIARY2("조행기");
 
     private String value;
-    SortType(String value) {
+    SearchPublish(String value) {
         this.value = value;
     }
 
@@ -28,5 +24,6 @@ public enum SortType  implements IEnumModel {
     public String getValue() {
         return this.value;
     }
+
 
 }

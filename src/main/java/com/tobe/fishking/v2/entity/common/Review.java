@@ -20,8 +20,8 @@ public class Review extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', review, 'COLUMN',  id
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
-// @Column(columnDefinition = "comment 'id'  ")
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    // @Column(columnDefinition = "comment 'id'  ")
+    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상품', 'USER', DBO, 'TABLE', review, 'COLUMN',  goods

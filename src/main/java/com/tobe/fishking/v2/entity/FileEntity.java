@@ -63,8 +63,6 @@ public class FileEntity extends BaseTime {
     private String  storedFile;
 
    //_thumb.jpg
-
-
     // EXEC sp_addextendedproperty 'MS_Description', N'파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  thumname_file
     @Column(columnDefinition = "varchar(50) comment '썸네일'  ")
     private String  thumbnailFile;
@@ -74,9 +72,13 @@ public class FileEntity extends BaseTime {
     @Column(columnDefinition = "varchar(100) comment '업로드URL' ")
     private String fileUrl;
 
+    //    @Column(columnDefinition = "varchar(100) comment '업로드URL'  ")
+    // EXEC sp_addextendedproperty 'MS_Description', N'업로드URL', 'USER', DBO, 'TABLE', files, 'COLUMN',  url
+    @Column(columnDefinition = "varchar(100) comment '다운로드URL' ")
+    private String downloadUrl;
 
 
-   // @Column(columnDefinition = "integer default 0 not null comment '파일크기'  ")
+    // @Column(columnDefinition = "integer default 0 not null comment '파일크기'  ")
     // EXEC sp_addextendedproperty 'MS_Description', N'파일크기', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_size
     @Column(columnDefinition = "integer default 0 not null comment '파일크기' ")
     private long size;

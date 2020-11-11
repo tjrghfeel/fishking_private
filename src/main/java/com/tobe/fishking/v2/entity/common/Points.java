@@ -21,7 +21,7 @@ public class Points {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
 // @Column(columnDefinition = "comment 'id'  ")
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     //결제수단 , //결제방법
