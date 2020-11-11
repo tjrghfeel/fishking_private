@@ -17,8 +17,6 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -34,7 +32,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -48,52 +45,49 @@ public class UploadService {
     private BoardService boardService;
 
 
-
     public Map<String, Object> initialFile(MultipartFile file, FileType fileType, FilePublish filePublish, String sessionToken) throws IOException {
         Map<String, Object> result = new HashMap<>();
 
-            Member member = memberService.getMemberBySessionToken(sessionToken);
-            String memberId = member.getUid();
+        Member member = memberService.getMemberBySessionToken(sessionToken);
+        String memberId = member.getUid();
 
             /*String fileLocation = this.getFileLocation(desireFileLocation);
             String filePath = this.getFilePath(desireFileLocation);
             */
 
-             Board board  = boardService.getBoardByFilePublish(filePublish);
+        Board board = boardService.getBoardByFilePublish(filePublish);
 
-             String fileLocation = env.getProperty("file.location") + board.getUploadPath();
-             String filePath = board.getUploadPath();
-
-
+        String fileLocation = env.getProperty("file.location") + board.getUploadPath();
+        String filePath = board.getUploadPath();
 
 
-            FileType currentFileType = FileType.image;
-            if (!file.getContentType().startsWith("image/")) {
-                currentFileType = FileType.attachments;
-            }
-            if (fileType.equals(FileType.image) && !currentFileType.equals(fileType)) {
-                throw new FileImageOnlyException(fileType.toString());
-            }
+        FileType currentFileType = FileType.image;
+        if (!file.getContentType().startsWith("image/")) {
+            currentFileType = FileType.attachments;
+        }
+        if (fileType.equals(FileType.image) && !currentFileType.equals(fileType)) {
+            throw new FileImageOnlyException(fileType.toString());
+        }
 
-            List<String> fileResult = new ArrayList<>();
-            fileResult = this.saveUploadFile(file, memberId, fileLocation, filePath, true);
+        List<String> fileResult = new ArrayList<>();
+        fileResult = this.saveUploadFile(file, memberId, fileLocation, filePath, true);
 
-            if (fileResult.isEmpty()) {
-                throw new FileUploadFailException();
-            }
+        if (fileResult.isEmpty()) {
+            throw new FileUploadFailException();
+        }
 
-            String fileUrl = fileResult.get(0);
-            String fileThumbnail = fileResult.get(1);
+        String fileUrl = fileResult.get(0);
+        String fileThumbnail = fileResult.get(1);
 
-            FileEntity currentFile = FileEntity.builder().fileName(file.getOriginalFilename()).size(file.getSize()).fileUrl(fileUrl).thumbnailFile(fileThumbnail).fileType(fileType).createdBy(member).build();
+        FileEntity currentFile = FileEntity.builder().fileName(file.getOriginalFilename()).size(file.getSize()).fileUrl(fileUrl).thumbnailFile(fileThumbnail).fileType(fileType).createdBy(member).build();
 
-            long fileId = fileRepository.save(currentFile).getId();
+        long fileId = fileRepository.save(currentFile).getId();
 
-            result.clear();
-            result.put("thumb", currentFile.getThumbnailFile());
-            result.put("fileUrl", currentFile.getFileUrl());
-            result.put("fileName", currentFile.getFileName());
-            result.put("tempFileSeq", fileId);
+        result.clear();
+        result.put("thumb", currentFile.getThumbnailFile());
+        result.put("fileUrl", currentFile.getFileUrl());
+        result.put("fileName", currentFile.getFileName());
+        result.put("tempFileSeq", fileId);
         return result;
     }
 
@@ -103,9 +97,7 @@ public class UploadService {
         String fileLocation = "/data/file/user";
 
 
-
-
-        Board board  = boardService.getBoardByFilePublish(filePublish);
+        Board board = boardService.getBoardByFilePublish(filePublish);
 
 
         String filePath = board.getUploadPath();
@@ -155,8 +147,7 @@ public class UploadService {
 
         String uploadFilePath = fileLocation.substring(1) + "/" + fileName;
 
-      //  String bucket = env.getProperty("cloud.aws.s3.bucket");
-
+        //  String bucket = env.getProperty("cloud.aws.s3.bucket");
 
 
         File uploadFile = convert(file, fileName).orElseThrow(FileUploadFailException::new);
@@ -183,7 +174,6 @@ public class UploadService {
             fileNames.add(amazonS3Client.getUrl(bucket, fileLocation.substring(1) + "/" + thumbs.getName()).toString());
 */
             fileNames.add(fileLocation.substring(1) + "/" + thumbs.getName());
-
 
 
             removeNewFile(thumbs);
@@ -256,7 +246,7 @@ public class UploadService {
 
     private Optional<File> convert(MultipartFile file, String fileName) throws IOException {
         File convertFile = new File(fileName);
-        if(convertFile.createNewFile()) {
+        if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());
             }

@@ -12,10 +12,11 @@ import java.util.List;
 
 
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 @Getter
-//@Builder
-//@AllArgsConstructor
-@Entity(name = "FishingDiary")
+@Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "fishing_diary")
 public class FishingDiary extends BaseTime {
 
@@ -27,7 +28,7 @@ public class FishingDiary extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'게시판그룹', 'USER', DBO, 'TABLE', orders, 'COLUMN',  fishing_ships
     @ManyToOne
-    @JoinColumn(name = "board_id", columnDefinition = " bigint not null   comment '게시판그룹'  ")
+    @JoinColumn(name = "board_id", columnDefinition = " bigint not null   comment '게시판'  ")
     private Board board;
 
     //null이면 조행기, null이 아니면 조행일지
@@ -161,6 +162,10 @@ public class FishingDiary extends BaseTime {
         this.writeLongitude = writeLongitude;
         this.createdBy = createdBy;
         this.modifiedBy = modifiedBy;
+    }
+
+    public FishingDiary() {
+
     }
 
 

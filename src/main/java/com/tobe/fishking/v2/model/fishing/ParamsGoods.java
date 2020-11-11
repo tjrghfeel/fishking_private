@@ -1,8 +1,5 @@
 package com.tobe.fishking.v2.model.fishing;
 
-import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.fishing.Places;
-import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,11 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -25,7 +20,7 @@ public class ParamsGoods {
     /*@NotEmpty
     @Size(min = 2, max = 10)
     @ApiModelProperty(value = "상품ID", required = true)
-    private Long goodsId;
+    private Long fishingDiaryId;
     */
     @NotEmpty
     @Size(min = 2, max = 100)
@@ -125,14 +120,7 @@ public class ParamsGoods {
     private List<String> fishSpecies;
 
     @ApiModelProperty(notes = "낚시기법")
-    private List<String> fishingLures ;
-
-
-
-
-
-
-
+    private List<String> fishingLures;
 
 
 }
