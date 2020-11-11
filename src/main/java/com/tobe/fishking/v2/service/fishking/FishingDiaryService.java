@@ -48,7 +48,7 @@ public class FishingDiaryService {
 
         //조행일지중에 어종명으로  검색
         Page<FishingDiary> fishingDiary = searchRequest.isEmpty()
-                ? fishingDiaryRepo.findFishingDiariesByBoard_BoardTypeEquals(board, pageable, totalElement)
+                ? fishingDiaryRepo.findFishingDiariesByBoard_FilePublish(board, pageable, totalElement)
                 : fishingDiaryRepo.findFishingDiariesByBoardEqualsAndFishingSpeciesName(board, searchRequest, pageable, totalElement);
 
         popularRepo.save(new Popular(SearchPublish.TOTAL, searchRequest, memberRepo.getOne((long) 5)));
