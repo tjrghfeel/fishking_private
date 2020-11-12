@@ -1,10 +1,13 @@
 package com.tobe.fishking.v2.entity.auth;
 
 import com.tobe.fishking.v2.entity.BaseTime;
+import com.tobe.fishking.v2.entity.common.Address;
+import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import lombok.*;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -97,6 +100,11 @@ public class Member extends BaseTime implements Serializable {
     @Column(columnDefinition = "varchar(20)   comment '상태메세지'  ")
     private String statusMessage ;
 
+    @Embedded
+    private Address address;
+
+    @Embedded
+    private PhoneNumber phoneNumber;
 
 
     //Getters and setters ommitted for brevity
