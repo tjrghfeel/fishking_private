@@ -129,9 +129,11 @@ public class FishingDiary extends BaseTime {
     private ShareStatus status;
 
 
+/*
     @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "fishing_diary_comments", columnDefinition = "comment '댓글' ")
     private List<FishingDiaryComment> comments = new ArrayList<>();
+*/
 
 
     //사진및 동영상은 File로.. 구분자(FilePublish) 조황일지
