@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -53,14 +54,13 @@ public class MainController {
         Map<String,Object> map = null;
 
         Page<GoodsDTO> goods = service.getGoodsList(pageable, OperatorType.or, searchRequest, totalElements);
-
-
-
-
         map.put("goods", goods);
+
 
         Page<FilesDTO> files = commonService.getFilesList(pageable,  searchRequest, totalElements);
         map.put("files", files);
+
+        // goosByRegionCnt = service.getCountTotalGoodsByRegion();
 
 
 

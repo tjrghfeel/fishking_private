@@ -160,6 +160,7 @@ public class GoodsService {
     }
 
     public List<Object> getCountTotalGoodsByRegion() {
+
         return goodsRepo.countTotalGoodsByRegion();
     }
 

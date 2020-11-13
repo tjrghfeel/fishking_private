@@ -26,7 +26,7 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
 
 
     // @Query("select s.seaDirection, count(g.id) as cnt from Goods as g inner join Ship as s on s.id  = g.ship.id   group by s.seaDirection")
-    @Query(value = "select new map( count(g.ship.seaDirection) as numberOfGoods, g.ship.seaDirection as seaDirection )  FROM Goods g group by g.ship.seaDirection")
+    @Query(value = "select new map( count(g.id) as numberOfGoods, g.ship.seaDirection as seaDirection )  FROM Goods g group by g.ship.seaDirection")
     List<Object> countTotalGoodsByRegion();
 
 }
