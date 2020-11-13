@@ -3,7 +3,7 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
-import com.tobe.fishking.v2.enums.fishing.PaymentGroup;
+//import com.tobe.fishking.v2.enums.fishing.PaymentGroup;
 import lombok.*;
 
 import javax.persistence.*;
@@ -49,9 +49,9 @@ public class Orders extends BaseTime {
 
     //결제수단 , //결제방법
  // EXEC sp_addextendedproperty 'MS_Description', N'결제수단', 'USER', DBO, 'TABLE', orders, 'COLUMN',  pay_method
-    @Column(columnDefinition = "int comment '결제수단'  ")
+    /*@Column(columnDefinition = "int comment '결제수단'  ")
     @Enumerated(EnumType.ORDINAL)
-    private PaymentGroup paymentGroup;
+    private PaymentGroup paymentGroup;*/
 
     //결제여부
     // EXEC sp_addextendedproperty 'MS_Description', N'결제여부', 'USER', DBO, 'TABLE', orders, 'COLUMN',  is_pay

@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.board;
 
-import com.tobe.fishking.v2.enums.IEnumModel;
+//import com.tobe.fishking.v2.enums.IEnumModel;
 
-public  enum QuestionType implements IEnumModel {
+public  enum QuestionType /*implements IEnumModel*/ {
     /* sql
      update board set board_type = 'free' ;
      update board set board_type = 'notice' where id  = 6;
@@ -18,7 +18,7 @@ public  enum QuestionType implements IEnumModel {
     }
 
 
-    @Override
+    /*@Override
     public String getKey() {
         return name();
     }
@@ -26,7 +26,7 @@ public  enum QuestionType implements IEnumModel {
     @Override
     public String getValue() {
         return value;
-    }
+    }*/
 
 }
 

@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-import com.tobe.fishking.v2.enums.IEnumModel;
+//import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum UseType  implements IEnumModel {
+public enum UseType  /*implements IEnumModel*/ {
 
     Y("예"),
     N("아니오");
@@ -12,7 +12,7 @@ public enum UseType  implements IEnumModel {
         this.value = value;
     }
 
-    @Override
+    /*@Override
     public String getKey() {
         return name();
     }
@@ -20,7 +20,7 @@ public enum UseType  implements IEnumModel {
     @Override
     public String getValue() {
         return this.value;
-    }
+    }*/
 
 
 }

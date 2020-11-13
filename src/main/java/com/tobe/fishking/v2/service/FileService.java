@@ -30,10 +30,10 @@ public class FileService {
         Member member = post.getAuthor();
 
         FileEntity fileEntity = FileEntity.builder()
-                .filePublish(FilePublish.valueOf(fileDTO.getFilePublish()))
+                .filePublish(FilePublish.values()[fileDTO.getFilePublish()])
                 .originalFile(fileDTO.getOriginalFile())
                 .fileNo(fileDTO.getFileNo())
-                .fileType(FileType.valueOf(fileDTO.getFileType()))
+                .fileType(FileType.values()[fileDTO.getFileType()])
                 .postId(post)
                 .size(fileDTO.getSize())
                 .fileUrl(fileDTO.getFileUrl())
@@ -42,6 +42,7 @@ public class FileService {
 //                .pid()
                 .createdBy(member)
                 .modifiedBy(member)
+                .locations("sampleLocation")
                 .build();
         fileEntity = filesRepository.save(fileEntity);
 

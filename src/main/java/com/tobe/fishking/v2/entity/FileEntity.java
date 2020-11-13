@@ -2,6 +2,8 @@ package com.tobe.fishking.v2.entity;
 
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.board.Board;
+import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import lombok.*;
@@ -41,7 +43,7 @@ public class FileEntity extends BaseTime {
     // @Column(columnDefinition = "int comment '파일형태'  ")
     // EXEC sp_addextendedproperty 'MS_Description', N'파일형태', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_type
     @Column(nullable = false , columnDefinition = "int   comment '파일형태'  ")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private FileType fileType;
 
 
@@ -59,14 +61,14 @@ public class FileEntity extends BaseTime {
     //_adfdfdfdsfdsfdsfd.jpg
 
    // EXEC sp_addextendedproperty 'MS_Description', N'파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  stored_file
-   @Column(columnDefinition = "varchar(50) comment '저장파일명'  ")
+   @Column(columnDefinition = "varchar(100) comment '저장파일명'  ")
     private String  storedFile;
 
    //_thumb.jpg
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  thumname_file
-    @Column(columnDefinition = "varchar(50) comment '썸네일'  ")
+    @Column(columnDefinition = "varchar(100) comment '썸네일'  ")
     private String  thumbnailFile;
 
 //    @Column(columnDefinition = "varchar(100) comment '업로드URL'  ")
@@ -74,7 +76,8 @@ public class FileEntity extends BaseTime {
     @Column(columnDefinition = "varchar(100) comment '업로드URL' ")
     private String fileUrl;
 
-
+    @Column(columnDefinition = "varchar(100) comment '다운로드 url' ")
+    private String downloadUrl;
 
    // @Column(columnDefinition = "integer default 0 not null comment '파일크기'  ")
     // EXEC sp_addextendedproperty 'MS_Description', N'파일크기', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_size
@@ -101,13 +104,17 @@ public class FileEntity extends BaseTime {
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', files, 'COLUMN',  created_by
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint not null comment '생성자'")
+    @ManyToOne/*(cascade = CascadeType.ALL)*/
+    @JoinColumn(name="created_by" , updatable= false , columnDefinition = "bigint not null comment '생성자'")
     private Member createdBy;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', files, 'COLUMN',  modified_by
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = "bigint not null comment '수정자'")
+    @ManyToOne/*(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})*/
+    @JoinColumn(name="modified_by" ,  columnDefinition = "bigint not null comment '수정자'")
     private Member modifiedBy;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="post_id_id", columnDefinition = "bigint null comment 'post id'")
+    private Post postId;
 
 }

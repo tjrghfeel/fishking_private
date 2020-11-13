@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    업체 등록 요청
+    <form action = "/v1/api/company" method="post" enctype="multipart/form-data">
+        <input type="file" name="files" multiple="multiple"/><br>
+        <!--<input type="file" name = "files"/><br>
+        <input type="file" name = "files"/><br>-->
+
+        <input type="text" name="companyAddress"/><br>
+        <input type="text" name="companyName"/><br>
+        <input type="text" name="harbor"/><br>
+        <input type="text" name="member"/><br>
+        <input type="text" name="ownerWording"/><br>
+        <input type="text" name="shipOwner"/><br>
+        <input type="text" name="tel"/><br>
+        <input type="text" name="sido"/><br>
+        <input type="text" name="gungu"/><br>
+        <input type="text" name="bizNo"/><br>
+        <input type="text" name="accountNo"/><br>
+
+        <input type="submit" value="submit"/>
+    </form>
+
+    업체등록요청 수정
+    <form action = "/v1/api/company" method="post" enctype="multipart/form-data">
+        <input type="file" name="files" multiple="multiple"/><br>
+        <input type="file" name = "files"/><br>
+        <input type="file" name = "files"/><br>
+
+        <input type="text" name="companyAddress"/><br>
+        <input type="text" name="companyName"/><br>
+        <input type="text" name="harbor"/><br>
+        <input type="text" name="member"/><br>
+        <input type="text" name="ownerWording"/><br>
+        <input type="text" name="shipOwner"/><br>
+        <input type="text" name="tel"/><br>
+        <input type="text" name="sido"/><br>
+        <input type="text" name="gungu"/><br>
+        <input type="text" name="bizNo"/><br>
+        <input type="text" name="accountNo"/><br>
+        <input type="text" name="id"/><br>
+
+        <input type="hidden" name="_method" value="put" />
+
+        <input type="submit" value="submit"/>
+    </form>
+
+</body>
+</html>

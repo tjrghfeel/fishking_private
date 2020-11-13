@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-import com.tobe.fishking.v2.enums.IEnumModel;
+//import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum CouponType  implements IEnumModel {
+public enum CouponType  /*implements IEnumModel*/ {
 
     amount("정액"),
     rate("정률");
@@ -13,7 +13,7 @@ public enum CouponType  implements IEnumModel {
         this.value = value;
     }
 
-    @Override
+    /*@Override
     public String getKey() {
         return name();
     }
@@ -21,6 +21,6 @@ public enum CouponType  implements IEnumModel {
     @Override
     public String getValue() {
         return this.value;
-    }
+    }*/
 
 }

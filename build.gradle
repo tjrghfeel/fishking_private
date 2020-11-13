@@ -39,6 +39,7 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.gson:gson'
+    implementation 'junit:junit:4.12'
 /*
     implementation 'net.rakugakibox.util:yaml-resource-bundle:1.1'
 */

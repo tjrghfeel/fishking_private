@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.repository.fishking;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
+import com.tobe.fishking.v2.model.TakeResponse;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -32,7 +33,28 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
     int findTakeCountAboutFishType(Member member, FishingType fishingType);
 
     /*인자 Member가 찜한 인자 FishingType에 해당하는 Goods 목록을 쿼리. */
-    @Query()
-    List<TakeResponse> findTakeListAboutFishType(Member member, FishingType fishingType);
-
+    @Query(
+            value = "select " +
+                    "g.id id, " +
+                    "g.name name, " +
+                    "g.fishing_date fishingDate, " +
+                    "g.is_close isClose, " +
+                    "g.is_use isUse, " +
+                    "g.ship_start_time shipStartTime, " +
+                    "g.total_amount totalAmount, " +
+                    "g.total_avg_by_review totalAvgByReview, " +
+                    "p.palce_name placeName, " +
+                    "p.fish_spices_info fishSpicesInfo " +
+                    "from goods as g, places as p " +
+                    "where g.fishing_type = :fishingType " +
+                    "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
+                    "   and g.goods_place_id = p.id ",
+            countQuery ="select g.id " +
+                        "from goods as g, places as p " +
+                        "where g.fishing_type = :fishingType " +
+                        "and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
+                        "and g.goods_place_id = p.id ",
+            nativeQuery = true
+    )
+    List<TakeResponse> findTakeListAboutFishType(Member member, int fishingType);
 }

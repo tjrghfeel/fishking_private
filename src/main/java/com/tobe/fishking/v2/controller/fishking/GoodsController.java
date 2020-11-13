@@ -1,3 +1,4 @@
+/*
 package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
@@ -14,14 +15,17 @@ import org.springframework.web.bind.annotation.*;
 public class GoodsController {
     private final GoodsService service;
 
-    @ApiOperation(value = "상품리스트 조회", notes = "상품리스트를  조회합니다. ")
+    */
+/*@ApiOperation(value = "상품리스트 조회", notes = "상품리스트를  조회합니다. ")
     @GetMapping("/goodses")
     public ResponseEntity<Page<GoodsDTO>> getGoods(Pageable pageable,
                                                    @RequestParam(required = false, name = "total_elements")Integer totalElements){
         Page<GoodsDTO> goods = service.getGoodsList(pageable, totalElements);
         return ResponseEntity.ok(goods);
-    }
+    }*//*
 
+
+*/
 /*
     @ApiOperation(value = "상품상세 조회", notes = "상품상세를  조회합니다. ")
     @ApiImplicitParams({
@@ -33,8 +37,9 @@ public class GoodsController {
         model.addAttribute("template", "fragments/content/product/detail");
         return "index";
     }
-*/
+*//*
+
 
 
     
-}
+}*/

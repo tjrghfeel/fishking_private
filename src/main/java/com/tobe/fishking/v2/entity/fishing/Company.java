@@ -1,7 +1,10 @@
 package com.tobe.fishking.v2.entity.fishing;
 
 import com.tobe.fishking.v2.entity.BaseTime;
+import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.model.fishing.CompanyUpdateDTO;
+import com.tobe.fishking.v2.model.fishing.CompanyWriteDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -59,12 +62,18 @@ public class Company extends BaseTime {  //선상
     private String harbor;
     
     // EXEC sp_addextendedproperty 'MS_Description', N'사업자등록증파일', 'USER', DBO, 'TABLE', company, 'COLUMN',  biz_no_file_url
-    @Column(columnDefinition = "varchar(200)   comment '사업자등록파일'  ")
-    private String bizNoFilesUrl ;
+    @OneToOne
+    @JoinColumn(columnDefinition = "bigint   comment '사업자등록파일'  ")
+    private FileEntity bizNoFileId;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'대표자신분증파일', 'USER', DBO, 'TABLE', company, 'COLUMN',  represent_file_url
-    @Column(columnDefinition = "varchar(200)   comment '대표자신분증파일'  ")
-    private String representFilesUrl ;
+    @OneToOne
+    @JoinColumn(columnDefinition = "bigint   comment '대표자신분증파일'  ")
+    private FileEntity representFileId ;
+
+    @OneToOne
+    @JoinColumn(columnDefinition = "bigint  commont '정산 통장 사본'  ")
+    private FileEntity accountFileId;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'정산계좌은행 ', 'USER', DBO, 'TABLE', company, 'COLUMN',  bank
     @Column(columnDefinition = "varchar(10)   comment '정산계좌은행'  ")
@@ -73,12 +82,10 @@ public class Company extends BaseTime {  //선상
     // EXEC sp_addextendedproperty 'MS_Description', N'정산계좌번호', 'USER', DBO, 'TABLE', company, 'COLUMN',  account_no
     @Column(columnDefinition = "varchar(20)   comment '정산계좌번호'  ")
     private String accountNo ;
-/*
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사장님한마디', 'USER', DBO, 'TABLE', company, 'COLUMN',  owner_wording
     @Column(columnDefinition = "varchar(500)  comment '사장님한마디'  ")
     private String ownerWording;
-*/
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'영업상태', 'USER', DBO, 'TABLE', company, 'COLUMN',  is_open
@@ -119,5 +126,32 @@ public class Company extends BaseTime {  //선상
         this.companyName = companyName;
         this.createdBy = member;
         this.modifiedBy =  member ;
+    }
+
+    public void updateCompanyRegisterRequest(CompanyWriteDTO dto, Member modifiedBy, FileEntity[] files){
+        //private Long id;//not null, pk
+        //private Long member;  //name이 없을 경우 member_id, fk
+        companyName = dto.getCompanyName();//
+        shipOwner = dto.getShipOwner();//
+        sido = dto.getSido();
+        gungu = dto.getGungu();
+        tel = dto.getTel();//
+        bizNo = dto.getBizNo();
+        harbor = dto.getHarbor();//
+        //private String bizNoFilesUrl ;
+        //private String representFilesUrl ;
+        bank = dto.getBank();
+        accountNo = dto.getAccountNo();
+        ownerWording = dto.getOwnerWording();//not null
+        //isOpen = dto.isOpen();
+        //private String  skbAccount;
+        //private String skbPassword;
+        companyAddress = dto.getCompanyAddress();//
+        //isRegisitered = dto.isRegisitered();
+        //private Member createdBy;//not null, fk
+        this.modifiedBy = modifiedBy;//not null, fk
+        bizNoFileId = files[0];//not null
+        representFileId = files[1];//not null
+        accountFileId = files[2];//not null
     }
 }

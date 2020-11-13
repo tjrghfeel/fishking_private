@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.board;
 
-import com.tobe.fishking.v2.enums.IEnumModel;
+//import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum FilePublish implements IEnumModel {
+public enum FilePublish /*implements IEnumModel*/ {
 
 
     ship("선상"),
@@ -13,15 +13,19 @@ public enum FilePublish implements IEnumModel {
     fishingBlog("조행기"),
     fishingDaily("조행일지"),
     comment("답글"),
-    fishkingTv("어복TV");
+    fishkingTv("어복TV"),
+    companyRequest("업체요청");
 
 
     private String value;
     FilePublish(String value) {
         this.value = value;
     }
+    public String getValue() {
+        return value;
+    }
 
-    @Override
+  /*  @Override
     public String getKey() {
         return name();
     }
@@ -29,7 +33,7 @@ public enum FilePublish implements IEnumModel {
     @Override
     public String getValue() {
         return value;
-    }
+    }*/
 
 
 }

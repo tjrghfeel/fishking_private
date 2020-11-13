@@ -3,10 +3,10 @@ package com.tobe.fishking.v2.entity.common;
 
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -77,5 +77,20 @@ public class CommonCode extends BaseTime  {
         @ManyToOne
         @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
         private Member modifiedBy;
+
+        public void updateCommonCode(CommonCodeWriteDTO dto, Member modifiedBy, CodeGroup codeGroup){
+                this.codeGroup = codeGroup;
+                isActive = dto.isActive();
+                iLevel = dto.getLevel();
+                orderBy = dto.getOrderBy();
+
+                code = dto.getCode();
+                codeName = dto.getCodeName();
+                aliasName = dto.getAliasName();
+                extraValue1 = dto.getExtraValue1();
+                retValue1 = dto.getRetValue1();
+                remark = dto.getRemark();
+                this.modifiedBy = modifiedBy;
+        }
 
 }

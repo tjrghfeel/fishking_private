@@ -1,12 +1,16 @@
 package com.tobe.fishking.v2.controller.post;
 
 import com.google.gson.Gson;
+import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.board.Post;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.FileDTO;
 import com.tobe.fishking.v2.model.board.PostDTO;
+import com.tobe.fishking.v2.model.board.PostResponse;
+import com.tobe.fishking.v2.model.board.UpdatePostDTO;
 import com.tobe.fishking.v2.model.board.WritePostDTO;
 import com.tobe.fishking.v2.repository.FilesRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
@@ -16,6 +20,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,9 +33,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.validation.Valid;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Api(tags = {"게시글"})
@@ -41,26 +49,37 @@ public class PostController {
     private PostService postService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private UploadService uploadService;
 
-    @ApiOperation(value="noName", notes="noName")
-    @GetMapping("/hello222")
-    public List<Integer> hello(){
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        list.add(11);
-        list.add(22);
-        return list;
+    //게시판별로 게시글 목록을 조회.
+    @ApiOperation(value = "게시글 목록 조회", notes = "게시글의 '내용'을 제외한 게시글정보들이 페이지형식으로 반환됩니다")
+    @GetMapping("/posts/{board_id}/{page}")
+    public Page<PostResponse> getPostListInPageForm(@PathVariable(value = "board_id") Long board_id, @PathVariable(value="page") int page)
+            throws ResourceNotFoundException {
+        Page<PostResponse> p = postService.getPostListInPageForm(board_id, page);
+        return p;
+    }
+    
+    /*Board의 모든 Post 조회*/
+    @ApiOperation(value = "게시글의 모든 글 가져오기", notes = "게시글의 모든 글들을 내용포함해서 가져옵니다. ")
+    @GetMapping("/posts/{board_id}")
+    public List<PostResponse> getPostList(@PathVariable("board_id") Long boardId) throws ResourceNotFoundException {
+        return postService.getPostList(boardId);
     }
 
-    //게시판별로 게시글 목록 조회
-    /*@ApiOperation(value = "게시글 목록 조회", notes = "게시글 목록을 조회합니다")
-    @GetMapping("/posts/{board_id}/{page}")
-    public Page<PostDTO> getPostList(@PathVariable(value = "board_id") Long board_id, @PathVariable(value="page") int page)
-            throws ResourceNotFoundException {
-        Page<PostDTO> p = postService.getPostList(board_id, page);
-        return p;
+    //1대1 문의내역 목록 조회. 로그인 처리, 스프링 시큐리티 어떻게 돌아가는지 공부후에 완성.
+    /*@ApiOperation(value = "1:1문의내역 목록 조회", notes = "1:1문의 내역을 목록을 조회합니다.")
+    @GetMapping("/post/{board_id}/{member}/{page}")
+    public Page<PostResponse> getQnAList(
+            @PathVariable(value = "board_id") Long board_id,
+            @PathVariable(value = "member")
+            @PathVariable(value="page") int page
+    ){
+
     }*/
 
-    //게시글 하나 조회
+    //게시글 하나 조회.
     @ApiOperation(value = "게시글 조회", notes = "게시글을 조회합니다")
     @GetMapping("/post/{id}")
     public PostDTO getPostById(@PathVariable(value = "id") Long id) throws ResourceNotFoundException {
@@ -68,48 +87,30 @@ public class PostController {
         return postDTO;
     }
 
-    //게시글 저장. Post entity, FileEntity저장을 한다.
-    @ApiOperation(value = "게시글 저장", notes = "게시글을 등록합니다")
+    //게시글 저장. Post entity, FileEntity저장을 한다. 생성한 Post엔터티의 id를 반환.
+    /*!!!!!!!!!!이미지 저장할 폴더위치, 저장을 어떤식으로 할지 정해진다음 수정해야함.*/
+    @ApiOperation(value = "게시글 저장", notes = "parnedId, tagName, secret은 nullable")
     @PostMapping("/post")
-    public boolean writePost(@ModelAttribute PostDTO postDTO, @RequestParam("file") ArrayList<MultipartFile> files,
-                             @RequestParam("filePublish") String filePublish) throws Exception {
+    public Long writePost(@ModelAttribute WritePostDTO writePostDTO,
+                             /*@RequestParam("file") ArrayList<MultipartFile> files,*/
+                             @RequestParam("file") MultipartFile file,
+                             @RequestParam("filePublish") int filePublish) throws Exception {
         //게시글 저장.
-        Long postId = postService.writePost(postDTO);
+        Long postId = postService.writePost(writePostDTO, file, filePublish);
 
-        //파일 저장.
-        for(int i=0; i<files.size(); i++) {//파일 여러개일경우, 각 파일들에 대해 반복.
-            MultipartFile file = files.get(i);
-            String origFilename = file.getOriginalFilename();
-            String savePath = System.getProperty("user.dir") + "\\files";
-
-            String filePath = savePath + "\\" + origFilename;
-            file.transferTo(new File(filePath));//파일저장.
-
-            //파일 타입 확인.
-            String fileType = file.getContentType().split("/")[0];
-            FileType enumFileType;
-            if(fileType.equals("image")){enumFileType = FileType.image;}
-            else if(fileType.equals("text")){enumFileType = FileType.txt;}
-            else if(fileType.equals("video")){enumFileType = FileType.video;}
-            else enumFileType = FileType.attachments;
-
-            FileDTO fileDTO = FileDTO.builder()
-                    .filePublish(filePublish)
-                    .originalFile(origFilename)
-                    .fileNo(i)
-                    .fileType(enumFileType.getValue())
-                    .postId(postId)
-                    .size(file.getSize())
-                    .fileUrl(filePath)
-                    //.bid()
-                    //.caption()
-                    //.pid()
-                    .build();
-
-            fileService.storeFileEntity(fileDTO);
-        }
-
-        return true;
+        return postId;
     }
+
+    /*Post하나 업데이트.
+    * 반환값 : 업데이트된 Post id.
+    */
+    @ApiOperation(value = "게시물 수정", notes = "게시물을 수정합니다")
+    @PutMapping("/post")
+    public Long updatePost(UpdatePostDTO postDTO, @RequestParam("file") MultipartFile file,
+                           @RequestParam("filePublish") int filePublish) throws ResourceNotFoundException, IOException {
+        return postService.updatePost(postDTO, file, filePublish);
+    }
+
+
 
 }

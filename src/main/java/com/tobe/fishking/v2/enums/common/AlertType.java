@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-import com.tobe.fishking.v2.enums.IEnumModel;
+//import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum AlertType implements IEnumModel {
+public enum AlertType /*implements IEnumModel*/ {
 
     mmmber("사용자");
 
@@ -12,7 +12,7 @@ public enum AlertType implements IEnumModel {
     }
 
 
-    @Override
+    /*@Override
     public String getKey() {
         return name();
     }
@@ -20,6 +20,6 @@ public enum AlertType implements IEnumModel {
     @Override
     public String getValue() {
         return this.value;
-    }
+    }*/
 
 }

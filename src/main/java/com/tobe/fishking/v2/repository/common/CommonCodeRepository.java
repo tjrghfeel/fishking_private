@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,11 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, Long> {
 
     @Query("select a from CommonCode a where a.codeName = :codeName and a.codeGroup = :codeGroup")
     public Optional<CommonCode> findByCodeNameAndDiv(String codeName, CodeGroup codeGroup);
+
+    @Query("select a from CommonCode a where a.codeGroup = :codeGroup")
+    public List<CommonCode> findAllByCodeGroup(CodeGroup codeGroup);
+
+    public CommonCode findByCode(String code);
 
     /*code 코드리스트 조회*/
     @Query("select a from CommonCode a where a.codeGroup = :codeGroup and a.code in (:codeList)")

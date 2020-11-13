@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
+import com.tobe.fishking.v2.model.board.UpdatePostDTO;
 import lombok.*;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
 
@@ -16,6 +17,7 @@ import java.util.List;
 // @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 @Getter
+@Builder
 @AllArgsConstructor
 @Entity(name = "Post")
 @Table(name = "post")
@@ -109,12 +111,12 @@ public class Post extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', post, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint  NOT NULL   comment '생성자'  ")
+    @JoinColumn(name="created_by" , updatable= false , columnDefinition  = "bigint  NOT NULL   comment '생성자'  ")
     private Member createdBy;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', post, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name="modified_by" , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
     public Post(Member member, Board board, String authorName , String title, String contents) {
@@ -124,5 +126,14 @@ public class Post extends BaseTime {
         this.authorName = authorName;
         this.title = title;
         this.contents = contents;
+    }
+
+    //Post 수정시에, UpdatePostDTO로부터 엔터티 정보 수정하는 메소드.
+    public void updatePost(UpdatePostDTO postDTO){
+        contents = postDTO.getContents();
+        createdAt = postDTO.getCreatedAt();
+        isSecret = postDTO.isSecret();
+        parent_id = postDTO.getParentId();
+        title = postDTO.getTitle();
     }
 }

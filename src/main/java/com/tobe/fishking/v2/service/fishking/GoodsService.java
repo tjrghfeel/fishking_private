@@ -1,3 +1,4 @@
+/*
 package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -41,10 +42,12 @@ public class GoodsService {
     private final CodeGroupRepository codeGroupRepo;  //JpaResposistory
 
 
-    public Page<GoodsDTO> getGoodsList(Pageable pageable, Integer totalElements) {
+    */
+/*public Page<GoodsDTO> getGoodsList(Pageable pageable, Integer totalElements) {
         Page<Goods> goods = goodsRepo.findAll(pageable, totalElements);
         return goods.map(GoodsDTO::of);
-    }
+    }*//*
+
 
     public Page<GoodsDTO> getGoodsList(Pageable pageable, @RequestParam(required = false) Map<String, Object> searchRequest, Integer totalElement) {
 
@@ -137,14 +140,16 @@ public class GoodsService {
     }
     
 
+*/
 /*
     public Optional<Goods>  getGoods(Long goodsId) {
         return goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new ResourceNotFoundException("Goods not found for this id :: " + goodsId));
-    }*/
+    }*//*
 
 
 
 
 
-}
+
+}*/

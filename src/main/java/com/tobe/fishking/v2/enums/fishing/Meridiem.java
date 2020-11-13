@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-import com.tobe.fishking.v2.enums.IEnumModel;
+//import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum Meridiem implements IEnumModel {
+public enum Meridiem /*implements IEnumModel*/ {
 
     am("오전"),
     pm("오후");
@@ -13,7 +13,7 @@ public enum Meridiem implements IEnumModel {
     }
 
 
-    @Override
+    /*@Override
     public String getKey() {
         return name();
     }
@@ -21,6 +21,6 @@ public enum Meridiem implements IEnumModel {
     @Override
     public String getValue() {
         return this.value;
-    }
+    }*/
 
 }

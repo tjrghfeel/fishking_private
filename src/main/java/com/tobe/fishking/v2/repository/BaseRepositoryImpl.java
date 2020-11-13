@@ -16,7 +16,7 @@ public class BaseRepositoryImpl<T,ID extends Serializable> extends SimpleJpaRepo
         super(entityInformation, entityManager);
     }
 
-    @Override
+    /*@Override
     public Page<T> findAll(Pageable pageable, Integer totalElements) {
         return findAll(null, pageable, totalElements, Sort.unsorted());
     }
@@ -55,5 +55,5 @@ public class BaseRepositoryImpl<T,ID extends Serializable> extends SimpleJpaRepo
         query.setMaxResults(pageable.getPageSize());
 
         return  new PageImpl<>(query.getResultList(), PageRequest.of(pageNumber, pageSize), totalElements);
-    }
+    }*/
 }

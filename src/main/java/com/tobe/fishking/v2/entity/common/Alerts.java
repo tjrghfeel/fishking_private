@@ -15,7 +15,6 @@ import javax.persistence.*;
 //EXEC sp_addextendedproperty 'MS_Description', N'알림', 'USER', DBO, 'TABLE', alerts,
 public class Alerts  {
 
-
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', alerts, 'COLUMN',  id
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql

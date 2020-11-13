@@ -15,4 +15,5 @@ public class FishkingV2Application {
         SpringApplication.run(FishkingV2Application.class, args);
     }
 
+
    }

@@ -20,10 +20,9 @@ import java.time.LocalDateTime;
 public class FileDTO {
     //not null필드.
     private Long id;
-    private String filePublish;
-    private int bid;
+    private int filePublish;//
     private int fileNo;
-    private String fileType;
+    private int fileType;//
     private boolean isDelete;
     private boolean isTop;
     private String  locations;
@@ -45,11 +44,10 @@ public class FileDTO {
 
     public FileDTO(FileEntity fileEntity){
         id=fileEntity.getId();
-        filePublish = fileEntity.getFilePublish().getValue();
+        filePublish = fileEntity.getFilePublish().ordinal();
         pid = fileEntity.getPid();
-        bid = fileEntity.getBid();
         fileNo = fileEntity.getFileNo();
-        fileType = fileEntity.getFileName();
+        fileType = fileEntity.getFileType().ordinal();
         isDelete = fileEntity.isDelete();
         isTop = fileEntity.isTop();
         locations = fileEntity.getLocations();

@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-import com.tobe.fishking.v2.enums.IEnumModel;
+//import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum OrderStatus implements IEnumModel {
+public enum OrderStatus /*implements IEnumModel*/ {
 
     waite(" 접수대기"),
     receipt("접수"),
@@ -13,7 +13,7 @@ public enum OrderStatus implements IEnumModel {
         this.value = value;
     }
 
-    @Override
+    /*@Override
     public String getKey() {
         return name();
     }
@@ -21,6 +21,6 @@ public enum OrderStatus implements IEnumModel {
     @Override
     public String getValue() {
         return this.value;
-    }
+    }*/
 
 }

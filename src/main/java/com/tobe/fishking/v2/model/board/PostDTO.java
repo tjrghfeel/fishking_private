@@ -34,6 +34,7 @@ public class PostDTO {
     private String createdAt;
     private Long createdById;
     private Long modifiedById;
+    private int questionType;
 
     //nullable 필드.
     private LocalDateTime createdDate;
@@ -58,6 +59,7 @@ public class PostDTO {
         createdAt = post.getCreatedAt();
         createdById = post.getCreatedBy().getId();
         modifiedById = post.getModifiedBy().getId();
+        questionType = post.getQuestionType().ordinal();
 
         //nullable 필드.
         likeCount = post.getLikeCount();
