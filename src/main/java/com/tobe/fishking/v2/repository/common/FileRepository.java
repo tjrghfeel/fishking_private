@@ -2,9 +2,12 @@ package com.tobe.fishking.v2.repository.common;
 
 
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,30 +19,21 @@ public interface FileRepository extends BaseRepository<FileEntity, Long> {
     @Query("select a from FileEntity a where a.fileUrl = :fileUrl")
     public Optional<FileEntity> findByFileUrl(String fileUrl);
 
+/*
 
-    /*@Query(value = "select b.* " +
+    @Query(value = "select b.* " +
             "from member a, FileEntity b " +
-            "where a.profile_image = b.file_seq " +
-            "and (a.alt_user_code = :memberSeq or concat(a.member_seq, '') = :memberSeq)" +
+            "where a.profile_image = b.pid " +
+            "and concat(a.id, '') = :memberSeq)" +
             "and a.is_member = 1",
             nativeQuery = true)
-    Optional<FileEntity> findProfileImageBySeqOrCode(String memberSeq);
-    */
-
-    //joing fetch는 paging이 안되서 totallimit 삭제
-    @Query(value = "SELECT distinct fe FROM FileEntity AS fe "
-            + "JOIN FishingDiary AS fd ON fe.pid = fd.id "
-            + "WHERE fd.contents like CONCAT('%',:contents,'%')")
-    Page<FileEntity> findAllFileLikeFishingDiaryContents(@Param("contents") String contents, Pageable pageable);
-
-/*
-    @Query(value = "SELECT distinct fe FROM FileEntity AS fe "
-            + "JOIN FishingDiary AS fd ON fe.pid = fd.id "
-            + "WHERE fd.contents like CONCAT('%',:contents,'%')")
-    Optional<List<FileEntity>> findAllFileLikeFishingDiaryContents(@Param("contents") String contents, Pageable pageable);*/
+    Optional<FileEntity> findProfileImageBySeqOrCode(int memberId);
+*/
 
 
-
+    @Query(value="SELECT a FROM FileEntity a , FishingDiary b  where a.pid = b.id and b.contents like CONCAT('%',:contents,'%')",
+            countQuery = "SELECT count(a) FROM FileEntity , FishingDiary b  where a.pid = b.id and b.contents like CONCAT('%',:contents,'%')", nativeQuery = true)
+    Page<FileEntity> findAllFilesWithPaginationNative(@Param("contents") String  contents, Pageable pageable);
 
 /*
     @Query("select a from FileEntity a where a. = true ")

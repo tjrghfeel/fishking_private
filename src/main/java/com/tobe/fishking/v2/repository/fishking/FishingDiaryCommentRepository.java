@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface FishingDiaryCommentRepository extends BaseRepository<FishingDiary, Long> {
+public interface FishingDiaryCommentRepository extends BaseRepository<FishingDiaryComment, Long> {
 
     //
  //   Page<FishingDiary> findFishingDiariesByFishSpeciesIsContaining(String fishSpeciesName, Pageable pageable, Integer totalElements);
