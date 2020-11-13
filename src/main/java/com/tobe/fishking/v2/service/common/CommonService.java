@@ -97,7 +97,7 @@ public class CommonService {
     /*CodeGroup 하나 추가 메소드.*/
     @Transactional
     public Long writeCodeGroup(CodeGroupWriteDTO codeGroupWriteDTO) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(codeGroupWriteDTO.getCreatedBy())
+        Member member = memberRepo.findById(codeGroupWriteDTO.getCreatedBy())
                 .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+codeGroupWriteDTO.getCreatedBy()));
 
         CodeGroup codeGroup = CodeGroup.builder()
@@ -109,14 +109,14 @@ public class CommonService {
                 .modifiedBy(member)
                 .build();
 
-        return codeGroupRepository.save(codeGroup).getId();
+        return codeGroupRepo.save(codeGroup).getId();
     }
     /*CodeGroup 수정 메소드*/
     @Transactional
     public Long updateCodeGroup(CodeGroupWriteDTO codeGroupWriteDTO) throws ResourceNotFoundException {
-        CodeGroup codeGroup = codeGroupRepository.findById(codeGroupWriteDTO.getId())
+        CodeGroup codeGroup = codeGroupRepo.findById(codeGroupWriteDTO.getId())
                 .orElseThrow(()->new ResourceNotFoundException("CodeGroup not found for this id :: " + codeGroupWriteDTO.getId()));
-        Member member = memberRepository.findById(codeGroupWriteDTO.getModifiedBy())
+        Member member = memberRepo.findById(codeGroupWriteDTO.getModifiedBy())
                 .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+codeGroupWriteDTO.getModifiedBy()));
 
         codeGroup.updateCodeGroup(codeGroupWriteDTO, member);
@@ -128,9 +128,9 @@ public class CommonService {
     * 새로 만든 CommonCode Entity의 id를 반환. */
     @Transactional
     public String writeCommonCode(CommonCodeWriteDTO commonCodeWriteDTO) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(commonCodeWriteDTO.getCreatedBy())
+        Member member = memberRepo.findById(commonCodeWriteDTO.getCreatedBy())
                 .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+commonCodeWriteDTO.getCreatedBy()));
-        CodeGroup codeGroup = codeGroupRepository.findById(commonCodeWriteDTO.getCodeGroup())
+        CodeGroup codeGroup = codeGroupRepo.findById(commonCodeWriteDTO.getCodeGroup())
                 .orElseThrow(()->new ResourceNotFoundException("CodeGroup not found for this id :: "+commonCodeWriteDTO.getId()));
 
         //CommdonCode 엔터티 생성.
@@ -152,18 +152,18 @@ public class CommonService {
                 .orderBy(commonCodeWriteDTO.getOrderBy())
                 .build();
 
-        commonCode = commonCodeRepository.save(commonCode);
+        commonCode = commonCodeRepo.save(commonCode);
 
         return commonCode.getCode();
     }
     /*Common Code 수정 메소드*/
     @Transactional
     public String updateCommonCode(CommonCodeWriteDTO commonCodeWriteDTO) throws ResourceNotFoundException {
-        CommonCode commonCode = commonCodeRepository.findById(commonCodeWriteDTO.getId())
+        CommonCode commonCode = commonCodeRepo.findById(commonCodeWriteDTO.getId())
                 .orElseThrow(()->new ResourceNotFoundException("CommonCode not found for this id ::"+commonCodeWriteDTO.getId()));
-        Member member = memberRepository.findById(commonCodeWriteDTO.getModifiedBy())
+        Member member = memberRepo.findById(commonCodeWriteDTO.getModifiedBy())
                 .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+commonCodeWriteDTO.getModifiedBy()));
-        CodeGroup codeGroup = codeGroupRepository.findById(commonCodeWriteDTO.getCodeGroup())
+        CodeGroup codeGroup = codeGroupRepo.findById(commonCodeWriteDTO.getCodeGroup())
                 .orElseThrow(()->new ResourceNotFoundException("CodeGroup not found for this id ::"+commonCodeWriteDTO.getId()));
 
         commonCode.updateCommonCode(commonCodeWriteDTO,member,codeGroup);
@@ -176,10 +176,10 @@ public class CommonService {
     public List<CommonCodeDTO> getCommonCodeDTOList(Long codeGroupId) throws ResourceNotFoundException {
         List<CommonCodeDTO> commonCodeDTOList = new ArrayList<CommonCodeDTO>();
 
-        CodeGroup codeGroup = codeGroupRepository.findById(codeGroupId)
+        CodeGroup codeGroup = codeGroupRepo.findById(codeGroupId)
                 .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+codeGroupId));
 
-        List<CommonCode> commonCodeList = commonCodeRepository.findAllByCodeGroup(codeGroup);
+        List<CommonCode> commonCodeList = commonCodeRepo.findAllByCodeGroup(codeGroup);
         for(int i=0; i<commonCodeList.size(); i++){
             CommonCode commonCode = commonCodeList.get(i);
             CommonCodeDTO commonCodeDTO = new CommonCodeDTO();

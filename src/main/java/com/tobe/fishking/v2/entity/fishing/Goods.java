@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.enums.fishing.FishSpecies;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
 //import com.tobe.fishking.v2.model.fishing.ParamsGoods;
+import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -185,7 +186,7 @@ public class Goods extends BaseTime {
 
 
     // 생성자
-    /*public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {
+    public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {
         this.createdBy = member;
         this.modifiedBy = member;
         this.name = paramsGoods.getGoodsName();
@@ -217,7 +218,7 @@ public class Goods extends BaseTime {
         this.onSitePurchase = paramsGoods.getOnSitePurchase();
         this.etc = paramsGoods.getEtc();
         this.places = places;
-    }*/
+    }
 
     public void setFishSpecies(List<CommonCode> fishSpecies) {
         this.fishSpecies = fishSpecies;
@@ -244,7 +245,7 @@ public class Goods extends BaseTime {
 
 
     // 수정시 데이터 처리
-    /*public Goods setUpdate(Member member, Ship ship, Places places, ParamsGoods paramsGoods) {
+    public Goods setUpdate(Member member, Ship ship, Places places, ParamsGoods paramsGoods) {
 
         this.modifiedBy = member;
 
@@ -278,7 +279,7 @@ public class Goods extends BaseTime {
         this.etc = paramsGoods.getEtc();
         this.places = places;
         return this;
-    }*/
+    }
 
 
 

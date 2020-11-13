@@ -1,4 +1,4 @@
-/*
+
 package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -48,11 +48,11 @@ public class GoodsService {
 
 
 
-    */
-/*public Page<GoodsDTO> getGoodsList(Pageable pageable, Integer totalElements) {
+
+    public Page<GoodsDTO> getGoodsList(Pageable pageable, Integer totalElements) {
         Page<Goods> goods = goodsRepo.findAll(pageable, totalElements);
         return goods.map(GoodsDTO::of);
-    }*//*
+    }
 
 
     public Page<GoodsDTO> getGoodsByRecommend(Pageable pageable, Integer totalElements) {
@@ -111,6 +111,7 @@ public class GoodsService {
         return goods.map(GoodsDTO::of);
     }
 
+
 /*
 
     //검색 -- and
@@ -143,6 +144,7 @@ public class GoodsService {
         return goods.map(GoodsDTO::of);
     }
 */
+
 
 
 
@@ -224,16 +226,16 @@ public class GoodsService {
     }
     
 
-*/
+
 /*
     public Optional<Goods>  getGoods(Long goodsId) {
         return goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new ResourceNotFoundException("Goods not found for this id :: " + goodsId));
-    }*//*
+    }*/
 
 
 
 
 
 
-}*/
+}
