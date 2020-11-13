@@ -2,7 +2,7 @@ package com.tobe.fishking.v2.model.fishing;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
-import com.tobe.fishking.v2.entity.fishing.Goods;
+import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import io.swagger.annotations.ApiModelProperty;

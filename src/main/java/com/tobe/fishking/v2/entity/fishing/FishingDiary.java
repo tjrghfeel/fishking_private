@@ -3,7 +3,9 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
+import com.tobe.fishking.v2.entity.board.Tag;
 import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
+import com.tobe.fishking.v2.model.common.ShareStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,10 +14,11 @@ import java.util.List;
 
 
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 @Getter
-//@Builder
-//@AllArgsConstructor
-@Entity(name = "FishingDiary")
+@Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "fishing_diary")
 public class FishingDiary extends BaseTime {
 
@@ -27,7 +30,7 @@ public class FishingDiary extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'게시판그룹', 'USER', DBO, 'TABLE', orders, 'COLUMN',  fishing_ships
     @ManyToOne
-    @JoinColumn(name = "board_id", columnDefinition = " bigint not null   comment '게시판그룹'  ")
+    @JoinColumn(name = "board_id", columnDefinition = " bigint not null   comment '게시판'  ")
     private Board board;
 
     //null이면 조행기, null이 아니면 조행일지
@@ -122,6 +125,15 @@ public class FishingDiary extends BaseTime {
     //  @Builder.Default
     private final List<Member> scrabMembers = new ArrayList<>();
 
+    @AttributeOverride(name="shareCount", column=@Column(name = "SHARE"))
+    private ShareStatus status;
+
+
+/*
+    @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "fishing_diary_comments", columnDefinition = "comment '댓글' ")
+    private List<FishingDiaryComment> comments = new ArrayList<>();
+*/
 
 
     //사진및 동영상은 File로.. 구분자(FilePublish) 조황일지
@@ -160,6 +172,16 @@ public class FishingDiary extends BaseTime {
         this.writeLatitude = writeLatitude;
         this.writeLongitude = writeLongitude;
         this.createdBy = createdBy;
+        this.modifiedBy = modifiedBy;
+    }
+
+    public FishingDiary() {
+
+    }
+
+    public FishingDiary(Long id,  ShareStatus status  ) {
+        this.id = id;
+        this.status = status;
         this.modifiedBy = modifiedBy;
     }
 

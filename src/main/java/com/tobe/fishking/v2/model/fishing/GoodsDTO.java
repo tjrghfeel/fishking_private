@@ -26,7 +26,7 @@ public class GoodsDTO {
     private Long goodsId;
     private String goodsName;
     private double totalAmount;
-    private boolean isbegginerPossible;
+    private boolean isBegginerPossible;
     private String shipStartTime;
     private Meridiem meridiem;
     private boolean isClose;
@@ -36,7 +36,7 @@ public class GoodsDTO {
                 .goodsId(goods.getId())
                 .goodsName(goods.getName())
                 .totalAmount(goods.getTotalAmount())
-                .isbegginerPossible(goods.isBeginnerPossible())
+                .isBegginerPossible(goods.isBeginnerPossible())
                 .shipStartTime(goods.getShipStartTime())
                 .meridiem(goods.getMeridiem())
                 .isClose(goods.isClose())

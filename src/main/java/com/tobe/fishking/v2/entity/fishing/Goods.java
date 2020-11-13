@@ -152,10 +152,25 @@ public class Goods extends BaseTime {
     @JoinColumn(name = "goods_place_id", columnDefinition = "bigint comment  '장소 소개'")
     private Places places;
 
-
     // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(nullable = false, columnDefinition = "bit default 1  comment  '사용여부'  ")
     private boolean isUse;
+
+    @ManyToMany(targetEntity = CommonCode.class)
+    @JoinColumn(name = "goods_facility", columnDefinition = " comment  '편의시설'  ")
+    @Builder.Default
+    private List<CommonCode> facilities = new ArrayList<>();
+
+
+    @ManyToMany(targetEntity = CommonCode.class)
+    @JoinColumn(name = "goods_nearby_facility", columnDefinition = " comment  '주변시설'  ")
+    @Builder.Default
+    private List<CommonCode> nearbyFacilities = new ArrayList<>();
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'추천업체', 'USER', DBO, 'TABLE', ship, 'COLUMN',  is_recommend
+    @Column(nullable = false, columnDefinition = "int default 0  comment '추천업체'  ")
+    private boolean isRecommend;
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  created_by
     @ManyToOne
@@ -217,9 +232,7 @@ public class Goods extends BaseTime {
     }
 
     public Goods(Member member,  Ship ship,  String name, FishingType fishingType, List<CommonCode> arrFishSpecies ) {
-
         this.modifiedBy = member;
-
         this.name = name;
         this.fishingType = fishingType;
         this.ship = ship;

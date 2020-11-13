@@ -1,15 +1,17 @@
 package com.tobe.fishking.v2.repository.fishking;
 
 import com.tobe.fishking.v2.entity.fishing.Company;
+
 import com.tobe.fishking.v2.model.fishing.CompanyResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import com.tobe.fishking.v2.repository.BaseRepository;
 
 import java.util.List;
 
 @Repository
-public interface CompanyRepository extends JpaRepository<Company, Long> {
+public interface CompanyRepository extends BaseRepository<Company, Long> {
 
     /* nativeQeury를 이용해 리포지토리로부터 CompanyResponse의 값들을 바로 받아오려했으나 FileEntity의 url을 받아오는 부분에서
     쿼리문을 어떻게짜야할지 몰라서 일단 다른방법으로 하였다. 추후 수정필요.

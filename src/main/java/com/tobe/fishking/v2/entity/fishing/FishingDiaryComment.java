@@ -1,5 +1,4 @@
-package com.tobe.fishking.v2.entity.board;
-
+package com.tobe.fishking.v2.entity.fishing;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -7,25 +6,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.board.Board;
+import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
-import lombok.*;
+import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Setter
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 
-@Entity(name = "Comment")
-@Table(name = "comment")
-public class Comment extends BaseTime {
+@Getter
+@Entity
+@Builder
+@AllArgsConstructor
+@Table(name = "fishing_diary_comment")
+public class FishingDiaryComment extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', comment, 'COLUMN',  id
     @Id
@@ -49,14 +52,12 @@ public class Comment extends BaseTime {
     @Column(nullable = true, columnDefinition ="INT  comment '상위id ' ")
     private Long parentId;
 
-    
+
     // EXEC sp_addextendedproperty 'MS_Description', N'내용', 'USER', DBO, 'TABLE', comment, 'COLUMN',  content
     @Column(columnDefinition = "varchar(2000) comment '내용 ' ", nullable = false)
     private String contents;
 
-    @Transient // DB에 영향을 미치지 않는다.
-    @Column(columnDefinition = "int comment '좋아요수' ")
-    private int likeCount;
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', comment, 'COLUMN',  created_by
     @ManyToOne
@@ -68,12 +69,17 @@ public class Comment extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "fishing_diary_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     @JsonIdentityReference(alwaysAsId=true)
-    @JsonProperty("post_id")
-    private Post post;
+    @JsonProperty("fishing_diary_id")
+    private FishingDiary fishingDiary;
 
+
+    public FishingDiaryComment() {
+
+    }
 }
