@@ -39,7 +39,7 @@ public class FishingDiaryService {
 
     private final BoardRepository boardRepo;
 
-
+    private static int searchSize = 0;
     //검색 -- 통합검색
     public Page<FishingDiaryDTO> getFishingDiaryListLike(Board board,
                                                          @RequestParam(required = false) String searchRequest,
@@ -63,18 +63,21 @@ public class FishingDiaryService {
     }
 
     //검색 --
-    public Page<FishingDiaryDTO> getFishingDiaryList(Pageable pageable, OperatorType orType,
+    public Page<FishingDiaryDTO> getFishingDiaryList(Pageable pageable,
                                                      @RequestParam(required = false) Map<String,  ///total를 제외한 모든 것 조회
                                                              Object> searchRequest, Integer totalElement) {
+
+        searchSize = 0;
 
         Map<FishingDiarySpecs.SearchKey, Object> searchKeys = new HashMap<>();
         for (String key : searchRequest.keySet()) {
             searchKeys.put(FishingDiarySpecs.SearchKey.valueOf(key.toUpperCase()), searchRequest.get(key));
+            searchSize += 1;
         }
 
         Page<FishingDiary> fishingDiary = null;
 
-        if (OperatorType.and == orType) {
+        if (searchSize > 1) {
             fishingDiary = searchKeys.isEmpty()
                     ? fishingDiaryRepo.findAll(pageable, totalElement)
                     : fishingDiaryRepo.findAll(FishingDiarySpecs.searchWith(searchKeys), pageable, totalElement);

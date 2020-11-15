@@ -28,6 +28,10 @@ public class GoodsSpecs {
         TAG("tag"),
         LIKESGREATERTHAN("likes");
 
+
+
+
+
         private final String value;
 
         SearchKey(String value) {

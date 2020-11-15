@@ -128,7 +128,6 @@ public class FishingDiary extends BaseTime {
     @AttributeOverride(name="shareCount", column=@Column(name = "SHARE"))
     private ShareStatus status;
 
-
 /*
     @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "fishing_diary_comments", columnDefinition = "comment '댓글' ")

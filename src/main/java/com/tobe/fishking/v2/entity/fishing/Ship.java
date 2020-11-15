@@ -60,8 +60,10 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "int comment '지역별' ", nullable = false)
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private SeaDirection seaDirection;
-    
-    
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'중량', 'USER', DBO, 'TABLE', ship, 'COLUMN',  weight
+    @Column(columnDefinition = "decimal(5,2)  comment  '거리'  ")
+    private double distance;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'연락처', 'USER', DBO, 'TABLE', ship, 'COLUMN',  tel
     @Column(columnDefinition = "varchar(30)   comment '연락처'  ")
