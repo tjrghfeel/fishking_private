@@ -1,43 +1,23 @@
 package com.tobe.fishking.v2.controller.post;
 
-import com.google.gson.Gson;
 import com.tobe.fishking.v2.addon.UploadService;
-import com.tobe.fishking.v2.entity.FileEntity;
-import com.tobe.fishking.v2.entity.board.Post;
-import com.tobe.fishking.v2.enums.board.FilePublish;
-import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.FileDTO;
 import com.tobe.fishking.v2.model.board.PostDTO;
 import com.tobe.fishking.v2.model.board.PostResponse;
 import com.tobe.fishking.v2.model.board.UpdatePostDTO;
 import com.tobe.fishking.v2.model.board.WritePostDTO;
-import com.tobe.fishking.v2.repository.FilesRepository;
-import com.tobe.fishking.v2.repository.board.PostRepository;
-import com.tobe.fishking.v2.service.FileService;
+import com.tobe.fishking.v2.service.common.FileService;
 import com.tobe.fishking.v2.service.post.PostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.validation.Valid;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Api(tags = {"게시글"})

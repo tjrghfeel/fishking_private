@@ -62,7 +62,7 @@ public class FishingDiaryService {
         return fishingDiary.map(FishingDiaryDTO::of);
     }
 
-    //검색 --
+    //검색 -- 조황일지, 조행기
     public Page<FishingDiaryDTO> getFishingDiaryList(Pageable pageable,
                                                      @RequestParam(required = false) Map<String,  ///total를 제외한 모든 것 조회
                                                              Object> searchRequest, Integer totalElement) {

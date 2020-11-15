@@ -34,7 +34,7 @@ public class FileDTO {
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
     private String fileName;
-    private int pid;
+    private Long pid;
     private String originalFile;
     private String  storedFile;
     private String  thumbnailFile;

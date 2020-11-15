@@ -150,7 +150,7 @@ public class PostService {
                 .modifiedBy(authorOfPost)
                 .filePublish(FilePublish.values()[filePublish])
                 .locations("sampleLocation")
-                .postId(post)
+                .pid(post.getId())
                 /*아래 세 필드 not null이라 추가 필요.
                 .location()
                 * .bid()
@@ -176,7 +176,7 @@ public class PostService {
 
         /*Post에 올려놓은 File들 삭제하고 다시 올림. */
             /*파일들 모두 삭제.*/
-        List<FileEntity> fileList = fileRepository.findByPostId(post);
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(FilePublish.post, post.getId());
         for(int i=0; i<fileList.size(); i++){
             FileEntity fileEntity = fileList.get(i);
             String fileUrl = fileEntity.getFileUrl();
@@ -209,7 +209,7 @@ public class PostService {
                 .modifiedBy(post.getModifiedBy())
                 .filePublish(FilePublish.values()[filePublish])
                 .locations("sampleLocation")
-                .postId(post)
+                .pid(post.getId())
                 /*아래 세 필드 not null이라 추가 필요.
                 .location()
                 * .bid()

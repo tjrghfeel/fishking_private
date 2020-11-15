@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,12 @@ public interface FileRepository extends BaseRepository<FileEntity, Long> {
     @Query("select a from FileEntity a where a.fileUrl = :fileUrl")
     public Optional<FileEntity> findByFileUrl(String fileUrl);
 
-    public List<FileEntity> findByPostId(Post post);
+    @Query("select a from FileEntity a where a.filePublish = :filePublish and  a.isRepresent = :isRepresent")
+    public Optional<FileEntity> findFileEntityByAndFilePublish(FilePublish filePublish, Boolean isRepresent );
+
+
+    public List<FileEntity>  findByPidAndFilePublish(FilePublish filePublish, Long pid);
+        // public List<FileEntity> findByPostId(Post post);
 /*
 
     @Query(value = "select b.* " +

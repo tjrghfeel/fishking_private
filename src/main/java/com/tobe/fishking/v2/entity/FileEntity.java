@@ -33,7 +33,7 @@ public class FileEntity extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상위번호', 'USER', DBO, 'TABLE', files, 'COLUMN',  bid
     @Column(columnDefinition = "int   comment '번호 - board'  ")
-    private int pid;
+    private Long pid;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'순번', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_no
@@ -99,10 +99,11 @@ public class FileEntity extends BaseTime {
     @Column(columnDefinition = "varchar(200) default 0 not null comment '촬영위치'") //mssql 은 false 안됨 , 0만 된다.
     private String  locations;
 
-    // EXEC sp_addextendedproperty 'MS_Description', N'caption위치 - default 아래', 'USER', DBO, 'TABLE', files, 'COLUMN',  created_date
     @Column(columnDefinition = "bit default 0 not null comment 'Caption위치 - default 아래' ") //mssql 은 false 안됨 , 0만 된다.
     private boolean isTop;
 
+    @Column(columnDefinition = "bit default 0 not null comment '대표여부' ") //mssql 은 false 안됨 , 0만 된다.
+    private boolean isRepresent;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', files, 'COLUMN',  created_by
     @ManyToOne/*(cascade = CascadeType.ALL)*/
@@ -114,8 +115,6 @@ public class FileEntity extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint not null comment '수정자'")
     private Member modifiedBy;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="post_id_id", columnDefinition = "bigint null comment 'post id'")
-    private Post postId;
+
 
 }
