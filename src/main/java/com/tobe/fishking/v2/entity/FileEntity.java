@@ -33,7 +33,7 @@ public class FileEntity extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상위번호', 'USER', DBO, 'TABLE', files, 'COLUMN',  bid
     @Column(columnDefinition = "int   comment '번호 - board'  ")
-    private int pid;
+    private Long pid;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'순번', 'USER', DBO, 'TABLE', files, 'COLUMN',  file_no
@@ -68,6 +68,9 @@ public class FileEntity extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'파일명', 'USER', DBO, 'TABLE', files, 'COLUMN',  thumname_file
     @Column(columnDefinition = "varchar(100) comment '썸네일'  ")
     private String  thumbnailFile;
+
+    @Column(columnDefinition = "varchar(150) comment '섬네일 다운url'  ")
+    private String  downloadThumbnailUrl;
 
 //    @Column(columnDefinition = "varchar(100) comment '업로드URL'  ")
     // EXEC sp_addextendedproperty 'MS_Description', N'업로드URL', 'USER', DBO, 'TABLE', files, 'COLUMN',  url
@@ -114,8 +117,5 @@ public class FileEntity extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint not null comment '수정자'")
     private Member modifiedBy;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="post_id_id", columnDefinition = "bigint null comment 'post id'")
-    private Post postId;
 
 }

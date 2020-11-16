@@ -34,7 +34,7 @@ public class FileService {
                 .originalFile(fileDTO.getOriginalFile())
                 .fileNo(fileDTO.getFileNo())
                 .fileType(FileType.values()[fileDTO.getFileType()])
-                .postId(post)
+                .pid(post.getId())
                 .size(fileDTO.getSize())
                 .fileUrl(fileDTO.getFileUrl())
                 //.bid(post.getBoard())

@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.service.post;
+package com.tobe.fishking.v2.service.board;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
@@ -13,7 +13,7 @@ import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.board.PostDTO;
-import com.tobe.fishking.v2.model.board.PostResponse;
+import com.tobe.fishking.v2.model.board.PostListDTO;
 import com.tobe.fishking.v2.model.board.UpdatePostDTO;
 import com.tobe.fishking.v2.model.board.WritePostDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -23,6 +23,7 @@ import com.tobe.fishking.v2.repository.board.TagRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,8 @@ import java.util.function.Function;
 
 @Service
 public class PostService {
+    @Autowired
+    private Environment env;
 
     @Autowired
     private PostRepository postRepository;
@@ -58,32 +61,40 @@ public class PostService {
     /*PostResponse를 Page형태로 반환해주는 메소드.
     * 반환하는 PostResponse에는 contents필드가 포함되어있지 않다. */
     @Transactional(readOnly = true)
-    public Page<PostResponse> getPostListInPageForm(Long board_id, int page) throws ResourceNotFoundException {
+    public Page<PostListDTO> getPostListInPageForm(Long board_id, int page) throws ResourceNotFoundException {
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id :: " + board_id));
         Pageable pageable = PageRequest.of(page, 10);//!!!!!!!!!!!!목록 사이즈 몇으로 할지 확인후 수정.
-        Page<PostResponse> postResponse = postRepository.findAllByBoard(board.getId(), pageable);
+        Page<PostListDTO> postResponse = postRepository.findAllByBoard(board.getId(), pageable);
 
         return postResponse;
     }
 
     /*Board의 Post 리스트를 반환하는 메소드.
     * 반환하는 PostResponse에는 Post의 모든 필드가 들어있다. */
+    /*FAQ용으로 만들었지만, PostController에 getPostList()에 적힌 이유로 일단 보류.
     @Transactional(readOnly = true)
     public List<PostResponse> getPostList(Long boardId) throws ResourceNotFoundException {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id ::"+boardId));
 
         return postRepository.findAllByBoard(boardId);
-    }
+    }*/
 
     //Post하나 반환 메소드.
     @Transactional(readOnly = true)
-    public PostDTO getPostById(Long id) throws ResourceNotFoundException {
+    public PostDTO getPostById(Long id, int filePublish) throws ResourceNotFoundException {
         Post post = postRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Post not found for this id :: " + id));
 
-        return new PostDTO(post);
+        /*파일들 가져오는 부분. */
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), FilePublish.values()[filePublish]);
+        List<String> fileUrlList = new LinkedList<String>();
+        for(int i=0; i<fileList.size(); i++){
+            fileUrlList.add(fileList.get(i).getDownloadUrl());
+        }
+
+        return new PostDTO(post, fileUrlList);
     }
 
     //Post entity저장 및 FileEntity저장.
@@ -136,21 +147,25 @@ public class PostService {
         else enumFileType = FileType.attachments;
 
             //UploadService를 이용한 파일저장.
-        Map<String, Object> fileInfo = uploadService.initialFile(file, enumFileType, FilePublish.values()[filePublish], ""/*, 세션토큰 인자 */);
+        Map<String, Object> fileInfo
+                = uploadService.initialFile(file, enumFileType, FilePublish.values()[filePublish], ""/*, 세션토큰 인자 */);
 
         //File entity 저장.
         FileEntity currentFile = FileEntity.builder()
-                .fileName((String)fileInfo.get("fileName"))
+                .fileName(file.getOriginalFilename())
+                .storedFile((String)fileInfo.get("fileName"))
+                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
+                .thumbnailFile((String)fileInfo.get("thumbUploadPath"))
+                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
                 .originalFile(file.getOriginalFilename())
                 .size(file.getSize())
                 .fileUrl((String)fileInfo.get("fileUrl"))
-                .thumbnailFile((String)fileInfo.get("thumb"))
                 .fileType(enumFileType)
                 .createdBy(authorOfPost)
                 .modifiedBy(authorOfPost)
                 .filePublish(FilePublish.values()[filePublish])
                 .locations("sampleLocation")
-                .postId(post)
+                .pid(post.getId())
                 /*아래 세 필드 not null이라 추가 필요.
                 .location()
                 * .bid()
@@ -176,7 +191,7 @@ public class PostService {
 
         /*Post에 올려놓은 File들 삭제하고 다시 올림. */
             /*파일들 모두 삭제.*/
-        List<FileEntity> fileList = fileRepository.findByPostId(post);
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), FilePublish.values()[filePublish]);
         for(int i=0; i<fileList.size(); i++){
             FileEntity fileEntity = fileList.get(i);
             String fileUrl = fileEntity.getFileUrl();
@@ -199,17 +214,20 @@ public class PostService {
 
         //File entity 저장.
         FileEntity currentFile = FileEntity.builder()
-                .fileName((String)fileInfo.get("fileName"))
+                .fileName(file.getOriginalFilename())
+                .storedFile((String)fileInfo.get("fileName"))
+                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
+                .thumbnailFile((String)fileInfo.get("thumbUploadPath"))
+                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
                 .originalFile(file.getOriginalFilename())
                 .size(file.getSize())
                 .fileUrl((String)fileInfo.get("fileUrl"))
-                .thumbnailFile((String)fileInfo.get("thumb"))
                 .fileType(enumFileType)
                 .createdBy(post.getModifiedBy())
                 .modifiedBy(post.getModifiedBy())
                 .filePublish(FilePublish.values()[filePublish])
                 .locations("sampleLocation")
-                .postId(post)
+                .pid(post.getId())
                 /*아래 세 필드 not null이라 추가 필요.
                 .location()
                 * .bid()

@@ -8,13 +8,17 @@ import com.tobe.fishking.v2.entity.fishing.Company;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.fishing.CompanyResponse;
+import com.tobe.fishking.v2.model.fishing.CompanyDTO;
+import com.tobe.fishking.v2.model.fishing.CompanyListDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyUpdateDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyWriteDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,6 +74,9 @@ public class CompanyService {
                 .bizNoFileId(fileEntityList[0])
                 .representFileId(fileEntityList[1])
                 .accountFileId(fileEntityList[2])
+                .bizNoFileDownloadUrl(fileEntityList[0].getDownloadUrl())
+                .representFileDownloadUrl(fileEntityList[1].getDownloadUrl())
+                .accountFileDownloadUrl(fileEntityList[2].getDownloadUrl())
                 .createdBy(member)
                 .modifiedBy(member)
                 .member(member)
@@ -94,14 +101,16 @@ public class CompanyService {
             //FileEntity 저장.
             FileEntity fileEntity = FileEntity.builder()
                     .originalFile(file.getOriginalFilename())
+                    .fileName(file.getOriginalFilename())
                     .fileNo(i)
                     .filePublish(FilePublish.companyRequest)
                     .fileType(FileType.image)
                     .fileUrl((String)fileInfo.get("fileUrl"))
-                    .originalFile(file.getOriginalFilename())
+                    .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
+                    .thumbnailFile((String)fileInfo.get("thumbUploadPath"))
+                    .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
                     .size(file.getSize())
                     .storedFile((String)fileInfo.get("fileName"))
-                    .thumbnailFile((String)fileInfo.get("thumb"))
                     .createdBy(member)
                     .modifiedBy(member)
                     .locations("sampleLocation")
@@ -124,10 +133,10 @@ public class CompanyService {
                 .orElseThrow(()->new ResourceNotFoundException("company not found for this id ::"+companyWriteDTO.getId()));
 
         //기존의 파일들을 저장해둠.
-        Long[] fileIdList = new Long[3];
-        fileIdList[0] = company.getBizNoFileId().getId();
-        fileIdList[1] = company.getAccountFileId().getId();
-        fileIdList[2] = company.getRepresentFileId().getId();
+        Long[] preFileIdList = new Long[3];
+        preFileIdList[0] = company.getBizNoFileId().getId();
+        preFileIdList[1] = company.getAccountFileId().getId();
+        preFileIdList[2] = company.getRepresentFileId().getId();
 
         //넘어온 파일들 다시 등록.
         Long[] fileEntityIdList = saveFile(companyWriteDTO.getMember(), files);
@@ -142,59 +151,31 @@ public class CompanyService {
         company.updateCompanyRegisterRequest(companyWriteDTO, member, fileEntityList);
 
         //Company의 파일들과 FileEntity삭제.
-        uploadService.removeFileEntity(company.getBizNoFileId().getId());
-        uploadService.removeFileEntity(company.getAccountFileId().getId());
-        uploadService.removeFileEntity(company.getRepresentFileId().getId());
+        uploadService.removeFileEntity(preFileIdList[0]);
+        uploadService.removeFileEntity(preFileIdList[1]);
+        uploadService.removeFileEntity(preFileIdList[2]);
 
         return company.getId();
+    }
+
+    /*Company 하나 조회 메소드. */
+    @Transactional
+    public CompanyDTO getCompany(Long companyId) throws ResourceNotFoundException {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(()->new ResourceNotFoundException("company not found for this id ::"+companyId));
+        CompanyDTO companyDTO = new CompanyDTO(company);
+
+        return companyDTO;
     }
 
     /*업체등록 요청 리스트 조회 메소드.
     * Company 엔터티 리스트를 리포지토리로부터 받아와 CompanyRepsonse에 필드들을 매핑시켜서 반환해준다. */
     @Transactional
-    public List<CompanyResponse> getCompanyRegisterRequestList() throws ResourceNotFoundException {
-        List<CompanyResponse> companyResponseList = new LinkedList<CompanyResponse>();
-        List<Company> companyRegisterRequestList = companyRepository.findAllByIsRegisitered(false);
+    public Page<CompanyListDTO> getCompanyRegisterRequestList(int page) throws ResourceNotFoundException {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<CompanyListDTO> companyRegisterRequestPage = companyRepository.findCompanyRegisterRequestList(false, pageable);
 
-        for(int i=0; i<companyRegisterRequestList.size(); i++){
-            Company company = companyRegisterRequestList.get(i);
-
-            /*업체요청시 등록한 증빙서류File에 대한 downloadUrl을 받아오기위해 FileEntity들을 가져와줌. */
-            FileEntity binZoFile = fileRepository.findById(company.getBizNoFileId().getId())
-                    .orElseThrow(()->new ResourceNotFoundException("files not found for this id ::"+company.getBizNoFileId()));
-            FileEntity representFile = fileRepository.findById(company.getBizNoFileId().getId())
-                    .orElseThrow(()->new ResourceNotFoundException("files not found for this id ::"+company.getRepresentFileId()));
-            FileEntity accountFile = fileRepository.findById(company.getBizNoFileId().getId())
-                    .orElseThrow(()->new ResourceNotFoundException("files not found for this id ::"+company.getAccountFileId()));
-
-            CompanyResponse companyResponse = CompanyResponse.builder()
-                    .id(company.getId())
-                    .member(company.getMember().getId())
-                    .companyName(company.getCompanyName())
-                    .shipOwner(company.getShipOwner())
-                    .sido(company.getSido())
-                    .gungu(company.getGungu())
-                    .tel(company.getTel())
-                    .bizNo(company.getBizNo())
-                    .harbor(company.getHarbor())
-                    .bank(company.getBank())
-                    .accountNo(company.getAccountNo())
-                    .ownerWording(company.getOwnerWording())
-                    .isOpen(company.isOpen())
-                    .skbAccount(company.getSkbAccount())
-                    .skbPassword(company.getSkbPassword())
-                    .companyAddress(company.getCompanyAddress())
-                    .isRegisitered(company.isRegisitered())
-                    .createdBy(company.getCreatedBy().getId())
-                    .modifiedBy(company.getModifiedBy().getId())
-                    .bizNoFilesUrl(binZoFile.getDownloadUrl())
-                    .accountFileUrl(accountFile.getDownloadUrl())
-                    .representFilesUrl(representFile.getDownloadUrl())
-                    .build();
-
-            companyResponseList.add(companyResponse);
-        }
-        return companyResponseList;
+        return companyRegisterRequestPage;
     }
 
     /*업체등록 요청 취소 메소드.*/
@@ -210,9 +191,9 @@ public class CompanyService {
 
         companyRepository.delete(company);
 
-        uploadService.removeFileEntity(company.getRepresentFileId().getId());
-        uploadService.removeFileEntity(company.getAccountFileId().getId());
-        uploadService.removeFileEntity(company.getBizNoFileId().getId());
+        uploadService.removeFileEntity(fileIdList[0]);
+        uploadService.removeFileEntity(fileIdList[1]);
+        uploadService.removeFileEntity(fileIdList[2]);
 
         return companyId;
     }

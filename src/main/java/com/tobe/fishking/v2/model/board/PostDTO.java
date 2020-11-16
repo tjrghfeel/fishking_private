@@ -22,31 +22,34 @@ import java.util.List;
 @AllArgsConstructor
 public class PostDTO {
     //not null필드.
-    private Long id;
-    private Long boardId;
-    private int channelType;
-    private String title;
-    private String contents;
-    private Long authorId;
-    private String authorName;
-    private int returnType;
-    private String returnNoAddress;
-    private String createdAt;
-    private Long createdById;
-    private Long modifiedById;
+    private Long id;//
+    private Long boardId;//
+    private int channelType;//
+    private String title;//
+    private String contents;//
+    private Long authorId;//
+    private String authorName;//
+    private int returnType;//
+    private String returnNoAddress;//
+    private String createdAt;//
+    private Long createdById;//
+    private Long modifiedById;//
     private int questionType;
 
     //nullable 필드.
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
+    private LocalDateTime createdDate;//
+    private LocalDateTime modifiedDate;//
     private List<String> tagsName = new ArrayList<>();
-    private boolean isSecret;
+    private boolean isSecret;//
     private Long parentId;
     private int likeCount;
 
+    //파일들 필드.
+    private List<String> fileUrlList;
+
     public PostDTO(){}
 
-    public PostDTO(Post post) {
+    public PostDTO(Post post, List<String> fileUrlList) {
         id = post.getId();
         boardId = post.getBoard().getId();
         channelType = post.getChannelType().ordinal();
@@ -69,6 +72,8 @@ public class PostDTO {
         for(int i=0; i<tagList.size(); i++){
             tagsName.add(tagList.get(i).getTagName());
         }
+
+        this.fileUrlList = fileUrlList;
     }
 
 

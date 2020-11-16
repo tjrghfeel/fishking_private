@@ -183,6 +183,7 @@ public class CommonService {
         for(int i=0; i<commonCodeList.size(); i++){
             CommonCode commonCode = commonCodeList.get(i);
             CommonCodeDTO commonCodeDTO = new CommonCodeDTO();
+            commonCodeDTO.setId(commonCode.getId());
             commonCodeDTO.setCode(commonCode.getCode());
             commonCodeDTO.setCodeGroup(commonCode.getCodeGroup());
             commonCodeDTO.setCodeName(commonCode.getCodeName());

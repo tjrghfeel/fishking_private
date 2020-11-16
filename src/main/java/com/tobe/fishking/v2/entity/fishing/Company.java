@@ -72,8 +72,17 @@ public class Company extends BaseTime {  //선상
     private FileEntity representFileId ;
 
     @OneToOne
-    @JoinColumn(columnDefinition = "bigint  commont '정산 통장 사본'  ")
+    @JoinColumn(columnDefinition = "bigint  comment '정산 통장 사본'  ")
     private FileEntity accountFileId;
+
+    @Column(columnDefinition = "varchar(150)  comment '사업자등록파일 downloadUrl")
+    private String bizNoFileDownloadUrl;
+
+    @Column(columnDefinition = "varchar(150) comment '대표자신분증파일 downloadUrl")
+    private String representFileDownloadUrl;
+
+    @Column(columnDefinition = "varchar(150) comment '정산통장사본파일 downloadUrl")
+    private String accountFileDownloadUrl;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'정산계좌은행 ', 'USER', DBO, 'TABLE', company, 'COLUMN',  bank
     @Column(columnDefinition = "varchar(10)   comment '정산계좌은행'  ")
@@ -108,7 +117,7 @@ public class Company extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'등록여부', 'USER', DBO, 'TABLE', company, 'COLUMN',  is_regisitered
     @Column(columnDefinition = "bit default 0   comment '등록여부'  ")
-    private boolean isRegisitered;
+    private boolean isRegistered;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', company, 'COLUMN',  created_by
@@ -153,5 +162,8 @@ public class Company extends BaseTime {  //선상
         bizNoFileId = files[0];//not null
         representFileId = files[1];//not null
         accountFileId = files[2];//not null
+        bizNoFileDownloadUrl = files[0].getDownloadUrl();
+        representFileDownloadUrl = files[1].getDownloadUrl();
+        accountFileDownloadUrl = files[2].getDownloadUrl();
     }
 }

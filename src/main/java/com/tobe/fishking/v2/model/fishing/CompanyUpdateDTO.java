@@ -29,7 +29,7 @@ public class CompanyUpdateDTO {
     //private String  skbAccount;
     //private String skbPassword;
     private String companyAddress;//
-    private boolean isRegisitered;
+    private boolean isRegistered;
     //private Member createdBy;//not null, fk
     private Long modifiedBy;//not null, fk
     private Long bizNoFile;//not null

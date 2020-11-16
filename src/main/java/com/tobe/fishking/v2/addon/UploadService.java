@@ -13,6 +13,7 @@ import com.tobe.fishking.v2.exception.FileImageOnlyException;
 import com.tobe.fishking.v2.exception.FileUploadFailException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
@@ -48,6 +49,7 @@ public class UploadService {
     private MemberService memberService;
     private FileRepository fileRepository;
     private PostRepository postRepository;
+    private BoardRepository boardRepo;
 
 //    private AmazonS3Client amazonS3Client;
 
@@ -79,10 +81,10 @@ public class UploadService {
             String filePath = this.getFilePath(desireFileLocation);
             */
 
-//             Board board  = boardService.getBoardByFilePublish(filePublish);
+             Board board  = boardRepo.findBoardByFilePublish(filePublish);
 
-             String fileLocation = env.getProperty("file.location") + File.separator + filePublish.toString();
-             String filePath = filePublish.toString();
+             String fileLocation = env.getProperty("file.location") + File.separator + board.getUploadPath();/*filePublish.toString();*/
+             String filePath = board.getUploadPath();
 
             FileType currentFileType = FileType.image;
             if (!file.getContentType().startsWith("image/")) {
@@ -100,12 +102,17 @@ public class UploadService {
             }
             String fileName = fileResult.get(0);//새로만든 저장파일명.
             String fileUrl = fileResult.get(1);//uploadFilePath
-            String fileThumbnail = fileResult.get(2);//thumbnailFileName
+            String thumbnailName = fileResult.get(2);//thumbnailFileName
+            String thumbnailPath = fileResult.get(3);//섬네일 path
+            String fileDownloadUrl = env.getProperty("file.downloadUrl")+"/"+board.getDownloadPath()+"/"+fileName;
+            String thumbDownloadUrl = env.getProperty("file.downloadUrl")+"/"+board.getDownloadPath()+"/"+thumbnailName;
 
             result.clear();
-            result.put("thumb", fileThumbnail);
+            result.put("thumbUploadPath", thumbnailPath);
             result.put("fileUrl", fileUrl);
             result.put("fileName", fileName);
+            result.put("fileDownloadUrl", fileDownloadUrl);
+            result.put("thumbDownloadUrl", thumbDownloadUrl);
             //result.put("tempFileSeq", fileId);
         return result;
     }
@@ -199,6 +206,7 @@ public class UploadService {
 
             fileNames.add(amazonS3Client.getUrl(bucket, fileLocation.substring(1) + "/" + thumbs.getName()).toString());
 */
+            fileNames.add(thumbs.getName());
             fileNames.add(thumbs.getPath());
 
             //removeNewFile(thumbs);

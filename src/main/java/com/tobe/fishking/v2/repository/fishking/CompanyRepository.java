@@ -2,9 +2,12 @@ package com.tobe.fishking.v2.repository.fishking;
 
 import com.tobe.fishking.v2.entity.fishing.Company;
 
-import com.tobe.fishking.v2.model.fishing.CompanyResponse;
+import com.tobe.fishking.v2.model.fishing.CompanyListDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.tobe.fishking.v2.repository.BaseRepository;
 
@@ -47,5 +50,38 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
     )
     List<CompanyResponse> findCompanyRegisterRequestList();*/
 
-    List<Company> findAllByIsRegisitered(Boolean registered);
+    @Query(
+            value = "select " +
+                    "c.id id," +
+                    "c.member_id member," +
+                    "c.company_name companyName," +
+                    "c.ship_owner shipOwner," +
+                    "c.gungu gungu," +
+                    "c.sido sido," +
+                    "c.tel tel," +
+                    //"c.biz_no bizNo," +
+                    //"c.harbor harbor," +
+                    //"c.bank bank," +
+                    //"c.account_no accountNo," +
+                    //"c.owner_wording ownerWording," +
+                    "c.is_open isOpen," +
+                    //"c.skb_account skbAccount," +
+                    //"c.skb_password skbPassword," +
+                    //"c.companny_address companyAddress," +
+                    "c.is_registered isRegistered " +
+//                    "c.created_by createdBy," +
+//                    "c.modified_by modifiedBy," +
+//                    "c.biz_no_file_id bizNoFileId," +
+//                    "c.represent_file_id representFileId," +
+//                    "c.account_file_id accountFileId " +
+                    "from company c " +
+                    "where c.is_registered = :isRegistered " +
+                    "order by c.created_date desc",
+            countQuery = "select p.id from company c where c.is_registered = :isRegistered ",
+            nativeQuery = true
+    )
+    Page<CompanyListDTO> findCompanyRegisterRequestList(@Param("isRegistered") Boolean isRegistered, Pageable pageable);
+
+
+    List<Company> findAllByIsRegistered(Boolean registered);
 }

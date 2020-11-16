@@ -20,5 +20,7 @@ public interface TakeResponse {
      String getPlaceName();
     //장소로부터 대상어종
      String getFishSpicesInfo();
+     //섬네일 파일.
+     String getDownloadThumbnailUrl();
 
 }

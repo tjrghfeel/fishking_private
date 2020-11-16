@@ -13,7 +13,8 @@ public  enum BoardType /*implements IEnumModel*/ {
     qna("QnA"),
     faq("FAQ"),
     guestbook("방명록"),
-    blog("블로그");
+    blog("블로그"),
+    companyRequest("업체등록요청");
 
     private String value;
 

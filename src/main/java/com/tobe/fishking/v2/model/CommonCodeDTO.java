@@ -13,7 +13,7 @@ import javax.validation.Valid;
 @Setter
 @NoArgsConstructor
 public class CommonCodeDTO {
-
+    private @Valid Long id;
     private @Valid CodeGroup codeGroup;
     private @Valid String code;
     private @Valid String codeName;

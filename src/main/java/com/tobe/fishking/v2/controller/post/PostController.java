@@ -1,43 +1,22 @@
 package com.tobe.fishking.v2.controller.post;
 
-import com.google.gson.Gson;
 import com.tobe.fishking.v2.addon.UploadService;
-import com.tobe.fishking.v2.entity.FileEntity;
-import com.tobe.fishking.v2.entity.board.Post;
-import com.tobe.fishking.v2.enums.board.FilePublish;
-import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.FileDTO;
 import com.tobe.fishking.v2.model.board.PostDTO;
-import com.tobe.fishking.v2.model.board.PostResponse;
+import com.tobe.fishking.v2.model.board.PostListDTO;
 import com.tobe.fishking.v2.model.board.UpdatePostDTO;
 import com.tobe.fishking.v2.model.board.WritePostDTO;
-import com.tobe.fishking.v2.repository.FilesRepository;
-import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.service.FileService;
-import com.tobe.fishking.v2.service.post.PostService;
+import com.tobe.fishking.v2.service.board.PostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.validation.Valid;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 
 @Api(tags = {"게시글"})
@@ -52,21 +31,25 @@ public class PostController {
     @Autowired
     private UploadService uploadService;
 
-    //게시판별로 게시글 목록을 조회.
+    /*게시판별로 게시글 목록을 조회.
+    * 일단 '목록'출력만 할때 사용. Post에서 목록 출력할때 필요한 몇가지 정보들만을 담아서 반환해준다. */
     @ApiOperation(value = "게시글 목록 조회", notes = "게시글의 '내용'을 제외한 게시글정보들이 페이지형식으로 반환됩니다")
     @GetMapping("/posts/{board_id}/{page}")
-    public Page<PostResponse> getPostListInPageForm(@PathVariable(value = "board_id") Long board_id, @PathVariable(value="page") int page)
+    public Page<PostListDTO> getPostListInPageForm(@PathVariable(value = "board_id") Long board_id, @PathVariable(value="page") int page)
             throws ResourceNotFoundException {
-        Page<PostResponse> p = postService.getPostListInPageForm(board_id, page);
+        Page<PostListDTO> p = postService.getPostListInPageForm(board_id, page);
         return p;
     }
     
-    /*Board의 모든 Post 조회*/
+    /*FAQ용 Post 리스트 조회.
+    * 위의 getPostListInPageForm()와 거의 같지만 FAQ용으로 만든 컨트롤러 메소드.
+    * FAQ같은 경우, 내용이 별로없어서 FAQ목록 조회할때 내용까지 모두 전달해서 한번에 볼수있도록. */
+    /*FAQ라도 나중에 이미지를 넣고 할수도있기때문에 굳이 따로만들지 않고 위의 메소드를 같이 사용하기로함.
     @ApiOperation(value = "게시글의 모든 글 가져오기", notes = "게시글의 모든 글들을 내용포함해서 가져옵니다. ")
     @GetMapping("/posts/{board_id}")
     public List<PostResponse> getPostList(@PathVariable("board_id") Long boardId) throws ResourceNotFoundException {
         return postService.getPostList(boardId);
-    }
+    }*/
 
     //1대1 문의내역 목록 조회. 로그인 처리, 스프링 시큐리티 어떻게 돌아가는지 공부후에 완성.
     /*@ApiOperation(value = "1:1문의내역 목록 조회", notes = "1:1문의 내역을 목록을 조회합니다.")
@@ -82,8 +65,8 @@ public class PostController {
     //게시글 하나 조회.
     @ApiOperation(value = "게시글 조회", notes = "게시글을 조회합니다")
     @GetMapping("/post/{id}")
-    public PostDTO getPostById(@PathVariable(value = "id") Long id) throws ResourceNotFoundException {
-        PostDTO postDTO = postService.getPostById(id);
+    public PostDTO getPostById(@PathVariable(value = "id") Long id, int filePublish) throws ResourceNotFoundException {
+        PostDTO postDTO = postService.getPostById(id, filePublish);
         return postDTO;
     }
 
