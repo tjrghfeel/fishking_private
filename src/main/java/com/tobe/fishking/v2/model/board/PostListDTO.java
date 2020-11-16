@@ -17,7 +17,7 @@ public interface PostListDTO {
     //String getReturnNoAddress();
     //int getReturnType();
     Long getAuthorId();
-    int getParentId();
+    //int getParentId();
     //Long getCreatedBy();
     //Long getModifiedBy();
 

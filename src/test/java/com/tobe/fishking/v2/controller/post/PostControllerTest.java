@@ -14,7 +14,6 @@ import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.service.board.PostService;
-import com.tobe.fishking.v2.service.post.PostService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

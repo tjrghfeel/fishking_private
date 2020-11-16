@@ -38,8 +38,8 @@ public interface PostRepository extends JpaRepository<Post, Long>{
                     //"p.modified_by modifiedById, " +
                     "p.created_date createdDate, " +
                     "p.modified_date modifiedDate, " +
-                    "p.is_secret isSecret, " +
-                    "p.parent_id parentId " +
+                    "p.is_secret isSecret " +
+//                    "p.parent_id parentId " +
                     "from post p " +
                     "where p.board_id = :boardId " +
                     "order by p.created_date desc ",
