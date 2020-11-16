@@ -8,6 +8,8 @@ import com.tobe.fishking.v2.model.board.UpdatePostDTO;
 import com.tobe.fishking.v2.model.board.WritePostDTO;
 import com.tobe.fishking.v2.service.FileService;
 import com.tobe.fishking.v2.service.board.PostService;
+import com.tobe.fishking.v2.service.common.FileService;
+import com.tobe.fishking.v2.service.post.PostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @Api(tags = {"게시글"})

@@ -30,9 +30,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +50,7 @@ public class GoodsService {
     private final PopularRepository popularRepo;  //JpaResposistory
 
 
-
+    private static int searchSize = 0;
 
     public Page<GoodsDTO> getGoodsList(Pageable pageable, Integer totalElements) {
         Page<Goods> goods = goodsRepo.findAll(pageable, totalElements);
@@ -61,19 +64,20 @@ public class GoodsService {
     }
 
     //검색 --
-    public Page<GoodsDTO> getGoodsList(Pageable pageable,OperatorType orType,
+    public Page<GoodsDTO> getGoodsList(Pageable pageable,
                                        @RequestParam(required = false) Map<String, Object> searchRequest,   ///total를 제외한 모든 것 조회
                                        Integer totalElement) {
+        searchSize = 0;
 
         Map<GoodsSpecs.SearchKey, Object> searchKeys = new HashMap<>();
         for (String key : searchRequest.keySet()) {
             searchKeys.put(GoodsSpecs.SearchKey.valueOf(key.toUpperCase()), searchRequest.get(key));
+            searchSize += 1;
         }
 
         Page<Goods> goods = null;
 
-        if (OperatorType.and == orType)
-        {
+        if ( searchSize > 1)  {
             goods = searchKeys.isEmpty()
                     ? goodsRepo.findAll(pageable, totalElement)
                     : goodsRepo.findAll(GoodsSpecs.searchAndWith(searchKeys), pageable, totalElement);

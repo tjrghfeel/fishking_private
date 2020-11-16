@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.service;
+package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -7,9 +7,9 @@ import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.FileDTO;
-import com.tobe.fishking.v2.repository.FilesRepository;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
+import com.tobe.fishking.v2.repository.common.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FileService {
     @Autowired
-    FilesRepository filesRepository;
+    FileRepository filesRepository;
     @Autowired
     MemberRepository memberRepository;
     @Autowired

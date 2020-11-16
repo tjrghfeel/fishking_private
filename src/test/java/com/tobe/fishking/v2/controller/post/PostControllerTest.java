@@ -1,15 +1,20 @@
 package com.tobe.fishking.v2.controller.post;
 
+import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
+import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.enums.board.BoardType;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
+import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.service.board.PostService;
+import com.tobe.fishking.v2.service.post.PostService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.hamcrest.Matchers.is;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,6 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class PostControllerTest {
+
+
+    @Autowired
+    FileRepository fileRepo;
 
     @Autowired
     MemberRepository memberRepository;
@@ -41,9 +51,19 @@ public class PostControllerTest {
     @Autowired
     GoodsRepository goodsRepository;
 
+
+    @Test
+    public void fileTest() throws Exception {
+
+  /*      FileEntity file =  fileRepo.findByPidAndFilePublish(FilePublish.post, 4 );
+
+        assertThat("hello",is("hello"));
+*/
+    }
+/*
     @Test
     public void noName() throws Exception {
-        /*Member member = Member.builder()
+        *//*Member member = Member.builder()
                 .uid("zfasdf")
                 .memberName("kai")
                 .password("pwKai")
@@ -60,7 +80,7 @@ public class PostControllerTest {
                 .statusMessage("kaiStatusMessage")
                 .build();
 
-        memberRepository.save(member);*/
+        memberRepository.save(member);*//*
 
         Member member = memberRepository.findById(8L)
                 .orElseThrow(()->new ResourceNotFoundException("aaa"));
@@ -78,7 +98,7 @@ public class PostControllerTest {
                 .build();
         boardRepository.save(board);
 
-        /*Member member = memberRepository.findById(5L)
+        *//*Member member = memberRepository.findById(5L)
                 .orElseThrow(()->new ResourceNotFoundException("aaa"));
 
         Board board = boardRepository.findById(3L)
@@ -97,17 +117,17 @@ public class PostControllerTest {
 
                 .modifiedBy(member)
                 .build();
-        postRepository.save(post);*/
+        postRepository.save(post);*//*
 
-        /*System.out.println("mvc : "+mvc);
+        *//*System.out.println("mvc : "+mvc);
         mvc.perform(get("/v1/api/post/5"))
                 .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print());*/
+                .andDo(MockMvcResultHandlers.print());*//*
 
         //assertThat("hello",is("hello"));
 
-    }
-
+    }*/
+/*
     @Test
     public void getPostList() throws Exception {
         mvc.perform(get("/v1/api/posts/3/0"))
@@ -123,6 +143,14 @@ public class PostControllerTest {
     }
 
 
+    @Test
+    public void getPageDTO() throws ResourceNotFoundException {
+*//*        Member member = memberRepository.findById(5L)
+                .orElseThrow(()->new ResourceNotFoundException("mema;fj"));
+
+        int aaa = goodsRepository.findTakeCountAboutFish(member, FishingType.sealocks);
+        System.out.println(aaa);*//*
+    }*/
 
 
 }

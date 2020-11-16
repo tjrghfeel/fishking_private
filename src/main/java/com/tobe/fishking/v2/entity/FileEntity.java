@@ -106,6 +106,8 @@ public class FileEntity extends BaseTime {
     @Column(columnDefinition = "bit default 0 not null comment 'Caption위치 - default 아래' ") //mssql 은 false 안됨 , 0만 된다.
     private boolean isTop;
 
+    @Column(columnDefinition = "bit default 0 not null comment '대표여부' ") //mssql 은 false 안됨 , 0만 된다.
+    private boolean isRepresent;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', files, 'COLUMN',  created_by
     @ManyToOne/*(cascade = CascadeType.ALL)*/
@@ -116,6 +118,7 @@ public class FileEntity extends BaseTime {
     @ManyToOne/*(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})*/
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint not null comment '수정자'")
     private Member modifiedBy;
+
 
 
 }

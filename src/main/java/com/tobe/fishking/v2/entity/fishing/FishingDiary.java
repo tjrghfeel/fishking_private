@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Tag;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import lombok.*;
@@ -32,6 +33,11 @@ public class FishingDiary extends BaseTime {
     @ManyToOne
     @JoinColumn(name = "board_id", columnDefinition = " bigint not null   comment '게시판'  ")
     private Board board;
+
+
+    @Column(columnDefinition = "bigint null   comment '조행기/조행일지만'  ")
+    @Enumerated(EnumType.ORDINAL)
+    private FilePublish  filePublish;
 
     //null이면 조행기, null이 아니면 조행일지
     // EXEC sp_addextendedproperty 'MS_Description', N'선상', 'USER', DBO, 'TABLE', ship, 'COLUMN',  ship
@@ -127,7 +133,6 @@ public class FishingDiary extends BaseTime {
 
     @AttributeOverride(name="shareCount", column=@Column(name = "SHARE"))
     private ShareStatus status;
-
 
 /*
     @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
