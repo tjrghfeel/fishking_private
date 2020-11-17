@@ -27,6 +27,7 @@ public class CouponMember extends BaseTime {
     @JoinColumn(name="member_coupon_id" , columnDefinition = "bigint comment  '쿠폰ID'")
     private Coupon coupon;
 
+    /*쿠폰코드중에서 일련번호부분 말하는건가? Coupon에 쿠폰코드 필드가 있는데 여기도 있다. */
     @Column(columnDefinition = "varchar(50) comment  '쿠폰코드'")
     private String couponCode;
 
@@ -51,7 +52,7 @@ public class CouponMember extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'사용오더', 'USER', DBO, 'TABLE', coupon_member, 'COLUMN',  orders_id
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="coupon_orders_id" , columnDefinition = "bigint comment  '사용오더'")
-    private Orders ordes;
+    private Orders orders;
 
    //coupon 알림 생성 - 프로시져 push, 1) 1:1, 2)쿠폰, 3)새글, 4)예약
 

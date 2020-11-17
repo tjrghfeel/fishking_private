@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.controller.post;
+package com.tobe.fishking.v2.controller.board;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
