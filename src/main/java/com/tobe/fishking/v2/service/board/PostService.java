@@ -139,40 +139,45 @@ public class PostService {
 
         //파일 저장.
             //파일 타입 확인.
-        String fileType = file.getContentType().split("/")[0];
-        FileType enumFileType;
-        if(fileType.equals("image")){enumFileType = FileType.image;}
-        else if(fileType.equals("text")){enumFileType = FileType.txt;}
-        else if(fileType.equals("video")){enumFileType = FileType.video;}
-        else enumFileType = FileType.attachments;
+        if(file!=null) {
+            String fileType = file.getContentType().split("/")[0];
+            FileType enumFileType;
+            if (fileType.equals("image")) {
+                enumFileType = FileType.image;
+            } else if (fileType.equals("text")) {
+                enumFileType = FileType.txt;
+            } else if (fileType.equals("video")) {
+                enumFileType = FileType.video;
+            } else enumFileType = FileType.attachments;
 
             //UploadService를 이용한 파일저장.
-        Map<String, Object> fileInfo
-                = uploadService.initialFile(file, enumFileType, FilePublish.values()[filePublish], ""/*, 세션토큰 인자 */);
+            Map<String, Object> fileInfo
+                    = uploadService.initialFile(file, enumFileType, FilePublish.values()[filePublish], ""/*, 세션토큰 인자 */);
 
-        //File entity 저장.
-        FileEntity currentFile = FileEntity.builder()
-                .fileName(file.getOriginalFilename())
-                .storedFile((String)fileInfo.get("fileName"))
-                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
-                .thumbnailFile((String)fileInfo.get("thumbUploadPath"))
-                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
-                .originalFile(file.getOriginalFilename())
-                .size(file.getSize())
-                .fileUrl((String)fileInfo.get("fileUrl"))
-                .fileType(enumFileType)
-                .createdBy(authorOfPost)
-                .modifiedBy(authorOfPost)
-                .filePublish(FilePublish.values()[filePublish])
-                .locations("sampleLocation")
-                .pid(post.getId())
-                /*아래 세 필드 not null이라 추가 필요.
-                .location()
-                * .bid()
-                * .modifiedBy()
-                * .filePublish()*/
-                .build();
-        long fileId = fileRepository.save(currentFile).getId();
+            //File entity 저장.
+            FileEntity currentFile = FileEntity.builder()
+                    .fileName(file.getOriginalFilename())
+                    .storedFile((String) fileInfo.get("fileName"))
+                    .downloadUrl((String) fileInfo.get("fileDownloadUrl"))
+                    .thumbnailFile((String) fileInfo.get("thumbUploadPath"))
+                    .downloadThumbnailUrl((String) fileInfo.get("thumbDownloadUrl"))
+                    .originalFile(file.getOriginalFilename())
+                    .size(file.getSize())
+                    .fileUrl((String) fileInfo.get("fileUrl"))
+                    .fileType(enumFileType)
+                    .createdBy(authorOfPost)
+                    .modifiedBy(authorOfPost)
+                    .filePublish(FilePublish.values()[filePublish])
+                    .locations("sampleLocation")
+                    .pid(post.getId())
+                    /*아래 세 필드 not null이라 추가 필요.
+                    .location()
+                    * .bid()
+                    * .modifiedBy()
+                    * .filePublish()*/
+                    .build();
+            long fileId = fileRepository.save(currentFile).getId();
+        }
 
         return post.getId();
     }

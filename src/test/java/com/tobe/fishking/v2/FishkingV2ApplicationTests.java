@@ -8,6 +8,7 @@ class FishkingV2ApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

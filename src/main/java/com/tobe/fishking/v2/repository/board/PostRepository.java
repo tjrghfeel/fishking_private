@@ -2,9 +2,9 @@ package com.tobe.fishking.v2.repository.board;
 
 
 
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
-import com.tobe.fishking.v2.model.board.PostDTO;
 import com.tobe.fishking.v2.model.board.PostListDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -76,4 +76,8 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             nativeQuery = true
     )
     List<PostResponse> findAllByBoard(@Param("boardId") Long boardId);*/
+
+    /*작성자가 쓴 post의 개수 카운트. */
+    @Query("select count(p) from Post p where p.author = :author")
+    int countPostByAuthor(@Param("author") Member author);
 }

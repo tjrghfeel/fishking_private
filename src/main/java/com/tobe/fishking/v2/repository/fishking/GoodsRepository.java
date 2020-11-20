@@ -31,6 +31,12 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
     @Query(value = "select new map( count(g.id) as numberOfGoods, g.ship.seaDirection as seaDirection )  FROM Goods g group by g.ship.seaDirection")
     List<Object> countTotalGoodsByRegion();
 
+    /* Goods에 대해 Member가 몇개나 찜했는지 쿼리. */
+    @Query("select count(g) " +
+            "from Goods as g " +
+            "where g.id in (select t.linkId from Take as t where t.createdBy = :member and t.takeType = 0)")
+    int findTakeCount(@Param("member") Member member);
+
     /*주어진 FishingType에 해당하는 Goods를 주어진 Member가 몇개나 찜했는지 쿼리. */
     @Query("select count(g) " +
             "from Goods as g " +

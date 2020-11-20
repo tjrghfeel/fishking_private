@@ -60,104 +60,27 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             "c.to_purchase_amount toPurchaseAmount, " +
             "c.brf_introduction brfIntroduction, " +
             "c.coupon_description description " +
-            "from coupon c " +
+            "from coupon c, coupon_member cm " +
             "where " +
             "   c.exposure_start_date <= :today and " +
             "   c.exposure_end_date >= :today and " +
             "   c.is_issue = true and " +
-            "   c.max_issue_count > c.issue_qty " +
+            "   c.max_issue_count > c.issue_qty and " +
+            "   c.id not in (select cm.member_coupon_id from coupon_member cm where cm.coupon_member_id = :memberId)" +
+            "group by c.id " +
             "order by c.exposure_end_date ",
             countQuery = "select c.id " +
-                    "from coupon c " +
+                    "from coupon c, coupon_member cm " +
                     "where " +
                     "   c.exposure_start_date <= :today and " +
                     "   c.exposure_end_date >= :today and " +
                     "   c.is_issue = true and " +
-                    "   c.max_issue_count > c.issue_qty " +
+                    "   c.max_issue_count > c.issue_qty and " +
+                    "   c.id not in (select cm.member_coupon_id from coupon_member cm where cm.coupon_member_id = :memberId)"  +
+                    "group by c.id " +
                     "order by c.exposure_end_date ",
             nativeQuery = true
     )
-    Page<CouponDTO> findCouponList(@Param("today") LocalDateTime today, Pageable pageable);
-
-
-    /*member가 사용가능한 coupon_member리스트를 Page로 반환 메소드. 남은 사용기간이 가장 적은순으로 반환.
-    * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트 */
-    @Query(value = "select " +
-            "   cm.id id, " +
-            "   cm.member_coupon_id coupon, " +
-            "   cm.coupon_code couponCode, " +
-            "   cm.coupon_member_id member, " +
-            "   cm.is_use isUse, " +
-            "   cm.reg_date regDate, " +
-            "   cm.use_date useDate, " +
-            "   cm.coupon_orders_id orders, " +
-            "   cm.created_by createdBy, " +
-            "   cm.modified_by modifiedBy, " +
-            "   c.coupon_type couponType, " +
-            "   c.coupon_name couponName, " +
-            "   c.sale_values saleValues, " +
-            "   c.effective_days effectiveDays, " +
-            "   c.is_issue isIssue, " +
-            "   c.is_use isUsable, " +
-            "   c.brf_introduction brfIntroduction, " +
-            "   c.coupon_description couponDescription " +
-            "from coupon_member cm, coupon c " +
-            "where cm.coupon_member_id = :member " +
-            "   and cm.member_coupon_id = c.id "+
-            "   and cm.is_use = :isUse " +
-            "   and c.is_use = true " +
-            "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
-            "order by DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY)",
-            countQuery = "select cm.id from coupon_member cm, coupon c " +
-                "where cm.coupon_member_id = :member " +
-                    "   and cm.member_coupon_id = c.id "+
-                    "   and cm.is_use = :isUse " +
-                    "   and c.is_use = true " +
-                    "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
-                "order by DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY)",
-            nativeQuery = true
-    )
-    Page<CouponMemberDTO> findCouponMemberListOrderByBasic(
-            @Param("member") Member member, @Param("isUse") boolean isUse, @Param("today") LocalDateTime today, Pageable pageable);
-
-    /*member가 사용가능한 coupon_member리스트를 Page로 반환 메소드. 쿠폰사용량이 가장 많은순으로 반환.
-    * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트 */
-    @Query(value = "select " +
-            "   cm.id id, " +
-            "   cm.member_coupon_id coupon, " +
-            "   cm.coupon_code couponCode, " +
-            "   cm.coupon_member_id member, " +
-            "   cm.is_use isUse, " +
-            "   cm.reg_date regDate, " +
-            "   cm.use_date useDate, " +
-            "   cm.coupon_orders_id orders, " +
-            "   cm.created_by createdBy, " +
-            "   cm.modified_by modifiedBy, " +
-            "   c.coupon_type couponType, " +
-            "   c.coupon_name couponName, " +
-            "   c.sale_values saleValues, " +
-            "   c.effective_days effectiveDays, " +
-            "   c.is_issue isIssue, " +
-            "   c.is_use isUsable, " +
-            "   c.brf_introduction brfIntroduction, " +
-            "   c.coupon_description couponDescription " +
-            "from coupon_member as cm, coupon as c " +
-            "where cm.coupon_member_id = :member " +
-            "   and cm.member_coupon_id = c.id "+
-            "   and cm.is_use = :isUse " +
-            "   and c.is_use = true " +
-            "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
-            "order by c.use_qty DESC",
-            countQuery = "select cm.id from coupon_member cm, coupon c " +
-                    "where cm.coupon_member_id = :member " +
-                    "   and cm.member_coupon_id = c.id "+
-                    "   and cm.is_use = :isUse " +
-                    "   and c.is_use = true " +
-                    "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
-                    "order by c.use_qty DESC",
-            nativeQuery = true
-    )
-    Page<CouponMemberDTO> findCouponMemberListOrderByPopular(
-            @Param("member") Member member, @Param("isUse") boolean isUse, @Param("today") LocalDateTime today, Pageable pageable);
+    Page<CouponDTO> findCouponList(@Param("memberId") Long memberId, @Param("today") LocalDateTime today, Pageable pageable);
 
 }

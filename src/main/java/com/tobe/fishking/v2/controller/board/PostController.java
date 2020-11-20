@@ -77,7 +77,7 @@ public class PostController {
     @PostMapping("/post")
     public Long writePost(@ModelAttribute WritePostDTO writePostDTO,
                              /*@RequestParam("file") ArrayList<MultipartFile> files,*/
-                             @RequestParam("file") MultipartFile file,
+                             @RequestParam(value = "file", required = false) MultipartFile file,
                              @RequestParam("filePublish") int filePublish) throws Exception {
         //게시글 저장.
         Long postId = postService.writePost(writePostDTO, file, filePublish);

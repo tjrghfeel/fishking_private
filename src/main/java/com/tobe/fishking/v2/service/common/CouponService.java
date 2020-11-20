@@ -31,9 +31,9 @@ public class CouponService {
 
     /*다운 가능한 쿠폰 리스트 조회.*/
     @Transactional
-    public Page<CouponDTO> getDownloadableCouponList(int page){
+    public Page<CouponDTO> getDownloadableCouponList(Long memberId, int page){
         Pageable pageable = PageRequest.of(page, 10);
-        return couponRepository.findCouponList(LocalDateTime.now(), pageable);
+        return couponRepository.findCouponList(memberId, LocalDateTime.now(), pageable);
     }
 
     /*쿠폰 다운받기
@@ -45,7 +45,7 @@ public class CouponService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
         //!!!!!!!!!!!!쿠폰 번호 생성. (일단은 랜덤숫자 넣음. 번호어떻게만들지 정해지고 수정필요.
-        String couponCodeOfCouponMember = coupon.getCouponCode() + (int)Math.random()*1000;
+        String couponCodeOfCouponMember = coupon.getCouponCode() + String.format("%03d",(int)(Math.random()*1000));
 
         CouponMember couponMember = CouponMember.builder()
                 .coupon(coupon)
@@ -72,13 +72,13 @@ public class CouponService {
         Pageable pageable = PageRequest.of(page, 10);
         //정렬 기준에 따라 다른 repository메소드 호출.
         if(sort.equals("popular")) {
-            return couponRepository.findCouponMemberListOrderByPopular(member, false, LocalDateTime.now(), pageable);
+            return couponMemberRepository.findCouponMemberListOrderByPopular(member, false, LocalDateTime.now(), pageable);
         }
         else if(sort.equals("latest")){
             //쿠폰 정렬기준이 '최신순'일 경우. (최신순이 뭔지 잘모르겟음)
         }
         //sort가 'basic'인 경우.
-        return couponRepository.findCouponMemberListOrderByBasic(member, false, LocalDateTime.now(), pageable);
+        return couponMemberRepository.findCouponMemberListOrderByBasic(member, false, LocalDateTime.now(), pageable);
     }
 
 

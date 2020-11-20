@@ -26,9 +26,10 @@ public class CouponController {
     @ApiOperation(value = "다운 가능한 쿠폰리스트 출력")
     @GetMapping("/downloadableCouponList/{page}")
     public Page<CouponDTO> getDownloadableCouponList(
+            @RequestParam("memberId") Long memberId,
             @PathVariable("page") int page
     ){
-        return couponService.getDownloadableCouponList(page);
+        return couponService.getDownloadableCouponList(memberId, page);
     }
 
     /*쿠폰 다운 받기.

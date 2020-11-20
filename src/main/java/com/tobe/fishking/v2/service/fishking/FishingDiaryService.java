@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.OperatorType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDTO;
+import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
@@ -19,6 +20,7 @@ import com.tobe.fishking.v2.repository.fishking.specs.FishingDiarySpecs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -184,5 +186,9 @@ public class FishingDiaryService {
         return fishingDiaryRepository.findById(fishingDiaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("FishingDiary not found for this id :: " + fishingDiaryId));
     }*/
+
+
+    /*마이페이지 - 게시글에서 Page형식으로 뿌려줄*/
+
 
 }

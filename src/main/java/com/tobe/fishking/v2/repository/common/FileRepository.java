@@ -26,6 +26,8 @@ public interface FileRepository extends BaseRepository<FileEntity, Long> {
     @Query("select a from FileEntity a where a.filePublish = :filePublish and  a.isRepresent = :isRepresent")
     public Optional<FileEntity> findFileEntityByAndFilePublish(FilePublish filePublish, Boolean isRepresent );
 
+    public FileEntity findTop1ByPidAndFilePublishAndIsRepresent(Long pid, FilePublish filePublish, Boolean represent);
+
 
     public List<FileEntity>  findByPidAndFilePublish(FilePublish filePublish, Long pid);
         // public List<FileEntity> findByPostId(Post post);

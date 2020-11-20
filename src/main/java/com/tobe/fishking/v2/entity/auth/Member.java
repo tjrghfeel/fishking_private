@@ -66,7 +66,7 @@ public class Member extends BaseTime implements Serializable {
     private String profileImage; //프로파일 사진 경로+이름
 
     @Transient
-    @NotBlank
+    //@NotBlank
     // EXEC sp_addextendedproperty 'MS_Description', N'패스워드확인', 'USER', DBO, 'TABLE', member, 'COLUMN' confirm_password
     @Column(nullable = false, columnDefinition = "varchar(100)   comment '패스워드확인'  ")
     private String confirmPassword;
@@ -111,4 +111,5 @@ public class Member extends BaseTime implements Serializable {
 //    @ManyToMany(mappedBy = "coupons")
  //   private List<Coupon> coupons = new ArrayList<>();
 
+    public void deActivateMember(){isActive=false;}
 }

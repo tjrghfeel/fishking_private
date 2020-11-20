@@ -32,7 +32,6 @@ public class Review extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'회원', 'USER', DBO, 'TABLE', review, 'COLUMN',  member
     @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "member_id", columnDefinition = "bigint  not null comment '회원'  ")
-
     private Member member ;
 
    //fileEntity에 파일내용, 이미지 저장
@@ -51,6 +50,9 @@ public class Review extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'청결도평점', 'USER', DBO, 'TABLE', review, 'COLUMN',  clean_by_review
     @Column(nullable = false,  columnDefinition = "float  default 0.0 comment  '청결도평점'  ")
     private double cleanByReview;
+
+    @Column(nullable = false, columnDefinition = "varchar(2000) comment '내용'")
+    private String content;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', review, 'COLUMN',  created_by
     @ManyToOne
