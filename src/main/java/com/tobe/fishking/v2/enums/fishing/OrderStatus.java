@@ -6,7 +6,15 @@ public enum OrderStatus /*implements IEnumModel*/ {
 
     waite(" 접수대기"),
     receipt("접수"),
-    payment("결제");
+    payment("결제"),
+
+    book("예약 대기"),
+    waitBook("대기자 예약"),
+    bookFix("예약 확정"),
+    bookCancel("예약 취소"),
+    fishingComplete("출조 완료"),
+    bookConfirm("예약 완료");
+
 
     private String value;
     OrderStatus(String value) {

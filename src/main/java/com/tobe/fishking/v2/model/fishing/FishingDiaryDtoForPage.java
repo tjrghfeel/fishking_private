@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,8 @@ public interface FishingDiaryDtoForPage {
     Long getId();
     //private Board board;
     //private FilePublish filePublish;
-    //private Ship ship;
-    Long getMember() ;
+    Long getShipId();
+    Long getMemberId() ;
     //private Goods goods;
     String getTitle();
     String getContents();
@@ -43,17 +44,18 @@ public interface FishingDiaryDtoForPage {
     //private String writeLocation;
     //private Long writeLatitude;
     //private Long writeLongitude;
-    //!!!!!private final List<Member> scrabMembers = new ArrayList<>();
+    //private final List<Member> scrabMembers = new ArrayList<>();
     //private ShareStatus status;
     //public Member createdBy;
     //public Member modifiedBy;
+    LocalDateTime getCreatedDate();
 
     int getLikeCount();
     int getCommentCount();
-    /*!!!!!스크랩수 필요. 물어봐야할게있어서 일단 패쓰. */
+    int getScrapCount();
 
     /*파일들*/
-    List<String> getFileList();
+    String getFileList();
 
 
 

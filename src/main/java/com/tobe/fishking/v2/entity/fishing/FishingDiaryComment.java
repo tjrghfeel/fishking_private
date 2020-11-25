@@ -39,7 +39,7 @@ public class FishingDiaryComment extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'게시판유형', 'USER', DBO, 'TABLE', comment, 'COLUMN',  board_type
     @Column(columnDefinition = "int  comment '게시판종류' ")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private DependentType dependentType;
 
     @Column(nullable = true, columnDefinition ="INT  comment 'Link ID ' ")
@@ -57,7 +57,8 @@ public class FishingDiaryComment extends BaseTime {
     @Column(columnDefinition = "varchar(2000) comment '내용 ' ", nullable = false)
     private String contents;
 
-
+    @Column(columnDefinition = "bit not null default 1 comment '활성화 여부' ")
+    private boolean isActive;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', comment, 'COLUMN',  created_by
     @ManyToOne

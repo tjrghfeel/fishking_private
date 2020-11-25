@@ -54,6 +54,9 @@ public class Review extends BaseTime {
     @Column(nullable = false, columnDefinition = "varchar(2000) comment '내용'")
     private String content;
 
+    @Column(columnDefinition = "bit not null default 1 comment '활성화 여부' ")
+    private boolean isActive;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', review, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null  comment '생성자'")

@@ -64,7 +64,12 @@ public class Orders extends BaseTime {
     @Enumerated(EnumType.ORDINAL)
     private OrderStatus orderStatus;
 
+    @ManyToOne
+    @JoinColumn(name = "goods", columnDefinition = "bigint not null comment '상품'")
+    private Goods goods;
 
+    @Column(columnDefinition = "varchar(20) comment '예약번호'")
+    private String ordersNum;
 /*
 
 - 결제수단

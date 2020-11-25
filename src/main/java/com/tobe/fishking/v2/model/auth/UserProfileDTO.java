@@ -6,10 +6,7 @@ import com.tobe.fishking.v2.entity.common.PhoneNumberInfo;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -19,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class UserProfileDTO {
     public Long memberId;

@@ -64,7 +64,7 @@ public class PostService {
     public Page<PostListDTO> getPostListInPageForm(Long board_id, int page) throws ResourceNotFoundException {
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id :: " + board_id));
-        Pageable pageable = PageRequest.of(page, 10);//!!!!!!!!!!!!목록 사이즈 몇으로 할지 확인후 수정.
+        Pageable pageable = PageRequest.of(page, 10);
         Page<PostListDTO> postResponse = postRepository.findAllByBoard(board.getId(), pageable);
 
         return postResponse;
@@ -84,6 +84,7 @@ public class PostService {
     //Post하나 반환 메소드.
     @Transactional(readOnly = true)
     public PostDTO getPostById(Long id, int filePublish) throws ResourceNotFoundException {
+        PostDTO postDTO = null;
         Post post = postRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Post not found for this id :: " + id));
 
@@ -94,7 +95,16 @@ public class PostService {
             fileUrlList.add(fileList.get(i).getDownloadUrl());
         }
 
-        return new PostDTO(post, fileUrlList);
+        postDTO = new PostDTO(post, fileUrlList);
+
+        /*비활성화된 글이라면 빈 dto를 반환시켜줌.*/
+        if(postDTO.isActive()==false) {
+            PostDTO dto = new PostDTO();
+            dto.setActive(false);
+            return dto;
+        }
+
+        return postDTO;
     }
 
     //Post entity저장 및 FileEntity저장.

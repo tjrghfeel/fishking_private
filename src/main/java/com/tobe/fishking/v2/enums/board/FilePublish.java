@@ -15,7 +15,8 @@ public enum FilePublish /*implements IEnumModel*/ {
     comment("답글"),
     fishkingTv("어복TV"),
     companyRequest("업체요청"),
-    profile("프로필");
+    profile("프로필"),
+    review("리뷰");
 
 
     private String value;

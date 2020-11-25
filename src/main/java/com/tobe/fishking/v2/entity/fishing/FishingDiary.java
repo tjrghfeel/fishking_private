@@ -126,10 +126,10 @@ public class FishingDiary extends BaseTime {
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
-    @OneToMany
-    @JoinColumn(name = "fishing_diary_scrab_by" , columnDefinition = "bigint not null   comment '스크랩 사용자'  ")
+    @ManyToMany(targetEntity = Member.class)
+    @JoinColumn(name = "fishing_diary_scrap_by" , columnDefinition = "bigint not null   comment '스크랩 사용자'  ")
     //  @Builder.Default
-    private final List<Member> scrabMembers = new ArrayList<>();
+    private final List<Member> scrapMembers = new ArrayList<>();
 
     @AttributeOverride(name="shareCount", column=@Column(name = "SHARE"))
     private ShareStatus status;
@@ -140,6 +140,8 @@ public class FishingDiary extends BaseTime {
     private List<FishingDiaryComment> comments = new ArrayList<>();
 */
 
+    @Column(columnDefinition = "bit not null default 1 comment '활성화 여부' ")
+    private boolean isActive;
 
     //사진및 동영상은 File로.. 구분자(FilePublish) 조황일지
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  created_by

@@ -89,25 +89,12 @@ public class Post extends BaseTime {
     @Column(columnDefinition = "bit default 0  comment '비밀글여부' ")
     private boolean isSecret;
 
-
+    @Column(columnDefinition = "bit not null default 1 comment '활성화 여부' ")
+    private boolean isActive;
 
     @ManyToMany(targetEntity= Tag.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "post_tags", columnDefinition = "comment '태그' ")
     private List<Tag> tags = new ArrayList<>();
-
-    public Post(){
-
-    }
-    //Getters and setters ommitted for brevity
-    public void addTag(Tag tag) {
-        tags.add(tag);
-    //    tag.getPosts().add(this);
-    }
-
-    public void removeTag(Tag tag) {
-        tags.remove(tag);
-     //   tag.getPosts().remove(this);
-    }
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', post, 'COLUMN',  created_by
     @ManyToOne
@@ -118,6 +105,20 @@ public class Post extends BaseTime {
     @ManyToOne
     @JoinColumn(name="modified_by" , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
+
+    public Post(){
+
+    }
+    //Getters and setters ommitted for brevity
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        //    tag.getPosts().add(this);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+        //   tag.getPosts().remove(this);
+    }
 
     public Post(Member member, Board board, String authorName , String title, String contents) {
         this.createdBy = member;

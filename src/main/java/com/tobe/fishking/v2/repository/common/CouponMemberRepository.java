@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface CouponMemberRepository extends BaseRepository<CouponMember, Long> {
@@ -117,4 +118,5 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             @Param("member") Member member, @Param("isUse") boolean isUse, @Param("today") LocalDateTime today);
 
 
+    List<CouponMember> findByMember(Member member);
 }

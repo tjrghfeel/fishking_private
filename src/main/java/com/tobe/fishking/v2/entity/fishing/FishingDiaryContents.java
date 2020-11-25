@@ -117,12 +117,12 @@ public class FishingDiaryContents extends BaseTime {
     private Long writelongitude;
 
 
-    // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
+   /* // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
     @OneToMany
     @JoinColumn(name = "fishing_diary_scrab_by" , columnDefinition = "bigint comment '스크랩 사용자'  ")
     @Builder.Default
     private List<Member> scrabMembers = new ArrayList<>();
-
+*/
 
 
     //사진및 동영상은 File로.. 구분자(FilePublish) 조황일지

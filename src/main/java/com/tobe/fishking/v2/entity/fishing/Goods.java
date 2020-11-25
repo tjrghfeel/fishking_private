@@ -106,7 +106,6 @@ public class Goods extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'선상-상품목록', 'USER', DBO, 'TABLE', goods, 'COLUMN',  fishing_goods
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "goods_ship_id", columnDefinition = "bigint   not null comment '선상-상품목록'  ")
-
     private Ship ship;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상품정보-미끼목록', 'USER', DBO, 'TABLE', goods, 'COLUMN',  lure
@@ -184,6 +183,8 @@ public class Goods extends BaseTime {
     @JoinColumn(name = "modified_by", insertable = false, updatable = false, columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    @Column(columnDefinition = " varchar(100)  comment '물때'  ")
+    private String fishingTideTime;
 
     // 생성자
     public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {

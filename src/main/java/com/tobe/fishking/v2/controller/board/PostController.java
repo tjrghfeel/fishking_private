@@ -68,11 +68,11 @@ public class PostController {
     @GetMapping("/post/{id}")
     public PostDTO getPostById(@PathVariable(value = "id") Long id, int filePublish) throws ResourceNotFoundException {
         PostDTO postDTO = postService.getPostById(id, filePublish);
+
         return postDTO;
     }
 
     //게시글 저장. Post entity, FileEntity저장을 한다. 생성한 Post엔터티의 id를 반환.
-    /*!!!!!!!!!!이미지 저장할 폴더위치, 저장을 어떤식으로 할지 정해진다음 수정해야함.*/
     @ApiOperation(value = "게시글 저장", notes = "parnedId, tagName, secret은 nullable")
     @PostMapping("/post")
     public Long writePost(@ModelAttribute WritePostDTO writePostDTO,

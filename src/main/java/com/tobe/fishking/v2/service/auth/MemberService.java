@@ -1,11 +1,17 @@
 package com.tobe.fishking.v2.service.auth;
 
 
+import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.LoveTo;
+import com.tobe.fishking.v2.entity.common.Take;
+import com.tobe.fishking.v2.entity.fishing.CouponMember;
+import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.exception.CMemberExistException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
@@ -13,9 +19,8 @@ import com.tobe.fishking.v2.model.auth.ProfileManageDTO;
 import com.tobe.fishking.v2.model.auth.UserProfileDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
-import com.tobe.fishking.v2.repository.common.FileRepository;
-import com.tobe.fishking.v2.repository.common.LoveToRepository;
-import com.tobe.fishking.v2.repository.common.TakeRepository;
+import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
@@ -24,10 +29,13 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -42,6 +50,10 @@ public class MemberService {
     private ShipRepository shipRepository;
     private FileRepository fileRepository;
     private FishingDiaryRepository fishingDiaryRepository;
+    private ReviewRepository reviewRepository;
+    private FishingDiaryCommentRepository fishingDiaryCommentRepository;
+    private CouponMemberRepository couponMemberRepository;
+    private UploadService uploadService;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -64,10 +76,17 @@ public class MemberService {
             /*userId로부터 Member를 가져온다. */
             Member member = memberRepository.findById(profileUserId)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+profileUserId));
+
+            /*비활성화된 멤버라면 빈 dto를 반환. */
+            if(member.getIsActive()==false){
+                UserProfileDTO dto = new UserProfileDTO();
+                dto.setIsActive(false);
+                return dto;
+            }
             /*DTO저장에 필요한 작성글수(fishingDiary글만을 취급, 좋아요수, 업체찜수를 가져온다. */
             int postCount = fishingDiaryRepository.countByMember(member);
             int takeCount = goodsRepository.findTakeCount(member);//!!!!!어떤것에 대한 찜 수인지 확인후 수정. 일단은 상품에 대한 찜 수.
-            //좋아요 수???!!!!!! member에 대한 좋아요가 뭔지 확인하고 추가필요.
+            //좋아요 수???!!!!! member에 대한 좋아요가 뭔지 확인하고 추가필요.
 
         /*가져온 데이터들을 UserProfileDTO에 저장. (본인이 아닌 경우, '업체찜수'를 추가해준다)  */
             /*공통적으로 필요한 프로필정보 dto에 추가. */
@@ -94,7 +113,7 @@ public class MemberService {
                 for(int i=0; i<fishSpecies.size(); i++){
                     fishSpeciesString.add(fishSpecies.get(i).getCodeName());
                 }
-                int likeCount = loveToRepository.countByTaskTypeAndLinkId(TakeType.ship, ship.getId());//ship이 받은 좋아요 수 카운트.
+                int likeCount = loveToRepository.countByTakeTypeAndLinkId(TakeType.ship, ship.getId());//ship이 받은 좋아요 수 카운트.
 
                 userProfileDTO.setIsShip(true);
                 userProfileDTO.setLikeCount(likeCount);
@@ -129,6 +148,44 @@ public class MemberService {
         return profileManageDTO;
     }
 
+    /*프사변경*/
+    @Transactional
+    public boolean updateProfileImage(MultipartFile file, Long memberId) throws ResourceNotFoundException, IOException {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+
+        /*기존 프사 fileEntity 삭제*/
+        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(memberId, FilePublish.profile,true);
+        uploadService.removeFileEntity(preFileEntity.getId());
+
+        /*프사 추가 및 Member의 profileImage 업데이트. */
+        Map<String,Object> fileInfo = uploadService.initialFile(file, FileType.image, FilePublish.profile);
+
+        FileEntity fileEntity = FileEntity.builder()
+                .pid(memberId)
+                .originalFile(file.getOriginalFilename())
+                .fileName(file.getOriginalFilename())
+                .fileNo(0)
+                .filePublish(FilePublish.profile)
+                .fileType(FileType.image)
+                .fileUrl((String)fileInfo.get("fileUrl"))
+                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
+                .thumbnailFile((String)fileInfo.get("thumbUploadPath"))
+                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
+                .size(file.getSize())
+                .storedFile((String)fileInfo.get("fileName"))
+                .isRepresent(true)
+                .createdBy(member)
+                .modifiedBy(member)
+                .locations("sampleLocation")
+                .build();
+        fileRepository.save(fileEntity);
+
+        member.setProfileImage((String)fileInfo.get("thumbDownloadUrl"));
+
+        return true;
+    }
+
     /*닉네임 변경*/
     @Transactional
     public String modifyProfileNickName(Long memberId, String nickName) throws ResourceNotFoundException {
@@ -156,7 +213,7 @@ public class MemberService {
     /*이메일 변경*/
     @Transactional
     public String modifyProfileEmail(Long memberId, String email) throws ResourceNotFoundException {
-        /*!!!!!!!유효성 체크 로직. (만약 서비스계층에서 수행해야하는거면)*/
+        /*!!!!!유효성 체크 로직. (만약 서비스계층에서 수행해야하는거면)*/
 
         /*Member 가져옴*/
         Member member = memberRepository.findById(memberId)
@@ -182,14 +239,40 @@ public class MemberService {
         else return false;
     }
 
-    /*탈퇴하기*/
+    /*탈퇴하기
+    * - 해당 회원의 예약건 취소
+    * - 글들을 비활성화 처리한다. 좋아요,찜,스크랩,쿠폰 삭제 및 리뷰,post,fishingDiary,fishingDiaryComment 비활성화.
+    * - !!!!!탈퇴회원이 업주일 경우 어떻게 처리할지는 업주쪽 기획이 나온뒤 결정. */
     @Transactional
     public Long deleteMember(Long memberId) throws ResourceNotFoundException {
         /*Member의 isActive를 false로 변경*/
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
 
+        /*예약 취소처리 !!!!!orders엔터티 완성되면 구현. */
+
+        /*게시글들 비활성화 처리. */
+            /*좋아요,찜,스크랩,쿠폰 삭제 */
+            List<LoveTo> loveTo = loveToRepository.findByCreatedBy(member);
+            loveToRepository.deleteAll(loveTo);
+
+            List<Take> take = takeRepository.findByCreatedBy(member);
+            takeRepository.deleteAll(take);
+
+            fishingDiaryRepository.deleteAllScrapByMember(member);
+
+            List<CouponMember> couponMembers = couponMemberRepository.findByMember(member);
+            couponMemberRepository.deleteAll(couponMembers);
+
+            /*리뷰,post,fishingDiary,fishingDiaryComment 비활성화 */
+            fishingDiaryRepository.updateIsActiveByMember(member);
+            postRepository.updateIsActiveByMember(member);
+            fishingDiaryCommentRepository.updateIsActiveByMember(member);
+            reviewRepository.updateIsActiveByMember(member);
+
+        /*member 비활성화. */
         member.deActivateMember();
+
         return member.getId();
     }
 

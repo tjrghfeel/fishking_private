@@ -9,9 +9,11 @@ import com.tobe.fishking.v2.model.board.PostListDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,6 +44,7 @@ public interface PostRepository extends JpaRepository<Post, Long>{
 //                    "p.parent_id parentId " +
                     "from post p " +
                     "where p.board_id = :boardId " +
+                    "   and p.is_active = true " +
                     "order by p.created_date desc ",
             countQuery = "select p.id from post p where p.board_id = :boardId",
             nativeQuery = true
@@ -80,4 +83,9 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     /*작성자가 쓴 post의 개수 카운트. */
     @Query("select count(p) from Post p where p.author = :author")
     int countPostByAuthor(@Param("author") Member author);
+
+    /*회원탈퇴시 회원이 작성한 post를 비활성화 처리해주는 메소드.*/
+    @Modifying
+    @Query("update Post p set p.isActive = false where p.author = :member")
+    int updateIsActiveByMember(@Param("member") Member member);
 }

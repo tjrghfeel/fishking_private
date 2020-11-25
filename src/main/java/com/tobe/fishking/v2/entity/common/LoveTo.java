@@ -26,7 +26,7 @@ public class LoveTo extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'구분', 'USER', DBO, 'TABLE', loveto, 'COLUMN',  task_flag
     @Column(columnDefinition = "int   comment '구분-조황일지,조행기등, 댓글'  ")
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
-    private TakeType taskType;
+    private TakeType takeType;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'번호', 'USER', DBO, 'TABLE', loveto, 'COLUMN',  tid
     @Column(columnDefinition = "int   comment '번호'  ")

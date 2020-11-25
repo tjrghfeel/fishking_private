@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 @Service
 public class UploadService {
     private Environment env;
-    private MemberService memberService;
     private FileRepository fileRepository;
     private PostRepository postRepository;
     private BoardRepository boardRepo;
@@ -69,11 +68,11 @@ public class UploadService {
             throws IOException, ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
 
-            /*!!!!!!!!!!테스트용 임의 주석처리 by 석호. (sessionToken같은 시큐리티? 아직 적용안함)
+            /*!!!!!테스트용 임의 주석처리 by 석호. (sessionToken같은 시큐리티? 아직 적용안함)
             Member member = memberService.getMemberBySessionToken(sessionToken);
             String memberId = member.getUid();*/
 
-            /*!!!!!!!!!임의 Member 사용. by 석호. 나중에 지워야함. */
+            /*!!!!!임의 Member 사용. by 석호. 나중에 지워야함. */
             Member member = memberRepository.findById(8L)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+8L));
 

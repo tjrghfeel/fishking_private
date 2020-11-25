@@ -8,6 +8,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Api(tags={"프로필"})
 @RestController
@@ -32,6 +35,19 @@ public class MemberController {
     @GetMapping("/profileManage")
     public ProfileManageDTO getProfileManage(@RequestParam("memberId") Long memberId) throws ResourceNotFoundException {
         return memberService.getProfileManage(memberId);
+    }
+
+    /*프사변경
+     * - !!!!!정확하게는 모르겠지만, 클라이언트가 자기사진을 올려서 요청을 보내는형식이 될거라고생각됨.
+     * - 따라서 여기선 이미지파일을 파라미터로 받아서 프사로 업데이트해주는 기능 구현.
+     * - 반환값 : memberId */
+    @ApiOperation(value = "사용자 프로필사진 변경")
+    @PostMapping("/profileManage/profileImage")
+    public boolean updateProfileImage(
+            @RequestParam("profileImage") MultipartFile multipartFile,
+            @RequestParam("memberId") Long memberId
+    ) throws ResourceNotFoundException, IOException {
+        return memberService.updateProfileImage(multipartFile,memberId);
     }
 
     /*닉네임 변경*/

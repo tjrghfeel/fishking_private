@@ -1,24 +1,37 @@
 package com.tobe.fishking.v2.controller.post;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.LoveTo;
+import com.tobe.fishking.v2.entity.common.Take;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.NoNameDTO;
+import com.tobe.fishking.v2.model.NoNameDTOInterface;
+import com.tobe.fishking.v2.model.common.ReviewDto;
+import com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage;
+import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
+import com.tobe.fishking.v2.model.fishing.OrdersDtoForPage;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
-import com.tobe.fishking.v2.repository.common.CouponRepository;
-import com.tobe.fishking.v2.repository.common.FileRepository;
-import com.tobe.fishking.v2.repository.common.LoveToRepository;
-import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
-import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.board.PostService;
+import io.swagger.annotations.ApiOperation;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 
@@ -51,7 +64,18 @@ public class PostControllerTest {
     ShipRepository shipRepository;
     @Autowired
     LoveToRepository loveToRepository;
-
+    @Autowired
+    FishingDiaryRepository fishingDiaryRepository;
+    @Autowired
+    FishingDiaryCommentRepository fishingDiaryCommentRepository;
+    @Autowired
+    AlertsRepository alertsRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
+    @Autowired
+    OrdersRepository ordersRepository;
+    @Autowired
+    TakeRepository takeRepository;
 
     @Test
     public void fileTest() throws Exception {
@@ -64,13 +88,16 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        Member member = memberRepository.findById(12L)
+        Member member = memberRepository.findById(21L)
                 .orElseThrow(()->new ResourceNotFoundException(""));
 
+        List<LoveTo> loveTo = loveToRepository.findByCreatedBy(member);
+        loveToRepository.deleteAll(loveTo);
+
 
         System.out.println("=====================================");
         System.out.println("=====================================");
-        System.out.println("####result ) "+fileRepo.findTop1ByPidAndFilePublishAndIsRepresent(18L, FilePublish.ship,true).getId());
+        System.out.println("####result ) ");
         System.out.println("=====================================");
         System.out.println("=====================================");
     }
