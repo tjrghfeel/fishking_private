@@ -2,7 +2,9 @@ package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.common.FilesDTO;
+import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
+import com.tobe.fishking.v2.model.response.ListResult;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.common.PopularService;
 import com.tobe.fishking.v2.service.fishking.GoodsService;
@@ -75,5 +77,15 @@ public class MainController {
         return map;
     }
 
+
+/*  jkkim 수정 지우질 말것
+    @ApiOperation(value = "위경도 리스트", notes = "조항일지/포인트 조행기 위경도  리스트를 조회한다.")
+    @GetMapping(value = "/getMapListByAll")
+    public ListResult<MapInfoDTO> posts(@RequestParam(required = false) Map<String, Object> searchRequest
+                                        //, @RequestParam(required = false, name = "total_elements") Integer totalElements
+    ) {
+
+        return responseService.getListResult(mapService.find(boardName));
+    }*/
 
 }
