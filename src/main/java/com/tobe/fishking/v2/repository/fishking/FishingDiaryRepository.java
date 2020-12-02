@@ -5,8 +5,9 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.NoNameDTO;
-import com.tobe.fishking.v2.model.NoNameDTOInterface;
+//import com.tobe.fishking.v2.model.NoNameDTO;
+//import com.tobe.fishking.v2.model.NoNameDTOInterface;
+import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Repository
 public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Long> {
@@ -114,6 +117,14 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     int updateIsActiveByMember(@Param("member") Member member);
 
 
+    /* 조항일지, 조행기, 낚시포인트 위*경도 */
+    @Query(nativeQuery = true,value = "SELECT re.id, re.latitude, re.longitude,re.type FROM ( " +
+            "SELECT  board.id AS id, a.writeLatitude AS latitude, a.writeLongitude AS latitude, 1 AS type " +
+            "FROM FishingDiary a where  a.writeLatitude is not null  and  a.writeLatitude is not null " +
+            "UNION ALL " +
+            "SELECT  999 AS id,  b.Latitude AS latitude, b.Longitude AS latitude ,2 AS type " +
+            "FROM FishingPoints b where  b.Latitude is not null  and  b.Latitude is not null   ) re")
+    List<MapInfoDTO> findLatitudeAndLongitudeList();
 
 }
 

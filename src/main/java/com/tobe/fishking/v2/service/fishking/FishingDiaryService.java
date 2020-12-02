@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.OperatorType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDTO;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -99,6 +101,10 @@ public class FishingDiaryService {
         return fishingDiary.map(FishingDiaryDTO::of);
     }
 
+
+    public List<MapInfoDTO> getLatitudeAndLongitudeList() {
+        return fishingDiaryRepo.findLatitudeAndLongitudeList();
+    }
 
 /*
 

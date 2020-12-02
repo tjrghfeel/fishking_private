@@ -11,14 +11,17 @@ import lombok.Getter;
 @Getter
 public class MapInfoDTO {
 
+    /*조행기 ,조앻일지, 낙씨포이트(999) */
     @ApiModelProperty(value = "구분")
-    private String searchKeyWord;
+    private Long id;
 
     @ApiModelProperty(value = "위도")
-    private String oLAT;
+    private Long latitude;
 
     @ApiModelProperty(value = "경도")
-    private String oLON;
+    private Long longitude;
 
+    @ApiModelProperty(value = "타입")
+    private int typee;
 
 }
