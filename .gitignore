@@ -5,7 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-2react_client/node_modules
+react_client/node_modules
 
 
 
