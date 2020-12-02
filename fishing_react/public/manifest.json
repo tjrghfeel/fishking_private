@@ -1,0 +1,25 @@
+{
+  "short_name": "어복황제",
+  "name": "카이모바일-어복황제",
+  "icons": [
+    {
+      "src": "./assets/brand/favicon.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/brand/favicon.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "./assets/brand/favicon.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
