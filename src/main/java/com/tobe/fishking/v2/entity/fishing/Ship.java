@@ -63,7 +63,7 @@ public class Ship extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'중량', 'USER', DBO, 'TABLE', ship, 'COLUMN',  weight
     @Column(columnDefinition = "decimal(5,2)  comment  '거리'  ")
-    private double distance;
+    private Double distance;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'연락처', 'USER', DBO, 'TABLE', ship, 'COLUMN',  tel
     @Column(columnDefinition = "varchar(30)   comment '연락처'  ")
@@ -71,17 +71,17 @@ public class Ship extends BaseTime {  //선상
 
 // EXEC sp_addextendedproperty 'MS_Description', N'중량', 'USER', DBO, 'TABLE', ship, 'COLUMN',  weight
     @Column(columnDefinition = "decimal(5,2)  comment  '중량'  ")
-    private double weight;
+    private Double weight;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'탑승인원', 'USER', DBO, 'TABLE', ship, 'COLUMN',  boarding_person
     @Column(columnDefinition = "int  comment '탑승인원'  ")
-    private int boardingPerson;
+    private Integer boardingPerson;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'추천업체', 'USER', DBO, 'TABLE', ship, 'COLUMN',  is_recommend
     @Column(nullable = false, columnDefinition = "int default 0  comment '추천업체'  ")
-    private boolean isRecommend;
+    private Boolean isRecommend;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사장님한마디', 'USER', DBO, 'TABLE', ship, 'COLUMN',  owner_wording
     @Column(columnDefinition = "varchar(500) comment '사장님한마디'  ")

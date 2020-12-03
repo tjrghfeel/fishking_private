@@ -59,7 +59,7 @@ public class GoodsService {
 
 
     public Page<GoodsDTO> getGoodsByRecommend(Pageable pageable, Integer totalElements) {
-        Page<Goods> goods = goodsRepo.findAllByRecommend(pageable, totalElements);
+        Page<Goods> goods = goodsRepo.findAllByIsRecommend(pageable, totalElements);
         return goods.map(GoodsDTO::of);
     }
 

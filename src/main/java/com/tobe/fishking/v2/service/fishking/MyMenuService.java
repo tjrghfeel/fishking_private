@@ -1,22 +1,18 @@
 package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
+import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
-import com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage;
-import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
-import com.tobe.fishking.v2.model.fishing.MyMenuPageDTO;
-import com.tobe.fishking.v2.model.fishing.OrdersDtoForPage;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.repository.common.CouponRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.ReviewRepository;
-import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
-import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
-import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
+import com.tobe.fishking.v2.repository.fishking.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MyMenuService {
@@ -43,6 +40,13 @@ public class MyMenuService {
     FishingDiaryCommentRepository fishingDiaryCommentRepository;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    OrderDetailsRepository orderDetailsRepository;
+    @Autowired
+    GoodsRepository goodsRepository;
+    @Autowired
+    ShipRepository shipRepository;
+
 
     /*마이메뉴 페이지 조회 처리 메소드
     * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
@@ -121,5 +125,55 @@ public class MyMenuService {
         return ordersRepository.findByCreatedByAndOrderStatus(member, OrderStatus.valueOf(sort).ordinal(), pageable);
     }
 
+    /*예약 상세보기 */
+    @Transactional(readOnly = true)
+    public OrdersDetailDto getOrdersDetail(Long orderId) throws ResourceNotFoundException {
+        Orders orders = ordersRepository.findById(orderId)
+                .orElseThrow(()->new ResourceNotFoundException("orders not found for this id ::"+orderId));
+        OrderDetails orderDetails = orderDetailsRepository.findByOrders(orders);
+        Goods goods = goodsRepository.findById(orderDetails.getGoods().getId())
+                .orElseThrow(()->new ResourceNotFoundException("goods not found for this id ::"+orderDetails.getGoods().getId()));
+        Member member = memberRepository.findById(orders.getCreatedBy().getId())
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+orders.getCreatedBy().getId()));
+        Ship ship = shipRepository.findById(goods.getShip().getId())
+                .orElseThrow(()->new ResourceNotFoundException("ship not found for this id ::"+goods.getShip().getId()));
+
+
+        /*dto 생성.*/
+        OrdersDetailDto ordersDetailDto = OrdersDetailDto.builder()
+                .id(orders.getId())
+                .shipName(ship.getShipName())
+                .orderStatus(orders.getOrderStatus().getValue())
+                .fishingType(goods.getFishingType().getValue())
+                .sigungu(ship.getSigungu())
+                .distance(ship.getDistance())
+                .fishingDate(goods.getFishingDate())
+                //.fishSpecies()
+                .meridiem(goods.getMeridiem().getValue())
+                .shipStartTime(goods.getShipStartTime())
+                .goodsPrice(goods.getTotalAmount())
+                .personnel(orderDetails.getPersonnel())
+                .ordersNum(orders.getOrdersNum())
+                .nickName(member.getNickName())
+                .areaCode(member.getPhoneNumber().getAreaCode())
+                .localNumber(member.getPhoneNumber().getLocalNumber())
+                .orderDate(orders.getOrderDate())
+                //.paymentGroup(orders.getPaymentGroup())
+                .totalAmount(orders.getTotalAmount())
+                .discountAmount(orders.getDiscountAmount())
+                .paymentAmount(orders.getPaymentAmount())
+                .build();
+
+        List<CommonCode> list = goods.getFishSpecies();
+        if(list.size()!=0) {
+            String fishSpecies = list.get(0).getCodeName();
+            for (int i = 1; i < list.size(); i++) {
+                fishSpecies += "," + list.get(i).getCodeName();
+            }
+            ordersDetailDto.setFishSpecies(fishSpecies);
+        }
+
+        return ordersDetailDto;
+    }
 
 }

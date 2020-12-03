@@ -56,6 +56,17 @@ public class UploadService {
 
     private MemberRepository memberRepository;
 
+    /*파일 타입 구하는 메소드 */
+    public FileType checkFileType(MultipartFile file){
+        String fileType = file.getContentType().split("/")[0];
+        FileType enumFileType;
+        if(fileType.equals("image")){enumFileType = FileType.image;}
+        else if(fileType.equals("text")){enumFileType = FileType.txt;}
+        else if(fileType.equals("video")){enumFileType = FileType.video;}
+        else enumFileType = FileType.attachments;
+
+        return enumFileType;
+    }
 
     /*파일 저장 메소드
     * 인자 enum filePublish의 이름과 똑같은 폴더가 파일저장위치에 존재하며 이곳에 파일을 저장한다.
@@ -63,7 +74,7 @@ public class UploadService {
     *  enum FilePublish이름인 one2one이라는 폴더가 존재한다. 여기에 저장하도록 메소드가 동작한다.
     * 반환 ) 섬네일파일명, 원본파일의 풀url, 원본파일의 저장명을 반환한다. */
     @Transactional
-    public Map<String, Object> initialFile(MultipartFile file, FileType fileType,
+    public Map<String, Object> initialFile(MultipartFile file, /*FileType fileType,*/
                                            FilePublish filePublish, String sessionToken)
             throws IOException, ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
@@ -85,13 +96,14 @@ public class UploadService {
              String fileLocation = env.getProperty("file.location") + File.separator + board.getUploadPath();/*filePublish.toString();*/
              String filePath = board.getUploadPath();
 
+            /* 파일 타입에 대해 체크해주는 부분인듯하다. 처음부터있었던 로직인데 당장필요없을듯하여 일단 주석처리. by석호
             FileType currentFileType = FileType.image;
             if (!file.getContentType().startsWith("image/")) {
                 currentFileType = FileType.attachments;
             }
             if (fileType.equals(FileType.image) && !currentFileType.equals(fileType)) {
                 throw new FileImageOnlyException(fileType.toString());
-            }
+            }*/
 
             List<String> fileResult = new ArrayList<>();
             fileResult = this.saveUploadFile(file, /*memberId*/"seok ho", fileLocation, filePath, true);

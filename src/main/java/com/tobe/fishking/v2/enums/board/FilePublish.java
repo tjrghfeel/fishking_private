@@ -9,7 +9,7 @@ public enum FilePublish /*implements IEnumModel*/ {
     post("게시판"),
     one2one("1:1문의"),
     faq("FAQ"),
-    qna("1:1"),
+    notice("공지사항"),
     fishingBlog("조행기"),
     fishingDaily("조행일지"),
     comment("답글"),

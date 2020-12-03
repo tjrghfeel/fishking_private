@@ -66,36 +66,36 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'총가격', 'USER', DBO, 'TABLE', goods, 'COLUMN',  total_amount
     @Column(columnDefinition = "float comment '총가격'  ")
-    private double totalAmount;
+    private Integer totalAmount;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'정원(min)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  max_personnel
     @Column(columnDefinition = "int comment '정원(min)'  ")
-    private int minPersonnel;
+    private Integer minPersonnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'정원(max)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  max_personnel
     @Column(columnDefinition = "int  comment  '정원(max)'  ")
-    private int maxPersonnel;
+    private Integer maxPersonnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'마감여부', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_close
     @Column(nullable = false, columnDefinition = "bit default 0 comment '마감여부'  ")
-    private boolean isClose;
+    private Boolean isClose;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'예약인수', 'USER', DBO, 'TABLE', goods, 'COLUMN',  notice
     @Column(columnDefinition = "float comment '예약인수'  ")
-    private double reservationPersonnel;
+    private Double reservationPersonnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'대기인', 'USER', DBO, 'TABLE', goods, 'COLUMN',  notice
     @Column(columnDefinition = "float comment '대기인수'  ")
-    private double waitingPersonnel;
+    private Double waitingPersonnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'초보가능여부', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_close
     @Column(nullable = false, columnDefinition = "bit default 1 comment  '초보가능여부'") //comment '초보가능여부'  ")
-    private boolean isBeginnerPossible;
+    private Boolean isBeginnerPossible;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(nullable = false, columnDefinition = "bit default 0  comment  '상태(노출여부)'  ")
-    private boolean isVisible;
+    private Boolean isVisible;
 
     @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_fish_species", columnDefinition = " comment  '상품 어종'  ")
@@ -117,22 +117,22 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'전체평균평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  total_average
     @Column(columnDefinition = "float  default 0.0 comment  '전체평균평점'  ")
-    private double totalAvgByReview;
+    private Double totalAvgByReview;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'손맛평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(columnDefinition = "float  default 0.0  comment  '손맛평점'  ")
-    private double tasteByReview;
+    private Double tasteByReview;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'서비스평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(columnDefinition = "float  default 0.0  comment  '서비스평점'  ")
-    private double serviceByReview;
+    private Double serviceByReview;
     // EXEC sp_addextendedproperty 'MS_Description', N'청결도평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(columnDefinition = "float  default 0.0  comment  '청결도평점'  ")
-    private double cleanByReview;
+    private Double cleanByReview;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'적립포인트', 'USER', DBO, 'TABLE', goods, 'COLUMN',  accumulate_point
     @Column(columnDefinition = "float  default 0.0  comment  '적립포인트'  ")
-    private double accumulatePoint;
+    private Double accumulatePoint;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'공지사항', 'USER', DBO, 'TABLE', goods, 'COLUMN',  notice
     @Column(columnDefinition = "varchar(200) comment '공지사항'  ")
@@ -154,7 +154,7 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(nullable = false, columnDefinition = "bit default 1  comment  '사용여부'  ")
-    private boolean isUse;
+    private Boolean isUse;
 
     @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_facility", columnDefinition = " comment  '편의시설'  ")
@@ -169,7 +169,7 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'추천업체', 'USER', DBO, 'TABLE', ship, 'COLUMN',  is_recommend
     @Column(nullable = false, columnDefinition = "int default 0  comment '추천업체'  ")
-    private boolean isRecommend;
+    private Boolean isRecommend;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  created_by

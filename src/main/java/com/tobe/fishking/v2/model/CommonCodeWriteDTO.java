@@ -21,11 +21,11 @@ public class CommonCodeWriteDTO {
     private Long id;
     private Long createdBy;
     private Long modifiedBy;
-    private double retValue1;
+    private Double retValue1;
     //not null & default 필드.
-    private boolean active;
-    private int level;
-    private int orderBy;
+    private Boolean active;
+    private Integer level;
+    private Integer orderBy;
     //nullable 필드
     private String code;
     private String codeName;

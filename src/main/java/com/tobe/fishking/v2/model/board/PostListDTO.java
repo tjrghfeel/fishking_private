@@ -13,10 +13,11 @@ public interface PostListDTO {
     //int getChannelType();
     //String getContents();
     //String getCreatedAt();
-    boolean getIsSecret();
+    Boolean getIsSecret();
     //String getReturnNoAddress();
     //int getReturnType();
     Long getAuthorId();
+    String getQuestionType();
     //int getParentId();
     //Long getCreatedBy();
     //Long getModifiedBy();

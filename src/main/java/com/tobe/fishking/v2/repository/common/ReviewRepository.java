@@ -54,9 +54,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<ReviewDto> findMyReviewList(@Param("member") Member member, Pageable pageable);
 
     /*회원탈퇴시 회원이 작성한 review를 비활성화 처리해주는 메소드.*/
-    @Modifying
+    /*@Modifying
     @Query("update Review r set r.isActive = false where r.member = :member")
-    int updateIsActiveByMember(@Param("member") Member member);
+    int updateIsActiveByMember(@Param("member") Member member);*/
 
 
 }

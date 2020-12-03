@@ -12,10 +12,7 @@ import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.board.PostDTO;
-import com.tobe.fishking.v2.model.board.PostListDTO;
-import com.tobe.fishking.v2.model.board.UpdatePostDTO;
-import com.tobe.fishking.v2.model.board.WritePostDTO;
+import com.tobe.fishking.v2.model.board.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
@@ -70,25 +67,69 @@ public class PostService {
         return postResponse;
     }
 
-    /*Board의 Post 리스트를 반환하는 메소드.
-    * 반환하는 PostResponse에는 Post의 모든 필드가 들어있다. */
-    /*FAQ용으로 만들었지만, PostController에 getPostList()에 적힌 이유로 일단 보류.
+    /*FAQ 조회*/
     @Transactional(readOnly = true)
-    public List<PostResponse> getPostList(Long boardId) throws ResourceNotFoundException {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(()->new ResourceNotFoundException("Board not found for this id ::"+boardId));
+    public Page<FAQDto> getFAQList(int page){
+        Pageable pageable = PageRequest.of(page,10);
+        return postRepository.findAllFAQList(pageable);
+    }
 
-        return postRepository.findAllByBoard(boardId);
-    }*/
-
-    //Post하나 반환 메소드.
+    /*QnA 리스트 조회*/
     @Transactional(readOnly = true)
+    public Page<QnADtoForPage> getQnAList(int page, Long memberId) throws ResourceNotFoundException {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Pageable pageable = PageRequest.of(page, 10);
+        return postRepository.findAllQnAList(member, pageable);
+    }
+
+    /*QnA detail 조회*/
+    @Transactional(readOnly = true)
+    public QnADetailDto getQnADetail(Long postId){
+        return postRepository.findQnADetailByPostId(postId);
+    }
+    
+    /*공지사항 리스트 조회*/
+    @Transactional(readOnly = true)
+    public Page<NoticeDtoForPage> getNoticeList(int page){
+        Pageable pageable = PageRequest.of(page,10);
+        return postRepository.findNoticeList(pageable);
+    }
+
+    /*공지사항 상세보기*/
+    @Transactional(readOnly = true)
+    public NoticeDetailDto getNoticeDetail(Long postId) throws ResourceNotFoundException {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postId));
+
+        NoticeDetailDto result = NoticeDetailDto.builder()
+                .id(post.getId())
+                .channelType(post.getChannelType().getValue())
+                .title(post.getTitle())
+                .date(post.getCreatedDate())
+                .contents(post.getContents())
+                .build();
+
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), post.getBoard().getFilePublish());
+        if(fileList.size()!=0) {
+            String fileListString = fileList.get(0).getDownloadUrl();
+            for (int i = 1; i < fileList.size(); i++) {
+                fileListString += "," + fileList.get(i).getDownloadUrl();
+            }
+            result.setFileList(fileListString);
+        }
+
+        return result;
+    }
+
+    //Post하나 반환 메소드. FAQ, QNA, 공지사항 리스트 및 하나 조회에 대해 따로따로 위에 만들어놓음.
+    /*@Transactional(readOnly = true)
     public PostDTO getPostById(Long id, int filePublish) throws ResourceNotFoundException {
         PostDTO postDTO = null;
         Post post = postRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Post not found for this id :: " + id));
 
-        /*파일들 가져오는 부분. */
+        *//*파일들 가져오는 부분. *//*
         List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), FilePublish.values()[filePublish]);
         List<String> fileUrlList = new LinkedList<String>();
         for(int i=0; i<fileList.size(); i++){
@@ -97,21 +138,14 @@ public class PostService {
 
         postDTO = new PostDTO(post, fileUrlList);
 
-        /*비활성화된 글이라면 빈 dto를 반환시켜줌.*/
-        if(postDTO.isActive()==false) {
-            PostDTO dto = new PostDTO();
-            dto.setActive(false);
-            return dto;
-        }
-
         return postDTO;
-    }
+    }*/
 
     //Post entity저장 및 FileEntity저장.
     /*postDTO에는 boardId, channelType, title, content, authorId, returnType, returnNoAddress, createdAt, tagsName,
     isSecret, parentId가 들어있음.*/
     @Transactional
-    public Long writePost(WritePostDTO postDTO, MultipartFile file, int filePublish) throws ResourceNotFoundException, IOException {
+    public Long writePost(WritePostDTO postDTO, MultipartFile[] files) throws ResourceNotFoundException, IOException {
         //Post 저장 부분.
         Board boardOfPost = boardRepository.findById(postDTO.getBoardId())
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id :: "+postDTO.getBoardId()));
@@ -119,14 +153,14 @@ public class PostService {
                 .orElseThrow(()->new ResourceNotFoundException("Member not found for this id ::"+postDTO.getAuthorId()));
 
         //Post entity의 List<Tag>만듦.
-        List<Tag> tagList = new LinkedList<Tag>();
+        /*List<Tag> tagList = new LinkedList<Tag>();
         List<String> tagNameList = postDTO.getTagsName();
         for(int i=0; i<tagNameList.size(); i++){
             Tag tempTag = null;
             tempTag = tagRepository.findByTagName(tagNameList.get(i));
             if(tempTag==null) throw new ResourceNotFoundException("Tag not found for this tagName :: "+tagNameList.get(i));
             tagList.add(tempTag);
-        }
+        }*/
 
         Post post = Post.builder()
                 .modifiedBy(authorOfPost)
@@ -140,8 +174,8 @@ public class PostService {
                 .channelType(ChannelType.values()[postDTO.getChannelType()])
                 .board(boardOfPost)
                 .author(authorOfPost)
-                .isSecret(postDTO.isSecret())
-                .tags(tagList)
+                .isSecret(postDTO.getIsSecret())
+//                .tags(tagList)
                 .questionType(QuestionType.values()[postDTO.getQuestionType()])
                 .parent_id(postDTO.getParentId())
                 .build();
@@ -149,20 +183,14 @@ public class PostService {
 
         //파일 저장.
             //파일 타입 확인.
-        if(file!=null) {
-            String fileType = file.getContentType().split("/")[0];
-            FileType enumFileType;
-            if (fileType.equals("image")) {
-                enumFileType = FileType.image;
-            } else if (fileType.equals("text")) {
-                enumFileType = FileType.txt;
-            } else if (fileType.equals("video")) {
-                enumFileType = FileType.video;
-            } else enumFileType = FileType.attachments;
+        for(int i=0; i<files.length; i++ ) {
+            MultipartFile file = files[i];
+
+            FileType enumFileType = uploadService.checkFileType(file);
 
             //UploadService를 이용한 파일저장.
             Map<String, Object> fileInfo
-                    = uploadService.initialFile(file, enumFileType, FilePublish.values()[filePublish], ""/*, 세션토큰 인자 */);
+                    = uploadService.initialFile(file, boardOfPost.getFilePublish(), ""/*, 세션토큰 인자 */);
 
             //File entity 저장.
             FileEntity currentFile = FileEntity.builder()
@@ -177,16 +205,11 @@ public class PostService {
                     .fileType(enumFileType)
                     .createdBy(authorOfPost)
                     .modifiedBy(authorOfPost)
-                    .filePublish(FilePublish.values()[filePublish])
+                    .filePublish(boardOfPost.getFilePublish())
                     .locations("sampleLocation")
                     .pid(post.getId())
-                    /*아래 세 필드 not null이라 추가 필요.
-                    .location()
-                    * .bid()
-                    * .modifiedBy()
-                    * .filePublish()*/
                     .build();
-            long fileId = fileRepository.save(currentFile).getId();
+            fileRepository.save(currentFile).getId();
         }
 
         return post.getId();
@@ -196,8 +219,8 @@ public class PostService {
     * */
     @Transactional
     public Long updatePost(UpdatePostDTO postDTO,
-                           MultipartFile file,
-                           int filePublish) throws ResourceNotFoundException, IOException {
+                           MultipartFile[] files
+                            ) throws ResourceNotFoundException, IOException {
         //Post entity 수정.
         Post post = postRepository.findById(postDTO.getPostId())
                 .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postDTO.getPostId()));
@@ -206,50 +229,37 @@ public class PostService {
 
         /*Post에 올려놓은 File들 삭제하고 다시 올림. */
             /*파일들 모두 삭제.*/
-        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), FilePublish.values()[filePublish]);
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), post.getBoard().getFilePublish());
         for(int i=0; i<fileList.size(); i++){
-            FileEntity fileEntity = fileList.get(i);
-            String fileUrl = fileEntity.getFileUrl();
-            String fileThumnailUrl = fileEntity.getThumbnailFile();
-            uploadService.removeFile(new File(fileUrl));
-            uploadService.removeFile(new File(fileThumnailUrl));
-
-            fileRepository.delete(fileEntity);
+            uploadService.removeFileEntity(fileList.get(i).getId());
         }
-            /*새로 업로드*/
-        String fileType = file.getContentType().split("/")[0];
-        FileType enumFileType;
-        if(fileType.equals("image")){enumFileType = FileType.image;}
-        else if(fileType.equals("text")){enumFileType = FileType.txt;}
-        else if(fileType.equals("video")){enumFileType = FileType.video;}
-        else enumFileType = FileType.attachments;
 
-        //UploadService를 이용한 파일저장.
-        Map<String, Object> fileInfo = uploadService.initialFile(file, enumFileType, FilePublish.values()[filePublish], ""/*, 세션토큰 인자 */);
+        for(int i=0; i<files.length; i++ ) {
+            MultipartFile file = files[i];
+            FileType enumFileType = uploadService.checkFileType(file);
 
-        //File entity 저장.
-        FileEntity currentFile = FileEntity.builder()
-                .fileName(file.getOriginalFilename())
-                .storedFile((String)fileInfo.get("fileName"))
-                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
-                .thumbnailFile((String)fileInfo.get("thumbUploadPath"))
-                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
-                .originalFile(file.getOriginalFilename())
-                .size(file.getSize())
-                .fileUrl((String)fileInfo.get("fileUrl"))
-                .fileType(enumFileType)
-                .createdBy(post.getModifiedBy())
-                .modifiedBy(post.getModifiedBy())
-                .filePublish(FilePublish.values()[filePublish])
-                .locations("sampleLocation")
-                .pid(post.getId())
-                /*아래 세 필드 not null이라 추가 필요.
-                .location()
-                * .bid()
-                * .modifiedBy()
-                * .filePublish()*/
-                .build();
-        long fileId = fileRepository.save(currentFile).getId();
+            //UploadService를 이용한 파일저장.
+            Map<String, Object> fileInfo = uploadService.initialFile(file, post.getBoard().getFilePublish(), ""/*, 세션토큰 인자 */);
+
+            //File entity 저장.
+            FileEntity currentFile = FileEntity.builder()
+                    .fileName(file.getOriginalFilename())
+                    .storedFile((String) fileInfo.get("fileName"))
+                    .downloadUrl((String) fileInfo.get("fileDownloadUrl"))
+                    .thumbnailFile((String) fileInfo.get("thumbUploadPath"))
+                    .downloadThumbnailUrl((String) fileInfo.get("thumbDownloadUrl"))
+                    .originalFile(file.getOriginalFilename())
+                    .size(file.getSize())
+                    .fileUrl((String) fileInfo.get("fileUrl"))
+                    .fileType(enumFileType)
+                    .createdBy(post.getModifiedBy())
+                    .modifiedBy(post.getModifiedBy())
+                    .filePublish(post.getBoard().getFilePublish())
+                    .locations("sampleLocation")
+                    .pid(post.getId())
+                    .build();
+            fileRepository.save(currentFile).getId();
+        }
 
         return post.getId();
     }

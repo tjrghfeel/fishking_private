@@ -99,7 +99,7 @@ public class Company extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'영업상태', 'USER', DBO, 'TABLE', company, 'COLUMN',  is_open
     @Column(columnDefinition = "bit default 1 comment '영업상태- default :영업중' ")
-    private boolean isOpen;
+    private Boolean isOpen;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'Skb계정', 'USER', DBO, 'TABLE', company, 'COLUMN',  skb_account
@@ -117,7 +117,7 @@ public class Company extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'등록여부', 'USER', DBO, 'TABLE', company, 'COLUMN',  is_regisitered
     @Column(columnDefinition = "bit default 0   comment '등록여부'  ")
-    private boolean isRegistered;
+    private Boolean isRegistered;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', company, 'COLUMN',  created_by

@@ -6,33 +6,39 @@ import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.LoveTo;
+import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.entity.common.Take;
 import com.tobe.fishking.v2.entity.fishing.CouponMember;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
+import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.auth.Gender;
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.TakeType;
-import com.tobe.fishking.v2.exception.CMemberExistException;
-import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.*;
+import com.tobe.fishking.v2.model.auth.LoginDTO;
 import com.tobe.fishking.v2.model.auth.ProfileManageDTO;
+import com.tobe.fishking.v2.model.auth.SignUpDto;
 import com.tobe.fishking.v2.model.auth.UserProfileDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
-import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
-import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
-import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
-import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import com.tobe.fishking.v2.repository.fishking.*;
 import lombok.AllArgsConstructor;
 
 
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +60,8 @@ public class MemberService {
     private FishingDiaryCommentRepository fishingDiaryCommentRepository;
     private CouponMemberRepository couponMemberRepository;
     private UploadService uploadService;
+    private PasswordEncoder encoder;
+    private PhoneAuthRepository phoneAuthRepository;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -66,6 +74,143 @@ public class MemberService {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
         optionalMember.orElseThrow(() -> new CMemberExistException(sessionToken));
         return optionalMember.get().getId();
+    }
+
+    /*회원가입
+    * - 이메일 중복 확인
+    * - 비번 '자바 암호화' (그 외 개인정보 암호화는 db저장시 jpa converter에서 수행)
+    * - Member생성하여 db에 저장.
+    * - 회원정보와 문자인증 정보가 함께 넘어옴. */
+    public boolean signUp(SignUpDto signUpDto){
+        /*이메일 중복 확인*/
+        if(memberRepository.existsByEmail(signUpDto.getEmail())==true){
+            /*!!!!!예외처리 이렇게하는게 맞는지? 그냥 던지기만하면 프론트에서 알아서 처리하는지? */
+            throw new EmailDupException("이메일이 중복됩니다");
+        }
+
+        /*회원 정보 저장*/
+        /*전화번호를 나타내는 PhoneNumber생성*/
+        PhoneNumber phoneNumber = new PhoneNumber(signUpDto.getAreaCode(),signUpDto.getLocalNumber());
+        /*비밀번호 자바 암호화 및 개인정보 db암호화*/
+        String encodedPw = encoder.encode(signUpDto.getPw());
+
+        /*Member 저장*/
+        Member member = Member.builder()
+                .uid(signUpDto.getEmail())//!!!!!uid가 뭔지몰라 일단 중복처리를 하기때문에 똑같이 유일한 이메일로 설정.
+//                .memberName()
+                .nickName(signUpDto.getNickName())
+                .password(encodedPw)
+                .email(signUpDto.getEmail())//일단 이렇게.
+                .gender(Gender.boy)
+                .roles(Role.member)
+//                .profileImage()
+                .isActive(true)
+//                .certifiedNo()
+                .isCertified(true)
+//                .joinDt()
+//                .snsType()
+//                .snsId()
+//                .statusMessage()
+//                .address()
+                .phoneNumber(phoneNumber)
+                .build();
+
+        memberRepository.save(member).getId();
+        return true;
+    }
+
+    /*휴대폰 번호로 가입한 회원 존재유무 확인
+    * - 존재하면 true반환. */
+    @Transactional
+    public boolean checkExistByPhoneNum(PhoneNumber pNum){
+        if(memberRepository.existsByPhoneNumber(pNum)){
+            return true;
+        }
+        else return false;
+    }
+
+    /*문자인증 요청
+    * - 랜덤한 인증번호 생성.
+    * - 인증번호가 담긴 sms 문자인증 메세지를 pNum으로 발송.
+    * - pNum과 인증번호를 db에 저장. */
+    @Transactional
+    public boolean requestSmsAuth(PhoneNumber pNum){
+        /*랜덤으로 인증번호 생성.*/
+        String randomNum=null;
+        randomNum = String.format("%04d",((int)(Math.random()*10000)));
+
+        /*인증번호와 폰번호 db에 저장. */
+        PhoneAuth phoneAuth = PhoneAuth.builder()
+                .phoneNumber(pNum)
+                .certifyNum(randomNum)
+                .build();
+
+        phoneAuthRepository.save(phoneAuth);
+
+        /*!!!!! 문자 전송. */
+
+        return true;
+    }
+
+    /*문자인증 확인 메소드
+    * - 넘어온 폰번호와 인증번호를 가지고 테이블상의 값과 일치하는지 확인.
+    * - 일치하면 true,아니면 false */
+    @Transactional
+    public boolean checkSmsAuth(PhoneNumber pNum, String authNum){
+        /*폰번호에 해당하는 인증번호 가져옴*/
+        PhoneAuth phoneAuth = phoneAuthRepository.findByPhoneNumber(pNum);
+        if(phoneAuth.getCertifyNum().equals(authNum)){
+            return true;
+        }
+        else return  false;
+    }
+
+    /*비번변경 메소드
+    * - 비번암호화하여 세션토큰에 해당하는 멤버의 비번필드에 update. */
+    @Transactional
+    public boolean updatePw(String pw, PhoneNumber pNum) {
+        /*비번 암호화*/
+        String encodedPw = encoder.encode(pw);
+
+        /*세션토큰에 해당하는 멤버의 비번필드 업데이트*/
+        Member member = memberRepository.findByPhoneNumber(pNum);
+
+        member.setPassword(encodedPw);
+
+        return true;
+    }
+
+
+    /*로그인
+     * - 아디, 비번확인하고 아니면 예외처리??, 맞으면 세션토큰생성하여 저장하고 반환. */
+    @Transactional
+    public String login(LoginDTO loginDTO){
+        String sessionToken=null;
+        /*아디,비번 확인*/
+        Member member = memberRepository.findByEmail(loginDTO.getMemberId());
+        if(member==null){
+            throw new IncorrectIdException("아이디가 존재하지 않습니다");
+        }
+        else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
+            /*세션토큰 생성 및 저장. */
+            String rawToken = member.getEmail()+ LocalDateTime.now();
+            sessionToken = encoder.encode(rawToken);
+
+            member.setSessionToken(sessionToken);
+        }
+        else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
+        return sessionToken;
+    }
+
+    /*로그아웃
+    * - 세션토큰에 해당하는 멤버 찾아서 세션토큰필드 비워줌. */
+    @Transactional
+    public boolean logout(String sessionToken) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
+
+        member.setSessionToken(null);
+        return  true;
     }
 
     /*사용자 프로필 보기
@@ -150,16 +295,19 @@ public class MemberService {
 
     /*프사변경*/
     @Transactional
-    public boolean updateProfileImage(MultipartFile file, Long memberId) throws ResourceNotFoundException, IOException {
+    public boolean updateProfileImage(MultipartFile file, Long memberId) throws Exception {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
 
         /*기존 프사 fileEntity 삭제*/
         FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(memberId, FilePublish.profile,true);
-        uploadService.removeFileEntity(preFileEntity.getId());
+        if(preFileEntity!=null){  uploadService.removeFileEntity(preFileEntity.getId());}
 
+        if(uploadService.checkFileType(file)!=FileType.image){
+            throw new Exception();//!!!!!어떤 예외 던져야할지.
+        }
         /*프사 추가 및 Member의 profileImage 업데이트. */
-        Map<String,Object> fileInfo = uploadService.initialFile(file, FileType.image, FilePublish.profile);
+        Map<String,Object> fileInfo = uploadService.initialFile(file, FilePublish.profile, "");
 
         FileEntity fileEntity = FileEntity.builder()
                 .pid(memberId)
@@ -231,9 +379,9 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
 
-        //!!!!!비번이 입력데이터 그대로 db에 저장되는거면 변경필요없지만, 그게아니라면 수정 필요.
-        if(member.getPassword().equals(currentPw)){
-            member.setPassword(newPw);
+        //비번변경.
+        if(encoder.matches(currentPw, member.getPassword())){
+            member.setPassword(encoder.encode(newPw));
             return true;
         }
         else return false;
@@ -249,10 +397,16 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
 
+        /*member 비활성화. */
+        member.deActivateMember();
+
         /*예약 취소처리 !!!!!orders엔터티 완성되면 구현. */
 
         /*게시글들 비활성화 처리. */
             /*좋아요,찜,스크랩,쿠폰 삭제 */
+            /* 탈퇴하는 회원의 모든 글 등에 대해서 isActive 필드를 부여하고 false값을 주는 방식으로 처리하게되면 처리량이 너무
+                많아진다고 하심. 그냥 member에다가만 isActive필드를 부여하고 글 조회하는쪽 로직에서 member의 isActive로 처리하는게
+                낫다고 하심. 좋아요,찜,스크랩,쿠폰도 그냥 지우지말자.
             List<LoveTo> loveTo = loveToRepository.findByCreatedBy(member);
             loveToRepository.deleteAll(loveTo);
 
@@ -264,15 +418,12 @@ public class MemberService {
             List<CouponMember> couponMembers = couponMemberRepository.findByMember(member);
             couponMemberRepository.deleteAll(couponMembers);
 
-            /*리뷰,post,fishingDiary,fishingDiaryComment 비활성화 */
+            *//*리뷰,post,fishingDiary,fishingDiaryComment 비활성화 *//*
             fishingDiaryRepository.updateIsActiveByMember(member);
             postRepository.updateIsActiveByMember(member);
             fishingDiaryCommentRepository.updateIsActiveByMember(member);
             reviewRepository.updateIsActiveByMember(member);
-
-        /*member 비활성화. */
-        member.deActivateMember();
-
+*/
         return member.getId();
     }
 

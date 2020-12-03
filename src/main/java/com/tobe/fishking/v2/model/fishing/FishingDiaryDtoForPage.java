@@ -50,9 +50,9 @@ public interface FishingDiaryDtoForPage {
     //public Member modifiedBy;
     LocalDateTime getCreatedDate();
 
-    int getLikeCount();
-    int getCommentCount();
-    int getScrapCount();
+    Integer getLikeCount();
+    Integer getCommentCount();
+    Integer getScrapCount();
 
     /*파일들*/
     String getFileList();

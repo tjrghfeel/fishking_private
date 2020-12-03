@@ -35,7 +35,8 @@ file :
   downloadUrl : localhost:8082/files
 #  location :  /usr/local/tomcat/webapps/upload/data/file
 #  downloadUrl : http://192.168.0.58:6081/resource
-
+encrypKey :
+  key : fishking12345abcde
 
 spring:
   profiles:

@@ -47,42 +47,42 @@ public class Coupon extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'할인금액(율)', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  saleValues
     @Column(columnDefinition = "decimal(18,0)  comment '할인금액(율)'  ")
-    private double saleValues;
+    private Double saleValues;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'최대발행갯수', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  maxIssue
     @Column(columnDefinition = "int  comment '최대발행갯수'  ")
-    private int maxIssueCount;
+    private Integer maxIssueCount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'유효일수', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  effective_days
     @Column(columnDefinition = "int  comment '유효일수'  ")
-    private int effectiveDays;
+    private Integer effectiveDays;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'발행수량', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  issue_qty
     @Column(columnDefinition = "float comment '발행수량'")
-    private double issueQty;
+    private Double issueQty;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사용여부(중지)', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  use_qty
     @Column(columnDefinition = "float  comment '사용수량'")
-    private double useQty;
+    private Double useQty;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'발행여부', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  is_issue
     @Column(columnDefinition = "bit default 1  comment '발행/발행중지'")
-    private boolean isIssue;
+    private Boolean isIssue;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사용여부(중지)', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  is_use
     @Column(columnDefinition = "bit default 1  comment '사용/사용중지'")
-    private boolean isUse;
+    private Boolean isUse;
 
     //--condition (ex: 100000 구매이상) 0원은 모두 쿠폰 배포
 
     // EXEC sp_addextendedproperty 'MS_Description', N'구매금액 0이면 구매금액 상관없음', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  from_purchase_amount
     @Column(columnDefinition = "float  comment '구매금액 0이면 구매금액 상관없음' ")
-    private double fromPurchaseAmount;
+    private Double fromPurchaseAmount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'구매금액 0이면 구매금액 상관없음', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  to_purchase_amount
     @Column(columnDefinition = "float  comment '구매금액 0이면 구매금액 상관없음' ")
-    private double toPurchaseAmount;
+    private Double toPurchaseAmount;
 
 
 

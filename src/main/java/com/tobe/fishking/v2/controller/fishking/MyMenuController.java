@@ -103,13 +103,13 @@ public class MyMenuController {
     /*예약 상세보기
     * - orders에 대한 세부정보가 들은 dto반환. 데이터는 ship이름,ordersStatus,선상구분,주소,거리,출발시간(예약일),낚시어종,오전/오후,
     *   출항시간, 상품가격,상품수량,예약번호,예약자명,예약자연락처,결제일,결재수단,총주문금액,쿠폰할인금액,총결제액. */
-    /*@ApiOperation(value = "예약 상세")
+    @ApiOperation(value = "예약 상세")
     @GetMapping("/OrdersDetail")
     public OrdersDetailDto getOrdersDetail(
             @RequestParam("ordersId") Long ordersId
-    ){
-        !!!!!아직 Orders엔터티가 완전하지 않은것같아서 보류. 바로위의 getMyOrdersList()도 Orders엔터티가 확정되면 바뀔수도.
-    }*/
+    ) throws ResourceNotFoundException {
+        return myMenuService.getOrdersDetail(ordersId);
+    }
 
 
 

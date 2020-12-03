@@ -112,9 +112,9 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     int deleteAllScrapByMember(@Param("member") Member member);
 
     /*회원탈퇴시 회원이 작성한 fishingDiary를 비활성화 처리해주는 메소드.*/
-    @Modifying
+    /*@Modifying
     @Query("update FishingDiary f set f.isActive = false where f.member = :member")
-    int updateIsActiveByMember(@Param("member") Member member);
+    int updateIsActiveByMember(@Param("member") Member member);*/
 
 
     /* 조항일지, 조행기, 낚시포인트 위*경도 */

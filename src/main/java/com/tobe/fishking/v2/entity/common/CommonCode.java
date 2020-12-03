@@ -49,19 +49,19 @@ public class CommonCode extends BaseTime  {
 
         // EXEC sp_addextendedproperty 'MS_Description', N'', 'USER', DBO, 'TABLE', com_code, 'COLUMN',  ret_value1
         @Column(nullable = false, columnDefinition = "float not null default 0   comment '대체값1-double'  ")
-        private double retValue1;
+        private Double retValue1;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'', 'USER', DBO, 'TABLE', com_code, 'COLUMN',  is_active
         @Column(nullable = false, columnDefinition = "bit default 1   comment '사용여부'  ")
-        private boolean isActive;
+        private Boolean isActive;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'레벨', 'USER', DBO, 'TABLE', com_code, 'COLUMN',  i_level
         @Column(nullable = false, columnDefinition = "INT  default 1   comment '레벨'  ")
-        private int iLevel;
+        private Integer iLevel;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'순서', 'USER', DBO, 'TABLE', com_code, 'COLUMN',  order_by
         @Column(nullable = false, columnDefinition = "INT  default 1   comment '순서'  ")
-        private int orderBy;
+        private Integer orderBy;
 
 
         // EXEC sp_addextendedproperty 'MS_Description', N'비고', 'USER', DBO, 'TABLE', com_code, 'COLUMN',  remark
@@ -80,7 +80,7 @@ public class CommonCode extends BaseTime  {
 
         public void updateCommonCode(CommonCodeWriteDTO dto, Member modifiedBy, CodeGroup codeGroup){
                 this.codeGroup = codeGroup;
-                isActive = dto.isActive();
+                isActive = dto.getActive();
                 iLevel = dto.getLevel();
                 orderBy = dto.getOrderBy();
 

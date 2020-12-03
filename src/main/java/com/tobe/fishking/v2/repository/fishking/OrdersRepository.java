@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.repository.fishking;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.model.fishing.OrdersDetailDto;
 import com.tobe.fishking.v2.model.fishing.OrdersDtoForPage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -81,4 +82,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     Page<OrdersDtoForPage> findByCreatedByOrderByOrderStatus(
             @Param("member") Member member,
             Pageable pageable);
+
+
+
 }

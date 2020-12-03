@@ -47,8 +47,8 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
     Page<FishingDiaryCommentDtoForPage> findByMember(@Param("member") Member member, Pageable pageable);
 
     /*회원탈퇴시 회원이 작성한 comment를 비활성화 처리해주는 메소드.*/
-    @Modifying
+    /*@Modifying
     @Query("update FishingDiaryComment f set f.isActive = false where f.createdBy = :member")
-    int updateIsActiveByMember(@Param("member") Member member);
+    int updateIsActiveByMember(@Param("member") Member member);*/
 }
 

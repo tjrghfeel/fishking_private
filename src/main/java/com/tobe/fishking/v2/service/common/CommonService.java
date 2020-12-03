@@ -116,7 +116,7 @@ public class CommonService {
                 .remark(commonCodeWriteDTO.getRemark())
                 //not null & default값 존재 필드.
                 .iLevel(commonCodeWriteDTO.getLevel())
-                .isActive(commonCodeWriteDTO.isActive())
+                .isActive(commonCodeWriteDTO.getActive())
                 .orderBy(commonCodeWriteDTO.getOrderBy())
                 .build();
 

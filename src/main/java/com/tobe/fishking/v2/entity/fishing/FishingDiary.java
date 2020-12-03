@@ -87,11 +87,11 @@ public class FishingDiary extends BaseTime {
 
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'물고기길이', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fish_length
     @Column(columnDefinition = " float comment '물고기길이'  ")
-    private double fishLength;
+    private Double fishLength;
 
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'물고기무게', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fish_weight
     @Column(columnDefinition = " float  comment '물고기무게'  ")
-    private double fishWeight;
+    private Double fishWeight;
 
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'낚시기법', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fish_weight
     @Column(columnDefinition = "int   comment '낚시기법'  ")
@@ -139,9 +139,6 @@ public class FishingDiary extends BaseTime {
     @JoinColumn(name = "fishing_diary_comments", columnDefinition = "comment '댓글' ")
     private List<FishingDiaryComment> comments = new ArrayList<>();
 */
-
-    @Column(columnDefinition = "bit not null default 1 comment '활성화 여부' ")
-    private boolean isActive;
 
     //사진및 동영상은 File로.. 구분자(FilePublish) 조황일지
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  created_by

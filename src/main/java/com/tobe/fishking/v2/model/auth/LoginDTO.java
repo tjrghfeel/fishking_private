@@ -1,15 +1,21 @@
 package com.tobe.fishking.v2.model.auth;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginDTO {
 
-    private @Valid String memberId;
-    private @Valid String password;
+    @NotNull(message = "id가 비었습니다")
+    private String memberId;
+    
+    @NotNull(message = "pw가 비었습니다")
+    private String password;
 }

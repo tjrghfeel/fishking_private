@@ -15,7 +15,7 @@ public interface CouponMemberDTO {
      Long getcoupon();
      String getcouponCode();
      Long getMember();
-     boolean getIsUse();//사용여부
+     Boolean getIsUse();//사용여부
      LocalDateTime getRegDate();//등록일
      LocalDateTime getUseDate();//사용일
      Long getOrders();
@@ -29,13 +29,13 @@ public interface CouponMemberDTO {
      String getCouponName();
     //private String exposureStartDate;
     //private String exposureEndDate;
-     double getSaleValues();//할인률
+     Double getSaleValues();//할인률
     //private int maxIssueCount;//최대발행수량.
-     int getEffectiveDays();//유효일수
+    Integer getEffectiveDays();//유효일수
     //private double issueQty;//발행수량
     //private double useQty;//사용수량
-     boolean getIsIssue();//발행/발행중지
-     boolean getIsUsable();//사용/사용중지
+     Boolean getIsIssue();//발행/발행중지
+     Boolean getIsUsable();//사용/사용중지
     //private double fromPurchaseAmount;
     //private double toPurchaseAmount;
      String getBrfIntroduction();//간략 소개

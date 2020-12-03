@@ -12,7 +12,7 @@ public enum FishingType /*implements IEnumModel*/ {
         this.value = value;
     }
 
-
+    public String getValue(){return this.value;}
     /*@Override
     public String getKey() {
         return name();

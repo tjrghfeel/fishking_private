@@ -36,10 +36,10 @@ public class GoodsDTO {
                 .goodsId(goods.getId())
                 .goodsName(goods.getName())
                 .totalAmount(goods.getTotalAmount())
-                .isBegginerPossible(goods.isBeginnerPossible())
+                .isBegginerPossible(goods.getIsBeginnerPossible())
                 .shipStartTime(goods.getShipStartTime())
                 .meridiem(goods.getMeridiem())
-                .isClose(goods.isClose())
+                .isClose(goods.getIsClose())
                 .build();
     }
 }

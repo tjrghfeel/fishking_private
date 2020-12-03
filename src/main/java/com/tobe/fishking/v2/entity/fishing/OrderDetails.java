@@ -24,7 +24,7 @@ public class OrderDetails extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'조황정보', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  fishing_ships
     @ManyToOne
     @JoinColumn(name = "order_detail_goods_id", columnDefinition = "bigint  not null   comment '조황정보'  ")
-    private Goods goodss;
+    private Goods goods;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'조황정보', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  fishing_ships
     @ManyToOne
@@ -33,16 +33,16 @@ public class OrderDetails extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'인원', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  personnel
     @Column(columnDefinition = "float  comment  '인원'  ")
-    private double personnel;
+    private Integer personnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'가격', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  price
     @Column(columnDefinition = "float comment '가격'  ")
-    private double price;
+    private Integer price;
 
     //최종가격  = 인원* 가격
     // EXEC sp_addextendedproperty 'MS_Description', N'최종가격', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  total_amount
     @Column(columnDefinition = "float comment '총가격'  ")
-    private double totalAmount;
+    private Integer totalAmount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  created_by
     @ManyToOne
@@ -56,3 +56,4 @@ public class OrderDetails extends BaseTime {
     private Member modifiedBy;
 
 }
+

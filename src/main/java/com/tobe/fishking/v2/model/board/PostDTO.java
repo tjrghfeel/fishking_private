@@ -34,8 +34,8 @@ public class PostDTO {
     private String createdAt;//
     private Long createdById;//
     private Long modifiedById;//
-    private int questionType;
-    private boolean isActive;
+    private int questionType;//
+
 
     //nullable 필드.
     private LocalDateTime createdDate;//
@@ -64,11 +64,10 @@ public class PostDTO {
         createdById = post.getCreatedBy().getId();
         modifiedById = post.getModifiedBy().getId();
         questionType = post.getQuestionType().ordinal();
-        isActive = post.isActive();
 
         //nullable 필드.
         likeCount = post.getLikeCount();
-        isSecret = post.isSecret();
+        isSecret = post.getIsSecret();
         parentId = post.getParent_id();
         List<Tag> tagList = post.getTags();
         for(int i=0; i<tagList.size(); i++){

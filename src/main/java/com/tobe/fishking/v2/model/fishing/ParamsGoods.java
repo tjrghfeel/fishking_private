@@ -54,7 +54,7 @@ public class ParamsGoods {
 
     @Size(min = 2, max = 10)
     @ApiModelProperty(value = "총액", required = true)
-    private double totalAmount;
+    private int totalAmount;
 
     @Size(min = 1, max = 2)
     @ApiModelProperty(value = " '정원(min)'", required = true)

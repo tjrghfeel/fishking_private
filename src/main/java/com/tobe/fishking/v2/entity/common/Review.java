@@ -38,24 +38,21 @@ public class Review extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'전체평균평점 5점만점. 0/0.5/1....5', 'USER', DBO, 'TABLE', review, 'COLUMN',  total_avg_by_review
     @Column(nullable = false,  columnDefinition = "float  default 0.0 comment  '전체평균평점'  ")
-    private double totalAvgByReview;
+    private Double totalAvgByReview;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'손맛평점', 'USER', DBO, 'TABLE', review, 'COLUMN',  taste_by_review
     @Column(nullable = false,  columnDefinition = "float  default 0.0 comment  '손맛평점'  ")
-    private double tasteByReview;
+    private Double tasteByReview;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'서비스평점', 'USER', DBO, 'TABLE', review, 'COLUMN',  service_by_review
     @Column(nullable = false,  columnDefinition = "float  default 0.0 comment  '서비스평점'  ")
-    private double serviceByReview;
+    private Double serviceByReview;
     // EXEC sp_addextendedproperty 'MS_Description', N'청결도평점', 'USER', DBO, 'TABLE', review, 'COLUMN',  clean_by_review
     @Column(nullable = false,  columnDefinition = "float  default 0.0 comment  '청결도평점'  ")
-    private double cleanByReview;
+    private Double cleanByReview;
 
     @Column(nullable = false, columnDefinition = "varchar(2000) comment '내용'")
     private String content;
-
-    @Column(columnDefinition = "bit not null default 1 comment '활성화 여부' ")
-    private boolean isActive;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', review, 'COLUMN',  created_by
     @ManyToOne

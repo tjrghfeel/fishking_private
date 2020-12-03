@@ -16,19 +16,19 @@ import java.util.List;
 public class WritePostDTO {
     //not null필드.
     private Long boardId;
-    private int channelType;
+    private Integer channelType;
     private String title;
     private String contents;
     private Long authorId;//modifiedBy, createdBy필드를 여기서 id로 가져와 사용할것.
 //    private String authorName;
-    private int returnType;
+    private Integer returnType;
     private String returnNoAddress;
     private String createdAt;
-    private int questionType;
+    private Integer questionType;
 
     //nullable 필드.
-    private List<String> tagsName = new ArrayList<>();
-    private boolean isSecret;
+//    private List<String> tagsName = new ArrayList<>();
+    private Boolean isSecret;
     private Long parentId;
 
     public WritePostDTO(Post post) {
@@ -44,12 +44,12 @@ public class WritePostDTO {
         questionType = post.getQuestionType().ordinal();
 
         //nullable 필드.
-        isSecret = post.isSecret();
+        isSecret = post.getIsSecret();
         parentId = post.getParent_id();
         List<Tag> tagList = post.getTags();
-        for(int i=0; i<tagList.size(); i++){
+        /*for(int i=0; i<tagList.size(); i++){
             tagsName.add(tagList.get(i).getTagName());
-        }
+        }*/
     }
 
 

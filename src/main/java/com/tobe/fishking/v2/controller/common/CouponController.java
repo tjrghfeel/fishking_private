@@ -44,9 +44,6 @@ public class CouponController {
         return couponService.downloadCoupon(memberId, couponId);
     }
 
-
-
-
     /*사용 가능한 coupon_member 리스트 조회.
     * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트를 정렬기준에 맞게 반환. */
     @ApiOperation(value = "사용 가능한 쿠폰 리스트 조회")

@@ -34,14 +34,14 @@ public class CompanyController {
      */
     @ApiOperation(value = "업체 등록")
     @PostMapping("/company")
-    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, @RequestParam("files") MultipartFile[] files) throws IOException, ResourceNotFoundException {
+    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, @RequestParam("files") MultipartFile[] files) throws Exception {
         return companyService.handleCompanyRegisterReq(companyWriteDTO, files);
     }
 
     /*업체 등록 요청 수정*/
     @ApiOperation(value = "업체 등록 요청 수정")
     @PostMapping("/company/modify")
-    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, @RequestParam("files") MultipartFile[] files) throws ResourceNotFoundException, IOException {
+    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, @RequestParam("files") MultipartFile[] files) throws Exception {
         return companyService.updateCompanyRegisterReq(companyWriteDTO, files);
     }
 

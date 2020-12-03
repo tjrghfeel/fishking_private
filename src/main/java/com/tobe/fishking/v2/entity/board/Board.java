@@ -47,7 +47,7 @@ public class Board extends BaseTime implements Serializable {
     //@Column(columnDefinition = " varchar(255) null comment '게시판 유형'  ")
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'게시판 유형', 'USER', DBO, 'TABLE', board, 'COLUMN',  board_type
     @Column(columnDefinition = " varchar(100) null comment '게시판 유형' ")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private BoardType boardType;
 
     //@Column(length = 100, nullable = false)
@@ -117,7 +117,7 @@ public class Board extends BaseTime implements Serializable {
     // mysql > @Column(columnDefinition = " int(2) default 0 not null   comment '첨부파일수 '  ")
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'첨부파일수', 'USER', DBO, 'TABLE', board, 'COLUMN',  n_attach
     @Column(columnDefinition = "int  null comment '첨부파일수' ")
-    private int nAttach;
+    private Integer nAttach;
 
    // @Column(columnDefinition = " varchar(5)  comment '첨부파일 하나의 크기 제약 '  ")
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'첨부파일 하나의 크기 제약', 'USER', DBO, 'TABLE', board, 'COLUMN',  a_size
@@ -127,7 +127,7 @@ public class Board extends BaseTime implements Serializable {
     // @Column(columnDefinition = " int(1) default 1 not null comment '포맷 '  ")
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'포맷', 'USER', DBO, 'TABLE', board, 'COLUMN',  display_format
     @Column(columnDefinition = "int  default 1 not null comment '포맷' ")
-    private  int displayFrmat;
+    private  Integer displayFrmat;
 
     //myssql @Column(columnDefinition = " varchar(100)  comment '게시판 description '  ")
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'게시판 description', 'USER', DBO, 'TABLE', board, 'COLUMN',  board_desc
@@ -144,12 +144,11 @@ public class Board extends BaseTime implements Serializable {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
-
     @Enumerated(EnumType.ORDINAL)
     @Column(unique = true, name = "file_publish")
     private FilePublish filePublish;
 
-    FilePublish getFilePublish() {
+    public FilePublish getFilePublish() {
         return filePublish;
     }
 

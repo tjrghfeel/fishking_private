@@ -19,11 +19,11 @@ public interface CompanyListDTO {
     //private String bank ;
     //private String accountNo ;
     //private String ownerWording;//not null
-     boolean getIsOpen();
+     Boolean getIsOpen();
     //private String  skbAccount;
     //private String skbPassword;
     //private String companyAddress;//
-     boolean getIsRegistered();
+     Boolean getIsRegistered();
     //private Long createdBy;//not null, fk
     //private Long modifiedBy;//not null, fk
     //private String bizNoFilesUrl ;

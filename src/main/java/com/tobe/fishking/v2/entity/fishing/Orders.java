@@ -33,18 +33,18 @@ public class Orders extends BaseTime {
     //최종가격  = 인원* 가격
     // EXEC sp_addextendedproperty 'MS_Description', N'최종가격', 'USER', DBO, 'TABLE', orders, 'COLUMN',  total_amount
     @Column(columnDefinition = "float comment '최종가격'  ")
-    private double totalAmount;
+    private Integer totalAmount;
 
     //(예정)승선자는  어떻게 처리?
 
     //최종가격  = 인원* 가격
     // EXEC sp_addextendedproperty 'MS_Description', N'할인금액', 'USER', DBO, 'TABLE', orders, 'COLUMN',  discount_amount
     @Column(columnDefinition = "float comment '할인금액'  ")
-    private double discountAmount;
+    private Integer discountAmount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'할인후결제금액', 'USER', DBO, 'TABLE', orders, 'COLUMN',  payment_amount
     @Column(columnDefinition = "float comment '할인후결제금액'  ")
-    private double  paymentAmount;
+    private Integer  paymentAmount;
 
 
     //결제수단 , //결제방법
@@ -56,17 +56,13 @@ public class Orders extends BaseTime {
     //결제여부
     // EXEC sp_addextendedproperty 'MS_Description', N'결제여부', 'USER', DBO, 'TABLE', orders, 'COLUMN',  is_pay
     @Column(columnDefinition = "bit  comment '결제여부'  ")
-    private boolean isPay;
+    private Boolean isPay;
 
     //OrderStatus
     // EXEC sp_addextendedproperty 'MS_Description', N'결제여부', 'USER', DBO, 'TABLE', orders, 'COLUMN',  is_pay
     @Column(columnDefinition = "int  comment '주문진행상태'  ")
     @Enumerated(EnumType.ORDINAL)
     private OrderStatus orderStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "goods", columnDefinition = "bigint not null comment '상품'")
-    private Goods goods;
 
     @Column(columnDefinition = "varchar(20) comment '예약번호'")
     private String ordersNum;

@@ -84,13 +84,10 @@ public class Post extends BaseTime {
 
     @Transient // DB에 영향을 미치지 않는다.
     @Column(columnDefinition = "varchar(200)  comment '좋아요수' ")
-    private int likeCount;
+    private Integer likeCount;
 
     @Column(columnDefinition = "bit default 0  comment '비밀글여부' ")
-    private boolean isSecret;
-
-    @Column(columnDefinition = "bit not null default 1 comment '활성화 여부' ")
-    private boolean isActive;
+    private Boolean isSecret;
 
     @ManyToMany(targetEntity= Tag.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "post_tags", columnDefinition = "comment '태그' ")
@@ -131,10 +128,13 @@ public class Post extends BaseTime {
 
     //Post 수정시에, UpdatePostDTO로부터 엔터티 정보 수정하는 메소드.
     public void updatePost(UpdatePostDTO postDTO){
-        contents = postDTO.getContents();
-        createdAt = postDTO.getCreatedAt();
-        isSecret = postDTO.isSecret();
-        parent_id = postDTO.getParentId();
+        channelType = ChannelType.values()[postDTO.getChannelType()];
         title = postDTO.getTitle();
+        contents = postDTO.getContents();
+        returnType = ReturnType.values()[postDTO.getReturnType()];
+        returnNoAddress = postDTO.getReturnNoAddress();
+        createdAt = postDTO.getCreatedAt();
+        questionType = QuestionType.values()[postDTO.getQuestionType()];
+        isSecret = postDTO.getIsSecret();
     }
 }

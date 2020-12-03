@@ -24,11 +24,11 @@ public class CompanyDTO {
     private String bank ;
     private String accountNo ;
     private String ownerWording;//not null
-    private boolean isOpen;
+    private Boolean isOpen;
     private String  skbAccount;
     private String skbPassword;
     private String companyAddress;//
-    private boolean isRegistered;
+    private Boolean isRegistered;
     private Long createdBy;//not null, fk
     private Long modifiedBy;//not null, fk
     private String bizNoFilesUrl ;
@@ -51,11 +51,11 @@ public class CompanyDTO {
         bank = company.getBank();
         accountNo = company.getAccountNo();
         ownerWording = company.getOwnerWording();
-        isOpen = company.isOpen();
+        isOpen = company.getIsOpen();
         skbAccount = company.getSkbAccount();
         skbPassword = company.getSkbPassword();
         companyAddress = company.getCompanyAddress();
-        isRegistered = company.isRegistered();
+        isRegistered = company.getIsRegistered();
         createdBy = company.getCreatedBy().getId();
         modifiedBy = company.getModifiedBy().getId();
         bizNoFilesUrl = company.getBizNoFileDownloadUrl();

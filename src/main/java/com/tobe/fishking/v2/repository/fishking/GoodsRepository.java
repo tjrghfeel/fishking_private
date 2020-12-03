@@ -18,7 +18,7 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
     List<Goods> findAllByFishingType(FishingType fishingType);
 
     //추천업체
-    Page<Goods> findAllByRecommend(Pageable pageable, Integer totalElements);
+    Page<Goods> findAllByIsRecommend(Pageable pageable, Integer totalElements);
 
     //
     Page<Goods> findGoodsByFishSpeciesIsContaining(String fishSpeciesName, Pageable pageable, Integer totalElements);

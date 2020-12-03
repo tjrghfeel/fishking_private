@@ -6,6 +6,9 @@ import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
+//import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.StringConverter;
 import lombok.*;
 
 
@@ -31,6 +34,7 @@ public class Member extends BaseTime implements Serializable {
     public String uid;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'이름', 'USER', DBO, 'TABLE', member, 'COLUMN' username
+    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "nvarchar(100) null   comment '이름'  ")
     public String memberName;
     
@@ -43,7 +47,8 @@ public class Member extends BaseTime implements Serializable {
     public String password;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'이메일', 'USER', DBO, 'TABLE', member, 'COLUMN' email
-    @Column(columnDefinition = "varchar(20) NOT NULL   comment '이메일'  ")
+    @Convert(converter = StringConverter.class)
+    @Column(columnDefinition = "varchar(150) NOT NULL   comment '이메일'  ")
     public String email;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'성별', 'USER', DBO, 'TABLE', member, 'COLUMN' gender
@@ -72,7 +77,7 @@ public class Member extends BaseTime implements Serializable {
     private String confirmPassword;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'활성여부-사용여부', 'USER', DBO, 'TABLE', member, 'COLUMN' is_active
-    @Column(nullable = false, columnDefinition = "bit default 1 comment '활성여부-사용여부'  ")
+    @Column(columnDefinition = "bit not null default 1 comment '활성여부-사용여부'  ")
     private Boolean isActive;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'인증번호', 'USER', DBO, 'TABLE', member, 'COLUMN' certifiedNo
@@ -93,7 +98,8 @@ public class Member extends BaseTime implements Serializable {
     private SNSType snsType ;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'SNS ID', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified
-    @Column(columnDefinition = "varchar(50)   comment 'SNS ID'  ")
+    @Convert(converter = StringConverter.class)
+    @Column(columnDefinition = "varchar(80)   comment 'SNS ID'  ")
     private String snsId ;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상태메세지', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified

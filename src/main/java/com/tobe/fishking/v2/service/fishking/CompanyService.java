@@ -45,7 +45,7 @@ public class CompanyService {
 
     /*업체 등록 요청 처리 메소드. */
     @Transactional
-    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files) throws IOException, ResourceNotFoundException {
+    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files) throws Exception {
         FileEntity[] fileEntityList = new FileEntity[3];
 
         Member member = memberRepository.findById(companyWriteDTO.getMember())
@@ -86,7 +86,7 @@ public class CompanyService {
 
     /*MultipartServletRequest를 받아 안에들어잇는 파일저장하는 메소드. */
     @Transactional
-    Long[] saveFile(Long memberId, MultipartFile[] files) throws ResourceNotFoundException, IOException {
+    Long[] saveFile(Long memberId, MultipartFile[] files) throws Exception {
         Long[] fileEntityIdList = new Long[3];//각 증빙서류 FileEntity 저장 후, 그 FileEntity들 저장할 배열.
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
@@ -96,7 +96,10 @@ public class CompanyService {
         for(int i=0; i<3; i++){//넘어온 파일들에 대해 반복.
             MultipartFile file = files[i];
             //파일 저장.
-            Map<String, Object> fileInfo = uploadService.initialFile(file, FileType.image, FilePublish.companyRequest, "");
+            if(uploadService.checkFileType(file)!=FileType.image){
+                throw new Exception();//!!!!!어떤 예외 던져야 할지.
+            }
+            Map<String, Object> fileInfo = uploadService.initialFile(file, FilePublish.companyRequest, "");
 
             //FileEntity 저장.
             FileEntity fileEntity = FileEntity.builder()
@@ -124,7 +127,7 @@ public class CompanyService {
 
     /*업체등록 요청 수정 메소드*/
     @Transactional
-    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files) throws ResourceNotFoundException, IOException {
+    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files) throws Exception {
         /*다시올린사람이 누구인지 받아옴.*/
         Member member = memberRepository.findById(companyWriteDTO.getMember())
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+companyWriteDTO.getMember()));
