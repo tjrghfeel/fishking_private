@@ -17,7 +17,7 @@ export class RouteStore {
 
   /** 뒤로가기 */
   back() {
-    this.history!.back();
+    this.history!.go(-1);
   }
 
   /** 이동 */

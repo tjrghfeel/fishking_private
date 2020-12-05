@@ -1,7 +1,7 @@
 import React from "react";
 
-const component = () => {
-  return <div className="clearfix"></div>;
+const component = ({ children }) => {
+  return <div className="clearfix">{children}</div>;
 };
 
 export default component;

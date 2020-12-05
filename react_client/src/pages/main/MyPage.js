@@ -31,12 +31,44 @@ export default inject(
           this.MyStore.clearMyMenuPageData();
         }
       }
-      navigateTo = (pathname) => {
-        this.RouteStore.go(pathname);
-      };
 
+      /** 로그인 화면 이동 */
+      navigateToLogin = () => {
+        this.RouteStore.go("/common/login");
+      };
+      /** 내쿠폰 화면 이동 */
+      navigateToMyCoupon = () => {
+        const { myMenuPageData } = this.MyStore;
+        if (myMenuPageData === null) this.navigateToLogin();
+        else this.RouteStore.go("/my/coupon");
+      };
+      /** 알림 화면 이동 */
+      navigateToAlarm = () => {
+        const { myMenuPageData } = this.MyStore;
+        if (myMenuPageData === null) this.navigateToLogin();
+        else this.RouteStore.go("/my/alarm");
+      };
+      /** 혜택쿠폰 화면 이동 */
+      navigateToCoupon = () => {
+        const { myMenuPageData } = this.MyStore;
+        if (myMenuPageData === null) this.navigateToLogin();
+        else this.RouteStore.go("/common/coupon");
+      };
+      /** 마이메뉴 화면 이동 */
+      navigateToMyMenu = (menu) => {
+        const { myMenuPageData } = this.MyStore;
+        if (menu.loggedIn && myMenuPageData === null) {
+          this.navigateToLogin();
+        } else {
+          this.RouteStore.go(menu.pathname);
+        }
+      };
+      /** 카카오톡 상담링크 열기 */
+      openKakao = () => {
+        console.log("KAKAO");
+      };
       /** 전화걸기 모달 열기 */
-      openCallModal = () => {
+      openCall = () => {
         this.ModalStore.open({
           id: "confirmModal",
           title: "전화걸기",
@@ -61,16 +93,19 @@ export default inject(
           pathname: "story-add.html",
           imgSrc: "/assets/img/svg/mymenu-write.svg",
           text: "글쓰기",
+          loggedIn: true,
         },
         {
           pathname: "my-post.html",
           imgSrc: "/assets/img/svg/mymenu-mypost.svg",
           text: "내글관리",
+          loggedIn: true,
         },
         {
           pathname: "my-zzim.html",
           imgSrc: "/assets/img/svg/mymenu-zzim.svg",
           text: "찜한업체",
+          loggedIn: true,
         },
         {
           pathname: "boat.html",
@@ -144,7 +179,7 @@ export default inject(
             <Container cls={"nopadding"}>
               {myMenuPageData === null && (
                 <a
-                  onClick={() => this.navigateTo("login.html")}
+                  onClick={() => this.navigateToLogin()}
                   className="btn btn-primary btn-round btn-lg btn-block cs-padding"
                 >
                   로그인 및 회원가입 하기
@@ -181,7 +216,7 @@ export default inject(
               <div className="row no-gutters d-flex align-items-center mt-3">
                 <div className="col-2">내 쿠폰</div>
                 <div className="col-4 text-right">
-                  <a onClick={() => this.navigateTo("my-coupon.html")}>
+                  <a onClick={() => this.navigateToMyCoupon()}>
                     <strong className="text-primary large">
                       {(myMenuPageData !== null &&
                         myMenuPageData.couponCount) ||
@@ -198,7 +233,7 @@ export default inject(
                 <div className="col-1"></div>
                 <div className="col-2">알림</div>
                 <div className="col-3 text-right">
-                  <a onClick={() => this.navigateTo("my-alarm.html")}>
+                  <a onClick={() => this.navigateToAlarm()}>
                     <strong className="text-primary large">
                       {(myMenuPageData !== null && myMenuPageData.alarmCount) ||
                         0}
@@ -213,7 +248,7 @@ export default inject(
                 </div>
               </div>
               <Space cls={"mt-3 mb-0"} />
-              <a onClick={() => this.navigateTo("coupon.html")}>
+              <a onClick={() => this.navigateToCoupon()}>
                 <div className="row no-gutters d-flex align-items-center mt-2">
                   <div className="col-9">
                     <strong>
@@ -240,7 +275,7 @@ export default inject(
                   <a
                     key={index}
                     className="nav-link"
-                    onClick={() => this.navigateTo(data.pathname)}
+                    onClick={() => this.navigateToMyMenu(data)}
                   >
                     <figure>
                       <img src={data.imgSrc} alt="" />
@@ -263,7 +298,7 @@ export default inject(
               <div className="row no-gutters no-gutters-cs d-flex align-items-center mt-4">
                 <div className="col-6">
                   <a
-                    href="#none"
+                    onClick={() => this.openKakao()}
                     className="btn btn-yellow btn-round btn-lg btn-block cs-padding"
                   >
                     <img
@@ -276,7 +311,7 @@ export default inject(
                 </div>
                 <div className="col-6" style={{ paddingRight: "0px" }}>
                   <a
-                    onClick={() => this.openCallModal()}
+                    onClick={() => this.openCall()}
                     className="btn btn-grey btn-round btn-lg btn-block cs-padding"
                     data-toggle="modal"
                     data-target="#callModal"

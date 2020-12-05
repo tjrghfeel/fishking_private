@@ -2,8 +2,8 @@ import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { inject, observer } from "mobx-react";
 
-import IndexPage from "../pages/Main/IndexPage";
-import MyPage from "../pages/Main/MyPage";
+import IndexPage from "../pages/main/IndexPage";
+import MyPage from "../pages/main/MyPage";
 
 import MainTabs from "../components/tabs/MainTabs.js";
 
