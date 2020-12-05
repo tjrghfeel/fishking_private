@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 
 const MainTabs = inject("RouteStore")(
   observer(({ RouteStore }) => {
-    const [location, setLocation] = useState(
-      RouteStore.history.location.pathname
-    );
+    const [location, setLocation] = useState(RouteStore.location?.pathname);
+    useEffect(() => {
+      setLocation(RouteStore.location?.pathname);
+    }, [setLocation, RouteStore]);
     // -- > 네비게이션
     const navigateTo = useCallback(
       (pathname) => {
@@ -33,7 +34,10 @@ const MainTabs = inject("RouteStore")(
                 key={index}
                 className={
                   "nav-link" +
-                  (location.indexOf(data.pathname) !== -1 ? " active" : "")
+                  (location?.indexOf(data.pathname) !== -1 ||
+                  (location === "/" && data.pathname === `/main/index`)
+                    ? " active"
+                    : "")
                 }
                 onClick={() => navigateTo(data.pathname)}
               >

@@ -2,16 +2,13 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 
-const ConfirmModal = inject("PageStore")(
-  observer(({ PageStore }) => {
-    const { modalData } = PageStore;
-    let { title, innerHtml, textOk, textCancel, onOk, onCancel } = modalData;
-    textCancel = textCancel || "닫기";
+const ConfirmModal = inject("ModalStore")(
+  observer(({ ModalStore: { data } }) => {
     return (
       <div
         className="modal fade"
         id="confirmModal"
-        tabIndex="-1"
+        tabIndex={-1}
         aria-labelledby="confirmModalLabel"
         aria-hidden="true"
       >
@@ -19,28 +16,30 @@ const ConfirmModal = inject("PageStore")(
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title text-center" id="confirmModalLabel">
-                {title}
+                {data.title}
               </h5>
             </div>
-            <div className="modal-body text-center">{innerHtml}</div>
+            <div className="modal-body text-center">{data.innerHtml}</div>
             <div className="modal-footer-btm">
               <div className="row no-gutters">
                 <div className="col-6">
                   <a
-                    onClick={() => (onOk ? onOk() : null)}
+                    onClick={() => (data.onClickOk ? data.onClickOk() : null)}
                     className="btn btn-primary btn-lg btn-block"
                     data-dismiss="modal"
                   >
-                    {textOk}
+                    {data.textOk}
                   </a>
                 </div>
                 <div className="col-6">
                   <a
-                    onClick={() => (onCancel ? onCancel() : null)}
+                    onClick={() =>
+                      data.onClickCancel ? data.onClickCancel() : null
+                    }
                     className="btn btn-third btn-lg btn-block"
                     data-dismiss="modal"
                   >
-                    {textCancel}
+                    {data.textCancel || "닫기"}
                   </a>
                 </div>
               </div>

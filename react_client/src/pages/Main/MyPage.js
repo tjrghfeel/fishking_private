@@ -9,22 +9,35 @@ import Space from "../../components/layouts/Space";
 export default inject(
   "AppStore",
   "RouteStore",
-  "PageStore",
+  "ModalStore",
   "MyStore"
 )(
   observer(
     class MyPage extends React.Component {
-      componentDidMount() {
-        const { MyStore } = this.props;
-        MyStore.getMyMenuPage();
+      constructor(props) {
+        super(props);
+        this.AppStore = props.AppStore;
+        this.RouteStore = props.RouteStore;
+        this.ModalStore = props.ModalStore;
+        this.MyStore = props.MyStore;
       }
-
+      async componentDidMount() {
+        if (this.AppStore.memberId) {
+          await this.MyStore.loadMyMenuPageData(this.AppStore.memberId);
+        }
+      }
+      componentWillUnmount() {
+        if (this.MyStore.myMenuPageData) {
+          this.MyStore.clearMyMenuPageData();
+        }
+      }
       navigateTo = (pathname) => {
-        this.props.RouteStore.go(pathname);
+        this.RouteStore.go(pathname);
       };
+
       /** 전화걸기 모달 열기 */
       openCallModal = () => {
-        this.props.PageStore.openModal({
+        this.ModalStore.open({
           id: "confirmModal",
           title: "전화걸기",
           innerHtml: (
@@ -37,6 +50,9 @@ export default inject(
             </p>
           ),
           textOk: "통화",
+          onClickOk: () => {
+            console.log("전화걸기");
+          },
         });
       };
       /** 마이메뉴 데이터 리스트 */
@@ -83,8 +99,7 @@ export default inject(
         },
       ];
       render() {
-        const { AppStore } = this.props;
-        const { member } = AppStore;
+        const { myMenuPageData } = this.MyStore;
         return (
           <>
             {/** 네비게이션 */}
@@ -93,23 +108,23 @@ export default inject(
             {/** 프로필 */}
             <Container cls={"padding"}>
               <div className="media d-flex align-items-center">
-                {!member && (
+                {myMenuPageData === null && (
                   <div className="media-body">
                     <p className="text-center">
                       회원가입 시 할인쿠폰 및 다양한 서비스 이용이 가능합니다.
                     </p>
                   </div>
                 )}
-                {member && (
+                {myMenuPageData !== null && (
                   <>
                     <img
-                      src={member.profile}
+                      src={myMenuPageData.profileImage}
                       className="profile-thumb-md align-self-center mr-2"
                       alt="profile"
                     />
                     <div className="media-body">
                       <h6>
-                        <strong>{member.name}</strong>
+                        <strong>{myMenuPageData.nickName}</strong>
                         <a
                           onClick={() =>
                             this.navigateTo("my-profile-edit.html")
@@ -127,7 +142,7 @@ export default inject(
 
             {/** 예약&쿠폰 */}
             <Container cls={"nopadding"}>
-              {!member && (
+              {myMenuPageData === null && (
                 <a
                   onClick={() => this.navigateTo("login.html")}
                   className="btn btn-primary btn-round btn-lg btn-block cs-padding"
@@ -135,7 +150,7 @@ export default inject(
                   로그인 및 회원가입 하기
                 </a>
               )}
-              {member && (
+              {myMenuPageData !== null && (
                 <a href="my-reservation.html">
                   <div className="card-round-box">
                     <div className="row no-gutters d-flex align-items-center">
@@ -148,7 +163,9 @@ export default inject(
                         <strong>나의 예약내역 바로가기</strong>
                       </div>
                       <div className="col-5 text-right">
-                        <strong className="text-primary large">0</strong>
+                        <strong className="text-primary large">
+                          {myMenuPageData.bookingCount || 0}
+                        </strong>
                         <small className="text-secondary">건</small>
                         <img
                           src="/assets/img/svg/arrow-grey.svg"
@@ -165,8 +182,12 @@ export default inject(
                 <div className="col-2">내 쿠폰</div>
                 <div className="col-4 text-right">
                   <a onClick={() => this.navigateTo("my-coupon.html")}>
-                    <strong className="text-primary large"></strong>
-                    <small className="text-secondary"></small>
+                    <strong className="text-primary large">
+                      {(myMenuPageData !== null &&
+                        myMenuPageData.couponCount) ||
+                        0}
+                    </strong>
+                    <small className="text-secondary">건</small>
                     <img
                       src="/assets/img/svg/arrow-grey.svg"
                       alt="Set"
@@ -178,7 +199,10 @@ export default inject(
                 <div className="col-2">알림</div>
                 <div className="col-3 text-right">
                   <a onClick={() => this.navigateTo("my-alarm.html")}>
-                    <strong className="text-primary large">0</strong>
+                    <strong className="text-primary large">
+                      {(myMenuPageData !== null && myMenuPageData.alarmCount) ||
+                        0}
+                    </strong>
                     <small className="text-secondary">건</small>
                     <img
                       src="/assets/img/svg/arrow-grey.svg"

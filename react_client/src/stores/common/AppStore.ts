@@ -1,9 +1,15 @@
 import { makeAutoObservable } from "mobx";
 
-export default new (class AppStore {
+export class AppStore {
   constructor() {
     makeAutoObservable(this);
   }
-  /** 로그인 데이터 */
-  member: any = null;
-})();
+  /** MemberId */
+  memberId: number | null = null;
+}
+
+export const createStore = () => {
+  return new AppStore();
+};
+
+export type TAppStore = ReturnType<typeof createStore>;

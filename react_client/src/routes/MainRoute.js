@@ -1,10 +1,11 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { inject, observer } from "mobx-react";
 
 import IndexPage from "../pages/Main/IndexPage";
 import MyPage from "../pages/Main/MyPage";
-import MainTabs from "../components/tabs/MainTabs";
-import { inject, observer } from "mobx-react";
+
+import MainTabs from "../components/tabs/MainTabs.js";
 
 const MainRoute = inject("RouteStore")(
   observer(({ match }) => {

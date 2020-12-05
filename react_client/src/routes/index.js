@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import { Switch, Route, Redirect } from "react-router-dom";
 
 import Modals from "../components/modals";
+
 import MainRoute from "./MainRoute";
 
 export default inject("RouteStore")(
@@ -10,7 +11,7 @@ export default inject("RouteStore")(
     class Routes extends React.Component {
       constructor(props) {
         super(props);
-        props.RouteStore.setHistory(props.history);
+        props.RouteStore.setRouteObject(props.history, props.location);
       }
       render() {
         return (

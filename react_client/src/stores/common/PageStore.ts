@@ -1,14 +1,13 @@
-/* global $ */
 import { makeAutoObservable } from "mobx";
-import { ModalProps } from "../../types/StoreTypes";
 
-export default new (class PageStore {
+export class PageStore {
   constructor() {
     makeAutoObservable(this);
   }
-  /** Inject 된 외부 Script 모듈 배열 */
-  scripts: Array<any> = [];
-  /** 외부 Script 모듈을 Inject 한다. */
+  /** 동적 로드된 스크립트 엘리먼트 배열 */
+  scripts: Array<HTMLElement> = [];
+
+  /** 스크립트 동적 로드하기 */
   injectScript(src: string, onLoad?: Function, onError?: Function) {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -25,13 +24,18 @@ export default new (class PageStore {
       this.scripts.push(script);
     });
   }
-  /** Inject 된 외부 Script 모듈을 Remove 한다. */
+
+  /** 동적 로드된 스크립트 제거 */
   removeInjectetdScripts() {
-    for (let script of this.scripts) {
-      script.remove();
-    }
+    return new Promise((resolve) => {
+      for (let script of this.scripts) {
+        script.remove();
+      }
+      resolve(true);
+    });
   }
-  /** Window Scroll 정보를 State 에 저장한다. */
+
+  /** window scroll 정보를 state 에 저장 */
   storeScroll(pageX: number, pageY: number) {
     const { pageXOffset, pageYOffset, location } = window;
     const { state: prevState = {} } = window.history;
@@ -47,19 +51,17 @@ export default new (class PageStore {
       location.pathname
     );
   }
-  /** State 에 저장된 Window Scroll 을 복구한다. */
+
+  /** state 에 저장된 스크롤 정보를 복구 */
   restoreScroll() {
     const { state: prevState = {} } = window.history;
     const { scroll: prevScroll = { x: 0, y: 0 } } = prevState;
     window.scrollTo(prevScroll.x, prevScroll.y);
   }
-  /** Modal 데이터 */
-  modalData: ModalProps = { id: "" };
-  /** Modal 열기 */
-  openModal(data: ModalProps) {
-    this.modalData = data;
-    const { id } = this.modalData;
-    // @ts-ignore
-    $("#".concat(id)).modal("show");
-  }
-})();
+}
+
+export const createStore = () => {
+  return new PageStore();
+};
+
+export type TPageStore = ReturnType<typeof createStore>;
