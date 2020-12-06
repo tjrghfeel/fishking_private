@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 
 react_client/node_modules
-
+react_native_client/node_modules
 
 
 ### STS ###
