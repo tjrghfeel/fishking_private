@@ -1,0 +1,5 @@
+#import <Foundation/Foundation.h>
+@interface PodsDummy_Pods_react_native_webview_react_native_webviewTests : NSObject
+@end
+@implementation PodsDummy_Pods_react_native_webview_react_native_webviewTests
+@end
