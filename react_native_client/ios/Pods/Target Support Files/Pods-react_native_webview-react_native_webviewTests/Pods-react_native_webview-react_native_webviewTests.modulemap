@@ -1,6 +1,0 @@
-module Pods_react_native_webview_react_native_webviewTests {
-  umbrella header "Pods-react_native_webview-react_native_webviewTests-umbrella.h"
-
-  export *
-  module * { export * }
-}
