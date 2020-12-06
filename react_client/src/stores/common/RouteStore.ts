@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import qs from "query-string";
 
 export class RouteStore {
   constructor() {
@@ -24,6 +25,11 @@ export class RouteStore {
   go(pathname: string, state?: any) {
     // @ts-ignore
     this.history.push(pathname, state);
+  }
+
+  /** Query Parameter 가져오기 */
+  getQueryParam(key: string) {
+    return qs.parse(this.location?.search || "")[key] || null;
   }
 }
 

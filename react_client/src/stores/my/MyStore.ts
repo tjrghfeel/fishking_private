@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import Axios from "../../Axios";
+import http from "../../Http";
 import { MyMenuPageDataProps } from "./MyProps";
 
 export class MyStore {
@@ -11,7 +11,7 @@ export class MyStore {
   myMenuPageData: MyMenuPageDataProps | null = null;
   /** 마이메뉴페이지 API 호출 */
   loadMyMenuPageData(memberId: number) {
-    Axios.get("/myMenuPage", { memberId }, (response: any) => {
+    http.request("GET", "/myMenuPage", null, { memberId }, (response: any) => {
       runInAction(() => {
         this.myMenuPageData = response;
       });

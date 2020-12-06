@@ -1,5 +1,11 @@
 import { makeAutoObservable } from "mobx";
 
+export interface ScriptOptionsProps {
+  defer?: string;
+  crossOrigin?: string;
+  global?: boolean | false;
+}
+
 export class PageStore {
   constructor() {
     makeAutoObservable(this);
@@ -8,7 +14,12 @@ export class PageStore {
   scripts: Array<HTMLElement> = [];
 
   /** 스크립트 동적 로드하기 */
-  injectScript(src: string, onLoad?: Function, onError?: Function) {
+  injectScript(
+    src: string,
+    onLoad?: Function,
+    onError?: Function,
+    options?: ScriptOptionsProps | null
+  ) {
     return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = src;
@@ -20,8 +31,16 @@ export class PageStore {
         if (onError) onError();
         resolve(false);
       });
+      if (options !== null && options?.defer) {
+        script.setAttribute("defer", options.defer);
+      }
+      if (options !== null && options?.crossOrigin) {
+        script.setAttribute("crossOrigin", options.crossOrigin);
+      }
+      if (options === null || !options?.global) {
+        this.scripts.push(script);
+      }
       document.body.appendChild(script);
-      this.scripts.push(script);
     });
   }
 

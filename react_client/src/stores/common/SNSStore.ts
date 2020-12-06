@@ -2,24 +2,46 @@ import { makeAutoObservable } from "mobx";
 
 declare global {
   let Kakao: any;
+  let FB: any;
+  let AppleID: any;
 }
 
 export class SNSStore {
   constructor() {
     makeAutoObservable(this);
   }
-  /** 카카오 로그인 요청 */
-  kakaoLogin() {
-    Kakao.Auth.login({
-      persistAccessToken: false,
-      throughTalk: false,
-      success: (response: any) => {
-        console.log(JSON.stringify(response));
-      },
-      fail: (error: any) => {
-        console.log(error);
-      },
-    });
+  /** 카카오 로그인 요청 :: Redirect */
+  kakaoAuthorize() {
+    window.location.href =
+      "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" +
+      process.env["REACT_APP_KAKAO_JAVASCRIPT_KEY"] +
+      "&redirect_uri=" +
+      process.env["REACT_APP_KAKAO_REDIRECT_URI"];
+  }
+
+  /** 페이스북 로그인 요청 :: Redirect */
+  facebookAuthorize() {
+    window.location.href =
+      "https://www.facebook.com/v9.0/dialog/oauth?client_id=" +
+      process.env["REACT_APP_FACEBOOK_APP_ID"] +
+      "&redirect_uri=" +
+      process.env["REACT_APP_FACEBOOK_REDIRECT_URI"] +
+      "&state=";
+  }
+
+  /** 네이버 로그인 요청 :: Redirect */
+  naverAuthorize() {
+    window.location.href =
+      "https://nid.naver.com/oauth2.0/authorize?client_id=" +
+      process.env["REACT_APP_NAVER_CLIENT_ID"] +
+      "&response_type=code&redirect_uri=" +
+      process.env["REACT_APP_NAVER_REDIRECT_URI"] +
+      "&state=";
+  }
+
+  /** 애플 로그인 요청 :: Redirect */
+  appleAuthorize() {
+    AppleID.auth.signIn();
   }
 }
 

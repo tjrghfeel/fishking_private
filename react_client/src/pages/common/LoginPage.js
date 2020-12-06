@@ -35,11 +35,17 @@ const LoginPage = inject("SNSStore")(
     const onClickJoinByEmail = () => {
       console.log("이메일로가입하기");
     };
-    /** SNS 로그인 */
+    /** SNSPage 로그인 */
     const onClickLoingBySNS = (sns) => {
       console.log("SNS로그인 --> " + sns);
       if (sns === "kakao") {
-        SNSStore.kakaoLogin();
+        SNSStore.kakaoAuthorize();
+      } else if (sns === "facebook") {
+        SNSStore.facebookAuthorize();
+      } else if (sns === "naver") {
+        SNSStore.naverAuthorize();
+      } else if (sns === "apple") {
+        SNSStore.appleAuthorize();
       }
     };
     /** 정적 문서 보기 */

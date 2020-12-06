@@ -5,6 +5,7 @@
 - react-router-dom
 - mobx
 - axios
+- qs
 
 ```
 명확한 코드 리뷰와 기능|데이터 정형화를 위해
