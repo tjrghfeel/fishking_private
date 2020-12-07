@@ -92,7 +92,9 @@ export default inject(
               nonce: null,
               usePopup: false,
             });
-          }
+          },
+          null,
+          { global: true }
         );
       }
 
