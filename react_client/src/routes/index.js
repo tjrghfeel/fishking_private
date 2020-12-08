@@ -12,12 +12,14 @@ export default inject("RouteStore")(
     }, [RouteStore, history, location]);
     /** 렌더링 */
     return (
-      <Switch>
-        {/** 메인 */}
-        <Route path={`/main`} component={MainRoute} />
-        {/** 기본 라우팅 */}
-        <Redirect from={`*`} to={"/main/home"} />
-      </Switch>
+      <>
+        <Switch>
+          {/** 메인 */}
+          <Route path={`/main`} component={MainRoute} />
+          {/** 기본 라우팅 */}
+          <Redirect from={`*`} to={"/main/home"} />
+        </Switch>
+      </>
     );
   })
 );

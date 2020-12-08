@@ -1,12 +1,23 @@
-import React from "react";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useEffect } from "react";
 import { inject, observer } from "mobx-react";
-import Navigation from "../../components/layouts/Navigation";
-import Clearfix from "../../components/layouts/Clearfix";
-import SlideList01 from "../../components/lists/SlideList01";
-import CarouselList01 from "../../components/lists/CarouselList01";
+import Navigation from "../../components/layout/Navigation";
+import Clearfix from "../../components/layout/Clearfix";
+import SlideList01 from "../../components/list/SlideList01";
+import CarouselList01 from "../../components/list/CarouselList01";
 
-export default inject()(
-  observer(() => {
+export default inject("PageStore")(
+  observer(({ PageStore }) => {
+    useEffect(() => {
+      (async () => {
+        await PageStore.injectScript("/assets/js/jquery.touchSwipe.min.js");
+        await PageStore.injectScript("/assets/js/swiper.min.js");
+        await PageStore.injectScript("/assets/js/default.js");
+      })();
+      return () => {
+        PageStore.removeInjectetdScripts();
+      };
+    });
     return (
       <>
         {/** Navigation */}
@@ -141,52 +152,52 @@ export default inject()(
           <div className="mainMapWrap">
             <h5>지역별 조황</h5>
             <div className="mainMap">
-              <a href="boat.html">
+              <a>
                 <div className="infoMap NorthWestSea">
                   서해북부 <strong>7</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap CentralWestSea">
                   서해중부 <strong>9</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap SouthWestSea">
                   서해남부 <strong>12</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap WestSouthSea">
                   남해서부 <strong>11</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap CentralSouthSea">
                   남해중부 <strong>17</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap EastSouthSea">
                   남해동부 <strong>12</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap SouthEastSea">
                   동해남부 <strong>7</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap CentralEastSea">
                   동해중부 <strong>5</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap NorthEastSea">
                   동해북부 <strong>3</strong>
                 </div>
               </a>
-              <a href="boat.html">
+              <a>
                 <div className="infoMap Jeju">
                   제주도 <strong>11</strong>
                 </div>
