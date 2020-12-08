@@ -16,17 +16,6 @@ export class RouteStore {
     this.location = location;
   }
 
-  /** 뒤로가기 */
-  back() {
-    this.history!.go(-1);
-  }
-
-  /** 이동 */
-  go(pathname: string, state?: any) {
-    // @ts-ignore
-    this.history.push(pathname, state);
-  }
-
   /** Query Parameter 가져오기 */
   getQueryParam(key: string) {
     return qs.parse(this.location?.search || "")[key] || null;

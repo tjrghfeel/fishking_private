@@ -2,14 +2,11 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 
-const ListItemMore = inject("RouteStore")(
-  observer(({ RouteStore, navigateTo }) => {
-    const go = (pathname) => {
-      RouteStore.go(pathname);
-    };
+export default inject()(
+  observer(({ onClick }) => {
     return (
       <li className="item more">
-        <a onClick={() => navigateTo(go)} className="moreLink">
+        <a className="moreLink" onClick={() => (onClick ? onClick() : null)}>
           <div className="inner">
             <span>더보기</span>
           </div>
@@ -18,5 +15,3 @@ const ListItemMore = inject("RouteStore")(
     );
   })
 );
-
-export default ListItemMore;

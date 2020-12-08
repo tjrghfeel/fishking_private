@@ -2,7 +2,7 @@ import axios from "axios";
 
 /** 공통 설정 */
 const http = axios.create({
-  baseURL: "http://112.220.72.178:6081/fishkingV2/v1/api/",
+  baseURL: process.env.REACT_APP_HTTP_BASE_URL,
 });
 
 http.defaults.headers.common["Authorization"] = null;
