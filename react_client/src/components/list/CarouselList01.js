@@ -5,7 +5,7 @@ import ListItem03 from "./ListItem03";
 import ListItem04 from "./ListItem04";
 
 export default inject()(
-  observer(({ carouselType = "ListItem03", list }) => {
+  observer(({ carouselType = "ListItem03" | "ListItem04", list }) => {
     const id = carouselType.concat(new Date().getTime());
     return (
       <div id={id} className="carousel slide" data-ride="carousel">

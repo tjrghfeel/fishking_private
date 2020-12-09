@@ -7,7 +7,14 @@ import ListItemMore from "./ListItemMore";
 
 export default inject()(
   observer(
-    ({ title, itemType = "ListItem01", list, hasMore, onClickMore, cls }) => {
+    ({
+      title,
+      itemType = "ListItem01" | "ListItem05",
+      list,
+      hasMore,
+      onClickMore,
+      cls,
+    }) => {
       return (
         <>
           <h5>{title}</h5>
