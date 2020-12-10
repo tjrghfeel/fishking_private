@@ -21,7 +21,7 @@ import java.util.List;
 @Api(tags = {"게시글"})
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/v1/api")
+@RequestMapping(value = "/v2/api")
 public class PostController {
     @Autowired
     private PostService postService;
@@ -89,13 +89,15 @@ public class PostController {
     }*/
 
     //게시글 저장. Post entity, FileEntity저장을 한다. 생성한 Post엔터티의 id를 반환.
-    @ApiOperation(value = "게시글 저장", notes = "parnedId, tagName, secret은 nullable")
+    @ApiOperation(value = "게시글 저장", notes = "parnedId, tagName, secret은 nullable / " +
+            "writePostDTO의 files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다. ")
     @PostMapping("/post")
     public Long writePost(
-            @ModelAttribute WritePostDTO writePostDTO,
-            @RequestParam(value = "files", required = false) MultipartFile[] files
+            @RequestBody WritePostDTO writePostDTO/*,
+            @RequestPart(value = "files", required = false) MultipartFile[] files*/
     ) throws Exception {
         //게시글 저장.
+        MultipartFile[] files = writePostDTO.getFiles();
         Long postId = postService.writePost(writePostDTO, files);
 
         return postId;
@@ -106,8 +108,11 @@ public class PostController {
     */
     @ApiOperation(value = "게시물 수정", notes = "게시물을 수정합니다")
     @PostMapping("/post/update")
-    public Long updatePost(UpdatePostDTO postDTO, @RequestParam("files") MultipartFile[] files
-                           ) throws ResourceNotFoundException, IOException {
+    public Long updatePost(
+            @RequestBody UpdatePostDTO postDTO/*,
+            @RequestParam("files") MultipartFile[] files*/
+    ) throws ResourceNotFoundException, IOException {
+        MultipartFile[] files = postDTO.getFiles();
         return postService.updatePost(postDTO, files);
     }
 

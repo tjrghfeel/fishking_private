@@ -10,6 +10,9 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.TakeRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,11 +59,12 @@ public class TakeService {
     /*선상 낚시 찜 목록 조회
     * 반환 : */
     @Transactional
-    public List<TakeResponse> getFishingTypeFishTakeList(int fishingType, Long memberId) throws ResourceNotFoundException {
+    public Page<TakeResponse> getFishingTypeFishTakeList(int fishingType, Long memberId, int page) throws ResourceNotFoundException {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
 
-        return goodsRepository.findTakeListAboutFishType(member, fishingType);
+        Pageable pageable = PageRequest.of(page, 10);
+        return goodsRepository.findTakeListAboutFishType(member, fishingType,pageable);
     }
 
     /*선상, 갯바위 찜 개수 조회

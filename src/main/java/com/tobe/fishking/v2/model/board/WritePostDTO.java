@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.model.board;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.board.Tag;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,8 @@ public class WritePostDTO {
 //    private List<String> tagsName = new ArrayList<>();
     private Boolean isSecret;
     private Long parentId;
+
+    private MultipartFile[] files;
 
     public WritePostDTO(Post post) {
         boardId = post.getBoard().getId();

@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.controller.common;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.CouponDTO;
+import com.tobe.fishking.v2.model.common.CouponDownloadDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
 import com.tobe.fishking.v2.service.common.CouponService;
 import io.swagger.annotations.Api;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags={"쿠폰"})
 @RestController
-@RequestMapping(value = "/v1/api")
+@RequestMapping(value = "/v2/api")
 public class CouponController {
 
     @Autowired
@@ -38,10 +39,9 @@ public class CouponController {
     @ApiOperation(value = "쿠폰 다운 받기")
     @PostMapping("/downloadCoupon")
     public Long downloadCoupon(
-            @RequestParam("memberId") Long memberId,
-            @RequestParam("couponId") Long couponId
+            @RequestBody CouponDownloadDto downloadDto
     ) throws ResourceNotFoundException {
-        return couponService.downloadCoupon(memberId, couponId);
+        return couponService.downloadCoupon(downloadDto.getMemberId(), downloadDto.getCouponId());
     }
 
     /*사용 가능한 coupon_member 리스트 조회.

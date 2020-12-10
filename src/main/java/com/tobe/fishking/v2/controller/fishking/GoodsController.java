@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = {"상품"})
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/v1/api")
+@RequestMapping(value = "/v2/api")
 public class GoodsController {
     private final GoodsService service;
 

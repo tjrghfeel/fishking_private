@@ -22,7 +22,7 @@ import java.util.List;
 
 @Api(tags = {"업체"})
 @RequiredArgsConstructor
-@RequestMapping(value = "/v1/api")
+@RequestMapping(value = "/v2/api")
 @RestController
 public class CompanyController {
 
@@ -34,14 +34,22 @@ public class CompanyController {
      */
     @ApiOperation(value = "업체 등록")
     @PostMapping("/company")
-    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, @RequestParam("files") MultipartFile[] files) throws Exception {
+    public Long handleCompanyRegisterReq(
+            @RequestBody CompanyWriteDTO companyWriteDTO/*,
+            @RequestParam("files") MultipartFile[] files*/
+    ) throws Exception {
+        MultipartFile[] files = companyWriteDTO.getFiles();
         return companyService.handleCompanyRegisterReq(companyWriteDTO, files);
     }
 
     /*업체 등록 요청 수정*/
     @ApiOperation(value = "업체 등록 요청 수정")
-    @PostMapping("/company/modify")
-    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, @RequestParam("files") MultipartFile[] files) throws Exception {
+    @PostMapping("/company/modify")//!!!!!테스트끝나고 PUT으로 수정.
+    public Long updateCompanyRegisterReq(
+            @RequestBody CompanyWriteDTO companyWriteDTO/*,
+            @RequestParam("files") MultipartFile[] files*/
+    ) throws Exception {
+        MultipartFile[] files = companyWriteDTO.getFiles();
         return companyService.updateCompanyRegisterReq(companyWriteDTO, files);
     }
 

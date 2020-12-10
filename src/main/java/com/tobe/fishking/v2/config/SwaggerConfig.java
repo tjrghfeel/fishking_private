@@ -31,7 +31,7 @@ public class SwaggerConfig {
                 .apiInfo(swaggerInfo()).select()
                 .apis(RequestHandlerSelectors.basePackage(BASE_PACKAGE))
                 //.paths(PathSelectors.any())
-                .paths(PathSelectors.ant("/v1/api/**"))
+                .paths(PathSelectors.ant("/v2/api/**"))
                 .build()
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())
@@ -93,7 +93,7 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(BASE_PACKAGE))
                 //.paths(any())
-                .paths(PathSelectors.ant("/v1/api/**"))
+                .paths(PathSelectors.ant("/v2/api/**"))
                 .build()
     *//*            .consumes(getContentType())
                 .produces(getContentType())*//*

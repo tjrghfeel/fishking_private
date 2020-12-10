@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 * 여기엔 그 이외의 것들이 있다. */
 @RestController
 @Api(tags={"마이메뉴"})
-@RequestMapping("/v1/api")
+@RequestMapping("/v2/api")
 public class MyMenuController {
 
     @Autowired

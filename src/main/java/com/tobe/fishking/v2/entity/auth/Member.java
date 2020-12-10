@@ -43,11 +43,11 @@ public class Member extends BaseTime implements Serializable {
     public String nickName;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'패스워드', 'USER', DBO, 'TABLE', member, 'COLUMN' password
-    @Column(columnDefinition = "varchar(100) not null   comment '패스워드'  ")
+    @Column(columnDefinition = "varchar(150) not null   comment '패스워드'  ")
     public String password;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'이메일', 'USER', DBO, 'TABLE', member, 'COLUMN' email
-    @Convert(converter = StringConverter.class)
+//    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(150) NOT NULL   comment '이메일'  ")
     public String email;
 
@@ -98,7 +98,7 @@ public class Member extends BaseTime implements Serializable {
     private SNSType snsType ;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'SNS ID', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified
-    @Convert(converter = StringConverter.class)
+//    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(80)   comment 'SNS ID'  ")
     private String snsId ;
 

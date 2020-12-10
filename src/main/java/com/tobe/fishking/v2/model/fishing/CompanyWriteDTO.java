@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -38,5 +39,6 @@ public class CompanyWriteDTO {
     //private Long representFile;//not null
     //private Long accountFile;//not null
 
+    private MultipartFile[] files;
 
 }

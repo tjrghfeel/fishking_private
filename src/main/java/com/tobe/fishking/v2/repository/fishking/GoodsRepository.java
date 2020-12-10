@@ -63,15 +63,16 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
                     "   and g.goods_place_id = p.id " +
                     "   and g.goods_ship_id = s.id " +
                     "   and s.id = f.pid " +
-                    "   and f.file_no = 0 ",
+                    "   and f.is_represent = 1 ",
             countQuery ="select g.id " +
                         "from goods as g, places as p, files as f, ship as s " +
                         "where g.fishing_type = :fishingType " +
                         "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
                         "   and g.goods_place_id = p.id " +
                     "       and g.goods_ship_id = s.id " +
-                    "       and s.id = f.pid ",
+                    "       and s.id = f.pid "+
+                    "       and f.is_represent = 1 ",
             nativeQuery = true
     )
-    List<TakeResponse> findTakeListAboutFishType(@Param("member") Member member, @Param("fishingType") int fishingType);
+    Page<TakeResponse> findTakeListAboutFishType(@Param("member") Member member, @Param("fishingType") int fishingType,Pageable pageable);
 }

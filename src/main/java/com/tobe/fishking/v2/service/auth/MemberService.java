@@ -18,10 +18,7 @@ import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.exception.*;
-import com.tobe.fishking.v2.model.auth.LoginDTO;
-import com.tobe.fishking.v2.model.auth.ProfileManageDTO;
-import com.tobe.fishking.v2.model.auth.SignUpDto;
-import com.tobe.fishking.v2.model.auth.UserProfileDTO;
+import com.tobe.fishking.v2.model.auth.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
@@ -76,6 +73,22 @@ public class MemberService {
         return optionalMember.get().getId();
     }
 
+    /*회원가입 - 휴대폰 인증
+    * - 폰번호 중복 확인
+    * - 실제 있는폰번호인지 확인
+    * - 인증문자 전송
+    * - 반환 ) 이미 가입된 번호이면 예외. 문자송신 성공하면 true, 실패하면 false. */
+    @Transactional
+    public boolean smsAuthForSignUp(String areaCode, String localNumber){
+        if(checkExistByPhoneNum(areaCode,localNumber)){//이미 가입된 휴대폰번호이면
+            throw new PhoneNumberDupException("이미 회원가입한 번호입니다");
+        }
+        else{
+            if(requestSmsAuth(areaCode,localNumber)==true){return true;}//문자 전송이 성공한다면,
+            else return false;
+        }
+    }
+
     /*회원가입
     * - 이메일 중복 확인
     * - 비번 '자바 암호화' (그 외 개인정보 암호화는 db저장시 jpa converter에서 수행)
@@ -122,8 +135,8 @@ public class MemberService {
     /*휴대폰 번호로 가입한 회원 존재유무 확인
     * - 존재하면 true반환. */
     @Transactional
-    public boolean checkExistByPhoneNum(PhoneNumber pNum){
-        if(memberRepository.existsByPhoneNumber(pNum)){
+    public boolean checkExistByPhoneNum(String areaCode, String localNumber){
+        if(memberRepository.findByAreaCodeAndLocalNumber(areaCode, localNumber)!=null){
             return true;
         }
         else return false;
@@ -132,16 +145,17 @@ public class MemberService {
     /*문자인증 요청
     * - 랜덤한 인증번호 생성.
     * - 인증번호가 담긴 sms 문자인증 메세지를 pNum으로 발송.
-    * - pNum과 인증번호를 db에 저장. */
+    * - pNum과 인증번호를 db에 저장.
+    * - 반환 ) 전송 실패시 false. 성공시 true. */
     @Transactional
-    public boolean requestSmsAuth(PhoneNumber pNum){
+    public boolean requestSmsAuth(String areaCode, String localNumber){
         /*랜덤으로 인증번호 생성.*/
         String randomNum=null;
         randomNum = String.format("%04d",((int)(Math.random()*10000)));
 
         /*인증번호와 폰번호 db에 저장. */
         PhoneAuth phoneAuth = PhoneAuth.builder()
-                .phoneNumber(pNum)
+                .phoneNumber(new PhoneNumber(areaCode,localNumber))
                 .certifyNum(randomNum)
                 .build();
 
@@ -154,12 +168,14 @@ public class MemberService {
 
     /*문자인증 확인 메소드
     * - 넘어온 폰번호와 인증번호를 가지고 테이블상의 값과 일치하는지 확인.
-    * - 일치하면 true,아니면 false */
+    * - 일치하면 true,아니면 false
+    * - 반환 ) 인증번호가 맞으면 true, 틀리면 false. */
     @Transactional
-    public boolean checkSmsAuth(PhoneNumber pNum, String authNum){
+    public boolean checkSmsAuth(String areaCode, String localNumber, String authNum){
         /*폰번호에 해당하는 인증번호 가져옴*/
-        PhoneAuth phoneAuth = phoneAuthRepository.findByPhoneNumber(pNum);
+        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
         if(phoneAuth.getCertifyNum().equals(authNum)){
+            phoneAuthRepository.delete(phoneAuth);
             return true;
         }
         else return  false;
@@ -168,12 +184,14 @@ public class MemberService {
     /*비번변경 메소드
     * - 비번암호화하여 세션토큰에 해당하는 멤버의 비번필드에 update. */
     @Transactional
-    public boolean updatePw(String pw, PhoneNumber pNum) {
+    public boolean updatePw(ResetPwDto resetPwDto) {
         /*비번 암호화*/
-        String encodedPw = encoder.encode(pw);
+//        String encodedPw = encoder.encode(resetPwDto.getNewPw());
+        String encodedPw = resetPwDto.getNewPw();
+
 
         /*세션토큰에 해당하는 멤버의 비번필드 업데이트*/
-        Member member = memberRepository.findByPhoneNumber(pNum);
+        Member member = memberRepository.findByAreaCodeAndLocalNumber(resetPwDto.getAreaCode(),resetPwDto.getLocalNumber());
 
         member.setPassword(encodedPw);
 
@@ -295,12 +313,12 @@ public class MemberService {
 
     /*프사변경*/
     @Transactional
-    public boolean updateProfileImage(MultipartFile file, Long memberId) throws Exception {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public boolean updateProfileImage(MultipartFile file, String sessionToken) throws Exception {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*기존 프사 fileEntity 삭제*/
-        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(memberId, FilePublish.profile,true);
+        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(), FilePublish.profile,true);
         if(preFileEntity!=null){  uploadService.removeFileEntity(preFileEntity.getId());}
 
         if(uploadService.checkFileType(file)!=FileType.image){
@@ -310,7 +328,7 @@ public class MemberService {
         Map<String,Object> fileInfo = uploadService.initialFile(file, FilePublish.profile, "");
 
         FileEntity fileEntity = FileEntity.builder()
-                .pid(memberId)
+                .pid(member.getId())
                 .originalFile(file.getOriginalFilename())
                 .fileName(file.getOriginalFilename())
                 .fileNo(0)
@@ -336,10 +354,10 @@ public class MemberService {
 
     /*닉네임 변경*/
     @Transactional
-    public String modifyProfileNickName(Long memberId, String nickName) throws ResourceNotFoundException {
+    public String modifyProfileNickName(String sessionToken, String nickName) throws ResourceNotFoundException {
         /*Member 가져옴*/
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*닉네임 업데이트*/
         member.setNickName(nickName);
@@ -348,10 +366,10 @@ public class MemberService {
 
     /*상태 메세지 변경*/
     @Transactional
-    public String modifyProfileStatusMessage(Long memberId, String statusMessage) throws ResourceNotFoundException {
+    public String modifyProfileStatusMessage(String sessionToken, String statusMessage) throws ResourceNotFoundException {
         /*Member 가져옴*/
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*닉네임 업데이트*/
         member.setStatusMessage(statusMessage);
@@ -360,12 +378,12 @@ public class MemberService {
 
     /*이메일 변경*/
     @Transactional
-    public String modifyProfileEmail(Long memberId, String email) throws ResourceNotFoundException {
+    public String modifyProfileEmail(String sessionToken, String email) throws ResourceNotFoundException {
         /*!!!!!유효성 체크 로직. (만약 서비스계층에서 수행해야하는거면)*/
 
         /*Member 가져옴*/
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*닉네임 업데이트*/
         member.setEmail(email);
@@ -374,10 +392,10 @@ public class MemberService {
 
     /*비번 변경*/
     @Transactional
-    public boolean modifyProfilePassword(Long memberId, String currentPw, String newPw) throws ResourceNotFoundException {
+    public boolean modifyProfilePassword(String sessionToken, String currentPw, String newPw) throws ResourceNotFoundException {
         /*currentPw가 맞는지 확인. 맞으면 pw변경, 아니면 false반환. */
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         //비번변경.
         if(encoder.matches(currentPw, member.getPassword())){
@@ -392,10 +410,10 @@ public class MemberService {
     * - 글들을 비활성화 처리한다. 좋아요,찜,스크랩,쿠폰 삭제 및 리뷰,post,fishingDiary,fishingDiaryComment 비활성화.
     * - !!!!!탈퇴회원이 업주일 경우 어떻게 처리할지는 업주쪽 기획이 나온뒤 결정. */
     @Transactional
-    public Long deleteMember(Long memberId) throws ResourceNotFoundException {
+    public Long inactivateMember(String sessionToken) throws ResourceNotFoundException {
         /*Member의 isActive를 false로 변경*/
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*member 비활성화. */
         member.deActivateMember();
