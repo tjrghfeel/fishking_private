@@ -7,9 +7,8 @@ import com.tobe.fishking.v2.enums.board.BoardType;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
-import com.tobe.fishking.v2.enums.common.AlertType;
-import com.tobe.fishking.v2.enums.common.BannerType;
-import com.tobe.fishking.v2.enums.common.ByRegion;
+import com.tobe.fishking.v2.enums.common.*;
+import com.tobe.fishking.v2.enums.fishing.*;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.*;
 import com.tobe.fishking.v2.model.response.ListResult;
@@ -91,6 +90,37 @@ public class CommonController {
         enumValues.put("alertType", toEnumValues(AlertType.class));
         enumValues.put("bannerType", toEnumValues(BannerType.class));
         enumValues.put("byRegion", toEnumValues(ByRegion.class));
+        enumValues.put("channelType", toEnumValues(ChannelType.class));
+        enumValues.put("couponType", toEnumValues(CouponType.class));
+        enumValues.put("operatorType", toEnumValues(OperatorType.class));
+        enumValues.put("postTitle", toEnumValues(PostTitle.class));
+        enumValues.put("searchPublish", toEnumValues(SearchPublish.class));
+        enumValues.put("sortType", toEnumValues(SortType.class));
+        enumValues.put("takeType", toEnumValues(TakeType.class));
+        enumValues.put("UseType", toEnumValues(UseType.class));
+        enumValues.put("accumuateType", toEnumValues(AccumuateType.class));
+        enumValues.put("approvalStatus", toEnumValues(ApprovalStatus.class));
+        enumValues.put("dependentType", toEnumValues(DependentType.class));
+        enumValues.put("fishingTechnic", toEnumValues(FishingTechnic.class));
+        enumValues.put("fishingType", toEnumValues(FishingType.class));
+        enumValues.put("meridiem", toEnumValues(Meridiem.class));
+
+        enumValues.put("orderStatus", toEnumValues(OrderStatus.class));
+        enumValues.put("paymentGroup", toEnumValues(PaymentGroup.class));
+        enumValues.put("paymentOption", toEnumValues(PaymentOption.class));
+        enumValues.put("payMethod", toEnumValues(PayMethod.class));
+        enumValues.put("salesAmountType", toEnumValues(SalesAmountType.class));
+        enumValues.put("seaDirection", toEnumValues(SeaDirection.class));
+        enumValues.put("sNSType", toEnumValues(SNSType.class));
+        enumValues.put("tideTime", toEnumValues(TideTime.class));
+
+
+
+
+
+
+
+
 
 
         return enumValues;
