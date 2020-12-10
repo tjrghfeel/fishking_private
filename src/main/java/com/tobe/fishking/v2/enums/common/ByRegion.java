@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-public enum ByRegion {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum ByRegion implements IEnumModel {
 
     NorthWestSEA("서해북부"),
     CentralWestSeq("서해중부"),
@@ -16,6 +18,13 @@ public enum ByRegion {
     ByRegion(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getKey() {
+        return name();
+    }
+
+    @Override
     public String getValue() {
         return this.value;
     }

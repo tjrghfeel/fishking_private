@@ -2,11 +2,12 @@ package com.tobe.fishking.v2.model;
 
 import com.tobe.fishking.v2.enums.IEnumModel;
 
-public class EnumValue {
+
+public class EnumValueDTO {
     private String key;
     private String value;
 
-    public EnumValue(IEnumModel enumModel) {
+    public EnumValueDTO(IEnumModel enumModel) {
         key = enumModel.getKey();
         value = enumModel.getValue();
     }

@@ -2,7 +2,7 @@ package com.tobe.fishking.v2.enums.common;
 
 //import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum TakeType  /*implements IEnumModel*/ {
+public enum TakeType    implements IEnumModel   {
 
     goods("상품"),
     ship("업체"),

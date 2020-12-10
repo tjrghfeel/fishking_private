@@ -2,10 +2,11 @@ package com.tobe.fishking.v2.enums.auth;
 
 
 //import com.tobe.fishking.v2.enums.IEnumModel;
+import com.tobe.fishking.v2.enums.IEnumModel;
 import lombok.Getter;
 
 @Getter
-public enum Role  /*implements IEnumModel*/ {
+public enum Role  implements IEnumModel {
 
     admin("관리자"),
     shipowner("선주"),
@@ -19,7 +20,7 @@ public enum Role  /*implements IEnumModel*/ {
     }
 
 
-    /*@Override
+    @Override
     public String getKey() {
         return name();
     }
@@ -27,7 +28,7 @@ public enum Role  /*implements IEnumModel*/ {
     @Override
     public String getValue() {
         return value;
-    }*/
+    }
 
 
 }

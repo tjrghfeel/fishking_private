@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.common;
 
-//import com.tobe.fishking.v2.enums.IEnumModel;
+import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum ChannelType  /*implements IEnumModel*/ {
+public enum ChannelType  implements IEnumModel {
 
     fishkingwow("낚시가즐거워"),
     notice("공지"),
@@ -13,8 +13,7 @@ public enum ChannelType  /*implements IEnumModel*/ {
         this.value = value;
     }
 
-    public String getValue(){return this.value;}
-    /*@Override
+    @Override
     public String getKey() {
         return name();
     }
@@ -22,6 +21,6 @@ public enum ChannelType  /*implements IEnumModel*/ {
     @Override
     public String getValue() {
         return this.value;
-    }*/
+    }
 
 }

@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-//import com.tobe.fishking.v2.enums.IEnumModel;
+import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum FishingType /*implements IEnumModel*/ {
+public enum FishingType   implements IEnumModel   {
 
     ship("선상"),
     sealocks("갯바위");
@@ -12,8 +12,7 @@ public enum FishingType /*implements IEnumModel*/ {
         this.value = value;
     }
 
-    public String getValue(){return this.value;}
-    /*@Override
+    @Override
     public String getKey() {
         return name();
     }
@@ -21,7 +20,6 @@ public enum FishingType /*implements IEnumModel*/ {
     @Override
     public String getValue() {
         return this.value;
-    }*/
-
+    }
 
 }

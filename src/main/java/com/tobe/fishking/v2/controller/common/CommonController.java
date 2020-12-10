@@ -1,9 +1,17 @@
 package com.tobe.fishking.v2.controller.common;
 
+import com.tobe.fishking.v2.enums.IEnumModel;
+import com.tobe.fishking.v2.enums.auth.Gender;
+import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.board.BoardType;
+import com.tobe.fishking.v2.enums.board.FileType;
+import com.tobe.fishking.v2.enums.board.QuestionType;
+import com.tobe.fishking.v2.enums.board.ReturnType;
+import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.common.BannerType;
+import com.tobe.fishking.v2.enums.common.ByRegion;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
-import com.tobe.fishking.v2.model.CommonCodeDTO;
-import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
+import com.tobe.fishking.v2.model.*;
 import com.tobe.fishking.v2.model.response.ListResult;
 import com.tobe.fishking.v2.service.ResponseService;
 import com.tobe.fishking.v2.service.common.CommonService;
@@ -11,8 +19,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @Api(tags = "Common")
 @RestController
@@ -60,6 +75,47 @@ public class CommonController {
         //ListResult로 만들어주기.
         return responseService.getListResult(commonCodeDTOList);
     }
+
+
+    @GetMapping("/value")
+    public Map<String, List<EnumValueDTO>> getEnumValue() {
+        Map<String, List<EnumValueDTO>> enumValues = new LinkedHashMap<>();
+
+        enumValues.put("gender", toEnumValues(Gender.class));
+        enumValues.put("role", toEnumValues(Role.class));
+        enumValues.put("boardType", toEnumValues(BoardType.class));
+        enumValues.put("fileType", toEnumValues(FileType.class));
+        enumValues.put("questionType", toEnumValues(QuestionType.class));
+        enumValues.put("returnType", toEnumValues(ReturnType.class));
+        enumValues.put("adType", toEnumValues(AlertType.class));
+        enumValues.put("alertType", toEnumValues(AlertType.class));
+        enumValues.put("bannerType", toEnumValues(BannerType.class));
+        enumValues.put("byRegion", toEnumValues(ByRegion.class));
+
+
+        return enumValues;
+
+
+
+    }
+
+    private List<EnumValueDTO> toEnumValues(Class<? extends IEnumModel> e){
+
+/*
+        // Java8이 아닐경우
+        List<EnumValue> enumValues = new ArrayList<>();
+        for (IEnumModel enumType : e.getEnumConstants()) {
+            enumValues.add(new EnumValue(enumType));
+        }
+        return enumValues;
+*/
+
+        return Arrays
+                .stream(e.getEnumConstants())
+                .map(EnumValueDTO::new)
+                .collect(Collectors.toList());
+    }
+
 
 
 }
