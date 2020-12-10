@@ -6,6 +6,7 @@ import { withRouter } from "react-router";
 export default inject()(
   observer(
     withRouter(({ history }) => {
+      console.log("tab -> " + history.location.pathname);
       const [activeIndex, setActiveIndex] = useState(0);
       const parsePathname = useCallback(
         (pathname) => {
@@ -14,8 +15,7 @@ export default inject()(
             setActiveIndex(1);
           else if (pathname.indexOf(`/main/reserve/rock`) !== -1)
             setActiveIndex(2);
-          else if (pathname.indexOf(`/main/story/main`) !== -1)
-            setActiveIndex(3);
+          else if (pathname.indexOf(`/main/story`) !== -1) setActiveIndex(3);
           else if (pathname.indexOf(`/main/my`) !== -1) setActiveIndex(4);
         },
         [setActiveIndex]

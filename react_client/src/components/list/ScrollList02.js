@@ -54,7 +54,7 @@ export default inject()(
                   <a href="story-detail.html">
                     <h6>{title}</h6>
                     <p>
-                      {contents}… <a className="grey">더보기</a>
+                      {contents}… <span className="grey">더보기</span>
                     </p>
                   </a>
                   <p className="clearfix-sm"></p>

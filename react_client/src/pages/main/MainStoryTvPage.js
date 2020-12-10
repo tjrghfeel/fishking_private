@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layout/Navigation";
 import StoryTabs from "../../components/layout/StoryTabs";
 import SlideList01 from "../../components/list/SlideList01";
+import ScrollList03 from "../../components/list/ScrollList03";
 
 export default inject("PageStore")(
   observer(({ PageStore }) => {
@@ -20,7 +21,7 @@ export default inject("PageStore")(
     return (
       <>
         {/** Navigation */}
-        <Navigation tit={"어복스토리"} visibleSearchIcon={true} />
+        <Navigation title={"어복스토리"} visibleSearchIcon={true} />
 
         {/** 탭메뉴 */}
         <StoryTabs />
@@ -80,6 +81,19 @@ export default inject("PageStore")(
           />
         </div>
         <p className="space"></p>
+
+        {/** List */}
+        <ScrollList03
+          list={[
+            {
+              imgSrc: "/assets/img/sample/photo1.jpg",
+              playtime: "20:17",
+              title: "바다황제호 8월 31일 쭈꾸미 조황",
+              contents:
+                "안녕하세요. 어보황제3호 선장입니다. 태풍의 영향을 받아서인지 포인트에",
+            },
+          ]}
+        />
       </>
     );
   })

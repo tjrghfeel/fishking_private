@@ -13,6 +13,8 @@ export default inject("PageStore")(
         await PageStore.injectScript("/assets/js/jquery.touchSwipe.min.js");
         await PageStore.injectScript("/assets/js/swiper.min.js");
         await PageStore.injectScript("/assets/js/default.js");
+        PageStore.appyCarousel();
+        PageStore.applySwipe();
       })();
       return () => {
         PageStore.removeInjectetdScripts();

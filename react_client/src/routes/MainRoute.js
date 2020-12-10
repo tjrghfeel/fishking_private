@@ -7,6 +7,7 @@ import MainReserveBoatPage from "../pages/main/MainReserveBoatPage";
 import MainReserveRockPage from "../pages/main/MainReserveRockPage";
 import MainStoryPage from "../pages/main/MainStoryPage";
 import MainStoryTvPage from "../pages/main/MainStoryTvPage";
+import MainStoryUserPage from "../pages/main/MainStoryUserPage";
 import MainMyPage from "../pages/main/MainMyPage";
 import BottomTabs from "../components/layout/BottomTabs";
 
@@ -40,6 +41,12 @@ export default inject()(
             exact
             path={`${match.url}/story/tv`}
             component={MainStoryTvPage}
+          />
+          {/** 메인 > 어복스토리 > 유저조행기 */}
+          <Route
+            exact
+            path={`${match.url}/story/user`}
+            component={MainStoryUserPage}
           />
           {/** 메인 > 마이메뉴 */}
           <Route exact path={`${match.url}/my`} component={MainMyPage} />
