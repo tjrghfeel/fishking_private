@@ -1,8 +1,8 @@
 package com.tobe.fishking.v2.enums.fishing;
 
-//import com.tobe.fishking.v2.enums.IEnumModel;
+import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum ApprovalStatus /*implements IEnumModel*/ {
+public enum ApprovalStatus   implements IEnumModel {
     ing("진행"),
     approved("확인(승인)"),
     fail("실패");
@@ -13,7 +13,7 @@ public enum ApprovalStatus /*implements IEnumModel*/ {
         this.value = value;
     }
 
-   /* @Override
+    @Override
     public String getKey() {
         return name();
     }
@@ -21,6 +21,6 @@ public enum ApprovalStatus /*implements IEnumModel*/ {
     @Override
     public String getValue() {
         return this.value;
-    }*/
+    }
 
 }

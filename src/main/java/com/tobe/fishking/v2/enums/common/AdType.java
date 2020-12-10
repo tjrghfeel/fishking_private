@@ -2,7 +2,9 @@ package com.tobe.fishking.v2.enums.common;
 
 //import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum AdType /*implements IEnumModel*/ {
+import com.tobe.fishking.v2.enums.IEnumModel;
+
+public enum AdType implements IEnumModel {
 
     premium("프리미엄"),
     recommend("추천");
@@ -12,7 +14,7 @@ public enum AdType /*implements IEnumModel*/ {
         this.value = value;
     }
 
-    /*@Override
+    @Override
     public String getKey() {
         return name();
     }
@@ -20,6 +22,6 @@ public enum AdType /*implements IEnumModel*/ {
     @Override
     public String getValue() {
         return value;
-    }*/
+    }
 
 }

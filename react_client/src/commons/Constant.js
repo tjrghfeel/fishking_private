@@ -19,3 +19,6 @@ export const fishIcon = {
   f07: "/assets/img/fish/fish_icon_07.svg",
   f08: "/assets/img/fish/fish_icon_08.svg",
 };
+/** 지역 데이터 :: 코드 데이터 필요 */
+
+/** 어종 데이터 :: 코드 데이터 필요 */
