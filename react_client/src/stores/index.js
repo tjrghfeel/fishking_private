@@ -1,13 +1,9 @@
-import AppStore from "./common/AppStore";
-import RouteStore from "./common/RouteStore";
-import PageStore from "./common/PageStore";
-import MyStore from "./my/MyStore";
+import { createStore as createRouteStore } from "./common/RouteStore.ts";
+import { createStore as createPageStore } from "./common/PageStore";
+import { createStore as createMemberStore } from "./common/MemberStore";
 
-const Stores = {
-  AppStore,
-  RouteStore,
-  PageStore,
-  MyStore,
-};
+const RouteStore = createRouteStore();
+const PageStore = createPageStore();
+const MemberStore = createMemberStore();
 
-export default Stores;
+export const Stores = { RouteStore, PageStore, MemberStore };

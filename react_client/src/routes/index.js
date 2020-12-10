@@ -1,30 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { inject, observer } from "mobx-react";
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import Modals from "../components/modals";
 import MainRoute from "./MainRoute";
 
 export default inject("RouteStore")(
-  observer(
-    class Routes extends React.Component {
-      constructor(props) {
-        super(props);
-        props.RouteStore.setHistory(props.history);
-      }
-      render() {
-        return (
-          <>
-            <Switch>
-              {/** 메인 라우트 :: BottomTab */}
-              <Route path={`/main`} component={MainRoute} />
-              {/** 최초 스크린 리디렉트 */}
-              <Redirect from={`*`} to={`/main/index`} />
-            </Switch>
-            <Modals />
-          </>
-        );
-      }
-    }
-  )
+  observer(({ RouteStore, history, location }) => {
+    useEffect(() => {
+      // --> Store 를 통해 Route 관련 처리를 할 수 있도록 설정
+      RouteStore.setRouteObject(history, location);
+    }, [RouteStore, history, location]);
+    /** 렌더링 */
+    return (
+      <>
+        <Switch>
+          {/** 메인 */}
+          <Route path={`/main`} component={MainRoute} />
+          {/** 기본 라우팅 */}
+          <Redirect from={`*`} to={"/main/home"} />
+        </Switch>
+      </>
+    );
+  })
 );

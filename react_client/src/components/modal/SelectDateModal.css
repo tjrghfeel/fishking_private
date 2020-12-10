@@ -1,0 +1,6 @@
+[data-modal-type='SelectDateModal'] .modal-body {
+    margin: auto;
+}
+.react-calendar {
+    border:none;
+}
