@@ -267,7 +267,9 @@ export default inject(
           id={"callModal"}
           title={"전화걸기"}
           textOk={"통화"}
-          onClickOK={() => ExternalStore.link_call("12347777")}
+          onClickOK={() =>
+            ExternalStore.link_call(process.env.REACT_APP_CS_PHONE)
+          }
         >
           <p>
             고객센터로 전화연결 하시겠습니까?
