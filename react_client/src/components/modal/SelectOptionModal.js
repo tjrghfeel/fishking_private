@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   forwardRef,
   useCallback,
@@ -68,7 +69,6 @@ export default inject()(
           setSelected1,
           selected2,
           setSelected2,
-          selected3,
           setSelected3,
           selected4,
           setSelected4,

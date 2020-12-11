@@ -6,7 +6,6 @@ import { withRouter } from "react-router";
 export default inject()(
   observer(
     withRouter(({ history }) => {
-      console.log("tab -> " + history.location.pathname);
       const [activeIndex, setActiveIndex] = useState(0);
       const parsePathname = useCallback(
         (pathname) => {
