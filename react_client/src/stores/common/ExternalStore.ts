@@ -15,8 +15,8 @@ export class ExternalStore {
   link_call(phone: string) {
     if (window.isNative) {
       const json = {
-        process: "LINK",
-        data: phone,
+        process: "Linking",
+        data: "tel:".concat(phone),
       };
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
     } else {
