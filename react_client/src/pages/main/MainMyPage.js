@@ -268,7 +268,7 @@ export default inject(
           title={"전화걸기"}
           textOk={"통화"}
           onClickOK={() =>
-            ExternalStore.link_call(process.env.REACT_APP_CS_PHONE)
+            ExternalStore.linking("tel:".concat(process.env.REACT_APP_CS_PHONE))
           }
         >
           <p>

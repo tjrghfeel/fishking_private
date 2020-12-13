@@ -12,15 +12,15 @@ export class ExternalStore {
     makeAutoObservable(this);
   }
   /** Native Linking :: 전화걸기 */
-  link_call(phone: string) {
+  linking(url: string) {
     if (window.isNative) {
       const json = {
         process: "Linking",
-        data: "tel:".concat(phone),
+        data: url,
       };
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
     } else {
-      window.location.href = "tel:".concat(phone);
+      window.location.href = url;
     }
   }
 }

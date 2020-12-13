@@ -1,9 +1,10 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layout/Navigation";
 
-export default inject()(
-  observer(() => {
+export default inject("ExternalStore")(
+  observer(({ ExternalStore }) => {
     return (
       <>
         {/** Navigation */}
@@ -430,26 +431,36 @@ export default inject()(
             </h4>
             <p>
               - 개인정보침해신고센터 (
-              <a href="http://www.1336.or.kr" target="_blank" className="point">
+              <a
+                onClick={() => ExternalStore.linking("http://www.1336.or.kr")}
+                className="point"
+              >
                 www.1336.or.kr
               </a>{" "}
               / 국번없이 118)
               <br />- 정보보호마크인증위원회 (
               <a
-                href="http://www.eprivacy.or.kr"
-                target="_blank"
+                onClick={() =>
+                  ExternalStore.linking("http://www.eprivacy.or.kr")
+                }
                 className="point"
               >
                 www.eprivacy.or.kr
               </a>{" "}
               / 02-580-0533~4)
               <br />- 대검찰청 인터넷범죄수사센터 (
-              <a href="http://www.spo.go.kr" target="_blank" className="point">
+              <a
+                onClick={() => ExternalStore.linking("http://www.spo.go.kr")}
+                className="point"
+              >
                 www.spo.go.kr
               </a>{" "}
               / 02-3480-3600)
               <br />- 경찰청 사이버테러대응센터 (
-              <a href="http://www.ctrc.go.kr" target="_blank" className="point">
+              <a
+                onClick={() => ExternalStore.linking("http://www.ctrc.go.kr")}
+                className="point"
+              >
                 www.ctrc.go.kr
               </a>{" "}
               / 02-392-0330)

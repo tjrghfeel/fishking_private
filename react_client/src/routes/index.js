@@ -6,6 +6,8 @@ import { Switch, Route, Redirect, BrowserRouter } from "react-router-dom";
 import MainRoute from "./MainRoute";
 import MemberRoute from "./MemberRoute";
 import DocsRoute from "./DocsRoute";
+import SearchRoute from "./SearchRoute";
+import SetRoute from "./SetRoute";
 
 export default inject("PageStore")(
   observer(({ PageStore }) => {
@@ -98,6 +100,10 @@ export default inject("PageStore")(
           <Route path={`/member`} component={MemberRoute} />
           {/** 문서 */}
           <Route path={`/docs`} component={DocsRoute} />
+          {/** 검색 */}
+          <Route path={`/search`} component={SearchRoute} />
+          {/** 설정 */}
+          <Route path={`/set`} component={SetRoute} />
           {/** 기본 라우팅 */}
           <Redirect from={`*`} to={"/main/home"} />
         </Switch>

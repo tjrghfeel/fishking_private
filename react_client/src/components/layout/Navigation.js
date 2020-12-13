@@ -35,7 +35,7 @@ export default inject()(
                     aria-label="Search"
                     disabled
                   />
-                  <a>
+                  <a onClick={() => history.push(`/search/all`)}>
                     <img src="/assets/img/svg/navbar-search.svg" alt="Search" />
                   </a>
                 </form>
@@ -57,12 +57,18 @@ export default inject()(
                 )}
                 {title && <span className="navbar-title">{title}</span>}
                 {visibleConfigIcon && (
-                  <a className="fixed-top-right-two">
+                  <a
+                    onClick={() => history.push(`/set/main`)}
+                    className="fixed-top-right-two"
+                  >
                     <img src="/assets/img/svg/navbar-set.svg" alt="Set" />
                   </a>
                 )}
                 {visibleSearchIcon && (
-                  <a className="fixed-top-right">
+                  <a
+                    onClick={() => history.push(`/search/all`)}
+                    className="fixed-top-right"
+                  >
                     <img src="/assets/img/svg/navbar-search.svg" alt="Search" />
                   </a>
                 )}

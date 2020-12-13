@@ -22,11 +22,11 @@ export class PageStore {
         fingerCount: any,
         fingerData: any
       ) {
-        if (direction == "left") {
+        if (direction === "left") {
           // @ts-ignore
           $(this).carousel("next");
         }
-        if (direction == "right") {
+        if (direction === "right") {
           // @ts-ignore
           $(this).carousel("prev");
         }

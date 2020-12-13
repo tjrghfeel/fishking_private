@@ -1,21 +1,39 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layout/Navigation";
 
-export default inject("SNSStore")(
-  observer(({ SNSStore, history }) => {
+export default inject(
+  "SNSStore",
+  "ValidStore"
+)(
+  observer(({ SNSStore, ValidStore, history }) => {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
+    const [valid, setValid] = useState(true);
 
     /** 로그인 클릭 */
     const onClickLogin = useCallback(() => {
       const email = emailRef.current?.value;
       const password = passwordRef.current?.value;
 
+      if (!ValidStore.isEmail(email)) {
+        console.log("이메일을 확인해주세요.");
+        return;
+      } else if (
+        !(
+          ValidStore.isMultiCheck1(password) ||
+          ValidStore.isMultiCheck2(password) ||
+          ValidStore.isMultiCheck3(password)
+        )
+      ) {
+        setValid(false);
+        return;
+      }
+
       console.log(email);
       console.log(password);
-    }, [emailRef, passwordRef]);
+    }, [emailRef, passwordRef, setValid]);
     return (
       <>
         {/** Navigation */}
@@ -55,6 +73,11 @@ export default inject("SNSStore")(
                   id="inputPhone"
                   placeholder="비밀번호 (영문/숫자/특수문자 조합, 8~15자 이내)"
                 />
+                {!valid && (
+                  <p className="text-muted">
+                    <small className="red">비밀번호를 확인해주세요.</small>
+                  </p>
+                )}
               </div>
             </form>
             <a
