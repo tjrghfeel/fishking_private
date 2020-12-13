@@ -26,6 +26,7 @@ export default inject()(
         <input
           ref={fileProfile}
           type="file"
+          accept="image/*"
           id="fileProfile"
           name="fileProfile"
           style={{ display: "none" }}
