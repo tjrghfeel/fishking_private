@@ -5,11 +5,7 @@ import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.common.LoveTo;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
-import com.tobe.fishking.v2.entity.common.Take;
-import com.tobe.fishking.v2.entity.fishing.CouponMember;
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Gender;
@@ -27,17 +23,11 @@ import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import lombok.AllArgsConstructor;
-
-
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -286,7 +276,7 @@ public class MemberService {
                 .profileImage(member.getProfileImage())
                 .statusMessage((member.getStatusMessage()==null)?("없음"):(member.getStatusMessage()))
                 //!!!!!아래 전화번호는 nullable필드이지만 회원가입시 휴대폰인증을 하므로 무조건 있다고 판단.
-                .areaCode(member.getPhoneNumber().getAreaCode())
+                //.areaCode(member.getPhoneNumber().getAreaCode())
                 .localNumber(member.getPhoneNumber().getLocalNumber())
                 .build();
 

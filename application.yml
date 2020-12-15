@@ -1,0 +1,21 @@
+logging:
+  level:
+    jdbc:
+      sqlonly: DEBUG
+    org:
+      hibernate:
+        SQL: OFF
+        type:
+          descriptor:
+            sql:
+              BasicBinder: OFF
+      springframework: DEBUG
+    com:
+      tobe:
+        fishing:
+          pagination : OFF
+
+
+spring:
+  jpa:
+    show-sql: false

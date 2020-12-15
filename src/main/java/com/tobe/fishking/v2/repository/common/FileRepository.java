@@ -2,20 +2,18 @@ package com.tobe.fishking.v2.repository.common;
 
 
 import com.tobe.fishking.v2.entity.FileEntity;
-import com.tobe.fishking.v2.entity.board.Post;
-import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface FileRepository extends BaseRepository<FileEntity, Long> {
 
     @Query("select a from FileEntity a where a.fileUrl = :fileUrl")
