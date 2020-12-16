@@ -29,6 +29,7 @@ logging:
       tobe:
         fishing:
           pagination=debug: debug
+
 #File location
 file :
 #  location : C:\Users\kai\Desktop\fishkingV2\src\main\resources\static\files
@@ -63,8 +64,10 @@ spring:
     #url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
     #url: jdbc:log4jdbc:sqlserver://localhost:1433;databaseName=fishking;sendStringParametersAsUnicode=false
     #url: jdbc:log4jdbc:mysql://localhost:7306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
-#    url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
-    url: jdbc:log4jdbc:mysql://172.17.0.8:3306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql. 도커용.
+
+    jdbc-url : jdbc:log4jdbc:mysql://112.220.72.178:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
+    jdbc-url: jdbc:log4jdbc:mysql://172.17.0.8:3306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql. 도커용.
+
     username: fishking      #sa        # username: fishluck
     password: fishking12#$  #P@ssw0rd  # password: fishluck123!
     platform: mysql
