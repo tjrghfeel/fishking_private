@@ -4,7 +4,10 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.board.BoardType;
 import com.tobe.fishking.v2.enums.board.FilePublish;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -87,7 +90,7 @@ public class Board extends BaseTime implements Serializable {
     @Column(columnDefinition = " varchar(10) comment '수정권한' ")
     private String modifyAllow;
 
- //   @Column(columnDefinition = " varchar(10)  comment '삭제권한'  ")
+    //   @Column(columnDefinition = " varchar(10)  comment '삭제권한'  ")
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'삭제권한', 'USER', DBO, 'TABLE', board, 'COLUMN',  remove
     @Column(columnDefinition = " varchar(10) comment '삭제권한' ")
     private String remove;

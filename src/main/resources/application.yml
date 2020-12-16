@@ -66,7 +66,6 @@ spring:
     #url: jdbc:log4jdbc:mysql://localhost:7306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
 
     jdbc-url : jdbc:log4jdbc:mysql://112.220.72.178:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
-    jdbc-url: jdbc:log4jdbc:mysql://172.17.0.8:3306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql. 도커용.
 
     username: fishking      #sa        # username: fishluck
     password: fishking12#$  #P@ssw0rd  # password: fishluck123!
@@ -90,4 +89,5 @@ spring:
       #        strategy: org.hibernate.cfg.DefaultNamingStrategy
       #        strategy: org.hibernate.cfg.ImprovedNamingStrategy
       strategy: org.springframework.boot.orm.jpa.hibernate.SpringNamingStrategy
+
 

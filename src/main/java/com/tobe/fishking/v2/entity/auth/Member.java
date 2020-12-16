@@ -1,39 +1,45 @@
 package com.tobe.fishking.v2.entity.auth;
 
+import com.tobe.fishking.v2.entity.BaseTime;
+import com.tobe.fishking.v2.entity.common.Address;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.tobe.fishking.v2.service.StringConverter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
+
+//import com.tobe.fishking.v2.service.AES;
+
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "member")
-public class Member {
+public class Member extends BaseTime implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', member, 'COLUMN' id
     public Long id;
 
-    @Column
+    @Column(nullable = false, unique = true, columnDefinition = "nvarchar(50) comment '코드' ")
     public String uid;
 
-    @Column(name = "member_name")
+    // EXEC sp_addextendedproperty 'MS_Description', N'이름', 'USER', DBO, 'TABLE', member, 'COLUMN' username
+    @Convert(converter = StringConverter.class)
+    @Column(columnDefinition = "nvarchar(100) null   comment '이름'  ")
     public String memberName;
 
-    @Column(name = "nick_name")
+    // EXEC sp_addextendedproperty 'MS_Description', N'별명', 'USER', DBO, 'TABLE', member, 'COLUMN' nickname
+    @Column(columnDefinition = "varchar(100) null   comment '별명'  ")
     public String nickName;
 
-    @Column
-    public String password;
-
-    @Column
     // EXEC sp_addextendedproperty 'MS_Description', N'패스워드', 'USER', DBO, 'TABLE', member, 'COLUMN' password
     @Column(columnDefinition = "varchar(150) not null   comment '패스워드'  ")
     public String password;
@@ -41,94 +47,73 @@ public class Member {
     // EXEC sp_addextendedproperty 'MS_Description', N'이메일', 'USER', DBO, 'TABLE', member, 'COLUMN' email
 //    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(150) NOT NULL   comment '이메일'  ")
-
     public String email;
 
-    @Column
+    // EXEC sp_addextendedproperty 'MS_Description', N'성별', 'USER', DBO, 'TABLE', member, 'COLUMN' gender
+    @Column(columnDefinition = "int NOT NULL   comment '성별'  ")
+    @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private Gender gender;
 
-    @Column
+    // EXEC sp_addextendedproperty 'MS_Description', N'역할', 'USER', DBO, 'TABLE', ad, 'COLUMN',  role
+    @Column(columnDefinition = "int NOT NULL   comment '역할'  ")
+    @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private Role roles;
 
-    @Column(name = "session_token")
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'토큰', 'USER', DBO, 'TABLE', member, 'COLUMN' sessionToken
+    @Column(columnDefinition = "varchar(100) NULL   comment '토큰'  ")
     private String sessionToken;
 
-    @Column(name = "profile_image")
+    // EXEC sp_addextendedproperty 'MS_Description', N'프로파일이미지', 'USER', DBO, 'TABLE', member, 'COLUMN' profile_image
+    @Column(columnDefinition = "varchar(100)  comment '프로파일이미지'  ")
     private String profileImage; //프로파일 사진 경로+이름
 
-    @Column(name = "is_active")
+    @Transient
+    //@NotBlank
+    // EXEC sp_addextendedproperty 'MS_Description', N'패스워드확인', 'USER', DBO, 'TABLE', member, 'COLUMN' confirm_password
+    @Column(nullable = false, columnDefinition = "varchar(100)   comment '패스워드확인'  ")
+    private String confirmPassword;
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'활성여부-사용여부', 'USER', DBO, 'TABLE', member, 'COLUMN' is_active
+    @Column(columnDefinition = "bit not null default 1 comment '활성여부-사용여부'  ")
     private Boolean isActive;
 
-    @Column(name = "certified_no")
+    // EXEC sp_addextendedproperty 'MS_Description', N'인증번호', 'USER', DBO, 'TABLE', member, 'COLUMN' certifiedNo
+    @Column(columnDefinition = "varchar(100)   comment '인증번호'  ")
     private String certifiedNo;
 
-    @Column(name = "is_certified")
+    // EXEC sp_addextendedproperty 'MS_Description', N'인증여부', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified
+    @Column(nullable = false, columnDefinition = "bit  default 0 comment '인증여부'  ")
     private Boolean isCertified;
 
-    @Column(name = "join_dt")
+    // EXEC sp_addextendedproperty 'MS_Description', N'가입일', 'USER', DBO, 'TABLE', member, 'COLUMN' joinDt
+    @Column(columnDefinition = "varchar(8)   comment '가입일'  ")
     private String joinDt;
 
-    @Column(name = "sns_type")
-    private SNSType snsType;
-
-    @Column(name = "sns_id")
-    private String snsId;
-
-
-    @Column(name = "status_message")
-    private String statusMessage;
+    // EXEC sp_addextendedproperty 'MS_Description', N'SNS유형', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified
+    @Column(columnDefinition = "bit   comment 'SNS유형'  ")
+    @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
+    private SNSType snsType ;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'SNS ID', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified
 //    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(80)   comment 'SNS ID'  ")
     private String snsId ;
 
-    @Transient
-    private String confirmPassword;
+    // EXEC sp_addextendedproperty 'MS_Description', N'상태메세지', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified
+    @Column(columnDefinition = "varchar(20)   comment '상태메세지'  ")
+    private String statusMessage ;
 
-    private PhoneNumber phoneNumber;
-
-    @Builder
-    public Member(Long id, String uid,
-                  String memberName, String nickName,
-                  String password, String email, Gender gender,
-                  Role roles, String sessionToken, String profileImage,
-                  Boolean isActive, String certifiedNo, Boolean isCertified,
-                  String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber) {
-        this.id = id;
-        this.uid = uid;
-        this.memberName = memberName;
-        this.nickName = nickName;
-        this.password = password;
-        this.email = email;
-        this.gender = gender;
-        this.roles = roles;
-        this.sessionToken = sessionToken;
-        this.profileImage = profileImage;
-        this.isActive = isActive;
-        this.certifiedNo = certifiedNo;
-        this.isCertified = isCertified;
-        this.joinDt = joinDt;
-        this.snsType = snsType;
-        this.snsId = snsId;
-        this.statusMessage = statusMessage;
-        this.phoneNumber = phoneNumber;
-    }
-/*
     @Embedded
     private Address address;
 
     @Embedded
     private PhoneNumber phoneNumber;
 
-     */
-
 
     //Getters and setters ommitted for brevity
 //    @ManyToMany(mappedBy = "coupons")
     //   private List<Coupon> coupons = new ArrayList<>();
 
-    public void deActivateMember() {
-        isActive = false;
-    }
+    public void deActivateMember(){isActive=false;}
 }
