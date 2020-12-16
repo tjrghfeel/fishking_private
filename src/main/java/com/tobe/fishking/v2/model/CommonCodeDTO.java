@@ -17,6 +17,7 @@ public class CommonCodeDTO {
     private @Valid CodeGroup codeGroup;
     private @Valid String code;
     private @Valid String codeName;
+    private @Valid String extraValue1;
     private @Valid String remark;
 
     public CommonCode toEntity() {
@@ -24,6 +25,7 @@ public class CommonCodeDTO {
                 .codeGroup(codeGroup)
                 .code(code)
                 .codeName(codeName)
+                .extraValue1(extraValue1)
                 .remark(remark)
                 .build();
     }

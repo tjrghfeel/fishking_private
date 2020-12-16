@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 /*마이메뉴 안에 있더라도 찜, 쿠폰 등과 같은 다룰 api가 좀있는 것들은 컨트롤러를 따로 빼내었고
 * 여기엔 그 이외의 것들이 있다. */
 @RestController
 @Api(tags={"마이메뉴"})
-@RequestMapping("/v1/api")
+@RequestMapping("/v2/api")
 public class MyMenuController {
 
     @Autowired
@@ -29,8 +31,9 @@ public class MyMenuController {
     * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
     @ApiOperation(value = "마이메뉴 페이지")
     @GetMapping("/myMenuPage")
-    public MyMenuPageDTO getMyMenuPage(@RequestParam("memberId") Long member) throws ResourceNotFoundException {
-        return myMenuService.getMyMenuPage(member);
+    public MyMenuPageDTO getMyMenuPage(HttpServletRequest request) throws ResourceNotFoundException {
+        String sessionToken = request.getHeader("Authorization");
+        return myMenuService.getMyMenuPage(sessionToken);
 
     }
 
@@ -43,10 +46,11 @@ public class MyMenuController {
     @ApiOperation(value = "내글관리 - 게시글")
     @GetMapping("/myFishingPostList/{page}")
     public Page<FishingDiaryDtoForPage> getMyFishingDiary(
-            @RequestParam("memberId") Long memberId,
+            HttpServletRequest request,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        return myMenuService.getMyFishingDiary(memberId, page);
+        String sessionToken = request.getHeader("Authorization");
+        return myMenuService.getMyFishingDiary(sessionToken, page);
     }
 
     /*내글관리 - 댓글
@@ -54,10 +58,11 @@ public class MyMenuController {
     @ApiOperation(value = "내글관리 - 댓글")
     @GetMapping("/myFishingCommentList/{page}")
     public Page<FishingDiaryCommentDtoForPage> getMyFishingDiaryComment(
-            @RequestParam("memberId") Long memberId,
+            HttpServletRequest request,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        return myMenuService.getMyFishingDiaryComment(memberId,page);
+        String sessionToken = request.getHeader("Authorization");
+        return myMenuService.getMyFishingDiaryComment(sessionToken,page);
     }
     
     /*내글관리 - 스크랩
@@ -65,10 +70,11 @@ public class MyMenuController {
     @ApiOperation(value = "내글관리 - 스크랩")
     @GetMapping("/myFishingDiaryScrap/{page}")
     public Page<FishingDiaryDtoForPage> getMyFishingDiaryScrap(
-            @RequestParam("memberId") Long memberId,
+            HttpServletRequest request,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        return myMenuService.getMyFishingDiaryScrap(memberId, page);
+        String sessionToken = request.getHeader("Authorization");
+        return myMenuService.getMyFishingDiaryScrap(sessionToken, page);
     }
 
     /*내글관리 - 리뷰
@@ -80,10 +86,11 @@ public class MyMenuController {
     @ApiOperation(value = "내글관리 - 리뷰")
     @GetMapping("/myReviewList/{page}")
     public Page<ReviewDto> getReviewList(
-            @RequestParam("memberId") Long memberId,
+            HttpServletRequest request,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        return myMenuService.getMyReview(memberId, page);
+        String sessionToken = request.getHeader("Authorization");
+        return myMenuService.getMyReview(sessionToken, page);
     }
 
     /*예약 내역 리스트 보기
@@ -94,10 +101,11 @@ public class MyMenuController {
     @GetMapping("/myOrdersList/{page}")
     public Page<OrdersDtoForPage> getMyOrdersList(
             @PathVariable("page") int page,
-            @RequestParam("memberId") Long memberId,
+            HttpServletRequest request,
             @RequestParam(value = "sort", required = false, defaultValue = "none") String sort
     ) throws ResourceNotFoundException {
-        return myMenuService.getMyOrdersList(memberId, page, sort);
+        String sessionToken = request.getHeader("Authorization");
+        return myMenuService.getMyOrdersList(sessionToken, page, sort);
     }
 
     /*예약 상세보기

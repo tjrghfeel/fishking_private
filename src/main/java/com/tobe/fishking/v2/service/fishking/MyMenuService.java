@@ -51,13 +51,13 @@ public class MyMenuService {
     /*마이메뉴 페이지 조회 처리 메소드
     * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
     @Transactional
-    public MyMenuPageDTO getMyMenuPage(Long memberId) throws ResourceNotFoundException {
+    public MyMenuPageDTO getMyMenuPage(String sessionToken) throws ResourceNotFoundException {
         MyMenuPageDTO myMenuPageDTO = null;
 
         /*repository로부터 값 가져옴. */
             //프사가져옴.
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+            Member member = memberRepository.findBySessionToken(sessionToken)
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
             String profileImage = member.getProfileImage();
             //nickName 가져옴
             String nickName = member.getNickName();
@@ -79,9 +79,9 @@ public class MyMenuService {
 
     /*내글관리 - 게시글 */
     @Transactional
-    public Page<FishingDiaryDtoForPage> getMyFishingDiary(Long memberId, int page) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public Page<FishingDiaryDtoForPage> getMyFishingDiary(String sessionToken, int page) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page,10);
         return fishingDiaryRepository.findByMember(member,pageable);
     }
@@ -89,27 +89,27 @@ public class MyMenuService {
     /*내글관리 - 댓글
      * - 댓글을 단 fishingDiary가 선상인지 갯바위인지, fishingDiary 제목, 댓글 내용, 시간이 담긴 DTO를 Page로 반환. */
     @Transactional
-    public Page<FishingDiaryCommentDtoForPage> getMyFishingDiaryComment(Long memberId, int page) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public Page<FishingDiaryCommentDtoForPage> getMyFishingDiaryComment(String sessionToken, int page) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page, 10);
         return fishingDiaryCommentRepository.findByMember(member, pageable);
     }
 
     /*내글관리 - 스크랩*/
     @Transactional
-    public Page<FishingDiaryDtoForPage> getMyFishingDiaryScrap(Long memberId, int page) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for thid id ::"+memberId));
+    public Page<FishingDiaryDtoForPage> getMyFishingDiaryScrap(String sessionToken, int page) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for thid sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page,10);
         return fishingDiaryRepository.findByScrapMembers(member,pageable);
     }
 
     /*내글관리 - 리뷰*/
     @Transactional
-    public Page<ReviewDto> getMyReview(Long memberId, int page) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+memberId));
+    public Page<ReviewDto> getMyReview(String sessionToken, int page) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
 
         Pageable pageable = PageRequest.of(page,10);
         return reviewRepository.findMyReviewList(member, pageable);
@@ -117,9 +117,9 @@ public class MyMenuService {
 
     /*내 예약 리스트 조회*/
     @Transactional
-    public Page<OrdersDtoForPage> getMyOrdersList(Long memberId, int page, String sort) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public Page<OrdersDtoForPage> getMyOrdersList(String sessionToken, int page, String sort) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page,10);
         if(sort.equals("none")){ return ordersRepository.findByCreatedByOrderByOrderStatus(member, pageable);}
         return ordersRepository.findByCreatedByAndOrderStatus(member, OrderStatus.valueOf(sort).ordinal(), pageable);

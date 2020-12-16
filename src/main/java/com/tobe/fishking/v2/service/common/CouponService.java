@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.fishing.CouponMember;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.CouponDTO;
+import com.tobe.fishking.v2.model.common.CouponDownloadDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
@@ -31,19 +32,19 @@ public class CouponService {
 
     /*다운 가능한 쿠폰 리스트 조회.*/
     @Transactional
-    public Page<CouponDTO> getDownloadableCouponList(Long memberId, int page){
+    public Page<CouponDTO> getDownloadableCouponList(String sessionToken, int page){
         Pageable pageable = PageRequest.of(page, 10);
-        return couponRepository.findCouponList(memberId, LocalDateTime.now(), pageable);
+        return couponRepository.findCouponList(sessionToken, LocalDateTime.now(), pageable);
     }
 
     /*쿠폰 다운받기
     * - couponId로 CouponMember를 생성한다. */
     @Transactional
-    public Long downloadCoupon(Long memberId, Long couponId) throws ResourceNotFoundException {
-        Coupon coupon = couponRepository.findById(couponId)
+    public Long downloadCoupon(String sessionToken, CouponDownloadDto couponId) throws ResourceNotFoundException {
+        Coupon coupon = couponRepository.findById(couponId.getCouponId())
                 .orElseThrow(()->new ResourceNotFoundException("coupon not found for this id ::"+couponId));
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         //!!!!!!!!!!!!쿠폰 번호 생성. (일단은 랜덤숫자 넣음. 번호어떻게만들지 정해지고 수정필요.
         String couponCodeOfCouponMember = coupon.getCouponCode() + String.format("%03d",(int)(Math.random()*1000));
 
@@ -65,9 +66,9 @@ public class CouponService {
     /*coupon_member 리스트 조회
     * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트를 정렬기준에 맞게 반환.*/
     @Transactional
-    public Page<CouponMemberDTO> getCouponMemberList(Long memberId, int page, String sort) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public Page<CouponMemberDTO> getCouponMemberList(String sessionToken, int page, String sort) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         Pageable pageable = PageRequest.of(page, 10);
         //정렬 기준에 따라 다른 repository메소드 호출.

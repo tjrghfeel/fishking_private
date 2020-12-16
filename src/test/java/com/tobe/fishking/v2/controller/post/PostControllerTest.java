@@ -1,5 +1,12 @@
 package com.tobe.fishking.v2.controller.post;
 
+import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.Address;
+import com.tobe.fishking.v2.entity.common.PhoneNumber;
+import com.tobe.fishking.v2.entity.common.PhoneNumberInfo;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.admin.MemberManageDtoForPage;
+import com.tobe.fishking.v2.model.board.FAQDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
@@ -13,8 +20,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.File;
 
 import static org.hamcrest.Matchers.is;
 
@@ -61,29 +78,44 @@ public class PostControllerTest {
     TakeRepository takeRepository;
     @Autowired
     Environment env;
+    @Autowired
+    PasswordEncoder encoder;
 
     @Test
     public void fileTest() throws Exception {
 
-  /*      FileEntity file =  fileRepo.findByPidAndFilePublish(FilePublish.post, 4 );
-
-        assertThat("hello",is("hello"));
-*/
+        return;
     }
 
+    @Transactional
+    @Modifying
     @Test
     public void noName() throws Exception {
-        String randomNum=null;
-        randomNum = Integer.toString((int)(Math.random()*10000));
-        randomNum = String.format("%04d",((int)(Math.random()*10000)));
+
+        Member member = memberRepository.findById(17L)
+                .orElseThrow(()->new ResourceNotFoundException(""));
+
+        System.out.println("result >>> "+encoder.encode("aaaaa12#$"));
+        /*member.setMemberName("김예린");
+        member.setNickName("예");
+        member.setEmail("ssss123@naver.com");
+        String encodedPw = encoder.encode("1234");
+        member.setPassword(encodedPw);
+        member.setProfileImage(env.getProperty("file.downloadUrl")+ "/profile/noProfileImage.jpg");
+        PhoneNumber phoneNumber = new PhoneNumber("123","5555");
+        member.setPhoneNumber(phoneNumber);
+        Address address = new Address("서울시","하남시","하남동");
+        member.setAddress(address);
+
+        memberRepository.save(member);*/
+
+        return;
+    }
+    @Transactional
+    public void updateMember() throws ResourceNotFoundException {
 
 
-
-        System.out.println("=====================================");
-        System.out.println("=====================================");
-        System.out.println("####result ) "+randomNum);
-        System.out.println("=====================================");
-        System.out.println("=====================================");
+        return;
     }
 
 

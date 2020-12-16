@@ -66,7 +66,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             "   c.exposure_end_date >= :today and " +
             "   c.is_issue = true and " +
             "   c.max_issue_count > c.issue_qty and " +
-            "   c.id not in (select cm.member_coupon_id from coupon_member cm where cm.coupon_member_id = :memberId)" +
+            "   c.id not in (select cm.member_coupon_id from coupon_member cm join member m on cm.coupon_member_id=m.id " +
+            "                   where m.session_token = :sessionToken)" +
             "group by c.id " +
             "order by c.exposure_end_date ",
             countQuery = "select c.id " +
@@ -76,11 +77,12 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
                     "   c.exposure_end_date >= :today and " +
                     "   c.is_issue = true and " +
                     "   c.max_issue_count > c.issue_qty and " +
-                    "   c.id not in (select cm.member_coupon_id from coupon_member cm where cm.coupon_member_id = :memberId)"  +
+                    "   c.id not in (select cm.member_coupon_id from coupon_member cm join member m on cm.coupon_member_id=m.id " +
+                    "                   where m.session_token = :sessionToken)" +
                     "group by c.id " +
                     "order by c.exposure_end_date ",
             nativeQuery = true
     )
-    Page<CouponDTO> findCouponList(@Param("memberId") Long memberId, @Param("today") LocalDateTime today, Pageable pageable);
+    Page<CouponDTO> findCouponList(@Param("sessionToken") String sessionToken, @Param("today") LocalDateTime today, Pageable pageable);
 
 }

@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Api(tags = {"알람"})
-@RequestMapping(value = "/v1/api")
+@RequestMapping(value = "/v2/api")
 public class AlertController {
 
     @Autowired
     AlertService alertService;
 
     /*알람 추가. */
-    @ApiOperation(value = "알람 추가")
+    /*@ApiOperation(value = "알람 추가")
     @PostMapping("/alert")
     public Long addAlert(Long memberId, Long[] commonCodeIdList) throws ResourceNotFoundException {
         return alertService.addAlert(memberId,commonCodeIdList);
-    }
+    }*/
 
     /**/
 

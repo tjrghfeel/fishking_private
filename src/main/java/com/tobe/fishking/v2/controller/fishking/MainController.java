@@ -27,7 +27,7 @@ import java.util.Map;
 @Api(tags = {"메인"})
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/v1/api")
+@RequestMapping(value = "/v2/api")
 public class MainController {
 
     private final GoodsService goodsService;

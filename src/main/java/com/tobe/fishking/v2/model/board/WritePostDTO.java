@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.model.board;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.board.Tag;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,6 @@ public class WritePostDTO {
     private Integer channelType;
     private String title;
     private String contents;
-    private Long authorId;//modifiedBy, createdBy필드를 여기서 id로 가져와 사용할것.
 //    private String authorName;
     private Integer returnType;
     private String returnNoAddress;
@@ -31,12 +31,13 @@ public class WritePostDTO {
     private Boolean isSecret;
     private Long parentId;
 
+    private MultipartFile[] files;
+
     public WritePostDTO(Post post) {
         boardId = post.getBoard().getId();
         channelType = post.getChannelType().ordinal();
         title = post.getTitle();
         contents = post.getContents();
-        authorId = post.getAuthor().getId();
 //        authorName = post.getAuthorName();
         returnType = post.getReturnType().ordinal();
         returnNoAddress = post.getReturnNoAddress();

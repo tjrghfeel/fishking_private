@@ -21,7 +21,7 @@ public class SignUpDto {
     private String email;
 
     @NotNull(message = "aaa")
-    @Size(min = 8, max = 14, message = "비밀번호는 8~14자")
+    @Size(min = 8, max = 16, message = "비밀번호는 8~14자")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$")
     private String pw;
 
