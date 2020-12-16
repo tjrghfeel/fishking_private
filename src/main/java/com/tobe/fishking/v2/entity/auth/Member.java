@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.entity.auth;
 
+import com.tobe.fishking.v2.entity.common.Address;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
@@ -31,11 +32,6 @@ public class Member {
     public String nickName;
 
     @Column
-    public String password;
-
-    @Column
-    // EXEC sp_addextendedproperty 'MS_Description', N'패스워드', 'USER', DBO, 'TABLE', member, 'COLUMN' password
-    @Column(columnDefinition = "varchar(150) not null   comment '패스워드'  ")
     public String password;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'이메일', 'USER', DBO, 'TABLE', member, 'COLUMN' email
@@ -78,11 +74,6 @@ public class Member {
     @Column(name = "status_message")
     private String statusMessage;
 
-    // EXEC sp_addextendedproperty 'MS_Description', N'SNS ID', 'USER', DBO, 'TABLE', member, 'COLUMN' is_certified
-//    @Convert(converter = StringConverter.class)
-    @Column(columnDefinition = "varchar(80)   comment 'SNS ID'  ")
-    private String snsId ;
-
     @Transient
     private String confirmPassword;
 
@@ -94,7 +85,8 @@ public class Member {
                   String password, String email, Gender gender,
                   Role roles, String sessionToken, String profileImage,
                   Boolean isActive, String certifiedNo, Boolean isCertified,
-                  String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber) {
+                  String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber,
+                  Address address) {
         this.id = id;
         this.uid = uid;
         this.memberName = memberName;
@@ -113,15 +105,12 @@ public class Member {
         this.snsId = snsId;
         this.statusMessage = statusMessage;
         this.phoneNumber = phoneNumber;
+        this.address = address;
     }
-/*
-    @Embedded
+
     private Address address;
 
-    @Embedded
-    private PhoneNumber phoneNumber;
 
-     */
 
 
     //Getters and setters ommitted for brevity
