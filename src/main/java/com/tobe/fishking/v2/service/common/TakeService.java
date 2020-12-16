@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.TakeResponse;
+import com.tobe.fishking.v2.model.common.DeletingTakeDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.TakeRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
@@ -30,10 +31,10 @@ public class TakeService {
 
     /*찜 추가 메소드. */
     @Transactional
-    public Long addTake(Long linkId, int takeType, Long memberId) throws ResourceNotFoundException {
+    public Long addTake(Long linkId, int takeType, String sessionToken) throws ResourceNotFoundException {
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         Take take = Take.builder()
                 .takeType(TakeType.values()[takeType])
@@ -48,8 +49,8 @@ public class TakeService {
     /*찜 삭제 메소드.
     * 반환 : 삭제한 Take 엔터티의 id를 반환.  */
     @Transactional
-    public Long deleteTake(Long takeId) throws ResourceNotFoundException {
-        Take take = takeRepository.findById(takeId)
+    public Long deleteTake(DeletingTakeDto takeId) throws ResourceNotFoundException {
+        Take take = takeRepository.findById(takeId.getTakeId())
                 .orElseThrow(()->new ResourceNotFoundException("take not found for this id ::"+takeId));
         Long deletedTakeId = take.getId();
         takeRepository.delete(take);
@@ -59,9 +60,9 @@ public class TakeService {
     /*선상 낚시 찜 목록 조회
     * 반환 : */
     @Transactional
-    public Page<TakeResponse> getFishingTypeFishTakeList(int fishingType, Long memberId, int page) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public Page<TakeResponse> getFishingTypeFishTakeList(int fishingType, String sessionToken, int page) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         Pageable pageable = PageRequest.of(page, 10);
         return goodsRepository.findTakeListAboutFishType(member, fishingType,pageable);
@@ -70,11 +71,11 @@ public class TakeService {
     /*선상, 갯바위 찜 개수 조회
     * 반환 : int[0] : 선상 찜 개수, int[1] : 갯바위 찜 개수 */
     @Transactional
-    public int[] getTakeCount(Long memberId) throws ResourceNotFoundException {
+    public int[] getTakeCount(String sessionToken) throws ResourceNotFoundException {
         int[] count = new int[2];
         /*Member 조회*/
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*Member로*/
         count[0] = goodsRepository.findTakeCountAboutFishType(member, FishingType.ship);

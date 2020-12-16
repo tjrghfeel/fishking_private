@@ -7,7 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ModifyProfilePwDto {
-    private String currentPw;
-    private String newPw;
+public class ModifyingStatusMessageDto {
+    private String statusMessage;
 }

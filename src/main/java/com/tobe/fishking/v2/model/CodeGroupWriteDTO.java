@@ -1,16 +1,14 @@
 package com.tobe.fishking.v2.model;
 
 import com.tobe.fishking.v2.entity.auth.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class CodeGroupWriteDTO {
     private Long id;
@@ -18,7 +16,5 @@ public class CodeGroupWriteDTO {
     private String name;
     private String description;
     private String remark;
-    private Long createdBy;
-    private Long modifiedBy;
 
 }

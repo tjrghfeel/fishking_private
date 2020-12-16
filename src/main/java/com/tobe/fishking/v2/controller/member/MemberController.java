@@ -82,17 +82,15 @@ public class MemberController {
     /*로그인*/
     @ApiOperation(value = "로그인")
     @PostMapping("/login")
-    public Boolean login(@RequestBody @Valid LoginDTO loginDTO, HttpServletResponse response){
-        String sessionToken = memberService.login(loginDTO);
-        if(sessionToken==null) return false;
-        response.setHeader("token", sessionToken);
-        return true;
+    public String login(@RequestBody @Valid LoginDTO loginDTO){
+        return memberService.login(loginDTO);
     }
 
     /*로그아웃*/
     @ApiOperation(value = "로그아웃")
     @PostMapping("/logout")
-    public boolean logout(@RequestBody String sessionToken) throws ResourceNotFoundException {
+    public boolean logout(HttpServletRequest request) throws ResourceNotFoundException {
+        String sessionToken = request.getHeader("Authorization");
         return memberService.logout(sessionToken);
     }
 
@@ -119,18 +117,21 @@ public class MemberController {
     /*사용자 프로필 정보 페이지 조회
     * - 프로필 조회 요청이 들어오면, 보고자하는 프로필의 member가 자기자신인지, 다른 일반 사용자인지, 업체인지에 따라 조금씩
     *   다른 정보가 들어있는 DTO를 반환해준다. */
-    @ApiOperation(value = "사용자 프로필 정보 조회")
+    @ApiOperation(value = "사용자 프로필 정보 조회",notes = "상대방 프로필을 클릭할시 해당 사용자의프로필 정보를 가져오는 api. \n" +
+            "- 클릭한 프로필의 사용자가 자기자신인지, 업주 회원인지, 일단 다른 회원인지에 따라 조금씩 다른 정보를 반환한다. ")
     @GetMapping("/profile")
-    public UserProfileDTO getUserProfile(@RequestParam("userId") Long userId, @RequestParam("myId") Long myId) throws ResourceNotFoundException {
-        return memberService.getUserProfile(userId, myId);
+    public UserProfileDTO getUserProfile(@RequestParam("userId") Long userId, HttpServletRequest request) throws ResourceNotFoundException {
+        String sessionToken = request.getHeader("Authorization");
+        return memberService.getUserProfile(userId, sessionToken);
     }
 
     /*프로필 관리 페이지 조회.
     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환. */
-    @ApiOperation(value = "프로필 관리 페이지 조회")
+    @ApiOperation(value = "프로필 관리 페이지 조회",notes = "프로필 관리를 위한 자기자신의 프로필 정보를 가져온다. ")
     @GetMapping("/profileManage")
-    public ProfileManageDTO getProfileManage(@RequestParam("memberId") Long memberId) throws ResourceNotFoundException {
-        return memberService.getProfileManage(memberId);
+    public ProfileManageDTO getProfileManage(HttpServletRequest request) throws ResourceNotFoundException {
+        String sessionToken = request.getHeader("Authorization");
+        return memberService.getProfileManage(sessionToken);
     }
 
     /*프사변경
@@ -151,7 +152,7 @@ public class MemberController {
     @ApiOperation(value = "닉네임 변경")
     @PutMapping("/profileManage/nickName")
     public String modifyProfileNickName(
-            @RequestBody String nickName,
+            @RequestBody ModifyingNickNameDto nickName,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -162,7 +163,7 @@ public class MemberController {
     @ApiOperation(value = "상태메세지 변경")
     @PutMapping("/profileManage/statusMessage")
     public String modifyProfileStatusMessage(
-            @RequestBody String statusMessage,
+            @RequestBody ModifyingStatusMessageDto statusMessage,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -173,7 +174,7 @@ public class MemberController {
     @ApiOperation(value = "이메일 변경")
     @PutMapping("/profileManage/email")
     public String modifyProfileEmail(
-            @RequestBody String email,
+            @RequestBody ModifyingEmailDto email,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");

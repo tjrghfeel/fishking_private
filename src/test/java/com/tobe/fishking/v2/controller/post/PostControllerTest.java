@@ -23,6 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -86,10 +87,15 @@ public class PostControllerTest {
         return;
     }
 
+    @Transactional
+    @Modifying
     @Test
     public void noName() throws Exception {
 
+        Member member = memberRepository.findById(17L)
+                .orElseThrow(()->new ResourceNotFoundException(""));
 
+        System.out.println("result >>> "+encoder.encode("aaaaa12#$"));
         /*member.setMemberName("김예린");
         member.setNickName("예");
         member.setEmail("ssss123@naver.com");

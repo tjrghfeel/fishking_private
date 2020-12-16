@@ -1,10 +1,7 @@
 package com.tobe.fishking.v2.model.fishing;
 
 import com.tobe.fishking.v2.entity.auth.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -13,9 +10,9 @@ import javax.persistence.*;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class CompanyWriteDTO {
     private Long id;//not null, pk
-    private Long member;  //name이 없을 경우 member_id, fk
     private String companyName;//
     private String shipOwner;//
     private String sido;

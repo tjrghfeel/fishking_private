@@ -20,7 +20,6 @@ public class WritePostDTO {
     private Integer channelType;
     private String title;
     private String contents;
-    private Long authorId;//modifiedBy, createdBy필드를 여기서 id로 가져와 사용할것.
 //    private String authorName;
     private Integer returnType;
     private String returnNoAddress;
@@ -39,7 +38,6 @@ public class WritePostDTO {
         channelType = post.getChannelType().ordinal();
         title = post.getTitle();
         contents = post.getContents();
-        authorId = post.getAuthor().getId();
 //        authorName = post.getAuthorName();
         returnType = post.getReturnType().ordinal();
         returnNoAddress = post.getReturnNoAddress();

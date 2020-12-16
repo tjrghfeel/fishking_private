@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Api(tags={"쿠폰"})
 @RestController
 @RequestMapping(value = "/v2/api")
@@ -24,35 +26,39 @@ public class CouponController {
     * - 어떤 Coupon이 노출기간이 현재시점이고, 발행가능상태이고, 발행수량이 최대발행수량을 넘지 않았으면,
     *    그 쿠폰들을 남은 기간이 짧은 순으로 정렬하여 Page로 반환.
     * - 반환은 쿠폰의 여러 정보들이 담겨있는 DTO형태로 반환. (CouponDTO 필드 참고) */
-    @ApiOperation(value = "다운 가능한 쿠폰리스트 출력")
+    @ApiOperation(value = "다운 가능한 쿠폰리스트 출력",notes = "현재 로그인된 회원이 다운받을 수 있는 쿠폰목록을 출력. ")
     @GetMapping("/downloadableCouponList/{page}")
     public Page<CouponDTO> getDownloadableCouponList(
-            @RequestParam("memberId") Long memberId,
+            HttpServletRequest request,
             @PathVariable("page") int page
     ){
-        return couponService.getDownloadableCouponList(memberId, page);
+        String sessionToken = request.getHeader("Authorization");
+        return couponService.getDownloadableCouponList(sessionToken, page);
     }
 
     /*쿠폰 다운 받기.
     * - 다운받은 쿠폰 종류를 가지고 coupon_member를 생성.
     * - 생선된 coupon_member의 id를 반환. */
-    @ApiOperation(value = "쿠폰 다운 받기")
+    @ApiOperation(value = "쿠폰 다운 받기", notes = "")
     @PostMapping("/downloadCoupon")
     public Long downloadCoupon(
-            @RequestBody CouponDownloadDto downloadDto
+            HttpServletRequest request,
+            @RequestBody CouponDownloadDto couponId
     ) throws ResourceNotFoundException {
-        return couponService.downloadCoupon(downloadDto.getMemberId(), downloadDto.getCouponId());
+        String sessionToken = request.getHeader("Authorization");
+        return couponService.downloadCoupon(sessionToken, couponId);
     }
 
     /*사용 가능한 coupon_member 리스트 조회.
     * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트를 정렬기준에 맞게 반환. */
-    @ApiOperation(value = "사용 가능한 쿠폰 리스트 조회")
+    @ApiOperation(value = "사용 가능한 쿠폰 리스트 조회",notes = "현재 로그인한 회원이 다운받은 쿠폰들 중에서 사용가능한 쿠폰목록 반환. ")
     @GetMapping("/usableCouponList/{page}")
     public Page<CouponMemberDTO> getCouponMemberList(
-            @RequestParam("memberId") Long memberId,
+            HttpServletRequest request,
             @PathVariable("page") int page,
             @RequestParam(value = "sort", required = false, defaultValue = "basic") String sort) throws ResourceNotFoundException {
-        return  couponService.getCouponMemberList(memberId, page, sort);
+        String sessionToken = request.getHeader("Authorization");
+        return  couponService.getCouponMemberList(sessionToken, page, sort);
     }
 
 

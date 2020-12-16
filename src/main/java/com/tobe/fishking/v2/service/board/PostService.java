@@ -76,9 +76,9 @@ public class PostService {
 
     /*QnA 리스트 조회*/
     @Transactional(readOnly = true)
-    public Page<QnADtoForPage> getQnAList(int page, Long memberId) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public Page<QnADtoForPage> getQnAList(int page, String sessionToken) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page, 10);
         return postRepository.findAllQnAList(member, pageable);
     }
@@ -145,12 +145,12 @@ public class PostService {
     /*postDTO에는 boardId, channelType, title, content, authorId, returnType, returnNoAddress, createdAt, tagsName,
     isSecret, parentId가 들어있음.*/
     @Transactional
-    public Long writePost(WritePostDTO postDTO, MultipartFile[] files) throws ResourceNotFoundException, IOException {
+    public Long writePost(WritePostDTO postDTO, MultipartFile[] files,String sessionToken) throws ResourceNotFoundException, IOException {
         //Post 저장 부분.
         Board boardOfPost = boardRepository.findById(postDTO.getBoardId())
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id :: "+postDTO.getBoardId()));
-        Member authorOfPost = memberRepository.findById(postDTO.getAuthorId())
-                .orElseThrow(()->new ResourceNotFoundException("Member not found for this id ::"+postDTO.getAuthorId()));
+        Member authorOfPost = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("Member not found for this sessionToken ::"+sessionToken));
 
         //Post entity의 List<Tag>만듦.
         /*List<Tag> tagList = new LinkedList<Tag>();
@@ -219,11 +219,20 @@ public class PostService {
     * */
     @Transactional
     public Long updatePost(UpdatePostDTO postDTO,
-                           MultipartFile[] files
+                           MultipartFile[] files,
+                           String sessionToken
                             ) throws ResourceNotFoundException, IOException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()-> new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
+
         //Post entity 수정.
         Post post = postRepository.findById(postDTO.getPostId())
                 .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postDTO.getPostId()));
+
+        /*현재 로그인된 회원이 글의 작성자가 아닐경우 예외처리. */
+        if(member.getId()!=post.getAuthor().getId()){
+            throw new RuntimeException("자신의 글만 수정할 수 있습니다");
+        }
 
         post.updatePost(postDTO);
 

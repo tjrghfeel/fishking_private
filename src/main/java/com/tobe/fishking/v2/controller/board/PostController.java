@@ -14,11 +14,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
 
-@Api(tags = {"게시글"})
+@Api(tags = {"고객센터"})
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/v2/api")
@@ -37,21 +38,22 @@ public class PostController {
     }*/
 
     /*FAQ 조회*/
-    @ApiOperation(value = "FAQ조회")
+    @ApiOperation(value = "FAQ조회", notes = "모든 FAQ를 조회합니다. \n" +
+            "- 글 목록 조회이지만 글 내용까지 한꺼번에 담겨서 반환된다. ")
     @GetMapping("/faq/{page}")
     public Page<FAQDto> getFAQList(@PathVariable("page") int page){
         return postService.getFAQList(page);
     }
 
     /*1:1문의내역 리스트 조회*/
-    @ApiOperation(value = "1:1문의내역 리스트 조회")
+    @ApiOperation(value = "1:1문의내역 리스트 조회", notes = "자신이 문의한 내역을 볼 수 있다. ")
     @GetMapping("/qna/{page}")
     public Page<QnADtoForPage> getQnAList(
             @PathVariable("page") int page,
-            /*@RequestParam("sessionToken") String sessionToken,*/
-            @RequestParam("memberId") Long memberId
+            HttpServletRequest request
     ) throws ResourceNotFoundException {
-        return postService.getQnAList(page, memberId);
+        String sessionToken = request.getHeader("Authorization");
+        return postService.getQnAList(page, sessionToken);
     }
 
     /*1:1문의내역 상세보기*/
@@ -89,16 +91,19 @@ public class PostController {
     }*/
 
     //게시글 저장. Post entity, FileEntity저장을 한다. 생성한 Post엔터티의 id를 반환.
-    @ApiOperation(value = "게시글 저장", notes = "parnedId, tagName, secret은 nullable / " +
-            "writePostDTO의 files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다. ")
+    @ApiOperation(value = "게시글 저장", notes = "1:1문의, FAQ, 공지사항 작성 api. \n" +
+            "- parnedId, tagName, secret은 nullable. \n  " +
+            "- files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다.\n" +
+            " ")
     @PostMapping("/post")
     public Long writePost(
-            @RequestBody WritePostDTO writePostDTO/*,
-            @RequestPart(value = "files", required = false) MultipartFile[] files*/
+            @RequestBody WritePostDTO writePostDTO,
+            HttpServletRequest request
     ) throws Exception {
+        String sessionToken = request.getHeader("Authorization");
         //게시글 저장.
         MultipartFile[] files = writePostDTO.getFiles();
-        Long postId = postService.writePost(writePostDTO, files);
+        Long postId = postService.writePost(writePostDTO, files, sessionToken);
 
         return postId;
     }
@@ -106,14 +111,16 @@ public class PostController {
     /*Post하나 업데이트.
     * 반환값 : 업데이트된 Post id.
     */
-    @ApiOperation(value = "게시물 수정", notes = "게시물을 수정합니다")
+    @ApiOperation(value = "게시물 수정", notes = "1:1문의, FAQ, 공지사항 수정 api. \n" +
+            "- files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다. ")
     @PostMapping("/post/update")
     public Long updatePost(
-            @RequestBody UpdatePostDTO postDTO/*,
-            @RequestParam("files") MultipartFile[] files*/
+            @RequestBody UpdatePostDTO postDTO,
+            HttpServletRequest request
     ) throws ResourceNotFoundException, IOException {
+        String sessionToken = request.getHeader("Authorization");
         MultipartFile[] files = postDTO.getFiles();
-        return postService.updatePost(postDTO, files);
+        return postService.updatePost(postDTO, files,sessionToken);
     }
 
 

@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CouponDownloadDto {
-    private Long couponId;
+public class DeletingTakeDto {
+    private Long takeId;
 }

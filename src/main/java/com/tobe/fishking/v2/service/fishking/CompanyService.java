@@ -45,11 +45,11 @@ public class CompanyService {
 
     /*업체 등록 요청 처리 메소드. */
     @Transactional
-    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files) throws Exception {
+    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files,String token) throws Exception {
         FileEntity[] fileEntityList = new FileEntity[3];
 
-        Member member = memberRepository.findById(companyWriteDTO.getMember())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+companyWriteDTO.getMember()));
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
 
         Long[] fileEntityIdList = saveFile(member.getId(), files);
         for(int i=0;i<3;i++){
@@ -127,10 +127,10 @@ public class CompanyService {
 
     /*업체등록 요청 수정 메소드*/
     @Transactional
-    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files) throws Exception {
+    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files,String token) throws Exception {
         /*다시올린사람이 누구인지 받아옴.*/
-        Member member = memberRepository.findById(companyWriteDTO.getMember())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+companyWriteDTO.getMember()));
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
 
         Company company = companyRepository.findById(companyWriteDTO.getId())
                 .orElseThrow(()->new ResourceNotFoundException("company not found for this id ::"+companyWriteDTO.getId()));
@@ -142,7 +142,7 @@ public class CompanyService {
         preFileIdList[2] = company.getRepresentFileId().getId();
 
         //넘어온 파일들 다시 등록.
-        Long[] fileEntityIdList = saveFile(companyWriteDTO.getMember(), files);
+        Long[] fileEntityIdList = saveFile(member.getId(), files);
 
         //Company엔터티 업데이트.
         FileEntity[] fileEntityList = new FileEntity[3];

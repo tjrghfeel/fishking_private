@@ -7,7 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ModifyProfilePwDto {
-    private String currentPw;
-    private String newPw;
+public class ModifyingEmailDto {
+    private String email;
 }

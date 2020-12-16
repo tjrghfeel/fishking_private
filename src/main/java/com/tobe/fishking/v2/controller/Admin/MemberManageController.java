@@ -44,12 +44,11 @@ public class MemberManageController {
     }
 
     /*회원 생성*/
-    /*!!!!!관리자페이지에서 회원생성시 휴대폰인증 어떻게할지 미정. 휴대폰인증도 할거면 문자인증api정해지고나서 회원가입 문자인증부분 구현후 구현하도록.
-    @ApiOperation(value = "회원 생성 기능",notes = "email,gender,password,roles,uid 필수. ")
+    @ApiOperation(value = "회원 생성 기능",notes = "email,gender,roles,uid,isActive,isCertified,areaCode,localNumber 필수. ")
     @PostMapping("/manage/member/create")
     public MemberDetailDtoForManager makeMember(@RequestBody @Valid MemberDetailDtoForManager dto){
         return memberManageService.makeMember(dto);
-    }*/
+    }
 
     /*회원 삭제
     * - 넘어온 id에 해당하는 회원을 '비활성화'처리 */
@@ -67,11 +66,10 @@ public class MemberManageController {
     }
 
     /*회원 수정*/
-    /*!!!!!휴대폰 번호 수정할때 인증할지말지 결정후 구현.
-    @ApiOperation(value = "회원 수정")
+    @ApiOperation(value = "회원 수정",notes = "email,gender,roles,uid,isActive,isCertified,areaCode,localNumber 필수")
     @PutMapping("/manage/member/update")
-    public MemberDetailDtoForManager updateMember(@RequestBody MemberDetailDtoForManager dto){
-
-    }*/
+    public boolean updateMember(@RequestBody MemberDetailDtoForManager dto) throws ResourceNotFoundException {
+        return memberManageService.modifyMember(dto);
+    }
 
 }

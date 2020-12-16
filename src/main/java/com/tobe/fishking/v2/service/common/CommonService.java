@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.Popular;
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -64,9 +65,10 @@ public class CommonService {
 
     /*CodeGroup 하나 추가 메소드.*/
     @Transactional
-    public Long writeCodeGroup(CodeGroupWriteDTO codeGroupWriteDTO) throws ResourceNotFoundException {
-        Member member = memberRepo.findById(codeGroupWriteDTO.getCreatedBy())
-                .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+codeGroupWriteDTO.getCreatedBy()));
+    public Long writeCodeGroup(CodeGroupWriteDTO codeGroupWriteDTO, String sessionToken) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("Member not found for this sessionToken :: "+sessionToken));
+
 
         CodeGroup codeGroup = CodeGroup.builder()
                 .code(codeGroupWriteDTO.getCode())
@@ -81,25 +83,28 @@ public class CommonService {
     }
     /*CodeGroup 수정 메소드*/
     @Transactional
-    public Long updateCodeGroup(CodeGroupWriteDTO codeGroupWriteDTO) throws ResourceNotFoundException {
+    public Long updateCodeGroup(CodeGroupWriteDTO codeGroupWriteDTO,String sessionToken) throws ResourceNotFoundException {
         CodeGroup codeGroup = codeGroupRepo.findById(codeGroupWriteDTO.getId())
                 .orElseThrow(()->new ResourceNotFoundException("CodeGroup not found for this id :: " + codeGroupWriteDTO.getId()));
-        Member member = memberRepo.findById(codeGroupWriteDTO.getModifiedBy())
-                .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+codeGroupWriteDTO.getModifiedBy()));
+        Member member = memberRepo.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("Member not found for this sessionToken :: "+sessionToken));
+
 
         codeGroup.updateCodeGroup(codeGroupWriteDTO, member);
 
         return codeGroup.getId();
     }
 
+
     /*CommonCode를 하나 추가해주는 메소드.
     * 새로 만든 CommonCode Entity의 id를 반환. */
     @Transactional
-    public String writeCommonCode(CommonCodeWriteDTO commonCodeWriteDTO) throws ResourceNotFoundException {
-        Member member = memberRepo.findById(commonCodeWriteDTO.getCreatedBy())
-                .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+commonCodeWriteDTO.getCreatedBy()));
+    public String writeCommonCode(CommonCodeWriteDTO commonCodeWriteDTO,String sessionToken) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("Member not found for this sessionToken :: "+sessionToken));
         CodeGroup codeGroup = codeGroupRepo.findById(commonCodeWriteDTO.getCodeGroup())
                 .orElseThrow(()->new ResourceNotFoundException("CodeGroup not found for this id :: "+commonCodeWriteDTO.getId()));
+
 
         //CommdonCode 엔터티 생성.
         CommonCode commonCode = CommonCode.builder()
@@ -126,13 +131,14 @@ public class CommonService {
     }
     /*Common Code 수정 메소드*/
     @Transactional
-    public String updateCommonCode(CommonCodeWriteDTO commonCodeWriteDTO) throws ResourceNotFoundException {
+    public String updateCommonCode(CommonCodeWriteDTO commonCodeWriteDTO,String sessionToken) throws ResourceNotFoundException {
         CommonCode commonCode = commonCodeRepo.findById(commonCodeWriteDTO.getId())
                 .orElseThrow(()->new ResourceNotFoundException("CommonCode not found for this id ::"+commonCodeWriteDTO.getId()));
-        Member member = memberRepo.findById(commonCodeWriteDTO.getModifiedBy())
-                .orElseThrow(()->new ResourceNotFoundException("Member not found for this id :: "+commonCodeWriteDTO.getModifiedBy()));
+        Member member = memberRepo.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("Member not found for this sessionToken :: "+sessionToken));
         CodeGroup codeGroup = codeGroupRepo.findById(commonCodeWriteDTO.getCodeGroup())
                 .orElseThrow(()->new ResourceNotFoundException("CodeGroup not found for this id ::"+commonCodeWriteDTO.getId()));
+
 
         commonCode.updateCommonCode(commonCodeWriteDTO,member,codeGroup);
 
@@ -155,6 +161,7 @@ public class CommonService {
             commonCodeDTO.setCode(commonCode.getCode());
             commonCodeDTO.setCodeGroup(commonCode.getCodeGroup());
             commonCodeDTO.setCodeName(commonCode.getCodeName());
+            commonCodeDTO.setExtraValue1(commonCode.getExtraValue1());
             commonCodeDTO.setRemark(commonCode.getRemark());
 
             commonCodeDTOList.add(commonCodeDTO);

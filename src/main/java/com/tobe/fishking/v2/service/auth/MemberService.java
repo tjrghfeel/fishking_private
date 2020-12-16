@@ -234,11 +234,13 @@ public class MemberService {
     /*사용자 프로필 보기
     * - 해당 사용자가 본인인지, 일반 다른사용자인지, 업체인지에 따라 DTO에 필요한 정보를 추가해주는식으로.  */
     @Transactional
-    public UserProfileDTO getUserProfile(Long profileUserId, Long myId) throws ResourceNotFoundException {
+    public UserProfileDTO getUserProfile(Long profileUserId, String sessionToken) throws ResourceNotFoundException {
         /*repository로부터 필요한 정보 가져오기*/
             /*userId로부터 Member를 가져온다. */
             Member member = memberRepository.findById(profileUserId)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+profileUserId));
+            Member me = memberRepository.findBySessionToken(sessionToken)
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
 
             /*비활성화된 멤버라면 빈 dto를 반환. */
             if(member.getIsActive()==false){
@@ -266,7 +268,7 @@ public class MemberService {
                 .build();
 
             /*본인인 경우를 표시. */
-            if(profileUserId.equals(myId)){ userProfileDTO.setIsMe(true); }
+            if(profileUserId.equals(me.getId())){ userProfileDTO.setIsMe(true); }
 
             /*업체회원인 경우 정보추가  */
             Ship ship = shipRepository.findByMember(member);
@@ -292,9 +294,9 @@ public class MemberService {
     /*프로필 관리 페이지 보기
     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환.*/
     @Transactional
-    public ProfileManageDTO getProfileManage(Long memberId) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
+    public ProfileManageDTO getProfileManage(String sessionToken) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         ProfileManageDTO profileManageDTO = ProfileManageDTO.builder()
                 .id(member.getId())
@@ -354,31 +356,31 @@ public class MemberService {
 
     /*닉네임 변경*/
     @Transactional
-    public String modifyProfileNickName(String sessionToken, String nickName) throws ResourceNotFoundException {
+    public String modifyProfileNickName(String sessionToken, ModifyingNickNameDto nickName) throws ResourceNotFoundException {
         /*Member 가져옴*/
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*닉네임 업데이트*/
-        member.setNickName(nickName);
+        member.setNickName(nickName.getNickName());
         return member.getNickName();
     }
 
     /*상태 메세지 변경*/
     @Transactional
-    public String modifyProfileStatusMessage(String sessionToken, String statusMessage) throws ResourceNotFoundException {
+    public String modifyProfileStatusMessage(String sessionToken, ModifyingStatusMessageDto statusMessage) throws ResourceNotFoundException {
         /*Member 가져옴*/
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*닉네임 업데이트*/
-        member.setStatusMessage(statusMessage);
+        member.setStatusMessage(statusMessage.getStatusMessage());
         return member.getStatusMessage();
     }
 
     /*이메일 변경*/
     @Transactional
-    public String modifyProfileEmail(String sessionToken, String email) throws ResourceNotFoundException {
+    public String modifyProfileEmail(String sessionToken, ModifyingEmailDto email) throws ResourceNotFoundException {
         /*!!!!!유효성 체크 로직. (만약 서비스계층에서 수행해야하는거면)*/
 
         /*Member 가져옴*/
@@ -386,7 +388,7 @@ public class MemberService {
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         /*닉네임 업데이트*/
-        member.setEmail(email);
+        member.setEmail(email.getEmail());
         return member.getEmail();
     }
 

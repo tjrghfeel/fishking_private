@@ -83,15 +83,15 @@ public class MemberManageService {
     }
 
     /*회원 생성*/
-    /*@Transactional
+    @Transactional
     public MemberDetailDtoForManager makeMember(MemberDetailDtoForManager dto){
-        *//*이메일 중복체크. *//*
+        /*이메일 중복체크.*/
         if(memberRepository.existsByEmail(dto.getEmail())==true){
-            *//*!!!!!예외처리 이렇게하는게 맞는지? 그냥 던지기만하면 프론트에서 알아서 처리하는지? *//*
+            /*!!!!!예외처리 이렇게하는게 맞는지? 그냥 던지기만하면 프론트에서 알아서 처리하는지?*/
             throw new EmailDupException("이메일이 중복됩니다");
         }
 
-        *//*회원 저장. *//*
+        /*회원 저장.*/
         Member member = Member.builder()
                 .uid(dto.getUid())
                 .memberName(dto.getMemberName())
@@ -116,7 +116,7 @@ public class MemberManageService {
 
         dto.setId(member.getId());
         return dto;
-    }*/
+    }
 
     /*회원 삭제(비활성화)
     * - */
@@ -160,6 +160,34 @@ public class MemberManageService {
                 .build();
 
         return dto;
+    }
+
+    /*회원 수정*/
+    @Transactional
+    public boolean modifyMember(MemberDetailDtoForManager dto) throws ResourceNotFoundException {
+        Member member = memberRepository.findById(dto.getId())
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getId()));
+
+        member.setUid(dto.getUid());
+        member.setMemberName(dto.getMemberName());
+        member.setNickName(dto.getNickName());
+        if(dto.getPassword()!=null){member.setPassword(encoder.encode(dto.getPassword()));}
+        member.setEmail(dto.getEmail());
+        member.setGender(Gender.values()[dto.getGender()]);
+        member.setRoles(Role.values()[dto.getRoles()]);
+        member.setProfileImage(dto.getProfileImage());
+        member.setIsActive(dto.getIsActive());
+        member.setCertifiedNo(dto.getCertifiedNo());
+        member.setIsCertified(dto.getIsCertified());
+        member.setJoinDt(dto.getJoinDt());
+        member.setSnsType((dto.getSnsType()==null)?null:(SNSType.values()[dto.getSnsType()]));
+        member.setSnsId(dto.getSnsId());
+        member.setStatusMessage(dto.getStatusMessage());
+        member.setAddress(new Address(dto.getCity(),dto.getGu(),dto.getDong()));
+        member.setPhoneNumber(new PhoneNumber(dto.getAreaCode(),dto.getLocalNumber()));
+
+        member = memberRepository.save(member);
+        return true;
     }
 
 }
