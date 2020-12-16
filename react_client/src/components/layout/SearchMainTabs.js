@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
@@ -11,35 +10,24 @@ export default inject()(
           <a
             className={
               "nav-link" +
-              (pathname.indexOf(`/main/story/main`) !== -1
+              (pathname.indexOf("/search/all") !== -1
                 ? " ".concat("active")
                 : "")
             }
-            onClick={() => history.push(`/main/story/main`)}
+            onClick={() => history.push(`/search/all`)}
           >
-            조황일지
+            전체
           </a>
           <a
             className={
               "nav-link" +
-              (pathname.indexOf(`/main/story/tv`) !== -1
+              (pathname.indexOf("/search/reserve") !== -1
                 ? " ".concat("active")
                 : "")
             }
-            onClick={() => history.push(`/main/story/tv`)}
+            onClick={() => history.push(`/search/reserve`)}
           >
-            어복TV
-          </a>
-          <a
-            className={
-              "nav-link" +
-              (pathname.indexOf(`/main/story/user`) !== -1
-                ? " ".concat("active")
-                : "")
-            }
-            onClick={() => history.push(`/main/story/user`)}
-          >
-            유저조행기
+            예약
           </a>
         </nav>
       );

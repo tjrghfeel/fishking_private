@@ -10,6 +10,55 @@ export class PageStore {
   constructor() {
     makeAutoObservable(this);
   }
+  /** Carousel 로딩 */
+  appyCarousel(className: string = "carousel") {
+    // @ts-ignore
+    $(".".concat(className)).swipe({
+      swipe: function (
+        event: any,
+        direction: any,
+        distance: any,
+        duration: any,
+        fingerCount: any,
+        fingerData: any
+      ) {
+        if (direction === "left") {
+          // @ts-ignore
+          $(this).carousel("next");
+        }
+        if (direction === "right") {
+          // @ts-ignore
+          $(this).carousel("prev");
+        }
+      },
+      tap: function (event: any, target: any) {
+        // navigateTo(url)
+      },
+
+      allowPageScroll: "vertical",
+      excludedElements: "label, button, input, select, textarea, .noSwipe",
+      threshold: 1,
+    });
+  }
+
+  /** Swipe 로딩 */
+  applySwipe() {
+    // @ts-ignore
+    $(document).swipe({
+      swipe: function (
+        event: any,
+        direction: any,
+        distance: any,
+        duration: any,
+        fingerCount: any
+      ) {},
+      click: function (event: any, target: any) {
+        $(target).click();
+      },
+      threshold: 75,
+    });
+  }
+
   /** 동적 로드된 스크립트 엘리먼트 배열 */
   scripts: Array<HTMLElement> = [];
 

@@ -4,49 +4,60 @@ import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layout/Navigation";
 import ConfirmModal from "../../components/modal/ConfirmModal";
 
-export default inject("MemberStore")(
-  observer(({ MemberStore: { memberId } }) => {
+export default inject(
+  "MemberStore",
+  "ExternalStore"
+)(
+  observer(({ ExternalStore, MemberStore: { memberId }, history }) => {
     /** 마이메뉴 데이터 */
     const menus = [
       {
         text: "글쓰기",
         pathname: "story-add.html",
         imgSrc: "/assets/img/svg/mymenu-write.svg",
+        requiredLogin: true,
       },
       {
         text: "내글관리",
         pathname: "my-post.html",
         imgSrc: "/assets/img/svg/mymenu-mypost.svg",
+        requiredLogin: true,
       },
       {
         text: "찜한업체",
         pathname: "my-zzim.html",
         imgSrc: "/assets/img/svg/mymenu-zzim.svg",
+        requiredLogin: true,
       },
       {
         text: "실시간조황",
         pathname: "boat.html",
         imgSrc: "/assets/img/svg/mymenu-live.svg",
+        requiredLogin: false,
       },
       {
         text: "물때",
         pathname: "tide.html",
         imgSrc: "/assets/img/svg/mymenu-tide.svg",
+        requiredLogin: false,
       },
       {
         text: "공지사항",
         pathname: "notice.html",
         imgSrc: "/assets/img/svg/mymenu-notice.svg",
+        requiredLogin: false,
       },
       {
         text: "이벤트",
         pathname: "event.html",
         imgSrc: "/assets/img/svg/mymenu-event.svg",
+        requiredLogin: false,
       },
       {
         text: "고객센터",
         pathname: "cs-faq.html",
         imgSrc: "/assets/img/svg/mymenu-cs.svg",
+        requiredLogin: false,
       },
     ];
     return (
@@ -95,7 +106,7 @@ export default inject("MemberStore")(
         <div className="container nopadding">
           {!memberId && (
             <a
-              href="login.html"
+              onClick={() => history.push(`/member/login`)}
               className="btn btn-primary btn-round btn-lg btn-block cs-padding"
             >
               로그인 및 회원가입 하기
@@ -129,7 +140,13 @@ export default inject("MemberStore")(
           <div className="row no-gutters d-flex align-items-center mt-3">
             <div className="col-2">내 쿠폰</div>
             <div className="col-4 text-right">
-              <a href="my-coupon.html">
+              <a
+                onClick={() =>
+                  memberId
+                    ? history.push(`my-coupon.html`)
+                    : history.push(`/member/login`)
+                }
+              >
                 <strong className="text-primary large"></strong>
                 <small className="text-secondary"></small>
                 <img
@@ -142,8 +159,14 @@ export default inject("MemberStore")(
             <div className="col-1"></div>
             <div className="col-2">알림</div>
             <div className="col-3 text-right">
-              <a href="my-alarm.html">
-                <strong className="text-primary large">17</strong>
+              <a
+                onClick={() =>
+                  memberId
+                    ? history.push(`my-alarm.html`)
+                    : history.push(`/member/login`)
+                }
+              >
+                <strong className="text-primary large">0</strong>
                 <small className="text-secondary">건</small>
                 <img
                   src="/assets/img/svg/arrow-grey.svg"
@@ -178,7 +201,17 @@ export default inject("MemberStore")(
         <div className="container nopadding">
           <nav className="nav nav-pills nav-sel nav-my nav-col-4">
             {menus.map((data, index) => (
-              <a key={index} className="nav-link">
+              <a
+                key={index}
+                className="nav-link"
+                onClick={() => {
+                  if (!data.requiredLogin || memberId !== null) {
+                    history.push(data.pathname);
+                  } else {
+                    history.push(`/member/login`);
+                  }
+                }}
+              >
                 <figure>
                   <img src={data.imgSrc} alt="" />
                 </figure>
@@ -230,7 +263,14 @@ export default inject("MemberStore")(
         </div>
 
         {/** 모달 팝업 */}
-        <ConfirmModal id={"callModal"} title={"전화걸기"} textOk={"통화"}>
+        <ConfirmModal
+          id={"callModal"}
+          title={"전화걸기"}
+          textOk={"통화"}
+          onClickOK={() =>
+            ExternalStore.linking("tel:".concat(process.env.REACT_APP_CS_PHONE))
+          }
+        >
           <p>
             고객센터로 전화연결 하시겠습니까?
             <br />
