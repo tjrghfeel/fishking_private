@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* global $ */
 import React, { useEffect } from "react";
 import { inject, observer } from "mobx-react";
@@ -23,7 +24,6 @@ export default inject("PageStore")(
     const onClickToggle = () => {
       $(".toggle-content").slideToggle("slow");
       $(this).toggleClass("active");
-      return false;
       $(".toggle-content").toggleClass("expanded");
     };
     return (
@@ -125,7 +125,9 @@ export default inject("PageStore")(
             </ul>
           </div>
           <div className="togglewrap">
-            <a onClick={onClickToggle} className="toggle-btn"></a>
+            <a onClick={onClickToggle} className="toggle-btn">
+              &nbsp;
+            </a>
           </div>
         </div>
 

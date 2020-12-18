@@ -5,17 +5,19 @@ import { inject, observer } from "mobx-react";
 export default inject()(
   observer(
     ({
-      imgSrc,
-      isLive,
-      playTime,
-      fishList,
-      title,
-      location,
-      distance = 0,
-      isRealtime,
-      price = 0,
-      textNotice,
-      textEvent,
+      data: {
+        imgSrc,
+        isLive,
+        playTime,
+        fishList,
+        title,
+        location,
+        distance = 0,
+        isRealtime,
+        price = 0,
+        textNotice,
+        textEvent,
+      },
     }) => {
       return (
         <a>

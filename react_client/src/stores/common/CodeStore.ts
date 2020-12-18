@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 import Http from "../../commons/Http";
 
 export interface fishspeciesProps {
@@ -11,53 +11,81 @@ export class CodeStore {
   constructor() {
     makeAutoObservable(this);
   }
-  /** 어종 코드 데이터 */
-  fishspecies: Array<fishspeciesProps> = [];
-  /** 어종 코드 데이터 :: n x 3 */
-  fishspecies2: Array<Array<fishspeciesProps>> = [];
-  /** 어종 코드 데이터 로드 */
-  loadFishspecies = () => {
-    return new Promise((resolve) => {
-      Http.request(
-        "GET",
-        "/v2/api/commonCode/80",
-        null,
-        null,
-        (response: any) => {
-          runInAction(() => {
-            if (response.success && response.list.length > 0) {
-              // --> 어종 코드 데이터
-              for (let fish of response.list) {
-                const { id, code, codeName } = fish;
-                this.fishspecies.push({ id, code, codeName });
-              }
+  /** enum 데이터 조회 */
+  REST_GET_commonCode_value = async (
+    type: string = "tideTime",
+    columnLength: number = 0
+  ) => {
+    try {
+      const resolve = await Http._get("/v2/api/value");
 
-              // --> 어종 코드 데이터 :: n x 3
-              let tmp = [];
-              for (let i = 0; i < response.list.length; i++) {
-                const { id, code, codeName } = response.list[i];
-                tmp.push({ id, code, codeName });
-                if (tmp.length === 3) {
-                  this.fishspecies2.push(tmp);
-                  tmp = [];
-                }
-                if (i === response.list.length - 1) {
-                  while (tmp.length < 3) {
-                    tmp.push({ id: "blank", code: null, codeName: null });
-                  }
-
-                  this.fishspecies2.push(tmp);
-                }
-              }
+      const enums: Array<any> = [];
+      if (resolve[type] && resolve[type].length > 0) {
+        let row = [];
+        for (let i = 0; i < resolve[type].length; i++) {
+          const item = resolve[type][i];
+          const { key, value } = item;
+          if (columnLength === 0) {
+            enums.push({ key, value });
+          } else {
+            row.push({ key, value });
+            if (row.length === columnLength) {
+              enums.push(row);
+              row = [];
             }
-            resolve(true);
-          });
-        },
-        (err: any) => {
-          resolve(false);
+            if (i === resolve[type].length - 1) {
+              while (row.length < columnLength) {
+                row.push({ key: null, value: null });
+              }
+              enums.push(row);
+            }
+          }
         }
-      );
-    });
+      }
+
+      return enums;
+    } catch (err) {
+      console.error("[REST] 프로필 > 탈퇴하기 :: " + JSON.stringify(err));
+      return null;
+    }
+  };
+  /** 코드 데이터 조회 :: n열 가공 */
+  REST_GET_commonCode_group = async (
+    groupId: string,
+    columnLength: number = 0
+  ) => {
+    try {
+      const resolve = await Http._get("/v2/api/commonCode/" + groupId);
+
+      const arr_code = [];
+      if (resolve.list && resolve.list.length > 0) {
+        let row = [];
+        for (let i = 0; i < resolve.list.length; i++) {
+          const item = resolve.list[i];
+          const { id, code, codeName } = item;
+          if (columnLength === 0) {
+            arr_code.push({ id, code, codeName });
+          } else {
+            row.push({ id, code, codeName });
+            if (row.length === columnLength) {
+              arr_code.push(row);
+              row = [];
+            }
+            if (i === resolve.list.length - 1) {
+              while (row.length < columnLength) {
+                row.push({ id: null, code: null, codeName: null });
+              }
+              arr_code.push(row);
+            }
+          }
+        }
+      }
+
+      return arr_code;
+    } catch (err) {
+      console.error("[REST] 프로필 > 탈퇴하기 :: " + JSON.stringify(err));
+      return null;
+    }
   };
 }
 

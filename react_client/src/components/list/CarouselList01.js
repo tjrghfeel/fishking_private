@@ -37,10 +37,10 @@ export default inject()(
                       }
                     >
                       {carouselType === "ListItem03" && (
-                        <ListItem03 {...data} />
+                        <ListItem03 data={data} />
                       )}
                       {carouselType === "ListItem04" && (
-                        <ListItem04 {...data} />
+                        <ListItem04 data={data} />
                       )}
                     </div>
                   ))}
@@ -70,10 +70,10 @@ export default inject()(
                       }
                     >
                       {carouselType === "ListItem03" && (
-                        <ListItem03 {...data} />
+                        <ListItem03 data={data} />
                       )}
                       {carouselType === "ListItem04" && (
-                        <ListItem04 {...data} />
+                        <ListItem04 data={data} />
                       )}
                     </div>
                   ))}

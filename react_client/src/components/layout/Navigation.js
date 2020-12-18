@@ -14,6 +14,7 @@ export default inject()(
         visibleConfigIcon,
         visibleSearchIcon,
         visibleBackIcon,
+        customButton,
       }) => {
         return (
           <nav
@@ -71,6 +72,9 @@ export default inject()(
                   >
                     <img src="/assets/img/svg/navbar-search.svg" alt="Search" />
                   </a>
+                )}
+                {customButton && (
+                  <React.Fragment>{[customButton]}</React.Fragment>
                 )}
               </>
             )}

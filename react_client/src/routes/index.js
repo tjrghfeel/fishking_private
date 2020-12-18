@@ -8,9 +8,18 @@ import MemberRoute from "./MemberRoute";
 import DocsRoute from "./DocsRoute";
 import SearchRoute from "./SearchRoute";
 import SetRoute from "./SetRoute";
+import CouponRoute from "./CouponRoute";
+import CommonRoute from "./CommonRoute";
+import StoryRoute from "./StoryRoute";
 
-export default inject("PageStore")(
-  observer(({ PageStore }) => {
+export default inject(
+  "PageStore",
+  "MemberStore"
+)(
+  observer(({ PageStore, MemberStore }) => {
+    /** 로그인여부 로드 */
+    MemberStore.loadLoggedIn();
+    /** 초기화 */
     useEffect(() => {
       (async () => {
         // --> 1. Kakao 초기화
@@ -89,7 +98,7 @@ export default inject("PageStore")(
           { global: true }
         );
       })();
-    }, [PageStore]);
+    }, [PageStore, MemberStore]);
     /** 렌더링 */
     return (
       <BrowserRouter>
@@ -104,6 +113,12 @@ export default inject("PageStore")(
           <Route path={`/search`} component={SearchRoute} />
           {/** 설정 */}
           <Route path={`/set`} component={SetRoute} />
+          {/** 쿠폰 */}
+          <Route path={`/coupon`} component={CouponRoute} />
+          {/** 스토리 */}
+          <Route path={`/story`} component={StoryRoute} />
+          {/** 공통 및 기타 */}
+          <Route path={`/common`} component={CommonRoute} />
           {/** 기본 라우팅 */}
           <Redirect from={`*`} to={"/main/home"} />
         </Switch>

@@ -21,9 +21,9 @@ export default inject()(
           {list &&
             list.map((data, index) => {
               if (itemType === "ListItem06") {
-                return <ListItem06 key={index} {...data} />;
+                return <ListItem06 key={index} data={data} />;
               } else {
-                return <ListItem07 key={index} {...data} />;
+                return <ListItem07 key={index} data={data} />;
               }
             })}
         </>

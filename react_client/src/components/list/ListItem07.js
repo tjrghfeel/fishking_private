@@ -7,17 +7,19 @@ import { fishIcon } from "../../commons/Constant";
 export default inject()(
   observer(
     ({
-      imgSrc,
-      isLive,
-      playTime,
-      title,
-      fishList,
-      fishType,
-      fishCount = 0,
-      location,
-      distance = 0,
-      isRealtime,
-      price = 0,
+      data: {
+        imgSrc,
+        isLive,
+        playTime,
+        title,
+        fishList,
+        fishType,
+        fishCount = 0,
+        location,
+        distance = 0,
+        isRealtime,
+        price = 0,
+      },
     }) => {
       return (
         <>

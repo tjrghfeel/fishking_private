@@ -8,8 +8,6 @@ import DocsPolicyCancelPage from "../pages/docs/DocsPolicyCancelPage";
 import DocsPolicyLbsPage from "../pages/docs/DocsPolicyLbsPage";
 import DocsPolicyAgreePage from "../pages/docs/DocsPolicyAgreePage";
 
-import BlankPage from "../pages/BlankPage";
-
 export default inject()(
   observer(({ match }) => {
     return (

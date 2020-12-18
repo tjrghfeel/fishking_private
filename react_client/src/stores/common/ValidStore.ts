@@ -6,12 +6,13 @@ export class ValidStore {
   }
   /** 이메일 형식 검증 */
   isEmail = (text: string) => {
-    const regex = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
+    // const regex = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
+    const regex = /^([0-9a-zA-Z_-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
     return regex.test(text);
   };
 
   /** 전화번호 형식 검증 :: 숫자만 */
-  isPhoneNo = (text: string) => {
+  isMobile = (text: string) => {
     const regex = /^[0][1][0-9]*$/;
     return regex.test(text);
   };
@@ -38,6 +39,32 @@ export class ValidStore {
   isMultiCheck3 = (text: string) => {
     const regex = /^(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{10,12}$/;
     return regex.test(text);
+  };
+
+  /** 비밀번호 형식 검증 */
+  isPassword = (text: string) => {
+    if (
+      this.isMultiCheck1(text) ||
+      this.isMultiCheck2(text) ||
+      this.isMultiCheck3(text)
+    )
+      return true;
+    else return false;
+  };
+
+  /** Date 포맷팅 :: yyyy년 mm월 dd일 w요일 */
+  getDateString = (date: Date) => {
+    const weeks = ["일", "월", "화", "수", "목", "금", "토"];
+    return (
+      date.getFullYear() +
+      "년 " +
+      (date.getMonth() + 1) +
+      "월 " +
+      date.getDate() +
+      "일 " +
+      weeks[date.getDay()] +
+      "요일"
+    );
   };
 }
 

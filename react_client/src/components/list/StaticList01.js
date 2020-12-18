@@ -10,7 +10,7 @@ export default inject()(
         <div className="pt-0">
           <hr className="full mt-0 mb-3" />
           {list &&
-            list.map((data, index) => <ListItem10 key={index} {...data} />)}
+            list.map((data, index) => <ListItem10 key={index} data={data} />)}
         </div>
       </div>
     );
