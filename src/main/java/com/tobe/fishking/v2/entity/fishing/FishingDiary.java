@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Tag;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import com.tobe.fishking.v2.model.common.ShareStatus;
@@ -94,14 +95,28 @@ public class FishingDiary extends BaseTime {
     private Double fishWeight;
 
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'낚시기법', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fish_weight
-    @Column(columnDefinition = "int   comment '낚시기법'  ")
+/*    @Column(columnDefinition = "int   comment '낚시기법'  ")
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private FishingTechnic fishingTechnic;
 
     //@Column(columnDefinition = " comment '미끼'  ")
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'미끼', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_lure
     @Column(columnDefinition = " varchar(200) comment '미끼'  ")
-    private String fishingLure;
+    private String fishingLure;*/
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
+    // EXEC sp_addextendedproperty 'MS_Description', N'상품정보-미끼목록', 'USER', DBO, 'TABLE', goods, 'COLUMN',  lure
+    @ManyToMany(targetEntity = CommonCode.class)
+    @JoinColumn(name = "fishing_diary_fishing_lures ", columnDefinition = " comment  '루어낚시'  ")
+    private List<CommonCode> fishingLures = new ArrayList<>();
+
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
+    @ManyToMany
+    @JoinColumn(name = "fishing_diary_fishing_technics" , columnDefinition = "comment  '낚시기법'  ")
+   // @Builder.Default
+    private List<CommonCode> fishingTechnics = new ArrayList<>();
+
 
     //위치 항목에 대해 선상인 경우 선상명, 갯바위인 경우 지역정보(xx시, xx군 면 등)
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'낚시장소', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fish_location
@@ -153,8 +168,9 @@ public class FishingDiary extends BaseTime {
 
     public FishingDiary(Board board, Ship ship, Member member, Goods goods, String title, String contents
             , String location, String fishingSpeciesName, String fishingDate, String fishingTideTime
-            , double fishLength, double fishWeight, FishingTechnic fishingTechnic
-            , String fishingLure, String fishingLocation, String writeLocation, Long writeLatitude
+            , double fishLength, double fishWeight
+            , List<CommonCode> fishingTechnics, List<CommonCode> fishingLuress
+            , String fishingLocation, String writeLocation, Long writeLatitude
             , Long writeLongitude, Member createdBy, Member modifiedBy) {
 
         this.board = board;
@@ -169,8 +185,9 @@ public class FishingDiary extends BaseTime {
         this.fishingTideTime = fishingTideTime;
         this.fishLength = fishLength;
         this.fishWeight = fishWeight;
-        this.fishingTechnic = fishingTechnic;
-        this.fishingLure = fishingLure;
+        this.fishingTechnics = fishingTechnics;
+        this.fishingLures = fishingLures;
+
         this.fishingLocation = fishingLocation;
         this.writeLocation = writeLocation;
         this.writeLatitude = writeLatitude;
@@ -190,7 +207,7 @@ public class FishingDiary extends BaseTime {
     }
 
 
-    public FishingDiary setUpdate(String title, String contents, String location, String fishingSpeciesName, String fishingDate, String fishingTideTime, double fishLength, double fishWeight, FishingTechnic fishingTechnic, String fishingLure, String fishingLocation, String writeLocation, Long writeLatitude, Long writelongitude, Member createdBy, Member modifiedBy) {
+    public FishingDiary setUpdate(String title, String contents, String location, String fishingSpeciesName, String fishingDate, String fishingTideTime, double fishLength, double fishWeight, List<CommonCode> fishingTechnics, List<CommonCode> fishingLuress, String fishingLocation, String writeLocation, Long writeLatitude, Long writelongitude, Member createdBy, Member modifiedBy) {
 
         this.title = title;
         this.contents = contents;
@@ -200,8 +217,8 @@ public class FishingDiary extends BaseTime {
         this.fishingTideTime = fishingTideTime;
         this.fishLength = fishLength;
         this.fishWeight = fishWeight;
-        this.fishingTechnic = fishingTechnic;
-        this.fishingLure = fishingLure;
+        this.fishingTechnics = fishingTechnics;
+        this.fishingLures = fishingLures;
         this.fishingLocation = fishingLocation;
         this.writeLocation = writeLocation;
         this.writeLatitude = writeLatitude;
