@@ -3,15 +3,17 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
-import com.tobe.fishking.v2.entity.board.Tag;
 import com.tobe.fishking.v2.enums.board.FilePublish;
-import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import com.tobe.fishking.v2.model.common.ShareStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,9 +26,9 @@ import java.util.List;
 public class FishingDiary extends BaseTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  id
-    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable = false, nullable = false, columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'게시판그룹', 'USER', DBO, 'TABLE', orders, 'COLUMN',  fishing_ships
@@ -37,19 +39,19 @@ public class FishingDiary extends BaseTime {
 
     @Column(columnDefinition = "bigint null   comment '조행기/조행일지만'  ")
     @Enumerated(EnumType.ORDINAL)
-    private FilePublish  filePublish;
+    private FilePublish filePublish;
 
     //null이면 조행기, null이 아니면 조행일지
     // EXEC sp_addextendedproperty 'MS_Description', N'선상', 'USER', DBO, 'TABLE', ship, 'COLUMN',  ship
     @ManyToOne
-    @JoinColumn(name="fishing_diary_ship_id",  columnDefinition = "bigint null   comment '선상'  ")
+    @JoinColumn(name = "fishing_diary_ship_id", columnDefinition = "bigint null   comment '선상'  ")
     private Ship ship;
 
     //null이면 조행일지, null이 아니면 조행기
     // EXEC sp_addextendedproperty 'MS_Description', N'글쓴이', 'USER', DBO, 'TABLE', ship, 'COLUMN',  ship
     @ManyToOne
-    @JoinColumn(name="fishing_diary_member_id", columnDefinition = "bigint not null   comment '글쓴이'  ")
-    private Member member ;
+    @JoinColumn(name = "fishing_diary_member_id", columnDefinition = "bigint not null   comment '글쓴이'  ")
+    private Member member;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상품', 'USER', DBO, 'TABLE', ship, 'COLUMN',  goods
@@ -93,15 +95,14 @@ public class FishingDiary extends BaseTime {
     @Column(columnDefinition = " float  comment '물고기무게'  ")
     private Double fishWeight;
 
-    //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'낚시기법', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fish_weight
-    @Column(columnDefinition = "int   comment '낚시기법'  ")
-    @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
-    private FishingTechnic fishingTechnic;
 
-    //@Column(columnDefinition = " comment '미끼'  ")
-    //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'미끼', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_lure
-    @Column(columnDefinition = " varchar(200) comment '미끼'  ")
-    private String fishingLure;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private Set<FishingDiaryFishingTechnics> fishingDiaryFishingTechnics = new LinkedHashSet<>();
+
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private Set<FishingDiaryFishingLures> fishingDiaryFishingLures = new LinkedHashSet<>();
 
     //위치 항목에 대해 선상인 경우 선상명, 갯바위인 경우 지역정보(xx시, xx군 면 등)
     //mssql 주석 >  EXEC sp_addextendedproperty 'MS_Description', N'낚시장소', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fish_location
@@ -127,11 +128,11 @@ public class FishingDiary extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
     @ManyToMany(targetEntity = Member.class)
-    @JoinColumn(name = "fishing_diary_scrap_by" , columnDefinition = "bigint not null   comment '스크랩 사용자'  ")
+    @JoinColumn(name = "fishing_diary_scrap_by", columnDefinition = "bigint not null   comment '스크랩 사용자'  ")
     //  @Builder.Default
     private final List<Member> scrapMembers = new ArrayList<>();
 
-    @AttributeOverride(name="shareCount", column=@Column(name = "SHARE"))
+    @AttributeOverride(name = "shareCount", column = @Column(name = "SHARE"))
     private ShareStatus status;
 
 /*
@@ -143,18 +144,19 @@ public class FishingDiary extends BaseTime {
     //사진및 동영상은 File로.. 구분자(FilePublish) 조황일지
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자' ")
+    @JoinColumn(name = "created_by", updatable = false, columnDefinition = " bigint not null comment '생성자' ")
     public Member createdBy;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+    @JoinColumn(name = "modified_by", columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     public Member modifiedBy;
 
     public FishingDiary(Board board, Ship ship, Member member, Goods goods, String title, String contents
             , String location, String fishingSpeciesName, String fishingDate, String fishingTideTime
-            , double fishLength, double fishWeight, FishingTechnic fishingTechnic
-            , String fishingLure, String fishingLocation, String writeLocation, Long writeLatitude
+            , double fishLength, double fishWeight, Set<FishingDiaryFishingTechnics> fishingDiaryFishingTechnics
+            , Set<FishingDiaryFishingLures> fishingDiaryFishingLures
+            , String fishingLocation, String writeLocation, Long writeLatitude
             , Long writeLongitude, Member createdBy, Member modifiedBy) {
 
         this.board = board;
@@ -169,8 +171,8 @@ public class FishingDiary extends BaseTime {
         this.fishingTideTime = fishingTideTime;
         this.fishLength = fishLength;
         this.fishWeight = fishWeight;
-        this.fishingTechnic = fishingTechnic;
-        this.fishingLure = fishingLure;
+        this.fishingDiaryFishingTechnics = fishingDiaryFishingTechnics;
+        this.fishingDiaryFishingLures = fishingDiaryFishingLures;
         this.fishingLocation = fishingLocation;
         this.writeLocation = writeLocation;
         this.writeLatitude = writeLatitude;
@@ -183,14 +185,18 @@ public class FishingDiary extends BaseTime {
 
     }
 
-    public FishingDiary(Long id,  ShareStatus status  ) {
+    public FishingDiary(Long id, ShareStatus status) {
         this.id = id;
         this.status = status;
         this.modifiedBy = modifiedBy;
     }
 
 
-    public FishingDiary setUpdate(String title, String contents, String location, String fishingSpeciesName, String fishingDate, String fishingTideTime, double fishLength, double fishWeight, FishingTechnic fishingTechnic, String fishingLure, String fishingLocation, String writeLocation, Long writeLatitude, Long writelongitude, Member createdBy, Member modifiedBy) {
+    public FishingDiary setUpdate(
+            String title, String contents, String location, String fishingSpeciesName
+            , String fishingDate, String fishingTideTime, double fishLength
+            , double fishWeight, Set<FishingDiaryFishingTechnics> fishingDiaryFishingTechnics
+            , Set<FishingDiaryFishingLures> fishingDiaryFishingLures, String fishingLocation, String writeLocation, Long writeLatitude, Long writelongitude, Member createdBy, Member modifiedBy) {
 
         this.title = title;
         this.contents = contents;
@@ -200,8 +206,8 @@ public class FishingDiary extends BaseTime {
         this.fishingTideTime = fishingTideTime;
         this.fishLength = fishLength;
         this.fishWeight = fishWeight;
-        this.fishingTechnic = fishingTechnic;
-        this.fishingLure = fishingLure;
+        this.fishingDiaryFishingTechnics = fishingDiaryFishingTechnics;
+        this.fishingDiaryFishingLures = fishingDiaryFishingLures;
         this.fishingLocation = fishingLocation;
         this.writeLocation = writeLocation;
         this.writeLatitude = writeLatitude;
@@ -211,9 +217,13 @@ public class FishingDiary extends BaseTime {
         return this;
     }
 
+    public void setFishingDiaryFishingTechnics(Set<FishingDiaryFishingTechnics> fishingDiaryFishingTechnics) {
+        this.fishingDiaryFishingTechnics = fishingDiaryFishingTechnics;
+    }
 
-
-
+    public void setFishingDiaryFishingLures(Set<FishingDiaryFishingLures> fishingDiaryFishingLures) {
+        this.fishingDiaryFishingLures = fishingDiaryFishingLures;
+    }
 
 //댓글은 Comment  구분장 dependentType 은 조화잉ㄹ지
 

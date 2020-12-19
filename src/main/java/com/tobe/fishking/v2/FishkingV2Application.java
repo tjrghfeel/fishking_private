@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(
+        //basePackages = "com.tobe.fishking.v2",
+        //basePackageClasses = {BaseRepositoryImpl.class, JpaRepository.class}
         repositoryBaseClass = BaseRepositoryImpl.class
 )
 public class FishkingV2Application {
