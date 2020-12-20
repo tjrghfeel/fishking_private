@@ -2,22 +2,23 @@ package com.tobe.fishking.v2.enums.fishing;
 
 import com.tobe.fishking.v2.enums.IEnumModel;
 
-public enum FishingTechnic   implements IEnumModel   {
+public enum FishingTechnic implements IEnumModel {
 
-    downshot("다운샷"),
-    lure("루어"),
-    mac("맥낚시"),
-    leash("목줄찌"),
-    rod("민장대"),
-    sigleline("외줄"),
-    onetwo("원투"),
-    pole("장대"),
-    jigging("지깅"),
-    bobber("찌"),
-    cargo("카고"),
-    hoot("훌치기");
+    DOWNSHOT("다운샷"),
+    LURE("루어"),
+    MAC("맥낚시"),
+    LEASH("목줄찌"),
+    ROD("민장대"),
+    SIGLELINE("외줄"),
+    ONETWO("원투"),
+    POLE("장대"),
+    JIGGING("지깅"),
+    BOBBER("찌"),
+    CARGO("카고"),
+    HOOT("훌치기");
 
     private String value;
+
     FishingTechnic(String value) {
         this.value = value;
     }
