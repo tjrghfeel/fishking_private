@@ -10,7 +10,7 @@ import { inject, observer } from "mobx-react";
 export default inject("CodeStore")(
   observer(
     forwardRef(({ id, onSelected }, ref) => {
-      const [list, setList] = useState([
+      const [list] = useState([
         { key: "boat", value: "선상" },
         { key: "rock", value: "갯바위" },
       ]);

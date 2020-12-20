@@ -24,6 +24,8 @@ export default inject()(
               }
             } else if (itemType === "ListItem14") {
               return <ListItem14 key={index} data={data} />;
+            } else {
+              return <React.Fragment key={index} />;
             }
           })}
       </div>

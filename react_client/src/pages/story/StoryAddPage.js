@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useCallback, useRef } from "react";
+import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layout/Navigation";
 import SelectFishModal from "../../components/modal/SelectFishModal";
@@ -271,7 +271,7 @@ export default inject(
                   </a>
                 </div>
                 {this.state.images.map((data, index) => (
-                  <ListItem15 data={data} />
+                  <ListItem15 key={index} data={data} />
                 ))}
               </div>
             </div>
