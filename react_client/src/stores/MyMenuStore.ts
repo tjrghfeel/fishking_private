@@ -24,6 +24,18 @@ export class MyMenuStore {
       return null;
     }
   };
+  // --> [REST] 마이메뉴 > 내글관리 - 게시글
+  REST_GET_myFishingPostList = async (page: number) => {
+    try {
+      const resolve = await Http._get("/v2/api/myFishingPostList/" + page);
+      return resolve;
+    } catch (err) {
+      console.error(
+        "[REST] 마이메뉴 > 내글관리 - 게시글 :: " + JSON.stringify(err)
+      );
+      return null;
+    }
+  };
 }
 
 export const createStore = () => {

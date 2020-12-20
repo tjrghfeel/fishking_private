@@ -23,13 +23,13 @@ export default inject(
           },
           {
             text: "내글관리",
-            pathname: "my-post.html",
+            pathname: "/story/my/post",
             imgSrc: "/assets/img/svg/mymenu-mypost.svg",
             requiredLogin: true,
           },
           {
             text: "찜한업체",
-            pathname: "my-zzim.html",
+            pathname: "/common/zzim/my",
             imgSrc: "/assets/img/svg/mymenu-zzim.svg",
             requiredLogin: true,
           },

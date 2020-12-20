@@ -6,6 +6,7 @@ import { createStore as createSNSStore } from "./common/SNSStore";
 import { createStore as createValidStore } from "./common/ValidStore";
 import { createStore as createMyMenuStore } from "./MyMenuStore";
 import { createStore as createCouponStore } from "./CouponStore";
+import { createStore as createTakeStore } from "./TakeStore";
 
 const PageStore = createPageStore();
 const MemberStore = createMemberStore();
@@ -15,6 +16,7 @@ const SNSStore = createSNSStore();
 const ValidStore = createValidStore();
 const MyMenuStore = createMyMenuStore();
 const CouponStore = createCouponStore();
+const TakeStore = createTakeStore();
 
 export const Stores = {
   PageStore,
@@ -25,4 +27,5 @@ export const Stores = {
   ValidStore,
   MyMenuStore,
   CouponStore,
+  TakeStore,
 };
