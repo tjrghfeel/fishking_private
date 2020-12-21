@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import com.tobe.fishking.v2.model.common.ShareStatus;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.List;
 public interface FishingDiaryDtoForPage {
 
     /*Member에서 가져와야하는 필드들.*/
+    @Value("#{@mapperUtility.transDownloadUrl(target.profileImage)}")
     String getProfileImage();//프사
     String getNickName();//이름(일반사용자의 넥네임을말하는지, 업주회원의 선상이름을 말하는지 애매.
 
@@ -55,7 +57,8 @@ public interface FishingDiaryDtoForPage {
     Integer getScrapCount();
 
     /*파일들*/
-    String getFileList();
+    @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
+    ArrayList<String> getFileList();
 
 
 

@@ -2,7 +2,7 @@ package com.tobe.fishking.v2.repository.auth;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
-import com.tobe.fishking.v2.model.admin.MemberManageDtoForPage;
+import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,14 +11,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select a from Member a where a.sessionToken = :sessionToken and a.isActive = true")
-    Optional<Member> findBySessionToken(String sessionToken);
+    Optional<Member> findBySessionToken(@Param("sessionToken") String sessionToken);
 
     Optional<Member> findByUid(String uId);
 
@@ -86,6 +85,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "   and if(:email is null, true, (m.email like %:email%)) " +
             "   and if(:gender is null,true,(m.gender = :gender)) " +
             "   and if(:isActive is null,true,(m.is_active = :isActive)) " +
+            "   and if(:certifiedNo is null, true, (m.certified_no like %:certifiedNo%)) " +
+            "   and if(:isCertified is null, true, (m.is_certified = :isCertified)) " +
             "   and if(:snsType is null,true,(m.sns_type = :snsType)) " +
             "   and if(:snsId is null,true,(m.sns_id like %:snsId%)) " +
             "   and if(:city is null,true,(m.city = :city)) " +
@@ -105,6 +106,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                     "   and if(:email is null, true, (m.email like %:email%)) " +
                     "   and if(:gender is null,true,(m.gender = :gender)) " +
                     "   and if(:isActive is null,true,(m.is_active = :isActive)) " +
+                    "   and if(:certifiedNo is null, true, (m.certified_no like %:certifiedNo%)) " +
+                    "   and if(:isCertified is null, true, (m.is_certified = :isCertified)) " +
                     "   and if(:snsType is null,true,(m.sns_type = :snsType)) " +
                     "   and if(:snsId is null,true,(m.sns_id like %:snsId%)) " +
                     "   and if(:city is null,true,(m.city = :city)) " +
@@ -125,6 +128,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             @Param("email") String email,
             @Param("gender") Integer gender,
             @Param("isActive") Boolean isActive,
+            @Param("certifiedNo") String certifiedNo,
+            @Param("isCertified") Boolean isCertified,
             @Param("snsType") Integer snsType,
             @Param("snsId") String snsId,
             @Param("city") String city,

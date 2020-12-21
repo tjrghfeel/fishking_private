@@ -56,7 +56,8 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
                     "g.total_avg_by_review totalAvgByReview, " +
                     "p.palce_name placeName, " +
                     "p.fish_spices_info fishSpicesInfo, " +
-                    "f.download_thumbnail_url downloadThumbnailUrl " +
+                    "f.thumbnail_file thumbnailFile," +
+                    "f.file_url filePath " +
                     "from goods as g, places as p, files as f, ship as s " +
                     "where g.fishing_type = :fishingType " +
                     "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +

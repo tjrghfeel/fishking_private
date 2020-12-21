@@ -4,19 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@Builder
-public class NoticeDetailDto {
-    private Long id;
-    private String channelType;
-    private String title;
-    private LocalDateTime date;
-    private String contents;
-    private String fileList;
+
+public interface NoticeDetailDto {
+    Long getId();
+    String getChannelType();
+    String getTitle();
+    LocalDateTime getDate();
+    String getContents();
+    @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
+    ArrayList<String> getFileList();
 }

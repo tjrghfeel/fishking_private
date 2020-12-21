@@ -14,6 +14,7 @@ import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.ReviewRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +47,8 @@ public class MyMenuService {
     GoodsRepository goodsRepository;
     @Autowired
     ShipRepository shipRepository;
+    @Autowired
+    Environment env;
 
 
     /*마이메뉴 페이지 조회 처리 메소드
@@ -58,7 +61,7 @@ public class MyMenuService {
             //프사가져옴.
             Member member = memberRepository.findBySessionToken(sessionToken)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
-            String profileImage = member.getProfileImage();
+            String profileImage = env.getProperty("file.downloadUrl")+member.getProfileImage();
             //nickName 가져옴
             String nickName = member.getNickName();
             //예약건수 가져옴.

@@ -99,6 +99,8 @@ public class PostService {
     /*공지사항 상세보기*/
     @Transactional(readOnly = true)
     public NoticeDetailDto getNoticeDetail(Long postId) throws ResourceNotFoundException {
+        return postRepository.findNoticeDetailByPostId(postId);
+        /*
         Post post = postRepository.findById(postId)
                 .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postId));
 
@@ -119,7 +121,7 @@ public class PostService {
             result.setFileList(fileListString);
         }
 
-        return result;
+        return result;*/
     }
 
     //Post하나 반환 메소드. FAQ, QNA, 공지사항 리스트 및 하나 조회에 대해 따로따로 위에 만들어놓음.
@@ -196,12 +198,12 @@ public class PostService {
             FileEntity currentFile = FileEntity.builder()
                     .fileName(file.getOriginalFilename())
                     .storedFile((String) fileInfo.get("fileName"))
-                    .downloadUrl((String) fileInfo.get("fileDownloadUrl"))
-                    .thumbnailFile((String) fileInfo.get("thumbUploadPath"))
-                    .downloadThumbnailUrl((String) fileInfo.get("thumbDownloadUrl"))
+//                    .downloadUrl((String) fileInfo.get("fileDownloadUrl"))
+                    .thumbnailFile((String) fileInfo.get("thumbnailName"))
+//                    .downloadThumbnailUrl((String) fileInfo.get("thumbDownloadUrl"))
                     .originalFile(file.getOriginalFilename())
                     .size(file.getSize())
-                    .fileUrl((String) fileInfo.get("fileUrl"))
+                    .fileUrl((String) fileInfo.get("path"))
                     .fileType(enumFileType)
                     .createdBy(authorOfPost)
                     .modifiedBy(authorOfPost)
@@ -254,12 +256,12 @@ public class PostService {
             FileEntity currentFile = FileEntity.builder()
                     .fileName(file.getOriginalFilename())
                     .storedFile((String) fileInfo.get("fileName"))
-                    .downloadUrl((String) fileInfo.get("fileDownloadUrl"))
-                    .thumbnailFile((String) fileInfo.get("thumbUploadPath"))
-                    .downloadThumbnailUrl((String) fileInfo.get("thumbDownloadUrl"))
+//                    .downloadUrl((String) fileInfo.get("fileDownloadUrl"))
+                    .thumbnailFile((String) fileInfo.get("thumbnailName"))
+//                    .downloadThumbnailUrl((String) fileInfo.get("thumbDownloadUrl"))
                     .originalFile(file.getOriginalFilename())
                     .size(file.getSize())
-                    .fileUrl((String) fileInfo.get("fileUrl"))
+                    .fileUrl((String) fileInfo.get("path"))
                     .fileType(enumFileType)
                     .createdBy(post.getModifiedBy())
                     .modifiedBy(post.getModifiedBy())

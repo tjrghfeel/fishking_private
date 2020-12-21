@@ -29,9 +29,10 @@ public class CompanyManageController {
     CompanyManageService companymanageService;
 
     /*업체목록 검색*/
-    @ApiOperation(value = "업체목록검색",notes = "정렬기준으로는 조건으로 넘기는 필드이름 중 하나를 sort인자에 그대로 넘기면 됩니다. \n" +
+    @ApiOperation(value = "업체목록검색",notes = "검색조건에 포함시킬 필드들만 값을 채우고 아닐경우 null로 비워두면된다. \n" +
+            "- 정렬기준으로는 조건으로 넘기는 필드이름 중 하나를 sort인자에 그대로 넘기면 됩니다. \n" +
             "- createdDayStart, createdDayEnd는 그대로입력하지않고 createdDate로 입력합니다. 기본적으로 내림차순 정렬됩니다. \n" +
-            "- memberName으로는 정렬은 되지않고 같은것끼리 묶여서 나옵니다. ")
+            "- memberName으로정렬하면 이름순 정렬은 되지않고 단지 같은이름끼리 연달아서 나옵니다. ")
     @GetMapping("/manage/company/list/{page}")
     public Page<CompanyManageDtoForPage> getCompanyList(
             @PathVariable("page") int page,

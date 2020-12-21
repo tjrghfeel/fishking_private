@@ -3,10 +3,7 @@ package com.tobe.fishking.v2.controller.common;
 import com.tobe.fishking.v2.enums.IEnumModel;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
-import com.tobe.fishking.v2.enums.board.BoardType;
-import com.tobe.fishking.v2.enums.board.FileType;
-import com.tobe.fishking.v2.enums.board.QuestionType;
-import com.tobe.fishking.v2.enums.board.ReturnType;
+import com.tobe.fishking.v2.enums.board.*;
 import com.tobe.fishking.v2.enums.common.*;
 import com.tobe.fishking.v2.enums.fishing.*;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
@@ -77,6 +74,7 @@ public class CommonController {
             "85 : 서비스 \n" +
             "86 : 가격 \n" +
             "87 : 편의시설 \n" +
+            "89 : 미끼 종류 \n" +
             "- 지역 codegroup안에 지역들은 level 1, 2로 분류되며, level1 지역은 level2지역을 포함한다. level1은 '수도권','충청남도'와 같은" +
             "   넓은 범위의 지역, level2는 그 안의 '시/군/구'단위의 지역을 말한다. \n" +
             "- level2 지역들은 extraValue1필드 안에 상위 level1 지역의 code를 가지고 있다. " +
@@ -91,8 +89,14 @@ public class CommonController {
         return responseService.getListResult(commonCodeDTOList);
     }
 
-    @ApiOperation(value = "enum타입 목록"/*,notes = "성별, 회원 role, 게시판 유형, 파일유형,문의 유형, 답변 방법, 광고 유형, 알람유형, " +
-            "배너 유형, 해면 종류,공지사항유형,쿠폰유형,operatorType,게시글유형, "*/)
+
+    @ApiOperation(value = "enum타입 목록",notes = "common code와 유사하게 정해진 값 저장에 사용되는 enum 리스트를 모두 반환. \n" +
+            "성별(gender), 회원 (role), 게시판 유형(boardType), 파일유형(fileType),문의 유형(questionType), 답변 방법(returnType)," +
+            " 광고 유형(adType), 알람유형(alertType), 배너유형(bannerType), 지역분류(byRegion),공지사항유형(channelType)," +
+            "쿠폰유형(couponType), operatorType, 게시글유형(postTitle), 검색항목(searchPublish), 정렬기준(sortType), " +
+            "찜(좋아요) 유형(takeType), useType, accumuateType, 승인상태(approvalStatus), dependentType, 낚시기법(fishingTechnic), " +
+            "낚시 유형(fishingType), 오전/오후(meridiem), 예약상태(orderStatus), 결재방법(paymentGroup), 결재옵션(paymentOption), " +
+            "payMethod, salesAmountType, 해면 분류(seaDirection), sns유형(sNSType), 물때(tideTime) ")
     @GetMapping("/value")
     public Map<String, List<EnumValueDTO>> getEnumValue() {
         Map<String, List<EnumValueDTO>> enumValues = new LinkedHashMap<>();
@@ -100,6 +104,7 @@ public class CommonController {
         enumValues.put("gender", toEnumValues(Gender.class));
         enumValues.put("role", toEnumValues(Role.class));
         enumValues.put("boardType", toEnumValues(BoardType.class));
+        enumValues.put("filePublish", toEnumValues(FilePublish.class));
         enumValues.put("fileType", toEnumValues(FileType.class));
         enumValues.put("questionType", toEnumValues(QuestionType.class));
         enumValues.put("returnType", toEnumValues(ReturnType.class));

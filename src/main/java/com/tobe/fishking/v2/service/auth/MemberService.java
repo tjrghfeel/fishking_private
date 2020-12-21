@@ -26,6 +26,7 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import lombok.AllArgsConstructor;
 
 
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,6 +60,7 @@ public class MemberService {
     private UploadService uploadService;
     private PasswordEncoder encoder;
     private PhoneAuthRepository phoneAuthRepository;
+    private Environment env;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -258,7 +260,7 @@ public class MemberService {
             UserProfileDTO userProfileDTO = UserProfileDTO.builder()
                 .memberId(member.getId())
                 .nickName((member.getNickName()==null)?("이름없음"):(member.getNickName()))
-                .profileImage(member.getProfileImage())
+                .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
                 .isActive(member.getIsActive())
                 .postCount(postCount)
                 .takeCount(takeCount)
@@ -303,7 +305,7 @@ public class MemberService {
                 .uid(member.getUid())
                 .nickName((member.getNickName()==null)?("없음"):(member.getNickName()))
                 .email(member.getEmail())
-                .profileImage(member.getProfileImage())
+                .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
                 .statusMessage((member.getStatusMessage()==null)?("없음"):(member.getStatusMessage()))
                 //!!!!!아래 전화번호는 nullable필드이지만 회원가입시 휴대폰인증을 하므로 무조건 있다고 판단.
                 .areaCode(member.getPhoneNumber().getAreaCode())
@@ -336,10 +338,10 @@ public class MemberService {
                 .fileNo(0)
                 .filePublish(FilePublish.profile)
                 .fileType(FileType.image)
-                .fileUrl((String)fileInfo.get("fileUrl"))
-                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
-                .thumbnailFile((String)fileInfo.get("thumbUploadPath"))
-                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
+                .fileUrl((String)fileInfo.get("path"))
+//                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
+                .thumbnailFile((String)fileInfo.get("thumbnailName"))
+//                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
                 .size(file.getSize())
                 .storedFile((String)fileInfo.get("fileName"))
                 .isRepresent(true)
@@ -349,7 +351,7 @@ public class MemberService {
                 .build();
         fileRepository.save(fileEntity);
 
-        member.setProfileImage((String)fileInfo.get("thumbDownloadUrl"));
+        member.setProfileImage("/"+fileInfo.get("path")+"/"+fileInfo.get("thumbnailName"));
 
         return true;
     }

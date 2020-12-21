@@ -2,13 +2,10 @@ package com.tobe.fishking.v2.repository.fishking;
 
 import com.tobe.fishking.v2.entity.fishing.Company;
 
-import com.tobe.fishking.v2.model.admin.MemberManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.company.CompanyManageDtoForPage;
 import com.tobe.fishking.v2.model.fishing.CompanyListDTO;
-import com.tobe.fishking.v2.service.StringConverter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

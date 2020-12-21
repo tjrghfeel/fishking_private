@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 public interface QnADetailDto {
     Long getId();
@@ -11,9 +12,11 @@ public interface QnADetailDto {
     Boolean getReplied();
     String getDate();
     String getContents();
-    String getFileList();
+    @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
+    String[] getFileList();
 
     String getReplyContents();
-    String getReplyFileList();
+    @Value("#{@mapperUtility.transFileUrlArray(target.replyFileNameList, target.replyFilePathList)}")
+    String[] getReplyFileList();
 
 }

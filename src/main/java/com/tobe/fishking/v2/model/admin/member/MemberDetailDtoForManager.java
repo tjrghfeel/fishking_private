@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.model.admin;
+package com.tobe.fishking.v2.model.admin.member;
 
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,9 +39,13 @@ public class MemberDetailDtoForManager {
     private String joinDt;
     private Integer snsType;
     private String snsId;
+    @Size(max=20)
     private String statusMessage;
+    @Size(max=10)
     private String city;
+    @Size(max=10)
     private String gu;
+    @Size(max=10)
     private String dong;
     @NotNull(message = "휴대폰 번호가 비었습니다. ")
     private String areaCode;

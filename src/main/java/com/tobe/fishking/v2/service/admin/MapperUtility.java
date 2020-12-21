@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 /*native query로 인터페이스형dto에 바로 db데이터를 담을때, 해당 데이터에 대해 처리를 해주는 함수들의 모음 클래스.
 * - */
@@ -28,5 +29,31 @@ public class MapperUtility {
             IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         if(columnValue==null) return null;
         return AES.aesDecode(columnValue, env.getProperty("encrypKey.key"));
+    }
+
+    /*mysql의 group_concat()으로 콤마(,)기준으로 파일이름과 파일path를 받았을때, 이들을 합쳐 해당파일에대한 downloadUrl 배열형태로 반환. 
+    * - 파일이름이나 path중 하나라도 null이면, 파일이 없다고 판단하고 null반환. */
+    public ArrayList<String> transFileUrlArray(String fileNameListString, String filePathListString){
+        ArrayList<String> result = new ArrayList<String>();
+        if(fileNameListString!=null && filePathListString!=null) {
+            String[] fileNameListArray = fileNameListString.split(",");
+            String[] filePathListArray = filePathListString.split(",");
+
+            for(int i=0; i<fileNameListArray.length; i++){
+                result.add(env.getProperty("file.downloadUrl") + "/" + filePathListArray[i] + "/" + fileNameListArray[i]);
+            }
+        }
+        return result;
+    }
+
+    /*도커환경인지 로컬환경인지에 따라 downloadUrl 설정해주는 메소드*/
+    public String transDownloadUrl(String inputUrl){
+        return env.getProperty("file.downloadUrl") + inputUrl;
+    }
+
+    public String noName(String value1,String value2){
+        String result = value1 + ","+value2;
+        return result;
+
     }
 }

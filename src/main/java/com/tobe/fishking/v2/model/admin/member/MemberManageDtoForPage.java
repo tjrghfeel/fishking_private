@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.model.admin;
+package com.tobe.fishking.v2.model.admin.member;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -33,5 +33,6 @@ public interface MemberManageDtoForPage {
     String getAreaCode();
     @Value("#{@mapperUtility.decodeString(target.localNumber)}")
     String getLocalNumber();
+
 
 }

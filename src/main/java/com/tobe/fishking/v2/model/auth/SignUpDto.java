@@ -20,12 +20,12 @@ public class SignUpDto {
     @NotNull(message = "이메일이 비었습니다")
     private String email;
 
-    @NotNull(message = "aaa")
+    @NotNull(message = "비밀번호가 비었습니다")
     @Size(min = 8, max = 16, message = "비밀번호는 8~14자")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$")
     private String pw;
 
-    @NotNull(message = "ccc")
+    @NotNull(message = "닉네임이 비었습니다")
     @Size(min = 4, max = 10)
     private String nickName;
 

@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import net.bytebuddy.implementation.bind.annotation.BindingPriority;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.ArrayList;
 
 
 public interface TakeResponse {
@@ -21,6 +24,7 @@ public interface TakeResponse {
     //장소로부터 대상어종
      String getFishSpicesInfo();
      //섬네일 파일.
-     String getDownloadThumbnailUrl();
+     @Value("#{@mapperUtility.transFileUrlArray(target.thumbnailFile, target.filePath)}")
+     ArrayList<String> getDownloadThumbnailUrl();
 
 }

@@ -112,7 +112,8 @@ public class PostController {
     * 반환값 : 업데이트된 Post id.
     */
     @ApiOperation(value = "게시물 수정", notes = "1:1문의, FAQ, 공지사항 수정 api. \n" +
-            "- files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다. ")
+            "- files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다." +
+            "- 파일을 올리지 않을 경우, files필드에 빈 배열 객체를 넣으면 됩니다.  ")
     @PostMapping("/post/update")
     public Long updatePost(
             @RequestBody UpdatePostDTO postDTO,

@@ -113,17 +113,24 @@ public class UploadService {
             }
             String fileName = fileResult.get(0);//새로만든 저장파일명.
             String fileUrl = fileResult.get(1);//uploadFilePath
+            String fileUploadUrl = "/"+board.getUploadPath()+"/"+fileName;
             String thumbnailName = fileResult.get(2);//thumbnailFileName
             String thumbnailPath = fileResult.get(3);//섬네일 path
-            String fileDownloadUrl = env.getProperty("file.downloadUrl")+"/"+board.getDownloadPath()+"/"+fileName;
-            String thumbDownloadUrl = env.getProperty("file.downloadUrl")+"/"+board.getDownloadPath()+"/"+thumbnailName;
+//            String thumbnailUploadUrl = "/"+
+            String fileDownloadUrl = "/"+board.getDownloadPath()+"/"+fileName;
+            String thumbDownloadUrl = "/"+board.getDownloadPath()+"/"+thumbnailName;
 
             result.clear();
+            result.put("fileName", fileName);//파일명.
+            result.put("thumbnailName",thumbnailName);//섬네일파일명.
+            result.put("path",board.getDownloadPath());//경로.
+
             result.put("thumbUploadPath", thumbnailPath);
-            result.put("fileUrl", fileUrl);
-            result.put("fileName", fileName);
+            result.put("fileUrl", fileUploadUrl);
             result.put("fileDownloadUrl", fileDownloadUrl);
             result.put("thumbDownloadUrl", thumbDownloadUrl);
+
+
             //result.put("tempFileSeq", fileId);
         return result;
     }

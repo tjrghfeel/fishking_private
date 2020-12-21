@@ -50,9 +50,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "   (select count(l.id) from loveto l where (l.take_type = 2 or l.take_type = 3) and l.link_id = d.id) likeCount, " +
             "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
             "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
-            "   (select GROUP_CONCAT(f2.download_url separator ',') " +
+            "   (select GROUP_CONCAT(f2.stored_file separator ',') " +
             "       from files f2 where f2.pid = d.id and (f2.file_publish = 5 or f2.file_publish = 6)" +
-            "       group by f2.pid order by f2.file_no) fileList " +
+            "       group by f2.pid order by f2.file_no) fileNameList, " +
+            "   (select GROUP_CONCAT(f2.file_url separator ',') " +
+            "       from files f2 where f2.pid = d.id and (f2.file_publish = 5 or f2.file_publish = 6)" +
+            "       group by f2.pid order by f2.file_no) filePathList " +
             "from fishing_diary as d, ship as s, Member as m  " +
             "where d.fishing_diary_member_id = :member " +
             "   and d.fishing_diary_ship_id = s.id " +
@@ -82,9 +85,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "   (select count(l.id) from loveto l where (l.take_type = 2 or l.take_type = 3) and l.link_id = d.id) likeCount, " +
             "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
             "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
-            "   (select GROUP_CONCAT(f2.download_url separator ',') " +
+            "   (select GROUP_CONCAT(f2.stored_file separator ',') " +
             "       from files f2 where f2.pid = d.id and (f2.file_publish = 5 or f2.file_publish = 6)" +
-            "       group by f2.pid order by f2.file_no) fileList " +
+            "       group by f2.pid order by f2.file_no) fileNameList, " +
+            "   (select GROUP_CONCAT(f2.file_url separator ',') " +
+            "       from files f2 where f2.pid = d.id and (f2.file_publish = 5 or f2.file_publish = 6)" +
+            "       group by f2.pid order by f2.file_no) filePathList " +
             "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm " +
             "where sm.scrap_members_id = :member " +
             "   and sm.fishing_diary_id = d.id " +

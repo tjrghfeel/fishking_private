@@ -68,11 +68,15 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             "   (select case when exists (select p2.id from post as p2 where p.id = p2.parent_id) then 'true' else 'false' end) replied, " +
             "   p.created_date date, " +
             "   p.contents contents, " +
-            "   (select group_concat(f.download_url separator ',') from files f " +
-            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) fileList, " +
+            "   (select group_concat(f.stored_file separator ',') from files f " +
+            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) fileNameList, " +
+            "   (select group_concat(f.file_url separator ',') from files f " +
+            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) filePathList, " +
             "   rp.contents replyContents, " +
-            "   (select group_concat(f2.download_url separator ',') from files f2 " +
-            "       where f2.file_publish = 4 and f2.pid = rp.id group by f2.pid) replyFileList " +
+            "   (select group_concat(f2.thumbnail_file separator ',') from files f2 " +
+            "       where f2.file_publish = 4 and f2.pid = rp.id group by f2.pid) replyFileNameList, " +
+            "   (select group_concat(f2.file_url separator ',') from files f2 " +
+            "       where f2.file_publish = 4 and f2.pid = rp.id group by f2.pid) replyFilePathList " +
             "from post p left outer join post rp on rp.parent_id = p.id " +
             "where p.id = :postId ",
             countQuery = "select p.id " +
@@ -96,6 +100,27 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             nativeQuery = true
     )
     Page<NoticeDtoForPage> findNoticeList(Pageable pageable);
+
+    /* 공지사항 detail 조회*/
+    @Query(value = "" +
+            "select " +
+            "   p.id id, " +
+            "   p.channel_type channelType, " +
+            "   p.created_date date, " +
+            "   p.title title, " +
+            "   p.contents contents, " +
+            "   (select group_concat(f.stored_file separator ',') from files f " +
+            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) fileNameList, " +
+            "   (select group_concat(f.file_url separator ',') from files f " +
+            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) filePathList " +
+            "from post p left outer join post rp on rp.parent_id = p.id " +
+            "where p.id = :postId ",
+            countQuery = "select p.id " +
+                    "from post p join post rp on rp.parent_id = p.id " +
+                    "where p.id = :postId ",
+            nativeQuery = true
+    )
+    NoticeDetailDto findNoticeDetailByPostId(@Param("postId") Long postId);
 
     /*PostResponse를 Page형태로 반환해주는 메소드.
      * 반환하는 PostResponse에는 contents필드가 포함되어있지 않다. */

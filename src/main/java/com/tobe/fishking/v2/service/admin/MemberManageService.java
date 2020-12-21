@@ -1,7 +1,6 @@
 package com.tobe.fishking.v2.service.admin;
 
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.Ad;
 import com.tobe.fishking.v2.entity.common.Address;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
@@ -9,19 +8,18 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.EmailDupException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.admin.MemberDetailDtoForManager;
-import com.tobe.fishking.v2.model.admin.MemberManageDtoForPage;
-import com.tobe.fishking.v2.model.admin.MemberSearchConditionDto;
+import com.tobe.fishking.v2.model.admin.member.MemberDetailDtoForManager;
+import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
+import com.tobe.fishking.v2.model.admin.member.MemberSearchConditionDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.service.AES;
-import javassist.compiler.MemberResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,16 +57,23 @@ public class MemberManageService {
         if(dto.getAreaCode()!=null){dto.setAreaCode(AES.aesEncode(dto.getAreaCode(),key));}
         if(dto.getLocalNumber()!=null){dto.setLocalNumber(AES.aesEncode(dto.getLocalNumber(),key));}
 
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable;
+        if(dto.getSort()==null){
+            pageable = PageRequest.of(page, 10);
+        }
+        else{pageable = PageRequest.of(page, 10,JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));}
+
         return memberRepository.findMemberListByConditions(
                 dto.getId(),
-                dto.getRole(),
+                dto.getRoles(),
                 dto.getMemberName(),
                 dto.getUid(),
                 dto.getNickName(),
                 dto.getEmail(),
                 dto.getGender(),
                 dto.getIsActive(),
+                dto.getCertifiedNo(),//!!!!!인증번호 필드인데 혹시 암호화필요하면 위에서 다른필드(city,gu,areacode 등)들 암호화하는것처럼 하기.
+                dto.getIsCertified(),
                 dto.getSnsType(),
                 dto.getSnsId(),
                 dto.getCity(),
@@ -152,9 +157,9 @@ public class MemberManageService {
                 .snsType((member.getSnsType()==null)?null:(member.getSnsType().ordinal()))
                 .snsId(member.getSnsId())
                 .statusMessage(member.getStatusMessage())
-                .city(member.getAddress().getCity())
-                .gu(member.getAddress().getGu())
-                .dong(member.getAddress().getDong())
+                .city((member.getAddress()==null)?null:(member.getAddress().getCity()))
+                .gu((member.getAddress()==null)?null:(member.getAddress().getGu()))
+                .dong((member.getAddress()==null)?null:(member.getAddress().getDong()))
                 .areaCode(member.getPhoneNumber().getAreaCode())
                 .localNumber(member.getPhoneNumber().getLocalNumber())
                 .build();
