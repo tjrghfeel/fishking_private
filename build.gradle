@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.3.4.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
     id 'war'
 
@@ -40,6 +41,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.gson:gson'
     implementation 'junit:junit:4.12'
+
+
+    implementation 'com.querydsl:querydsl-jpa'
 /*
     implementation 'net.rakugakibox.util:yaml-resource-bundle:1.1'
 */
@@ -58,4 +62,24 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+//QueryDsl 설정
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }

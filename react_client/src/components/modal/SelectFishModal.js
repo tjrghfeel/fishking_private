@@ -11,10 +11,8 @@ import { inject, observer } from "mobx-react";
 export default inject("CodeStore")(
   observer(
     forwardRef(
-      (
-        { CodeStore: { fishspecies2, loadFishspecies }, id, onSelected },
-        ref
-      ) => {
+      ({ CodeStore: { REST_GET_commonCode_group }, id, onSelected }, ref) => {
+        const [list, setList] = useState([]);
         /** 선택 데이터 */
         const [selected, setSelected] = useState([]);
         /** 선택 변경 */
@@ -44,16 +42,15 @@ export default inject("CodeStore")(
             element.checked = false;
           }
         }, [id, setSelected]);
-        useEffect(() => {
-          (async () => {
-            if (fishspecies2.length === 0) {
-              await loadFishspecies();
-            }
-          })();
-        }, [fishspecies2, loadFishspecies]);
         useImperativeHandle(ref, () => ({
           onInit,
         }));
+        useEffect(() => {
+          (async () => {
+            const resolve = await REST_GET_commonCode_group(80, 3);
+            setList(resolve);
+          })();
+        }, [REST_GET_commonCode_group, setList]);
         return (
           <div
             className="modal fade modal-full"
@@ -83,13 +80,13 @@ export default inject("CodeStore")(
                   <div className="padding">
                     <p className="mt-3"></p>
 
-                    {fishspecies2 &&
-                      fishspecies2.map((data, index) => (
+                    {list &&
+                      list.map((data, index) => (
                         <div key={index} className="row">
                           {data &&
                             data.map((item, index2) => (
                               <div key={index2} className="col">
-                                {item.id !== "blank" && (
+                                {item.id !== null && (
                                   <label className="control checkbox">
                                     <input
                                       type="checkbox"

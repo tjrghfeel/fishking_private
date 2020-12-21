@@ -11,7 +11,14 @@ export class ExternalStore {
   constructor() {
     makeAutoObservable(this);
   }
-  /** Native Linking :: 전화걸기 */
+  /********** ********** ********** ********** **********/
+  /** observable **/
+  /********** ********** ********** ********** **********/
+
+  /********** ********** ********** ********** **********/
+  /** action **/
+  /********** ********** ********** ********** **********/
+  // --> Native Linking
   linking(url: string) {
     if (window.isNative) {
       const json = {

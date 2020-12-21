@@ -6,10 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 
 @SpringBootApplication
-@EnableJpaRepositories(repositoryBaseClass = BaseRepositoryImpl.class)
+@EnableJpaRepositories(
+        //basePackages = "com.tobe.fishking.v2",
+        //basePackageClasses = {BaseRepositoryImpl.class, JpaRepository.class}
+        repositoryBaseClass = BaseRepositoryImpl.class
+)
 public class FishkingV2Application {
 
     public static void main(String[] args) {
@@ -20,6 +23,7 @@ public class FishkingV2Application {
 
 
 }
+
 
 
 

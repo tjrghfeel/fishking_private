@@ -7,11 +7,7 @@ export default inject()(
   observer(
     withRouter(
       ({
-        text,
-        content,
-        contentChild,
-        hasNext = true,
-        navigateTo,
+        data: { text, content, contentChild, hasNext = true, navigateTo },
         history,
       }) => {
         return (

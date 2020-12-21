@@ -4,7 +4,6 @@ import { Switch, Route } from "react-router-dom";
 
 import SearchMainPage from "../pages/search/SearchAllPage";
 import SearchReservePage from "../pages/search/SearchReservePage";
-import BlankPage from "../pages/BlankPage";
 
 export default inject()(
   observer(({ match }) => {

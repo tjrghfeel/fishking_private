@@ -6,7 +6,6 @@ import MemberLoginPage from "../pages/member/MemberLoginPage";
 import MemberFindpwPage from "../pages/member/MemberFindpwPage";
 import MemberSignupPage from "../pages/member/MemberSignupPage";
 import MemberSignoutPage from "../pages/member/MemberSignoutPage";
-import BlankPage from "../pages/BlankPage";
 
 export default inject()(
   observer(({ match }) => {

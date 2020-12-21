@@ -34,8 +34,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +58,6 @@ public class MemberService {
     private UploadService uploadService;
     private PasswordEncoder encoder;
     private PhoneAuthRepository phoneAuthRepository;
-    private Environment env;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -260,7 +257,7 @@ public class MemberService {
             UserProfileDTO userProfileDTO = UserProfileDTO.builder()
                 .memberId(member.getId())
                 .nickName((member.getNickName()==null)?("이름없음"):(member.getNickName()))
-                .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
+                .profileImage(member.getProfileImage())
                 .isActive(member.getIsActive())
                 .postCount(postCount)
                 .takeCount(takeCount)
@@ -308,7 +305,7 @@ public class MemberService {
                 .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
                 .statusMessage((member.getStatusMessage()==null)?("없음"):(member.getStatusMessage()))
                 //!!!!!아래 전화번호는 nullable필드이지만 회원가입시 휴대폰인증을 하므로 무조건 있다고 판단.
-                .areaCode(member.getPhoneNumber().getAreaCode())
+                //.areaCode(member.getPhoneNumber().getAreaCode())
                 .localNumber(member.getPhoneNumber().getLocalNumber())
                 .build();
 

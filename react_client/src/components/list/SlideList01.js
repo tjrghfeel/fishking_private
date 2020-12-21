@@ -35,10 +35,10 @@ export default inject()(
               {list &&
                 list.map((data, index) => (
                   <li key={index} className="item">
-                    {itemType === "ListItem01" && <ListItem01 {...data} />}
-                    {itemType === "ListItem05" && <ListItem05 {...data} />}
-                    {itemType === "ListItem08" && <ListItem08 {...data} />}
-                    {itemType === "ListItem11" && <ListItem11 {...data} />}
+                    {itemType === "ListItem01" && <ListItem01 data={data} />}
+                    {itemType === "ListItem05" && <ListItem05 data={data} />}
+                    {itemType === "ListItem08" && <ListItem08 data={data} />}
+                    {itemType === "ListItem11" && <ListItem11 data={data} />}
                   </li>
                 ))}
               {hasMore && (

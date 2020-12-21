@@ -6,7 +6,13 @@ import ListItem07 from "./ListItem07";
 
 export default inject()(
   observer(
-    ({ title, titleCls, itemType = "ListItem06" | "ListItem07", list }) => {
+    ({
+      title,
+      titleCls,
+      itemType = "ListItem06" | "ListItem07",
+      list,
+      onClose,
+    }) => {
       return (
         <>
           {title && (
@@ -21,9 +27,9 @@ export default inject()(
           {list &&
             list.map((data, index) => {
               if (itemType === "ListItem06") {
-                return <ListItem06 key={index} {...data} />;
+                return <ListItem06 key={index} data={{ ...data, onClose }} />;
               } else {
-                return <ListItem07 key={index} {...data} />;
+                return <ListItem07 key={index} data={{ ...data, onClose }} />;
               }
             })}
         </>

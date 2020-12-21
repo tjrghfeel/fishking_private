@@ -3,7 +3,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 
 export default inject()(
-  observer(({ imgSrc, text, count }) => {
+  observer(({ data: { imgSrc, text, count } }) => {
     return (
       <a>
         <div className="imgWrap imgFish">

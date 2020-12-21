@@ -7,22 +7,39 @@ import { fishIcon } from "../../commons/Constant";
 export default inject()(
   observer(
     ({
-      imgSrc,
-      isLive,
-      playTime,
-      title,
-      fishList,
-      fishType,
-      fishCount = 0,
-      location,
-      distance = 0,
-      isRealtime,
-      price = 0,
+      data,
+      data: {
+        imgSrc,
+        isLive,
+        playTime,
+        title,
+        fishList,
+        fishType,
+        fishCount = 0,
+        fishingType,
+        location,
+        distance = 0,
+        isRealtime,
+        price = 0,
+        onClose,
+      },
     }) => {
       return (
         <>
           <a>
             <div className="card card-sm">
+              {onClose && (
+                <a
+                  className="float-top-right"
+                  onClick={() => (onClose ? onClose(data) : null)}
+                >
+                  <img
+                    src="/assets/img/svg/icon_close_grey.svg"
+                    alt=""
+                    className="vam"
+                  />
+                </a>
+              )}
               <div className="row no-gutters">
                 <div className="cardimgWrap">
                   <img src={imgSrc} className="img-fluid" alt="" />
@@ -70,6 +87,11 @@ export default inject()(
                         </>
                       )}
                       <br />
+                      {fishingType && (
+                        <React.Fragment>
+                          <span className="grey">선상&nbsp;|</span>&nbsp;
+                        </React.Fragment>
+                      )}
                       {location} {Intl.NumberFormat().format(distance)}km
                     </p>
                     <div className="card-price">

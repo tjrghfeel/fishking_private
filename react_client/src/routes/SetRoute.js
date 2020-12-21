@@ -11,7 +11,6 @@ import SetProfilePassword from "../pages/set/SetProfilePasswordPage";
 import SetAlarm from "../pages/set/SetAlarmPage";
 import SetVod from "../pages/set/SetVodPage";
 import SetPolicy from "../pages/set/SetPolicyPage";
-import BlankPage from "../pages/BlankPage";
 
 export default inject()(
   observer(({ match }) => {
