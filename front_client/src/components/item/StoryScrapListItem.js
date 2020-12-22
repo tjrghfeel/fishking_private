@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { inject, observer } from "mobx-react";
 
-export default inject()(
+export default inject("DataStore")(
   observer(
     ({
+      DataStore: { latestTimeFormat },
       data: {
         profileImage,
         nickName,
@@ -15,8 +16,8 @@ export default inject()(
         likeCount = 0,
         commentCount = 0,
         scrapCount = 0,
-        isLike = false, // 좋아요 여부
-        isScrap = false, // 스크랩 여부
+        isLike = false,
+        isScrap = false,
       },
       data,
       onClick,
@@ -25,6 +26,10 @@ export default inject()(
       onClickComment,
       onClickScrap,
     }) => {
+      const [timeString, setTimeString] = useState("");
+      useCallback(() => {
+        setTimeString(latestTimeFormat(createdDate));
+      }, [latestTimeFormat, setTimeString, createdDate]);
       return (
         <div className="container nopadding">
           <div className="row-story-col ">
@@ -40,7 +45,7 @@ export default inject()(
                 <h5>{nickName}</h5>
                 <p>
                   <img
-                    src="/assets/img/svg/icon-map-grey.svg"
+                    src="./assets/img/svg/icon-map-grey.svg"
                     alt=""
                     className="vam"
                   />
@@ -49,10 +54,12 @@ export default inject()(
               </a>
             </div>
             <div className="col">
-              <small className="grey">{createdDate}</small>
+              <small className="grey">{timeString}</small>
             </div>
           </div>
           <div className="row-story">
+            <span className="tag-orange">현장실시간</span>{" "}
+            <span className="tag">선상조황</span>
             <a onClick={() => (onClick ? onClick(data) : null)}>
               <h6>{title}</h6>
               <p>
@@ -115,24 +122,24 @@ export default inject()(
           </div>
           <hr />
           <nav className="nav nav-pills nav-comment nav-justified">
-            {/*<a*/}
-            {/*  className={"nav-link" + (isLike ? " ".concat("active") : "")}*/}
-            {/*  onClick={() => (onClickLike ? onClickLike(data) : null)}*/}
-            {/*>*/}
-            {/*  <span className="icon icon-good"></span>좋아요*/}
-            {/*</a>*/}
+            <a
+              className={"nav-link" + (isLike ? " active" : "")}
+              onClick={() => (onClickLike ? onClickLike(data) : null)}
+            >
+              <span className="icon icon-good"></span>좋아요
+            </a>
             <a
               className="nav-link"
               onClick={() => (onClickComment ? onClickComment(data) : null)}
             >
               <span className="icon icon-comment"></span>댓글쓰기
             </a>
-            {/*<a*/}
-            {/*  className={"nav-link" + (isScrap ? " ".concat("active") : "")}*/}
-            {/*  onClick={() => (onClickScrap ? onClickScrap(data) : null)}*/}
-            {/*>*/}
-            {/*  <span className="icon icon-scrap"></span>스크랩*/}
-            {/*</a>*/}
+            <a
+              className={"nav-link" + (isScrap ? " active" : "")}
+              onClick={() => (onClickScrap ? onClickScrap(data) : null)}
+            >
+              <span className="icon icon-scrap"></span>스크랩
+            </a>
           </nav>
           <p className="space"></p>
         </div>

@@ -13,6 +13,12 @@ export default inject()(
           <Route exact path={`${match.url}/add`} component={BlankPage} />
           {/** 스토리 > 상세 */}
           <Route exact path={`${match.url}/detail/:id`} component={BlankPage} />
+          {/** 스토리 > 댓글 */}
+          <Route
+            exact
+            path={`${match.url}/comment/:id`}
+            component={BlankPage}
+          />
         </Switch>
       </>
     );

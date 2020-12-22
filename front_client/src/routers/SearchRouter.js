@@ -11,6 +11,8 @@ export default inject()(
         <Switch>
           {/** 검색 > 전체 */}
           <Route exact path={`${match.url}/all`} component={BlankPage} />
+          {/** 검색 > 예약 */}
+          <Route exact path={`${match.url}/reserve`} component={BlankPage} />
         </Switch>
       </>
     );

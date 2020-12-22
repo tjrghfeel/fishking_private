@@ -2,11 +2,14 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
 import MyStoryTabs from "../../components/layouts/MyStoryTabs";
-import StoryPostListItem from "../../components/item/StoryPostListItem";
 import Http from "../../Http";
 import MainBottomTabs from "../../components/layouts/MainBottomTabs";
+import StoryScrapListItem from "../../components/item/StoryScrapListItem";
 
-export default inject("ViewStore")(
+export default inject(
+  "ViewStore",
+  "DOMStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -44,6 +47,10 @@ export default inject("ViewStore")(
       }
 
       componentWillUnmount() {
+        const {
+          DOMStore: { clearScripts },
+        } = this.props;
+        clearScripts();
         window.removeEventListener("scroll", this.onScrollForPage);
       }
 
@@ -66,19 +73,10 @@ export default inject("ViewStore")(
         let {
           content,
           pageable: { pageSize },
-        } = await Http._get("/v2/api/myFishingPostList/" + page);
+        } = await Http._get("/v2/api/myFishingDiaryScrap/" + page);
 
-        // TODO : [PUB-OK/API-NO] 내글관리 > 게시글 목록 조회 : 데이터 항목이 필요합니다. (등록시간:n분전, 좋아요여부, 스크랩여부)
-        // TODO : [PUB-OK/API-NO] 내글관리 > 게시글 목록 조회 : fileList 항목은 배열 이어야 합니다.
-
-        for (let item of content) {
-          if (item.fileList !== null)
-            item.fileList = [
-              "/assets/img/sample/photo5.jpg",
-              "/assets/img/sample/photo3.jpg",
-              "/assets/img/sample/photo6.jpg",
-            ];
-        }
+        // TODO : 내 글 관리 > 스크랩 : 현장실시간, 선상조황, 좋아요 여부, 스크랩 여부 데이터 항목이 필요합니다.
+        // TODO : 내 글 관리 > 스크랩 : shipId 와 memberId 가 같이 오고 있습니다. 프로필보기 링크시 어떤 데이터를 적용해야 할지요?
 
         if (page === 0) {
           await this.setState({ list: content });
@@ -93,6 +91,9 @@ export default inject("ViewStore")(
         }
 
         await this.setState({ isPending: false });
+
+        this.props.DOMStore.clearScripts();
+        this.props.DOMStore.applyCarouselSwipe();
       };
 
       onClick = async (item) => {
@@ -115,14 +116,14 @@ export default inject("ViewStore")(
 
         history.push(`/common/profile/` + item.memberId);
       };
-      onClickLike = async (item) => {
-        // TODO : [PUB-OK/API-NO] 게시글 좋아요 요청
-      };
       onClickComment = () => {
         // TODO : [NO-FILE] 댓글 쓰기 이동
       };
-      onClickScrap = async (item) => {
-        // TODO : [PUB-OK/API-NO] 게시글 스크랩 요청
+      onClickLike = async () => {
+        // TODO : 내 글 관리 > 스크랩 : 좋아요 토글 요청
+      };
+      onClickScrap = async () => {
+        // TODO : 내 글 관리 > 스크랩 : 스크랩 토글 요청
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -150,18 +151,49 @@ export default inject("ViewStore")(
             {/** 탭메뉴 */}
             <MyStoryTabs />
 
-            {/** List */}
-            {this.state.list.map((data, index) => (
-              <StoryPostListItem
-                key={index}
-                data={data}
-                onClick={(data) => this.onClick(data)}
-                onClickProfile={(data) => this.onClickProfile(data)}
-                onClickLike={(data) => this.onClickLike(data)}
-                onClickComment={(data) => this.onClickComment(data)}
-                onClickScrap={(data) => this.onClickScrap(data)}
-              />
-            ))}
+            {/** 리스트 > 데이터 없음 */}
+            {this.state.list.length === 0 && (
+              <div className="container nopadding mt-3 mb-0 text-center">
+                <p className="mt-5 mb-3">
+                  <img
+                    src="/assets/img/svg/icon-scrap-no.svg"
+                    alt=""
+                    className="icon-lg"
+                  />
+                </p>
+                <h6>내가 스크랩한 게시글이 없습니다.</h6>
+                <p className="mt-3">
+                  <small className="grey">
+                    낚시인들의 소중한 경험을 저장해 보세요.
+                  </small>
+                </p>
+                <p className="mt-5">
+                  <a
+                    onClick={() => history.push(`/main/story`)}
+                    className="btn btn-primary btn-round"
+                  >
+                    어복스토리 보러 가기
+                  </a>
+                </p>
+              </div>
+            )}
+
+            {/** 리스트 > 데이터 있음 */}
+            {this.state.list.length > 0 && (
+              <div className="container nopadding">
+                {this.state.list.map((data, index) => (
+                  <StoryScrapListItem
+                    key={index}
+                    data={data}
+                    onClick={this.onClick}
+                    onClickProfile={this.onClickProfile}
+                    onClickLike={this.onClickLike}
+                    onClickComment={this.onClickComment}
+                    onClickScrap={this.onClickScrap}
+                  />
+                ))}
+              </div>
+            )}
 
             {/** 하단탭 */}
             <MainBottomTabs activedIndex={3} />

@@ -1,3 +1,4 @@
+/* global $ */
 import { makeAutoObservable } from "mobx";
 
 const DOMStore = new (class {
@@ -42,6 +43,40 @@ const DOMStore = new (class {
       for (let script of this.arr_injected_scripts) {
         script.remove();
       }
+    });
+  };
+  applyCarouselSwipe = async () => {
+    await this.loadScript("/assets/js/swiper.min.js");
+    await this.loadScript("/assets/js/jquery.touchSwipe.min.js");
+    await this.loadScript("/assets/js/default.js");
+
+    $(".carousel").swipe({
+      swipe: function (
+        event,
+        direction,
+        distance,
+        duration,
+        fingerCount,
+        fingerData
+      ) {
+        if (direction == "left") $(this).carousel("next");
+        if (direction == "right") $(this).carousel("prev");
+      },
+      tap: function (event, target) {
+        // navigateTo(url)
+      },
+
+      allowPageScroll: "vertical",
+      excludedElements: "label, button, input, select, textarea, .noSwipe",
+      threshold: 1,
+    });
+
+    $(document).swipe({
+      swipe: function (event, direction, distance, duration, fingerCount) {},
+      click: function (event, target) {
+        $(target).click();
+      },
+      threshold: 75,
     });
   };
 })();

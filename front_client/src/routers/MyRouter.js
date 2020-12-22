@@ -6,7 +6,10 @@ import BlankPage from "../views/BlankPage";
 import MyReservationView from "../views/my/MyReservationView";
 import MyCouponView from "../views/my/MyCouponView";
 import MyAlarmView from "../views/my/MyAlarmView";
-import MyStoryPost from "../views/my/MyStoryPost";
+import MyStoryPostView from "../views/my/MyStoryPostView";
+import MyStoryCommentView from "../views/my/MyStoryCommentView";
+import MyStoryScrapView from "../views/my/MyStoryScrapView";
+import MyStoryReviewView from "../views/my/MyStoryReviewView";
 
 export default inject()(
   observer(({ match }) => {
@@ -27,25 +30,25 @@ export default inject()(
           <Route
             exact
             path={`${match.url}/story/post`}
-            component={MyStoryPost}
+            component={MyStoryPostView}
           />
           {/** 마이 > 내글관리 > 댓글 */}
           <Route
             exact
             path={`${match.url}/story/comment`}
-            component={BlankPage}
+            component={MyStoryCommentView}
           />
           {/** 마이 > 내글관리 > 스크랩 */}
           <Route
             exact
             path={`${match.url}/story/scrap`}
-            component={BlankPage}
+            component={MyStoryScrapView}
           />
           {/** 마이 > 내글관리 > 리뷰 */}
           <Route
             exact
             path={`${match.url}/story/review`}
-            component={BlankPage}
+            component={MyStoryReviewView}
           />
           {/** 마이 > 찜한업체 */}
           <Route exact path={`${match.url}/zzim`} component={BlankPage} />
