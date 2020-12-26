@@ -1,5 +1,5 @@
 /* global daum */
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { inject, observer } from "mobx-react";
 import SelectCompanyAndLocationModal from "./SelectCompanyAndLocationModal";
 import NativeStore from "../../stores/NativeStore";
@@ -32,7 +32,8 @@ export default inject(
             (mapInstance || map).relayout();
           }, 0);
 
-          NativeStore.getCurrentPosition();
+          // TODO : 현재 위치 조회 확인 : SSL 필요
+          // NativeStore.getCurrentPosition();
         }
       },
       [

@@ -23,6 +23,7 @@ const NativeStore = new (class {
     }
   }
   getCurrentPosition = () => {
+    // TODO : 내 위치 조회
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
