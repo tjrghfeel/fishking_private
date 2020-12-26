@@ -54,6 +54,7 @@ export default inject()(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        // TODO : 설정 > 프로필관리 : 퍼블상 배경이미지도 변경이 가능한 것 같은데, API 필요함
         const { history } = this.props;
         return (
           <>
