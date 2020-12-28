@@ -1,0 +1,141 @@
+import React, { useState, useCallback } from "react";
+import { inject, observer } from "mobx-react";
+
+export default inject("DataStore")(
+  observer(
+    ({
+      DataStore: { latestTimeFormat },
+      data: {
+        profileImage,
+        nickName,
+        address,
+        createdDate,
+        title,
+        contents,
+        fileList = [],
+        likeCount = 0,
+        commentCount = 0,
+        scrapCount = 0,
+        isLike = false,
+      },
+      data,
+      onClick,
+      onClickProfile,
+      onClickLike,
+      onClickComment,
+    }) => {
+      const [timeString, setTimeString] = useState("");
+      useCallback(() => {
+        setTimeString(latestTimeFormat(createdDate));
+      }, [latestTimeFormat, setTimeString, createdDate]);
+      return (
+        <div className="container nopadding">
+          <div className="row-story-col ">
+            <div className="col">
+              <a onClick={() => (onClickProfile ? onClickProfile(data) : null)}>
+                <figure>
+                  <img src={profileImage} alt="" />
+                </figure>
+              </a>
+            </div>
+            <div className="col">
+              <a onClick={() => (onClickProfile ? onClickProfile(data) : null)}>
+                <h5>{nickName}</h5>
+                <p>
+                  <img
+                    src="./assets/img/svg/icon-map-grey.svg"
+                    alt=""
+                    className="vam"
+                  />
+                  <small className="grey">{address}</small>
+                </p>
+              </a>
+            </div>
+            <div className="col">
+              <small className="grey">{timeString}</small>
+            </div>
+          </div>
+          <div className="row-story">
+            <span className="tag-orange">현장실시간</span>{" "}
+            <span className="tag">선상조황</span>
+            <a onClick={() => (onClick ? onClick(data) : null)}>
+              <h6>{title}</h6>
+              <p>
+                {contents}…{" "}
+                <a
+                  onClick={() => (onClick ? onClick(data) : null)}
+                  className="grey"
+                >
+                  더보기
+                </a>
+              </p>
+            </a>
+            <p className="clearfix-sm"></p>
+            {fileList && fileList.length > 0 && (
+              <div
+                id="carousel-sub"
+                className="carousel slide"
+                data-ride="carousel"
+                onClick={() => (onClick ? onClick(data) : null)}
+              >
+                <div className="carouselwrap w-full">
+                  <ol className="carousel-indicators">
+                    {fileList &&
+                      fileList.map((data, index) => (
+                        <li
+                          key={index}
+                          data-target="#carousel-sub"
+                          data-slide-to={index}
+                          className={index === 0 ? "active" : ""}
+                        ></li>
+                      ))}
+                  </ol>
+                  <div className="carousel-inner">
+                    {fileList &&
+                      fileList.map((data, index) => (
+                        <div
+                          key={index}
+                          className={
+                            "carousel-item" + (index === 0 ? " active" : "")
+                          }
+                        >
+                          <img src={data} className="d-block w-100" alt="" />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="row no-gutters">
+            <div className="col-6">
+              <small>좋아요 {Intl.NumberFormat().format(likeCount)}개</small>
+            </div>
+            <div className="col-6 text-right">
+              <small>
+                댓글 {Intl.NumberFormat().format(commentCount)} &nbsp;&nbsp;
+                스크랩 {Intl.NumberFormat().format(scrapCount)}
+              </small>
+            </div>
+          </div>
+          <hr />
+          <nav className="nav nav-pills nav-comment nav-justified">
+            <a
+              className={"nav-link" + (isLike ? " active" : "")}
+              onClick={() => (onClickLike ? onClickLike(data) : null)}
+            >
+              <span className="icon icon-good"></span>좋아요
+            </a>
+            <a
+              className="nav-link"
+              onClick={() => (onClickComment ? onClickComment(data) : null)}
+            >
+              <span className="icon icon-comment"></span>댓글쓰기
+            </a>
+          </nav>
+          <p className="space"></p>
+        </div>
+      );
+    }
+  )
+);
