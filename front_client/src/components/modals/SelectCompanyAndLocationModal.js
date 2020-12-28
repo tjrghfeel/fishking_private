@@ -75,7 +75,6 @@ export default inject(
       onSelected(item);
     });
     return (
-      // TODO : 코드목록 'sortType' 에 '명칭순' 데이터가 필요합니다.
       <div
         className="modal fade modal-full"
         id={id}
@@ -206,8 +205,8 @@ export default inject(
                             id="customRadioInline2"
                             name="customRadioInline1"
                             className="custom-control-input"
-                            defaultChecked={searchFilter === "distance2"}
-                            onClick={() => searchByKeyword(0, "distance2")}
+                            defaultChecked={searchFilter === "name"}
+                            onClick={() => searchByKeyword(0, "name")}
                           />
                           <label
                             className="custom-control-label"

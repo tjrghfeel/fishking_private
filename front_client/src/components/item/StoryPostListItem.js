@@ -1,9 +1,10 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 
-export default inject()(
+export default inject("DataStore")(
   observer(
     ({
+      DataStore: { latestTimeFormat },
       data: {
         profileImage,
         nickName,
@@ -15,15 +16,11 @@ export default inject()(
         likeCount = 0,
         commentCount = 0,
         scrapCount = 0,
-        isLike = false, // 좋아요 여부
-        isScrap = false, // 스크랩 여부
       },
       data,
       onClick,
       onClickProfile,
-      onClickLike,
       onClickComment,
-      onClickScrap,
     }) => {
       return (
         <div className="container nopadding">
@@ -49,7 +46,7 @@ export default inject()(
               </a>
             </div>
             <div className="col">
-              <small className="grey">{createdDate}</small>
+              <small className="grey">{latestTimeFormat(createdDate)}</small>
             </div>
           </div>
           <div className="row-story">
@@ -115,24 +112,12 @@ export default inject()(
           </div>
           <hr />
           <nav className="nav nav-pills nav-comment nav-justified">
-            {/*<a*/}
-            {/*  className={"nav-link" + (isLike ? " ".concat("active") : "")}*/}
-            {/*  onClick={() => (onClickLike ? onClickLike(data) : null)}*/}
-            {/*>*/}
-            {/*  <span className="icon icon-good"></span>좋아요*/}
-            {/*</a>*/}
             <a
               className="nav-link"
               onClick={() => (onClickComment ? onClickComment(data) : null)}
             >
               <span className="icon icon-comment"></span>댓글쓰기
             </a>
-            {/*<a*/}
-            {/*  className={"nav-link" + (isScrap ? " ".concat("active") : "")}*/}
-            {/*  onClick={() => (onClickScrap ? onClickScrap(data) : null)}*/}
-            {/*>*/}
-            {/*  <span className="icon icon-scrap"></span>스크랩*/}
-            {/*</a>*/}
           </nav>
           <p className="space"></p>
         </div>

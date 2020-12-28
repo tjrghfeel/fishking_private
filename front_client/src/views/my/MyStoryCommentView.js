@@ -91,8 +91,7 @@ export default inject("ViewStore")(
         } = this.props;
         await saveState({ page, list });
 
-        // TODO : 내 글 관리 > 댓글 : 데이터 id 가 댓글의 id 인지 게시글의 id 인지 확인 필요
-        history.push(`/story/comment/` + item.id);
+        history.push(`/story/comment/` + item.fishingDiaryId);
       };
       /********** ********** ********** ********** **********/
       /** render */

@@ -75,8 +75,6 @@ export default inject(
           pageable: { pageSize },
         } = await Http._get("/v2/api/myFishingPostList/" + page);
 
-        // TODO : [PUB-OK/API-NO] 내글관리 > 게시글 목록 조회 : 데이터 항목이 필요합니다. (등록시간:n분전)
-
         if (page === 0) {
           await this.setState({ list: content });
         } else {
@@ -115,8 +113,15 @@ export default inject(
 
         history.push(`/common/profile/` + item.memberId);
       };
-      onClickComment = () => {
-        // TODO : [NO-FILE] 댓글 쓰기 이동
+      onClickComment = async (item) => {
+        const { page, list } = this.state;
+        const {
+          history,
+          ViewStore: { saveState },
+        } = this.props;
+        await saveState({ page, list });
+
+        history.push(`/story/comment/` + item.id);
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -151,9 +156,7 @@ export default inject(
                 data={data}
                 onClick={(data) => this.onClick(data)}
                 onClickProfile={(data) => this.onClickProfile(data)}
-                // onClickLike={(data) => this.onClickLike(data)}
                 onClickComment={(data) => this.onClickComment(data)}
-                // onClickScrap={(data) => this.onClickScrap(data)}
               />
             ))}
 

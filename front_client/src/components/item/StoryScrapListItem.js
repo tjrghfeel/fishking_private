@@ -17,14 +17,12 @@ export default inject("DataStore")(
         commentCount = 0,
         scrapCount = 0,
         isLike = false,
-        isScrap = false,
       },
       data,
       onClick,
       onClickProfile,
       onClickLike,
       onClickComment,
-      onClickScrap,
     }) => {
       const [timeString, setTimeString] = useState("");
       useCallback(() => {
@@ -133,12 +131,6 @@ export default inject("DataStore")(
               onClick={() => (onClickComment ? onClickComment(data) : null)}
             >
               <span className="icon icon-comment"></span>댓글쓰기
-            </a>
-            <a
-              className={"nav-link" + (isScrap ? " active" : "")}
-              onClick={() => (onClickScrap ? onClickScrap(data) : null)}
-            >
-              <span className="icon icon-scrap"></span>스크랩
             </a>
           </nav>
           <p className="space"></p>

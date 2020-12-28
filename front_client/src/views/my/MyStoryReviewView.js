@@ -2,9 +2,13 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
 import MyStoryTabs from "../../components/layouts/MyStoryTabs";
+import StoryReviewListItem from "../../components/item/StoryReviewListItem";
 import Http from "../../Http";
 
-export default inject("ViewStore")(
+export default inject(
+  "ViewStore",
+  "DOMStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -66,7 +70,7 @@ export default inject("ViewStore")(
           pageable: { pageSize },
         } = await Http._get("/v2/api/myReviewList/" + page);
 
-        // TODO : 내 글 관리 > 리뷰 : API 오류 발생하고 있습니다.
+        // TODO : 내 글 관리 > 리뷰 : 속도 데이터 항목이 필요합니다. (예, 1.47m/s)
         console.log(JSON.stringify(content));
 
         if (page === 0) {
@@ -82,6 +86,9 @@ export default inject("ViewStore")(
         }
 
         await this.setState({ isPending: false });
+
+        this.props.DOMStore.clearScripts();
+        this.props.DOMStore.applyCarouselSwipe();
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -135,6 +142,12 @@ export default inject("ViewStore")(
                 </p>
               </div>
             )}
+
+            {/** 리스트 > 데이터 있음 */}
+            {this.state.list.length > 0 &&
+              this.state.list.map((data, index) => (
+                <StoryReviewListItem key={index} data={data} />
+              ))}
           </>
         );
       }

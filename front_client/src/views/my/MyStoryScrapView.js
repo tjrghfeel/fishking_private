@@ -75,8 +75,7 @@ export default inject(
           pageable: { pageSize },
         } = await Http._get("/v2/api/myFishingDiaryScrap/" + page);
 
-        // TODO : 내 글 관리 > 스크랩 : 현장실시간, 선상조황, 좋아요 여부, 스크랩 여부 데이터 항목이 필요합니다.
-        // TODO : 내 글 관리 > 스크랩 : shipId 와 memberId 가 같이 오고 있습니다. 프로필보기 링크시 어떤 데이터를 적용해야 할지요?
+        // TODO : 내 글 관리 > 스크랩 : 현장실시간, 선상조황, 좋아요 여부, 데이터 항목이 필요합니다.
 
         if (page === 0) {
           await this.setState({ list: content });
@@ -116,14 +115,18 @@ export default inject(
 
         history.push(`/common/profile/` + item.memberId);
       };
-      onClickComment = () => {
-        // TODO : [NO-FILE] 댓글 쓰기 이동
+      onClickComment = async (item) => {
+        const { page, list } = this.state;
+        const {
+          history,
+          ViewStore: { saveState },
+        } = this.props;
+        await saveState({ page, list });
+
+        history.push(`/story/comment/` + item.id);
       };
       onClickLike = async () => {
         // TODO : 내 글 관리 > 스크랩 : 좋아요 토글 요청
-      };
-      onClickScrap = async () => {
-        // TODO : 내 글 관리 > 스크랩 : 스크랩 토글 요청
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -189,7 +192,6 @@ export default inject(
                     onClickProfile={this.onClickProfile}
                     onClickLike={this.onClickLike}
                     onClickComment={this.onClickComment}
-                    onClickScrap={this.onClickScrap}
                   />
                 ))}
               </div>
