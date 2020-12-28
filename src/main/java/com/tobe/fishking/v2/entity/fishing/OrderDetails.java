@@ -17,7 +17,7 @@ public class OrderDetails extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  id
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
+    @GeneratedValue(strategy= GenerationType.IDENTITY) // AUTO //mssql
 // @Column(columnDefinition = "comment 'id'  ")
 @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
@@ -43,6 +43,8 @@ public class OrderDetails extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'최종가격', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  total_amount
     @Column(columnDefinition = "float comment '총가격'  ")
     private Integer totalAmount;
+
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  created_by
     @ManyToOne

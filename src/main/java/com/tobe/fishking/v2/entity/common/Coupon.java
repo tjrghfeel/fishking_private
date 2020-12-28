@@ -20,15 +20,18 @@ public class Coupon extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  id
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
+    @GeneratedValue(strategy= GenerationType.IDENTITY) // AUTO //mssql
     public Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'쿠폰유형', 'USER', DBO, 'TABLE', coupon, 'COLUMN', coupon_type
-    @Column(columnDefinition = "int   comment '할인쿠폰유형 - 정액/정률'  ")
+    @Column(columnDefinition = "int   comment '할인쿠폰유형 - 정액/정률'  ")  //정률없음
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private CouponType couponType;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'쿠폰코드', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  couponCode
+
+    //생성규칙  VIP/General(V/G)  + A(정액, R:정률) +  '00'  +  발행일자(6)  + 일련번호 (7)\
+    //ex) GA00201231000000
     @Column(columnDefinition = "varchar(20)  comment '쿠폰코드'  ")
     public String couponCode;
 
@@ -37,19 +40,21 @@ public class Coupon extends BaseTime {
     public String couponName;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'노출기간-시작', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  exposure_start_date
-    @Column(columnDefinition = "varchar(8)   comment '노출기간-시작'  ")
+    @Column(columnDefinition = "varchar(8)   comment '노출기간-시작 - 발행일자'  ")
     private String exposureStartDate;
 
-
     // EXEC sp_addextendedproperty 'MS_Description', N'노출기간-종료', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  exposure_end_date
-    @Column(columnDefinition = "varchar(8)  comment '노출기간-종료'  ")
+    //만료일자 23:59까지 발행 가능
+    @Column(columnDefinition = "varchar(8)  comment '노출기간-종료 -만료일자'  ")
     private String exposureEndDate;
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'할인금액(율)', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  saleValues
     @Column(columnDefinition = "decimal(18,0)  comment '할인금액(율)'  ")
     private Double saleValues;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'최대발행갯수', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  maxIssue
+    //발행갯수가 최대발행갯수를 넘으면 발행중지
     @Column(columnDefinition = "int  comment '최대발행갯수'  ")
     private Integer maxIssueCount;
 
@@ -57,8 +62,8 @@ public class Coupon extends BaseTime {
     @Column(columnDefinition = "int  comment '유효일수'  ")
     private Integer effectiveDays;
 
-
     // EXEC sp_addextendedproperty 'MS_Description', N'발행수량', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  issue_qty
+    //발행수량은  최대발행수량은 넘지 않게
     @Column(columnDefinition = "float comment '발행수량'")
     private Double issueQty;
 

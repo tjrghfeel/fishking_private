@@ -20,7 +20,7 @@ public class CouponMember extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', coupon_member, 'COLUMN',  id
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
+    @GeneratedValue(strategy= GenerationType.IDENTITY) // AUTO //mssql
     public Long id;
 
     @ManyToOne(fetch=FetchType.LAZY)
@@ -28,6 +28,7 @@ public class CouponMember extends BaseTime {
     private Coupon coupon;
 
     /*쿠폰코드중에서 일련번호부분 말하는건가? Coupon에 쿠폰코드 필드가 있는데 여기도 있다. */
+    /*쿠폰코드는 Coupon Entity code의  뒤에서 6자리  순차적으로 생성*/
     @Column(columnDefinition = "varchar(50) comment  '쿠폰코드'")
     private String couponCode;
 
