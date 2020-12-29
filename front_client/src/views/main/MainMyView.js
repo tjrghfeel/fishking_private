@@ -98,7 +98,9 @@ export default inject(
                       </div>
                       <div className="col-5 text-right">
                         <strong className="text-primary large">
-                          {Intl.NumberFormat().format(this.state.bookingCount)}
+                          {Intl.NumberFormat().format(
+                            this.state.bookingCount || 0
+                          )}
                         </strong>
                         <small className="text-secondary">건</small>
                         <img
@@ -129,7 +131,7 @@ export default inject(
                     }}
                   >
                     <strong className="text-primary large">
-                      {Intl.NumberFormat().format(this.state.couponCount)}
+                      {Intl.NumberFormat().format(this.state.couponCount || 0)}
                     </strong>
                     <small className="text-secondary">장</small>
                     <img

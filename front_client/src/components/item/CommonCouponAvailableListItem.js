@@ -6,6 +6,7 @@ export default inject()(
     ({
       data: {
         couponType = "amount",
+        couponImage,
         couponName,
         saleValues = 0,
         couponDescription,
@@ -30,7 +31,9 @@ export default inject()(
                   <div className="coupon-img">
                     <img
                       src={
-                        couponType === "amount"
+                        couponImage
+                          ? couponImage
+                          : couponType === "amount"
                           ? "/assets/img/svg/img-coupon1.svg"
                           : "/assets/img/svg/img-coupon2.svg"
                       }

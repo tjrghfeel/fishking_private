@@ -36,7 +36,77 @@ const DataStore = new (class {
     if (text.length >= 2 && text.length <= 7) return true;
     else return false;
   };
-  /** --> enum 데이터 조회 */
+  // --> 날짜 객체로부터 요일 조회
+  getWeek = (date) => {
+    try {
+      const day = date.getDay();
+      switch (day) {
+        case 0:
+          return "일";
+          break;
+        case 1:
+          return "월";
+          break;
+        case 2:
+          return "화";
+          break;
+        case 3:
+          return "수";
+          break;
+        case 4:
+          return "목";
+          break;
+        case 5:
+          return "금";
+          break;
+        case 6:
+          return "토";
+          break;
+      }
+    } catch (err) {
+      return null;
+    }
+  };
+  // --> n분전 포맷 :: 포맷 이외의 경우 기준 날짜 반환
+  latestTimeFormat = (dateString) => {
+    try {
+      const second = 1000;
+      const minute = second * 60;
+      const hour = minute * 60;
+
+      const when = new Date(dateString);
+      const when_year = when.getFullYear();
+      const when_month =
+        when.getMonth() + 1 < 10
+          ? "0".concat(when.getMonth() + 1)
+          : when.getMonth() + 1;
+      const when_date =
+        when.getDate() < 10 ? "0".concat(when.getDate()) : when.getDate();
+
+      const prev = when.getTime();
+      const now = new Date().getTime();
+      const between = now - prev;
+
+      if (between > hour * 2) {
+        // 2시간 ~ :: 기준 날짜
+        return when_year + "년" + when_month + "월" + when_date + "일";
+      } else if (between <= hour * 2 && between >= hour) {
+        // 1시간 ~ 2시간 :: 1시간전
+        return "1시간 전";
+      } else if (between < minute) {
+        // ~ 1분 :: 방금 전
+        return "방금 전";
+      } else if (between < hour) {
+        // ~ 1시간 :: n분 전
+        return Math.round(between / minute) + "분 전";
+      } else {
+        return "-";
+      }
+    } catch (err) {
+      return "-";
+    }
+  };
+  /** --> enum 데이터 목록 조회 */
   getEnums = async (type, columnLength = 0) => {
     try {
       const resolve = await Http._get("/v2/api/value");
@@ -71,7 +141,22 @@ const DataStore = new (class {
       return null;
     }
   };
-  /** --> 코드 데이터 조회 */
+  /** --> enum 데이터 조회 */
+  getEnumValue = async (type, key) => {
+    try {
+      const resolve = await Http._get("/v2/api/value");
+      if (resolve[type] && resolve[type].length > 0) {
+        for (let enm of resolve[type]) {
+          if (enm.key === key) return enm;
+        }
+      }
+      return null;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+  /** --> 코드 데이터 목록 조회 */
   getCodes = async (groupId, columnLength = 0) => {
     try {
       const resolve = await Http._get("/v2/api/commonCode/" + groupId);
@@ -102,7 +187,7 @@ const DataStore = new (class {
 
       return codes;
     } catch (err) {
-      console.err(err);
+      console.error(err);
       return null;
     }
   };

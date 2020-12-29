@@ -2,7 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
 import MyStoryTabs from "../../components/layouts/MyStoryTabs";
-import StoryPostListItem from "../../components/item/StoryPostListItem";
+import StoryCommentListItem from "../../components/item/StoryCommentListItem";
 import Http from "../../Http";
 import MainBottomTabs from "../../components/layouts/MainBottomTabs";
 
@@ -66,19 +66,7 @@ export default inject("ViewStore")(
         let {
           content,
           pageable: { pageSize },
-        } = await Http._get("/v2/api/myFishingPostList/" + page);
-
-        // TODO : [PUB-OK/API-NO] 내글관리 > 게시글 목록 조회 : 데이터 항목이 필요합니다. (등록시간:n분전, 좋아요여부, 스크랩여부)
-        // TODO : [PUB-OK/API-NO] 내글관리 > 게시글 목록 조회 : fileList 항목은 배열 이어야 합니다.
-
-        for (let item of content) {
-          if (item.fileList !== null)
-            item.fileList = [
-              "/assets/img/sample/photo5.jpg",
-              "/assets/img/sample/photo3.jpg",
-              "/assets/img/sample/photo6.jpg",
-            ];
-        }
+        } = await Http._get("/v2/api/myFishingCommentList/" + page);
 
         if (page === 0) {
           await this.setState({ list: content });
@@ -103,26 +91,7 @@ export default inject("ViewStore")(
         } = this.props;
         await saveState({ page, list });
 
-        history.push(`/story/detail/` + item.id);
-      };
-      onClickProfile = async (item) => {
-        const { page, list } = this.state;
-        const {
-          history,
-          ViewStore: { saveState },
-        } = this.props;
-        await saveState({ page, list });
-
-        history.push(`/common/profile/` + item.memberId);
-      };
-      onClickLike = async (item) => {
-        // TODO : [PUB-OK/API-NO] 게시글 좋아요 요청
-      };
-      onClickComment = () => {
-        // TODO : [NO-FILE] 댓글 쓰기 이동
-      };
-      onClickScrap = async (item) => {
-        // TODO : [PUB-OK/API-NO] 게시글 스크랩 요청
+        history.push(`/story/comment/` + item.fishingDiaryId);
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -150,18 +119,47 @@ export default inject("ViewStore")(
             {/** 탭메뉴 */}
             <MyStoryTabs />
 
-            {/** List */}
-            {this.state.list.map((data, index) => (
-              <StoryPostListItem
-                key={index}
-                data={data}
-                onClick={(data) => this.onClick(data)}
-                onClickProfile={(data) => this.onClickProfile(data)}
-                onClickLike={(data) => this.onClickLike(data)}
-                onClickComment={(data) => this.onClickComment(data)}
-                onClickScrap={(data) => this.onClickScrap(data)}
-              />
-            ))}
+            {/** list > 데이터 없음 */}
+            {this.state.list.length === 0 && (
+              <div className="container nopadding mt-3 mb-0 text-center">
+                <p className="mt-5 mb-3">
+                  <img
+                    src="/assets/img/svg/icon-comment-no.svg"
+                    alt=""
+                    className="icon-lg"
+                  />
+                </p>
+                <h6>내가 작성한 댓글이 없습니다.</h6>
+                <p className="mt-3">
+                  <small className="grey">
+                    댓글로 낚시인들과 소통해 보세요.
+                  </small>
+                </p>
+                <p className="mt-5">
+                  <a
+                    onClick={() => history.push(`/main/story`)}
+                    className="btn btn-primary btn-round"
+                  >
+                    어복스토리 보러 가기
+                  </a>
+                </p>
+              </div>
+            )}
+
+            {/** list > 데이터 있음 */}
+            {this.state.list.length > 0 && (
+              <div className="container nopadding">
+                <div className="pt-3">
+                  {this.state.list.map((data, index) => (
+                    <StoryCommentListItem
+                      key={index}
+                      data={data}
+                      onClick={this.onClick}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/** 하단탭 */}
             <MainBottomTabs activedIndex={3} />
