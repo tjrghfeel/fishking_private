@@ -35,7 +35,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "   r.content content, " +
             "   (select GROUP_CONCAT(f.stored_file separator ',') " +
             "       from files f where f.pid = r.id and f.file_publish = 11 " +
-            "       group by f.pid) fileNameList " +
+            "       group by f.pid) fileNameList, " +
             "   (select GROUP_CONCAT(f.file_url separator ',') " +
             "       from files f where f.pid = r.id and f.file_publish = 11 " +
             "       group by f.pid) filePathList " +

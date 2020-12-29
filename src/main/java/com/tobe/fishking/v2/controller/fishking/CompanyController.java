@@ -30,20 +30,19 @@ public class CompanyController {
     /*업체 등록 요청
      * 반환 : 등록한 Company entity의 id.
      */
-    @ApiOperation(value = "업체 등록",notes = "files필드는 업체등록에 필요한 파일 세개를 저장할 필드. ")
+    /*@ApiOperation(value = "업체 등록",notes = "files필드는 업체등록에 필요한 파일 세개를 저장할 필드. ")
     @PostMapping("/company")
     public Long handleCompanyRegisterReq(
             @RequestBody CompanyWriteDTO companyWriteDTO,
             HttpServletRequest request
-
     ) throws Exception {
         String sessionToken = request.getHeader("Authorization");
         MultipartFile[] files = companyWriteDTO.getFiles();
         return companyService.handleCompanyRegisterReq(companyWriteDTO, files,sessionToken);
-    }
+    }*/
 
     /*업체 등록 요청 수정*/
-    @ApiOperation(value = "업체 등록 요청 수정")
+    /*@ApiOperation(value = "업체 등록 요청 수정")
     @PutMapping("/company/modify")
     public Long updateCompanyRegisterReq(
             @RequestBody CompanyWriteDTO companyWriteDTO,
@@ -52,7 +51,7 @@ public class CompanyController {
         String sessionToken = request.getHeader("Authorization");
         MultipartFile[] files = companyWriteDTO.getFiles();
         return companyService.updateCompanyRegisterReq(companyWriteDTO, files,sessionToken);
-    }
+    }*/
 
     /*업체 조회*/
     @ApiOperation(value = "업체 하나 조회")

@@ -51,6 +51,7 @@ public class MapperUtility {
         return env.getProperty("file.downloadUrl") + inputUrl;
     }
 
+
     public String noName(String value1,String value2){
         String result = value1 + ","+value2;
         return result;

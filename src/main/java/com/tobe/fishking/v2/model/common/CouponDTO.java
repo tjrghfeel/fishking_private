@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.model.common;
 
 import com.tobe.fishking.v2.enums.common.CouponType;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 
@@ -25,4 +26,6 @@ public interface CouponDTO {
     String getCouponDescription();//설명,유의사항,제한사항
     //private Member createdBy;//not null
     //private Member modifiedBy;//not null
+    @Value("#{@mapperUtility.transDownloadUrl(target.couponImage)}")
+    String getCouponImage();
 }

@@ -1,14 +1,18 @@
 package com.tobe.fishking.v2.service.common;
 
+import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,7 +27,9 @@ import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +42,8 @@ public class CommonService {
     private final MemberRepository memberRepo;
     private final FileRepository fileRepo;
     private final PopularRepository popularRepo;
+    private final UploadService uploadService;
+    private final Environment env;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -170,4 +178,16 @@ public class CommonService {
         return commonCodeDTOList;
     }
 
+    @Transactional
+    public FilePreUploadResponseDto preUploadFile(MultipartFile file, String filePublish, String sessionToken)
+            throws IOException, ResourceNotFoundException {
+        FileEntity fileEntity = uploadService.filePreUpload(file,FilePublish.valueOf(filePublish), sessionToken);
+
+        FilePreUploadResponseDto dto = FilePreUploadResponseDto.builder()
+                .fileId(fileEntity.getId())
+                .downloadUrl(env.getProperty("file.downloadUrl") + "/"+fileEntity.getFileUrl()+"/"+fileEntity.getStoredFile())
+                .build();
+
+        return dto;
+    }
 }

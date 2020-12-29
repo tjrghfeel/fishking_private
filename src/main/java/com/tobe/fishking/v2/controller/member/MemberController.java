@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.RegEx;
 import javax.persistence.AttributeConverter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringJoiner;
 
 @Api(tags={"프로필"})
 @RestController
@@ -114,11 +121,82 @@ public class MemberController {
 
     /*kakao 토큰 받는 메소드. */
 
+    /*naver 인증코드받는 메소드
+    * - 인증코드를 받고 접근코드 요청을 보냄. */
+    @ApiOperation(value = "naver 로그인 인증코드 받는 api",notes = "")
+    @RequestMapping("/naverAuthCode")
+    public void getNaverAuthCode(
+            @RequestParam("code") String code,
+            @RequestParam("state") String state,
+            @RequestParam("error") String error,
+            @RequestParam("error_description") String errorDescription
+    ) throws IOException {
+        String url = "https://nid.naver.com/oauth2.0/token";
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+        parameter.put("grant_type","authorization_code");
+        parameter.put("client_id","xQF6XDWPhMC665JO2kSq");
+        parameter.put("client_secret","shKqzGtgR1");
+        parameter.put("code",code);
+        parameter.put("state","sample");
+        parameter.put("refresh_token","");
+        parameter.put("access_token","");
+        parameter.put("service_provider","");
+
+        sendRequest(url,method,parameter);
+        return;
+    }
+
+    /*naver 접근코드 받는 메소드*/
+    @ApiOperation(value = "",notes = "")
+    @RequestMapping("/naverAccessToken")
+    public void getAccessToken(
+            @RequestParam("access_token") String accessToken,
+//            @RequestParam("refresh_token") String refreshToken,
+            @RequestParam("token_type") String tokenType,
+            @RequestParam("expires_in") Integer expiresIn,
+            @RequestParam("error") String error,
+            @RequestParam("error_description") String errorDescription
+    ){
+
+    }
+
+    /*요청보내는 메소드*/
+    public void sendRequest(String inputUrl, String method, Map<String,String> parameter) throws IOException {
+        URL url = new URL(inputUrl);
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection)con;
+        http.setRequestMethod(method); // PUT is another valid option
+        http.setDoOutput(true);
+
+        /*Map<String,String> arguments = new HashMap<>();
+        arguments.put("username", "root");
+        arguments.put("password", "sjh76HSn!"); // This is a fake password obviously*/
+        StringJoiner sj = new StringJoiner("&");
+        for(Map.Entry<String,String> entry : parameter.entrySet())
+            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        int length = out.length;
+
+        http.setFixedLengthStreamingMode(length);
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.connect();
+        try(OutputStream os = http.getOutputStream()) {
+            os.write(out);
+        }
+        // Do something with http.getInputStream()
+    }
+
     /*사용자 프로필 정보 페이지 조회
     * - 프로필 조회 요청이 들어오면, 보고자하는 프로필의 member가 자기자신인지, 다른 일반 사용자인지, 업체인지에 따라 조금씩
     *   다른 정보가 들어있는 DTO를 반환해준다. */
     @ApiOperation(value = "사용자 프로필 정보 조회",notes = "상대방 프로필을 클릭할시 해당 사용자의프로필 정보를 가져오는 api. \n" +
-            "- 클릭한 프로필의 사용자가 자기자신인지, 업주 회원인지, 일단 다른 회원인지에 따라 조금씩 다른 정보를 반환한다. ")
+            "- 클릭한 프로필의 사용자가 자기자신인지, 업주 회원인지, 일단 다른 회원인지에 따라 조금씩 다른 정보를 반환한다. \n" +
+            "- 자기자신의 프로필인 경우 isMe = true, 업체회원인 경우 isShip = true \n" +
+            "- postCount : 프로필 회원이 작성한 FishingDiary 글의 개수 / takeCount : 프로필 회원이 삼품에 대해 찜한 개수 \n" +
+            "- 업체 회원인 경우, 선상id(shipId), 선상명(shipName), 주소(시,도)(sido), 선상에서 잡는 어종(fishSpecies)," +
+            " 선상이 받은 좋아요소수(likeCount) 정보가 추가된다. ")
     @GetMapping("/profile")
     public UserProfileDTO getUserProfile(@RequestParam("userId") Long userId, HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");

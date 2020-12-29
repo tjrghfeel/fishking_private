@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.controller.Admin;
+package com.tobe.fishking.v2.controller.admin;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.admin.member.DeletingMemberDtoForManage;

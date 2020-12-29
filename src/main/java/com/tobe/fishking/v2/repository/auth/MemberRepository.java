@@ -2,6 +2,8 @@ package com.tobe.fishking.v2.repository.auth;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
+import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.model.NoNameDTO;
 import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -143,4 +146,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     );
 
     /*테스트용들*/
+    @Query("select new com.tobe.fishking.v2.model.NoNameDTO(" +
+            "m.id, m.memberName, m.gender) from Member m where m.roles = :role")
+    List<NoNameDTO> getNoNameList(@Param("role") Role role);
 }

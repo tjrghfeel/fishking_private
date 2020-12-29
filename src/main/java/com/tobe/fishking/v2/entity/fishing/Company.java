@@ -3,8 +3,10 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.model.admin.company.CompanyModifyDtoForManage;
 import com.tobe.fishking.v2.model.fishing.CompanyUpdateDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyWriteDTO;
+import com.tobe.fishking.v2.service.StringConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -103,11 +105,12 @@ public class Company extends BaseTime {  //선상
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'Skb계정', 'USER', DBO, 'TABLE', company, 'COLUMN',  skb_account
+    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(50) comment 'Skb계정' ")
     private String  skbAccount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'Skb패스워드', 'USER', DBO, 'TABLE', company, 'COLUMN',  skb_password
-    @Column(columnDefinition = "varchar(50) comment 'Skb패스워드' ")
+    @Column(columnDefinition = "varchar(150) comment 'Skb패스워드' ")
     private String skbPassword;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'주소', 'USER', DBO, 'TABLE', company, 'COLUMN',  address
@@ -137,33 +140,54 @@ public class Company extends BaseTime {  //선상
         this.modifiedBy =  member ;
     }
 
-    public void updateCompanyRegisterRequest(CompanyWriteDTO dto, Member modifiedBy, FileEntity[] files){
-        //private Long id;//not null, pk
-        //private Long member;  //name이 없을 경우 member_id, fk
-        companyName = dto.getCompanyName();//
-        shipOwner = dto.getShipOwner();//
-        sido = dto.getSido();
-        gungu = dto.getGungu();
-        tel = dto.getTel();//
-        bizNo = dto.getBizNo();
-        harbor = dto.getHarbor();//
-        //private String bizNoFilesUrl ;
-        //private String representFilesUrl ;
-        bank = dto.getBank();
-        accountNo = dto.getAccountNo();
-        ownerWording = dto.getOwnerWording();//not null
-        //isOpen = dto.isOpen();
-        //private String  skbAccount;
-        //private String skbPassword;
-        companyAddress = dto.getCompanyAddress();//
-        //isRegisitered = dto.isRegisitered();
-        //private Member createdBy;//not null, fk
-        this.modifiedBy = modifiedBy;//not null, fk
-        bizNoFileId = files[0];//not null
-        representFileId = files[1];//not null
-        accountFileId = files[2];//not null
-        bizNoFileDownloadUrl = files[0].getDownloadUrl();
-        representFileDownloadUrl = files[1].getDownloadUrl();
-        accountFileDownloadUrl = files[2].getDownloadUrl();
+    public void updateCompanyRegisterRequest(CompanyUpdateDTO dto, Member modifiedBy, FileEntity[] files){
+        companyName = (dto.getCompanyName());
+        shipOwner = (member.getMemberName());
+        sido = (dto.getSido());
+        gungu = (dto.getGungu());
+        tel = (dto.getTel());
+        bizNo = (dto.getBizNo());
+        harbor = (dto.getHarbor());
+        bank = (dto.getBank());
+        accountNo = (dto.getAccountNo());
+        ownerWording = (dto.getOwnerWording());
+        isOpen=(dto.getIsOpen());
+        skbAccount=(dto.getSkbAccount());
+        if(dto.getSkbPassword()!=null){skbPassword=((dto.getSkbPassword()));}//비번같은경우, 변경안할경우 dto안의 값이 비어있기때문에, 확인후 업데이트해줌.
+        companyAddress=(dto.getCompanyAddress());
+//        isRegistered=(dto.getIsRegistered());
+        bizNoFileId = (files[0]);
+        representFileId = (files[1]);
+        accountFileId = (files[2]);
+        bizNoFileDownloadUrl = "/"+files[0].getFileUrl()+"/"+files[0].getStoredFile();
+        representFileDownloadUrl = "/"+files[1].getFileUrl()+"/"+files[1].getStoredFile();
+        accountFileDownloadUrl = "/"+files[2].getFileUrl()+"/"+files[2].getStoredFile();
+        this.modifiedBy = (modifiedBy);
+    }
+
+    public void updateCompanyForManage(CompanyModifyDtoForManage dto, Member manager, Member member, FileEntity[] files){
+        companyName = (dto.getCompanyName());
+        shipOwner = (member.getMemberName());
+        sido = (dto.getSido());
+        gungu = (dto.getGungu());
+        tel = (dto.getTel());
+        bizNo = (dto.getBizNo());
+        harbor = (dto.getHarbor());
+        bank = (dto.getBank());
+        accountNo = (dto.getAccountNo());
+        ownerWording = (dto.getOwnerWording());
+        isOpen=(dto.getIsOpen());
+        skbAccount=(dto.getSkbAccount());
+        if(dto.getSkbPassword()!=null){skbPassword=((dto.getSkbPassword()));}//비번같은경우, 변경안할경우 dto안의 값이 비어있기때문에, 확인후 업데이트해줌.
+        companyAddress=(dto.getCompanyAddress());
+        isRegistered=(dto.getIsRegistered());
+        bizNoFileId = (files[0]);
+        representFileId = (files[1]);
+        accountFileId = (files[2]);
+        bizNoFileDownloadUrl = "/"+files[0].getFileUrl()+"/"+files[0].getStoredFile();
+        representFileDownloadUrl = "/"+files[1].getFileUrl()+"/"+files[1].getStoredFile();
+        accountFileDownloadUrl = "/"+files[2].getFileUrl()+"/"+files[2].getStoredFile();
+        modifiedBy = (manager);
+        this.member = (member);
     }
 }

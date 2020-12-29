@@ -21,8 +21,9 @@ public class HelloController {
 
     @ApiOperation(value = "Hello", notes = "Hello Test")
 
-    @GetMapping("/hello")
-    public String hello(){
+    @PostMapping("/hello")
+    public String hello(@RequestParam("username") String username,@RequestParam("pw") String pw){
+        System.out.println(">>> username : "+username+", pw : " +pw);
         return "hello";
     }
 

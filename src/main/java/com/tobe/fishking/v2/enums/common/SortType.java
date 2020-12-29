@@ -11,7 +11,8 @@ public enum SortType  implements IEnumModel {
     lowPrice("낮은가격순"),
     highPrice("높은가격순"),
     review("리뷰순"),
-    sell("판매순");
+    sell("판매순"),
+    name("명칭순");
 
 
     private String value;

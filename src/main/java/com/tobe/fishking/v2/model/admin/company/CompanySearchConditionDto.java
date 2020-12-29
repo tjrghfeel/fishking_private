@@ -14,25 +14,25 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class CompanySearchConditionDto {
-    private Long id;
-    private Long memberId;
-    private String memberName;
-    private String companyName;
-    private String sido;
-    private String gungu;
-    private String tel;
-    private String bizNo;
-    private String bank;
-    private String accountNum;
+    private Long companyId;//
+    private Long memberId;//
+    private String memberName;//
+    private String companyName;//
+    private String sido;//
+    private String gungu;//
+    private String tel;//
+    private String bizNo;//
+    private String bank;//
+    private String accountNum;//
     private String harbor;
     private String ownerWording;
-    private Boolean isOpen;
-    private String skbAccount;
-    private String companyAddress;
-    private Boolean isRegistered;
+    private Boolean isOpen;//
+    private String skbAccount;//
+    private String companyAddress;//
+    private Boolean isRegistered;//
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate createdDayStart;
+    private LocalDate createdDateStart;//
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate createdDayEnd;
+    private LocalDate createdDateEnd;//
     private String sort;
 }

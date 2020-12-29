@@ -34,6 +34,8 @@ public interface FishingDiaryDtoForPage {
     //private Goods goods;
     String getTitle();
     String getContents();
+    String getFishingType();
+    Boolean getIsLikeTo();
     //private String location; //사진 찍은 위치 (로마)
     //private String fishingSpeciesName;
     //private String fishingDate;

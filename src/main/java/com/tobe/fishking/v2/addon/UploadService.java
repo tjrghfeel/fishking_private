@@ -56,6 +56,33 @@ public class UploadService {
 
     private MemberRepository memberRepository;
 
+    /*파일 업로드 미리보기를 위한 파일 저장 메소드.
+    * - FileEntity의 isDelete필드를 true로 둔상태로 생성.
+    * - 생성한 FileEntity를 반환. */
+    public FileEntity filePreUpload(MultipartFile file, FilePublish filePublish, String sessionToken) throws IOException, ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
+
+        Map<String, Object> fileInfo = initialFile(file, filePublish, sessionToken);
+
+        FileEntity fileEntity = FileEntity.builder()
+                .filePublish(filePublish)
+                .fileNo(1)
+                .fileType(checkFileType(file))
+                .originalFile(file.getOriginalFilename())
+                .storedFile((String)fileInfo.get("fileName"))
+                .thumbnailFile((String)fileInfo.get("thumbnailName"))
+                .fileUrl((String)fileInfo.get("path"))
+                .size(file.getSize())
+                .createdBy(member)
+                .modifiedBy(member)
+                .locations("sampleLocation")
+                .isDelete(true)
+                .build();
+
+        return fileRepository.save(fileEntity);
+    }
+
     /*파일 타입 구하는 메소드 */
     public FileType checkFileType(MultipartFile file){
         String fileType = file.getContentType().split("/")[0];
@@ -293,9 +320,13 @@ public class UploadService {
                 .orElseThrow(()->new ResourceNotFoundException("files not found for this id ::"+fileEntityId));
 
         String fileUrl = fileEntity.getFileUrl();
-        String fileThumbnailUrl = fileEntity.getThumbnailFile();
-        removeFile(new File(fileUrl));
-        removeFile(new File(fileThumbnailUrl));
+        String fileName = fileEntity.getStoredFile();
+        String thumbnailName = fileEntity.getThumbnailFile();
+
+        File file = new File(env.getProperty("file.location")+File.separator+fileUrl+File.separator+fileName);
+        File thumbnailFile = new File(env.getProperty("file.location")+File.separator+fileUrl+File.separator+thumbnailName);
+        removeFile(file);
+        removeFile(thumbnailFile);
 
         fileRepository.delete(fileEntity);
     }

@@ -16,9 +16,11 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,42 +43,56 @@ public class CompanyService {
     MemberRepository memberRepository;
     @Autowired
     FileRepository fileRepository;
+    @Autowired
+    Environment env;
+    @Autowired
+    PasswordEncoder encoder;
 
 
     /*업체 등록 요청 처리 메소드. */
     @Transactional
-    public Long handleCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files,String token) throws Exception {
-        FileEntity[] fileEntityList = new FileEntity[3];
+    public Long handleCompanyRegisterReq(CompanyWriteDTO dto, String token) throws Exception {
+        MultipartFile bizNoFile = dto.getBizNoFile();
+        MultipartFile representFile = dto.getRepresentFile();
+        MultipartFile accountFile =dto.getAccountFile();
 
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
 
-        Long[] fileEntityIdList = saveFile(member.getId(), files);
-        for(int i=0;i<3;i++){
-            Long fileEntityId = fileEntityIdList[i];
-            fileEntityList[i] = fileRepository.findById(fileEntityId)
-                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id ::"+fileEntityId));
-        }
+        Long bizNoFileEntityId = saveFile(member.getId(), bizNoFile);
+        Long representFileEntityId = saveFile(member.getId(), representFile);
+        Long accountFileEntityId = saveFile(member.getId(), accountFile);
+
+        FileEntity bizNoFileEntity = fileRepository.findById(bizNoFileEntityId)
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+bizNoFileEntityId));
+        FileEntity representFileEntity = fileRepository.findById(representFileEntityId)
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+representFileEntityId));
+        FileEntity accountFileEntity = fileRepository.findById(accountFileEntityId)
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+accountFileEntityId));
 
         /*Company 엔터티 등록. */
         Company company = Company.builder()
-                .companyName(companyWriteDTO.getCompanyName())
-                .shipOwner(companyWriteDTO.getShipOwner())
-                .sido(companyWriteDTO.getSido())
-                .gungu(companyWriteDTO.getGungu())
-                .tel(companyWriteDTO.getTel())
-                .bizNo(companyWriteDTO.getBizNo())
-                .harbor(companyWriteDTO.getHarbor())
-                .bank(companyWriteDTO.getBank())
-                .accountNo(companyWriteDTO.getAccountNo())
-                .ownerWording(companyWriteDTO.getOwnerWording())
-                .companyAddress(companyWriteDTO.getCompanyAddress())
-                .bizNoFileId(fileEntityList[0])
-                .representFileId(fileEntityList[1])
-                .accountFileId(fileEntityList[2])
-                .bizNoFileDownloadUrl(fileEntityList[0].getDownloadUrl())
-                .representFileDownloadUrl(fileEntityList[1].getDownloadUrl())
-                .accountFileDownloadUrl(fileEntityList[2].getDownloadUrl())
+                .companyName(dto.getCompanyName())
+                .shipOwner(member.getMemberName())
+                .sido(dto.getSido())
+                .gungu(dto.getGungu())
+                .tel(dto.getTel())
+                .bizNo(dto.getBizNo())
+                .harbor(dto.getHarbor())
+                .bank(dto.getBank())
+                .accountNo(dto.getAccountNo())
+                .ownerWording(dto.getOwnerWording())
+                .isOpen(dto.getIsOpen())
+                .skbAccount(dto.getSkbAccount())
+                .skbPassword(dto.getSkbPassword())
+                .companyAddress(dto.getCompanyAddress())
+//                .isRegistered(dto.getIsRegistered())
+                .bizNoFileId(bizNoFileEntity)
+                .representFileId(representFileEntity)
+                .accountFileId(accountFileEntity)
+                .bizNoFileDownloadUrl("/"+bizNoFileEntity.getFileUrl()+"/"+bizNoFileEntity.getStoredFile())
+                .representFileDownloadUrl("/"+representFileEntity.getFileUrl()+"/"+representFileEntity.getStoredFile())
+                .accountFileDownloadUrl("/"+accountFileEntity.getFileUrl()+"/"+accountFileEntity.getStoredFile())
                 .createdBy(member)
                 .modifiedBy(member)
                 .member(member)
@@ -86,56 +102,107 @@ public class CompanyService {
 
     /*MultipartServletRequest를 받아 안에들어잇는 파일저장하는 메소드. */
     @Transactional
-    Long[] saveFile(Long memberId, MultipartFile[] files) throws Exception {
-        Long[] fileEntityIdList = new Long[3];//각 증빙서류 FileEntity 저장 후, 그 FileEntity들 저장할 배열.
+    public Long saveFile(Long memberId, MultipartFile file) throws Exception {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
 
         //List<MultipartFile> fileList = files.getFiles("file");
         /*파일 저장. */
-        for(int i=0; i<3; i++){//넘어온 파일들에 대해 반복.
-            MultipartFile file = files[i];
-            //파일 저장.
-            if(uploadService.checkFileType(file)!=FileType.image){
-                throw new Exception();//!!!!!어떤 예외 던져야 할지.
-            }
-            Map<String, Object> fileInfo = uploadService.initialFile(file, FilePublish.companyRequest, "");
-
-            //FileEntity 저장.
-            FileEntity fileEntity = FileEntity.builder()
-                    .originalFile(file.getOriginalFilename())
-                    .fileName(file.getOriginalFilename())
-                    .fileNo(i)
-                    .filePublish(FilePublish.companyRequest)
-                    .fileType(FileType.image)
-                    .fileUrl((String)fileInfo.get("path"))
-//                    .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
-                    .thumbnailFile((String)fileInfo.get("thumbnailName"))
-//                    .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
-                    .size(file.getSize())
-                    .storedFile((String)fileInfo.get("fileName"))
-                    .createdBy(member)
-                    .modifiedBy(member)
-                    .locations("sampleLocation")
-                    .build();
-            fileEntity = fileRepository.save(fileEntity);
-            fileEntityIdList[i] = fileEntity.getId();//Company 엔터이 저장시 FileEntity에 대한 fk로 주기위해 저장.
+        if(uploadService.checkFileType(file)!=FileType.image){
+            throw new Exception();//!!!!!어떤 예외 던져야 할지.
         }
+        Map<String, Object> fileInfo = uploadService.initialFile(file, FilePublish.companyRequest, "");
 
-        return fileEntityIdList;
+        //FileEntity 저장.
+        FileEntity fileEntity = FileEntity.builder()
+                .originalFile(file.getOriginalFilename())
+                .fileName(file.getOriginalFilename())
+                .fileNo(0)
+                .filePublish(FilePublish.companyRequest)
+                .fileType(FileType.image)
+                .fileUrl((String)fileInfo.get("path"))
+//                    .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
+                .thumbnailFile((String)fileInfo.get("thumbnailName"))
+//                    .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
+                .size(file.getSize())
+                .storedFile((String)fileInfo.get("fileName"))
+                .createdBy(member)
+                .modifiedBy(member)
+                .locations("sampleLocation")
+                .build();
+        fileEntity = fileRepository.save(fileEntity);
+        return fileEntity.getId();
     }
 
     /*업체등록 요청 수정 메소드*/
     @Transactional
-    public Long updateCompanyRegisterReq(CompanyWriteDTO companyWriteDTO, MultipartFile[] files,String token) throws Exception {
+    public Long updateCompanyRegisterReq(CompanyUpdateDTO dto, MultipartFile[] files,String token) throws Exception {
         /*다시올린사람이 누구인지 받아옴.*/
         Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+                .orElseThrow(() -> new ResourceNotFoundException("member not found for this sessionToken ::" + token));
 
-        Company company = companyRepository.findById(companyWriteDTO.getId())
-                .orElseThrow(()->new ResourceNotFoundException("company not found for this id ::"+companyWriteDTO.getId()));
+        Company company = companyRepository.findById(dto.getCompanyId())
+                .orElseThrow(() -> new ResourceNotFoundException("company not found for this id ::" + dto.getCompanyId()));
 
-        //기존의 파일들을 저장해둠.
+        /*기존 파일엔터티 id들 저장*/
+        Long preBizNoFileId = company.getBizNoFileId().getId();
+        Long preRepresentFileId = company.getRepresentFileId().getId();
+        Long preAccountFileId = company.getAccountFileId().getId();
+
+        /*입력받은 파일 세개 저장. null이 들어올수도있음. */
+        MultipartFile[] fileList = new MultipartFile[3];
+        MultipartFile inputBizNoFile = dto.getBizNoFile();
+        MultipartFile inputRepresentFile = dto.getRepresentFile();
+        MultipartFile inputAccountFile = dto.getAccountFile();
+
+        /*최종적으로 저장할 파일 세개의 변수 */
+        FileEntity bizNoFileEntity = null;
+        FileEntity representFileEntity = null;
+        FileEntity accountFileEntity = null;
+
+        if (inputBizNoFile != null) {//새로운 파일이 들어왔으면,
+            Long bizNoFileId = saveFile(16L, inputBizNoFile);//저장후
+            bizNoFileEntity = fileRepository.findById(bizNoFileId)//최종적으로 저장할 파일 변수에 저장.
+                    .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + bizNoFileId));
+        } else {
+            bizNoFileEntity = fileRepository.findById(preBizNoFileId)//새로운파일이 안들어왔으면, 최종적으로 저장할 파일변수에 기존의 파일 저장.
+                    .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + preBizNoFileId));
+        }
+        if (inputRepresentFile != null) {
+            Long representFileId = saveFile(16L, inputRepresentFile);
+            representFileEntity = fileRepository.findById(representFileId)
+                    .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + representFileId));
+        } else {
+            representFileEntity = fileRepository.findById(preRepresentFileId)
+                    .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + preRepresentFileId));
+        }
+        if (inputAccountFile != null) {
+            Long accountFileId = saveFile(16L, inputAccountFile);
+            accountFileEntity = fileRepository.findById(accountFileId)
+                    .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + accountFileId));
+        } else {
+            accountFileEntity = fileRepository.findById(preAccountFileId)
+                    .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + preAccountFileId));
+        }
+
+        if (dto.getSkbPassword() != null) {
+            dto.setSkbPassword(encoder.encode(dto.getSkbPassword()));
+        }
+
+        FileEntity[] fileEntityList = new FileEntity[3];
+        fileEntityList[0] = bizNoFileEntity;
+        fileEntityList[1] = representFileEntity;
+        fileEntityList[2] = accountFileEntity;
+        company.updateCompanyRegisterRequest(dto, member, fileEntityList);
+        companyRepository.save(company);
+
+        if (inputBizNoFile != null) uploadService.removeFileEntity(preBizNoFileId);
+        if (inputRepresentFile != null) uploadService.removeFileEntity(preRepresentFileId);
+        if (inputAccountFile != null) uploadService.removeFileEntity(preAccountFileId);
+
+        return company.getId();
+
+        /*//기존의 파일들을 저장해둠.
         Long[] preFileIdList = new Long[3];
         preFileIdList[0] = company.getBizNoFileId().getId();
         preFileIdList[1] = company.getAccountFileId().getId();
@@ -158,7 +225,7 @@ public class CompanyService {
         uploadService.removeFileEntity(preFileIdList[1]);
         uploadService.removeFileEntity(preFileIdList[2]);
 
-        return company.getId();
+        return company.getId();*/
     }
 
     /*Company 하나 조회 메소드. */
@@ -166,7 +233,7 @@ public class CompanyService {
     public CompanyDTO getCompany(Long companyId) throws ResourceNotFoundException {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(()->new ResourceNotFoundException("company not found for this id ::"+companyId));
-        CompanyDTO companyDTO = new CompanyDTO(company);
+        CompanyDTO companyDTO = new CompanyDTO(company, company.getMember(), env.getProperty("file.downloadUrl"));
 
         return companyDTO;
     }

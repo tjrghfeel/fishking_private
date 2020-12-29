@@ -59,15 +59,18 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             "c.from_purchase_amount fromPurchaseAmount, " +
             "c.to_purchase_amount toPurchaseAmount, " +
             "c.brf_introduction brfIntroduction, " +
-            "c.coupon_description description " +
-            "from coupon c, coupon_member cm " +
+            "c.coupon_description description, " +
+            "cc.extra_value1 couponImage " +
+            "from coupon c, coupon_member cm, common_code cc " +
             "where " +
             "   c.exposure_start_date <= :today and " +
             "   c.exposure_end_date >= :today and " +
             "   c.is_issue = true and " +
             "   c.max_issue_count > c.issue_qty and " +
             "   c.id not in (select cm.member_coupon_id from coupon_member cm join member m on cm.coupon_member_id=m.id " +
-            "                   where m.session_token = :sessionToken)" +
+            "                   where m.session_token = :sessionToken) and " +
+            "   cc.code_group_id = 91 and " +
+            "   c.coupon_type = cc.code " +
             "group by c.id " +
             "order by c.exposure_end_date ",
             countQuery = "select c.id " +

@@ -8,5 +8,7 @@ public interface FishingDiaryCommentDtoForPage {
     String getTitle();
     String getContents();
     LocalDateTime getTime();
+    Long getFishingDiaryId();
+
 
 }

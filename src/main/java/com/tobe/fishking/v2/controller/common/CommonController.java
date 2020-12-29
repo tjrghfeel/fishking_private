@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.enums.common.*;
 import com.tobe.fishking.v2.enums.fishing.*;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.*;
+import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.response.ListResult;
 import com.tobe.fishking.v2.service.ResponseService;
 import com.tobe.fishking.v2.service.common.CommonService;
@@ -16,9 +17,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -137,18 +141,7 @@ public class CommonController {
         enumValues.put("tideTime", toEnumValues(TideTime.class));
 
 
-
-
-
-
-
-
-
-
         return enumValues;
-
-
-
     }
 
     private List<EnumValueDTO> toEnumValues(Class<? extends IEnumModel> e){
@@ -168,6 +161,32 @@ public class CommonController {
                 .collect(Collectors.toList());
     }
 
+    /*파일 업로드 미리보기용 컨트롤러메소드
+    * - 파일업로드시 미리보기 지원 및 용량 감소 효과를 위해 업로드한 파일을 미리 저장하기위해 사용되는 컨트롤러메소드.
+    * - 넘어온 파일을 저장해주고 FileEntity생성하고 이 id를반환. 이때, FileEntity의 isDelete필드가 true상태로 생성시켜주어 미리업드로용으로 저장한
+    *   FileEntity임을 구분해준다. */
+    @ApiOperation(value = "파일 업로드용 api", notes = "파일업로드시 파일을 미리 업로드해주는 api. \n" +
+            "- 파일을 서버에 저장하고 download url과 저장된파일의 id를 반환. \n" +
+            "- 실제 파일을 올릴때 파일이 아닌 이때 반환받은 id를 함께 반환해주면 된다. \n" +
+            "- 'file'이란 이름으로 파일을 넘기고 \n " +
+            "- 파일과 함께 'filePublish'라는 이름의 파라미터로 다음의 값중 하나를 넘겨주어야 한다 \n" +
+            "   0 : 선상 사진 업로드의 경우\n" +
+            "   1 : 게시판에 파일 업로드하는 경우\n" +
+            "   2 : 일대일문의 게시판에 파일 업로드\n" +
+            "   3 : FAQ에 파일업로드\n" +
+            "   4 : 공지사항에 파일업로드\n" +
+            "   5 : 조행기에 파일업로드\n" +
+            "   6 : 조행일지에 파일업로드\n" +
+            "   7 : 댓글에 파일업로드\n" +
+            "   8 : 어복TV에 파일업로드\n" +
+            "   9 : 업체요청에 파일업로드\n" +
+            "   10 : 프로필에 파일업로드\n" +
+            "   11 : 리뷰에 파일업로드 ")
+    @PostMapping("/filePreUpload")
+    public FilePreUploadResponseDto preUploadFile(MultipartHttpServletRequest request) throws IOException, ResourceNotFoundException {
+        return commonService.preUploadFile(
+                request.getFile("file"), request.getParameter("filePublish"), request.getHeader("Authorization"));
+    }
 
 
 }

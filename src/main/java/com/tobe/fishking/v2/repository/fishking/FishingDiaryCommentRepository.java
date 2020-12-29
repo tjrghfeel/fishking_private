@@ -39,7 +39,8 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
             "c.dependentType as dependentType, " +
             "d.title as title, " +
             "c.contents as contents, " +
-            "c.createdDate as time " +
+            "c.createdDate as time," +
+            "d.id as fishingDiaryId  " +
             "from FishingDiaryComment as c, FishingDiary as d " +
             "where c.createdBy = :member " +
             "   and c.fishingDiary = d " +

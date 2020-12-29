@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,7 +18,7 @@ public class CompanyDTO {
     private Long id;//not null, pk
     private Long member;  //name이 없을 경우 member_id, fk
     private String companyName;//
-    private String shipOwner;//
+    private String memberName;//
     private String sido;
     private String gungu;
     private String tel;//
@@ -26,7 +29,7 @@ public class CompanyDTO {
     private String ownerWording;//not null
     private Boolean isOpen;
     private String  skbAccount;
-    private String skbPassword;
+//    private String skbPassword;
     private String companyAddress;//
     private Boolean isRegistered;
     private Long createdBy;//not null, fk
@@ -34,15 +37,16 @@ public class CompanyDTO {
     private String bizNoFilesUrl ;
     private String representFilesUrl ;
     private String accountFileUrl;
+    private LocalDateTime createdDate;
     //private Long bizNoFile;//not null
     //private Long representFile;//not null
     //private Long accountFile;//not null
 
-    public CompanyDTO(Company company){
+    public CompanyDTO(Company company, Member member, String url){
         id = company.getId();
-        member = company.getMember().getId();
+        this.member = company.getMember().getId();
         companyName = company.getCompanyName();
-        shipOwner = company.getShipOwner();
+        memberName = member.getMemberName();
         sido = company.getSido();
         gungu = company.getGungu();
         tel = company.getTel();
@@ -53,14 +57,15 @@ public class CompanyDTO {
         ownerWording = company.getOwnerWording();
         isOpen = company.getIsOpen();
         skbAccount = company.getSkbAccount();
-        skbPassword = company.getSkbPassword();
+//        skbPassword = company.getSkbPassword();
         companyAddress = company.getCompanyAddress();
         isRegistered = company.getIsRegistered();
         createdBy = company.getCreatedBy().getId();
         modifiedBy = company.getModifiedBy().getId();
-        bizNoFilesUrl = company.getBizNoFileDownloadUrl();
-        representFilesUrl =company.getRepresentFileDownloadUrl();
-        accountFileUrl = company.getAccountFileDownloadUrl();
+        bizNoFilesUrl = url + company.getBizNoFileDownloadUrl();
+        representFilesUrl = url + company.getRepresentFileDownloadUrl();
+        accountFileUrl = url + company.getAccountFileDownloadUrl();
+        createdDate = company.getCreatedDate();
     }
 
 }

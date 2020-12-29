@@ -81,7 +81,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "   s.sigungu address, " +
             "   d.created_date createdDate, " +
             "   d.title title, " +
+            "   d.file_publish fishingType, " +
             "   LEFT(d.contents,50) contents, " +
+            "   (select case when exists (select l.id from loveto as l " +
+            "       where l.created_by=:member and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
             "   (select count(l.id) from loveto l where (l.take_type = 2 or l.take_type = 3) and l.link_id = d.id) likeCount, " +
             "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
             "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +

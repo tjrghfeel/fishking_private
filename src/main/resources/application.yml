@@ -1,5 +1,5 @@
 server:
-#  port : 8082
+  port : 8082
   error:
     include-exception: true # 오류 응답에 exception의 내용을 포함할지 여부 default: false
     include-stacktrace: always # 오류 응답에 stacktrace 내용을 포함할 지 여부 default: never
@@ -29,13 +29,13 @@ logging:
       tobe:
         fishing:
           pagination=debug: debug
-
+#fishkingV2\src\main\resources\static\
 #File location
 file :
-#  location : C:\Users\kai\Desktop\fishkingV2\src\main\resources\static\files
-#  downloadUrl : localhost:8082/files
-  location :  /usr/local/tomcat/webapps/upload/data/file
-  downloadUrl : http://112.220.72.178:6081/resource
+    location : C:\Users\kai\Desktop\fishkingV2\src\main\resources\static\files
+    downloadUrl : localhost:8082/files
+#  location :  /usr/local/tomcat/webapps/upload/data/file
+#  downloadUrl : http://112.220.72.178:6081/resource
 encrypKey :
   key : fishking12345abcde
 
@@ -49,7 +49,7 @@ spring:
       enabled: true
     fremaker:
       cache: false
-# server.servlet.context-path=/portal
+  # server.servlet.context-path=/portal
   servlet:
     multipart:
       max-file-size : 2MB
@@ -65,9 +65,9 @@ spring:
     #url: jdbc:sqlserver://localhost:1433;databaseName=fishking;sendStringParametersAsUnicode=false
     #url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
     #url: jdbc:log4jdbc:sqlserver://localhost:1433;databaseName=fishking;sendStringParametersAsUnicode=false
-    #url: jdbc:log4jdbc:mysql://localhost:7306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
-
-    url : jdbc:log4jdbc:mysql://112.220.72.178:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
+    #    url: jdbc:log4jdbc:mysql://localhost:7306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
+    url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
+#    url : jdbc:log4jdbc:mysql://112.220.72.178:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
 
     username: fishking      #sa        # username: fishluck
     password: fishking12#$  #P@ssw0rd  # password: fishluck123!

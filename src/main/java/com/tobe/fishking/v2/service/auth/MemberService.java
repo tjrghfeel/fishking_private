@@ -58,6 +58,7 @@ public class MemberService {
     private UploadService uploadService;
     private PasswordEncoder encoder;
     private PhoneAuthRepository phoneAuthRepository;
+    private Environment env;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -209,11 +210,17 @@ public class MemberService {
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
-            /*세션토큰 생성 및 저장. */
-            String rawToken = member.getEmail()+ LocalDateTime.now();
-            sessionToken = encoder.encode(rawToken);
+            /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
+            if(member.getSessionToken()!=null){
+                return member.getSessionToken();
+            }
+            else {
+                /*세션토큰 생성 및 저장. */
+                String rawToken = member.getEmail() + LocalDateTime.now();
+                sessionToken = encoder.encode(rawToken);
 
-            member.setSessionToken(sessionToken);
+                member.setSessionToken(sessionToken);
+            }
         }
         else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
         return sessionToken;
@@ -257,7 +264,7 @@ public class MemberService {
             UserProfileDTO userProfileDTO = UserProfileDTO.builder()
                 .memberId(member.getId())
                 .nickName((member.getNickName()==null)?("이름없음"):(member.getNickName()))
-                .profileImage(member.getProfileImage())
+                .profileImage(env.getProperty("file.downloadUrl") + member.getProfileImage())
                 .isActive(member.getIsActive())
                 .postCount(postCount)
                 .takeCount(takeCount)
@@ -305,7 +312,7 @@ public class MemberService {
                 .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
                 .statusMessage((member.getStatusMessage()==null)?("없음"):(member.getStatusMessage()))
                 //!!!!!아래 전화번호는 nullable필드이지만 회원가입시 휴대폰인증을 하므로 무조건 있다고 판단.
-                //.areaCode(member.getPhoneNumber().getAreaCode())
+                .areaCode(member.getPhoneNumber().getAreaCode())
                 .localNumber(member.getPhoneNumber().getLocalNumber())
                 .build();
 

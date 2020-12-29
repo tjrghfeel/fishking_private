@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
+import com.tobe.fishking.v2.service.StringConverter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Member {
     @Column
     public String uid;
 
+    @Convert(converter = StringConverter.class)
     @Column(name = "member_name")
     public String memberName;
 
@@ -37,12 +39,13 @@ public class Member {
     // EXEC sp_addextendedproperty 'MS_Description', N'이메일', 'USER', DBO, 'TABLE', member, 'COLUMN' email
 //    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(150) NOT NULL   comment '이메일'  ")
-
     public String email;
 
     @Column
+    @Enumerated(EnumType.ORDINAL)
     private Gender gender;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column
     private Role roles;
 
@@ -64,6 +67,7 @@ public class Member {
     @Column(name = "join_dt")
     private String joinDt;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "sns_type")
     private SNSType snsType;
 
@@ -77,6 +81,7 @@ public class Member {
     @Transient
     private String confirmPassword;
 
+    @Embedded
     private PhoneNumber phoneNumber;
 
     @Builder
@@ -107,7 +112,7 @@ public class Member {
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
-
+    @Embedded
     private Address address;
 
 
