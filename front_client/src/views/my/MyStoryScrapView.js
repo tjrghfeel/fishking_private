@@ -76,6 +76,7 @@ export default inject(
         } = await Http._get("/v2/api/myFishingDiaryScrap/" + page);
 
         // TODO : 내 글 관리 > 스크랩 : 현장실시간, 선상조황, 좋아요 여부, 데이터 항목이 필요합니다.
+        console.log(JSON.stringify(content));
 
         if (page === 0) {
           await this.setState({ list: content });

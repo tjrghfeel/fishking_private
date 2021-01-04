@@ -11,10 +11,7 @@ export default inject("DataStore")(
   observer(
     forwardRef(({ id, onSelected, DataStore: { getEnums } }, ref) => {
       const [selected, setSelected] = useState(null);
-      const [list] = useState([
-        { key: "ship", value: "선상" },
-        { key: "sealocks", value: "갯바위" },
-      ]);
+      const [list, setList] = useState([]);
       const clearActive = (target) => {
         const elements = document.querySelectorAll(
           "#".concat(id) + " a.nav-link"
@@ -38,6 +35,12 @@ export default inject("DataStore")(
         [setSelected]
       );
       useImperativeHandle(ref, () => ({ onInit }));
+      useEffect(() => {
+        (async () => {
+          const enms = await getEnums("fishingType");
+          setList(enms);
+        })();
+      }, [getEnums, setList]);
       return (
         // TODO : 공통 모달 > 낚시장소 : 선상, 갯바위에 대한 데이터가 없음. 선상 = ship, 갯바위 = sealocks 로 대입하겠음.
         <div
@@ -54,7 +57,7 @@ export default inject("DataStore")(
                   <img src="/assets/img/svg/navbar-back.svg" alt="뒤로가기" />
                 </a>
                 <h5 className="modal-title" id={id.concat("Label")}>
-                  물때
+                  낚시장소
                 </h5>
                 <a onClick={onInit} className="nav-right">
                   <img src="/assets/img/svg/navbar-refresh.svg" alt="Refresh" />

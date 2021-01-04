@@ -1,14 +1,12 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
-import MyStoryTabs from "../../components/layouts/MyStoryTabs";
-import StoryReviewListItem from "../../components/item/StoryReviewListItem";
+import CsTabs from "../../components/layouts/CsTabs";
+import CsQnaTabs from "../../components/layouts/CsQnaTabs";
+import CsQnaListItem from "../../components/item/CsQnaListItem";
 import Http from "../../Http";
 
-export default inject(
-  "ViewStore",
-  "DOMStore"
-)(
+export default inject("ViewStore")(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -31,8 +29,8 @@ export default inject(
         } = window.history.state;
         if (saved) {
           if (data !== null) {
-            const { page, list } = data;
-            await this.setState({ page, list });
+            const { page, sort, list, totalElements } = data;
+            await this.setState({ page, sort, list, totalElements });
           }
           if (scroll !== null) {
             const { x, y } = scroll;
@@ -65,10 +63,10 @@ export default inject(
         else if (page === 0) await this.setState({ isEnd: false });
 
         await this.setState({ isPending: true, page });
-        let {
+        const {
           content,
           pageable: { pageSize },
-        } = await Http._get("/v2/api/myReviewList/" + page);
+        } = await Http._get("/v2/api/qna/" + page);
 
         if (page === 0) {
           await this.setState({ list: content });
@@ -83,68 +81,39 @@ export default inject(
         }
 
         await this.setState({ isPending: false });
+      };
 
-        this.props.DOMStore.clearScripts();
-        this.props.DOMStore.applyCarouselSwipe();
+      onClickItem = async (item) => {
+        const { page, sort, list, totalElements } = this.state;
+        const {
+          history,
+          ViewStore: { saveState },
+        } = this.props;
+        await saveState({ page, sort, list, totalElements });
+
+        history.push(`/common/cs/qna/detail/` + item.id);
       };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { history } = this.props;
         return (
           <>
             {/** Navigation */}
-            <Navigation
-              title={"내 글 관리"}
-              showBack={true}
-              customButton={
-                <React.Fragment key={1}>
-                  <a
-                    onClick={() => history.push(`/story/add`)}
-                    className="fixed-top-right text-white"
-                  >
-                    글쓰기
-                  </a>
-                </React.Fragment>
-              }
-            />
-
+            <Navigation title={"고객센터"} showBack={true} />
             {/** 탭메뉴 */}
-            <MyStoryTabs />
+            <CsTabs />
+            {/** 탭메뉴 */}
+            <CsQnaTabs />
 
-            {/** 리스트 > 데이터 없음 */}
-            {this.state.list.length === 0 && (
-              <div className="container nopadding mt-3 mb-0 text-center">
-                <p className="mt-5 mb-3">
-                  <img
-                    src="/assets/img/svg/icon-review-no.svg"
-                    alt=""
-                    className="icon-lg"
-                  />
-                </p>
-                <h6>내가 작성한 리뷰가 없습니다.</h6>
-                <p className="mt-3">
-                  <small className="grey">
-                    나에게 맞는 실시간 낚시 찾아보기
-                  </small>
-                </p>
-                <p className="mt-5">
-                  <a
-                    onClick={() => history.push(`/search/reserve`)}
-                    className="btn btn-primary btn-round"
-                  >
-                    낚시 예약해 보기
-                  </a>
-                </p>
-              </div>
-            )}
-
-            {/** 리스트 > 데이터 있음 */}
-            {this.state.list.length > 0 &&
-              this.state.list.map((data, index) => (
-                <StoryReviewListItem key={index} data={data} />
-              ))}
+            {/** 데이터 */}
+            {this.state.list.map((data, index) => (
+              <CsQnaListItem
+                key={index}
+                data={data}
+                onClick={this.onClickItem}
+              />
+            ))}
           </>
         );
       }

@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { inject, observer } from "mobx-react";
 
 export default inject("DataStore")(
   observer(
     ({
-      DataStore: { latestTimeFormat },
+      DataStore: { latestTimeFormat, latestTimeMillis, getEnumValueByIndex },
       data: {
         profileImage,
         nickName,
@@ -16,7 +16,8 @@ export default inject("DataStore")(
         likeCount = 0,
         commentCount = 0,
         scrapCount = 0,
-        isLike = false,
+        isLikeTo = false,
+        fishingType = 0,
       },
       data,
       onClick,
@@ -25,9 +26,31 @@ export default inject("DataStore")(
       onClickComment,
     }) => {
       const [timeString, setTimeString] = useState("");
-      useCallback(() => {
-        setTimeString(latestTimeFormat(createdDate));
-      }, [latestTimeFormat, setTimeString, createdDate]);
+      const [isRealtime, setIsRealtime] = useState(false);
+      const [fishingTypeName, setFishingTypeName] = useState("");
+      useEffect(() => {
+        (async () => {
+          setTimeString(latestTimeFormat(createdDate));
+          const createDateTimeMillis = latestTimeMillis(createdDate);
+          if (createDateTimeMillis <= 1000 * 60 * 60 * 2) {
+            setIsRealtime(true);
+          }
+          const fishingTypeEnum = await getEnumValueByIndex(
+            "fishingType",
+            fishingType
+          );
+          if (fishingTypeEnum) {
+            setFishingTypeName(fishingTypeEnum.value);
+          }
+        })();
+      }, [
+        latestTimeFormat,
+        setTimeString,
+        createdDate,
+        setIsRealtime,
+        fishingType,
+        setFishingTypeName,
+      ]);
       return (
         <div className="container nopadding">
           <div className="row-story-col ">
@@ -43,7 +66,7 @@ export default inject("DataStore")(
                 <h5>{nickName}</h5>
                 <p>
                   <img
-                    src="./assets/img/svg/icon-map-grey.svg"
+                    src="/assets/img/svg/icon-map-grey.svg"
                     alt=""
                     className="vam"
                   />
@@ -56,8 +79,12 @@ export default inject("DataStore")(
             </div>
           </div>
           <div className="row-story">
-            <span className="tag-orange">현장실시간</span>{" "}
-            <span className="tag">선상조황</span>
+            {isRealtime && (
+              <React.Fragment>
+                <span className="tag-orange">현장실시간</span>{" "}
+              </React.Fragment>
+            )}
+            {fishingTypeName !== "" && <span className="tag">선상조황</span>}
             <a onClick={() => (onClick ? onClick(data) : null)}>
               <h6>{title}</h6>
               <p>
@@ -121,7 +148,7 @@ export default inject("DataStore")(
           <hr />
           <nav className="nav nav-pills nav-comment nav-justified">
             <a
-              className={"nav-link" + (isLike ? " active" : "")}
+              className={"nav-link" + (isLikeTo ? " active" : "")}
               onClick={() => (onClickLike ? onClickLike(data) : null)}
             >
               <span className="icon icon-good"></span>좋아요
