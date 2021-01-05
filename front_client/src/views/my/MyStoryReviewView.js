@@ -4,6 +4,7 @@ import Navigation from "../../components/layouts/Navigation";
 import MyStoryTabs from "../../components/layouts/MyStoryTabs";
 import StoryReviewListItem from "../../components/item/StoryReviewListItem";
 import Http from "../../Http";
+import MainBottomTabs from "../../components/layouts/MainBottomTabs";
 
 export default inject(
   "ViewStore",
@@ -145,6 +146,9 @@ export default inject(
               this.state.list.map((data, index) => (
                 <StoryReviewListItem key={index} data={data} />
               ))}
+
+            {/** 하단탭 */}
+            <MainBottomTabs activedIndex={3} />
           </>
         );
       }

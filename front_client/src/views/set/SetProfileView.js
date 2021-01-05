@@ -60,12 +60,12 @@ export default inject()(
                 }
               );
             }
-            const profile = this.profile.current;
-            profile.value = null;
             if (resolve) {
               this.loadPageData();
             }
           }
+          const profile = this.profile.current;
+          profile.value = null;
         }
       };
       onSelectChangeProfile = async (item) => {
