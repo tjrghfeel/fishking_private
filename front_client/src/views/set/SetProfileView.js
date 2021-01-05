@@ -1,5 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
+import SelectModal from "../../components/modals/SelectModal";
 import Http from "../../Http";
 
 export default inject()(
@@ -8,6 +9,7 @@ export default inject()(
       constructor(props) {
         super(props);
         this.profile = React.createRef(null);
+        this.background = React.createRef(null);
         this.state = {};
       }
       /********** ********** ********** ********** **********/
@@ -34,27 +36,59 @@ export default inject()(
           );
         this.setState(resolve);
       };
-      onChangeProfile = async () => {
+      onChangeImage = async (changeType) => {
         if (this.profile.current?.files.length > 0) {
           const file = this.profile.current?.files[0];
 
           const form = new FormData();
-          form.append("profileImage", file);
+          form.append("file", file);
+          form.append("filePublish", "profile");
 
-          const resolve = await Http._put_upload(
-            "/v2/api/profileManage/profileImage",
-            form
+          const upload = await Http._post_upload("/v2/api/filePreUpload", form);
+
+          if (upload && upload.fileId) {
+            let resolve;
+            if (changeType === "profile") {
+              resolve = await Http._put("/v2/api/profileManage/profileImage", {
+                profileImgFileId: upload.fileId,
+              });
+            } else if (changeType === "background") {
+              resolve = await Http._put(
+                "/v2/api/profileManage/profileBackgroundImage",
+                {
+                  profileImgFileId: upload.fileId,
+                }
+              );
+            }
+            if (resolve) {
+              this.loadPageData();
+            }
+          }
+        }
+      };
+      onSelectChangeProfile = async (item) => {
+        if (item.value === "album") {
+          this.profile.current?.click();
+        } else if (item.value === "default") {
+          const resolve = await Http._put(
+            "/v2/api/profileManage/noProfileImage"
           );
           if (resolve) {
             this.loadPageData();
           }
         }
       };
+      onSelectChangeBackground = async (item) => {
+        if (item.value === "album") {
+          this.background.current?.click();
+        } else if (item.value === "default") {
+          // TODO : 설정 > 프로필관리 : 배경이미지 없애는 요청
+        }
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        // TODO : 설정 > 프로필관리 : 퍼블상 배경이미지도 변경이 가능한 것 같은데, API 필요함
         const { history } = this.props;
         return (
           <>
@@ -66,7 +100,14 @@ export default inject()(
                   type="file"
                   accept="image/*"
                   style={{ display: "none" }}
-                  onChange={this.onChangeProfile}
+                  onChange={() => this.onChangeImage("profile")}
+                />
+                <input
+                  ref={this.background}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={() => this.onChangeImage("background")}
                 />
                 <div className="float-top-left">
                   <a onClick={() => history.goBack()}>
@@ -77,6 +118,7 @@ export default inject()(
                   <img
                     src="/assets/img/svg/icon-photo.svg"
                     alt=""
+                    onClick={() => this.profile.current?.click()}
                     className="icon-photo"
                   />
                 </a>
@@ -95,7 +137,9 @@ export default inject()(
                       alt=""
                     />
                     <a
-                      onClick={() => this.profile.current?.click()}
+                      data-toggle="modal"
+                      data-target="#selModal"
+                      // onClick={() => this.profile.current?.click()}
                       className="img-upload btn btn-circle btn-circle-sm btn-white float_btn"
                     >
                       <img
@@ -192,6 +236,28 @@ export default inject()(
                 <hr className="full mt-3 mb-3" />
               </div>
             </div>
+
+            {/** 모달팝업 */}
+            <SelectModal
+              id={"selModal"}
+              title={"프로필 사진 변경"}
+              options={[
+                // { text: "사진촬영", value: "camera" },
+                { text: "사진 선택", value: "album" },
+                { text: "기본 이미지로 변경", value: "default" },
+              ]}
+              onClick={this.onSelectChangeProfile}
+            />
+            <SelectModal
+              id={"selBackModal"}
+              title={"프로필 배경 사진 변경"}
+              options={[
+                { text: "사진촬영", value: "camera" },
+                { text: "앨범에서 사진 선택", value: "album" },
+                { text: "기본 이미지로 변경", value: "default" },
+              ]}
+              onClick={this.onSelectChangeBackground}
+            />
           </>
         );
       }
