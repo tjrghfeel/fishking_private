@@ -1,7 +1,8 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
-import CommonCouponAvailableListItem from "../../components/item/CommonCouponAvailableListItem";
+import CsTabs from "../../components/layouts/CsTabs";
+import CsFaqListItem from "../../components/item/CsFaqListItem";
 import Http from "../../Http";
 
 export default inject()(
@@ -10,15 +11,15 @@ export default inject()(
       constructor(props) {
         super(props);
         this.state = {
-          page: 0,
           isPending: false,
           isEnd: false,
+          page: 0,
           list: [],
         };
       }
-      /********** ********** ********** ********** **********/
+      /************ ************ ************ ************ ************/
       /** functions */
-      /********** ********** ********** ********** **********/
+      /************ ************ ************ ************ ************/
       async componentDidMount() {
         this.loadPageData();
         window.addEventListener("scroll", this.onScrollForPage);
@@ -47,7 +48,7 @@ export default inject()(
         const {
           content,
           pageable: { pageSize },
-        } = await Http._get("/v2/api/downloadableCouponList/" + page);
+        } = await Http._get("/v2/api/faq/" + page);
 
         if (page === 0) {
           await this.setState({ list: content });
@@ -63,54 +64,31 @@ export default inject()(
 
         await this.setState({ isPending: false });
       };
-
-      downloadCoupon = async (item) => {
-        const resolve = await Http._post("/v2/api/downloadCoupon", {
-          couponId: item.id,
-        });
-
-        if (resolve) {
-          this.loadPageData();
-        }
-      };
-
-      downloadAllCoupon = async () => {
-        await Http._post("/v2/api/downloadAllCoupon");
-        this.loadPageData();
-      };
-      /********** ********** ********** ********** **********/
+      /************ ************ ************ ************ ************/
       /** render */
-      /********** ********** ********** ********** **********/
+      /************ ************ ************ ************ ************/
       render() {
         return (
           <>
             {/** Navigation */}
-            <Navigation title={"어복황제는 지금 할인중!"} showBack={true} />
+            <Navigation title={"고객센터"} showBack={true} />
 
-            {/** 리스트 */}
-            <div className="container nopadding bg-grey">
-              {this.state.list.map((data, index) => (
-                <CommonCouponAvailableListItem
-                  key={index}
-                  data={data}
-                  index={index}
-                  onClick={this.downloadCoupon}
-                />
-              ))}
-            </div>
+            {/** 탭메뉴 */}
+            <CsTabs />
 
-            {/** 하단버튼 */}
-            <div className="fixed-bottom">
-              <div className="row no-gutters">
-                <div className="col-12">
-                  <a
-                    onClick={this.downloadAllCoupon}
-                    className="btn btn-primary btn-lg btn-block"
-                  >
-                    전체 다운받기
-                  </a>
-                </div>
+            {/** 데이터 */}
+            <div className="container nopadding">
+              <div className="accordion" id="accordionFaq">
+                {this.state.list.length > 0 &&
+                  this.state.list.map((data, index) => (
+                    <CsFaqListItem
+                      key={index}
+                      data={data}
+                      expend={index === 0}
+                    />
+                  ))}
               </div>
+              <p className="space mt-1"></p>
             </div>
           </>
         );

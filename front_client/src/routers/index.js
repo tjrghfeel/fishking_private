@@ -20,6 +20,9 @@ export default inject(
   observer(({ AppStore, DOMStore }) => {
     const { loadAppData } = AppStore;
     loadAppData();
+    window.addEventListener("message", (e) => {
+      console.log("window event : " + JSON.stringify(e));
+    });
     /********** ********** ********** ********** **********/
     /** functions */
     /********** ********** ********** ********** **********/

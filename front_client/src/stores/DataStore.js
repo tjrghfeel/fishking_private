@@ -89,7 +89,7 @@ const DataStore = new (class {
 
       if (between > hour * 2) {
         // 2시간 ~ :: 기준 날짜
-        return when_year + "년" + when_month + "월" + when_date + "일";
+        return when_year + "." + when_month + "." + when_date + "";
       } else if (between <= hour * 2 && between >= hour) {
         // 1시간 ~ 2시간 :: 1시간전
         return "1시간 전";
@@ -100,10 +100,33 @@ const DataStore = new (class {
         // ~ 1시간 :: n분 전
         return Math.round(between / minute) + "분 전";
       } else {
-        return "-";
+        return "";
       }
     } catch (err) {
-      return "-";
+      return "";
+    }
+  };
+  // --> n분전 타임시간
+  latestTimeMillis = (dateString) => {
+    try {
+      const second = 1000;
+      const minute = second * 60;
+      const hour = minute * 60;
+
+      const when = new Date(dateString);
+      const when_year = when.getFullYear();
+      const when_month =
+        when.getMonth() + 1 < 10
+          ? "0".concat(when.getMonth() + 1)
+          : when.getMonth() + 1;
+      const when_date =
+        when.getDate() < 10 ? "0".concat(when.getDate()) : when.getDate();
+
+      const prev = when.getTime();
+      const now = new Date().getTime();
+      return now - prev;
+    } catch (err) {
+      return "";
     }
   };
   /** --> enum 데이터 목록 조회 */
@@ -149,6 +172,19 @@ const DataStore = new (class {
         for (let enm of resolve[type]) {
           if (enm.key === key) return enm;
         }
+      }
+      return null;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+  /** --> enum index 기준으로 데이터 조회 */
+  getEnumValueByIndex = async (type, index = 0) => {
+    try {
+      const resolve = await Http._get("/v2/api/value");
+      if (resolve[type] && resolve[type].length > 0) {
+        return resolve[type][new Number(index)];
       }
       return null;
     } catch (err) {

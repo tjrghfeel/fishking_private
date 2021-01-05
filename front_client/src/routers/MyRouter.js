@@ -10,6 +10,9 @@ import MyStoryPostView from "../views/my/MyStoryPostView";
 import MyStoryCommentView from "../views/my/MyStoryCommentView";
 import MyStoryScrapView from "../views/my/MyStoryScrapView";
 import MyStoryReviewView from "../views/my/MyStoryReviewView";
+import MyZzimView from "../views/my/MyZzimView";
+import MyZzimBoatView from "../views/my/MyZzimBoatView";
+import MyZzimRockView from "../views/my/MyZzimRockView";
 
 export default inject()(
   observer(({ match }) => {
@@ -51,7 +54,19 @@ export default inject()(
             component={MyStoryReviewView}
           />
           {/** 마이 > 찜한업체 */}
-          <Route exact path={`${match.url}/zzim`} component={BlankPage} />
+          <Route exact path={`${match.url}/zzim`} component={MyZzimView} />
+          {/** 마이 > 찜한업체 > 선상 */}
+          <Route
+            exact
+            path={`${match.url}/zzim/boat`}
+            component={MyZzimBoatView}
+          />
+          {/** 마이 > 찜한업체 > 갯바위 */}
+          <Route
+            exact
+            path={`${match.url}/zzim/rock`}
+            component={MyZzimRockView}
+          />
         </Switch>
       </>
     );

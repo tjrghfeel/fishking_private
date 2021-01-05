@@ -9,6 +9,13 @@ import CommonSignupView from "../views/common/CommonSignupView";
 import CommonSignoutView from "../views/common/CommonSignoutView";
 import CommonCouponAvailable from "../views/common/CommonCouponAvailableView";
 import CommonProfileView from "../views/common/CommonProfileView";
+import CommonCsFaqView from "../views/common/CommonCsFaqView";
+import CommonCsApplyView from "../views/common/CommonCsApplyView";
+import CommonCsQnaView from "../views/common/CommonCsQnaView";
+import CommonCsQnaListView from "../views/common/CommonCsQnaListView";
+import CommonCsQnaDetailView from "../views/common/CommonCsQnaDetailView";
+import CommonNoticeView from "../views/common/CommonNoticeView";
+import CommonNoticeDetailView from "../views/common/CommonNoticeDetailView";
 
 export default inject()(
   observer(({ match }) => {
@@ -60,11 +67,49 @@ export default inject()(
           {/** 공통 > 물때 */}
           <Route exact path={`${match.url}/tide`} component={BlankPage} />
           {/** 공통 > 공지사항 */}
-          <Route exact path={`${match.url}/notice`} component={BlankPage} />
+          <Route
+            exact
+            path={`${match.url}/notice`}
+            component={CommonNoticeView}
+          />
+          {/** 공통 > 공지사항 > 상세 */}
+          <Route
+            exact
+            path={`${match.url}/notice/detail/:id`}
+            component={CommonNoticeDetailView}
+          />
           {/** 공통 > 이벤트 */}
           <Route exact path={`${match.url}/event`} component={BlankPage} />
           {/** 공통 > 고객센터 > FAQ */}
-          <Route exact path={`${match.url}/cs/faq`} component={BlankPage} />
+          <Route
+            exact
+            path={`${match.url}/cs/faq`}
+            component={CommonCsFaqView}
+          />
+          {/** 공통 > 고객센터 > 업체등록요청 */}
+          <Route
+            exact
+            path={`${match.url}/cs/apply`}
+            component={CommonCsApplyView}
+          />
+          {/** 공통 > 고객센터 > 1:1문의하기 */}
+          <Route
+            exact
+            path={`${match.url}/cs/qna`}
+            component={CommonCsQnaView}
+          />
+          {/** 공통 > 고객센터 > 1:1문의하기 > 문의내역 */}
+          <Route
+            exact
+            path={`${match.url}/cs/qna/list`}
+            component={CommonCsQnaListView}
+          />
+          {/** 공통 > 고객센터 > 1:1문의하기 > 문의내역 > 상세 */}
+          <Route
+            exact
+            path={`${match.url}/cs/qna/detail/:id`}
+            component={CommonCsQnaDetailView}
+          />
         </Switch>
       </>
     );
