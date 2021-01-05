@@ -128,13 +128,13 @@ public class Post extends BaseTime {
 
     //Post 수정시에, UpdatePostDTO로부터 엔터티 정보 수정하는 메소드.
     public void updatePost(UpdatePostDTO postDTO){
-        channelType = ChannelType.values()[postDTO.getChannelType()];
+        channelType = ChannelType.valueOf(postDTO.getChannelType());
         title = postDTO.getTitle();
         contents = postDTO.getContents();
-        returnType = ReturnType.values()[postDTO.getReturnType()];
+        returnType = ReturnType.valueOf(postDTO.getReturnType());
         returnNoAddress = postDTO.getReturnNoAddress();
         createdAt = postDTO.getCreatedAt();
-        questionType = QuestionType.values()[postDTO.getQuestionType()];
+        questionType = QuestionType.valueOf(postDTO.getQuestionType());
         isSecret = postDTO.getIsSecret();
     }
 }

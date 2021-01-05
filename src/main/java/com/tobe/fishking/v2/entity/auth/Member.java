@@ -55,6 +55,9 @@ public class Member {
     @Column(name = "profile_image")
     private String profileImage; //프로파일 사진 경로+이름
 
+    @Column(name = "profile_background")
+    private String profileBackgroundImage;
+
     @Column(name = "is_active")
     private Boolean isActive;
 

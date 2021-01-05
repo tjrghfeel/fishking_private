@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.enums.common.CouponType;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public interface CouponMemberDTO {
 
     /*coupon 필드.*/
     //public Long id;//not null
+    @Value("#{@mapperUtility.transEnumCouponType(target.CouponType)}")
      CouponType getCouponType();//정액인지 정률인지
     //public String couponCode;
      String getCouponName();

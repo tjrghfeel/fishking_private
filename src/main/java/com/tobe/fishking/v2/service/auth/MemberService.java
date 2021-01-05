@@ -4,14 +4,8 @@ package com.tobe.fishking.v2.service.auth;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.common.LoveTo;
-import com.tobe.fishking.v2.entity.common.PhoneNumber;
-import com.tobe.fishking.v2.entity.common.Take;
-import com.tobe.fishking.v2.entity.fishing.CouponMember;
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
-import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
-import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.entity.common.*;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -27,6 +21,7 @@ import lombok.AllArgsConstructor;
 
 
 import org.springframework.core.env.Environment;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,10 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @AllArgsConstructor
 @Service
@@ -59,6 +56,9 @@ public class MemberService {
     private PasswordEncoder encoder;
     private PhoneAuthRepository phoneAuthRepository;
     private Environment env;
+    private CommonCodeRepository commonCodeRepository;
+    private CodeGroupRepository codeGroupRepository;
+    private TblSubmitQueueRepository tblSubmitQueueRepository;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -78,7 +78,7 @@ public class MemberService {
     * - 실제 있는폰번호인지 확인
     * - 인증문자 전송
     * - 반환 ) 이미 가입된 번호이면 예외. 문자송신 성공하면 true, 실패하면 false. */
-    @Transactional
+  /*  @Transactional
     public boolean smsAuthForSignUp(String areaCode, String localNumber){
         if(checkExistByPhoneNum(areaCode,localNumber)){//이미 가입된 휴대폰번호이면
             throw new PhoneNumberDupException("이미 회원가입한 번호입니다");
@@ -86,6 +86,101 @@ public class MemberService {
         else{
             if(requestSmsAuth(areaCode,localNumber)==true){return true;}//문자 전송이 성공한다면,
             else return false;
+        }
+    }*/
+
+    /*회원가입 - 문자인증
+     * */
+    @Transactional
+    public boolean sendSmsForSingup(PhoneAuthDto dto){
+        if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==true){
+            throw new RuntimeException("이미 가입한 휴대폰 번호입니다");
+        }
+        else{
+            return requestSmsAuth(dto);
+        }
+    }
+    /*휴대폰 번호로 가입한 회원 존재유무 확인
+     * - 존재하면 true반환. */
+    @Transactional
+    public boolean checkExistByPhoneNum(String areaCode, String localNumber){
+        if(memberRepository.findByAreaCodeAndLocalNumber(areaCode, localNumber)!=null){
+            return true;
+        }
+        else return false;
+    }
+
+    /*문자인증 요청
+     * - 랜덤한 인증번호 생성.
+     * - 인증번호가 담긴 sms 문자인증 메세지를 pNum으로 발송.
+     * - pNum과 인증번호를 db에 저장.
+     * - 반환 ) 전송 실패시 false. 성공시 true. */
+    @Transactional
+    public boolean requestSmsAuth(PhoneAuthDto dto){
+        String areaCode = dto.getAreaCode();
+        String localNumber = dto.getLocalNumber();
+
+        /*랜덤으로 인증번호 생성.*/
+        String randomNum=null;
+        randomNum = String.format("%04d",((int)(Math.random()*10000)));
+
+        /*인증번호와 폰번호 db에 저장. */
+        PhoneAuth phoneAuth = PhoneAuth.builder()
+                .phoneNumber(new PhoneNumber(areaCode,localNumber))
+                .certifyNum(randomNum)
+                .isCertified(false)
+                .build();
+        phoneAuthRepository.save(phoneAuth);
+
+        /* 문자 전송. */
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        TblSubmitQueue tblSubmitQueue = TblSubmitQueue.builder()
+                .usrId("aaa")
+                .smsGb("1")
+                .usedCd("00")
+                .reservedFg("I")
+                .reservedDttm(time)
+                .savedFg("0")
+                .rcvPhnId(dto.getAreaCode()+dto.getLocalNumber())
+                .sndMsg("인증번호는 ["+randomNum+"]입니다.")
+                .contentCnt(0)
+                .smsStatus("0")
+                .build();
+
+        tblSubmitQueueRepository.save(tblSubmitQueue);
+//        tblSubmitQueueRepository.sendSms( time, "01073693401", "인증번호는 ["+randomNum+"]입니다.");
+
+        /*문자전송 제대로 되었는지 확인????? !!!!!일단은 바로 반환하는걸로. dbAgent쪽에 문제발생시 너무 오랫동안 대기하는 이슈가 생길수도
+         * 있으므로 일단 바로 api를종료해주고 인증문자를 못받았으면 프론트쪽에서 사용자가 재전송버튼을 누르던지 하는 방식으로. */
+
+        return true;
+    }
+
+    /*문자인증 확인 메소드
+     * - 넘어온 폰번호와 인증번호를 가지고 테이블상의 값과 일치하는지 확인.
+     * - 일치하면 true,아니면 false
+     * - 반환 ) 인증번호가 맞으면 true, 틀리면 false. */
+    @Transactional
+    public boolean checkSmsAuth(String areaCode, String localNumber, String authNum){
+        /*폰번호에 해당하는 인증번호 가져옴*/
+        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
+        if(phoneAuth.getCertifyNum().equals(authNum)){
+            phoneAuth.setIsCertified(true);
+//            phoneAuthRepository.delete(phoneAuth);
+            return true;
+        }
+        else return  false;
+    }
+
+    /*uid중복 확인 메소드*/
+    @Transactional
+    public int checkUidDup(String uid){
+        if(Pattern.matches("^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$",uid)){
+            return 2;
+        }
+        else{
+            if(memberRepository.existsByUid(uid)){return 1;}
+            else return 0;
         }
     }
 
@@ -96,99 +191,73 @@ public class MemberService {
     * - 회원정보와 문자인증 정보가 함께 넘어옴. */
     public boolean signUp(SignUpDto signUpDto){
         /*이메일 중복 확인*/
-        if(memberRepository.existsByEmail(signUpDto.getEmail())==true){
+        if(memberRepository.existsByUid(signUpDto.getEmail())==true){
             /*!!!!!예외처리 이렇게하는게 맞는지? 그냥 던지기만하면 프론트에서 알아서 처리하는지? */
             throw new EmailDupException("이메일이 중복됩니다");
         }
+        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(signUpDto.getAreaCode(),signUpDto.getLocalNumber());
 
-        /*회원 정보 저장*/
-        /*전화번호를 나타내는 PhoneNumber생성*/
-        PhoneNumber phoneNumber = new PhoneNumber(signUpDto.getAreaCode(),signUpDto.getLocalNumber());
-        /*비밀번호 자바 암호화 및 개인정보 db암호화*/
-        String encodedPw = encoder.encode(signUpDto.getPw());
-
-        /*Member 저장*/
-        Member member = Member.builder()
-                .uid(signUpDto.getEmail())//!!!!!uid가 뭔지몰라 일단 중복처리를 하기때문에 똑같이 유일한 이메일로 설정.
-//                .memberName()
-                .nickName(signUpDto.getNickName())
-                .password(encodedPw)
-                .email(signUpDto.getEmail())//일단 이렇게.
-                .gender(Gender.boy)
-                .roles(Role.member)
-//                .profileImage()
-                .isActive(true)
-//                .certifiedNo()
-                .isCertified(true)
-//                .joinDt()
-//                .snsType()
-//                .snsId()
-//                .statusMessage()
-//                .address()
-                .phoneNumber(phoneNumber)
-                .build();
-
-        memberRepository.save(member).getId();
-        return true;
-    }
-
-    /*휴대폰 번호로 가입한 회원 존재유무 확인
-    * - 존재하면 true반환. */
-    @Transactional
-    public boolean checkExistByPhoneNum(String areaCode, String localNumber){
-        if(memberRepository.findByAreaCodeAndLocalNumber(areaCode, localNumber)!=null){
-            return true;
+        if(phoneAuth.getIsCertified()==false){
+            //!!!!! 휴대폰 인증이 완료되지 않은 번호입니다.
+            throw new RuntimeException("휴대폰 인증이 완료되지 않은 번호입니다");
         }
-        else return false;
-    }
+        else {
+            /*회원 정보 저장*/
+            /*전화번호를 나타내는 PhoneNumber생성*/
+            PhoneNumber phoneNumber = new PhoneNumber(signUpDto.getAreaCode(), signUpDto.getLocalNumber());
+            /*비밀번호 자바 암호화 및 개인정보 db암호화*/
+            String encodedPw = encoder.encode(signUpDto.getPw());
 
-    /*문자인증 요청
-    * - 랜덤한 인증번호 생성.
-    * - 인증번호가 담긴 sms 문자인증 메세지를 pNum으로 발송.
-    * - pNum과 인증번호를 db에 저장.
-    * - 반환 ) 전송 실패시 false. 성공시 true. */
-    @Transactional
-    public boolean requestSmsAuth(String areaCode, String localNumber){
-        /*랜덤으로 인증번호 생성.*/
-        String randomNum=null;
-        randomNum = String.format("%04d",((int)(Math.random()*10000)));
+            /*Member 저장*/
+            Member member = Member.builder()
+                    .uid(signUpDto.getEmail())//!!!!!uid가 뭔지몰라 일단 중복처리를 하기때문에 똑같이 유일한 이메일로 설정.
+                    //                .memberName()
+                    .nickName(signUpDto.getNickName())
+                    .password(encodedPw)
+                    .email(signUpDto.getEmail())//일단 이렇게.
+                    .gender(Gender.boy)
+                    .roles(Role.member)
+                    //                .profileImage()
+                    .isActive(true)
+                    //                .certifiedNo()
+                    .isCertified(true)
+                    //                .joinDt()
+                    //                .snsType()
+                    //                .snsId()
+                    //                .statusMessage()
+                    //                .address()
+                    .phoneNumber(phoneNumber)
+                    .build();
 
-        /*인증번호와 폰번호 db에 저장. */
-        PhoneAuth phoneAuth = PhoneAuth.builder()
-                .phoneNumber(new PhoneNumber(areaCode,localNumber))
-                .certifyNum(randomNum)
-                .build();
-
-        phoneAuthRepository.save(phoneAuth);
-
-        /*!!!!! 문자 전송. */
+            memberRepository.save(member).getId();
+        }
 
         return true;
     }
 
-    /*문자인증 확인 메소드
-    * - 넘어온 폰번호와 인증번호를 가지고 테이블상의 값과 일치하는지 확인.
-    * - 일치하면 true,아니면 false
-    * - 반환 ) 인증번호가 맞으면 true, 틀리면 false. */
+    /*비번 변경을 위한 문자인증 요청 메소드*/
     @Transactional
-    public boolean checkSmsAuth(String areaCode, String localNumber, String authNum){
-        /*폰번호에 해당하는 인증번호 가져옴*/
-        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
-        if(phoneAuth.getCertifyNum().equals(authNum)){
-            phoneAuthRepository.delete(phoneAuth);
-            return true;
+    public boolean sendSmsForPwReset(PhoneAuthDto dto){
+        /*해당 번호로 가입되어있는 회원이 있는지 확인*/
+        if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==false){
+            throw new RuntimeException("가입되지 않은 휴대폰 번호입니다");
         }
-        else return  false;
+        /*문자인증 요청*/
+        else{
+            return requestSmsAuth(dto);
+        }
     }
-
     /*비번변경 메소드
-    * - 비번암호화하여 세션토큰에 해당하는 멤버의 비번필드에 update. */
+    * - 비번암호화하여 번호에 해당하는 멤버의 비번필드에 update. */
     @Transactional
     public boolean updatePw(ResetPwDto resetPwDto) {
-        /*비번 암호화*/
-//        String encodedPw = encoder.encode(resetPwDto.getNewPw());
-        String encodedPw = resetPwDto.getNewPw();
+        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(resetPwDto.getAreaCode(),resetPwDto.getLocalNumber());
 
+        if(phoneAuth.getIsCertified()==false){
+            throw new RuntimeException("인증이 확인되지 않은 번호입니다. ");
+        }
+        /*비번 암호화*/
+        String encodedPw = encoder.encode(resetPwDto.getNewPw());
 
         /*세션토큰에 해당하는 멤버의 비번필드 업데이트*/
         Member member = memberRepository.findByAreaCodeAndLocalNumber(resetPwDto.getAreaCode(),resetPwDto.getLocalNumber());
@@ -321,19 +390,28 @@ public class MemberService {
 
     /*프사변경*/
     @Transactional
-    public boolean updateProfileImage(MultipartFile file, String sessionToken) throws Exception {
+    public boolean updateProfileImage(ModifyingProfileImgDto dto, String sessionToken) throws Exception {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
+        FileEntity newProfileImg = fileRepository.findById(dto.getProfileImgFileId())
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getProfileImgFileId()));
 
         /*기존 프사 fileEntity 삭제*/
         FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(), FilePublish.profile,true);
         if(preFileEntity!=null){  uploadService.removeFileEntity(preFileEntity.getId());}
 
-        if(uploadService.checkFileType(file)!=FileType.image){
+        /*업로드 미리보기요으로 미리 저장된 파일 엔터티를 수정.*/
+        newProfileImg.saveTemporaryFile(member.getId());
+        newProfileImg.setRepresent(true);
+
+        member.setProfileImage("/"+newProfileImg.getFileUrl()+"/"+newProfileImg.getStoredFile());
+
+        /*if(uploadService.checkFileType(file)!=FileType.image){
             throw new Exception();//!!!!!어떤 예외 던져야할지.
-        }
+        }*/
+
         /*프사 추가 및 Member의 profileImage 업데이트. */
-        Map<String,Object> fileInfo = uploadService.initialFile(file, FilePublish.profile, "");
+        /*Map<String,Object> fileInfo = uploadService.initialFile(file, FilePublish.profile, "");
 
         FileEntity fileEntity = FileEntity.builder()
                 .pid(member.getId())
@@ -353,9 +431,68 @@ public class MemberService {
                 .modifiedBy(member)
                 .locations("sampleLocation")
                 .build();
-        fileRepository.save(fileEntity);
+        fileRepository.save(fileEntity);*/
 
-        member.setProfileImage("/"+fileInfo.get("path")+"/"+fileInfo.get("thumbnailName"));
+        return true;
+    }
+    /*프사 내리기*/
+    @Transactional
+    public boolean deleteProfileImage(String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        FileEntity file = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(),FilePublish.profile,true);
+        CodeGroup codeGroup = codeGroupRepository.findById(92L)
+                .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+92));
+        CommonCode commonCode = commonCodeRepository.findByCodeGroupAndCode(codeGroup, "noImg");
+
+        uploadService.removeFileEntity(file.getId());
+        member.setProfileImage(commonCode.getExtraValue1());
+        return true;
+    }
+    /*프로필 배경 이미지 변경*/
+    @Transactional
+    public boolean updateProfileBackgroundImage(ModifyingProfileImgDto dto, String sessionToken) throws Exception {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
+        FileEntity newProfileImg = fileRepository.findById(dto.getProfileImgFileId())
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getProfileImgFileId()));
+
+        /*기존 프사 fileEntity 삭제*/
+        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(), FilePublish.profile,false);
+        if(preFileEntity!=null){  uploadService.removeFileEntity(preFileEntity.getId());}
+
+        /*업로드 미리보기요으로 미리 저장된 파일 엔터티를 수정.*/
+        newProfileImg.saveTemporaryFile(member.getId());
+        newProfileImg.setRepresent(false);
+
+        member.setProfileBackgroundImage("/"+newProfileImg.getFileUrl()+"/"+newProfileImg.getStoredFile());
+
+        /*if(uploadService.checkFileType(file)!=FileType.image){
+            throw new Exception();//!!!!!어떤 예외 던져야할지.
+        }*/
+
+        /*프사 추가 및 Member의 profileImage 업데이트. */
+        /*Map<String,Object> fileInfo = uploadService.initialFile(file, FilePublish.profile, "");
+
+        FileEntity fileEntity = FileEntity.builder()
+                .pid(member.getId())
+                .originalFile(file.getOriginalFilename())
+                .fileName(file.getOriginalFilename())
+                .fileNo(0)
+                .filePublish(FilePublish.profile)
+                .fileType(FileType.image)
+                .fileUrl((String)fileInfo.get("path"))
+//                .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
+                .thumbnailFile((String)fileInfo.get("thumbnailName"))
+//                .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
+                .size(file.getSize())
+                .storedFile((String)fileInfo.get("fileName"))
+                .isRepresent(true)
+                .createdBy(member)
+                .modifiedBy(member)
+                .locations("sampleLocation")
+                .build();
+        fileRepository.save(fileEntity);*/
 
         return true;
     }

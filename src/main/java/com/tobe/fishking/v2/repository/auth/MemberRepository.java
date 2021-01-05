@@ -34,6 +34,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     /*이메일 중복체크*/
     boolean existsByEmail(String email);
+    boolean existsByUid(String uid);
     /*휴대폰 번호 중복체크*/
     boolean existsByPhoneNumber(PhoneNumber phoneNumber);
     /*@Query(value = "select exists (select * from member m where m.areacode = :areaCode and m.localnumber = :localNumber)",

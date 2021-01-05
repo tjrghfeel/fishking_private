@@ -16,12 +16,15 @@ import javax.persistence.*;
 public class PhoneAuth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @Embedded
-    public PhoneNumber phoneNumber;
+    private PhoneNumber phoneNumber;
 
     @Column(nullable = false, columnDefinition = "varchar(6) comment '인증번호'")
-    public String certifyNum;
+    private String certifyNum;
+
+    @Column(nullable = false, columnDefinition = "bit default '0' comment '인증완료여부'")
+    private Boolean isCertified;
 
 }

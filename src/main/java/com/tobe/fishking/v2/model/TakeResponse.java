@@ -13,18 +13,23 @@ import java.util.ArrayList;
 public interface TakeResponse {
     Long getId();
     String getName();
-     String getFishingDate();
+    String getFishSpicesInfo();
+    Integer getFishSpicesCount();
+    @Value("#{@mapperUtility.transEnumFishingType(target.fishingType)}")
+    String getFishingType();
+    String getAddress();
+    Double getDistance();
+    Integer getPrice();
+
+     /*String getFishingDate();
      boolean getIsClose();
      boolean getIsUse();
      String getShipStartTime();
-     float getTotalAmount();
-     float getTotalAvgByReview();
     //장소명
-     String getPlaceName();
-    //장소로부터 대상어종
-     String getFishSpicesInfo();
+     String getPlaceName();*/
+
      //섬네일 파일.
-     @Value("#{@mapperUtility.transFileUrlArray(target.thumbnailFile, target.filePath)}")
-     ArrayList<String> getDownloadThumbnailUrl();
+     @Value("#{@mapperUtility.transDownLoadUrl(target.filePath, target.thumbnailFile)}")
+     String getDownloadThumbnailUrl();
 
 }

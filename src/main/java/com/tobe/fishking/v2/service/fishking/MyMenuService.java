@@ -8,10 +8,7 @@ import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
-import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
-import com.tobe.fishking.v2.repository.common.CouponRepository;
-import com.tobe.fishking.v2.repository.common.FileRepository;
-import com.tobe.fishking.v2.repository.common.ReviewRepository;
+import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -49,6 +46,8 @@ public class MyMenuService {
     ShipRepository shipRepository;
     @Autowired
     Environment env;
+    @Autowired
+    AlertsRepository alertsRepository;
 
 
     /*마이메뉴 페이지 조회 처리 메소드
@@ -65,9 +64,11 @@ public class MyMenuService {
             //nickName 가져옴
             String nickName = member.getNickName();
             //예약건수 가져옴.
-            Integer bookingCount = ordersRepository.countByOrderStatusAndCreatedBy(OrderStatus.payment, member);
+            Integer bookingCount = ordersRepository.countCurrentMyOrders( member.getId());
             //쿠폰 수 가져옴.
             Integer couponCount = couponMemberRepository.countByMemberAndIsUseAndDays(member,false, LocalDateTime.now());
+            //알림 개수 가져옴.
+            Integer alertCount = alertsRepository.countBySessionToken(sessionToken);
 
         /*dto에 값 넣어줌. */
         myMenuPageDTO = MyMenuPageDTO.builder()
@@ -75,6 +76,7 @@ public class MyMenuService {
                 .nickName(nickName)
                 .bookingCount(bookingCount)
                 .couponCount(couponCount)
+                .alertCount(alertCount)
                 .build();
 
         return myMenuPageDTO;
@@ -157,7 +159,7 @@ public class MyMenuService {
                 .goodsPrice(goods.getTotalAmount())
                 .personnel(orderDetails.getPersonnel())
                 .ordersNum(orders.getOrdersNum())
-                .nickName(member.getNickName())
+                .memberName(member.getMemberName())
                 .areaCode(member.getPhoneNumber().getAreaCode())
                 .localNumber(member.getPhoneNumber().getLocalNumber())
                 .orderDate(orders.getOrderDate())

@@ -1,16 +1,23 @@
 package com.tobe.fishking.v2.controller.post;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.Coupon;
+import com.tobe.fishking.v2.entity.common.PhoneNumber;
+import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
+import com.tobe.fishking.v2.entity.fishing.TblSubmitQueue;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.NoNameDTO;
+import com.tobe.fishking.v2.model.auth.PhoneAuthDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 //import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
+import com.tobe.fishking.v2.service.common.CouponService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +36,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +90,14 @@ public class PostControllerTest {
     Environment env;
     @Autowired
     PasswordEncoder encoder;
+    @Autowired
+    CouponService couponService;
+    @Autowired
+    PhoneAuthRepository phoneAuthRepository;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    TblSubmitQueueRepository tblSubmitQueueRepository;
 
     @Test
     public void fileTest() throws Exception {
@@ -110,20 +127,15 @@ public class PostControllerTest {
         return;
     }
 
-    @Transactional
-    @Modifying
     @Test
     public void noName() throws Exception {
-
-        Member member = memberRepository.findById(34L)
-                .orElseThrow(()->new ResourceNotFoundException(""));
-
-        System.out.println("result >>> "+member.getAddress());
-
-
-
-
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        System.out.println("result >>> "+time);
+        tblSubmitQueueRepository.sendSms("20210104140000","01012345678","hello");
+        /*PhoneAuthDto phoneAuthDto = PhoneAuthDto.builder().areaCode("aa").localNumber("bbb").build();
+        memberService.requestSmsAuth(phoneAuthDto);*/
         return;
+
     }
     @Transactional
     public void updateMember() throws ResourceNotFoundException {

@@ -17,14 +17,28 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     /*member가 한 예약 건수를 주문진행상태에 따라 검색*/
     int countByOrderStatusAndCreatedBy(OrderStatus orderStatus, Member member);
+    /*마이메뉴 > 현재 나의 예약 건수 반환을 위해 orderStatus가 '예약취소', '출조완료'상태인것을 제외한 order들의 개수를 카운트*/
+    @Query(value = "" +
+            "select count(o.id) " +
+            "from orders o " +
+            "where o.order_status = 3 " +
+            "or o.order_status = 4 " +
+            "or o.order_status = 5 " +
+            "or o.order_status = 8 " +
+            "and o.created_by = :memberId ",
+            nativeQuery = true
+    )
+    int countCurrentMyOrders(@Param("memberId") Long memberId);
 
     /*나의 예약내역 리스트 출력 메소드
     * - 주문상태에 따라 검색한경우 사용된다. */
     @Query(value = "select " +
             "   o.id id, " +
             "   g.id goodsId, " +
-            "   (select f.download_thumbnail_url from files f " +
-            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageUrl, " +
+            "   (select f.file_url from files f " +
+            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
+            "   (select f.thumbnail_file from files f " +
+            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileName, " +
             "   s.ship_name shipName, " +
             "   g.fishing_type fishingType, " +
             "   s.sigungu sigungu, " +

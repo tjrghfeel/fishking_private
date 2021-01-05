@@ -2,7 +2,12 @@ package com.tobe.fishking.v2.repository.common;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Alerts;
+import com.tobe.fishking.v2.model.common.AlertListForPage;
 import com.tobe.fishking.v2.repository.BaseRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -11,4 +16,39 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
 
     /*@Query("select new com.tobe.fishking.v2.model.NoNameDTO(a.id, a.alert_sets) from Alerts a")
     List<NoNameDTO> find();*/
+
+    @Query(
+            value = "select " +
+                    "   a.id alertId, " +
+                    "   a.alert_type alertType, " +
+                    "   a.created_date createdDate, " +
+                    "   a.content content, " +
+                    "   cc.extra_value1 iconDownloadUrl " +
+                    "from alerts a, common_code cc, member m " +
+                    "where " +
+                    "   cc.code_group_id = 93 " +
+                    "   and cc.code = a.alert_type " +
+                    "   and m.session_token = :token " +
+                    "   and a.receiver_id = m.id ",
+            countQuery = "select a.id " +
+                    "from alerts a, common_code cc, member m " +
+                    "where " +
+                    "   cc.code_group_id = 93 " +
+                    "   and cc.code = a.alert_type " +
+                    "   and m.session_token = :token " +
+                    "   and a.receiver_id = m.id ",
+            nativeQuery = true
+    )
+    Page<AlertListForPage> findAllByMember(@Param("token") String token, Pageable pageable);
+
+    /*세션토큰에 해당하는 회원의 알림 개수 카운트*/
+    @Query(
+        value = "select count(a.id) " +
+                "from alerts a, member m " +
+                "where " +
+                "   m.session_token = :token " +
+                "   and a.receiver_id = m.id ",
+        nativeQuery = true
+    )
+    int countBySessionToken(@Param("token") String token);
 }

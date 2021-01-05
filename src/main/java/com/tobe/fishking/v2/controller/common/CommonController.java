@@ -40,14 +40,27 @@ public class CommonController {
     CommonService commonService;
 
     /*CodeGroup 추가 api*/
-    @ApiOperation(value = "CodeGroup 추가", notes = "id 필드 생략. ")
+    @ApiOperation(value = "CodeGroup 추가", notes = "" +
+            "- 필드 )\n" +
+            "   id : 생략\n" +
+            "   code : CodeGroup의 코드\n" +
+            "   name : CodeGroup의 코드명\n" +
+            "   description : CodeGroup에 대한 설명\n" +
+            "   remark : 비고")
     @PostMapping("/codeGroup")
     public Long makeCodeGroup(@RequestBody CodeGroupWriteDTO codeGroupWriteDTO, HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         return commonService.writeCodeGroup(codeGroupWriteDTO, sessionToken);
     }
     /*CodeGroup 수정 api*/
-    @ApiOperation(value = "CodeGroup 수정", notes = "")
+    @ApiOperation(value = "CodeGroup 수정", notes = "" +
+            "- commond CodeGroup 하나를 수정 \n" +
+            "- 필드 )\n" +
+            "   id : 수정하려는 common CodeGroup id\n" +
+            "   code : CodeGroup의 코드\n" +
+            "   name : CodeGroup의 코드명\n" +
+            "   description : CodeGroup에 대한 설명\n" +
+            "   remark : 비고")
     @PutMapping("/codeGroup")
     public Long updateCodeGroup(@RequestBody CodeGroupWriteDTO codeGroupWriteDTO,HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -55,14 +68,40 @@ public class CommonController {
     }
 
     /*CommonCode 추가해주는 api.*/
-    @ApiOperation(value = "Common code 추가", notes = "retValue1, level, active, orderBy 필드 필수. ")
+    @ApiOperation(value = "Common code 추가", notes = "retValue1, level, active, orderBy 필드 필수. \n" +
+            "- common code 추가 api \n" +
+            "- 필드 ) \n" +
+            "   id : 생략 \n" +
+            "   retValue1 : common code의 대체값(double형) \n" +
+            "   active : 사용여부 \n" +
+            "   level : common code 레벨(common code가 계층형구조를 가질때 쓰임)\n" +
+            "   orderBy : 순서 \n" +
+            "   code : 코드 \n" +
+            "   codeName : 코드명 \n" +
+            "   aliasName : 별칭 \n" +
+            "   extraValue1 : common code의 대체값(string형)\n" +
+            "   remark : 주석 \n" +
+            "   codeGroup : code group의 id ")
     @PostMapping("/commonCode")
     public String makeCommonCode(@RequestBody CommonCodeWriteDTO commonCodeWriteDTO,HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         return commonService.writeCommonCode(commonCodeWriteDTO,sessionToken);
     }
     /*CommonCode 수정 api*/
-    @ApiOperation(value = "CommonCode 수정", notes = "id, retValue1, level, active, orderBy 필드 필수. ")
+    @ApiOperation(value = "CommonCode 수정", notes = "id, retValue1, level, active, orderBy 필드 필수." +
+            "- common code 수정 api \n" +
+            "- 필드 ) \n" +
+            "   id : 수정할 common code의 id \n" +
+            "   retValue1 : common code의 대체값(double형) \n" +
+            "   active : 사용여부 \n" +
+            "   level : common code 레벨(common code가 계층형구조를 가질때 쓰임)\n" +
+            "   orderBy : 순서 \n" +
+            "   code : 코드 \n" +
+            "   codeName : 코드명 \n" +
+            "   aliasName : 별칭 \n" +
+            "   extraValue1 : common code의 대체값(string형)\n" +
+            "   remark : 주석 \n" +
+            "   codeGroup : code group의 id ")
     @PutMapping("/commonCode")
     public String updateCommonCode(@RequestBody CommonCodeWriteDTO commonCodeWriteDTO,HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -170,18 +209,18 @@ public class CommonController {
             "- 실제 파일을 올릴때 파일이 아닌 이때 반환받은 id를 함께 반환해주면 된다. \n" +
             "- 'file'이란 이름으로 파일을 넘기고 \n " +
             "- 파일과 함께 'filePublish'라는 이름의 파라미터로 다음의 값중 하나를 넘겨주어야 한다 \n" +
-            "   0 : 선상 사진 업로드의 경우\n" +
-            "   1 : 게시판에 파일 업로드하는 경우\n" +
-            "   2 : 일대일문의 게시판에 파일 업로드\n" +
-            "   3 : FAQ에 파일업로드\n" +
-            "   4 : 공지사항에 파일업로드\n" +
-            "   5 : 조행기에 파일업로드\n" +
-            "   6 : 조행일지에 파일업로드\n" +
-            "   7 : 댓글에 파일업로드\n" +
-            "   8 : 어복TV에 파일업로드\n" +
-            "   9 : 업체요청에 파일업로드\n" +
-            "   10 : 프로필에 파일업로드\n" +
-            "   11 : 리뷰에 파일업로드 ")
+            "   ship : 선상 사진 업로드의 경우\n" +
+            "   post : 게시판에 파일 업로드하는 경우\n" +
+            "   one2one : 일대일문의 게시판에 파일 업로드\n" +
+            "   faq : FAQ에 파일업로드\n" +
+            "   notice : 공지사항에 파일업로드\n" +
+            "   fishingBlog : 조행기에 파일업로드\n" +
+            "   fishingDaily : 조행일지에 파일업로드\n" +
+            "   comment : 댓글에 파일업로드\n" +
+            "   fishkingTv : 어복TV에 파일업로드\n" +
+            "   companyRequest : 업체요청에 파일업로드\n" +
+            "   profile : 프로필에 파일업로드\n" +
+            "   review : 리뷰에 파일업로드 ")
     @PostMapping("/filePreUpload")
     public FilePreUploadResponseDto preUploadFile(MultipartHttpServletRequest request) throws IOException, ResourceNotFoundException {
         return commonService.preUploadFile(

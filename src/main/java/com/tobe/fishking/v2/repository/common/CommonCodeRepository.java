@@ -27,4 +27,5 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, Long> {
     @Query("select a from CommonCode a where a.codeGroup = :codeGroup and a.code in (:codeList)")
     public List<CommonCode> findCommonCodesByCodeGroupAndCodes(@Param("codeGroup") CodeGroup  codeGroup,@Param("codeList") List<String> codeList);
 
+    public CommonCode findByCodeGroupAndCode(CodeGroup codeGroup, String code);
 }

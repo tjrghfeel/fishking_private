@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 public interface QnADetailDto {
     Long getId();
+    @Value("#{@mapperUtility.transEnumQuestionType(target.questionType)}")
     String getQuestionType();
     Boolean getReplied();
     String getDate();

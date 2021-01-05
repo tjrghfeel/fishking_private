@@ -16,20 +16,20 @@ public class UpdatePostDTO {
     //not null필드.
     private Long postId;
     private Long boardId;
-    private Integer channelType;
+    private String channelType;
     private String title;
     private String contents;
     //private Long authorId;//modifiedBy, createdBy필드를 여기서 id로 가져와 사용할것.
     //    private String authorName;
-    private Integer returnType;
+    private String returnType;
     private String returnNoAddress;
     private String createdAt;
-    private Integer questionType;
+    private String questionType;
 
     //nullable 필드.
 //    private List<String> tagsName = new ArrayList<>();
     private Boolean isSecret;
     //private Long parentId;
 
-    private MultipartFile[] files;
+    private Long[] files;
 }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public interface CouponDTO {
 
     Long getId();//not null
+    @Value("#{@mapperUtility.transEnumCouponType(target.CouponType)}")
     CouponType getCouponType();//정액인지 정률인지
     String getCouponCode();
     String getCouponName();

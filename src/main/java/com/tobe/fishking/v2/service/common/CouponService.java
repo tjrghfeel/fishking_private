@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CouponService {
@@ -82,5 +84,36 @@ public class CouponService {
         return couponMemberRepository.findCouponMemberListOrderByBasic(member, false, LocalDateTime.now(), pageable);
     }
 
+    /*모든 쿠폰 다운로드
+    * - */
+    @Transactional
+    public Boolean downloadAllCoupon(String sessionToken) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
+        //회원이 다운가능한 모든 coupon의 id리스트를 받아옴.
+        List<Long> downloadableCouponList = couponRepository.findDownloadableCouponList(member.getId(),LocalDateTime.now());
+        List<CouponMember> couponMemberList = new ArrayList<>();//새로생성될 couponMember가 저장될 리스트.
 
+        /*모든 다운가능한 coupon들에 대해서, 쿠폰을 다운(couponeMember를 생성)하고 couponMemberList에 저장시켜줌.  */
+        for(int i=0; i<downloadableCouponList.size(); i++){
+            Long couponId = downloadableCouponList.get(i);
+            Coupon coupon = couponRepository.findById(couponId)
+                    .orElseThrow(()->new ResourceNotFoundException("coupon not found for this id :: "+couponId));
+            CouponMember couponMember = CouponMember.builder()
+                    .coupon(coupon)
+                    .couponCode(coupon.getCouponCode() + String.format("%03d",(int)(Math.random()*1000)))
+                    .member(member)
+                    .isUse(false)
+                    .regDate(LocalDateTime.now())
+                    .useDate(null)
+                    .orders(null)
+                    .createdBy(member)
+                    .modifiedBy(member)
+                    .build();
+            couponMemberList.add(couponMember);
+        }
+        /*생성된 couponMember들을 저장. */
+        couponMemberRepository.saveAll(couponMemberList);
+        return true;
+    }
 }

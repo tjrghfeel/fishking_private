@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryFishingLures;
 import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,9 +42,16 @@ public class Alerts extends BaseTime {
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private AlertType alertType;
 
+    @Column(columnDefinition = "comment '알림과 관련있는 entity종류")
+    @Enumerated(EnumType.ORDINAL)
+    private EntityType entityType;
+
     //alerttype에 따른 해당 id
-    @Column(columnDefinition = "bigint  comment 'bid' ")
-    private Long bid;
+    @Column(columnDefinition = "bigint  comment '알림과 관련있는 entity의 id' ")
+    private Long pid;
+
+    @Column(columnDefinition = "varchar(30) comment '알람 상세 내용'")
+    private String content;
 
     @Column(columnDefinition = "bit default 0 not null  comment '읽음확인' ") //0 안읽음 1:읽음
     private boolean isRead;

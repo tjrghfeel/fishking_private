@@ -147,12 +147,18 @@ public class PostService {
     /*postDTO에는 boardId, channelType, title, content, authorId, returnType, returnNoAddress, createdAt, tagsName,
     isSecret, parentId가 들어있음.*/
     @Transactional
-    public Long writePost(WritePostDTO postDTO, MultipartFile[] files,String sessionToken) throws ResourceNotFoundException, IOException {
+    public Long writePost(WritePostDTO postDTO, String sessionToken) throws ResourceNotFoundException, IOException {
         //Post 저장 부분.
         Board boardOfPost = boardRepository.findById(postDTO.getBoardId())
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id :: "+postDTO.getBoardId()));
         Member authorOfPost = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("Member not found for this sessionToken ::"+sessionToken));
+        FileEntity[] fileEntityList = new FileEntity[postDTO.getFiles().length];//fileEntity 목록 저장할 변수
+        for(int i=0; i<fileEntityList.length; i++){
+            Long fileEntityId = postDTO.getFiles()[i];
+            fileEntityList[i] = fileRepository.findById(fileEntityId)
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+fileEntityId));
+        }
 
         //Post entity의 List<Tag>만듦.
         /*List<Tag> tagList = new LinkedList<Tag>();
@@ -169,21 +175,25 @@ public class PostService {
                 .createdBy(authorOfPost)
                 .createdAt(postDTO.getCreatedAt())
                 .returnNoAddress(postDTO.getReturnNoAddress())
-                .returnType(ReturnType.values()[postDTO.getReturnType()])
+                .returnType(ReturnType.valueOf(postDTO.getReturnType()))
                 .authorName(authorOfPost.getMemberName())
                 .contents(postDTO.getContents())
                 .title(postDTO.getTitle())
-                .channelType(ChannelType.values()[postDTO.getChannelType()])
+                .channelType(ChannelType.valueOf(postDTO.getChannelType()))
                 .board(boardOfPost)
                 .author(authorOfPost)
                 .isSecret(postDTO.getIsSecret())
 //                .tags(tagList)
-                .questionType(QuestionType.values()[postDTO.getQuestionType()])
+                .questionType(QuestionType.valueOf(postDTO.getQuestionType()))
                 .parent_id(postDTO.getParentId())
                 .build();
         post = postRepository.save(post);
 
-        //파일 저장.
+        for(int i=0; i<fileEntityList.length; i++){
+            fileEntityList[i].saveTemporaryFile(post.getId());
+        }
+
+        /*//파일 저장.
             //파일 타입 확인.
         for(int i=0; i<files.length; i++ ) {
             MultipartFile file = files[i];
@@ -192,7 +202,7 @@ public class PostService {
 
             //UploadService를 이용한 파일저장.
             Map<String, Object> fileInfo
-                    = uploadService.initialFile(file, boardOfPost.getFilePublish(), ""/*, 세션토큰 인자 */);
+                    = uploadService.initialFile(file, boardOfPost.getFilePublish(), ""*//*, 세션토큰 인자 *//*);
 
             //File entity 저장.
             FileEntity currentFile = FileEntity.builder()
@@ -212,20 +222,92 @@ public class PostService {
                     .pid(post.getId())
                     .build();
             fileRepository.save(currentFile).getId();
-        }
+        }*/
 
         return post.getId();
+    }
+
+    /*1:1문의 글쓰기*/
+    @Transactional
+    public Long writeOne2one(QnaWriteDto dto, String token) throws ResourceNotFoundException, IOException {
+        /*WritePostDTO 생성*/
+        Board board = boardRepository.findBoardByFilePublish(FilePublish.one2one);
+        WritePostDTO writePostDTO = WritePostDTO.builder()
+                /*QnaWriteDto안에 있는것들*/
+                .questionType(dto.getQuestionType())
+                .contents(dto.getContents())
+                .returnType(dto.getReturnType())
+                .returnNoAddress(dto.getReturnAddress())
+                .files(dto.getFileList())
+                /*QnaWriteDto안에 없는것들*/
+                .boardId(board.getId())
+                .channelType("notice")
+                .title("noTitle")
+                .createdAt("sampleCreatedAt")
+                .build();
+
+        /*writePost()호출*/
+        return writePost(writePostDTO, token);
+    }
+    /*FAQ 생성*/
+    @Transactional
+    public Long writeFaq(FaqWriteDto dto, String token) throws ResourceNotFoundException, IOException {
+        /*WritePostDTO 생성*/
+        Board board = boardRepository.findBoardByFilePublish(FilePublish.faq);
+        WritePostDTO writePostDTO = WritePostDTO.builder()
+                /*FaqWriteDto안에 있는것들*/
+                .questionType(dto.getQuestionType())
+                .title(dto.getTitle())
+                .contents(dto.getContents())
+                .files(dto.getFileList())
+                /*FaqWriteDto안에 없는것들*/
+                .boardId(board.getId())
+                .channelType("notice")
+                .returnType("email")
+                .returnNoAddress("sampleReturnAddress")
+                .createdAt("sampleCreatedAt")
+                .build();
+
+        /*writePost() 호출*/
+        return writePost(writePostDTO,token);
+    }
+    /*공지사항 생성*/
+    @Transactional
+    public Long writeNotice(NoticeWriteDto dto, String token) throws ResourceNotFoundException, IOException {
+        /*WritePostDTO 생성*/
+        Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
+        WritePostDTO writePostDTO = WritePostDTO.builder()
+                /*FaqWriteDto안에 있는것들*/
+                .channelType(dto.getChannelType())
+                .title(dto.getTitle())
+                .contents(dto.getContents())
+                .files(dto.getFileList())
+                /*FaqWriteDto안에 없는것들*/
+                .boardId(board.getId())
+                .questionType("order")
+                .returnType("email")
+                .returnNoAddress("sampleReturnAddress")
+                .createdAt("sampleCreatedAt")
+                .build();
+
+        /*writePost() 호출*/
+        return writePost(writePostDTO,token);
     }
 
     /*Post 수정 및 해당Post의 기존 File들 삭제, 넘어온 파일 다시올리기, FileEntity 저장.
     * */
     @Transactional
     public Long updatePost(UpdatePostDTO postDTO,
-                           MultipartFile[] files,
                            String sessionToken
                             ) throws ResourceNotFoundException, IOException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()-> new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
+        FileEntity[] fileEntityList = new FileEntity[postDTO.getFiles().length];//fileEntity 목록 저장할 변수
+        for(int i=0; i<fileEntityList.length; i++){
+            Long fileEntityId = postDTO.getFiles()[i];
+            fileEntityList[i] = fileRepository.findById(fileEntityId)
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+fileEntityId));
+        }
 
         //Post entity 수정.
         Post post = postRepository.findById(postDTO.getPostId())
@@ -245,12 +327,16 @@ public class PostService {
             uploadService.removeFileEntity(fileList.get(i).getId());
         }
 
-        for(int i=0; i<files.length; i++ ) {
+        for(int i=0; i<fileEntityList.length; i++){
+            fileEntityList[i].saveTemporaryFile(post.getId());
+        }
+
+        /*for(int i=0; i<files.length; i++ ) {
             MultipartFile file = files[i];
             FileType enumFileType = uploadService.checkFileType(file);
 
             //UploadService를 이용한 파일저장.
-            Map<String, Object> fileInfo = uploadService.initialFile(file, post.getBoard().getFilePublish(), ""/*, 세션토큰 인자 */);
+            Map<String, Object> fileInfo = uploadService.initialFile(file, post.getBoard().getFilePublish(), ""*//*, 세션토큰 인자 *//*);
 
             //File entity 저장.
             FileEntity currentFile = FileEntity.builder()
@@ -270,8 +356,76 @@ public class PostService {
                     .pid(post.getId())
                     .build();
             fileRepository.save(currentFile).getId();
-        }
+        }*/
 
         return post.getId();
     }
+    /*1:1문의 수정*/
+    @Transactional
+    public Long updateOne2one(QnaUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
+        /*UpdatePostDTO생성*/
+        Board board = boardRepository.findBoardByFilePublish(FilePublish.one2one);
+        UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
+                /*dto에 있는 필드들*/
+                .postId(dto.getPostId())
+                .questionType(dto.getQuestionType())
+                .contents(dto.getContents())
+                .returnType(dto.getReturnType())
+                .returnNoAddress(dto.getReturnAddress())
+                .files(dto.getFileList())
+                /*dto에 없는 필드들*/
+                .boardId(board.getId())
+                .channelType("notice")
+                .title("noTitle")
+                .createdAt("sampleCreatedAt")
+                .build();
+        /*updatePost()호출*/
+        return updatePost(updatePostDTO, token);
+    }
+    /*faq 수정*/
+    @Transactional
+    public Long updateFaq(FaqUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
+        /*UpdatePostDTO생성*/
+        Board board = boardRepository.findBoardByFilePublish(FilePublish.faq);
+        UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
+                /*dto에 있는 필드들*/
+                .postId(dto.getPostId())
+                .questionType(dto.getQuestionType())
+                .contents(dto.getContents())
+                .title(dto.getTitle())
+                .files(dto.getFileList())
+                /*dto에 없는 필드들*/
+                .boardId(board.getId())
+                .returnType("email")
+                .returnNoAddress("sampleReturnAddress")
+                .channelType("notice")
+                .title("noTitle")
+                .createdAt("sampleCreatedAt")
+                .build();
+        /*updatePost()호출*/
+        return updatePost(updatePostDTO, token);
+    }
+    /*공지사항 수정*/
+    @Transactional
+    public Long updateNotice(NoticeUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
+        /*UpdatePostDTO생성*/
+        Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
+        UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
+                /*dto에 있는 필드들*/
+                .postId(dto.getPostId())
+                .channelType(dto.getChannelType())
+                .title(dto.getTitle())
+                .contents(dto.getContents())
+                .files(dto.getFileList())
+                /*dto에 없는 필드들*/
+                .boardId(board.getId())
+                .returnType("email")
+                .returnNoAddress("sampleReturnAddress")
+                .questionType("order")
+                .createdAt("sampleCreatedAt")
+                .build();
+        /*updatePost()호출*/
+        return updatePost(updatePostDTO, token);
+    }
+
 }

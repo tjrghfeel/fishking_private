@@ -15,5 +15,6 @@ public class MyMenuPageDTO {
     private String nickName;//닉네임
     private Integer bookingCount;//예약건수
     private Integer couponCount;//쿠폰수
+    private Integer alertCount;//알림 수
 
 }

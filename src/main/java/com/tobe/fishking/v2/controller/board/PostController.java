@@ -28,7 +28,7 @@ public class PostController {
     private PostService postService;
 
     /*게시판별로 게시글 목록을 조회.
-    * 일단 '목록'출력만 할때 사용. Post에서 목록 출력할때 필요한 몇가지 정보들만을 담아서 반환해준다. */
+     * 일단 '목록'출력만 할때 사용. Post에서 목록 출력할때 필요한 몇가지 정보들만을 담아서 반환해준다. */
     /*@ApiOperation(value = "게시글 목록 조회", notes = "게시글의 '내용'을 제외한 게시글정보들이 페이지형식으로 반환됩니다")
     @GetMapping("/posts/{board_id}/{page}")
     public Page<PostListDTO> getPostListInPageForm(@PathVariable(value = "board_id") Long board_id, @PathVariable(value="page") int page)
@@ -39,14 +39,24 @@ public class PostController {
 
     /*FAQ 조회*/
     @ApiOperation(value = "FAQ조회", notes = "모든 FAQ를 조회합니다. \n" +
-            "- 글 목록 조회이지만 글 내용까지 한꺼번에 담겨서 반환된다. ")
+            "- 글 목록 조회이지만 글 내용까지 한꺼번에 담겨서 반환된다. \n" +
+            "- 필드 )\n" +
+            "   id : faq 글 id\n" +
+            "   questionType : 문의유형\n" +
+            "   title : faq 제목\n" +
+            "   contents : faq 내용\n")
     @GetMapping("/faq/{page}")
-    public Page<FAQDto> getFAQList(@PathVariable("page") int page){
+    public Page<FAQDto> getFAQList(@PathVariable("page") int page) {
         return postService.getFAQList(page);
     }
 
     /*1:1문의내역 리스트 조회*/
-    @ApiOperation(value = "1:1문의내역 리스트 조회", notes = "자신이 문의한 내역을 볼 수 있다. ")
+    @ApiOperation(value = "1:1문의내역 리스트 조회", notes = "자신이 문의한 내역을 볼 수 있다. \n" +
+            "- 필드 )\n" +
+            "   id : 문의글 id\n" +
+            "   questionType : 문의 유형\n" +
+            "   date : 문의일자\n" +
+            "   replied : 답변 여부 \n")
     @GetMapping("/qna/{page}")
     public Page<QnADtoForPage> getQnAList(
             @PathVariable("page") int page,
@@ -57,30 +67,52 @@ public class PostController {
     }
 
     /*1:1문의내역 상세보기*/
-    @ApiOperation(value = "1:1문의내역 상세보기")
+    @ApiOperation(value = "1:1문의내역 상세보기", notes = "" +
+            "- 한 1:1문의 건에 대해 상세 내용을 볼 수 있다. \n" +
+            "- 필드 )\n" +
+            "   id : 문의글 id\n" +
+            "   questionType : 문의유형 \n" +
+            "   replied : 답변여부\n" +
+            "   date : 문의일자\n" +
+            "   contents : 문의 내용\n" +
+            "   fileList : 문의글의 파일download url 리스트\n" +
+            "   replyContents : 답변글 내용\n" +
+            "   replyFileList : 답변글의 파일 download url 리스트\n")
     @GetMapping("/qna/detail")
-    public QnADetailDto getQnADetail(@RequestParam("postId") Long postId){
+    public QnADetailDto getQnADetail(@RequestParam("postId") Long postId) {
         return postService.getQnADetail(postId);
     }
 
     /*공지사항 리스트 보기*/
-    @ApiOperation(value = "공지사항 리스트 보기")
+    @ApiOperation(value = "공지사항 리스트 보기", notes = "" +
+            "- 공지사항 리스트 반환 api \n" +
+            "- 필드 ) \n" +
+            "   id : 공지사항 글 id\n" +
+            "   channelType : 공지사항 유형\n" +
+            "   title : 공지사항 제목\n" +
+            "   date : 공지사항 작성일\n")
     @GetMapping("/notice/{page}")
-    public Page<NoticeDtoForPage> getNoticeList(@PathVariable("page") int page){
+    public Page<NoticeDtoForPage> getNoticeList(@PathVariable("page") int page) {
         return postService.getNoticeList(page);
     }
 
     /*공지사항 상세보기*/
-    @ApiOperation(value = "공지사항 상세보기")
+    @ApiOperation(value = "공지사항 상세보기", notes = "" +
+            "- 공지사항 내용 상세보기 api \n" +
+            "- 필드 )\n" +
+            "   id : 공지사항 글 id\n" +
+            "   channelType : 공지사항 유형\n" +
+            "   title : 공지사항 제목\n" +
+            "   contents : 공지사항 내용 \n" +
+            "   fileList : 파일 download url 리스트")
     @GetMapping("/notice")
     public NoticeDetailDto getNoticeDetail(@RequestParam("postId") Long postId) throws ResourceNotFoundException {
         return postService.getNoticeDetail(postId);
     }
 
 
-
     ///////////////////////////
-    
+
     //게시글 하나 조회. FAQ, QNA, 공지사항 리스트 및 하나 조회에 대해 따로따로 위에 만들어놓음.
     /*@ApiOperation(value = "게시글 조회", notes = "게시글을 조회합니다")
     @GetMapping("/post/{id}")
@@ -91,7 +123,7 @@ public class PostController {
     }*/
 
     //게시글 저장. Post entity, FileEntity저장을 한다. 생성한 Post엔터티의 id를 반환.
-    @ApiOperation(value = "게시글 저장", notes = "1:1문의, FAQ, 공지사항 작성 api. \n" +
+   /* @ApiOperation(value = "게시글 저장", notes = "1:1문의, FAQ, 공지사항 작성 api. \n" +
             "- parnedId, tagName, secret은 nullable. \n  " +
             "- files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다.\n" +
             " ")
@@ -102,16 +134,59 @@ public class PostController {
     ) throws Exception {
         String sessionToken = request.getHeader("Authorization");
         //게시글 저장.
-        MultipartFile[] files = writePostDTO.getFiles();
-        Long postId = postService.writePost(writePostDTO, files, sessionToken);
+//        MultipartFile[] files = writePostDTO.getFiles();
+        Long postId = postService.writePost(writePostDTO, sessionToken);
 
         return postId;
+    }*/
+    /*1:1문의 글올리기*/
+    @ApiOperation(value = "1:1문의하기 글올리기",notes = "" +
+            "- 요청 필드 )\n" +
+            "   questionType : String / 문의 카테고리\n" +
+            "       ㄴ order : 예약결제\n" +
+            "       ㄴ cancel : 취소\n" +
+            "   contents : String / 문의 내용\n" +
+            "   returnType : String / 답변받을 방법\n" +
+            "       ㄴ email : email \n" +
+            "       ㄴ tel : 전화번호\n" +
+            "   returnAddress : String / 'returnType'에서 결정한 방법에 해당하는 값 입력. 이메일주소 또는 전화번호\n" +
+            "   fileList : Integer 배열 / 파일id 배열\n" +
+            "- 반환 ) 생성된 1:1문의글의 id ")
+    @PostMapping("/post/one2one")
+    public Long writeOne2one(@RequestBody QnaWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        return postService.writeOne2one(dto,token);
+    }
+    /*faq 글올리기*/
+    @ApiOperation(value = "FAQ 생성",notes = "" +
+            "- 요청 필드 )\n" +
+            "   questionType : String / 문의 카테고리\n" +
+            "       ㄴ order : 예약결제\n" +
+            "       ㄴ cancel : 취소\n" +
+            "   title : String / 제목\n" +
+            "   contents : String / 내용\n" +
+            "   fileList : Integer 배열 / 파일id 배열")
+    @PostMapping("/post/faq")
+    public Long writeFaq(@RequestBody FaqWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        return postService.writeFaq(dto,token);
+    }
+    /*공지사항 올리기*/
+    @ApiOperation(value = "공지사항 생성",notes = "" +
+            "- 요청필드 )\n" +
+            "   channelType : String / 공지 유형\n" +
+            "       ㄴ notice : 공지\n" +
+            "       ㄴ event : 이벤트\n" +
+            "   title : String / 제목\n" +
+            "   contents : String / 내용\n" +
+            "   fileList : Integer 배열 / 파일id 배열")
+    @PostMapping("/post/notice")
+    public Long writeNotice(@RequestBody NoticeWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        return postService.writeNotice(dto,token);
     }
 
     /*Post하나 업데이트.
-    * 반환값 : 업데이트된 Post id.
-    */
-    @ApiOperation(value = "게시물 수정", notes = "1:1문의, FAQ, 공지사항 수정 api. \n" +
+     * 반환값 : 업데이트된 Post id.
+     */
+    /*@ApiOperation(value = "게시물 수정", notes = "1:1문의, FAQ, 공지사항 수정 api. \n" +
             "- files필드는 MultipartFile[]로 이미지파일 리스트를 저장하는 필드이다." +
             "- 파일을 올리지 않을 경우, files필드에 빈 배열 객체를 넣으면 됩니다.  ")
     @PostMapping("/post/update")
@@ -120,10 +195,56 @@ public class PostController {
             HttpServletRequest request
     ) throws ResourceNotFoundException, IOException {
         String sessionToken = request.getHeader("Authorization");
-        MultipartFile[] files = postDTO.getFiles();
-        return postService.updatePost(postDTO, files,sessionToken);
+//        MultipartFile[] files = postDTO.getFiles();
+        return postService.updatePost(postDTO, sessionToken);
+    }*/
+    /*1:1문의 수정*/
+    @ApiOperation(value = "1:1문의하기 수정",notes = "" +
+            "- 요청 필드 )\n" +
+            "   postId : 1:1문의글의 id\n" +
+            "   questionType : String / 문의 카테고리\n" +
+            "       ㄴ order : 예약결제\n" +
+            "       ㄴ cancel : 취소\n" +
+            "   contents : String / 문의 내용\n" +
+            "   returnType : String / 답변받을 방법\n" +
+            "       ㄴ email : email \n" +
+            "       ㄴ tel : 전화번호\n" +
+            "   returnAddress : String / 'returnType'에서 결정한 방법에 해당하는 값 입력. 이메일주소 또는 전화번호\n" +
+            "   fileList : Integer 배열 / 파일id 배열\n" +
+            "- 반환 ) 생성된 1:1문의글의 id ")
+    @PutMapping("/post/one2one")
+    public Long updateOne2one(@RequestBody QnaUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        return postService.updateOne2one(dto,token);
     }
 
+    /*faq 수정*/
+    @ApiOperation(value = "FAQ 수정",notes = "" +
+            "- 요청 필드 )\n" +
+            "   postId : FAQ 글의 id\n" +
+            "   questionType : String / 문의 카테고리\n" +
+            "       ㄴ order : 예약결제\n" +
+            "       ㄴ cancel : 취소\n" +
+            "   title : String / 제목\n" +
+            "   contents : String / 내용\n" +
+            "   fileList : Integer 배열 / 파일id 배열")
+    @PutMapping("/post/faq")
+    public Long updateFaq(@RequestBody FaqUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        return postService.updateFaq(dto,token);
+    }
+    /*공지사항 수정*/
+    @ApiOperation(value = "공지사항 수정",notes = "" +
+            "- 요청필드 )\n" +
+            "   postId : 공지사항 글의 id\n" +
+            "   channelType : String / 공지 유형\n" +
+            "       ㄴ notice : 공지\n" +
+            "       ㄴ event : 이벤트\n" +
+            "   title : String / 제목\n" +
+            "   contents : String / 내용\n" +
+            "   fileList : Integer 배열 / 파일id 배열")
+    @PutMapping("/post/notice")
+    public Long updateNotice(@RequestBody NoticeUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        return postService.updateNotice(dto,token);
+    }
 
 
 }

@@ -48,31 +48,33 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
             value = "select " +
                     "g.id id, " +
                     "g.name name, " +
-                    "g.fishing_date fishingDate, " +
-                    "g.is_close isClose, " +
-                    "g.is_use isUse, " +
-                    "g.ship_start_time shipStartTime, " +
-                    "g.total_amount totalAmount, " +
-                    "g.total_avg_by_review totalAvgByReview, " +
-                    "p.palce_name placeName, " +
-                    "p.fish_spices_info fishSpicesInfo, " +
-                    "f.thumbnail_file thumbnailFile," +
+                    "(select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
+                    "   where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) fishSpicesInfo, " +
+                    "(select count(c.id) from goods_fish_species gs, common_code c " +
+                        "where gs.goods_id = g.id and gs.fish_species_id = c.id ) fishSpicesCount, " +
+                    "g.fishing_type fishingType, " +
+                    "s.address address, " +
+                    "s.distance distance, " +
+                    "g.total_amount price, " +
+//                    "g.fishing_date fishingDate, " +
+//                    "g.is_close isClose, " +
+//                    "g.is_use isUse, " +
+//                    "g.ship_start_time shipStartTime, " +
+                    "f.thumbnail_file thumbnailFile, " +
                     "f.file_url filePath " +
-                    "from goods as g, places as p, files as f, ship as s " +
+                    "from goods as g, files as f, ship as s " +
                     "where g.fishing_type = :fishingType " +
                     "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
-                    "   and g.goods_place_id = p.id " +
                     "   and g.goods_ship_id = s.id " +
                     "   and s.id = f.pid " +
                     "   and f.is_represent = 1 ",
             countQuery ="select g.id " +
-                        "from goods as g, places as p, files as f, ship as s " +
-                        "where g.fishing_type = :fishingType " +
-                        "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
-                        "   and g.goods_place_id = p.id " +
-                    "       and g.goods_ship_id = s.id " +
-                    "       and s.id = f.pid "+
-                    "       and f.is_represent = 1 ",
+                    "from goods as g, files as f, ship as s " +
+                    "where g.fishing_type = :fishingType " +
+                    "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
+                    "   and g.goods_ship_id = s.id " +
+                    "   and s.id = f.pid " +
+                    "   and f.is_represent = 1 ",
             nativeQuery = true
     )
     Page<TakeResponse> findTakeListAboutFishType(@Param("member") Member member, @Param("fishingType") int fishingType,Pageable pageable);

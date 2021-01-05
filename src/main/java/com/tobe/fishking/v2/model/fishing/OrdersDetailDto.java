@@ -35,7 +35,7 @@ public class OrdersDetailDto {
     private Integer goodsPrice;
     private Integer personnel;
     private String ordersNum;
-    private String nickName;
+    private String memberName;
     private String areaCode;
     private String localNumber;
     private String orderDate;

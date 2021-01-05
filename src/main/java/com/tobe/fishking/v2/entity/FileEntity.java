@@ -119,6 +119,16 @@ public class FileEntity extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint not null comment '수정자'")
     private Member modifiedBy;
 
+    /*미리보기용으로 임시저장(isDelete필드가 true인상태)된 파일을 일반저장(isDelete필드 false)으로 변경*/
+    public void saveTemporaryFile(Long pid){
+        this.pid = pid;
+        this.isDelete=false;
+    }
+
+    /*isRepresent필드 변경*/
+    public void setRepresent(Boolean value){this.isRepresent =value;}
+
+
 
 
 }

@@ -1,5 +1,12 @@
 package com.tobe.fishking.v2.service.admin;
 
+import com.tobe.fishking.v2.enums.board.QuestionType;
+import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.common.ChannelType;
+import com.tobe.fishking.v2.enums.common.CouponType;
+import com.tobe.fishking.v2.enums.fishing.DependentType;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.service.AES;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -50,11 +57,47 @@ public class MapperUtility {
     public String transDownloadUrl(String inputUrl){
         return env.getProperty("file.downloadUrl") + inputUrl;
     }
+    /*path와 file name을 합쳐서 도커환경인지 로컬환경인지에 따라 download url을 만들어주는 메소드 */
+    public String transDownLoadUrl(String filePath, String fileName){
+        return env.getProperty("file.downloadUrl") + "/" + filePath + "/" + fileName;
+    }
 
+    /*알림 메세지 내용 생성 메소드*/
+    public String makeAlertMessage(int alertType, String content){
+        String message = AlertType.values()[alertType].getMessage();
+        return message+" "+content;
+    }
 
     public String noName(String value1,String value2){
         String result = value1 + ","+value2;
         return result;
 
     }
+
+    /*enum값 변환 메소드*/
+    public String transEnumQuestionType(int ordinal){
+        return QuestionType.values()[ordinal].getValue();
+    }
+    public String transEnumChannelType(int ordinal){
+        return ChannelType.values()[ordinal].getValue();
+    }
+    public String transEnumCouponType(int ordinal){
+        return CouponType.values()[ordinal].getValue();
+    }
+    public String transEnumFishingType(int ordinal){
+        return FishingType.values()[ordinal].getValue();
+    }
+    public String transEnumDependentType(int ordinal){
+        return DependentType.values()[ordinal].getValue();
+    }
+    public String transEnumOrderStatus(int ordinal){
+        return OrderStatus.values()[ordinal].getValue();
+    }
+    public String transEnumAlertType(int ordinal){
+        return AlertType.values()[ordinal].getValue();
+    }
+    /*public String transEnum(int ordinal){
+        return .values()[ordinal].getValue();
+    }*/
+
 }

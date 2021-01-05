@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public interface NoticeDetailDto {
     Long getId();
+    @Value("#{@mapperUtility.transEnumChannelType(target.channelType)}")
     String getChannelType();
     String getTitle();
     LocalDateTime getDate();

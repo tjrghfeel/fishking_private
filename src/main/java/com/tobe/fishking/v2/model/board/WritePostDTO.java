@@ -17,32 +17,32 @@ import java.util.List;
 public class WritePostDTO {
     //not null필드.
     private Long boardId;
-    private Integer channelType;
-    private String title;
-    private String contents;
+    private String channelType;//
+    private String title;//
+    private String contents;//
 //    private String authorName;
-    private Integer returnType;
+    private String returnType;
     private String returnNoAddress;
     private String createdAt;
-    private Integer questionType;
+    private String questionType;
 
     //nullable 필드.
 //    private List<String> tagsName = new ArrayList<>();
     private Boolean isSecret;
     private Long parentId;
 
-    private MultipartFile[] files;
+    private Long[] files;//
 
     public WritePostDTO(Post post) {
         boardId = post.getBoard().getId();
-        channelType = post.getChannelType().ordinal();
+        channelType = post.getChannelType().getValue();
         title = post.getTitle();
         contents = post.getContents();
 //        authorName = post.getAuthorName();
-        returnType = post.getReturnType().ordinal();
+        returnType = post.getReturnType().getValue();
         returnNoAddress = post.getReturnNoAddress();
         createdAt = post.getCreatedAt();
-        questionType = post.getQuestionType().ordinal();
+        questionType = post.getQuestionType().getValue();
 
         //nullable 필드.
         isSecret = post.getIsSecret();

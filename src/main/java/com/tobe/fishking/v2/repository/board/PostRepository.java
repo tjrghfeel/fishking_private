@@ -69,14 +69,14 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             "   p.created_date date, " +
             "   p.contents contents, " +
             "   (select group_concat(f.stored_file separator ',') from files f " +
-            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) fileNameList, " +
+            "       where f.file_publish = 2 and f.pid = p.id group by f.pid) fileNameList, " +
             "   (select group_concat(f.file_url separator ',') from files f " +
-            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) filePathList, " +
+            "       where f.file_publish = 2 and f.pid = p.id group by f.pid) filePathList, " +
             "   rp.contents replyContents, " +
             "   (select group_concat(f2.thumbnail_file separator ',') from files f2 " +
-            "       where f2.file_publish = 4 and f2.pid = rp.id group by f2.pid) replyFileNameList, " +
+            "       where f2.file_publish = 2 and f2.pid = rp.id group by f2.pid) replyFileNameList, " +
             "   (select group_concat(f2.file_url separator ',') from files f2 " +
-            "       where f2.file_publish = 4 and f2.pid = rp.id group by f2.pid) replyFilePathList " +
+            "       where f2.file_publish = 2 and f2.pid = rp.id group by f2.pid) replyFilePathList " +
             "from post p left outer join post rp on rp.parent_id = p.id " +
             "where p.id = :postId ",
             countQuery = "select p.id " +
