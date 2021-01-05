@@ -37,7 +37,10 @@ export default inject()(
         this.setState(resolve);
       };
       onChangeImage = async (changeType) => {
+        console.log("onChangeImage -> " + changeType);
         if (this.profile.current?.files.length > 0) {
+          console.log(this.profile.current?.files);
+          console.log(this.profile.current?.files[0]);
           const file = this.profile.current?.files[0];
 
           const form = new FormData();
