@@ -67,6 +67,8 @@ export default inject("ViewStore")(
           pageable: { pageSize },
         } = await Http._get("/v2/api/take/0/" + page);
 
+        console.log(JSON.stringify(content));
+
         if (page === 0) {
           await this.setState({ list: content });
         } else {
