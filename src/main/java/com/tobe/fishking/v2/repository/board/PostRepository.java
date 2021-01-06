@@ -5,6 +5,7 @@ package com.tobe.fishking.v2.repository.board;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
+import com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage;
 import com.tobe.fishking.v2.model.board.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -187,4 +189,81 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     /*@Modifying
     @Query("update Post p set p.isActive = false where p.author = :member")
     int updateIsActiveByMember(@Param("member") Member member);*/
+
+    /*관리자페이지 > 공지사항,FAQ,1:1문의 조건 검색 메소드*/
+    @Query(
+            value = "select " +
+                    "   p.id id, " +
+                    "   p.board_id boardId, " +
+                    "   b.name boardname, " +
+                    "   p.parent_id parentId, " +
+                    "   p.channel_type channelType, " +
+                    "   p.question_type questionType, " +
+                    "   p.title title, " +
+                    "   p.author_name authorName, " +
+                    "   p.author_id authorId, " +
+                    "   p.is_secret isSecret, " +
+                    "   p.created_date createdDate, " +
+                    "   p.modified_date modifiedDate  " +
+                    "from post p join board b on (p.board_id = b.id) " +
+                    "where " +
+                    "   if(:postId is null,true,(p.id = :postId)) " +
+                    "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
+                    "   and if(:parentId is null,true,(p.parent_id = :parentId)) " +
+                    "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
+                    "   and if(:questionType is null,true,(p.question_type = :questionType)) " +
+                    "   and if(:title is null,true,(p.title like %:title%)) " +
+                    "   and if(:content is null,true,(p.contents like %:content)%) " +
+                    "   and if(:authorId is null,true,(p.author_id = :authorId)) " +
+                    "   and if(:authorName is null,true,(p.author_name = :authorName)) " +
+                    "   and if(:returnType is null,true,(p.return_type = :returnType)) " +
+                    "   and if(:returnNoAddress is null,true,(p.return_no_address like %:returnNoAddress%)) " +
+                    "   and if(:createdAt is null,true,(p.created_at = %:createdAt%)) " +
+                    "   and if(:isSecret is null,true,(p.is_secret = :isSecret)) " +
+                    "   and if(:createdDateStart is null,true,(p.created_date > :createdDateStart)) " +
+                    "   and if(:createdDateEnd is null,true,(p.created_date < :createdDateEnd)) " +
+                    "   and if(:modifiedDateStart is null,true,(p.modified_date > :modifiedDateStart)) " +
+                    "   and if(:modifiedDateEnd is null,true,(p.modified_date < :modifiedDateEnd)) ",
+            countQuery = "select p.id " +
+                    "from post p join board b on (p.board_id = b.id) " +
+                    "where " +
+                    "   if(:postId is null,true,(p.id = :postId)) " +
+                    "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
+                    "   and if(:parentId is null,true,(p.parent_id = :parentId)) " +
+                    "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
+                    "   and if(:questionType is null,true,(p.question_type = :questionType)) " +
+                    "   and if(:title is null,true,(p.title like %:title%)) " +
+                    "   and if(:content is null,true,(p.contents like %:content)%) " +
+                    "   and if(:authorId is null,true,(p.author_id = :authorId)) " +
+                    "   and if(:authorName is null,true,(p.author_name = :authorName)) " +
+                    "   and if(:returnType is null,true,(p.return_type = :returnType)) " +
+                    "   and if(:returnNoAddress is null,true,(p.return_no_address like %:returnNoAddress%)) " +
+                    "   and if(:createdAt is null,true,(p.created_at = %:createdAt%)) " +
+                    "   and if(:isSecret is null,true,(p.is_secret = :isSecret)) " +
+                    "   and if(:createdDateStart is null,true,(p.created_date > :createdDateStart)) " +
+                    "   and if(:createdDateEnd is null,true,(p.created_date < :createdDateEnd)) " +
+                    "   and if(:modifiedDateStart is null,true,(p.modified_date > :modifiedDateStart)) " +
+                    "   and if(:modifiedDateEnd is null,true,(p.modified_date < :modifiedDateEnd)) ",
+            nativeQuery = true
+    )
+    Page<PostManageDtoForPage> findAllByConditions(
+            @Param("postId") Long postId,
+            @Param("boardId") Long boardId,
+            @Param("parentId") Long parentId,
+            @Param("channelType") Integer channelType,
+            @Param("questionType") Integer questionType,
+            @Param("title") String title,
+            @Param("content") String content,
+            @Param("authorId") Long authorId,
+            @Param("authorName") String authorName,
+            @Param("returnType") Integer returnType,
+            @Param("returnNoAddress") String returnNoAddress,
+            @Param("createdAt") String createdAt,
+            @Param("isSecret") Boolean isSecret,
+            @Param("createdDateStart") LocalDate createdDateStart,
+            @Param("createdDateEnd") LocalDate createdDateEnd,
+            @Param("modifiedDateStart") LocalDate modifiedDateStart,
+            @Param("modifiedDateEnd") LocalDate modifiedDateEnd,
+            Pageable pageable
+    );
 }

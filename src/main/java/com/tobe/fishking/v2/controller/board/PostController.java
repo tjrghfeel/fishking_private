@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -245,6 +246,17 @@ public class PostController {
     public Long updateNotice(@RequestBody NoticeUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
         return postService.updateNotice(dto,token);
     }
+
+    /*글 삭제하기*/
+    @ApiOperation(value = "공지사항, FAQ, 1:1문의 삭제",notes = "" +
+            "- 관리자 등급이 아닌 경우 공지사항,FAQ를 삭제할 수 없다. \n" +
+            "- 요청 필드 )\n" +
+            "   ")
+    @DeleteMapping("/post")
+    public boolean deletePost(@RequestBody DeletePostDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+        return postService.deletePost(dto,token);
+    }
+
 
 
 }

@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.board.Tag;
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.board.QuestionType;
@@ -428,4 +429,24 @@ public class PostService {
         return updatePost(updatePostDTO, token);
     }
 
+    /*공지사항, FAQ, 1:1문의 삭제*/
+    @Transactional
+    public boolean deletePost(DeletePostDto dto, String token) throws ResourceNotFoundException {
+        /*토큰에 해당하는 회원 확인*/
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Role role = member.getRoles();
+        Post post = postRepository.findById(dto.getPostId())
+                .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+dto.getPostId()));
+
+        /*현재 회원이 관리자거나 현재회원이 작성한 글이면 삭제가능. */
+        if(role == Role.admin || post.getAuthor() == member){
+            postRepository.delete(post);
+            return true;
+        }
+        /*아니면 삭제 불가*/
+        else {
+            throw new RuntimeException("삭제할 수 없는 게시글 입니다.");
+        }
+    }
 }
