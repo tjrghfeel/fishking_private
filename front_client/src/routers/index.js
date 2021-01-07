@@ -13,6 +13,8 @@ import SearchRouter from "./SearchRouter";
 import DocRouter from "./DocRouter";
 import CommonRouter from "./CommonRouter";
 
+import AlertModal from "../components/modals/AlertModal";
+
 export default inject(
   "AppStore",
   "DOMStore"
@@ -123,6 +125,7 @@ export default inject(
           {/** 리디렉트 */}
           <Redirect from={`*`} to={`/main/home`} />
         </Switch>
+        <AlertModal />
       </BrowserRouter>
     );
   })

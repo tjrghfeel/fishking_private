@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import SelectModal from "../../components/modals/SelectModal";
 import Http from "../../Http";
 
-export default inject()(
+export default inject("AlertStore")(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -61,6 +61,7 @@ export default inject()(
               );
             }
             if (resolve) {
+              this.props.AlertStore.openAlert("알림", "변경되었습니다.");
               this.loadPageData();
             }
           }
@@ -76,6 +77,7 @@ export default inject()(
             "/v2/api/profileManage/noProfileImage"
           );
           if (resolve) {
+            this.props.AlertStore.openAlert("알림", "변경되었습니다.");
             this.loadPageData();
           }
         }

@@ -49,8 +49,6 @@ export default inject("DataStore")(
           pageable: { pageSize },
         } = await Http._get("/v2/api/downloadableCouponList/" + page);
 
-        console.log(JSON.stringify(content));
-
         if (page === 0) {
           await this.setState({ list: content });
         } else {
@@ -115,18 +113,20 @@ export default inject("DataStore")(
             </div>
 
             {/** 하단버튼 */}
-            <div className="fixed-bottom">
-              <div className="row no-gutters">
-                <div className="col-12">
-                  <a
-                    onClick={this.downloadAllCoupon}
-                    className="btn btn-primary btn-lg btn-block"
-                  >
-                    전체 다운받기
-                  </a>
+            {this.state.list.length > 0 && (
+              <div className="fixed-bottom">
+                <div className="row no-gutters">
+                  <div className="col-12">
+                    <a
+                      onClick={this.downloadAllCoupon}
+                      className="btn btn-primary btn-lg btn-block"
+                    >
+                      전체 다운받기
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </>
         );
       }

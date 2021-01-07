@@ -52,7 +52,9 @@ export default inject("DataStore")(
         });
 
         if (resolve) {
-          history.goBack();
+          this.props.AlertStore.openAlert("알림", "등록되었습니다.", () => {
+            history.goBack();
+          });
         }
       };
       /********** ********** ********** ********** **********/

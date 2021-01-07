@@ -3,7 +3,10 @@ import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
 import Http from "../../Http";
 
-export default inject("DataStore")(
+export default inject(
+  "DataStore",
+  "AlertStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -38,7 +41,9 @@ export default inject("DataStore")(
           email,
         });
         if (resolve) {
-          history.goBack();
+          this.props.AlertStore.openAlert("알림", "등록되었습니다.", () => {
+            history.goBack();
+          });
         }
       };
       /********** ********** ********** ********** **********/

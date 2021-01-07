@@ -5,7 +5,10 @@ import CsTabs from "../../components/layouts/CsTabs";
 import CsQnaTabs from "../../components/layouts/CsQnaTabs";
 import Http from "../../Http";
 
-export default inject("DataStore")(
+export default inject(
+  "DataStore",
+  "AlertStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -71,7 +74,7 @@ export default inject("DataStore")(
         }
 
         const {
-          DataStore: { isValidMobile },
+          DataStore: { isValidMobile, isValidEmail },
         } = this.props;
 
         const questionType = this.questionType.current?.selectedOptions[0]
@@ -95,7 +98,7 @@ export default inject("DataStore")(
         } else {
           this.contents.current.classList.remove("is-invalid");
         }
-        if (returnType === 1 && !isValidMobile(returnAddress)) {
+        if (!isValidMobile(returnAddress) || !isValidEmail(returnAddress)) {
           this.returnAddress.current.classList.add("is-invalid");
           return;
         } else {
@@ -111,8 +114,14 @@ export default inject("DataStore")(
         });
 
         if (resolve) {
-          const { history } = this.props;
-          history.push(`/common/cs/qna/list`);
+          this.props.AlertStore.openAlert(
+            "알림",
+            "문의 등록되었습니다.",
+            () => {
+              const { history } = this.props;
+              history.push(`/common/cs/qna/list`);
+            }
+          );
         }
       };
       /********** ********** ********** ********** **********/
