@@ -29,28 +29,18 @@ export default inject()(
               >
                 <div className="row no-gutters d-flex align-items-center">
                   <div className="coupon-img">
-                    <img
-                      src={
-                        couponImage
-                          ? couponImage
-                          : couponType === "amount"
-                          ? "/assets/img/svg/img-coupon1.svg"
-                          : "/assets/img/svg/img-coupon2.svg"
-                      }
-                      alt=""
-                      className="icon-md"
-                    />
+                    <img src={couponImage} alt="" className="icon-md" />
                   </div>
                   <div className="coupon-text">
                     <small>{couponName}</small>
                     <h5>
                       <span className="red">
-                        {couponType === "amount" && (
+                        {couponType === "정액" && (
                           <React.Fragment>
                             {Intl.NumberFormat().format(saleValues)} 원
                           </React.Fragment>
                         )}
-                        {couponType === "rate" && (
+                        {couponType !== "정액" && (
                           <React.Fragment>
                             {Intl.NumberFormat().format(saleValues)} %
                           </React.Fragment>

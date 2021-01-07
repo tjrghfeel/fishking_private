@@ -4,7 +4,7 @@ import Navigation from "../../components/layouts/Navigation";
 import CommonCouponAvailableListItem from "../../components/item/CommonCouponAvailableListItem";
 import Http from "../../Http";
 
-export default inject()(
+export default inject("DataStore")(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -49,6 +49,8 @@ export default inject()(
           pageable: { pageSize },
         } = await Http._get("/v2/api/downloadableCouponList/" + page);
 
+        console.log(JSON.stringify(content));
+
         if (page === 0) {
           await this.setState({ list: content });
         } else {
@@ -70,13 +72,26 @@ export default inject()(
         });
 
         if (resolve) {
-          this.loadPageData();
+          const {
+            DataStore: { updateItemOfArray },
+          } = this.props;
+          const list = updateItemOfArray(this.state.list, "id", item.id, {
+            isUsable: false,
+          });
+          await this.setState({ list });
         }
       };
 
       downloadAllCoupon = async () => {
-        await Http._post("/v2/api/downloadAllCoupon");
-        this.loadPageData();
+        const resolve = await Http._post("/v2/api/downloadAllCoupon");
+        if (resolve) {
+          const list = [];
+          for (let item of this.state.list) {
+            item.isUsable = false;
+            list.push(item);
+          }
+          await this.setState({ list });
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */

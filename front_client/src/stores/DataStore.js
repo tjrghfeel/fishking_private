@@ -80,6 +80,28 @@ const DataStore = new (class {
     const after = list.slice(index + 1, list.length);
     return before.concat(after);
   };
+  // --> array 로부터 item 변경 후 리스트 반환하기 : keyData = id 가 되는 키네임, keyValue = 키밸류, updatedData = 변경데이터
+  updateItemOfArray = (
+    list = [],
+    keyData = "",
+    keyValue = "",
+    updateData = {}
+  ) => {
+    let index = -1;
+    for (let i = 0; i < list.length; i++) {
+      if (list[i][keyData] === keyValue) {
+        index = i;
+        break;
+      }
+    }
+    const updatedItem = {
+      ...list[index],
+      ...updateData,
+    };
+    const before = list.slice(0, index);
+    const after = list.slice(index + 1, list.length);
+    return before.concat(updatedItem).concat(after);
+  };
   // --> n분전 포맷 :: 포맷 이외의 경우 기준 날짜 반환
   latestTimeFormat = (dateString) => {
     try {
