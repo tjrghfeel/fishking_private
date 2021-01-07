@@ -4,15 +4,6 @@ import { inject, observer } from "mobx-react";
 export default inject()(
   observer(
     ({ data: { id, title, questionType, contents }, expend = false }) => {
-      let questionTypeName = "";
-      switch (questionType) {
-        case "0":
-          questionTypeName = "예약결제";
-          break;
-        case "1":
-          questionTypeName = "취소";
-          break;
-      }
       return (
         <div className="card">
           <div className="card-header" id={"heading" + id}>
@@ -24,7 +15,7 @@ export default inject()(
                 aria-expanded={expend ? "true" : "false"}
                 aria-controls={"collapse" + id}
               >
-                [{questionTypeName}] {title}
+                [{questionType}] {title}
               </a>
             </h2>
           </div>

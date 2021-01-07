@@ -59,12 +59,12 @@ export default inject()(
             <div className="padding text-center pt-4">
               {couponName}
               <h2 className="red">
-                {couponType === "rate" && (
+                {couponType === "정률" && (
                   <React.Fragment>
                     {Intl.NumberFormat().format(saleValues)} % 할인
                   </React.Fragment>
                 )}
-                {couponType === "amount" && (
+                {couponType === "정액" && (
                   <React.Fragment>
                     {Intl.NumberFormat().format(saleValues)} 원 할인
                   </React.Fragment>

@@ -17,7 +17,7 @@ export default inject("DataStore")(
         this.state = {
           questionTypeOptions: [], // 카테고리 옵션
           contents: "",
-          returnType: 0,
+          returnType: "email",
           returnAddress: "",
           fileList: [],
         };
@@ -150,7 +150,7 @@ export default inject("DataStore")(
                         >
                           <option value="">카테고리를 선택하세요</option>
                           {this.state.questionTypeOptions.map((data, index) => (
-                            <option key={index} value={index}>
+                            <option key={index} value={data.key}>
                               {data.value}
                             </option>
                           ))}
@@ -182,10 +182,10 @@ export default inject("DataStore")(
                         type="radio"
                         className="add-contrast"
                         data-role="collar"
-                        defaultChecked={this.state.returnType === 1}
+                        defaultChecked={this.state.returnType === "tel"}
                         onChange={(e) => {
                           if (e.target.checked)
-                            this.setState({ returnType: 1 });
+                            this.setState({ returnType: "tel" });
                         }}
                       />
                       <span className="control-indicator"></span>
@@ -197,28 +197,25 @@ export default inject("DataStore")(
                         type="radio"
                         className="add-contrast"
                         data-role="collar"
-                        defaultChecked={this.state.returnType === 0}
+                        defaultChecked={this.state.returnType === "email"}
                         onChange={(e) => {
                           if (e.target.checked)
-                            this.setState({ returnType: 0 });
+                            this.setState({ returnType: "email" });
                         }}
                       />
                       <span className="control-indicator"></span>
                       <span className="control-text">이메일</span>
                     </label>
 
-                    <div
-                      className="form-group"
-                      style={{
-                        display: this.state.returnType === 1 ? "block" : "none",
-                      }}
-                    >
+                    <div className="form-group">
                       <div className="input-group">
                         <label
                           className="input-group-addon"
                           htmlFor="inputRocal"
                         >
-                          연락처<strong className="required"></strong>
+                          {this.state.returnType === "email" && "이메일"}
+                          {this.state.returnType === "tel" && "연락처"}
+                          <strong className="required"></strong>
                         </label>
                         <input
                           ref={this.returnAddress}

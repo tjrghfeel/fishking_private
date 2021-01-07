@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
 import Http from "../../Http";
 
-export default inject("DataStore")(
+export default inject()(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -18,15 +18,9 @@ export default inject("DataStore")(
           match: {
             params: { id: postId },
           },
-          DataStore: { getEnumValueByIndex },
         } = this.props;
         const resolve = await Http._get("/v2/api/notice", { postId });
-
-        const channelEnum = await getEnumValueByIndex(
-          "channelType",
-          resolve.channelType
-        );
-        await this.setState({ ...resolve, channelTypeName: channelEnum.value });
+        await this.setState(resolve);
       }
 
       /********** ********** ********** ********** **********/
@@ -48,11 +42,7 @@ export default inject("DataStore")(
                     <div className="col-12 text-center">
                       <h5 className="mb-1">
                         <strong className="text-primary">
-                          {this.state.channelTypeName && (
-                            <React.Fragment>
-                              [{this.state.channelTypeName}]
-                            </React.Fragment>
-                          )}{" "}
+                          [{this.state.channelType}]{" "}
                         </strong>{" "}
                         {this.state.title}
                       </h5>

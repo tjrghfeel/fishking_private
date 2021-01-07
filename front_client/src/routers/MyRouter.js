@@ -55,13 +55,12 @@ export default inject()(
           />
           {/** 마이 > 찜한업체 */}
           <Route exact path={`${match.url}/zzim`} component={MyZzimView} />
-          {/** 마이 > 찜한업체 > 선상 */}
+          {/** 마이 > 찜한업체 > 선상|갯바위 */}
           <Route
             exact
             path={`${match.url}/zzim/boat`}
             component={MyZzimBoatView}
           />
-          {/** 마이 > 찜한업체 > 갯바위 */}
           <Route
             exact
             path={`${match.url}/zzim/rock`}

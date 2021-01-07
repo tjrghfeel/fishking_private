@@ -5,7 +5,10 @@ import MyZzimTabs from "../../components/layouts/MyZzimTabs";
 import MyZzimListItem from "../../components/item/MyZzimListItem";
 import Http from "../../Http";
 
-export default inject("ViewStore")(
+export default inject(
+  "ViewStore",
+  "DataStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -15,6 +18,7 @@ export default inject("ViewStore")(
           isEnd: false,
           page: 0,
           list: [],
+          fishingType: "sealocks",
         };
       }
       /********** ********** ********** ********** **********/
@@ -62,10 +66,13 @@ export default inject("ViewStore")(
         else if (page === 0) await this.setState({ isEnd: false });
 
         await this.setState({ isPending: true, page });
+
         const {
           content,
           pageable: { pageSize },
-        } = await Http._get("/v2/api/take/1/" + page);
+        } = await Http._get(
+          "/v2/api/take/" + this.state.fishingType + "/" + page
+        );
 
         if (page === 0) {
           await this.setState({ list: content });
@@ -81,7 +88,22 @@ export default inject("ViewStore")(
 
         await this.setState({ isPending: false });
       };
-
+      onDelete = async (item) => {
+        const resolve = await Http._delete("/v2/api/take", {
+          takeId: item.takeId,
+        });
+        if (resolve) {
+          const {
+            DataStore: { removeItemOfArray },
+          } = this.props;
+          const list = removeItemOfArray(
+            this.state.list,
+            "takeId",
+            item.takeId
+          );
+          await this.setState({ list });
+        }
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -100,7 +122,11 @@ export default inject("ViewStore")(
             <div className="container nopadding mt-3 mb-0">
               {this.state.list.length > 0 &&
                 this.state.list.map((data, index) => (
-                  <MyZzimListItem key={index} data={data} />
+                  <MyZzimListItem
+                    key={index}
+                    data={data}
+                    onDelete={this.onDelete}
+                  />
                 ))}
             </div>
           </>

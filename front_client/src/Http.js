@@ -68,7 +68,7 @@ export default (() => {
   const _delete = (url, params, headers) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await request(url, "DELETE", headers, params, null);
+        const response = await request(url, "DELETE", headers, null, params);
         resolve(response);
       } catch (err) {
         reject(err);

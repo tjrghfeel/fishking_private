@@ -4,31 +4,22 @@ import { inject, observer } from "mobx-react";
 export default inject()(
   observer(
     ({
-      data: { date, questionType = "0", replied = false },
+      data: { createdDate, questionType, replied = false },
       data,
       onClick,
     }) => {
-      let questionTypeName = "";
-      switch (questionType) {
-        case "0":
-          questionTypeName = "예약결제";
-          break;
-        case "1":
-          questionTypeName = "취소";
-          break;
-      }
       return (
         <>
           <div className="container nopadding mt-3">
             <a onClick={() => (onClick ? onClick(data) : null)}>
               <div className="row no-gutters align-items-center">
                 <div className="col-6 text-left">
-                  <strong>{questionTypeName}</strong>
+                  <strong>{questionType}</strong>
                   <br />
                   <small className="grey">
-                    {date && (
+                    {createdDate && (
                       <React.Fragment>
-                        {date.substr(0, 10).replace(/[-]/g, ".")}
+                        {createdDate.substr(0, 10).replace(/[-]/g, ".")}
                       </React.Fragment>
                     )}
                   </small>
