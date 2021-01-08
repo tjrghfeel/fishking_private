@@ -8,9 +8,11 @@ import DocPolicyPrivacyView from "../views/doc/DocPolicyPrivacyView";
 import DocPolicyCancelView from "../views/doc/DocPolicyCancelView";
 import DocPolicyLbsView from "../views/doc/DocPolicyLbsView";
 import DocPolicyAgreeView from "../views/doc/DocPolicyAgreeView";
+import ViewStore from "../stores/ViewStore";
 
-export default inject()(
-  observer(({ match }) => {
+export default inject("ViewStore")(
+  observer(({ match, history }) => {
+    ViewStore.setHistory(history);
     return (
       <>
         <Switch>

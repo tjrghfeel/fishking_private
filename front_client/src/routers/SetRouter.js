@@ -11,9 +11,11 @@ import SetProfilePasswordView from "../views/set/SetProfilePasswordView";
 import SetAlarmView from "../views/set/SetAlarmView";
 import SetVodView from "../views/set/SetVodView";
 import BlankPage from "../views/BlankPage";
+import ViewStore from "../stores/ViewStore";
 
-export default inject()(
-  observer(({ match }) => {
+export default inject("ViewStore")(
+  observer(({ match, history }) => {
+    ViewStore.setHistory(history);
     return (
       <>
         <Switch>

@@ -3,10 +3,12 @@ import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
 import ConfirmModal from "../../components/modals/ConfirmModal";
 import Http from "../../Http";
+import MainBottomTabs from "../../components/layouts/MainBottomTabs";
 
 export default inject(
   "AppStore",
-  "NativeStore"
+  "NativeStore",
+  "ViewStore"
 )(
   observer(
     class extends React.Component {
@@ -33,7 +35,7 @@ export default inject(
       /********** ********** ********** ********** **********/
       render() {
         const {
-          history,
+          ViewStore: history,
           AppStore: { loggedIn },
           NativeStore: { linking },
         } = this.props;
@@ -328,6 +330,8 @@ export default inject(
                 (점심시간 12시 ~ 13시 30분)
               </p>
             </ConfirmModal>
+
+            <MainBottomTabs activedIndex={4} />
           </>
         );
       }

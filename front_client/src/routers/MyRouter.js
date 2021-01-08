@@ -13,9 +13,11 @@ import MyStoryReviewView from "../views/my/MyStoryReviewView";
 import MyZzimView from "../views/my/MyZzimView";
 import MyZzimBoatView from "../views/my/MyZzimBoatView";
 import MyZzimRockView from "../views/my/MyZzimRockView";
+import ViewStore from "../stores/ViewStore";
 
-export default inject()(
-  observer(({ match }) => {
+export default inject("ViewStore")(
+  observer(({ match, history }) => {
+    ViewStore.setHistory(history);
     return (
       <>
         <Switch>

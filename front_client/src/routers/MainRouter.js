@@ -2,13 +2,14 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { Switch, Route } from "react-router-dom";
 
-import MainBottomTabs from "../components/layouts/MainBottomTabs";
-
 import MainMyPage from "../views/main/MainMyView";
 import BlankPage from "../views/BlankPage";
+import ViewStore from "../stores/ViewStore";
+import MainBottomTabs from "../components/layouts/MainBottomTabs";
 
-export default inject()(
-  observer(({ match }) => {
+export default inject("ViewStore")(
+  observer(({ match, history }) => {
+    ViewStore.setHistory(history);
     return (
       <>
         <Switch>
@@ -16,7 +17,12 @@ export default inject()(
           <Route
             exact
             path={`${match.url}/home`}
-            component={() => <div>Home</div>}
+            component={() => (
+              <>
+                <div>Home</div>
+                <MainBottomTabs activedIndex={0} />
+              </>
+            )}
           />
           {/** 메인 > 선상 */}
           <Route exact path={`${match.url}/boat`} component={BlankPage} />
@@ -27,7 +33,6 @@ export default inject()(
           {/** 메인 > 마이메뉴 */}
           <Route exact path={`${match.url}/my`} component={MainMyPage} />
         </Switch>
-        <MainBottomTabs />
       </>
     );
   })

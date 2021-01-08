@@ -3,7 +3,10 @@ import { inject, observer } from "mobx-react";
 import SelectModal from "../../components/modals/SelectModal";
 import Http from "../../Http";
 
-export default inject("AlertStore")(
+export default inject(
+  "AlertStore",
+  "ViewStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -93,7 +96,7 @@ export default inject("AlertStore")(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { history } = this.props;
+        const { ViewStore: history } = this.props;
         return (
           <>
             {/** Top */}

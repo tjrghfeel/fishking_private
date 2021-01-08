@@ -16,9 +16,11 @@ import CommonCsQnaListView from "../views/common/CommonCsQnaListView";
 import CommonCsQnaDetailView from "../views/common/CommonCsQnaDetailView";
 import CommonNoticeView from "../views/common/CommonNoticeView";
 import CommonNoticeDetailView from "../views/common/CommonNoticeDetailView";
+import ViewStore from "../stores/ViewStore";
 
-export default inject()(
-  observer(({ match }) => {
+export default inject("ViewStore")(
+  observer(({ match, history }) => {
+    ViewStore.setHistory(history);
     return (
       <>
         <Switch>

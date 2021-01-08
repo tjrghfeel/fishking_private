@@ -17,13 +17,22 @@ import AlertModal from "../components/modals/AlertModal";
 
 export default inject(
   "AppStore",
-  "DOMStore"
+  "DOMStore",
+  "ViewStore"
 )(
-  observer(({ AppStore, DOMStore }) => {
+  observer(({ AppStore, DOMStore, ViewStore }) => {
     const { loadAppData } = AppStore;
     loadAppData();
     window.addEventListener("message", (e) => {
-      console.log("window event : " + JSON.stringify(e));
+      if (e.isTrusted) {
+        const { type = null, method = null } = e.data || {};
+        if (type === "navigate") {
+          if (method === "goBack") {
+            console.log("goBack");
+            ViewStore.goBack();
+          }
+        }
+      }
     });
     /********** ********** ********** ********** **********/
     /** functions */
@@ -108,7 +117,7 @@ export default inject(
           {/** 선상 */}
           <Route path={`/boat`} component={BoatRouter} />
           {/** 갯바위 */}
-          <Route path={`/rock`} component={MainRouter} />
+          <Route path={`/rock`} component={BoatRouter} />
           {/** 어복스토리 */}
           <Route path={`/story`} component={StoryRouter} />
           {/** 마이메뉴 */}

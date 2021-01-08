@@ -2,7 +2,10 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
 
-export default inject("AppStore")(
+export default inject(
+  "AppStore",
+  "ViewStore"
+)(
   observer(
     class extends React.Component {
       /********** ********** ********** ********** **********/
@@ -15,7 +18,7 @@ export default inject("AppStore")(
       render() {
         const {
           AppStore: { loggedIn, version },
-          history,
+          ViewStore: history,
         } = this.props;
         return (
           <>

@@ -7,10 +7,20 @@ const ViewStore = new (class {
   /********** ********** ********** ********** **********/
   /** observable */
   /********** ********** ********** ********** **********/
-
+  history = null;
   /********** ********** ********** ********** **********/
   /** action */
   /********** ********** ********** ********** **********/
+  setHistory = (history) => {
+    this.history = history;
+  };
+  push = (pathname) => {
+    this.history.push(pathname);
+    // window.location.href = pathname;
+  };
+  goBack = () => {
+    this.history.goBack();
+  };
   saveState = async (data = {}) => {
     const { pageXOffset, pageYOffset, location } = window;
     const { state: prevState = {} } = window.history;

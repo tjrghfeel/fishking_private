@@ -3,9 +3,11 @@ import { inject, observer } from "mobx-react";
 import { Switch, Route } from "react-router-dom";
 
 import BlankPage from "../views/BlankPage";
+import ViewStore from "../stores/ViewStore";
 
-export default inject()(
-  observer(({ match }) => {
+export default inject("ViewStore")(
+  observer(({ match, history }) => {
+    ViewStore.setHistory(history);
     return (
       <>
         <Switch>
