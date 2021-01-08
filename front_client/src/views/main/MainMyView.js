@@ -150,7 +150,9 @@ export default inject(
                       else history.push(`/common/login`);
                     }}
                   >
-                    <strong className="text-primary large">0</strong>
+                    <strong className="text-primary large">
+                      {Intl.NumberFormat().format(this.state.alertCount || 0)}
+                    </strong>
                     <small className="text-secondary">건</small>
                     <img
                       src="/assets/img/svg/arrow-grey.svg"

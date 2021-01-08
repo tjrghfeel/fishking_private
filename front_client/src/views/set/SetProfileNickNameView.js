@@ -41,7 +41,7 @@ export default inject(
           nickName,
         });
         if (resolve) {
-          this.props.AlertStore.openAlert("알림", "변경되었습니다.", () => {
+          this.props.AlertStore.openAlert("변경되었습니다.", "알림", () => {
             history.goBack();
           });
         }

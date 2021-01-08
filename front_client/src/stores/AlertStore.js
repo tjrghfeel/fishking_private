@@ -15,8 +15,8 @@ const AlertStore = new (class {
   /********** ********** ********** ********** **********/
   /** action */
   /********** ********** ********** ********** **********/
-  openAlert = (title = "알림", body = "", onClose = null) => {
-    this.title = title;
+  openAlert = (body, title = "알림", onClose = null) => {
+    this.title = title || "알림";
     this.body = body;
     this.onClose = onClose;
     $("#alertModal").modal("show");

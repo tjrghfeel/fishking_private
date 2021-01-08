@@ -1,8 +1,12 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Navigation from "../../components/layouts/Navigation";
+import Http from "../../Http";
 
-export default inject("DataStore")(
+export default inject(
+  "DataStore",
+  "AlertStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -38,11 +42,13 @@ export default inject("DataStore")(
         const checked2 = this.stage1_chk2.current?.checked;
         const checked3 = this.stage1_chk3.current?.checked;
 
-        if (checked1 && checked2 && checked3) {
+        if (checked1 && checked2) {
           this.setState({ stage: 2 });
+        } else {
+          this.props.AlertStore.openAlert("필수약관에 동의해주세요.");
         }
       };
-      stage2_submit = () => {
+      stage2_submit = async () => {
         const { email, password1, password2, nickName } = this.state;
         const {
           DataStore: { isValidEmail, isValidPassword, isValidNickName },
@@ -72,6 +78,17 @@ export default inject("DataStore")(
         } else {
           this.nickName.current?.classList.remove("is-invalid");
         }
+
+        // -> 아이디 중복 확인
+        const resolveId = await Http._get("/v2/api/checkUidDup", {
+          uid: email,
+        });
+        console.log(JSON.stringify(resolveId));
+        if (resolveId !== 0) {
+          this.props.AlertStore.openAlert("중복된 아이디 입니다.");
+          return;
+        }
+        // -> 닉네임 중복 확인
 
         this.setState({ stage: 3 });
       };
