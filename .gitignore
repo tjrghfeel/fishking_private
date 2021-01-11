@@ -10,6 +10,7 @@ react_client/node_modules
 react_native_client/node_modules
 
 front_client/node_modules
+webapplication/node_modules
 
 ### STS ###
 .apt_generated
