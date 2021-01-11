@@ -4,6 +4,7 @@ import NativeStore from "./NativeStore";
 import DataStore from "./DataStore";
 import ViewStore from "./ViewStore";
 import AlertStore from "./AlertStore";
+import DialogStore from "./DialogStore";
 
 export const Stores = {
   DOMStore,
@@ -12,4 +13,5 @@ export const Stores = {
   DataStore,
   ViewStore,
   AlertStore,
+  DialogStore,
 };

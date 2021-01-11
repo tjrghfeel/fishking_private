@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Navigation from "../../components/layouts/Navigation";
+import Navigation from "../../components/common/layout/Navigation";
 
 export default inject("NativeStore")(
   observer(({ NativeStore }) => {

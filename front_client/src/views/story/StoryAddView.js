@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Navigation from "../../components/layouts/Navigation";
+import Navigation from "../../components/common/layout/Navigation";
 import SelectFishModal from "../../components/modals/SelectFishModal";
 import SelectDateModal from "../../components/modals/SelectDateModal";
 import SelectTideModal from "../../components/modals/SelectTideModal";

@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Navigation from "../../components/layouts/Navigation";
+import Navigation from "../../components/common/layout/Navigation";
 import MyCouponListItem from "../../components/item/MyCouponListItem";
 import Http from "../../Http";
 import AddCouponModal from "../../components/modals/AddCouponModal";

@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Navigation from "../../components/layouts/Navigation";
+import Navigation from "../../components/common/layout/Navigation";
 import MyAlarmListItem from "../../components/item/MyAlarmListItem";
 import Http from "../../Http";
 

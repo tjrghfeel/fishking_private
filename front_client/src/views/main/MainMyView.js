@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Navigation from "../../components/layouts/Navigation";
+import Navigation from "../../components/common/layout/Navigation";
 import ConfirmModal from "../../components/modals/ConfirmModal";
 import Http from "../../Http";
 import MainBottomTabs from "../../components/layouts/MainBottomTabs";
