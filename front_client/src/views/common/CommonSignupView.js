@@ -80,7 +80,7 @@ export default inject(
         }
 
         // -> 아이디 중복 확인
-        const resolveId = await Http._get("/v2/api/checkUidDup", {
+        const resolveId = await Http._get("/v2/api/signUp/checkUidDup", {
           uid: email,
         });
         console.log(JSON.stringify(resolveId));
@@ -89,6 +89,14 @@ export default inject(
           return;
         }
         // -> 닉네임 중복 확인
+        const resolveNickname = await Http._get(
+          "/v2/api/signUp/checkNickNameDup",
+          { nickName }
+        );
+        if (resolveNickname !== 0) {
+          this.props.AlertStore.openAlert("중복된 닉네임 입니다.");
+          return;
+        }
 
         this.setState({ stage: 3 });
       };
@@ -278,7 +286,9 @@ export default inject(
                         placeholder="닉네임"
                         value={this.state.nickName}
                         onChange={(e) =>
-                          this.setState({ nickName: e.target.value })
+                          this.setState({
+                            nickName: e.target.value.substr(0, 7),
+                          })
                         }
                       />
                     </div>

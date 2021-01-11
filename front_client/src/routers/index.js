@@ -28,7 +28,6 @@ export default inject(
         const { type = null, method = null } = e.data || {};
         if (type === "navigate") {
           if (method === "goBack") {
-            console.log("goBack");
             ViewStore.goBack();
           }
         }
