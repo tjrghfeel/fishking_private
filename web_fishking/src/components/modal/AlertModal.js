@@ -2,7 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 
 export default inject("ModalStore")(
-  observer(({ ModalStore: { title, body, onOk } }) => {
+  observer(({ ModalStore: { title, body, bodyClass, onOk } }) => {
     return (
       <div
         className="modal fade"
@@ -20,7 +20,7 @@ export default inject("ModalStore")(
                 </h5>
               </div>
             )}
-            <div className="modal-body text-center">{body}</div>
+            <div className={`modal-body ${bodyClass}`}>{body}</div>
             <div className="modal-footer-btm">
               <div className="row no-gutters">
                 <div className="col-12">

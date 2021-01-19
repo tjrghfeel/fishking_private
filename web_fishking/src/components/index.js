@@ -13,6 +13,7 @@ import SelectLureModal from "./modal/SelectLureModal";
 import SelectPlaceModal from "./modal/SelectPlaceModal";
 import SelectLocationModal from "./modal/SelectLocationModal";
 import AddCouponModal from "./modal/AddCouponModal";
+import SNSModal from "./modal/SNSModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -48,6 +49,7 @@ import ZzimListView from "./view/ZzimListView";
 import ZzimListItemView from "./view/ZzimListItemView";
 import CouponMyListItemView from "./view/CouponMyListItemView";
 import CouponAvailableListItemView from "./view/CouponAvailableListItemView";
+import ReservationMyListItemView from "./view/ReservationMyListItemView";
 
 export default {
   /********** MODAL **********/
@@ -64,6 +66,7 @@ export default {
     SelectPlaceModal,
     SelectLocationModal,
     AddCouponModal,
+    SNSModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
@@ -96,5 +99,6 @@ export default {
     ZzimListItemView,
     CouponMyListItemView,
     CouponAvailableListItemView,
+    ReservationMyListItemView,
   },
 };

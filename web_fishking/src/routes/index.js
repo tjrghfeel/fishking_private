@@ -13,9 +13,10 @@ import StoryRoute from "./story";
 import ZzimRoute from "./zzim";
 import CouponRoute from "./coupon";
 import SearchRoute from "./search";
+import ReservationRoute from "./reservation";
 
 const {
-  MODAL: { AlertModal, ConfirmModal, CouponModal, SelectModal },
+  MODAL: { AlertModal, ConfirmModal, CouponModal, SelectModal, SNSModal },
   LAYOUT: { LoadingLayout },
 } = Components;
 
@@ -125,6 +126,9 @@ export default inject("PageStore")(
           {/** 검색 */}
           <Route path={`/search`} component={SearchRoute} />
 
+          {/** 예약 */}
+          <Route path={`/reservation`} component={ReservationRoute} />
+
           {/** 기본 리디렉션 */}
           <Redirect from={`*`} to={`/main/home`} />
         </Switch>
@@ -133,6 +137,7 @@ export default inject("PageStore")(
         <ConfirmModal />
         <SelectModal />
         <CouponModal />
+        <SNSModal />
       </BrowserRouter>
     );
   })

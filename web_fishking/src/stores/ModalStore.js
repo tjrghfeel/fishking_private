@@ -10,6 +10,7 @@ const ModalStore = new (class {
   /********** ********** ********** ********** **********/
   title = "";
   body = "";
+  bodyClass = "text-center";
   textOk = "";
   textClose = "";
   selectOptions = [];
@@ -20,11 +21,12 @@ const ModalStore = new (class {
   /** action */
   /********** ********** ********** ********** **********/
   openModal = (
-    modalType = "Alert" | "Confirm" | "Select" | "Coupon",
+    modalType = "Alert" | "Confirm" | "Select" | "Coupon" | "SNS",
     options = {}
   ) => {
     this.title = options.title || "";
     this.body = options.body || "";
+    this.bodyClass = options.bodyClass || "text-center";
     this.textOk = options.textOk || "확인";
     this.textClose = options.textClose || "닫기";
     this.selectOptions = options.selectOptions || [];
@@ -40,6 +42,8 @@ const ModalStore = new (class {
       $("#selectModal").modal("show");
     } else if (modalType === "Coupon") {
       $("#couponModal").modal("show");
+    } else if (modalType === "SNS") {
+      $("#snsModal").modal("show");
     }
   };
 })();

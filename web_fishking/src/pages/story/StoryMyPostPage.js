@@ -12,7 +12,12 @@ export default inject("PageStore")(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-
+      onClick = (item) => {};
+      onClickProfile = (item) => {
+        const { PageStore } = this.props;
+        PageStore.push(`/member/profile/${item.memberId}`);
+      };
+      onClickComment = (item) => {};
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -37,7 +42,11 @@ export default inject("PageStore")(
 
             <StoryMyTab activeIndex={0} />
 
-            <StoryMyPostListView />
+            <StoryMyPostListView
+              onClick={this.onClick}
+              onClickProfile={this.onClickProfile}
+              onClickComment={this.onClickComment}
+            />
 
             <MainTab activeIndex={3} />
           </React.Fragment>

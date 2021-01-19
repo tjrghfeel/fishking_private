@@ -7,6 +7,7 @@ import MemberLoginTokenPage from "../pages/member/MemberLoginTokenPage";
 import MemberFindpwPage from "../pages/member/MemberFindpwPage";
 import MemberSignupPage from "../pages/member/MemberSignupPage";
 import MemberSignoutPage from "../pages/member/MemberSignoutPage";
+import MemberProfilePage from "../pages/member/MemberProfilePage";
 
 export default inject()(
   observer(({ match }) => {
@@ -42,6 +43,12 @@ export default inject()(
             exact
             path={`${match.url}/signout`}
             component={MemberSignoutPage}
+          />
+          {/** 멤버 > 프로필보기 */}
+          <Route
+            exact
+            path={`${match.url}/profile/:id`}
+            component={MemberProfilePage}
           />
         </Switch>
       </BrowserRouter>

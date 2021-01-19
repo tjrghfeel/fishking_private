@@ -52,13 +52,22 @@ export default inject(
       };
 
       onClick = (item) => {
-        console.log(JSON.stringify(item));
+        const { onClick } = this.props;
+        if (onClick) {
+          onClick(item);
+        }
       };
       onClickProfile = (item) => {
-        console.log(JSON.stringify(item));
+        const { onClickProfile } = this.props;
+        if (onClickProfile) {
+          onClickProfile(item);
+        }
       };
       onClickComment = (item) => {
-        console.log(JSON.stringify(item));
+        const { onClickComment } = this.props;
+        if (onClickComment) {
+          onClickComment(item);
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */

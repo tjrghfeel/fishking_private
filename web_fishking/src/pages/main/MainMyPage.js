@@ -63,7 +63,7 @@ export default inject(
           text: "고객센터",
           pathname: "/cs/faq",
           img: "/assets/img/svg/mymenu-cs.svg",
-          requiredLoggedIn: true,
+          requiredLoggedIn: false,
         },
       ];
       /********** ********** ********** ********** **********/

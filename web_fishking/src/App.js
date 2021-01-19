@@ -2,12 +2,42 @@ import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import Routers from "./routes";
 
+//
 String.prototype.maskEmail = function () {
   const index = this.indexOf("@");
   return this.substr(0, 3)
     .concat("****")
     .concat(this.substr(index, this.length));
 };
+// yyyyMMdd => (week)
+String.prototype.getWeek = function () {
+  try {
+    const year = this.substr(0, 4);
+    const month = this.substr(4, 2);
+    const date = this.substr(6, 2);
+    const d = new Date(year, new Number(month) - 1, date);
+
+    switch (d.getDay()) {
+      case 0:
+        return "일";
+      case 1:
+        return "월";
+      case 2:
+        return "화";
+      case 3:
+        return "수";
+      case 4:
+        return "목";
+      case 5:
+        return "금";
+      case 6:
+        return "토";
+    }
+  } catch (err) {
+    return "";
+  }
+};
+//
 String.prototype.betweenTime = function () {
   try {
     const second = 1000;
@@ -30,6 +60,23 @@ String.prototype.betweenTime = function () {
     return "";
   }
 };
+//
+String.prototype.dday = function () {
+  try {
+    const year = this.substr(0, 4);
+    const month = this.substr(4, 2);
+    const date = this.substr(6, 2);
+
+    const dday = new Date(year, new Number(month) - 1, date);
+    const now = new Date();
+
+    const between = new Date().getTime() - dday.getTime();
+    return Math.floor(between / (1000 * 60 * 60 * 24)) * -1;
+  } catch (err) {
+    return "";
+  }
+};
+//
 String.prototype.latest = function () {
   try {
     const second = 1000;
