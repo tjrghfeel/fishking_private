@@ -41,7 +41,6 @@ encrypKey :
 
 spring:
 
-
   profiles:
     active: local
   devtools:

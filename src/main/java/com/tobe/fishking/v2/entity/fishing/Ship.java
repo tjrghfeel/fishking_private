@@ -139,14 +139,14 @@ public class Ship extends BaseTime {  //선상
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+
+    @Builder
     public Ship(String shipName, Company company, Member member, SeaDirection seaDirection ) {
         this.shipName = shipName;
         this.company = company;
         this.createdBy = member;
         this.modifiedBy = member;
         this.seaDirection = seaDirection;
-
-
     }
 
     /*리뷰 평점 적용*/
