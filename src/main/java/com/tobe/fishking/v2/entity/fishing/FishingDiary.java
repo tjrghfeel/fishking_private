@@ -95,6 +95,11 @@ public class FishingDiary extends BaseTime {
     @Column(columnDefinition = " float  comment '물고기무게'  ")
     private Double fishWeight;
 
+    @Column(columnDefinition = "varchar(200) comment '낚시기법'")
+    private String fishingTechnic;
+
+    @Column(columnDefinition = "varchar(200) comment '미끼'")
+    private String fishingLure;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id")
@@ -132,8 +137,8 @@ public class FishingDiary extends BaseTime {
     //  @Builder.Default
     private final List<Member> scrapMembers = new ArrayList<>();
 
-    @AttributeOverride(name = "shareCount", column = @Column(name = "SHARE"))
-    private ShareStatus status;
+   /* @AttributeOverride(name = "shareCount", column = @Column(name = "SHARE"))
+    private ShareStatus status;*/
 
 /*
     @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
@@ -187,7 +192,7 @@ public class FishingDiary extends BaseTime {
 
     public FishingDiary(Long id, ShareStatus status) {
         this.id = id;
-        this.status = status;
+//        this.status = status;
         this.modifiedBy = modifiedBy;
     }
 

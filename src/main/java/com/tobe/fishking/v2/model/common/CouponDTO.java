@@ -9,7 +9,7 @@ public interface CouponDTO {
 
     Long getId();//not null
     @Value("#{@mapperUtility.transEnumCouponType(target.CouponType)}")
-    CouponType getCouponType();//정액인지 정률인지
+    String getCouponType();//정액인지 정률인지
     String getCouponCode();
     String getCouponName();
     //String getExposureStartDate();
@@ -21,8 +21,6 @@ public interface CouponDTO {
     //private double useQty;//사용수량
     //boolean getIsIssue();//발행/발행중지
     Boolean getIsUsable();//사용/사용중지
-    Double getFromPurchaseAmount();
-    Double getToPurchaseAmount();
     String getBrfIntroduction();//간략 소개
     String getCouponDescription();//설명,유의사항,제한사항
     //private Member createdBy;//not null

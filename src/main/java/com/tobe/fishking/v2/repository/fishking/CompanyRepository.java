@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Company;
 
 import com.tobe.fishking.v2.model.admin.company.CompanyManageDtoForPage;
@@ -85,6 +86,10 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
 
 
     List<Company> findAllByIsRegistered(Boolean registered);
+
+    Company findByMember(Member member);
+
+    Boolean existsByMember(Member member);
 
     /*관리자용 업체 목록 검색 메소드 */
     @Query(value = "" +
@@ -174,4 +179,6 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
 //            @Param("sort") String sort,
             Pageable pageable
     );
+
+
 }

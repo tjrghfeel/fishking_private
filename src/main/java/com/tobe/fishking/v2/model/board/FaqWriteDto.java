@@ -12,4 +12,5 @@ public class FaqWriteDto {
     private String title;
     private String contents;
     private Long[] fileList;
+    private String targetRole;
 }

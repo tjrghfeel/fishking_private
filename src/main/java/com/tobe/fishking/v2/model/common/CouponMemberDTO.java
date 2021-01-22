@@ -26,7 +26,7 @@ public interface CouponMemberDTO {
     /*coupon 필드.*/
     //public Long id;//not null
     @Value("#{@mapperUtility.transEnumCouponType(target.CouponType)}")
-     CouponType getCouponType();//정액인지 정률인지
+     String getCouponType();//정액인지 정률인지
     //public String couponCode;
      String getCouponName();
     //private String exposureStartDate;

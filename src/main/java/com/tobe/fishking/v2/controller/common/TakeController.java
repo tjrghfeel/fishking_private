@@ -26,7 +26,12 @@ public class TakeController {
 
     /*찜 추가
     * 반환 : 추가된 Take 엔터티의 id반환. */
-    @ApiOperation(value = "찜 추가",notes = "현재로그인한 회원의 찜목록에 상품을 추가. ")
+    @ApiOperation(value = "찜 추가",notes = "업체에 대한 찜 추가. \n" +
+            "- 요청 필드 )\n" +
+            "   takeType : 찜 대상의 타입 / goods(\"상품\"), ship(\"업체\"), fishkingDaily(\"조황일지\"), fishingBlog(\"조행기\")," +
+            "    comment(\"댓글\"), fishkingTv(\"어복TV\")\n" +
+            "   linkId : Integer / 찜 대상의 id \n" +
+            "- 반환값 ) 생성된 찜의 id ")
     @PostMapping(value = "/take")
     public Long addTake(HttpServletRequest request, @RequestBody AddTakeDto dto) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -36,15 +41,30 @@ public class TakeController {
     /*찜 삭제*/
     @ApiOperation(value = "찜 삭제",notes = "현재 로그인한 회원의 찜목록에서 해당 찜을 삭제. ")
     @DeleteMapping(value = "/take")
-    public Long deleteTake(@RequestBody DeletingTakeDto dto) throws ResourceNotFoundException {
-        return takeService.deleteTake(dto);
+    public Long deleteTake(@RequestBody DeletingTakeDto dto,@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+        return takeService.deleteTake(dto,token);
     }
 
     /*선상 낚시 찜 목록 조회*/
-    @ApiOperation(value = "선상/갯바위 상품 찜 목록 조회")
+    @ApiOperation(value = "선상/갯바위 상품 찜 목록 조회",notes = "" +
+            "- 요청 필드 )\n" +
+            "   fishingType : 선상/갯바위 / ship(\"선상\"), sealocks(\"갯바위\")\n" +
+            "- 응답 필드 ) \n" +
+            "   takeId : 찜id \n" +
+            "   goodsId : 찜한 상품의 id\n" +
+            "   name : 찜한 상품의 이름\n" +
+            "   fishSpicesInfo : 어종 종류\n" +
+            "   fishSpicesImgUrl : 어종 아이콘\n" +
+            "   fishSpicesCount : 어종 수\n" +
+            "   fishingType : 선상/갯바위인지\n" +
+            "   address : 선상 주소\n" +
+            "   distance : 거리\n" +
+            "   price : 상품 가격\n" +
+            "   isLive : 실시간영상 진행 여부\n" +
+            "   ")
     @GetMapping(value = "/take/{fishingType}/{page}")
     public Page<TakeResponse> getFishingTypeFishTakeList(
-            @PathVariable("fishingType") int fishingType,
+            @PathVariable("fishingType") String fishingType,
             @PathVariable("page") int page,
             HttpServletRequest request
         ) throws ResourceNotFoundException {

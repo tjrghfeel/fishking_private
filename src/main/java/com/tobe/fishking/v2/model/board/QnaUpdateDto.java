@@ -14,4 +14,5 @@ public class QnaUpdateDto {
     private String returnType;
     private String returnAddress;
     private Long[] fileList;
+    private String targetRole;
 }

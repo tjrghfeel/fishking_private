@@ -13,4 +13,5 @@ public class QnaWriteDto {
     private String returnType;
     private String returnAddress;
     private Long[] fileList;
+    private String targetRole;
 }

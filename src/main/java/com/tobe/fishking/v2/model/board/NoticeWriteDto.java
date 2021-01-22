@@ -12,4 +12,5 @@ public class NoticeWriteDto {
     private String title;
     private String contents;
     private Long[] fileList;
+    private String targetRole;
 }

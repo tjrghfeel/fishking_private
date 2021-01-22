@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.fishing.Goods;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @Entity
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "review") //상품정보
 public class Review extends BaseTime {
 
@@ -25,12 +27,12 @@ public class Review extends BaseTime {
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상품', 'USER', DBO, 'TABLE', review, 'COLUMN',  goods
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne/*(cascade=CascadeType.ALL)*/
     @JoinColumn(name = "review_good_id", columnDefinition = "bigint  not null comment '상품'  ")
     private Goods goods ;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'회원', 'USER', DBO, 'TABLE', review, 'COLUMN',  member
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne/*(cascade=CascadeType.ALL)*/
     @JoinColumn(name = "member_id", columnDefinition = "bigint  not null comment '회원'  ")
     private Member member ;
 
@@ -62,7 +64,7 @@ public class Review extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', review, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null  comment '수정자'")
+    @JoinColumn(name="modified_by" ,  columnDefinition = " bigint not null  comment '수정자'")
     private Member modifiedBy;
 
 

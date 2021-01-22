@@ -49,9 +49,17 @@ public class TakeService {
     /*찜 삭제 메소드.
     * 반환 : 삭제한 Take 엔터티의 id를 반환.  */
     @Transactional
-    public Long deleteTake(DeletingTakeDto takeId) throws ResourceNotFoundException {
+    public Long deleteTake(DeletingTakeDto takeId,String token) throws ResourceNotFoundException {
+        /*삭제하려는 찜의 생성자인지 확인*/
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         Take take = takeRepository.findById(takeId.getTakeId())
                 .orElseThrow(()->new ResourceNotFoundException("take not found for this id ::"+takeId));
+        if(take.getCreatedBy()!=member){
+            throw new RuntimeException("해당 찜의 삭제 권한이 없습니다.");
+        }
+        
+        /*찜 삭제*/
         Long deletedTakeId = take.getId();
         takeRepository.delete(take);
         return deletedTakeId;
@@ -60,12 +68,12 @@ public class TakeService {
     /*선상 낚시 찜 목록 조회
     * 반환 : */
     @Transactional
-    public Page<TakeResponse> getFishingTypeFishTakeList(int fishingType, String sessionToken, int page) throws ResourceNotFoundException {
+    public Page<TakeResponse> getFishingTypeFishTakeList(String fishingType, String sessionToken, int page) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
-
+        int fishingTypeOrdinal = FishingType.valueOf(fishingType).ordinal();
         Pageable pageable = PageRequest.of(page, 10);
-        return goodsRepository.findTakeListAboutFishType(member, fishingType,pageable);
+        return goodsRepository.findTakeListAboutFishType(member, fishingTypeOrdinal,pageable);
     }
 
     /*선상, 갯바위 찜 개수 조회
@@ -73,11 +81,9 @@ public class TakeService {
     @Transactional
     public int[] getTakeCount(String sessionToken) throws ResourceNotFoundException {
         int[] count = new int[2];
-        /*Member 조회*/
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
-        /*Member로*/
         count[0] = goodsRepository.findTakeCountAboutFishType(member, FishingType.ship);
         count[1] = goodsRepository.findTakeCountAboutFishType(member, FishingType.sealocks);
 

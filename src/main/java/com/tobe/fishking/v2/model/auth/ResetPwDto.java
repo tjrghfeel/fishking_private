@@ -15,12 +15,9 @@ import javax.validation.constraints.Pattern;
 public class ResetPwDto {
     @NotNull
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$", message = "pw형식이 잘못되었습니다")
-    String newPw;
+    private String newPw;
 
     @NotNull
-    String areaCode;
-
-    @NotNull
-    String localNumber;
+    private Long phoneAuthId;
 
 }

@@ -78,7 +78,7 @@ public class CouponService {
             return couponMemberRepository.findCouponMemberListOrderByPopular(member, false, LocalDateTime.now(), pageable);
         }
         else if(sort.equals("latest")){
-            //쿠폰 정렬기준이 '최신순'일 경우. (최신순이 뭔지 잘모르겟음)
+            //!!!!!쿠폰 정렬기준이 '최신순'일 경우. (최신순이 뭔지 잘모르겟음)
         }
         //sort가 'basic'인 경우.
         return couponMemberRepository.findCouponMemberListOrderByBasic(member, false, LocalDateTime.now(), pageable);

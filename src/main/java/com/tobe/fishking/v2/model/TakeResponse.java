@@ -11,15 +11,18 @@ import java.util.ArrayList;
 
 
 public interface TakeResponse {
-    Long getId();
+    Long getTakeId();
+//    Long getGoodsId();
     String getName();
-    String getFishSpicesInfo();
-    Integer getFishSpicesCount();
+//    String getFishSpicesInfo();
+//    @Value("#{@mapperUtility.transDownloadUrl(target.fishSpicesImgUrl)}")
+//    String getFishSpicesImgUrl();
+//    Integer getFishSpicesCount();
     @Value("#{@mapperUtility.transEnumFishingType(target.fishingType)}")
     String getFishingType();
     String getAddress();
     Double getDistance();
-    Integer getPrice();
+//    Integer getPrice();
 
      /*String getFishingDate();
      boolean getIsClose();

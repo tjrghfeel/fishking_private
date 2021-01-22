@@ -12,6 +12,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
 import lombok.RequiredArgsConstructor;
+import org.jcodec.api.JCodecException;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -180,7 +181,7 @@ public class CommonService {
 
     @Transactional
     public FilePreUploadResponseDto preUploadFile(MultipartFile file, String filePublish, String sessionToken)
-            throws IOException, ResourceNotFoundException {
+            throws IOException, ResourceNotFoundException, JCodecException {
         FileEntity fileEntity = uploadService.filePreUpload(file,FilePublish.valueOf(filePublish), sessionToken);
 
         FilePreUploadResponseDto dto = FilePreUploadResponseDto.builder()

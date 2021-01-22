@@ -37,7 +37,7 @@ class FishingDiaryCUDServiceTest extends IntegrationTest {
 
         FishingDiaryDtoGroup.SaveRequestDto saveRequestDto
                 = FishingDiaryDtoGroup.SaveRequestDto.builder()
-                .filePublish(FilePublish.fishingDaily)
+                .filePublish(FilePublish.fishingDiary)
                 .title("test title")
                 .contents("test contents")
                 .tideTime(TideTime.five)

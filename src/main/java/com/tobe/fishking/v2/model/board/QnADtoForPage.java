@@ -6,7 +6,7 @@ public interface QnADtoForPage {
     Long getId();
     @Value("#{@mapperUtility.transEnumQuestionType(target.questionType)}")
     String getQuestionType();
-    String getDate();
+    String getCreatedDate();
     Boolean getReplied();
 
 }

@@ -29,14 +29,16 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "   cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
                     "   and m.session_token = :token " +
-                    "   and a.receiver_id = m.id ",
+                    "   and a.receiver_id = m.id " +
+                    "order by a.created_date desc",
             countQuery = "select a.id " +
                     "from alerts a, common_code cc, member m " +
                     "where " +
                     "   cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
                     "   and m.session_token = :token " +
-                    "   and a.receiver_id = m.id ",
+                    "   and a.receiver_id = m.id " +
+                    "order by a.created_date desc",
             nativeQuery = true
     )
     Page<AlertListForPage> findAllByMember(@Param("token") String token, Pageable pageable);

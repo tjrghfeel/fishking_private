@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.fishing.ShipDTO;
+import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
@@ -12,8 +13,12 @@ import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
@@ -61,6 +66,21 @@ public class ShipService {
        // UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         //file 처리
         return ships.map(ShipDTO::of);
+    }
+
+    /*글쓰기시, ship선택버튼에 있는 ship검색 메소드 */
+    @Transactional
+    public Page<ShipListForWriteFishingDiary> searchShipForWriteFishingDiary(String keyword,/* String sortBy,*/ int page){
+
+//        if(sortBy.equals("name")){
+            Pageable pageable = PageRequest.of(page, 10/*, JpaSort.unsafe(Sort.Direction.DESC,"("+sortBy+")")*/);
+            return shipRepo.findBySearchKeyword(keyword,pageable);
+        /*}
+        //!!!!!정렬기준이 거리순일 경우, gps api를 이용해 처리해야할듯?
+        else{
+            Pageable pageable = PageRequest.of(page, 10, JpaSort.unsafe(Sort.Direction.DESC,"("+sortBy+")"));
+            return shipRepo.findBySearchKeyword(keyword,pageable);
+        }*/
     }
 
 

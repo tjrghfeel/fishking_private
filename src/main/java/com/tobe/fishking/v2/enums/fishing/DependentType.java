@@ -5,7 +5,7 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 public enum DependentType   implements IEnumModel   {
 
     board("게시판"),
-    fishingDaily("조황일지"),
+    fishingDiary("조황일지"),
     fishingBlog("조황기");
 
     private String value;

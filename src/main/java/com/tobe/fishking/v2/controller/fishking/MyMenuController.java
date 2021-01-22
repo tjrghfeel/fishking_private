@@ -84,6 +84,7 @@ public class MyMenuController {
             "- 필드 )\n" +
             "   id : 댓글id\n" +
             "   dependentType : 선상/갯바위. 댓글이 달린 본글의 조항 종류가 선상인지 갯바위인지. \n" +
+            "       board(\"게시판\"), fishingDiary(\"조황일지\"), fishingBlog(\"조황기\")\n" +
             "   title : 본글의 제목\n" +
             "   contents : 댓글의 내용\n" +
             "   time : 댓글작성 시간\n" +
@@ -170,6 +171,9 @@ public class MyMenuController {
     * - 전체보기시 순서는 orders상태에 따라 예약대기 - 대기자예약 - 예약확정 - 예약취소 - 출조완료 - 예약완료 순으로.  */
     @ApiOperation(value = "예약내역 리스트",notes = "" +
             "- 마이메뉴 > 나의 예약 리스트 클릭시, 내 예약 목록 데이터 반환하는 api \n" +
+            "- 요청 필드 ) \n" +
+            "   sort : 어떤 예약 상태를 검색할건지. 반환필드에서 orderStatus필드를 보면, 영어로된것이 키값, 소괄호 안의 한글이 value값이다. " +
+            "           여기서 key값을 string으로 넣어주면된다.  \n" +
             "- 필드 )\n" +
             "   id : 예약id\n" +
             "   goodsId : 예약한 상품의 id\n" +
@@ -180,7 +184,8 @@ public class MyMenuController {
             "       ㄴ sealocks : 갯바위\n " +
             "   sigungu : 주소(시,군,구)\n" +
             "   distance : 거리\n" +
-            "   orderStatus : 예약 상태\n" +
+            "   orderStatus : 예약상태 / book(\"예약 대기\"), waitBook(\"대기자 예약\"), bookFix(\"예약 확정\"), bookCancel(\"예약 취소\")," +
+            "    fishingComplete(\"출조 완료\"), bookConfirm(\"예약 완료\")\n" +
             "   fishingDate : 낚시일\n" +
             "   ordersNum : 예약번호")
     @GetMapping("/myOrdersList/{page}")
@@ -201,8 +206,9 @@ public class MyMenuController {
             "- 필드 ) \n" +
             "   id : 예약id\n" +
             "   shipName : 선상명\n" +
-            "   orderStatus : 예약상태\n" +
-            "   fishingType : 선상낚시/갯바위낚시\n" +
+            "   orderStatus : 예약상태 / book(\"예약 대기\"), waitBook(\"대기자 예약\"), bookFix(\"예약 확정\"), bookCancel(\"예약 취소\")," +
+            "    fishingComplete(\"출조 완료\"), bookConfirm(\"예약 완료\")\n" +
+            "   fishingType : 선상낚시/갯바위낚시 / ship(\"선상\"), sealocks(\"갯바위\")\n" +
             "   sigungu : 주소(시,군,구)\n" +
             "   distance : 거리\n" +
             "   fishingDate : 낚시일\n" +

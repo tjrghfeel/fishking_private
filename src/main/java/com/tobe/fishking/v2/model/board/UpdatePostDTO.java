@@ -25,6 +25,7 @@ public class UpdatePostDTO {
     private String returnNoAddress;
     private String createdAt;
     private String questionType;
+    private Boolean targetRole;
 
     //nullable 필드.
 //    private List<String> tagsName = new ArrayList<>();

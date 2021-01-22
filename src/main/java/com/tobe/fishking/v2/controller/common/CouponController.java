@@ -29,15 +29,13 @@ public class CouponController {
     @ApiOperation(value = "다운 가능한 쿠폰리스트 출력",notes = "현재 로그인된 회원이 다운받을 수 있는 쿠폰목록을 출력. \n" +
             "- 필드 )\n" +
             "   id : 쿠폰id \n" +
-            "   couponType : 쿠폰 유형(정액/정률)\n" +
+            "   couponType : 쿠폰 유형(정액/정률) / amount(\"정액\"), rate(\"정률\")\n" +
             "   couponCode : 쿠폰 코드\n" +
             "   couponName : 쿠폰 이름\n" +
             "   exposureEndDate : 노출 종료일\n" +
             "   saleValues : 할인률\n" +
             "   effectiveDays : 유효기간 \n" +
             "   isUsable : 쿠폰이 현재 사용가능상태인지 불가한상태인지\n" +
-            "   fromPurchaseAmount : 쿠폰이 사용가능한 최소주문금액\n" +
-            "   toPurchaseAmount : 쿠폰이 사용가능한 최대주문금액\n" +
             "   brfIntroduction : 쿠폰 간략 소개\n" +
             "   couponDescription : 쿠폰 설명\n" +
             "   couponImage : 쿠폰 이미지 download url")
@@ -73,7 +71,7 @@ public class CouponController {
             "- 필드 )\n" +
             "   id : '내 쿠폰' id \n" +
             "   coupon : 쿠폰id \n" +
-            "   couponType : 쿠폰 유형(정액/정률)\n" +
+            "   couponType : 쿠폰 유형(정액/정률) / amount(\"정액\"), rate(\"정률\")\n" +
             "   couponCode : 쿠폰 코드\n" +
             "   member : '내 쿠폰'의 소유자 회원id\n" +
             "   isUse : '내 쿠폰' 사용여부\n" +

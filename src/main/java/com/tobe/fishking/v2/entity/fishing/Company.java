@@ -53,6 +53,8 @@ public class Company extends BaseTime {  //선상
     // EXEC sp_addextendedproperty 'MS_Description', N'연락처', 'USER', DBO, 'TABLE', company, 'COLUMN',  tel
     @Column(columnDefinition = "varchar(30)   comment '연락처'  ")
     private String tel;
+    @Column(columnDefinition = "varchar(30) comment '업체전화번호'")
+    private String phoneNumber;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사업자등록번호', 'USER', DBO, 'TABLE', company, 'COLUMN',  biz_no
@@ -143,17 +145,17 @@ public class Company extends BaseTime {  //선상
     public void updateCompanyRegisterRequest(CompanyUpdateDTO dto, Member modifiedBy, FileEntity[] files){
         companyName = (dto.getCompanyName());
         shipOwner = (member.getMemberName());
-        sido = (dto.getSido());
-        gungu = (dto.getGungu());
+//        sido = (dto.getSido());
+//        gungu = (dto.getGungu());
         tel = (dto.getTel());
         bizNo = (dto.getBizNo());
         harbor = (dto.getHarbor());
         bank = (dto.getBank());
         accountNo = (dto.getAccountNo());
-        ownerWording = (dto.getOwnerWording());
-        isOpen=(dto.getIsOpen());
-        skbAccount=(dto.getSkbAccount());
-        if(dto.getSkbPassword()!=null){skbPassword=((dto.getSkbPassword()));}//비번같은경우, 변경안할경우 dto안의 값이 비어있기때문에, 확인후 업데이트해줌.
+//        ownerWording = (dto.getOwnerWording());
+//        isOpen=(dto.getIsOpen());
+//        skbAccount=(dto.getSkbAccount());
+//        if(dto.getSkbPassword()!=null){skbPassword=((dto.getSkbPassword()));}//비번같은경우, 변경안할경우 dto안의 값이 비어있기때문에, 확인후 업데이트해줌.
         companyAddress=(dto.getCompanyAddress());
 //        isRegistered=(dto.getIsRegistered());
         bizNoFileId = (files[0]);

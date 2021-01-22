@@ -15,6 +15,7 @@ import java.util.List;
 public class    CompanyCreateDtoForManage {
 
 //    private Long id;//not null, pk
+    private String token;
     @NotNull
     private Long memberId;  //name이 없을 경우 member_id, fk
     @Size(min=4,max = 10)

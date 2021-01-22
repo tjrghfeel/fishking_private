@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    /*회원이 작성한 리뷰 개수 카운트*/
+    int countByMember(Member member);
 
     /*마이메뉴 - 내글관리 - 리뷰에서 내 리뷰리스트를 가져오는 메소드. */
     @Query(value = "select " +

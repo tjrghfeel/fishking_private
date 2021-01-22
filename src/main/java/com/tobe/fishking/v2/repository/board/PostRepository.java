@@ -30,34 +30,39 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             "   p.id id, " +
             "   p.question_type questionType, " +
             "   p.title title, " +
-            "   p.contents contenst " +
+            "   p.contents contents, " +
+            "   p.author_id authorId, " +
+            "   p.created_by createdBy, " +
+            "   p.modified_by modifiedBy " +
             "from post p " +
             "where p.board_id = (select b.id from board b where b.board_type = 3) " +
+            "   and p.target_role = :role " +
             "order by p.question_type ",
             countQuery = "select p.id " +
                     "from post p " +
                     "where p.board_id = (select b.id from board b where b.board_type = 3) " +
+                    "   and p.target_role = :role " +
                     "order by p.question_type ",
             nativeQuery = true
     )
-    Page<FAQDto> findAllFAQList(Pageable pageable);
+    Page<FAQDto> findAllFAQList(@Param("role") Boolean role, Pageable pageable);
 
     /*QnA 리스트 조회*/
     @Query(value = "" +
             "select " +
             "   p.id id, " +
             "   p.question_type questionType, " +
-            "   p.created_date date, " +
+            "   p.created_date createdDate, " +
             "   (select case when exists (select p2.id from post as p2 where p.id = p2.parent_id) then 'true' else 'false' end) replied " +
             "from post p " +
             "where p.board_id = (select b.id from board b where b.board_type = 2) " +
             "   and p.author_id = :member " +
-            "order by replied, p.created_date ",
+            "order by  p.created_date ",
             countQuery = "select p.id " +
                     "from post p " +
                     "where p.board_id = (select b.id from board b where b.board_type = 2) " +
                     "   and p.author_id = :member " +
-                    "order by replied, p.created_date ",
+                    "order by p.created_date ",
             nativeQuery = true
     )
     Page<QnADtoForPage> findAllQnAList(@Param("member") Member member, Pageable pageable);
@@ -70,11 +75,21 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             "   (select case when exists (select p2.id from post as p2 where p.id = p2.parent_id) then 'true' else 'false' end) replied, " +
             "   p.created_date date, " +
             "   p.contents contents, " +
+            "   p.author_id authorId, " +
+            "   p.author_name authorName, " +
+            "   p.return_type returnType, " +
+            "   p.return_no_address returnNoAddress, " +
+            "   p.created_by createdBy, " +
+            "   p.modified_by modifiedBy, " +
             "   (select group_concat(f.stored_file separator ',') from files f " +
             "       where f.file_publish = 2 and f.pid = p.id group by f.pid) fileNameList, " +
             "   (select group_concat(f.file_url separator ',') from files f " +
             "       where f.file_publish = 2 and f.pid = p.id group by f.pid) filePathList, " +
             "   rp.contents replyContents, " +
+            "   rp.created_date replyDate, " +
+            "   rp.author_id replyAuthorId, " +
+            "   rp.created_by replyCreatedBy, " +
+            "   rp.modified_by replyModifiedBy, " +
             "   (select group_concat(f2.thumbnail_file separator ',') from files f2 " +
             "       where f2.file_publish = 2 and f2.pid = rp.id group by f2.pid) replyFileNameList, " +
             "   (select group_concat(f2.file_url separator ',') from files f2 " +
@@ -97,11 +112,12 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             "   p.created_date date " +
             "from post p " +
             "where p.board_id = 74 " +
+            "   and p.target_role = :role " +
             "order by p.created_date, p.channel_type ",
-            countQuery = "select p.id from post p where p.board_id = 74 order by p.created_date, p.channel_type ",
+            countQuery = "select p.id from post p where p.board_id = 74 and p.target_role = :role order by p.created_date, p.channel_type ",
             nativeQuery = true
     )
-    Page<NoticeDtoForPage> findNoticeList(Pageable pageable);
+    Page<NoticeDtoForPage> findNoticeList(@Param("role") Boolean role, Pageable pageable);
 
     /* 공지사항 detail 조회*/
     @Query(value = "" +
@@ -114,7 +130,10 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             "   (select group_concat(f.stored_file separator ',') from files f " +
             "       where f.file_publish = 4 and f.pid = p.id group by f.pid) fileNameList, " +
             "   (select group_concat(f.file_url separator ',') from files f " +
-            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) filePathList " +
+            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) filePathList, " +
+            "   p.author_id authorId, " +
+            "   p.created_by createdBy, " +
+            "   p.modified_by modifiedBy " +
             "from post p left outer join post rp on rp.parent_id = p.id " +
             "where p.id = :postId ",
             countQuery = "select p.id " +
@@ -213,12 +232,12 @@ public interface PostRepository extends JpaRepository<Post, Long>{
                     "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
                     "   and if(:questionType is null,true,(p.question_type = :questionType)) " +
                     "   and if(:title is null,true,(p.title like %:title%)) " +
-                    "   and if(:content is null,true,(p.contents like %:content)%) " +
+                    "   and if(:content is null,true,(p.contents like %:content%)) " +
                     "   and if(:authorId is null,true,(p.author_id = :authorId)) " +
                     "   and if(:authorName is null,true,(p.author_name = :authorName)) " +
                     "   and if(:returnType is null,true,(p.return_type = :returnType)) " +
                     "   and if(:returnNoAddress is null,true,(p.return_no_address like %:returnNoAddress%)) " +
-                    "   and if(:createdAt is null,true,(p.created_at = %:createdAt%)) " +
+                    "   and if(:createdAt is null,true,(p.created_at like %:createdAt%)) " +
                     "   and if(:isSecret is null,true,(p.is_secret = :isSecret)) " +
                     "   and if(:createdDateStart is null,true,(p.created_date > :createdDateStart)) " +
                     "   and if(:createdDateEnd is null,true,(p.created_date < :createdDateEnd)) " +
@@ -233,12 +252,12 @@ public interface PostRepository extends JpaRepository<Post, Long>{
                     "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
                     "   and if(:questionType is null,true,(p.question_type = :questionType)) " +
                     "   and if(:title is null,true,(p.title like %:title%)) " +
-                    "   and if(:content is null,true,(p.contents like %:content)%) " +
+                    "   and if(:content is null,true,(p.contents like %:content%)) " +
                     "   and if(:authorId is null,true,(p.author_id = :authorId)) " +
                     "   and if(:authorName is null,true,(p.author_name = :authorName)) " +
                     "   and if(:returnType is null,true,(p.return_type = :returnType)) " +
                     "   and if(:returnNoAddress is null,true,(p.return_no_address like %:returnNoAddress%)) " +
-                    "   and if(:createdAt is null,true,(p.created_at = %:createdAt%)) " +
+                    "   and if(:createdAt is null,true,(p.created_at like %:createdAt%)) " +
                     "   and if(:isSecret is null,true,(p.is_secret = :isSecret)) " +
                     "   and if(:createdDateStart is null,true,(p.created_date > :createdDateStart)) " +
                     "   and if(:createdDateEnd is null,true,(p.created_date < :createdDateEnd)) " +

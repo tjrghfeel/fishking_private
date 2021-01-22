@@ -41,21 +41,26 @@ public class PostController {
     /*FAQ 조회*/
     @ApiOperation(value = "FAQ조회", notes = "모든 FAQ를 조회합니다. \n" +
             "- 글 목록 조회이지만 글 내용까지 한꺼번에 담겨서 반환된다. \n" +
+            "- 요청 필드 )\n" +
+            "   role : String / 어떤 유형의 회원에 대한 faq인지 결정을 위한 필드 / member : 일반회원, shipowner : 업주회원" +
             "- 필드 )\n" +
             "   id : faq 글 id\n" +
-            "   questionType : 문의유형\n" +
+            "   questionType : 문의유형 / order(예약결제),canccel(취소)\n" +
             "   title : faq 제목\n" +
-            "   contents : faq 내용\n")
+            "   contents : faq 내용\n" +
+            "   authorId : 작성자 id\n" +
+            "   createdBy : 글 생성자 id\n" +
+            "   modifiedBy : 글 수정자 id\n")
     @GetMapping("/faq/{page}")
-    public Page<FAQDto> getFAQList(@PathVariable("page") int page) {
-        return postService.getFAQList(page);
+    public Page<FAQDto> getFAQList(@PathVariable("page") int page,@RequestParam("role") String role) {
+        return postService.getFAQList(page,role);
     }
 
     /*1:1문의내역 리스트 조회*/
     @ApiOperation(value = "1:1문의내역 리스트 조회", notes = "자신이 문의한 내역을 볼 수 있다. \n" +
             "- 필드 )\n" +
             "   id : 문의글 id\n" +
-            "   questionType : 문의 유형\n" +
+            "   questionType : 문의 유형 / order(예약결제),canccel(취소)\n" +
             "   date : 문의일자\n" +
             "   replied : 답변 여부 \n")
     @GetMapping("/qna/{page}")
@@ -72,12 +77,22 @@ public class PostController {
             "- 한 1:1문의 건에 대해 상세 내용을 볼 수 있다. \n" +
             "- 필드 )\n" +
             "   id : 문의글 id\n" +
-            "   questionType : 문의유형 \n" +
+            "   questionType : 문의유형 / order(예약결제),canccel(취소)\n" +
             "   replied : 답변여부\n" +
             "   date : 문의일자\n" +
             "   contents : 문의 내용\n" +
+            "   authorId : 작성자 id\n" +
+            "   authorName : 작성자명\n" +
+            "   returnType : 답변방법 / email(\"이메일\"),tel(\"연락처\")\n" +
+            "   returnAddress : 답변 주소 또는 번호\n" +
+            "   createdBy : 글 생성자 id\n" +
+            "   modifiedBy : 글 수정자 id\n" +
             "   fileList : 문의글의 파일download url 리스트\n" +
             "   replyContents : 답변글 내용\n" +
+            "   replyDate : 답변 시간\n" +
+            "   replyAuthorId : 답변자 id\n" +
+            "   replyCreatedBy : 글 생성자 id\n" +
+            "   replyModifiedBy : 글 수정자 id\n" +
             "   replyFileList : 답변글의 파일 download url 리스트\n")
     @GetMapping("/qna/detail")
     public QnADetailDto getQnADetail(@RequestParam("postId") Long postId) {
@@ -87,14 +102,16 @@ public class PostController {
     /*공지사항 리스트 보기*/
     @ApiOperation(value = "공지사항 리스트 보기", notes = "" +
             "- 공지사항 리스트 반환 api \n" +
+            "- 요청 필드 )\n" +
+            "   role : String / 어떤 유형의 회원에 대한 faq인지 결정을 위한 필드 / member : 일반회원, shipowner : 업주회원" +
             "- 필드 ) \n" +
             "   id : 공지사항 글 id\n" +
-            "   channelType : 공지사항 유형\n" +
+            "   channelType : 공지사항 유형 / order(\"예약결제\"), canccel(\"취소\")\n" +
             "   title : 공지사항 제목\n" +
             "   date : 공지사항 작성일\n")
     @GetMapping("/notice/{page}")
-    public Page<NoticeDtoForPage> getNoticeList(@PathVariable("page") int page) {
-        return postService.getNoticeList(page);
+    public Page<NoticeDtoForPage> getNoticeList(@PathVariable("page") int page, @RequestParam("role") String role) {
+        return postService.getNoticeList(page,role);
     }
 
     /*공지사항 상세보기*/
@@ -102,10 +119,10 @@ public class PostController {
             "- 공지사항 내용 상세보기 api \n" +
             "- 필드 )\n" +
             "   id : 공지사항 글 id\n" +
-            "   channelType : 공지사항 유형\n" +
+            "   channelType : 공지사항 유형 / order(\"예약결제\"), canccel(\"취소\")\n" +
             "   title : 공지사항 제목\n" +
             "   contents : 공지사항 내용 \n" +
-            "   fileList : 파일 download url 리스트")
+            "   fileList : 파일 download url 리스트\n")
     @GetMapping("/notice")
     public NoticeDetailDto getNoticeDetail(@RequestParam("postId") Long postId) throws ResourceNotFoundException {
         return postService.getNoticeDetail(postId);
@@ -152,6 +169,9 @@ public class PostController {
             "       ㄴ tel : 전화번호\n" +
             "   returnAddress : String / 'returnType'에서 결정한 방법에 해당하는 값 입력. 이메일주소 또는 전화번호\n" +
             "   fileList : Integer 배열 / 파일id 배열\n" +
+            "   targetRole : 어떤회원유형이 문의글을 올리는지\n" +
+            "       ㄴ member : 일반회원\n" +
+            "       ㄴ shipowner : 업체회원\n"+
             "- 반환 ) 생성된 1:1문의글의 id ")
     @PostMapping("/post/one2one")
     public Long writeOne2one(@RequestBody QnaWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
@@ -165,7 +185,10 @@ public class PostController {
             "       ㄴ cancel : 취소\n" +
             "   title : String / 제목\n" +
             "   contents : String / 내용\n" +
-            "   fileList : Integer 배열 / 파일id 배열")
+            "   fileList : Integer 배열 / 파일id 배열\n" +
+            "   targetRole : String / 어떤 유형의 회원에 대한 faq인지\n" +
+            "       ㄴ member : 일반회원\n" +
+            "       ㄴ shipowner : 업체회원\n")
     @PostMapping("/post/faq")
     public Long writeFaq(@RequestBody FaqWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
         return postService.writeFaq(dto,token);
@@ -178,7 +201,11 @@ public class PostController {
             "       ㄴ event : 이벤트\n" +
             "   title : String / 제목\n" +
             "   contents : String / 내용\n" +
-            "   fileList : Integer 배열 / 파일id 배열")
+            "   fileList : Integer 배열 / 파일id 배열\n" +
+            "   targetRole : 어떤 유형의 회원에 대한 공지사항인지\n" +
+            "       ㄴ member : 일반회원\n" +
+            "       ㄴ shipowner : 업체회원\n"+
+            "")
     @PostMapping("/post/notice")
     public Long writeNotice(@RequestBody NoticeWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
         return postService.writeNotice(dto,token);
@@ -212,6 +239,9 @@ public class PostController {
             "       ㄴ tel : 전화번호\n" +
             "   returnAddress : String / 'returnType'에서 결정한 방법에 해당하는 값 입력. 이메일주소 또는 전화번호\n" +
             "   fileList : Integer 배열 / 파일id 배열\n" +
+            "   targetRole : String / 어떤 유형의 회원이 작성한 문의인지\n" +
+            "       ㄴ member : 일반회원\n" +
+            "       ㄴ shipowner : 업체회원\n" +
             "- 반환 ) 생성된 1:1문의글의 id ")
     @PutMapping("/post/one2one")
     public Long updateOne2one(@RequestBody QnaUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
@@ -227,7 +257,10 @@ public class PostController {
             "       ㄴ cancel : 취소\n" +
             "   title : String / 제목\n" +
             "   contents : String / 내용\n" +
-            "   fileList : Integer 배열 / 파일id 배열")
+            "   fileList : Integer 배열 / 파일id 배열\n" +
+            "   targetRole : String / 어떤 유형의 회원에 대한 faq인지\n" +
+            "       ㄴ member : 일반회원\n" +
+            "       ㄴ shipowner : 업체회원\n")
     @PutMapping("/post/faq")
     public Long updateFaq(@RequestBody FaqUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
         return postService.updateFaq(dto,token);
@@ -241,7 +274,10 @@ public class PostController {
             "       ㄴ event : 이벤트\n" +
             "   title : String / 제목\n" +
             "   contents : String / 내용\n" +
-            "   fileList : Integer 배열 / 파일id 배열")
+            "   fileList : Integer 배열 / 파일id 배열\n" +
+            "   targetRole : String / 어떤 유형의 회원에 대한 공지사항인지\n" +
+            "       ㄴ member : 일반회원\n" +
+            "       ㄴ shipowner : 업체회원\n")
     @PutMapping("/post/notice")
     public Long updateNotice(@RequestBody NoticeUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
         return postService.updateNotice(dto,token);

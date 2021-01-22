@@ -17,7 +17,10 @@ public  enum BoardType implements IEnumModel {
     guestbook("방명록"),
     blog("블로그"),
     companyRequest("업체등록요청"),
-    profile("프로필");
+    profile("프로필"),
+    fishingBlog("유저조행기"),
+    fishingDiary("조항일지"),
+    review("리뷰");
 
     private String value;
 

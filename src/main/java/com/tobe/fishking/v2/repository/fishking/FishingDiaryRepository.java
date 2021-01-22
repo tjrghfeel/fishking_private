@@ -46,6 +46,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "   s.sigungu address, " +
             "   d.created_date createdDate, " +
             "   d.title title, " +
+            "   s.fishing_type fishingType, " +
             "   LEFT(d.contents,50) contents, " +
             "   (select count(l.id) from loveto l where (l.take_type = 2 or l.take_type = 3) and l.link_id = d.id) likeCount, " +
             "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
@@ -74,34 +75,34 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     /*마이메뉴 - 내글관리 - 스크랩 에서 스크랩한 게시글 목록을 가져와주는 메소드*/
     @Query(value = "select " +
             "   d.id id, " +
+            "   if(m.is_active = true, m.profile_image, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg')) profileImage, " +
             "   s.id shipId, " +
             "   m.id memberId, " +
-            "   m.profile_image profileImage, " +
-            "   m.nick_name nickName, " +
+            "   if(m.is_active=true, m.nick_name, '탈퇴한 회원입니다') nickName, " +
             "   s.sigungu address, " +
             "   d.created_date createdDate, " +
-            "   d.title title, " +
-            "   d.file_publish fishingType, " +
-            "   LEFT(d.contents,50) contents, " +
+            "   if(m.is_active=true, d.title, '탈퇴한 회원의 글입니다.') title, " +
+            "   s.fishing_type fishingType, " +
+            "   if(m.is_active=true, LEFT(d.contents,50), '탈퇴한 회원의 글입니다.') contents, " +
             "   (select case when exists (select l.id from loveto as l " +
             "       where l.created_by=:member and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
             "   (select count(l.id) from loveto l where (l.take_type = 2 or l.take_type = 3) and l.link_id = d.id) likeCount, " +
             "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
             "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
-            "   (select GROUP_CONCAT(f2.stored_file separator ',') " +
+            "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
             "       from files f2 where f2.pid = d.id and (f2.file_publish = 5 or f2.file_publish = 6)" +
-            "       group by f2.pid order by f2.file_no) fileNameList, " +
-            "   (select GROUP_CONCAT(f2.file_url separator ',') " +
+            "       group by f2.pid order by f2.file_no), null) fileNameList, " +
+            "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
             "       from files f2 where f2.pid = d.id and (f2.file_publish = 5 or f2.file_publish = 6)" +
-            "       group by f2.pid order by f2.file_no) filePathList " +
-            "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm " +
+            "       group by f2.pid order by f2.file_no), null) filePathList " +
+            "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm  " +
             "where sm.scrap_members_id = :member " +
             "   and sm.fishing_diary_id = d.id " +
             "   and d.fishing_diary_ship_id = s.id " +
             "   and d.fishing_diary_member_id = m.id " +
             "order by d.created_date desc ",
             countQuery = "select d.id " +
-                    "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm " +
+                    "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm  " +
                     "where sm.scrap_members_id = :member " +
                     "   and sm.fishing_diary_id = d.id " +
                     "   and d.fishing_diary_ship_id = s.id " +

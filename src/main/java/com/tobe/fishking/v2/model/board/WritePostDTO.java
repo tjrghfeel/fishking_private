@@ -25,6 +25,7 @@ public class WritePostDTO {
     private String returnNoAddress;
     private String createdAt;
     private String questionType;
+    private Boolean targetRole;
 
     //nullable 필드.
 //    private List<String> tagsName = new ArrayList<>();
@@ -33,25 +34,6 @@ public class WritePostDTO {
 
     private Long[] files;//
 
-    public WritePostDTO(Post post) {
-        boardId = post.getBoard().getId();
-        channelType = post.getChannelType().getValue();
-        title = post.getTitle();
-        contents = post.getContents();
-//        authorName = post.getAuthorName();
-        returnType = post.getReturnType().getValue();
-        returnNoAddress = post.getReturnNoAddress();
-        createdAt = post.getCreatedAt();
-        questionType = post.getQuestionType().getValue();
-
-        //nullable 필드.
-        isSecret = post.getIsSecret();
-        parentId = post.getParent_id();
-        List<Tag> tagList = post.getTags();
-        /*for(int i=0; i<tagList.size(); i++){
-            tagsName.add(tagList.get(i).getTagName());
-        }*/
-    }
 
 
 }

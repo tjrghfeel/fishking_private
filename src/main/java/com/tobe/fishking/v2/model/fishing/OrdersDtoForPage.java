@@ -14,9 +14,10 @@ public interface OrdersDtoForPage {
     String getFishingType();
     String getSigungu();
     Double getDistance();
-    @Value("#{@mapperUtility.transEnumQuestionType(target.orderStatusType)}")
+    @Value("#{@mapperUtility.transEnumOrderStatus(target.ordersStatus)}")
     String getOrdersStatus();
 //    Integer getDDay();
+    @Value("#{@mapperUtility.transFishingDate(target.fishingDate, target.fishingStartTime)}")
     String getFishingDate();
     String getOrdersNum();
 

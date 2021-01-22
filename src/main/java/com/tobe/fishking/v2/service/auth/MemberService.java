@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.service.auth;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -11,12 +12,14 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.TakeType;
+import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.*;
 import com.tobe.fishking.v2.model.auth.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
+import com.tobe.fishking.v2.service.AES;
 import lombok.AllArgsConstructor;
 
 
@@ -29,12 +32,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @AllArgsConstructor
@@ -59,6 +76,7 @@ public class MemberService {
     private CommonCodeRepository commonCodeRepository;
     private CodeGroupRepository codeGroupRepository;
     private TblSubmitQueueRepository tblSubmitQueueRepository;
+    private CompanyRepository companyRepository;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -92,7 +110,7 @@ public class MemberService {
     /*회원가입 - 문자인증
      * */
     @Transactional
-    public boolean sendSmsForSingup(PhoneAuthDto dto){
+    public Long sendSmsForSignup(PhoneAuthDto dto){
         if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==true){
             throw new RuntimeException("이미 가입한 휴대폰 번호입니다");
         }
@@ -116,13 +134,14 @@ public class MemberService {
      * - pNum과 인증번호를 db에 저장.
      * - 반환 ) 전송 실패시 false. 성공시 true. */
     @Transactional
-    public boolean requestSmsAuth(PhoneAuthDto dto){
+    public Long requestSmsAuth(PhoneAuthDto dto){
         String areaCode = dto.getAreaCode();
         String localNumber = dto.getLocalNumber();
+        Long phoneAuthId=null;
 
         /*랜덤으로 인증번호 생성.*/
         String randomNum=null;
-        randomNum = String.format("%04d",((int)(Math.random()*10000)));
+        randomNum = String.format("%06d",((int)(Math.random()*1000000)));
 
         /*인증번호와 폰번호 db에 저장. */
         PhoneAuth phoneAuth = PhoneAuth.builder()
@@ -130,18 +149,19 @@ public class MemberService {
                 .certifyNum(randomNum)
                 .isCertified(false)
                 .build();
-        phoneAuthRepository.save(phoneAuth);
+        phoneAuthId = phoneAuthRepository.save(phoneAuth).getId();
 
         /* 문자 전송. */
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         TblSubmitQueue tblSubmitQueue = TblSubmitQueue.builder()
-                .usrId("aaa")
+                .usrId("6314")
                 .smsGb("1")
                 .usedCd("00")
                 .reservedFg("I")
                 .reservedDttm(time)
                 .savedFg("0")
                 .rcvPhnId(dto.getAreaCode()+dto.getLocalNumber())
+                .sndPhnId("0612778002")
                 .sndMsg("인증번호는 ["+randomNum+"]입니다.")
                 .contentCnt(0)
                 .smsStatus("0")
@@ -153,7 +173,7 @@ public class MemberService {
         /*문자전송 제대로 되었는지 확인????? !!!!!일단은 바로 반환하는걸로. dbAgent쪽에 문제발생시 너무 오랫동안 대기하는 이슈가 생길수도
          * 있으므로 일단 바로 api를종료해주고 인증문자를 못받았으면 프론트쪽에서 사용자가 재전송버튼을 누르던지 하는 방식으로. */
 
-        return true;
+        return phoneAuthId;
     }
 
     /*문자인증 확인 메소드
@@ -161,9 +181,11 @@ public class MemberService {
      * - 일치하면 true,아니면 false
      * - 반환 ) 인증번호가 맞으면 true, 틀리면 false. */
     @Transactional
-    public boolean checkSmsAuth(String areaCode, String localNumber, String authNum){
+    public boolean checkSmsAuth(Long phoneAuthId, String authNum) throws ResourceNotFoundException {
         /*폰번호에 해당하는 인증번호 가져옴*/
-        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(phoneAuthId)
+                .orElseThrow(()->new ResourceNotFoundException("phoneAuth not found for this id :: "+phoneAuthId));
+
         if(phoneAuth.getCertifyNum().equals(authNum)){
             phoneAuth.setIsCertified(true);
 //            phoneAuthRepository.delete(phoneAuth);
@@ -175,7 +197,7 @@ public class MemberService {
     /*uid중복 확인 메소드*/
     @Transactional
     public int checkUidDup(String uid){
-        if(Pattern.matches("^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$",uid)){
+        if(Pattern.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}$",uid)){
             return 2;
         }
         else{
@@ -183,61 +205,126 @@ public class MemberService {
             else return 0;
         }
     }
+    /*닉네임 중복 확인 메소드*/
+    @Transactional
+    public int checkNickNameDup(String nickName){
+        if(nickName.length()<4 && nickName.length() > 10){return 2; }
+        else{
+            if(memberRepository.existsByNickName(nickName)){return 1;}
+            else return 0;
+        }
+    }
+
+    /*회원가입 중간단계 - 회원정보입력*/
+    @Transactional
+    public Long insertMemberInfo(SignUpDto signUpDto) throws ResourceNotFoundException {
+        Member member = memberRepository.findById(signUpDto.getMemberId())
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+signUpDto.getMemberId()));
+
+        /*uid 중복 확인*/
+        if(checkUidDup(signUpDto.getEmail())==1){
+            memberRepository.delete(member);
+            throw new EmailDupException("이메일이 중복됩니다");
+        }
+        /*닉네임 중복 확인*/
+        if(checkNickNameDup(signUpDto.getNickName())==1){
+            memberRepository.delete(member);
+            throw new RuntimeException("닉네임이 중복됩니다");
+        }
+
+        /*회원 정보 저장*/
+        /*비밀번호 자바 암호화*/
+        String encodedPw = encoder.encode(signUpDto.getPw());
+
+        /*sns를 통해 가입하는경우.*/
+        if(member!=null){
+            member.setUid(signUpDto.getEmail());
+            member.setNickName(signUpDto.getNickName());
+            member.setPassword(encodedPw);
+            member.setEmail(signUpDto.getEmail());
+
+            member = memberRepository.save(member);
+        }
+        /*이메일을 통해 가입하는 경우.*/
+        else{
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            member = Member.builder()
+                    .uid(signUpDto.getEmail())
+                    .memberName(null)//임시값. 수정필요.
+                    .nickName(signUpDto.getNickName())
+                    .password(encodedPw)
+                    .email(signUpDto.getEmail())
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(null)
+                    .snsId(null)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            member = memberRepository.save(member);
+        }
+        return member.getId();
+    }
 
     /*회원가입
     * - 이메일 중복 확인
     * - 비번 '자바 암호화' (그 외 개인정보 암호화는 db저장시 jpa converter에서 수행)
     * - Member생성하여 db에 저장.
     * - 회원정보와 문자인증 정보가 함께 넘어옴. */
-    public boolean signUp(SignUpDto signUpDto){
-        /*이메일 중복 확인*/
-        if(memberRepository.existsByUid(signUpDto.getEmail())==true){
-            /*!!!!!예외처리 이렇게하는게 맞는지? 그냥 던지기만하면 프론트에서 알아서 처리하는지? */
-            throw new EmailDupException("이메일이 중복됩니다");
-        }
-        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(signUpDto.getAreaCode(),signUpDto.getLocalNumber());
+    /*public Long signUp(SignUpDto signUpDto) throws ResourceNotFoundException {
 
-        if(phoneAuth.getIsCertified()==false){
-            //!!!!! 휴대폰 인증이 완료되지 않은 번호입니다.
-            throw new RuntimeException("휴대폰 인증이 완료되지 않은 번호입니다");
-        }
-        else {
-            /*회원 정보 저장*/
-            /*전화번호를 나타내는 PhoneNumber생성*/
-            PhoneNumber phoneNumber = new PhoneNumber(signUpDto.getAreaCode(), signUpDto.getLocalNumber());
-            /*비밀번호 자바 암호화 및 개인정보 db암호화*/
-            String encodedPw = encoder.encode(signUpDto.getPw());
+        *//*이미 가입한 사용자인지 확인*//*
+        Member tempMember = memberRepository.findByAreaCodeAndLocalNumberAndMemberName(
+                signUpDto.getAreaCode(),signUpDto.getLocalNumber(),signUpDto.getMemberName());
+        if(tempMember!=null){throw new RuntimeException("이미 가입한 사용자 입니다");}
 
-            /*Member 저장*/
-            Member member = Member.builder()
-                    .uid(signUpDto.getEmail())//!!!!!uid가 뭔지몰라 일단 중복처리를 하기때문에 똑같이 유일한 이메일로 설정.
-                    //                .memberName()
-                    .nickName(signUpDto.getNickName())
-                    .password(encodedPw)
-                    .email(signUpDto.getEmail())//일단 이렇게.
-                    .gender(Gender.boy)
-                    .roles(Role.member)
-                    //                .profileImage()
-                    .isActive(true)
-                    //                .certifiedNo()
-                    .isCertified(true)
-                    //                .joinDt()
-                    //                .snsType()
-                    //                .snsId()
-                    //                .statusMessage()
-                    //                .address()
-                    .phoneNumber(phoneNumber)
-                    .build();
+        *//*회원 정보 저장*//*
+        *//*비밀번호 자바 암호화*//*
+        String encodedPw = encoder.encode(signUpDto.getPw());
 
-            memberRepository.save(member).getId();
-        }
+        *//*기본 프로필 이미지url들 가져옴*//*
+        CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+        CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+        CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
-        return true;
-    }
+        *//*Member 저장*//*
+        Member member = Member.builder()
+                .uid(signUpDto.getEmail())
+                //                .memberName()
+                .nickName(signUpDto.getNickName())
+                .password(encodedPw)
+                .email(signUpDto.getEmail())//일단 이렇게.
+//                .gender(Gender.boy)
+                .roles(Role.member)
+                //                .profileImage()
+                .isActive(true)
+                .certifiedNo(signUpDto.getPassLoginId())
+                .isCertified(true)
+                //                .joinDt()
+                //                .statusMessage()
+                //                .address()
+                .phoneNumber(new PhoneNumber(signUpDto.getAreaCode(),signUpDto.getLocalNumber()))
+                .memberName(signUpDto.getMemberName())
+                .profileImage(noProfileImage.getExtraValue1())
+                .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                .snsId(signUpDto.getSnsId())
+                .snsType((signUpDto.getSnsType()==null)?null:(SNSType.valueOf(signUpDto.getSnsType())))
+                .build();
+
+        member = memberRepository.save(member);
+
+        return member.getId();
+    }*/
 
     /*비번 변경을 위한 문자인증 요청 메소드*/
     @Transactional
-    public boolean sendSmsForPwReset(PhoneAuthDto dto){
+    public Long sendSmsForPwReset(PhoneAuthDto dto){
         /*해당 번호로 가입되어있는 회원이 있는지 확인*/
         if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==false){
             throw new RuntimeException("가입되지 않은 휴대폰 번호입니다");
@@ -250,8 +337,9 @@ public class MemberService {
     /*비번변경 메소드
     * - 비번암호화하여 번호에 해당하는 멤버의 비번필드에 update. */
     @Transactional
-    public boolean updatePw(ResetPwDto resetPwDto) {
-        PhoneAuth phoneAuth = phoneAuthRepository.findByAreaCodeAndLocalNumber(resetPwDto.getAreaCode(),resetPwDto.getLocalNumber());
+    public boolean updatePw(ResetPwDto resetPwDto) throws ResourceNotFoundException {
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(resetPwDto.getPhoneAuthId())
+                .orElseThrow(()->new ResourceNotFoundException("phoneAuth not found for this id :: "+resetPwDto.getPhoneAuthId()));
 
         if(phoneAuth.getIsCertified()==false){
             throw new RuntimeException("인증이 확인되지 않은 번호입니다. ");
@@ -260,21 +348,516 @@ public class MemberService {
         String encodedPw = encoder.encode(resetPwDto.getNewPw());
 
         /*세션토큰에 해당하는 멤버의 비번필드 업데이트*/
-        Member member = memberRepository.findByAreaCodeAndLocalNumber(resetPwDto.getAreaCode(),resetPwDto.getLocalNumber());
+        Member member = memberRepository.findByAreaCodeAndLocalNumber(
+                phoneAuth.getPhoneNumber().getAreaCode(),phoneAuth.getPhoneNumber().getLocalNumber()
+        );
 
         member.setPassword(encodedPw);
+
+        /*문자인증테이블 phoneAuth에서 데이터 삭제*/
+        phoneAuthRepository.delete(phoneAuth);
 
         return true;
     }
 
+    /*id찾기를 위한 문자인증 메소드*/
+    @Transactional
+    public String findId(Long phoneAuthId, String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        String uid = member.getUid();
+
+        String[] tempUid = uid.split("@");
+        tempUid[0] = tempUid[0].substring(0,tempUid[0].length()-2)+"**";
+        tempUid[1] = "**"+tempUid[1].substring(2);
+
+        return tempUid[0]+tempUid[1];
+    }
+
+
+    /*pass인증*/
+    @Transactional
+    public String passAuth(String code, String state, String error, String message) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, ResourceNotFoundException {
+        PassAuthResponseDto resultDto=new PassAuthResponseDto();
+        String passClientId = "uWHHuitm5at159jXPlc5";
+        String passClientPw = "c30dbcd9c06a9b0211e12327549537fd6169876092f9f693bce172664690a909";
+
+        Member member = memberRepository.findById(Long.parseLong(state))
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+state));
+
+        /*받은 응답이 에러가있을경우 예외처리.*/
+        if(error!=null){
+            memberRepository.delete(member);
+            throw new RuntimeException(error + ", "+message);
+        }
+
+        /*접근코드 받아오기. */
+        String url = "https://id.passlogin.com/oauth2/token";
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+        parameter.put("grant_type","authorization_code");
+        parameter.put("client_id",passClientId);
+        parameter.put("client_secret",passClientPw);
+        parameter.put("code",code);
+        parameter.put("state","sample");
+//        parameter.put("refresh_token",""); 갱신때 필수.
+//        parameter.put("access_token","");     삭제때 필수.
+//        parameter.put("service_provider",""); 삭제때 필수.
+
+        String responseForAccessCode = sendRequest(url,method,parameter,"");
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
+
+        String accessToken = (String)mapForAccessCode.get("access_token");
+//        String tokenType = (String)mapForAccessCode.get("token_type");
+//        Integer expiresIn = (Integer)mapForAccessCode.get("expires_in");
+//        String stateForAccessToken = (String)mapForAccessCode.get("state");
+        String errorForAccessToken = (String)mapForAccessCode.get("error");
+        String messageForAccessToken = (String)mapForAccessCode.get("message");
+
+        if(errorForAccessToken!=null){
+            memberRepository.delete(member);
+            throw new RuntimeException("pass 접근코드 받기 에러\nerror : "+errorForAccessToken+"\nmessage : "+messageForAccessToken);
+        }
+
+        /*회원정보 받아오기. */
+        url = "https://id.passlogin.com/v1/user/me";
+        method = "GET";
+
+        String responseForUsrInfo = sendRequest(url,method,new HashMap<String,String>(),"Bearer "+accessToken);
+        Map<String,Object> mapForUsrInfo = mapper.readValue(responseForUsrInfo, Map.class);
+
+        Map<String,Object> userInfo = (Map<String,Object>)mapForUsrInfo.get("user");
+
+        String plid = (String)userInfo.get("plid");
+        String phoneNo = (String)userInfo.get("phoneNo");
+        String name = (String)userInfo.get("name");
+
+        phoneNo = AES.aesDecode(phoneNo, passClientPw.substring(0,16));
+        name = AES.aesDecode(name, passClientPw.substring(0,16));
+
+        /*state로 받은 member의 정보에 pass에서 가져온값 저장*/
+        member.setMemberName(name);
+        member.setCertifiedNo(plid);
+        member.setIsCertified(true);
+        member.setPhoneNumber(new PhoneNumber(phoneNo.substring(0,3),phoneNo.substring(3)));
+        memberRepository.save(member);
+
+        String sessionToken=null;
+        /*세션토큰 생성 및 저장. */
+        String rawToken = member.getUid() + LocalDateTime.now();
+        sessionToken = encoder.encode(rawToken);
+
+        member.setSessionToken(sessionToken);
+        return sessionToken;
+    }
+
+    /*sns로그인. kakao*/
+    @Transactional
+    public SnsLoginResponseDto snsLoginForKakao(String code, String state, String error) throws IOException {
+        SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
+        resultDto.setSnsType("kakao");
+        String clientId = "f0685b27f74d3f456d396195ca40796e";
+        String redirectUrl = "http://112.220.72.178:6081/fishkingV2/v2/api/kakaoAuthCode";
+        String clientSecret = "LhhI6bSQYOCzBf7FLfnLGA0Ud2qsGTkV";
+
+        /*받은 응답이 에러가있을경우 예외처리.*/
+        if(error!=null){
+            throw new RuntimeException("인증 코드 요청 에러\nerror code : "+ error );
+        }
+
+        /*접근코드 받아오기. */
+        String url = "https://kauth.kakao.com/oauth/token";
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+        parameter.put("grant_type","authorization_code");
+        parameter.put("client_id",clientId);
+        parameter.put("redirect_uri",redirectUrl);
+        parameter.put("client_secret",clientSecret);
+        parameter.put("code",code);
+//        parameter.put("refresh_token",""); 갱신때 필수.
+//        parameter.put("access_token","");     삭제때 필수.
+//        parameter.put("service_provider",""); 삭제때 필수.
+
+        String responseForAccessCode = sendRequest(url,method,parameter,"");
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
+
+//        String responseError = (String)mapForAccessCode.get("error");//카카오엔 따로 없음.
+//        String responseErrorDescription = (String)mapForAccessCode.get("error_description");//카카오엔 따로 없음.
+        String accessToken = (String)mapForAccessCode.get("access_token");
+//        String refreshToken = (String)mapForAccessCode.get("refreshToken");
+        String tokenType = (String)mapForAccessCode.get("token_type");
+//        String expiresInString = (String)mapForAccessCode.get("expires_in");
+//        Integer expiresIn = null;
+//        if(expiresInString!=null){expiresIn = Integer.parseInt(expiresInString);}
+
+//        if(responseError!=null){
+//            throw new RuntimeException("접근 토큰 요청 에러\nerror code : "+ responseError + "\nerror description : "+responseErrorDescription);
+//        }
+
+        /*회원정보 받아오기. */
+        url = "https://kapi.kakao.com/v2/user/me";
+        method = "POST";
+
+        String responseForUsrInfo = sendRequest(url,method,new HashMap<String,String>(),"Bearer "+accessToken);
+        Map<String,Object> mapForUsrInfo = mapper.readValue(responseForUsrInfo, Map.class);
+//        Map<String,Object> usrInfo = (Map<String,Object>)mapForUsrInfo.get("id");
+
+        String errorCode = (String)mapForUsrInfo.get("code");
+        String errorMessage = (String)mapForUsrInfo.get("msg");
+        Long usrId = new Long((Integer)mapForUsrInfo.get("id"));
+//        String usrNickName = (String)usrInfo.get("nickname");
+//        String usrName = (String)usrInfo.get("name");
+//        String usrEmail = (String)usrInfo.get("email");
+//        String usrGender = (String)usrInfo.get("gender");
+//        String usrAge = (String)usrInfo.get("age");
+//        String usrProfileImage = (String)usrInfo.get("profile_image");
+//        String usrMobile = (String)usrInfo.get("mobile");
+
+        /*에러응답시 예외처리*/
+        if(errorCode!=null){
+            throw new RuntimeException("프로필 조회 에러\ncode : "+errorCode+"\nmsg : "+errorMessage);
+        }
+
+        /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
+        Member member = memberRepository.findBySnsIdAndSnsType(usrId.toString(), SNSType.kakao);
+        /*이미 가입된 회원일 경우, 로그인 처리. */
+        if(member !=null){
+            resultDto.setResultType("login");
+
+            /*세션토큰이 이미 존재하면 해당세션토큰반환*/
+            if(member.getSessionToken()!=null){
+                resultDto.setSessionToken(member.getSessionToken());
+            }
+            /*세션토큰이 존재하지 않으면 새로생성한 세션토큰반환.*/
+            else{
+                String rawToken = member.getUid() + LocalDateTime.now();
+                String sessionToken = encoder.encode(rawToken);
+
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(sessionToken);
+            }
+            return resultDto;
+        }
+        /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
+         * - 회원가입페이지로 라다이렉트.
+         * - sns api에서 넘겨준 sns연동id를 반환. */
+        else{
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.kakao.getValue()+usrId)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password("tempPassword")//임시값. 수정필요.
+                    .email("tempEmail")//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.kakao)
+                    .snsId(usrId.toString())
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
+            return resultDto;
+        }
+    }
+
+    /*sns로그인. 페북
+    * - 페북로그인 연동id로 가입된 회원이 있는지확인하고, 있으면 로그인처리, 없으면 회원가입 중간처리. */
+    @Transactional
+    public SnsLoginResponseDto snsLoginForFacebook(String snsId){
+        SnsLoginResponseDto resultDto = new SnsLoginResponseDto();
+        resultDto.setSnsType("facebook");
+
+        Member member = memberRepository.findBySnsIdAndSnsType(snsId, SNSType.facebook);
+        if(member!=null){/*기존 회원가입되어있으면,*/
+            resultDto.setResultType("login");
+            if(member.getSessionToken()!=null){/*이미 로그인되어있으면,*/
+                resultDto.setSessionToken(member.getSessionToken());
+            }
+            else{/*로그인되어있지 않으면, */
+                String sessionToken=null;
+                /*세션토큰 생성 및 저장. */
+                String rawToken = member.getUid() + LocalDateTime.now();
+                sessionToken = encoder.encode(rawToken);
+
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(sessionToken);
+            }
+            return resultDto;
+        }
+        else{/*회원가입되어있지 않으면, */
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.facebook.getValue()+snsId)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password(snsId)//임시값. 수정필요.
+                    .email(snsId)//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.facebook)
+                    .snsId(snsId)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
+            return resultDto;
+        }
+    }
+
+    /*sns로그인. naver
+    * - OAuth방식으로 인증코드를 받아 접근코드받기, 회원정보가져오기를 수행하고 처음 접속하는 회원이면 회원가입처리, 아니면 로그인 처리를 해준다.
+    * - */
+    @Transactional
+    public SnsLoginResponseDto snsLoginForNaver(String code, String state, String error, String errorDescription) throws IOException {
+        SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
+        resultDto.setSnsType("naver");
+        String clientId = "xQF6XDWPhMC665JO2kSq";
+        String clientSecret = "shKqzGtgR1";
+
+        /*받은 응답이 에러가있을경우 예외처리.*/
+        if(error!=null){
+            throw new RuntimeException("인증 코드 요청 에러\nerror code : "+ error + "\nerror description : "+errorDescription);
+        }
+
+        /*접근코드 받아오기. */
+        String url = "https://nid.naver.com/oauth2.0/token";
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+        parameter.put("grant_type","authorization_code");
+        parameter.put("client_id",clientId);
+        parameter.put("client_secret",clientSecret);
+        parameter.put("code",code);
+        parameter.put("state","sample");
+//        parameter.put("refresh_token",""); 갱신때 필수.
+//        parameter.put("access_token","");     삭제때 필수.
+//        parameter.put("service_provider",""); 삭제때 필수.
+
+        String responseForAccessCode = sendRequest(url,method,parameter,"");
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
+
+        String responseError = (String)mapForAccessCode.get("error");
+        String responseErrorDescription = (String)mapForAccessCode.get("error_description");
+        String accessToken = (String)mapForAccessCode.get("access_token");
+//        String refreshToken = (String)mapForAccessCode.get("refreshToken");
+        String tokenType = (String)mapForAccessCode.get("token_type");
+//        String expiresInString = (String)mapForAccessCode.get("expires_in");
+//        Integer expiresIn = null;
+//        if(expiresInString!=null){expiresIn = Integer.parseInt(expiresInString);}
+
+        if(responseError!=null){
+            throw new RuntimeException("접근 토큰 요청 에러\nerror code : "+ responseError + "\nerror description : "+responseErrorDescription);
+        }
+
+        /*회원정보 받아오기. */
+        url = "https://openapi.naver.com/v1/nid/me";
+        method = "POST";
+
+        String responseForUsrInfo = sendRequest(url,method,new HashMap<String,String>(),tokenType+" "+accessToken);
+        Map<String,Object> mapForUsrInfo = mapper.readValue(responseForUsrInfo, Map.class);
+        Map<String,Object> usrInfo = (Map<String,Object>)mapForUsrInfo.get("response");
+
+        String resultCode = (String)mapForUsrInfo.get("resultcode");
+        String message = (String)mapForUsrInfo.get("message");
+        String usrId = (String)usrInfo.get("id");
+//        String usrNickName = (String)usrInfo.get("nickname");
+//        String usrName = (String)usrInfo.get("name");
+//        String usrEmail = (String)usrInfo.get("email");
+//        String usrGender = (String)usrInfo.get("gender");
+//        String usrAge = (String)usrInfo.get("age");
+//        String usrProfileImage = (String)usrInfo.get("profile_image");
+//        String usrMobile = (String)usrInfo.get("mobile");
+
+        /*에러응답시 예외처리*/
+        if(!resultCode.equals("00")){
+            throw new RuntimeException("프로필 조회 에러\nresultcode : "+resultCode+"\nmessage : "+message);
+        }
+
+        /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
+        Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.naver);
+        /*이미 가입된 회원일 경우, 로그인 처리. */
+        if(member !=null){
+            resultDto.setResultType("login");
+
+            /*세션토큰이 이미 존재하면 해당세션토큰반환*/
+            if(member.getSessionToken()!=null){
+                resultDto.setSessionToken(member.getSessionToken());
+            }
+            /*세션토큰이 존재하지 않으면 새로생성한 세션토큰반환.*/
+            else{
+                String rawToken = member.getUid() + LocalDateTime.now();
+                String sessionToken = encoder.encode(rawToken);
+
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(sessionToken);
+            }
+            return resultDto;
+        }
+        /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
+        * - 회원가입페이지로 라다이렉트.
+        * - sns api에서 넘겨준 sns연동id를 반환. */
+        else{
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.naver.getValue()+usrId)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password(usrId)//임시값. 수정필요.
+                    .email(usrId)//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.naver)
+                    .snsId(usrId)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
+            return resultDto;
+            /*String[] phoneNumber = convertPhoneNumber(usrMobile);
+            if(memberRepository.existsByAreaCodeAndLocalNumber(phoneNumber[0], phoneNumber[1])>0){
+                throw new RuntimeException("이미 가입한 전화번호입니다.");
+            }
+
+            *//*저장할 회원정보 변환*//*
+            *//*Gender gender=null;
+            if(usrGender.equals("F")){gender=Gender.girl;}
+            else if(usrGender.equals("M")){gender=Gender.boy;}
+            else if(usrGender.equals("U")){gender=null;}*//*
+
+            *//*기본 프로필 이미지url들 가져옴*//*
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.naver.getValue()+usrId)
+                    .memberName(usrName)
+//                    .nickName(usrNickName)
+                    .email(usrEmail)
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(true)
+                    .isCertified(true)
+                    .snsType(SNSType.naver)
+                    .snsId(usrId)
+                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            String rawToken = newMember.getUid() + LocalDateTime.now();
+            String sessionToken = encoder.encode(rawToken);
+
+            newMember.setSessionToken(sessionToken);
+            return sessionToken;*/
+        }
+
+    }
+
+    /*000-0000-0000형식의 전화번호를 앞세자리와 나머지번호부분으로 나누어 반환하는 메소드. */
+    String[] convertPhoneNumber(String phoneNumber){
+        String[] number = phoneNumber.split("-");
+        String[] result=new String[2];
+
+        result[0]=number[0];
+        result[1]=number[1]+number[2];
+
+        return result;
+    }
+
+    /*요청보내는 메소드*/
+    public String sendRequest(String inputUrl, String method, Map<String,String> parameter, String token) throws IOException {
+        URL url = new URL(inputUrl);
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection)con;
+        http.setRequestMethod(method); // PUT is another valid option
+        http.setDoOutput(true);
+
+        /*Map<String,String> arguments = new HashMap<>();
+        arguments.put("username", "root");
+        arguments.put("password", "sjh76HSn!"); // This is a fake password obviously*/
+        StringJoiner sj = new StringJoiner("&");
+        for(Map.Entry<String,String> entry : parameter.entrySet())
+            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        int length = out.length;
+
+        http.setFixedLengthStreamingMode(length);
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.setRequestProperty("Authorization",token);
+        http.connect();
+        try(OutputStream os = http.getOutputStream()) {
+            os.write(out);
+        }
+        // Do something with http.getInputStream()
+        int responseCode = http.getResponseCode();
+        BufferedReader br;
+
+        if(responseCode == 200) { // 정상 호출
+            br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+        } else {  // 에러 발생
+            br = new BufferedReader(new InputStreamReader(http.getErrorStream()));
+        }
+        String inputLine;
+        StringBuffer res = new StringBuffer();
+        while ((inputLine = br.readLine()) != null) {
+            res.append(inputLine);
+        }
+        br.close();
+        return res.toString();
+        /*if(responseCode==200) {
+            return res.toString();
+        } else {
+            return null;
+        }*/
+    }
 
     /*로그인
      * - 아디, 비번확인하고 아니면 예외처리??, 맞으면 세션토큰생성하여 저장하고 반환. */
     @Transactional
-    public String login(LoginDTO loginDTO){
+    public String login(LoginDTO loginDTO) throws ResourceNotFoundException {
         String sessionToken=null;
         /*아디,비번 확인*/
-        Member member = memberRepository.findByEmail(loginDTO.getMemberId());
+        Member member = memberRepository.findByUid(loginDTO.getMemberId())
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this uid :: "+loginDTO.getMemberId()));
         if(member==null){
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
@@ -285,7 +868,7 @@ public class MemberService {
             }
             else {
                 /*세션토큰 생성 및 저장. */
-                String rawToken = member.getEmail() + LocalDateTime.now();
+                String rawToken = member.getUid() + LocalDateTime.now();
                 sessionToken = encoder.encode(rawToken);
 
                 member.setSessionToken(sessionToken);
@@ -312,55 +895,74 @@ public class MemberService {
     public UserProfileDTO getUserProfile(Long profileUserId, String sessionToken) throws ResourceNotFoundException {
         /*repository로부터 필요한 정보 가져오기*/
             /*userId로부터 Member를 가져온다. */
-            Member member = memberRepository.findById(profileUserId)
+            Member profileMember = memberRepository.findById(profileUserId)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+profileUserId));
             Member me = memberRepository.findBySessionToken(sessionToken)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
-
-            /*비활성화된 멤버라면 빈 dto를 반환. */
-            if(member.getIsActive()==false){
-                UserProfileDTO dto = new UserProfileDTO();
-                dto.setIsActive(false);
-                return dto;
-            }
-            /*DTO저장에 필요한 작성글수(fishingDiary글만을 취급, 좋아요수, 업체찜수를 가져온다. */
-            int postCount = fishingDiaryRepository.countByMember(member);
-            int takeCount = goodsRepository.findTakeCount(member);//!!!!!어떤것에 대한 찜 수인지 확인후 수정. 일단은 상품에 대한 찜 수.
-            //좋아요 수???!!!!! member에 대한 좋아요가 뭔지 확인하고 추가필요.
+            Company profileCompany = companyRepository.findByMember(profileMember);
 
         /*가져온 데이터들을 UserProfileDTO에 저장. (본인이 아닌 경우, '업체찜수'를 추가해준다)  */
-            /*공통적으로 필요한 프로필정보 dto에 추가. */
-            UserProfileDTO userProfileDTO = UserProfileDTO.builder()
-                .memberId(member.getId())
-                .nickName((member.getNickName()==null)?("이름없음"):(member.getNickName()))
-                .profileImage(env.getProperty("file.downloadUrl") + member.getProfileImage())
-                .isActive(member.getIsActive())
-                .postCount(postCount)
-                .takeCount(takeCount)
-                .isMe(false)
-                .isShip(false)
-                //.likeCount() !!!!! member에 대한 좋아요는 뭘말하는지 모호해 일단 생략. 수정 필요.
-                .build();
+            UserProfileDTO userProfileDTO=null;
+            if(profileMember.getIsActive()) {
+                /*공통적으로 필요한 프로필정보 dto에 추가. */
+                userProfileDTO = UserProfileDTO.builder()
+                        .memberId(profileMember.getId())
+                        .nickName((profileMember.getNickName() == null) ? ("이름없음") : (profileMember.getNickName()))
+                        .profileImage(env.getProperty("file.downloadUrl") + profileMember.getProfileImage())
+                        .backgroundImage(env.getProperty("file.downloadUrl") + profileMember.getProfileBackgroundImage())
+                        .isMe(false)
+                        .isCompany(false)
+                        .build();
 
-            /*본인인 경우를 표시. */
-            if(profileUserId.equals(me.getId())){ userProfileDTO.setIsMe(true); }
-
-            /*업체회원인 경우 정보추가  */
-            Ship ship = shipRepository.findByMember(member);
-            if(ship!=null){//Role이 선주인 member가 ship이 무조건 있는건지 없는건지 모르겠어서 확인차 추가.
-                List<String> fishSpeciesString = new LinkedList<String>();
-                List<CommonCode> fishSpecies = ship.getFishSpecies();
-                for(int i=0; i<fishSpecies.size(); i++){
-                    fishSpeciesString.add(fishSpecies.get(i).getCodeName());
+                /*본인인 경우를 표시. */
+                if (profileUserId.equals(me.getId())) {
+                    int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);
+                    ;//회원이 작성한 조행기 개수.
+                    int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
+                    int likeCount = loveToRepository.countByCreatedBy(profileMember);//회원이 좋아요한 개수.
+                    userProfileDTO.setIsMe(true);
+                    userProfileDTO.setPostCount(fishingDiaryCount + reviewCount);
+                    userProfileDTO.setLikeCount(likeCount);
                 }
-                int likeCount = loveToRepository.countByTakeTypeAndLinkId(TakeType.ship, ship.getId());//ship이 받은 좋아요 수 카운트.
+                /*본인이 아닌 다른 일반회원의 프로필일 경우*/
+                else if ((profileUserId != me.getId()) && profileCompany == null) {
+                    int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//회원이 작성한 조행기 개수.
+                    int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
+                    int likeCount = loveToRepository.countByCreatedBy(profileMember);//회원이 좋아요한 개수.
+                    int takeCount = takeRepository.countByCreatedBy(profileMember);//회원이 찜한 개수.
+                    userProfileDTO.setPostCount(fishingDiaryCount + reviewCount);
+                    userProfileDTO.setLikeCount(likeCount);
+                    userProfileDTO.setTakeCount(takeCount);
+                }
+                /*업체회원인 경우*/
+                else if ((profileUserId != me.getId()) && profileCompany != null) {
+                    int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//업체가 작성한 조항일지 개수.
+                    int likeCount = loveToRepository.countLikeCountForCompanyProfile(profileMember.getId());//조항일지 등에서 받은 좋아요수.
+                    int takeCount = takeRepository.countForCompanyProfile(profileCompany.getId());//업체가 받은 총 찜수.
+                    userProfileDTO.setPostCount(fishingDiaryCount);
+                    userProfileDTO.setTakeCount(takeCount);
+                    userProfileDTO.setLikeCount(likeCount);
+                    userProfileDTO.setIsCompany(true);
+                    userProfileDTO.setCompanyId(profileCompany.getId());
+                }
+            }
+            /*회원이 탈퇴한 경우*/
+            else{
+                /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+                CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+                CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+                CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
-                userProfileDTO.setIsShip(true);
-                userProfileDTO.setLikeCount(likeCount);
-                userProfileDTO.setShipId(ship.getId());
-                userProfileDTO.setShipName(ship.getShipName());//!!!!!ShipOwner role의 member의 이름이 ship의 이름인지 잘모르겠음.
-                userProfileDTO.setSido(ship.getSido());
-                userProfileDTO.setFishSpecies(fishSpeciesString);
+                userProfileDTO = UserProfileDTO.builder()
+                        .nickName("탈퇴한 회원입니다.")
+                        .profileImage(noProfileImage.getExtraValue1())
+                        .backgroundImage(noBackgroundImage.getExtraValue1())
+                        .postCount(0)
+                        .likeCount(0)
+                        .isMe(false)
+                        .takeCount(0)
+                        .isCompany(false)
+                        .build();
             }
 
         return userProfileDTO;
@@ -496,6 +1098,20 @@ public class MemberService {
 
         return true;
     }
+    /*프사배경 내리기*/
+    @Transactional
+    public boolean deleteProfileBackgroundImage(String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        FileEntity file = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(),FilePublish.profile,false);
+        CodeGroup codeGroup = codeGroupRepository.findById(92L)
+                .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+92));
+        CommonCode commonCode = commonCodeRepository.findByCodeGroupAndCode(codeGroup, "noBackImg");
+
+        uploadService.removeFileEntity(file.getId());
+        member.setProfileBackgroundImage(commonCode.getExtraValue1());
+        return true;
+    }
 
     /*닉네임 변경*/
     @Transactional
@@ -588,6 +1204,35 @@ public class MemberService {
             reviewRepository.updateIsActiveByMember(member);
 */
         return member.getId();
+    }
+
+    /*휴대폰번호 변경을 위한 문자인증요청 */
+    @Transactional
+    public Long sendSmsAuthForModifyPhoneNum(PhoneAuthDto dto){
+        if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==true){
+            throw new RuntimeException("이미 가입한 휴대폰 번호입니다");
+        }
+        else{
+            return requestSmsAuth(dto);
+        }
+    }
+
+    /*휴대폰 번호 변경
+    * - dto에 들은 phoneAuth가 인증이된건지 확인 후, token에 해당하는 멤버의 번호를 변경해준다.*/
+    @Transactional
+    public boolean modifyPhoneNumber(ModifyPhoneNumberDto dto, String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not fuond for this token :: "+token));
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(dto.getPhoneAuthId())
+                .orElseThrow(()->new ResourceNotFoundException("phoneAuth not found for this id :: "+dto.getPhoneAuthId()));
+
+        if(phoneAuth.getIsCertified()) {
+            member.setPhoneNumber(new PhoneNumber(phoneAuth.getPhoneNumber().getAreaCode(), phoneAuth.getPhoneNumber().getLocalNumber()));
+            return true;
+        }
+        else{
+            throw new RuntimeException("문자 인증을 받은 번호가 아닙니다.");
+        }
     }
 
 }

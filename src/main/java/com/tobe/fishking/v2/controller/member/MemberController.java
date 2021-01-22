@@ -1,5 +1,8 @@
 package com.tobe.fishking.v2.controller.member;
 
+import com.fasterxml.jackson.core.util.BufferRecycler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
@@ -7,21 +10,33 @@ import com.tobe.fishking.v2.model.auth.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JsonParser;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.RegEx;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.persistence.AttributeConverter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
+import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -46,15 +61,15 @@ public class MemberController {
 
     /*회원가입시 문자인증 api
     * */
-    @ApiOperation(value = "문자인증 문자 보내기",notes = "" +
+    @ApiOperation(value = "회원가입 문자인증 문자 보내기",notes = "" +
             "- 회원가입시, 문자 인증 문자를 보내고 해당 문자인증 건에 대한 id를 반환한다. 인증번호를 보낼때 이 id값을 같이 보내야 한다. " +
             "- 요청 필드 )\n" +
             "   areaCode : 지역번호 및 휴대폰 앞번호\n" +
             "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)\n" +
-            "- 응답 ) 문자 인증 전송 성공시 true")
-    @PostMapping("/sendSms")
-    public boolean sendSms(@RequestBody PhoneAuthDto dto){
-        return memberService.sendSmsForSingup(dto);
+            "- 응답 ) 문자 인증건에 대한 id. ")
+    @PostMapping("/signUp/sendSms")
+    public Long sendSms(@RequestBody PhoneAuthDto dto){
+        return memberService.sendSmsForSignup(dto);
     }
 
     /*문자인증 확인
@@ -62,15 +77,14 @@ public class MemberController {
     @ApiOperation(value = "문자인증확인",notes = "" +
             "- 인증번호가 일치하는지 확인.\n" +
             "- 요청 필드 )\n" +
-            "   areaCode : 지역번호 및 휴대폰 앞번호\n" +
-            "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)\n" +
+            "   phoneAuthId : 문자인증건에 대한 id\n" +
             "   authNum : 인증번호\n" +
             "- 반환 ) 일치할경우 true, 아닐경우 false. ")
     @PostMapping("/checkSmsAuth")
     public boolean checkSignUpSmsAuth(
             @RequestBody PhoneAuthCheckDto dto
-    ){
-        return memberService.checkSmsAuth(dto.getAreaCode(),dto.getLocalNumber(),dto.getAuthNum());
+    ) throws ResourceNotFoundException {
+        return memberService.checkSmsAuth(dto.getPhoneAuthId(),dto.getAuthNum());
     }
 
     /*아이디 중복 확인*/
@@ -82,38 +96,71 @@ public class MemberController {
             "   0 : 중복 안됨\n" +
             "   1 : 중복 \n" +
             "   2 : 이메일 형식에 맞지 않음")
-    @GetMapping("/checkUidDup")
+    @GetMapping("/signUp/checkUidDup")
     public int checkUidDup(@RequestParam("uid") String uid){
         return memberService.checkUidDup(uid);
+    }
+
+    /*닉네임 중복 확인*/
+    @ApiOperation(value = "닉네임 중복 확인", notes = "" +
+            "- 입력 필드 ) \n" +
+            "   nickName : 중복확인할 닉네임"
+    )
+    @GetMapping("/signUp/checkNickNameDup")
+    public int checkNickNameDup(@RequestParam("nickName") String nickName){
+        return memberService.checkNickNameDup(nickName);
+    }
+
+    /*회원가입 중간단계 - 회원정보입력*/
+    @ApiOperation(value = "회원가입 - 회원정보입력",notes = "" +
+            "회원가입 단계중, 회원정보 입력후 이를 등록하는 api. \n" +
+            "요청 필드 ) \n" +
+            "- memberId : Long / sns를 통해 회원가입진행중일 경우 입력. \n\tㄴ sns로그인 후 리다이렉트 url에 있는 파라미터 'memberId'를 입력해주면된다.\n" +
+            "- email : String / 이메일. 이메일 형식에 맞아야한다\n" +
+            "- pw : String / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
+            "- nickName : String / 닉네임. 4~10자. \n" +
+            "응답 )\n" +
+            "- 회원가입 진행중인 member의 id. " )
+    @PostMapping("/signUp/info")
+    public Long insertMemberInfo(@RequestBody SignUpDto dto) throws ResourceNotFoundException {
+        return memberService.insertMemberInfo(dto);
     }
 
     /*회원가입 - 회원정보입력
     * - 이메일이 중복되지 않으면 true, 세션에 회원가입정보 저장.
     * - 중복되면 false반환.  */
-    @ApiOperation(value = "회원가입 - 회원정보입력", notes = "" +
+    /*@ApiOperation(value = "회원가입 - 회원정보입력", notes = "" +
             "- 회원정보와 함께 보낼경우 회원가입 처리해주는 api \n" +
             "- 요청 필드 ) \n" +
             "   email : String / 이메일. 이메일 형식에 맞아야한다\n" +
             "   pw : String / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
-            "   nickName : String / 닉네임. 4~10자. " +
-            "   areaCode : 지역번호 및 휴대폰 앞번호\n" +
-            "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)\n" +
-            "- 반환 ) 회원가입처리 성공시 true.  ")
+            "   nickName : String / 닉네임. 4~10자. \n" +
+            *//*"   phoneAuthId : Long / 문자인증건의 id.\n" +*//*
+            "   snsId : String / 연동된sns id\n" +
+            "   snsType : String / 연동된 sns의 종류(아래 값들 중 하나를 입력)\n" +
+            "       ㄴ kakao : 카카오\n" +
+            "       ㄴ naver : 네이버 \n" +
+            "       ㄴ facebook : 페이스북\n" +
+            "   memberName : String / 실명\n"+
+            "   areaCode : String / 지역번호 및 휴대폰 앞번호\n" +
+            "   localNumber : String / 나머지 번호(공백,'-'없이 숫자만입력)\n" +
+            "   passLoginId : String / pass로그인 연동 식별자. \n" +
+            "- 반환 ) 회원가입된 회원의 id  ")
     @PostMapping("/signUp/info")
-    public boolean checkEmailDup(@RequestBody @Valid SignUpDto signUpDto) {
+    public Long checkEmailDup(@RequestBody @Valid SignUpDto signUpDto) throws ResourceNotFoundException {
         return memberService.signUp(signUpDto);
-    }
+    }*/
 
     /*비밀번호 찾기(재설정) 인증.
     * - 번호누르고 발송버튼 누르면 들어오는 요청. */
-    @ApiOperation(value = "비밀번호 찾기(재설정)",notes = "" +
-            "- 비밀번호 재설정시 문자인증하는 api. \n" +
+    @ApiOperation(value = "비밀번호 찾기(재설정) 또는 아이디찾기를 위한 문자인증",notes = "" +
+            "- 비밀번호 재설정시 또는 아이디 찾기를 위해 문자인증요청하는 api. \n" +
             "- 요청필드 )\n" +
             "   areaCode : 지역번호 및 휴대폰 앞번호\n" +
             "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)\n" +
-            "- 응답 ) 성공시 true ")
+            "- 응답 ) 문자인증건의 id ")
     @PostMapping("/findPw/smsAuthReq")
-    public boolean requestSmsAuthForPwSearch(@RequestBody PhoneAuthDto dto){
+    public Long requestSmsAuthForPwSearch(@RequestBody PhoneAuthDto dto){
         return memberService.sendSmsForPwReset(dto);
     }
     /*비밀번호 찾기 이후, 재설정.
@@ -123,19 +170,26 @@ public class MemberController {
             "- 비밀번호 재설정에서 문자인증 통과후, 비번을 재설정하는 api.\n" +
             "- 요청 필드 )\n" +
             "   newPw : String / 새 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
-            "   areaCode : 지역번호 및 휴대폰 앞번호\n" +
-            "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)")
+            "   phoneAuthId : 문자인증건의 id")
     @PutMapping("/findPw/updatePw")
     public boolean updatePw(
             @RequestBody @Valid ResetPwDto resetPwDto
-    ) {
+    ) throws ResourceNotFoundException {
         return memberService.updatePw(resetPwDto);
+    }
+
+    /*아이디 찾기*/
+    @ApiOperation(value = "아이디 찾기",notes = "" +
+            "- 문자인증 이후, 아이디 반환해주는 api. \n ")
+    @GetMapping("/findId/smsAuthReq")
+    public String findId(@RequestParam Long phoneAuthId, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+        return memberService.findId(phoneAuthId, token);
     }
 
     /*로그인*/
     @ApiOperation(value = "로그인")
     @PostMapping("/login")
-    public String login(@RequestBody @Valid LoginDTO loginDTO){
+    public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException {
         return memberService.login(loginDTO);
     }
 
@@ -147,97 +201,101 @@ public class MemberController {
         return memberService.logout(sessionToken);
     }
 
-    /*sns 인증 요청 결과
-    * - 인증 요청에대해 카카오 인증서버에서 응답을 redirect하면 이를 받는 메소드.
-    * - 에러인지 성공인지 판단하여 에러이면 프론트로 redirect.
-    * - 성공이면 카카오 서버로 토큰 요청.
-    * - 반환 ) 미정!!!!!*/
-    @RequestMapping("/kakaoAuthCode")
-    public void acceptKakaoAuthCode(/*HttpServletResponse response*/
-            @RequestParam("code") String code,
-            @RequestParam("error") String error//!!!!!어떤걸로 받아야 응답이 받아지는지 잘 모르겠다. 테스트하면서 해야할 필요.
-    ){
-        /*error인지 성공인지 확인*/
+    /*pass인증 callback url*/
+    @ApiOperation(value = "pass인증 callback url",notes = "" +
+            "회원가입 단계 마지막 본인인증 단계에서 사용하는 pass의 callback url.\n" +
+            "실명과 핸드폰번호 데이터를 가지고 회원가입 처리 후, 로그인 처리.  \n" +
+            "?????\n" +
+            "")
+    @RequestMapping("/passAuthCode")
+    public void getPassAuthCode(
+            @RequestParam(value = "code",required = false) String code,
+            @RequestParam(value = "state",required = false) String state,
+            @RequestParam(value = "error",required = false) String error,
+            @RequestParam(value = "message",required = false) String message
+    ) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, ResourceNotFoundException {
+        String sessionToken = memberService.passAuth(code,state,error,message);
 
-        /*에러이면 프론트 페이지로 리다이렉트*/
+        /*!!!!!form을 사용해 post로 프런트의 페이지로 보내주는 jsp로 이동. view사용하여 model에 세션코드저장해서보내줌.*/
 
-        /*성공이면, 카카오 서버로 토큰 요청. */
-
+        return ;
     }
 
-    /*kakao 토큰 받는 메소드. */
+    /*kakao 인증코드 받는 메소드. */
+    @ApiOperation(value = "kakao 로그인 인증코드 받는 api",notes = "")
+    @RequestMapping("/kakaoAuthCode")
+    public void getKakaoAuthCode(
+        @RequestParam(value = "code",required = false) String code,
+        @RequestParam(value = "state",required = false) String state,
+        @RequestParam(value = "error",required = false) String error,
+        HttpServletResponse response
+    ) throws IOException {
+        SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
+
+        if(dto.getResultType().equals("singUp")){
+            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+        }
+        else{
+            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
+        }
+        return;
+    }
+
+    /*페이스북 로그인 연동 id받는 메소드 */
+    @ApiOperation(value = "페이스북 로그인 연동 id를 받아 로그인 및 회원가입 중간 처리해주는 메소드",notes = "" +
+            "js를 이용해 페북 로그인을 한뒤, 이 api로 로그인 연동id가 넘어오면, 이 id에 대해 회원가입 여부를 판단후, 로그인처리 또는" +
+            " 회원가입 중간처리를 해준다.\n" +
+            "요청 필드  ) \n" +
+            "   snsId : 페북 로그인 연동 id \n")
+    @PostMapping("/facebookLogin")
+    public void facebookLogin(
+            @RequestParam("snsId") String snsId,
+            HttpServletResponse response
+    ) throws IOException {
+        SnsLoginResponseDto dto = memberService.snsLoginForFacebook(snsId);
+
+        if(dto.getResultType().equals("singUp")){
+            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+        }
+        else{
+            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
+        }
+        return;
+    }
 
     /*naver 인증코드받는 메소드
     * - 인증코드를 받고 접근코드 요청을 보냄. */
-    @ApiOperation(value = "naver 로그인 인증코드 받는 api",notes = "")
+    @ApiOperation(value = "naver 로그인 인증코드 받는 api",notes = "" +
+            "처음 로그인하는 sns계정일 경우 ) \n" +
+            "- 회원가입페이지로 리다이렉트.\n" +
+            "- 리다이렉트url에 query string 파라미터로 'memberId' 전송. 현재 회원가입 진행중인 member의 id이다.  \n" +
+            "이미 회원가입 되어있는 sns계정일 경우 )\n" +
+            "- 메인페이지로 리다이렉트.\n" +
+            "- ????? \n"
+            /*"- 응답 필드 )\n" +
+            "   snsType : String / sns종류\n" +
+            "   resultType : String / sns연동 로그인 응답 종류\n" +
+            "       ㄴ login : 해당 sns로 이미가입되어있어서 로그인이 됨을 의미. \n" +
+            "       ㄴ signUp : 해당 sns로 가입되어있지않아 회원가입이 필요함을 의미. \n" +
+            "   snsId : resultType이 'signUp'일 경우 값존재. sns로 로그인 연동시 sns으로부터 발급받는 id이다. 회원가입시 같이 넘겨주어야한다.\n" +
+            "   sessionToken : resultType이 'login'인 경우 값존재. 로그인된 세션토큰이다. \n "*/)
     @RequestMapping("/naverAuthCode")
     public void getNaverAuthCode(
-            @RequestParam("code") String code,
+            @RequestParam(value = "code",required = false) String code,
             @RequestParam("state") String state,
-            @RequestParam("error") String error,
-            @RequestParam("error_description") String errorDescription
+            @RequestParam(value = "error",required = false) String error,
+            @RequestParam(value = "error_description",required = false) String errorDescription,
+            HttpServletResponse response
     ) throws IOException {
-        String url = "https://nid.naver.com/oauth2.0/token";
-        String method = "POST";
-        Map<String,String> parameter = new HashMap<String, String>();
-        parameter.put("grant_type","authorization_code");
-        parameter.put("client_id","xQF6XDWPhMC665JO2kSq");
-        parameter.put("client_secret","shKqzGtgR1");
-        parameter.put("code",code);
-        parameter.put("state","sample");
-        parameter.put("refresh_token","");
-        parameter.put("access_token","");
-        parameter.put("service_provider","");
+        SnsLoginResponseDto dto = memberService.snsLoginForNaver(code,state,error,errorDescription);
 
-        sendRequest(url,method,parameter,"");
-        return;
-    }
-
-    /*naver 접근코드 받는 메소드
-    * - 접근코드로 회원정보를 요청.  */
-    @ApiOperation(value = "",notes = "")
-    @RequestMapping("/naverAccessToken")
-    public void getAccessToken(
-            @RequestParam("access_token") String accessToken,
-//            @RequestParam("refresh_token") String refreshToken,
-            @RequestParam("token_type") String tokenType,
-            @RequestParam("expires_in") Integer expiresIn,
-            @RequestParam("error") String error,
-            @RequestParam("error_description") String errorDescription
-    ) throws IOException {
-        String url = "https://openapi.naver.com/v1/nid/me";
-        String method = "POST";
-
-        sendRequest(url,method,new HashMap<String,String>(),accessToken);
-        return;
-    }
-
-    /*요청보내는 메소드*/
-    public void sendRequest(String inputUrl, String method, Map<String,String> parameter, String token) throws IOException {
-        URL url = new URL(inputUrl);
-        URLConnection con = url.openConnection();
-        HttpURLConnection http = (HttpURLConnection)con;
-        http.setRequestMethod(method); // PUT is another valid option
-        http.setDoOutput(true);
-
-        /*Map<String,String> arguments = new HashMap<>();
-        arguments.put("username", "root");
-        arguments.put("password", "sjh76HSn!"); // This is a fake password obviously*/
-        StringJoiner sj = new StringJoiner("&");
-        for(Map.Entry<String,String> entry : parameter.entrySet())
-            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
-                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
-        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
-        int length = out.length;
-
-        http.setFixedLengthStreamingMode(length);
-        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        http.setRequestProperty("Authorization",token);
-        http.connect();
-        try(OutputStream os = http.getOutputStream()) {
-            os.write(out);
+        if(dto.getResultType().equals("singUp")){
+            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
-        // Do something with http.getInputStream()
+        else{
+            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
+        }
+        return;
     }
 
     /*사용자 프로필 정보 페이지 조회
@@ -248,21 +306,23 @@ public class MemberController {
             "- 요청 필드 )\n" +
             "   userId : 프로필을 보고자하는 회원의 id \n" +
             "- 응답 필드 ) \n" +
-            "   memberId : 회원id \n" +
-            "   nickName : 회원 닉네임 \n" +
-            "   profileImage : 회원 프로필 이미지 download url\n" +
-            "   isActive : 회원 활성화 여부 \n" +
-            "   postCount : 회원의 작성글 수 \n" +
-            "   likeCount : " +
-            "- 자기자신의 프로필인 경우 isMe = true, 업체회원인 경우 isShip = true \n" +
-            "- postCount : 프로필 회원이 작성한 FishingDiary 글의 개수 / takeCount : 프로필 회원이 삼품에 대해 찜한 개수 \n" +
-            "- 업체 회원인 경우, 선상id(shipId), 선상명(shipName), 주소(시,도)(sido), 선상에서 잡는 어종(fishSpecies)," +
-            " 선상이 받은 좋아요소수(likeCount) 정보가 추가된다. ")
+            "   memberId : Long / 회원id \n" +
+            "   nickName : String / 회원 닉네임 \n" +
+            "   profileImage : String / 회원 프로필 이미지 url\n" +
+            "   backgroundImage : String / 배경이미지 url" +
+            "   postCount : Integer / 작성글수. 리뷰, 조항일지, 조행기 등 본인이 작성한 글의 개수. \n" +
+            "   likeCount : Integer / 좋아요수. 업체회원일경우, 글 등에서 받은 좋아요수 / 일반회원일경우, 회원이 좋아요 누른 수.\n" +
+            "   isMe : boolean / 현재 프로필이 내 프로필인지 여부. \n" +
+            "   takeCount : Integer / 업체 찜 수. 업체회원인경우, 받은 찜수. / 일반회원인경우, 회원이 찜한 수.\n" +
+            "   isCompany : boolean / 업체의 프로필인지 여부. \n" +
+            "   companyId : Long / 업체의 id\n")
     @GetMapping("/profile")
     public UserProfileDTO getUserProfile(@RequestParam("userId") Long userId, HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         return memberService.getUserProfile(userId, sessionToken);
     }
+
+    /*상대방 글 보기 api*/
 
     /*프로필 관리 페이지 조회.
     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환. */
@@ -295,7 +355,6 @@ public class MemberController {
         return memberService.deleteProfileImage(token);
     }
 
-
     /*프로필 배경 이미지 변경*/
     @ApiOperation(value = "프사 배경이미지 변경", notes = "")
     @PutMapping("/profileManage/profileBackgroundImage")
@@ -305,6 +364,14 @@ public class MemberController {
     ) throws Exception {
         String sessionToken = request.getHeader("Authorization");
         return memberService.updateProfileBackgroundImage(dto,sessionToken);
+    }
+    /*프사배경이미지 없애기.*/
+    @ApiOperation(value = "프사배경이미지 없애기",notes = "" +
+            "- 프로필 배경사진을 내립니다. \n" +
+            "- 반환 ) 성공시 : true / 실패시 : false ")
+    @PutMapping("/profileManage/noProfileBackgroundImage")
+    public boolean deleteProfileBackgroundImage(@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+        return memberService.deleteProfileBackgroundImage(token);
     }
 
     /*닉네임 변경*/
@@ -330,7 +397,8 @@ public class MemberController {
     }
 
     /*이메일 변경*/
-    @ApiOperation(value = "이메일 변경")
+    @ApiOperation(value = "이메일 변경",notes = "" +
+            "- 이메일만 변경되며, 로그인시 사용하는 uid는 변경되지 않습니다. ")
     @PutMapping("/profileManage/email")
     public String modifyProfileEmail(
             @RequestBody ModifyingEmailDto email,
@@ -363,7 +431,35 @@ public class MemberController {
         return memberService.inactivateMember(sessionToken);
     }
 
-    /**/
+    /*휴대폰 번호 변경 문자인증요청*/
+    /*@ApiOperation(value="휴대폰 번호 변경 문자인증api", notes = "" +
+            "- 휴대폰 번호 변경을 위한 문자인증 요청 api")
+    @PostMapping("/profileManage/sendSms")
+    public Long sendSmsForModifyingPhoneNumber(@RequestBody PhoneAuthForModifyPhoneNumber dto, @RequestHeader("Authorization") String token){
+        PhoneAuthDto phoneAuthDto = PhoneAuthDto.builder().areaCode(dto.getAreaCode()).localNumber(dto.getLocalNumber()).build();
+        return memberService.sendSmsForSignup(phoneAuthDto);
+    }*/
+    /*휴대폰 번호 변경*/
+    /*@ApiOperation(value = "휴대폰 번호 변경 api",notes = "" +
+            "- 문자인증 후, 휴대폰 번호 변경하는 api\n" +
+            "- 반환 ) 변경된 번호. ")
+    @PutMapping("/profileManage/phoneNumber")
+    public String modifyPhoneNumber(@RequestBody ModifyPhoneNumberDto dto, @RequestHeader("Authorization") String token){
 
+    }*/
+
+    /*휴대폰 번호 변경을 위한 문자인증 요청.*/
+    @ApiOperation(value = "휴대폰 번호 변경을 위한 문자인증 요청",notes = "" +
+            "")
+    @PostMapping("/profileManage/phoneNumber/sendSms")
+    public Long requestSmsAuthForModifyPhoneNum(@RequestBody PhoneAuthDto dto){
+        return memberService.sendSmsAuthForModifyPhoneNum(dto);
+    }
+    /*문자인증 후, 휴대폰 번호 변경*/
+    @ApiOperation(value = "문자인증 후, 휴대폰 번호 변경",notes = "")
+    @PutMapping("/profileManage/phoneNumber")
+    public boolean modifyPhoneNumber(@RequestBody @Valid ModifyPhoneNumberDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+        return memberService.modifyPhoneNumber(dto,token);
+    }
 
 }

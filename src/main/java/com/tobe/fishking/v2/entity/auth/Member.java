@@ -41,7 +41,7 @@ public class Member {
     @Column(columnDefinition = "varchar(150) NOT NULL   comment '이메일'  ")
     public String email;
 
-    @Column
+    @Column(columnDefinition = "int comment '성별'")
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;
 
@@ -87,11 +87,14 @@ public class Member {
     @Embedded
     private PhoneNumber phoneNumber;
 
+    @Embedded
+    private Address address;
+
     @Builder
     public Member(Long id, String uid,
                   String memberName, String nickName,
                   String password, String email, Gender gender,
-                  Role roles, String sessionToken, String profileImage,
+                  Role roles, String sessionToken, String profileImage, String profileBackgroundImage,
                   Boolean isActive, String certifiedNo, Boolean isCertified,
                   String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber,
                   Address address) {
@@ -105,6 +108,7 @@ public class Member {
         this.roles = roles;
         this.sessionToken = sessionToken;
         this.profileImage = profileImage;
+        this.profileBackgroundImage = profileBackgroundImage;
         this.isActive = isActive;
         this.certifiedNo = certifiedNo;
         this.isCertified = isCertified;
@@ -115,8 +119,7 @@ public class Member {
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
-    @Embedded
-    private Address address;
+
 
 
 

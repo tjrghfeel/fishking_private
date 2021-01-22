@@ -151,9 +151,9 @@ public class FishingDiaryDtoGroup {
                     .member(member)
                     .createdBy(member)
                     .modifiedBy(member)
-                    .status(ShareStatus.builder()
-                            .shareCount(0)
-                            .build())
+//                    .status(ShareStatus.builder()
+//                            .shareCount(0)
+//                            .build())
                     .build();
 
 

@@ -40,11 +40,12 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   (select f.thumbnail_file from files f " +
             "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileName, " +
             "   s.ship_name shipName, " +
-            "   g.fishing_type fishingType, " +
+            "   s.fishing_type fishingType, " +
             "   s.sigungu sigungu, " +
             "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
             "   g.fishing_date fishingDate, " +
+            "   g.fishing_start_time fishingStartTime, " +
             "   o.orders_num ordersNum " +
             "from orders o, ship s, goods g " +
             "where o.created_by = :member " +
@@ -71,14 +72,17 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query(value = "select " +
             "   o.id id, " +
             "   g.id goodsId, " +
-            "   (select f.download_thumbnail_url from files f " +
-            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageUrl, " +
+            "   (select f.file_url from files f " +
+            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
+            "   (select f.thumbnail_file from files f " +
+            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileName, " +
             "   s.ship_name shipName, " +
-            "   g.fishing_type fishingType, " +
+            "   s.fishing_type fishingType, " +
             "   s.sigungu sigungu, " +
             "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
             "   g.fishing_date fishingDate, " +
+            "   g.fishing_start_time fishingStartTime, " +
             "   o.orders_num ordersNum " +
             "from orders o, ship s, goods g " +
             "where o.created_by = :member " +

@@ -1,8 +1,10 @@
 package com.tobe.fishking.v2.repository.auth;
 
+import com.querydsl.core.annotations.QueryEmbeddable;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.model.NoNameDTO;
 import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +38,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     /*이메일 중복체크*/
     boolean existsByEmail(String email);
     boolean existsByUid(String uid);
+    /*닉네임 중복체크*/
+    boolean existsByNickName(String nickName);
     /*휴대폰 번호 중복체크*/
     boolean existsByPhoneNumber(PhoneNumber phoneNumber);
     /*@Query(value = "select exists (select * from member m where m.areacode = :areaCode and m.localnumber = :localNumber)",
@@ -48,11 +53,20 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     /*휴대폰 번호로 검색*/
     Member findByPhoneNumber(PhoneNumber phoneNumber);
 
+
     @Query("select m from Member m where m.phoneNumber.areaCode = :areaCode and m.phoneNumber.localNumber = :localNumber")
     Member findByAreaCodeAndLocalNumber(@Param("areaCode") String areaCode, @Param("localNumber") String localNumber);
 
+    /*전화번호, 실명으로 회원 검색 메소드. */
+    @Query("select m from Member m " +
+            "where m.phoneNumber.areaCode = :areaCode and m.phoneNumber.localNumber = :localNumber and m.memberName = :memberName")
+    Member findByAreaCodeAndLocalNumberAndMemberName(
+            @Param("areaCode") String areaCode, @Param("localNumber") String localNumber, @Param("memberName") String memberName);
+
     /*아이디로 검색*/
     Member findByEmail(String email);
+    /*sns_type, sns_id로 검색*/
+    Member findBySnsIdAndSnsType(String snsId, SNSType snsType);
 
     /*관리자용 검색 메소드*/
     @Query(value = "" +
@@ -146,8 +160,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             Pageable pageable
     );
 
-    /*테스트용들*/
-    @Query("select new com.tobe.fishking.v2.model.NoNameDTO(" +
-            "m.id, m.memberName, m.gender) from Member m where m.roles = :role")
-    List<NoNameDTO> getNoNameList(@Param("role") Role role);
+    @Query("select m from Member m where m.id in :list")
+    ArrayList<Member> findList(@Param("list") ArrayList<Long> list);
 }

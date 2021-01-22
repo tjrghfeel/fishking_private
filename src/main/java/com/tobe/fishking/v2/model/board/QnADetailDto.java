@@ -13,10 +13,21 @@ public interface QnADetailDto {
     Boolean getReplied();
     String getDate();
     String getContents();
+    Long getAuthorId();
+    @Value("#{@mapperUtility.decodeString(target.authorName)}")
+    String getAuthorName();
+    String getReturnType();
+    String getReturnAddress();
+    Long getCreatedBy();
+    Long getModifiedBy();
     @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
     String[] getFileList();
 
     String getReplyContents();
+    String getReplyDate();
+    Long getReplyAuthorId();
+    Long getReplyCreatedBy();
+    Long getReplyModifiedBy();
     @Value("#{@mapperUtility.transFileUrlArray(target.replyFileNameList, target.replyFilePathList)}")
     String[] getReplyFileList();
 

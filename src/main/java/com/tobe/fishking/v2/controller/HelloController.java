@@ -2,13 +2,23 @@ package com.tobe.fishking.v2.controller;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.HelloResponseDto;
+import com.tobe.fishking.v2.model.NoNameDTO;
 import com.tobe.fishking.v2.model.auth.SignUpDto;
 import com.tobe.fishking.v2.service.HelloService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.jcodec.api.JCodecException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.io.IOException;
 
 
 @Api(tags = {"Hello Test"})
@@ -27,16 +37,20 @@ public class HelloController {
         return "hello";
     }
 
-    @GetMapping("/hello/dto")
-    public HelloResponseDto helloDto(@RequestParam("name") String name,
-                                     @RequestParam("amount") int amount) {
+    @GetMapping("/noName2")
+    public HelloResponseDto helloDto(
+            HttpSession session,
+            @RequestParam("name") String name,
+            @RequestParam("amount") int amount
+    ) {
         return new HelloResponseDto(name, amount);
     }
 
     @PostMapping("/noName")
-    public void noName(@RequestBody String dto) throws ResourceNotFoundException {
-        System.out.println("hello >>> "+dto);
-        helloService.noName();
+    public String noName(MultipartFile file) throws ResourceNotFoundException, IOException, JCodecException {
+        helloService.noName(file);
+
+        return "asbdsf";
     }
 
 }

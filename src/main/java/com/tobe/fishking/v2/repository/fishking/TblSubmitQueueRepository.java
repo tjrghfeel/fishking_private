@@ -13,11 +13,11 @@ public interface TblSubmitQueueRepository extends JpaRepository<TblSubmitQueue, 
      * - !!!!! cmp_msg_id확인후 수정필요, usr_id확인후 정확한 id추가필요, snd_phn_id확인후 정확한 번호추가필요*/
     @Query(value = "" +
             "insert into tbl_submit_queue(" +
-            "    usr_id, sms_gb, used_cd, reserved_fg, reserved_dttm, saved_fg, rcv_phn_id, snd_phn_id, snd_msg, " +
+            "    usr_id, sms_gb, used_cd, reserved_fg, reserved_dttm, saved_fg, rcv_phn_id, snd_msg, " +
             "   content_cnt, sms_status  " +
             ") " +
             "values (" +
-            "   'aaa', '1', '00', 'I', :time, '0', :phoneNum, '01011112222', " +
+            "   '6314', '1', '00', 'I', :time, '0', :phoneNum, " +
             "   :content, 0, '0'" +
             ")",
             nativeQuery = true

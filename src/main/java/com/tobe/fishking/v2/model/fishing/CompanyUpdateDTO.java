@@ -15,15 +15,16 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 public class CompanyUpdateDTO {
+    @NotNull
     private Long companyId;//not null, pk
     @Size(min=4,max = 10)
     private String companyName;//
     @Size(min=2,max=5)
     private String memberName;//
-    @Size(min=2,max=15)
-    private String sido;
-    @Size(min=2,max=15)
-    private String gungu;
+//    @Size(min=2,max=15)
+//    private String sido;
+//    @Size(min=2,max=15)
+//    private String gungu;
 
     private String tel;//
 
@@ -34,14 +35,14 @@ public class CompanyUpdateDTO {
     private String bank ;
 
     private String accountNo ;
-    @NotNull
-    private String ownerWording;//not null
-    private Boolean isOpen;
-    private String  skbAccount;
-    private String skbPassword;
+    //    @NotNull
+//    private String ownerWording;//not null
+//    private Boolean isOpen;
+//    private String  skbAccount;
+//    private String skbPassword;
     @Size(min=10,max=50)
     private String companyAddress;//
-//    private Boolean isRegistered;
+    //    private Boolean isRegistered;
     /* @NotNull
      private Long createdBy;//not null, fk
      @NotNull
@@ -50,9 +51,9 @@ public class CompanyUpdateDTO {
 //    private String representFilesUrl ;
 //    private String accountFileUrl;
     @NotNull
-    private MultipartFile bizNoFile;
+    private Long bizNoFile;
     @NotNull
-    private MultipartFile representFile;
+    private Long representFile;
     @NotNull
-    private MultipartFile accountFile;
+    private Long accountFile;
 }

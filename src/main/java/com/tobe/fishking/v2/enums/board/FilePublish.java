@@ -13,7 +13,7 @@ public enum FilePublish implements IEnumModel {
     faq("FAQ"),
     notice("공지사항"),
     fishingBlog("조행기"),
-    fishingDaily("조행일지"),
+    fishingDiary("조행일지"),
     comment("답글"),
     fishkingTv("어복TV"),
     companyRequest("업체요청"),

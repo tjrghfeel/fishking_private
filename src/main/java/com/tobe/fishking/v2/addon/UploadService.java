@@ -20,6 +20,10 @@ import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.BoardService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.api.JCodecException;
+import org.jcodec.common.model.Picture;
+import org.jcodec.scale.AWTUtil;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +63,7 @@ public class UploadService {
     /*파일 업로드 미리보기를 위한 파일 저장 메소드.
     * - FileEntity의 isDelete필드를 true로 둔상태로 생성.
     * - 생성한 FileEntity를 반환. */
-    public FileEntity filePreUpload(MultipartFile file, FilePublish filePublish, String sessionToken) throws IOException, ResourceNotFoundException {
+    public FileEntity filePreUpload(MultipartFile file, FilePublish filePublish, String sessionToken) throws IOException, ResourceNotFoundException, JCodecException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
 
@@ -103,7 +107,7 @@ public class UploadService {
     @Transactional
     public Map<String, Object> initialFile(MultipartFile file, /*FileType fileType,*/
                                            FilePublish filePublish, String sessionToken)
-            throws IOException, ResourceNotFoundException {
+            throws IOException, ResourceNotFoundException, JCodecException {
         Map<String, Object> result = new HashMap<>();
 
             /*!!!!!테스트용 임의 주석처리 by 석호. (sessionToken같은 시큐리티? 아직 적용안함)
@@ -162,7 +166,7 @@ public class UploadService {
         return result;
     }
 
-    public Map<String, Object> initialFile(MultipartFile file, FileType fileType, FilePublish filePublish) throws IOException {
+    /*public Map<String, Object> initialFile(MultipartFile file, FileType fileType, FilePublish filePublish) throws IOException, JCodecException {
         Map<String, Object> result = new HashMap<>();
 
         String fileLocation = "/data/file/user";
@@ -203,7 +207,7 @@ public class UploadService {
         result.put("tempFileSeq", fileId);
         return result;
     }
-
+*/
     /*파일을 저장해주는 메소드.
         반환 ) ArrayList<String>을 반환. 크기는3이고 인덱스 순서대로 새로만든 저장될 파일명, 파일 업로드 path, 섬네일파일 업로드path.
      */
@@ -211,7 +215,7 @@ public class UploadService {
                                        String userID,
                                        String fileLocation,
                                        String filePath,
-                                       boolean thumbnail) throws IOException {
+                                       boolean thumbnail) throws IOException, JCodecException {
         Map<String, Object> fileData = new HashMap<String, Object>();
         List<String> fileNames = new ArrayList<>();
 
@@ -255,7 +259,21 @@ public class UploadService {
             fileNames.add(thumbs.getPath());
 
             //removeNewFile(thumbs);
-        } else {
+        }
+        else if(thumbnail && file.getContentType().startsWith("video/")){
+            int frameNumber = 0;
+            Picture picture = FrameGrab.getFrameFromFile(uploadFile, frameNumber);
+            fileName = fileName.replace(FilenameUtils.getExtension(fileName),".png");
+            String thumbnailFileName = fileLocation + File.separator + "thumb_" + fileName;
+            File thumbs = new File(thumbnailFileName);
+            //for JDK (jcodec-javase)
+            BufferedImage bufferedImage = AWTUtil.toBufferedImage(picture);
+            ImageIO.write(bufferedImage, "png", thumbs);
+
+            fileNames.add(thumbs.getName());
+            fileNames.add(thumbs.getPath());
+        }
+        else {
             fileNames.add("");
         }
         //removeNewFile(uploadFile);

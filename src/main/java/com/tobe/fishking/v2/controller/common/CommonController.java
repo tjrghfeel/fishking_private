@@ -14,6 +14,7 @@ import com.tobe.fishking.v2.service.ResponseService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.jcodec.api.JCodecException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -215,14 +216,14 @@ public class CommonController {
             "   faq : FAQ에 파일업로드\n" +
             "   notice : 공지사항에 파일업로드\n" +
             "   fishingBlog : 조행기에 파일업로드\n" +
-            "   fishingDaily : 조행일지에 파일업로드\n" +
+            "   fishingDiary : 조행일지에 파일업로드\n" +
             "   comment : 댓글에 파일업로드\n" +
             "   fishkingTv : 어복TV에 파일업로드\n" +
             "   companyRequest : 업체요청에 파일업로드\n" +
             "   profile : 프로필에 파일업로드\n" +
             "   review : 리뷰에 파일업로드 ")
     @PostMapping("/filePreUpload")
-    public FilePreUploadResponseDto preUploadFile(MultipartHttpServletRequest request) throws IOException, ResourceNotFoundException {
+    public FilePreUploadResponseDto preUploadFile(MultipartHttpServletRequest request) throws IOException, ResourceNotFoundException, JCodecException {
         return commonService.preUploadFile(
                 request.getFile("file"), request.getParameter("filePublish"), request.getHeader("Authorization"));
     }

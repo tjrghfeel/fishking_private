@@ -52,7 +52,57 @@ public class CompanyService {
     /*업체 등록 요청 처리 메소드. */
     @Transactional
     public Long handleCompanyRegisterReq(CompanyWriteDTO dto, String token) throws Exception {
-        MultipartFile bizNoFile = dto.getBizNoFile();
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+
+        /*이미 등록 또는 등록대기중인 company가 있는지 확인*/
+        if(companyRepository.existsByMember(member)){throw new RuntimeException("해당 회원은 이미 업체등록을 하였습니다");}
+
+        FileEntity bizNoFileEntity = fileRepository.findById(dto.getBizNoFile())
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getBizNoFile()));
+        FileEntity representFileEntity = fileRepository.findById(dto.getRepresentFile())
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getRepresentFile()));
+        FileEntity accountFileEntity = fileRepository.findById(dto.getAccountFile())
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getAccountNo()));
+
+        /*Company 엔터티 등록. */
+        Company company = Company.builder()
+                .companyName(dto.getCompanyName())
+                .shipOwner(member.getMemberName())
+                .sido(null)
+                .gungu(null)
+                .tel(dto.getTel())
+                .phoneNumber(dto.getPhoneNumber())
+                .bizNo(dto.getBizNo())
+                .harbor(dto.getHarbor())
+                .bank(dto.getBank())
+                .accountNo(dto.getAccountNo())
+                .ownerWording("")
+                .isOpen(false)
+                .skbAccount(null)
+                .skbPassword(null)
+                .companyAddress(dto.getCompanyAddress())
+                .isRegistered(false)
+                .bizNoFileId(bizNoFileEntity)
+                .representFileId(representFileEntity)
+                .accountFileId(accountFileEntity)
+                .bizNoFileDownloadUrl("/"+bizNoFileEntity.getFileUrl()+"/"+bizNoFileEntity.getStoredFile())
+                .representFileDownloadUrl("/"+representFileEntity.getFileUrl()+"/"+representFileEntity.getStoredFile())
+                .accountFileDownloadUrl("/"+accountFileEntity.getFileUrl()+"/"+accountFileEntity.getStoredFile())
+                .createdBy(member)
+                .modifiedBy(member)
+                .member(member)
+                .build();
+        company = companyRepository.save(company);
+
+        bizNoFileEntity.saveTemporaryFile(company.getId());
+        representFileEntity.saveTemporaryFile(company.getId());
+        accountFileEntity.saveTemporaryFile(company.getId());
+
+        return company.getId();
+
+
+        /*MultipartFile bizNoFile = dto.getBizNoFile();
         MultipartFile representFile = dto.getRepresentFile();
         MultipartFile accountFile =dto.getAccountFile();
 
@@ -70,7 +120,7 @@ public class CompanyService {
         FileEntity accountFileEntity = fileRepository.findById(accountFileEntityId)
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+accountFileEntityId));
 
-        /*Company 엔터티 등록. */
+        *//*Company 엔터티 등록. *//*
         Company company = Company.builder()
                 .companyName(dto.getCompanyName())
                 .shipOwner(member.getMemberName())
@@ -97,7 +147,7 @@ public class CompanyService {
                 .modifiedBy(member)
                 .member(member)
                 .build();
-        return companyRepository.save(company).getId();
+        return companyRepository.save(company).getId();*/
     }
 
     /*MultipartServletRequest를 받아 안에들어잇는 파일저장하는 메소드. */
@@ -136,26 +186,73 @@ public class CompanyService {
 
     /*업체등록 요청 수정 메소드*/
     @Transactional
-    public Long updateCompanyRegisterReq(CompanyUpdateDTO dto, MultipartFile[] files,String token) throws Exception {
+    public Long updateCompanyRegisterReq(CompanyUpdateDTO dto, String token) throws Exception {
         /*다시올린사람이 누구인지 받아옴.*/
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException("member not found for this sessionToken ::" + token));
-
         Company company = companyRepository.findById(dto.getCompanyId())
                 .orElseThrow(() -> new ResourceNotFoundException("company not found for this id ::" + dto.getCompanyId()));
 
+        ArrayList<Long> deleteFileList = new ArrayList<>();
+
+        FileEntity bizNoFileEntity = null;
+        FileEntity representFileEntity = null;
+        FileEntity accountFileEntity = null;
+
+        if(dto.getBizNoFile() != company.getBizNoFileId().getId()){
+            bizNoFileEntity = fileRepository.findById(dto.getBizNoFile())
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getBizNoFile()));
+            bizNoFileEntity.saveTemporaryFile(company.getId());
+            deleteFileList.add(company.getBizNoFileId().getId());
+        }
+        else{
+            bizNoFileEntity = company.getBizNoFileId();
+        }
+        if(dto.getAccountFile() != company.getRepresentFileId().getId()){
+            accountFileEntity = fileRepository.findById(dto.getAccountFile())
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getAccountFile()));
+            accountFileEntity.saveTemporaryFile(company.getId());
+            deleteFileList.add(company.getAccountFileId().getId());
+        }
+        else{
+            accountFileEntity = company.getAccountFileId();
+        }
+        if(dto.getRepresentFile() != company.getAccountFileId().getId()){
+            representFileEntity = fileRepository.findById(dto.getRepresentFile())
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getRepresentFile()));
+            representFileEntity.saveTemporaryFile(company.getId());
+            deleteFileList.add(company.getRepresentFileId().getId());
+        }
+        else{
+            representFileEntity = company.getRepresentFileId();
+        }
+
+        FileEntity[] fileEntityList = new FileEntity[3];
+        fileEntityList[0] = bizNoFileEntity;
+        fileEntityList[1] = representFileEntity;
+        fileEntityList[2] = accountFileEntity;
+        company.updateCompanyRegisterRequest(dto, member, fileEntityList);
+        company = companyRepository.save(company);
+
+        /*이전파일들 삭제*/
+        for(int i=0; i<deleteFileList.size(); i++){
+            uploadService.removeFileEntity(deleteFileList.get(i));
+        }
+
+        return company.getId();
+
         /*기존 파일엔터티 id들 저장*/
-        Long preBizNoFileId = company.getBizNoFileId().getId();
+        /*Long preBizNoFileId = company.getBizNoFileId().getId();
         Long preRepresentFileId = company.getRepresentFileId().getId();
         Long preAccountFileId = company.getAccountFileId().getId();
 
-        /*입력받은 파일 세개 저장. null이 들어올수도있음. */
+        *//*입력받은 파일 세개 저장. null이 들어올수도있음. *//*
         MultipartFile[] fileList = new MultipartFile[3];
         MultipartFile inputBizNoFile = dto.getBizNoFile();
         MultipartFile inputRepresentFile = dto.getRepresentFile();
         MultipartFile inputAccountFile = dto.getAccountFile();
 
-        /*최종적으로 저장할 파일 세개의 변수 */
+        *//*최종적으로 저장할 파일 세개의 변수 *//*
         FileEntity bizNoFileEntity = null;
         FileEntity representFileEntity = null;
         FileEntity accountFileEntity = null;
@@ -201,7 +298,7 @@ public class CompanyService {
         if (inputAccountFile != null) uploadService.removeFileEntity(preAccountFileId);
 
         return company.getId();
-
+*/
         /*//기존의 파일들을 저장해둠.
         Long[] preFileIdList = new Long[3];
         preFileIdList[0] = company.getBizNoFileId().getId();
@@ -248,7 +345,7 @@ public class CompanyService {
         return companyRegisterRequestPage;
     }
 
-    /*업체등록 요청 취소 메소드.*/
+    /*업체등록 삭제 메소드.*/
     @Transactional
     public Long deleteCompanyRegisterRequest(Long companyId) throws ResourceNotFoundException {
         Company company = companyRepository.findById(companyId)
@@ -266,6 +363,17 @@ public class CompanyService {
         uploadService.removeFileEntity(fileIdList[2]);
 
         return companyId;
+    }
+
+    /*업체 등록 취소 */
+    @Transactional
+    public Boolean cancelCompanyRegister(String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()-> new ResourceNotFoundException("member not found for this token ::"+token));
+        Company company = companyRepository.findByMember(member);
+
+        deleteCompanyRegisterRequest(company.getId());
+        return true;
     }
 
 }

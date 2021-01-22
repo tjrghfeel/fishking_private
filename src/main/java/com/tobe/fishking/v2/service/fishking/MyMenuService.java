@@ -149,7 +149,8 @@ public class MyMenuService {
                 .id(orders.getId())
                 .shipName(ship.getShipName())
                 .orderStatus(orders.getOrderStatus().getValue())
-                .fishingType(goods.getFishingType().getValue())
+//                .fishingType(goods.getFishingType().getValue())
+                .fishingType(ship.getFishingType().getValue())
                 .sigungu(ship.getSigungu())
                 .distance(ship.getDistance())
                 .fishingDate(goods.getFishingDate())
@@ -164,7 +165,7 @@ public class MyMenuService {
                 .localNumber(member.getPhoneNumber().getLocalNumber())
                 .orderDate(orders.getOrderDate())
                 //.paymentGroup(orders.getPaymentGroup())
-                .totalAmount(orders.getTotalAmount())
+                .totalAmount(orderDetails.getTotalAmount())
                 .discountAmount(orders.getDiscountAmount())
                 .paymentAmount(orders.getPaymentAmount())
                 .build();

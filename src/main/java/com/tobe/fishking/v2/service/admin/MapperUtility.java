@@ -1,11 +1,13 @@
 package com.tobe.fishking.v2.service.admin;
 
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.enums.common.CouponType;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
+import com.tobe.fishking.v2.enums.fishing.Meridiem;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.service.AES;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +69,10 @@ public class MapperUtility {
         String message = AlertType.values()[alertType].getMessage();
         return message+" "+content;
     }
-
-    public String noName(String value1,String value2){
-        String result = value1 + ","+value2;
-        return result;
-
-    }
+    /*int값을 boolean값으로 반환.*/
+    public Boolean transIntToBoolean(int value){return (value == 0)?false:true;}
+    /*낚시일과 낚시 시작시간을 합쳐서 반환.*/
+    public String transFishingDate(String fishingDate, String fishingStartTime){return fishingDate+" "+fishingStartTime;}
 
     /*enum값 변환 메소드*/
     public String transEnumQuestionType(int ordinal){
@@ -96,8 +96,22 @@ public class MapperUtility {
     public String transEnumAlertType(int ordinal){
         return AlertType.values()[ordinal].getValue();
     }
+    public String transEnumFilePublish(int ordinal){return FilePublish.values()[ordinal].getValue();}
+    public String transEnumMeridiem(int ordinal){return Meridiem.values()[ordinal].getValue();}
+
     /*public String transEnum(int ordinal){
         return .values()[ordinal].getValue();
     }*/
 
+
+
+
+
+
+
+    public String noName(String value1,String value2){
+        String result = value1 + ","+value2;
+        return result;
+
+    }
 }

@@ -1,11 +1,13 @@
 package com.tobe.fishking.v2.controller.post;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.entity.fishing.TblSubmitQueue;
 import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.NoNameDTO;
 import com.tobe.fishking.v2.model.auth.PhoneAuthDto;
@@ -18,6 +20,10 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.CouponService;
+import org.apache.commons.io.FilenameUtils;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.common.model.Picture;
+import org.jcodec.scale.AWTUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +36,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -38,11 +47,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.regex.Pattern;
 
+import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -129,13 +137,10 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        System.out.println("result >>> "+time);
-        tblSubmitQueueRepository.sendSms("20210104140000","01012345678","hello");
-        /*PhoneAuthDto phoneAuthDto = PhoneAuthDto.builder().areaCode("aa").localNumber("bbb").build();
-        memberService.requestSmsAuth(phoneAuthDto);*/
+        Float aaa = 1.2F;
+        Float bbb = 2.4F;
+        System.out.println(aaa/2);
         return;
-
     }
     @Transactional
     public void updateMember() throws ResourceNotFoundException {

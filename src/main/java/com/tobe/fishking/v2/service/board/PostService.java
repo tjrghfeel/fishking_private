@@ -70,9 +70,12 @@ public class PostService {
 
     /*FAQ 조회*/
     @Transactional(readOnly = true)
-    public Page<FAQDto> getFAQList(int page){
+    public Page<FAQDto> getFAQList(int page, String role){
+        Boolean roleValue = null;
+        if(role.equals("member")){roleValue=true;}
+        else if(role.equals("shipowner")){roleValue=false;}
         Pageable pageable = PageRequest.of(page,10);
-        return postRepository.findAllFAQList(pageable);
+        return postRepository.findAllFAQList(roleValue, pageable);
     }
 
     /*QnA 리스트 조회*/
@@ -92,9 +95,12 @@ public class PostService {
     
     /*공지사항 리스트 조회*/
     @Transactional(readOnly = true)
-    public Page<NoticeDtoForPage> getNoticeList(int page){
+    public Page<NoticeDtoForPage> getNoticeList(int page, String role){
+        Boolean roleValue = null;
+        if(role.equals("member")){roleValue=true;}
+        else if(role.equals("shipowner")){roleValue=false;}
         Pageable pageable = PageRequest.of(page,10);
-        return postRepository.findNoticeList(pageable);
+        return postRepository.findNoticeList(roleValue, pageable);
     }
 
     /*공지사항 상세보기*/
@@ -187,6 +193,7 @@ public class PostService {
 //                .tags(tagList)
                 .questionType(QuestionType.valueOf(postDTO.getQuestionType()))
                 .parent_id(postDTO.getParentId())
+                .targetRole(postDTO.getTargetRole())
                 .build();
         post = postRepository.save(post);
 
@@ -233,6 +240,10 @@ public class PostService {
     public Long writeOne2one(QnaWriteDto dto, String token) throws ResourceNotFoundException, IOException {
         /*WritePostDTO 생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.one2one);
+        Boolean targetRole;
+        if(dto.getTargetRole().equals("member")){targetRole=true;}
+        else targetRole=false;
+
         WritePostDTO writePostDTO = WritePostDTO.builder()
                 /*QnaWriteDto안에 있는것들*/
                 .questionType(dto.getQuestionType())
@@ -244,6 +255,7 @@ public class PostService {
                 .boardId(board.getId())
                 .channelType("notice")
                 .title("noTitle")
+                .targetRole(targetRole)
                 .createdAt("sampleCreatedAt")
                 .build();
 
@@ -255,6 +267,9 @@ public class PostService {
     public Long writeFaq(FaqWriteDto dto, String token) throws ResourceNotFoundException, IOException {
         /*WritePostDTO 생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.faq);
+        Boolean targetRole;
+        if(dto.getTargetRole().equals("member")){targetRole=true;}
+        else targetRole=false;
         WritePostDTO writePostDTO = WritePostDTO.builder()
                 /*FaqWriteDto안에 있는것들*/
                 .questionType(dto.getQuestionType())
@@ -267,6 +282,7 @@ public class PostService {
                 .returnType("email")
                 .returnNoAddress("sampleReturnAddress")
                 .createdAt("sampleCreatedAt")
+                .targetRole(targetRole)
                 .build();
 
         /*writePost() 호출*/
@@ -277,6 +293,9 @@ public class PostService {
     public Long writeNotice(NoticeWriteDto dto, String token) throws ResourceNotFoundException, IOException {
         /*WritePostDTO 생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
+        Boolean targetRole;
+        if(dto.getTargetRole().equals("member")){targetRole=true;}
+        else targetRole=false;
         WritePostDTO writePostDTO = WritePostDTO.builder()
                 /*FaqWriteDto안에 있는것들*/
                 .channelType(dto.getChannelType())
@@ -289,6 +308,7 @@ public class PostService {
                 .returnType("email")
                 .returnNoAddress("sampleReturnAddress")
                 .createdAt("sampleCreatedAt")
+                .targetRole(targetRole)
                 .build();
 
         /*writePost() 호출*/
@@ -366,6 +386,9 @@ public class PostService {
     public Long updateOne2one(QnaUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
         /*UpdatePostDTO생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.one2one);
+        Boolean targetRole;
+        if(dto.getTargetRole().equals("member")){targetRole=true;}
+        else targetRole=false;
         UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
                 /*dto에 있는 필드들*/
                 .postId(dto.getPostId())
@@ -379,6 +402,7 @@ public class PostService {
                 .channelType("notice")
                 .title("noTitle")
                 .createdAt("sampleCreatedAt")
+                .targetRole(targetRole)
                 .build();
         /*updatePost()호출*/
         return updatePost(updatePostDTO, token);
@@ -388,6 +412,9 @@ public class PostService {
     public Long updateFaq(FaqUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
         /*UpdatePostDTO생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.faq);
+        Boolean targetRole;
+        if(dto.getTargetRole().equals("member")){targetRole=true;}
+        else targetRole=false;
         UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
                 /*dto에 있는 필드들*/
                 .postId(dto.getPostId())
@@ -402,6 +429,7 @@ public class PostService {
                 .channelType("notice")
                 .title("noTitle")
                 .createdAt("sampleCreatedAt")
+                .targetRole(targetRole)
                 .build();
         /*updatePost()호출*/
         return updatePost(updatePostDTO, token);
@@ -411,6 +439,9 @@ public class PostService {
     public Long updateNotice(NoticeUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
         /*UpdatePostDTO생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
+        Boolean targetRole;
+        if(dto.getTargetRole().equals("member")){targetRole=true;}
+        else targetRole=false;
         UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
                 /*dto에 있는 필드들*/
                 .postId(dto.getPostId())
@@ -424,6 +455,7 @@ public class PostService {
                 .returnNoAddress("sampleReturnAddress")
                 .questionType("order")
                 .createdAt("sampleCreatedAt")
+                .targetRole(targetRole)
                 .build();
         /*updatePost()호출*/
         return updatePost(updatePostDTO, token);

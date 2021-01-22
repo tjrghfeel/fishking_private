@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CompanyModifyDtoForManage {
+    private String token;
     @NotNull
     private Long id;//not null, pk
     @NotNull

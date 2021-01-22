@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.model.board.UpdatePostDTO;
+import com.tobe.fishking.v2.service.StringConverter;
 import lombok.*;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
 
@@ -65,6 +66,7 @@ public class Post extends BaseTime {
     private Member author;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'작성자이름', 'USER', DBO, 'TABLE', post, 'COLUMN',  writer_name
+    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(200)  comment '작성자' ",  nullable = false)   //1:1문의
     private String authorName;
 
@@ -103,6 +105,9 @@ public class Post extends BaseTime {
     @JoinColumn(name="modified_by" , columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    @Column(columnDefinition = "bit not null comment '회원에 대한 글이면 true, 업주에 대한 글이면 false.' ")
+    private Boolean targetRole;
+
     public Post(){
 
     }
@@ -136,5 +141,6 @@ public class Post extends BaseTime {
         createdAt = postDTO.getCreatedAt();
         questionType = QuestionType.valueOf(postDTO.getQuestionType());
         isSecret = postDTO.getIsSecret();
+
     }
 }

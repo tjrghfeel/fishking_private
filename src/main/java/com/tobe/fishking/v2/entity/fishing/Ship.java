@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import lombok.*;
 
@@ -42,6 +43,9 @@ public class Ship extends BaseTime {  //선상
         this.goods = goods;
     }
 */
+    @Column(columnDefinition = "int   comment '구분:선상/갯바위'  ")
+    @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
+    private FishingType fishingType;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'주소', 'USER', DBO, 'TABLE', ship, 'COLUMN',  address
     @Column(columnDefinition = "varchar(100)   comment '주소'  ")
@@ -107,6 +111,23 @@ public class Ship extends BaseTime {  //선상
     @JoinColumn(columnDefinition = "bigint  NOT NULL   comment '업체'")
     private Company company;
 
+    // EXEC sp_addextendedproperty 'MS_Description', N'전체평균평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  total_average
+    @Column(columnDefinition = "float  default 0.0 comment  '전체평균평점'  ")
+    private Double totalAvgByReview;
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'손맛평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
+    @Column(columnDefinition = "float  default 0.0  comment  '손맛평점'  ")
+    private Double tasteByReview;
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'서비스평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
+    @Column(columnDefinition = "float  default 0.0  comment  '서비스평점'  ")
+    private Double serviceByReview;
+    // EXEC sp_addextendedproperty 'MS_Description', N'청결도평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
+    @Column(columnDefinition = "float  default 0.0  comment  '청결도평점'  ")
+    private Double cleanByReview;
+    @Column(columnDefinition = "int default 0 comment '리뷰 수'")
+    private int reviewCount;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
@@ -126,5 +147,14 @@ public class Ship extends BaseTime {  //선상
         this.seaDirection = seaDirection;
 
 
+    }
+
+    /*리뷰 평점 적용*/
+    public void applyReviewGrade(double taste, double clean, double service){
+        this.tasteByReview = (reviewCount*this.tasteByReview + taste)/(reviewCount+1);
+        this.cleanByReview = (reviewCount*this.cleanByReview + clean)/(reviewCount+1);
+        this.serviceByReview = (reviewCount*this.serviceByReview + service)/(reviewCount+1);
+        this.totalAvgByReview = (this.tasteByReview+this.cleanByReview+this.serviceByReview)/3;
+        this.reviewCount++;
     }
 }

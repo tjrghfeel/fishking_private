@@ -13,4 +13,5 @@ public class NoticeUpdateDto {
     private String title;
     private String contents;
     private Long[] fileList;
+    private String targetRole;
 }

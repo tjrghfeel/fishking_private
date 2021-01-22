@@ -13,9 +13,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class PhoneAuthCheckDto {
     @NotNull
-    private String areaCode;
-    @NotNull
-    private String localNumber;
+    private Long phoneAuthId;
     @NotNull
     private String authNum;
 }

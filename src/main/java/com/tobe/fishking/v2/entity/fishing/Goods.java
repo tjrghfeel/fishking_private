@@ -39,9 +39,9 @@ public class Goods extends BaseTime {
     private String name;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'구분 : 선상/갯바위', 'USER', DBO, 'TABLE', goods, 'COLUMN',  when
-    @Column(columnDefinition = "int   comment '구분:선상/갯바위'  ")
+    /*@Column(columnDefinition = "int   comment '구분:선상/갯바위'  ")
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
-    private FishingType fishingType;
+    private FishingType fishingType;*/
 
     // EXEC sp_addextendedproperty 'MS_Description', N'일자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  fishing_date
     @Column(columnDefinition = "varchar(8) comment  '일자'  ")
@@ -115,20 +115,7 @@ public class Goods extends BaseTime {
     private List<CommonCode> fishingLures = new ArrayList<>();
 
 
-    // EXEC sp_addextendedproperty 'MS_Description', N'전체평균평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  total_average
-    @Column(columnDefinition = "float  default 0.0 comment  '전체평균평점'  ")
-    private Double totalAvgByReview;
 
-    // EXEC sp_addextendedproperty 'MS_Description', N'손맛평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
-    @Column(columnDefinition = "float  default 0.0  comment  '손맛평점'  ")
-    private Double tasteByReview;
-
-    // EXEC sp_addextendedproperty 'MS_Description', N'서비스평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
-    @Column(columnDefinition = "float  default 0.0  comment  '서비스평점'  ")
-    private Double serviceByReview;
-    // EXEC sp_addextendedproperty 'MS_Description', N'청결도평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
-    @Column(columnDefinition = "float  default 0.0  comment  '청결도평점'  ")
-    private Double cleanByReview;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'적립포인트', 'USER', DBO, 'TABLE', goods, 'COLUMN',  accumulate_point
     @Column(columnDefinition = "float  default 0.0  comment  '적립포인트'  ")
@@ -191,7 +178,7 @@ public class Goods extends BaseTime {
         this.createdBy = member;
         this.modifiedBy = member;
         this.name = paramsGoods.getGoodsName();
-        this.fishingType = paramsGoods.getFishingType();
+//        this.fishingType = paramsGoods.getFishingType();
         this.fishingDate = paramsGoods.getFishingDate();
         this.shipStartTime = paramsGoods.getShipStartTime();
         this.meridiem = paramsGoods.getMeridiem();
@@ -210,10 +197,10 @@ public class Goods extends BaseTime {
         //this.fishSpecies = paramsGoods.getFishSpecies();
         //this.fishingLures = paramsGoods.getFishingLures();
 
-        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
-        this.tasteByReview = paramsGoods.getTasteByReview();
-        this.serviceByReview = paramsGoods.getServiceByReview();
-        this.cleanByReview = paramsGoods.getCleanByReview();
+//        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
+//        this.tasteByReview = paramsGoods.getTasteByReview();
+//        this.serviceByReview = paramsGoods.getServiceByReview();
+//        this.cleanByReview = paramsGoods.getCleanByReview();
         this.accumulatePoint = paramsGoods.getAccumulatePoint();
         this.notice = paramsGoods.getNotice();
         this.onSitePurchase = paramsGoods.getOnSitePurchase();
@@ -236,7 +223,7 @@ public class Goods extends BaseTime {
     public Goods(Member member,  Ship ship,  String name, FishingType fishingType, List<CommonCode> arrFishSpecies ) {
         this.modifiedBy = member;
         this.name = name;
-        this.fishingType = fishingType;
+//        this.fishingType = fishingType;
         this.ship = ship;
 
     }
@@ -251,7 +238,7 @@ public class Goods extends BaseTime {
         this.modifiedBy = member;
 
         this.name = paramsGoods.getGoodsName();
-        this.fishingType = paramsGoods.getFishingType();
+//        this.fishingType = paramsGoods.getFishingType();
         this.fishingDate = paramsGoods.getFishingDate();
         this.shipStartTime = paramsGoods.getShipStartTime();
         this.meridiem = paramsGoods.getMeridiem();
@@ -270,10 +257,10 @@ public class Goods extends BaseTime {
         //this.fishSpecies = paramsGoods.getFishSpecies();
         //this.fishingLures = paramsGoods.getFishingLures();
 
-        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
-        this.tasteByReview = paramsGoods.getTasteByReview();
-        this.serviceByReview = paramsGoods.getServiceByReview();
-        this.cleanByReview = paramsGoods.getCleanByReview();
+//        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
+//        this.tasteByReview = paramsGoods.getTasteByReview();
+//        this.serviceByReview = paramsGoods.getServiceByReview();
+//        this.cleanByReview = paramsGoods.getCleanByReview();
         this.accumulatePoint = paramsGoods.getAccumulatePoint();
         this.notice = paramsGoods.getNotice();
         this.onSitePurchase = paramsGoods.getOnSitePurchase();

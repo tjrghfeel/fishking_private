@@ -6,7 +6,7 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 public enum SNSType   implements IEnumModel {
 
     kakao("카카오톡"),
-    navaer("네이버"),
+    naver("네이버"),
     facebook("페이스북");
 
 

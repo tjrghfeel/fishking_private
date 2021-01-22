@@ -48,7 +48,7 @@ public class FishingDiaryDTO {
 
     public static FishingDiaryDTO of(FishingDiary fishingDiary){
 
-        FileEntity shipFile2 = fileRepo.findFileEntityByAndFilePublish(FilePublish.fishingDaily, true)
+        FileEntity shipFile2 = fileRepo.findFileEntityByAndFilePublish(FilePublish.fishingDiary, true)
                     .orElseThrow(FileNotFoundException::new);
 
         FileEntity shipFile = fileRepo.findById(fishingDiary.getShip().getId())
@@ -64,7 +64,7 @@ public class FishingDiaryDTO {
                 .shipThumbnailUrl(shipFile.getDownloadUrl() + shipFile.getThumbnailFile())
                 .fishingSpeciesName(fishingDiary.getFishingSpeciesName())
                 .fishingLocation(fishingDiary.getFishingLocation())
-                .status(fishingDiary.getStatus())
+//                .status(fishingDiary.getStatus())
                 .build();
     }
 }

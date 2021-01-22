@@ -8,4 +8,8 @@ public interface FAQDto {
     String getQuestionType();
     String getTitle();
     String getContents();
+
+    Long getAuthorId();
+    Long getCreatedBy();
+    Long getModifiedBy();
 }

@@ -109,8 +109,18 @@ public class CompanyManageService {
     public Long createCompany(CompanyCreateDtoForManage dto) throws Exception {
         Member manager = memberRepository.findById(16L)//!!!!!관리자 로그인 어떻게할지 생각해보고 수정.
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+16L));
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMemberId()));
+        Member member = null;
+        if(dto.getMemberId()==null){
+            member = memberRepository.findBySessionToken(dto.getToken())
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+dto.getToken()));
+        }
+        else{
+            member = memberRepository.findById(dto.getMemberId())
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMemberId()));
+        }
+
+        /*이미 등록 또는 등록대기중인 company가 있는지 확인*/
+        if(companyRepository.existsByMember(member)){throw new RuntimeException("해당 회원은 이미 업체등록을 하였습니다");}
 
         MultipartFile bizNoFile = dto.getBizNoFile();
         MultipartFile representFile = dto.getRepresentFile();
@@ -162,8 +172,15 @@ public class CompanyManageService {
     public Boolean modifyCompany(CompanyModifyDtoForManage dto) throws Exception {
         Member manager = memberRepository.findById(16L)//!!!!!관리자 로그인 어떻게할지 생각해보고 수정.
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+16L));
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMemberId()));
+        Member member = null;
+        if(dto.getMemberId()==null){
+            member = memberRepository.findBySessionToken(dto.getToken())
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+dto.getToken()));
+        }
+        else{
+            member = memberRepository.findById(dto.getMemberId())
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMemberId()));
+        }
         Company company = companyRepository.findById(dto.getId())
                 .orElseThrow(()->new ResourceNotFoundException("company not found for this id :: "+dto.getId()));
 

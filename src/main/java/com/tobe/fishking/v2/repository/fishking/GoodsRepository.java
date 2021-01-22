@@ -14,9 +14,6 @@ import java.util.List;
 
 public interface GoodsRepository extends BaseRepository<Goods, Long> {
 
-    //--선상/갯바위 별 조회
-    List<Goods> findAllByFishingType(FishingType fishingType);
-
     //추천업체
     Page<Goods> findAllByIsRecommend(Pageable pageable, Integer totalElements);
 
@@ -38,43 +35,41 @@ public interface GoodsRepository extends BaseRepository<Goods, Long> {
     int findTakeCount(@Param("member") Member member);
 
     /*주어진 FishingType에 해당하는 Goods를 주어진 Member가 몇개나 찜했는지 쿼리. */
-    @Query("select count(g) " +
-            "from Goods as g " +
-            "where g.fishingType = :fishingType and g.id in (select t.linkId from Take as t where t.createdBy = :member and t.takeType = 0)")
+    @Query("select count(s) " +
+            "from Ship as s " +
+            "where s.fishingType = :fishingType and s.id in (select t.linkId from Take as t where t.createdBy = :member and t.takeType = 1)")
     int findTakeCountAboutFishType(@Param("member") Member member, @Param("fishingType") FishingType fishingType);
 
     /*인자 Member가 찜한 인자 FishingType에 해당하는 Goods 목록을 쿼리. */
     @Query(
             value = "select " +
-                    "g.id id, " +
-                    "g.name name, " +
-                    "(select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
-                    "   where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) fishSpicesInfo, " +
-                    "(select count(c.id) from goods_fish_species gs, common_code c " +
-                        "where gs.goods_id = g.id and gs.fish_species_id = c.id ) fishSpicesCount, " +
-                    "g.fishing_type fishingType, " +
+                    "(select t2.id from take t2 where t2.take_type=1 and t2.link_id=s.id and t2.created_by=:member) takeId, " +
+//                    "g.id goodsId, " +
+                    "s.ship_name name, " +
+//                    "(select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
+//                    "   where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) fishSpicesInfo, " +
+//                    "(select cc.extra_value1 from common_code cc where cc.id=94) fishSpicesImgUrl, " +
+//                    "(select count(c.id) from goods_fish_species gs, common_code c " +
+//                        "where gs.goods_id = g.id and gs.fish_species_id = c.id ) fishSpicesCount, " +
+                    "s.fishing_type fishingType, " +
                     "s.address address, " +
                     "s.distance distance, " +
-                    "g.total_amount price, " +
+//                    "g.total_amount price, " +
 //                    "g.fishing_date fishingDate, " +
 //                    "g.is_close isClose, " +
 //                    "g.is_use isUse, " +
 //                    "g.ship_start_time shipStartTime, " +
                     "f.thumbnail_file thumbnailFile, " +
                     "f.file_url filePath " +
-                    "from goods as g, files as f, ship as s " +
-                    "where g.fishing_type = :fishingType " +
-                    "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
-                    "   and g.goods_ship_id = s.id " +
-                    "   and s.id = f.pid " +
-                    "   and f.is_represent = 1 ",
-            countQuery ="select g.id " +
-                    "from goods as g, files as f, ship as s " +
-                    "where g.fishing_type = :fishingType " +
-                    "   and g.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 0) " +
-                    "   and g.goods_ship_id = s.id " +
-                    "   and s.id = f.pid " +
-                    "   and f.is_represent = 1 ",
+                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1)  " +
+                    "where s.fishing_type = :fishingType " +
+                    "   and s.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 1) " +
+                    "order by s.ship_name desc ",
+            countQuery ="select s.id " +
+                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1)  " +
+                    "where s.fishing_type = :fishingType " +
+                    "   and s.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 1) " +
+                    "order by s.ship_name desc ",
             nativeQuery = true
     )
     Page<TakeResponse> findTakeListAboutFishType(@Param("member") Member member, @Param("fishingType") int fishingType,Pageable pageable);

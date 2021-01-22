@@ -20,4 +20,8 @@ public interface NoticeDetailDto {
     String getContents();
     @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
     ArrayList<String> getFileList();
+
+    Long getAuthorId();
+    Long getCreatedBy();
+    Long getModifiedBy();
 }

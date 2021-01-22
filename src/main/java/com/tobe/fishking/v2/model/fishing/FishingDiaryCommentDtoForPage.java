@@ -8,6 +8,8 @@ public interface FishingDiaryCommentDtoForPage {
     Long getId();
     @Value("#{@mapperUtility.transEnumDependentType(target.dependentType)}")
     String getDependentType();
+    @Value("#{@mapperUtility.transEnumFishingType(target.fishingType)}")
+    String getFishingType();
     String getTitle();
     String getContents();
     LocalDateTime getTime();

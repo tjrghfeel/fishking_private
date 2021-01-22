@@ -34,17 +34,25 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
     Optional<FishingDiaryComment> findByIdAndFishingDiaryId(Long id, Long fishingDiaryId);
 
     /*마이메뉴 - 내글관리 - 내댓글에서 내 댓글목록을 뿌려주기위한 메소드. */
-    @Query("select " +
+    @Query(value = "select " +
             "c.id as id, " +
-            "c.dependentType as dependentType, " +
+            "c.dependent_type as dependentType, " +
+            "s.fishing_type as fishingType, " +
             "d.title as title, " +
             "c.contents as contents, " +
-            "c.createdDate as time," +
+            "c.created_date as time," +
             "d.id as fishingDiaryId  " +
-            "from FishingDiaryComment as c, FishingDiary as d " +
-            "where c.createdBy = :member " +
-            "   and c.fishingDiary = d " +
-            "   and c.dependentType is not null ")
+            "from fishing_diary_comment as c, fishing_diary as d join ship s on d.fishing_diary_ship_id = s.id " +
+            "where c.created_by = :member " +
+            "   and c.fishing_diary_id = d.id " +
+            "   and c.dependent_type is not null ",
+            countQuery = "select c.id " +
+                    "from fishing_diary_comment as c, fishing_diary as d join ship s on d.fishing_diary_ship_id = s.id " +
+                    "where c.created_by = :member " +
+                    "   and c.fishing_diary_id = d.id " +
+                    "   and c.dependent_type is not null ",
+            nativeQuery = true
+    )
     Page<FishingDiaryCommentDtoForPage> findByMember(@Param("member") Member member, Pageable pageable);
 
     /*회원탈퇴시 회원이 작성한 comment를 비활성화 처리해주는 메소드.*/
