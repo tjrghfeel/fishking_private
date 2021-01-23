@@ -103,10 +103,12 @@ public class FishingDiary extends BaseTime {
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id")
+    @Builder.Default
     private Set<FishingDiaryFishingTechnics> fishingDiaryFishingTechnics = new LinkedHashSet<>();
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id")
+    @Builder.Default
     private Set<FishingDiaryFishingLures> fishingDiaryFishingLures = new LinkedHashSet<>();
 
     //위치 항목에 대해 선상인 경우 선상명, 갯바위인 경우 지역정보(xx시, xx군 면 등)
@@ -137,8 +139,10 @@ public class FishingDiary extends BaseTime {
     //  @Builder.Default
     private final List<Member> scrapMembers = new ArrayList<>();
 
-   /* @AttributeOverride(name = "shareCount", column = @Column(name = "SHARE"))
-    private ShareStatus status;*/
+
+    //   @AttributeOverride(name = "shareCount", column = @Column(name = "SHARE"))
+    @Embedded
+    private ShareStatus status;
 
 /*
     @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })

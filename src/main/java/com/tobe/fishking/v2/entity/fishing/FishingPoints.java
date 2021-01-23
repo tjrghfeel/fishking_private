@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.entity.fishing;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.model.common.Location;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,15 +33,9 @@ public class FishingPoints {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'위도', 'USER', DBO, 'TABLE', fishing_point, 'COLUMN',  latitude
     //@Column(columnDefinition=" INT(11) NOT NULL COMMENT '0 for no action, 1 for executed, 2 for validated, 3 for aproved'  ")
-    @Column(columnDefinition = "float   comment '위도'  ")
-    private Long latitude;
-
-
-    // EXEC sp_addextendedproperty 'MS_Description', N'경도', 'USER', DBO, 'TABLE', fishing_point, 'COLUMN',  longitude
-    //@Column(columnDefinition=" INT(11) NOT NULL COMMENT '0 for no action, 1 for executed, 2 for validated, 3 for aproved'  ")
-    @Column(columnDefinition = "float   comment '경도'  ")
-    private Long longitude;
-
+    @ApiModelProperty(value = "위치")
+    // @Column(columnDefinition = "comment '위치'  ")
+    private Location location;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수심', 'USER', DBO, 'TABLE', fishing_point, 'COLUMN',  depth_of_water
     //@Column(columnDefinition=" INT(11) NOT NULL COMMENT '0 for no action, 1 for executed, 2 for validated, 3 for aproved'  ")

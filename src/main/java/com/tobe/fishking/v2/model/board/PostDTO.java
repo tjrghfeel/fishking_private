@@ -40,6 +40,7 @@ public class PostDTO {
     //nullable 필드.
     private LocalDateTime createdDate;//
     private LocalDateTime modifiedDate;//
+    @Builder.Default
     private List<String> tagsName = new ArrayList<>();
     private boolean isSecret;//
     private Long parentId;

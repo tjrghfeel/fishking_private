@@ -30,13 +30,13 @@ public class FilesGroup extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', files_group, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
+    @JoinColumn(name="created_by" ,   updatable= false , columnDefinition  = " bigint not null comment '생성자'")
     private Member createdBy;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', files_group, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null comment '수정자'")
+    @JoinColumn(name="modified_by" ,  columnDefinition = " bigint not null comment '수정자'")
     private Member modifiedBy;
 
 

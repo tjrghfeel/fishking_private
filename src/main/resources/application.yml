@@ -1,5 +1,5 @@
 server:
-#  port : 8082
+  port : 8082
   error:
     include-exception: true # 오류 응답에 exception의 내용을 포함할지 여부 default: false
     include-stacktrace: always # 오류 응답에 stacktrace 내용을 포함할 지 여부 default: never
@@ -40,9 +40,8 @@ encrypKey :
   key : fishking12345abcde
 
 spring:
-
   profiles:
-    active: local
+    active: dev
   devtools:
     livereload:
       enabled: true
@@ -54,11 +53,17 @@ spring:
       max-file-size : 2MB
       max-request-size: 10MB
 
+---
+
+spring:
+  profiles: dev
 
   datasource:
+
+    url: jdbc:log4jdbc:mysql://112.220.72.178:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
+
     #driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver   #<= ms-sql
     # driver-class-name: com.mysql.cj.jdbc.Driver                      #<= mysql
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     # sendStringParametersAsUnicode=false =>실행되는 느린 쿼리 수정
     # url: jdbc:sqlserver://192.168.0.58:1700;databaseName=fishking;sendStringParametersAsUnicode=false #<=real
     #url: jdbc:sqlserver://localhost:1433;databaseName=fishking;sendStringParametersAsUnicode=false
@@ -66,24 +71,28 @@ spring:
     #url: jdbc:log4jdbc:sqlserver://localhost:1433;databaseName=fishking;sendStringParametersAsUnicode=false
     #    url: jdbc:log4jdbc:mysql://localhost:7306/fishking?serverTimezone=UTC&characterEncoding=UTF-8 #=> mysql
 #    url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
-    url : jdbc:log4jdbc:mysql://112.220.72.178:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
 
     username: fishking      #sa        # username: fishluck
     password: fishking12#$  #P@ssw0rd  # password: fishluck123!
-    platform: mysql
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 
+  resources:
+    cache:
+      period: 0
   jpa:
+    database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     # ↓ PostRepository에서 findAllByBoard()호출시 sql문법이 틀렸다는 오류가떠서 db방언을 변경함.
     #(오류정보 : You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near)
     #database-platform: org.hibernate.dialect.MariaDB103Dialect
     #database-platform: org.hibernate.dialect.SQLServerDialect
     open-in-view: false
+    generate-ddl: true
     show-sql: true
     hibernate:
       format_sql: true
       use_sql_comments: true
-      ddl-auto: update
+      ddl-auto: none
     naming:
       #        strategy: org.hibernate.cfg.EJB3NamingStrategy
       #        strategy: org.hibernate.cfg.DefaultComponentSafeNamingStrategy

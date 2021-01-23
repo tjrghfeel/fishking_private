@@ -3,12 +3,12 @@ package com.tobe.fishking.v2.model.fishing;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.fishing.*;
-import com.tobe.fishking.v2.entity.vo.Location;
 import com.tobe.fishking.v2.enums.ErrorCodes;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.TideTime;
 import com.tobe.fishking.v2.enums.fishing.*;
 import com.tobe.fishking.v2.exception.ApiException;
+import com.tobe.fishking.v2.entity.vo.Location;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.utils.DateUtils;
 import io.swagger.annotations.ApiModel;
@@ -142,8 +142,7 @@ public class FishingDiaryDtoGroup {
                     .writeLocation(writeLocation)
                     .writeLongitude(location.getLongitude())
                     .writeLatitude(location.getLatitude())
-                    .ship(Ship.builder()
-                            .id(fishingDiaryShipId)
+                    .ship(Ship.builder().id(fishingDiaryShipId)
                             .build())
                     .goods(Goods.builder()
                             .id(goodsId)

@@ -5,7 +5,7 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 public enum FishingType   implements IEnumModel   {
 
     ship("선상"),
-    sealocks("갯바위");
+    seaRocks("갯바위");
 
     private String value;
     FishingType(String value) {

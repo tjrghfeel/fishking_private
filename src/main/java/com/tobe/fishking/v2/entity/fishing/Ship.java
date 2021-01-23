@@ -6,6 +6,9 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
+import com.tobe.fishking.v2.model.common.Location;
+import com.tobe.fishking.v2.model.common.ShareStatus;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,7 +27,7 @@ public class Ship extends BaseTime {  //선상
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', ship, 'COLUMN',  id
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    //@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'선박명', 'USER', DBO, 'TABLE', ship, 'COLUMN',  name
@@ -106,6 +109,23 @@ public class Ship extends BaseTime {  //선상
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();
 
 
+
+    @ApiModelProperty(name ="뷰-좋아요수")
+    private ShareStatus status;
+
+
+    @ApiModelProperty(name = "작성위치")
+    private Location location;
+
+    @ApiModelProperty(name = "실위치")
+    @Embedded
+    @AttributeOverrides( {
+            @AttributeOverride(name="latitude", column = @Column(name="liveLatitude") ),
+            @AttributeOverride(name="longitude", column = @Column(name="liveLongitude") )
+    } )
+    private Location liveLocation;
+
+
     // EXEC sp_addextendedproperty 'MS_Description', N'업체', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(columnDefinition = "bigint  NOT NULL   comment '업체'")
@@ -141,7 +161,8 @@ public class Ship extends BaseTime {  //선상
 
 
     @Builder
-    public Ship(String shipName, Company company, Member member, SeaDirection seaDirection ) {
+    public Ship(Long id, String shipName, Company company, Member member, SeaDirection seaDirection ) {
+        this.id = id;
         this.shipName = shipName;
         this.company = company;
         this.createdBy = member;
