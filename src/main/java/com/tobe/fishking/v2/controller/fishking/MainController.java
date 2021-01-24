@@ -100,7 +100,8 @@ public class MainController {
 
     /*  jkkim 수정 지우질 말것 */
 
-    @ApiOperation(value = "지도리스트", notes = "선상, 포인트, 조행기 조회한다.")
+    @ApiOperation(value = "지도리스트", notes = "선상, 포인트, 조행기 조회한다." +
+            "                   FishingType : ship, fishingBlog,  seaRocks만 조회한다.   ")
     @GetMapping(value = "/getListForMap")
     public SingleResult<Map<String, Object>> getListForMap(FilePublish filePublish)
     {

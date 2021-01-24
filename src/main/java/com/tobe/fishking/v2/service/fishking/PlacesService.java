@@ -33,9 +33,7 @@ public class PlacesService {
 
     public List<PlacesDTO.PlacesDTOResp> getPlacesListsForMap(FilePublish filePublish) {
 
-        FishingType fishingType = filePublish.name().equals("sealock") ? FishingType.seaRocks : FishingType.ship;
-
-        if (FishingType.seaRocks != fishingType) return null;
+        if (filePublish.ordinal() != FilePublish.seaRocks.ordinal()) return null;
 
         List<Places> placesEntityList = placesRepo.findAllPlacesAndLocation();
 
