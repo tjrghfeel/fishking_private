@@ -2,13 +2,50 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "APIStore"
+)(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          page: 0,
+          list: [],
+          isEnd: false,
+          keyword: "",
+        };
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      loadPageData = async (page = 0, keyword = "") => {
+        const { APIStore, PageStore } = this.props;
 
+        if (page > 0 && PageStore.state.isEnd) return;
+
+        PageStore.setState({ page, keyword });
+        const {
+          content,
+          pageable: { pageSize = 0 },
+        } = await APIStore._get("/v2/api/fishingDiary/searchShip/" + page);
+
+        console.log(JSON.stringify(content));
+        if (page === 0) {
+          PageStore.setState({ list: content });
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 100);
+        } else {
+          PageStore.setState({ list: PageStore.state.list.concat(content) });
+        }
+        if (content.length < pageSize) {
+          PageStore.setState({ isEnd: true });
+        } else {
+          PageStore.setState({ isEnd: false });
+        }
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/

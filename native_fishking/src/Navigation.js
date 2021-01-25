@@ -6,6 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 const RootStackNav = createStackNavigator();
 
+import SplashPage from './page/SplashPage';
 import WebViewPage from './page/WebViewPage';
 
 export default inject(
@@ -14,13 +15,20 @@ export default inject(
 )(
   observer(({AppStore}) => {
     useEffect(() => {
-      AppStore.isGrantedPermissions();
+      // AppStore.isGrantedPermissions();
     });
     return (
       <>
         <StatusBar />
         <SafeAreaView>
-          <RootStackNav.Navigator screenOptions={{headerShown: false}}>
+          <RootStackNav.Navigator
+            screenOptions={{headerShown: false}}
+            initialRouteName={'splash'}>
+            <RootStackNav.Screen
+              name={'splash'}
+              component={SplashPage}
+              options={{animationTypeForReplace: 'push'}}
+            />
             <RootStackNav.Screen name={'webview'} component={WebViewPage} />
           </RootStackNav.Navigator>
         </SafeAreaView>

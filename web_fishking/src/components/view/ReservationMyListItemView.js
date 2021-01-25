@@ -69,7 +69,14 @@ export default inject()(
                   </div>
                   <div className="col-6 padding-sm">
                     <small>
-                      2020년 08월 25일(화) 09:00 ~<br />
+                      {fishingDate && (
+                        <React.Fragment>
+                          {fishingDate.substr(0, 4)} {fishingDate.substr(4, 2)}
+                          월 {fishingDate.substr(6, 2)}일(화){" "}
+                          {fishingDate.substr(9, 2)}:{fishingDate.substr(11, 2)}{" "}
+                          ~<br />
+                        </React.Fragment>
+                      )}
                       {ordersNum}
                     </small>
                   </div>
