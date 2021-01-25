@@ -8,11 +8,14 @@ import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Places;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.OperatorType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.CMemberNotFoundException;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
 import com.tobe.fishking.v2.exception.CResourceNotExistException;
+import com.tobe.fishking.v2.model.ModelMapperUtils;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.ParamsPopular;
 import com.tobe.fishking.v2.repository.fishking.specs.GoodsSpecs;
@@ -30,11 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 @Service
@@ -52,19 +51,19 @@ public class GoodsService {
 
     private static int searchSize = 0;
 
-    public Page<GoodsDTO> getGoodsList(Pageable pageable, Integer totalElements) {
+    public Page<GoodsDTO.GoodsDTOResp> getGoodsList(Pageable pageable, Integer totalElements) {
         Page<Goods> goods = goodsRepo.findAll(pageable, totalElements);
-        return goods.map(GoodsDTO::of);
+        return goods.map(GoodsDTO.GoodsDTOResp::of);
     }
 
 
-    public Page<GoodsDTO> getGoodsByRecommend(Pageable pageable, Integer totalElements) {
+    public Page<GoodsDTO.GoodsDTOResp> getGoodsByRecommend(Pageable pageable, Integer totalElements) {
         Page<Goods> goods = goodsRepo.findAllByIsRecommend(pageable, totalElements);
-        return goods.map(GoodsDTO::of);
+        return goods.map(GoodsDTO.GoodsDTOResp::of);
     }
 
     //검색 --
-    public Page<GoodsDTO> getGoodsList(Pageable pageable,
+    public Page<GoodsDTO.GoodsDTOResp> getGoodsList(Pageable pageable,
                                        @RequestParam(required = false) Map<String, Object> searchRequest,   ///total를 제외한 모든 것 조회
                                        Integer totalElement) {
         searchSize = 0;
@@ -98,11 +97,11 @@ public class GoodsService {
         }
 
 
-        return goods.map(GoodsDTO::of);
+        return goods.map(GoodsDTO.GoodsDTOResp::of);
     }
 
     //검색 --
-    public Page<GoodsDTO> getGoodsListLike(Pageable pageable,
+    public Page<GoodsDTO.GoodsDTOResp> getGoodsListLike(Pageable pageable,
                                            @RequestParam(required = false) String searchRequest,
                                            Integer totalElement) {
 
@@ -112,7 +111,7 @@ public class GoodsService {
 
         popularRepo.save(new Popular(SearchPublish.TOTAL, searchRequest, memberRepo.getOne((long)5)));
 
-        return goods.map(GoodsDTO::of);
+        return goods.map(GoodsDTO.GoodsDTOResp::of);
     }
 
 
@@ -228,18 +227,6 @@ public class GoodsService {
 
         return true;
     }
-    
-
-
-/*
-    public Optional<Goods>  getGoods(Long goodsId) {
-        return goodsRepository.findById(goodsId)
-                .orElseThrow(() -> new ResourceNotFoundException("Goods not found for this id :: " + goodsId));
-    }*/
-
-
-
-
 
 
 }

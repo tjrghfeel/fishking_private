@@ -18,7 +18,8 @@ public enum FilePublish implements IEnumModel {
     fishkingTv("어복TV"),
     companyRequest("업체요청"),
     profile("프로필"),
-    review("리뷰");
+    review("리뷰"),
+    seaRocks("갯바위");
 
 
     private String value;

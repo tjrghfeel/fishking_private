@@ -1,6 +1,6 @@
 package com.tobe.fishking.v2.service.fishking;
 
-import com.tobe.fishking.v2.addon.UploadService;
+
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
@@ -9,7 +9,6 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
-import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.OperatorType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
@@ -19,8 +18,6 @@ import com.tobe.fishking.v2.enums.fishing.TideTime;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDTO;
-import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
-import com.tobe.fishking.v2.model.fishing.ModifyFishingDiaryDto;
 import com.tobe.fishking.v2.model.fishing.WriteFishingDiaryDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
@@ -32,18 +29,19 @@ import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.FishingDiarySpecs;
+import com.tobe.fishking.v2.utils.NativeResultProcessUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
+import javax.persistence.Tuple;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,11 +56,10 @@ public class FishingDiaryService {
     private final PopularRepository popularRepo;
     private final FileRepository fileRepository;
     private final BoardRepository boardRepo;
-    private final UploadService uploadService;
 
     private static int searchSize = 0;
     //검색 -- 통합검색
-    public Page<FishingDiaryDTO> getFishingDiaryListLike(Board board,
+    public Page<FishingDiaryDTO.FishingDiaryDTOResp> getFishingDiaryListLike(Board board,
                                                          @RequestParam(required = false) String searchRequest,
                                                          Pageable pageable,
                                                          Integer totalElement) {
@@ -74,17 +71,17 @@ public class FishingDiaryService {
 
         popularRepo.save(new Popular(SearchPublish.TOTAL, searchRequest, memberRepo.getOne((long) 5)));
 
-        return fishingDiary.map(FishingDiaryDTO::of);
+        return fishingDiary.map(FishingDiaryDTO.FishingDiaryDTOResp::of);
     }
 
 
-    public Page<FishingDiaryDTO> getFishingDiaryList(Pageable pageable, Integer totalElements) {
+    public Page<FishingDiaryDTO.FishingDiaryDTOResp> getFishingDiaryList(Pageable pageable, Integer totalElements) {
         Page<FishingDiary> fishingDiary = fishingDiaryRepo.findAll(pageable, totalElements);
-        return fishingDiary.map(FishingDiaryDTO::of);
+        return fishingDiary.map(FishingDiaryDTO.FishingDiaryDTOResp::of);
     }
 
     //검색 -- 조황일지, 조행기
-    public Page<FishingDiaryDTO> getFishingDiaryList(Pageable pageable,
+    public Page<FishingDiaryDTO.FishingDiaryDTOResp> getFishingDiaryList(Pageable pageable,
                                                      @RequestParam(required = false) Map<String,  ///total를 제외한 모든 것 조회
                                                              Object> searchRequest, Integer totalElement) {
 
@@ -115,13 +112,15 @@ public class FishingDiaryService {
         }
 
 
-        return fishingDiary.map(FishingDiaryDTO::of);
+        return fishingDiary.map(FishingDiaryDTO.FishingDiaryDTOResp::of);
     }
 
 
+  /*
     public List<MapInfoDTO> getLatitudeAndLongitudeList() {
         return fishingDiaryRepo.findLatitudeAndLongitudeList();
     }
+  */
 
     /*fishingDiary글쓰기
     * - */
@@ -214,6 +213,71 @@ public class FishingDiaryService {
 
         return fishingDiary.getId();
     }
+
+
+
+
+
+    public List<FishingDiaryDTO.FishingDiaryDTORespData> getFishingDiaryListsForMap(FilePublish filePublish) {
+
+        if (filePublish != FilePublish.fishingBlog) return null;
+
+        //       List<FishingDiaryDTO.FishingDiaryDTOResp> fishingDiaryEntityList = fishingDiaryRepo.findAllFishingDiaryAndLocation(filePublish);
+
+        List<Tuple> tupleRespList = fishingDiaryRepo.findAllFishingDiaryAndLocation(filePublish);
+
+        List<FishingDiaryDTO.FishingDiaryDTORespData> fishingDiaryDTOList1 = tupleRespList.stream().map(tuple -> {
+            // Use the tool class to turn tuple into an object
+            FishingDiaryDTO.FishingDiaryDTORespData fishingDiaryDTOResp = NativeResultProcessUtils.processResult(tuple, FishingDiaryDTO.FishingDiaryDTORespData.class);
+            return fishingDiaryDTOResp;
+        }).collect(Collectors.toList());
+
+
+        return fishingDiaryDTOList1;
+    }
+
+    //forEach(System.out::println);
+
+
+  /*      for (int i = 0; i < fishingDiaryDTORespList.size(); i++) {
+
+            FishingDiaryDTO.FishingDiaryDTOResp entity = (FishingDiaryDTO.FishingDiaryDTOResp) fishingDiaryDTORespList.get(i);
+
+       //     FileEntity fileEntity = fileRepo.findTop1ByPidAndFilePublishAndIsRepresent(entity.getFishingDiaryId(), FilePublish.fishingBlog, true);
+
+            //조행기(일지) 대표이미지 썸네일
+       //     if (fileEntity != null) entity.setFishingDiaryRepresentUrl(env.getProperty("file.downloadUrl") + "/"+fileEntity.getFileUrl()+"/"+fileEntity.getThumbnailFile());
+         //   else entity.setFishingDiaryRepresentUrl("https://");
+
+            fishingDiaryDTORespList.set(i, entity);
+*/
+
+
+
+/*        List<FishingDiaryDTO.FishingDiaryDTOResp> fishingDiaryDTORespList = fishingDiaryEntityList.stream().map(FishingDiaryDTO.FishingDiaryDTOResp::of).collect(Collectors.toList());  //O
+
+        //대표이미지
+        for (int i = 0; i < fishingDiaryDTORespList.size(); i++) {
+
+            FishingDiaryDTO.FishingDiaryDTOResp entity = (FishingDiaryDTO.FishingDiaryDTOResp) fishingDiaryDTORespList.get(i);
+
+            FileEntity fileEntity = fileRepo.findTop1ByPidAndFilePublishAndIsRepresent(entity.getFishingDiaryId(), FilePublish.fishingBlog, true);
+
+            // File thumbnailFile = new File(env.getProperty("file.location")+File.separator+fileUrl+File.separator+thumbnailName);
+            // File getStoredFile = new File(env.getProperty("file.location")+File.separator+fileUrl+File.separator+getStoredFile);
+
+      //      if (fileEntity != null) entity.setFishingDiaryImageFileUrl(env.getProperty("file.downloadUrl") + "/"+fileEntity.getFileUrl()+"/"+fileEntity.getThumbnailFile());
+      //      else entity.setFishingDiaryImageFileUrl("https://");
+
+            fishingDiaryDTORespList.set(i, entity);
+        }
+*/
+    //  return fishingDiaryDTORespList;
+
+    //  }
+//}
+
+
 
     /*조항일지, 유저조행기 수정*/
     @Transactional

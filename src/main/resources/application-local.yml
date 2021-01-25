@@ -1,0 +1,31 @@
+spring:
+  profiles: local
+
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
+    username: fishking      #sa        # username: fishluck
+    password: fishking12#$  #P@ssw0rd  # password: fishluck123!
+    platform: mysql
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      use_sql_comments: true
+      ddl-auto: update
+    naming:
+      strategy: org.springframework.boot.orm.jpa.hibernate.SpringNamingStrategy
+
+  devtools:
+    livereload:
+      enabled: true
+
+server:
+  port: 8083
+
+file :
+  location : ~/fishkingV2/src/main/resources/static/files
+  downloadUrl : localhost:8082/files

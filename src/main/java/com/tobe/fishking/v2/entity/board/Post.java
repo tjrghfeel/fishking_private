@@ -93,6 +93,7 @@ public class Post extends BaseTime {
 
     @ManyToMany(targetEntity= Tag.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "post_tags", columnDefinition = "comment '태그' ")
+    @Builder.Default
     private List<Tag> tags = new ArrayList<>();
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', post, 'COLUMN',  created_by

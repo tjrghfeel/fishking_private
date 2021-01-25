@@ -1,9 +1,12 @@
 package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.addon.UploadService;
+import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.fishing.ShipDTO;
 import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -22,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +49,7 @@ public class ShipService {
     */
 
     //검색 --  name으로 검색
-    public Page<ShipDTO> getShipList(Pageable pageable,
+    public Page<ShipDTO.ShipDTOResp> getShipList(Pageable pageable,
                                        @RequestParam(required = false) Map<String, Object> searchRequest,   ///total를 제외한 모든 것 조회
                                        Integer totalElement) {
 
@@ -65,7 +70,7 @@ public class ShipService {
 
        // UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         //file 처리
-        return ships.map(ShipDTO::of);
+        return ships.map(ShipDTO.ShipDTOResp::of);
     }
 
     /*글쓰기시, ship선택버튼에 있는 ship검색 메소드 */
@@ -83,6 +88,38 @@ public class ShipService {
         }*/
     }
 
+
+    /*지도에 선상 위치 및 정보를 위한 Method*/
+    public List<ShipDTO.ShipDTOResp> getShipListsForMap(FilePublish filePublish) {
+
+        if (FilePublish.ship != filePublish) return null;
+
+        FishingType fishingType = filePublish.name().equals("ship")? FishingType.ship : FishingType.seaRocks;
+
+        List<Ship> shipEntityList = shipRepo.findAllShipAndLocation();
+
+        List<ShipDTO.ShipDTOResp> shipDTORespList = shipEntityList.stream().map(ShipDTO.ShipDTOResp::of).collect(Collectors.toList());  //O
+
+        //대표이미지
+        for (int i = 0; i < shipDTORespList.size(); i++) {
+
+            ShipDTO.ShipDTOResp entity = (ShipDTO.ShipDTOResp) shipDTORespList.get(i);
+
+            FileEntity shipFile = fileRepo.findTop1ByPidAndFilePublishAndIsRepresent(entity.getId(), FilePublish.ship, true);
+
+
+            if (shipFile != null) entity.setShipImageFileUrl(shipFile.getDownloadThumbnailUrl());
+            else entity.setShipImageFileUrl("https://");
+
+            // entity.setFishSpeciesCount(entity.getFishSpecies() == null? 0:entity.getFishSpecies().size());
+            shipDTORespList.set(i, entity);
+
+        }
+
+        return shipDTORespList;
+
+
+    }
 
 
 

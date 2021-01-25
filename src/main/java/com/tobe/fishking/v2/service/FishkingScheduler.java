@@ -1,6 +1,5 @@
 package com.tobe.fishking.v2.service;
 
-import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.AddAlertDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
@@ -10,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 
 @Component

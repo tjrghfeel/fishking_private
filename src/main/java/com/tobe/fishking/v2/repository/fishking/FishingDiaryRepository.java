@@ -1,13 +1,16 @@
 package com.tobe.fishking.v2.repository.fishking;
 
 
+
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 //import com.tobe.fishking.v2.model.NoNameDTO;
 //import com.tobe.fishking.v2.model.NoNameDTOInterface;
 import com.tobe.fishking.v2.model.common.MapInfoDTO;
+import com.tobe.fishking.v2.model.fishing.FishingDiaryDTO;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
@@ -16,8 +19,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Tuple;
 import java.util.List;
 
 @Repository
@@ -26,11 +29,11 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     //
  //   Page<FishingDiary> findFishingDiariesByFishSpeciesIsContaining(String fishSpeciesName, Pageable pageable, Integer totalElements);
    // Page<FishingDiary> findFishingDiariesByFishSpeciesIsContaining(Pageable pageable, Integer totalElements);
-    //조행기, 조행일지
+    //조행기, 조황일지
 //    Page<FishingDiary> findFishingDiariesByBoard_BoardTypeEquals(Board board,Pageable pageable, Integer totalElements);
     Page<FishingDiary> findFishingDiariesByBoard_FilePublish(Board board,Pageable pageable, Integer totalElements);
 
-    //조행기, 조행일지  + 어종
+    //조행기, 조황일지  + 어종
     Page<FishingDiary> findFishingDiariesByBoardEqualsAndFishingSpeciesName(Board board,String fishSpeciesName, Pageable pageable, Integer totalElements);
 
     /*member가 작성한 유저조행기 또는 조황일지의 개수 카운트*/
@@ -127,7 +130,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     int updateIsActiveByMember(@Param("member") Member member);*/
 
 
-    /* 조항일지, 조행기, 낚시포인트 위*경도 */
+/*
+    */
+/* 조항일지, 조행기, 낚시포인트 위*경도 *//*
+
     @Query(nativeQuery = true,value = "SELECT re.id, re.latitude, re.longitude,re.type FROM ( " +
             "SELECT  board.id AS id, a.writeLatitude AS latitude, a.writeLongitude AS latitude, 1 AS type " +
             "FROM FishingDiary a where  a.writeLatitude is not null  and  a.writeLatitude is not null " +
@@ -135,6 +141,31 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "SELECT  999 AS id,  b.Latitude AS latitude, b.Longitude AS latitude ,2 AS type " +
             "FROM FishingPoints b where  b.Latitude is not null  and  b.Latitude is not null   ) re")
     List<MapInfoDTO> findLatitudeAndLongitudeList();
+
+
+
+*/
+   //조행기맍 조회함(조황일지는 나중에 혹시)
+    //조행기대표사진, 제목, 내용, 프사, 사용자명, 일자, 위/경도
+    //mysql ifnull => coalese alias를 반드시 주어야 한다.
+    @Query(value = "SELECT " +
+                         " a.id   as fishingDiaryId " +
+                         " , a.title   as title    " +
+                         " , a.contents as contents   " +
+                         " , b.downloadThumbnailUrl   as fishingDiaryRepresentUrl  " +
+                         " , coalesce(a.fishingSpeciesName , '')  as fishingSpeciesName " +
+                         " , a.fishingLocation  as fishingLocation" +
+                         " , a.status  as status"  +
+                         " , a.createdDate as createdDate" +
+                        " , a.createdBy.id as createdById " +
+                         " , a.createdBy.nickName as createdByNickName " +
+                         ",  a.createdBy.profileImage as createdByProfileImage " +
+                         " , a.writeLongitude  as writeLongitude  " +
+                         " , a.writeLatitude  as  writeLatitude " +
+                     " FROM FishingDiary a" +
+                       "   , FileEntity  b " +
+                       "    where  a.writeLongitude is not null  and  a.writeLatitude is not null  and a.filePublish = :filePublish and a.id = b.pid and b.isRepresent = true and b.id is not null ")
+    List<Tuple> findAllFishingDiaryAndLocation(@Param("filePublish") FilePublish filePublish);
 
 }
 

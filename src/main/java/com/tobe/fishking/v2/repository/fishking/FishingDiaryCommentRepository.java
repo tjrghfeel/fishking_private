@@ -24,9 +24,9 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
     //
  //   Page<FishingDiary> findFishingDiariesByFishSpeciesIsContaining(String fishSpeciesName, Pageable pageable, Integer totalElements);
    // Page<FishingDiary> findFishingDiariesByFishSpeciesIsContaining(Pageable pageable, Integer totalElements);
-    //조행기, 조행일지
+    //조행기, 조황일지
  //   Page<FishingDiaryComment> findFishingDiariesByBoard_BoardTypeEquals(Board board,Pageable pageable, Integer totalElements);
-    //조행기, 조행일지  + 어종
+    //조행기, 조황일지  + 어종
  //   Page<FishingDiaryComment> findFishingDiariesByBoardEqualsAndFishingSpeciesName(Board board,String fishSpeciesName, Pageable pageable, Integer totalElements);
 
 

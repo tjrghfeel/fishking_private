@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.entity.fishing;
 
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.model.common.Location;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,7 +36,18 @@ public class Places extends BaseTime {
     @Column(columnDefinition = "varchar(30)   comment '시군구'  ")
     private String sigungu;
 
+    // EXEC sp_addextendedproperty 'MS_Description', N'시군구', 'USER', DBO, 'TABLE', place, 'COLUMN',  sigungu
+    @Column(columnDefinition = "varchar(200)   comment '주소'  ")
+    private String address;
 
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'시군구', 'USER', DBO, 'TABLE', place, 'COLUMN',  sigungu
+    @Column(columnDefinition = "varchar(30)   comment '위치'  ")
+    private Location location;
+
+
+    
+    
     // EXEC sp_addextendedproperty 'MS_Description', N'기본정보', 'USER', DBO, 'TABLE', place, 'COLUMN',  base_info
     @Column(columnDefinition = "varchar(1000) comment  '기본정보'  ")
     private String baseInfo;
@@ -66,7 +78,7 @@ public class Places extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  created_by
     @ManyToOne
-    @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
+    @JoinColumn(name="created_by" ,   updatable= false , columnDefinition  = " bigint not null comment '생성자'")
     private Member createdBy;
 
 

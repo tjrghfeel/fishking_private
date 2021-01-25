@@ -85,7 +85,7 @@ public class TakeService {
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         count[0] = goodsRepository.findTakeCountAboutFishType(member, FishingType.ship);
-        count[1] = goodsRepository.findTakeCountAboutFishType(member, FishingType.sealocks);
+        count[1] = goodsRepository.findTakeCountAboutFishType(member, FishingType.seaRocks);
 
         return count;
     }

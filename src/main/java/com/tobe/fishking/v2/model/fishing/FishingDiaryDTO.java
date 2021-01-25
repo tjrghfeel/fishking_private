@@ -1,9 +1,11 @@
 package com.tobe.fishking.v2.model.fishing;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -11,19 +13,85 @@ import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.FileNotFoundException;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.repository.common.FileRepository;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Builder(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class FishingDiaryDTO {
 
-    private static FileRepository fileRepo;
+    @Getter
+    @Setter
+    public static class Create {
 
+   /*     private String content;
+
+        @Builder
+        public Create(String content) {
+         ...
+        }*/
+    }
+
+    @Getter
+    @Setter
+    public static class Update {
+
+        //   private Long   id;
+        //   private String content;
+        //     ...
+
+
+    }
+
+
+    //@NoArgsConstructor
+    @Data
+    //@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    public static class FishingDiaryDTORespData{
+
+
+        private Long fishingDiaryId;
+
+        private String title;
+
+        private String contents;
+
+        private String fishingDiaryRepresentUrl;
+
+        private String fishingSpeciesName;
+
+        private String fishingLocation;
+
+        private ShareStatus status;
+
+        private Date createdDate;
+
+        private Long createdById;
+
+        private String createdByNickName;
+
+        private String createdByProfileImage;
+
+        private double writeLongitude;
+
+        private double writeLatitude;
+
+
+
+
+    }
+
+
+    @Getter
+    @Setter
+    @Builder
+    public static class FishingDiaryDTOResp {
     /*
       id,
       제목
@@ -32,39 +100,57 @@ public class FishingDiaryDTO {
       공유Status (뷰 수, 공유 수, 좋아요 수, 댓글수)
     */
 
-    private Long fishingDiaryId;
-    private String title;
-    private String contents;
-    private LocalDateTime createDate;
-    private Ship ship;
-    private String shipThumbnailUrl;
+        @ApiModelProperty(value="id")
+        private Long fishingDiaryId;
 
-    private String fishingDiaaryRepresentUrl;
+        @ApiModelProperty(value="제목")
+        private String title;
 
-    private String fishingSpeciesName;
-    private String fishingLocation;
-    private ShareStatus status;
+        @ApiModelProperty(value="내용")
+        private String contents;
 
-
-    public static FishingDiaryDTO of(FishingDiary fishingDiary){
-
-        FileEntity shipFile2 = fileRepo.findFileEntityByAndFilePublish(FilePublish.fishingDiary, true)
-                    .orElseThrow(FileNotFoundException::new);
-
-        FileEntity shipFile = fileRepo.findById(fishingDiary.getShip().getId())
-                .orElseThrow(FileNotFoundException::new);
+        @ApiModelProperty(value="조행기대표사진")
+        private String fishingDiaryRepresentUrl;
 
 
-        return FishingDiaryDTO.builder()
-                .fishingDiaryId(fishingDiary.getId())
-                .title(fishingDiary.getTitle())
-                .contents(fishingDiary.getContents())
-                .createDate(fishingDiary.getCreatedDate())
-                .ship(fishingDiary.getShip())
-                .shipThumbnailUrl(shipFile.getDownloadUrl() + shipFile.getThumbnailFile())
-                .fishingSpeciesName(fishingDiary.getFishingSpeciesName())
-                .fishingLocation(fishingDiary.getFishingLocation())
-//                .status(fishingDiary.getStatus())
-                .build();
+        @ApiModelProperty(value="어종명")
+        private String fishingSpeciesName;
+
+        @ApiModelProperty(value="낚시위치")
+        private String fishingLocation;
+
+        @ApiModelProperty(value="좋아요상태")
+        private ShareStatus status;
+
+        @ApiModelProperty(value="생성일자")
+        private LocalDateTime createDate;
+
+        @ApiModelProperty(value="생성자")
+        private Member createdBy;
+
+        @ApiModelProperty(value="경동")
+        private double writeLongitude;
+
+        @ApiModelProperty(value="위도")
+        private double writeLatitude;
+
+        public static FishingDiaryDTOResp of(FishingDiary fishingDiary) {
+
+            return FishingDiaryDTOResp.builder()
+                    .fishingDiaryId(fishingDiary.getId())
+                    .title(fishingDiary.getTitle())
+                    .contents(fishingDiary.getContents())
+                    .createDate(fishingDiary.getCreatedDate())
+                    .fishingSpeciesName(fishingDiary.getFishingSpeciesName())
+                    .fishingLocation(fishingDiary.getFishingLocation())
+                    .status(fishingDiary.getStatus())
+                    .createdBy(fishingDiary.getMember())
+                    .writeLatitude(fishingDiary.getWriteLatitude())
+                    .build();
+        }
+
+
+
     }
+
 }

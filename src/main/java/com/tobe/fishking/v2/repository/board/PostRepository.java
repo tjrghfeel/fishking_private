@@ -1,7 +1,5 @@
 package com.tobe.fishking.v2.repository.board;
 
-
-
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
@@ -20,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long>{
+public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     List<Post> findByBoard(Board board);
   //  List<  Goods> findByBoardOrderBy  GoodsIdDesc(Board board);
 
@@ -285,4 +283,7 @@ public interface PostRepository extends JpaRepository<Post, Long>{
             @Param("modifiedDateEnd") LocalDate modifiedDateEnd,
             Pageable pageable
     );
+
+    @Query("select p from Post p where p.title like concat('%', :title, '%')")
+    List<Post> getPostContainTitle(String title);
 }

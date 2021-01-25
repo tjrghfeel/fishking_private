@@ -31,13 +31,13 @@ public class FishingDiaryContents extends BaseTime {
     @JoinColumn(name = "board_id", columnDefinition = " bigint not null   comment '게시판그룹'  ")
     private Board board;
 
-    //null이면 조행기, null이 아니면 조행일지
+    //null이면 조행기, null이 아니면 조황일지
     // EXEC sp_addextendedproperty 'MS_Description', N'선상', 'USER', DBO, 'TABLE', ship, 'COLUMN',  ship
     @ManyToOne
     @JoinColumn(name="fishing_diary_ship_id",  columnDefinition = "bigint null   comment '선상'  ")
     private Ship ship;
 
-    //null이면 조행일지, null이 아니면 조행기
+    //null이면 조황일지, null이 아니면 조행기
     // EXEC sp_addextendedproperty 'MS_Description', N'글쓴이', 'USER', DBO, 'TABLE', ship, 'COLUMN',  ship
     @ManyToOne
     @JoinColumn(name="fishing_diary_member_id", columnDefinition = "bigint not null   comment '글쓴이'  ")

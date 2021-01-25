@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Ship;
@@ -10,9 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 
 public interface ShipRepository extends BaseRepository<Ship, Long> {
+
 
     /*member가 만든 company가 만든 ship을 가져오는 메소드.
     * - !!!!! company와 ship은 '1대다'관계로 db가 구성되어있지만, 부장님말씀대로 1대1이라 가정하고 만든 쿼리. */
@@ -54,4 +59,10 @@ public interface ShipRepository extends BaseRepository<Ship, Long> {
     /*상품이 속한 ship을 검색하는 메소드*/
     @Query("select s from Ship s  where s = (select g.ship from Goods g where g = :goods)")
     Ship findByGoods(@Param("goods") Goods goods);
+
+    @Query("select s from Ship s \n" +
+            " left outer join fetch s.fishSpecies r \n" +
+            " join s.location pi where pi.longitude is not null or pi.longitude is not null ")
+    List<Ship> findAllShipAndLocation();
+
 }
