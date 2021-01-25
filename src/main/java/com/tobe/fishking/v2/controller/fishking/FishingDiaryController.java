@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.fishing.ModifyFishingDiaryDto;
 import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
 import com.tobe.fishking.v2.model.fishing.WriteFishingDiaryDto;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
@@ -48,6 +49,17 @@ public class FishingDiaryController {
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return fishingDiaryService.writeFishingDiary(dto,token);
+    }
+
+    /*글쓰기 수정*/
+    @ApiOperation(value = "조항일지, 유저조행기 수정",notes = "" +
+            "")
+    @PutMapping("/fishingDiary")
+    public Boolean modifyFishingDiary(
+            @RequestBody @Valid ModifyFishingDiaryDto dto,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return fishingDiaryService.modifyFishingDiary(dto,token);
     }
 
     /*글쓰기 - ship검색*/

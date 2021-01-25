@@ -232,4 +232,19 @@ public class FishingDiary extends BaseTime {
 
 //댓글은 Comment  구분장 dependentType 은 조화잉ㄹ지
 
+    /*글쓰기 수정*/
+    public FishingDiary modify(
+            Ship ship, String title, String content, String fishSpecies, String tideTime, String fishTechnic,
+            String fishLure, Member modifiedBy
+    ){
+        this.ship = ship;
+        this.title = title;
+        this.contents = content;
+        this.fishingSpeciesName = fishSpecies;
+        this.fishingTideTime = tideTime;
+        this.fishingTechnic = fishTechnic;
+        this.fishingLure = fishLure;
+        this.modifiedBy = modifiedBy;
+        return this;
+    }
 }
