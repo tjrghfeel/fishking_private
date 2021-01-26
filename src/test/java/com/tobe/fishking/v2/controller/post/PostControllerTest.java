@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.print.Pageable;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -137,9 +139,7 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        Float aaa = 1.2F;
-        Float bbb = 2.4F;
-        System.out.println(aaa/2);
+
         return;
     }
     @Transactional

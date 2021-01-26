@@ -21,4 +21,12 @@ public class ShareStatus {
         this.commentCount = commentCount;
         this.shareCount = shareCount;
     }
+
+    public void plusViewCount(){this.viewCount++;}
+    public void plusLikeCount(){this.likeCount++;}
+    public void plusCommentCount(){this.commentCount++;}
+    public void plusShareCount(){this.shareCount++;}
+    public void subLikeCount(){this.likeCount--;}
+    public void subCommentCount(){this.commentCount--;}
+    public void subShareCount(){this.shareCount--;}
 }

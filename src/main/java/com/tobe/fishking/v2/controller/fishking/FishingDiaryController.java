@@ -1,10 +1,15 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.entity.common.CodeGroup;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.model.fishing.ModifyFishingDiaryDto;
 import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
 import com.tobe.fishking.v2.model.fishing.WriteFishingDiaryDto;
+import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
+import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
 import io.swagger.annotations.Api;
@@ -24,6 +29,10 @@ import java.util.regex.Pattern;
 public class FishingDiaryController {
     @Autowired FishingDiaryService fishingDiaryService;
     @Autowired ShipService shipService;
+    @Autowired
+    CodeGroupRepository codeGroupRepository;
+    @Autowired
+    CommonCodeRepository commonCodeRepository;
 
     /*조항일지, 유저조행기 글쓰기*/
     @ApiOperation(value = "조항일지, 유저조행기 글쓰기",notes = "" +
@@ -52,7 +61,7 @@ public class FishingDiaryController {
     }
 
     /*글쓰기 수정*/
-    @ApiOperation(value = "조항일지, 유저조행기 수정",notes = "" +
+    /*@ApiOperation(value = "조항일지, 유저조행기 수정",notes = "" +
             "")
     @PutMapping("/fishingDiary")
     public Boolean modifyFishingDiary(
@@ -60,7 +69,7 @@ public class FishingDiaryController {
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return fishingDiaryService.modifyFishingDiary(dto,token);
-    }
+    }*/
 
     /*글쓰기 - ship검색*/
     @ApiOperation(value = "글쓰기 - ship검색",notes = "" +
@@ -95,5 +104,40 @@ public class FishingDiaryController {
 
         return shipService.searchShipForWriteFishingDiary(keyword/*,sortBy*/,page);
     }
+
+    /*조항일지 리스트 출력*/
+    @ApiOperation(value = "어복스토리 - 조황일지 목록 출력",notes = "" +
+            "선택된 지역에 해당하면서 직접입력한 검색어에 해당하는 글들을 검색.\n" +
+            "아무 지역 선택하지 않으면, 모든 지역을 선택한것으로 간주.\n" +
+            "요청 필드 ) \n" +
+            "- districtList : String[] / 선택 / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. \n" +
+            "   ex) 팝업창에서 '전라남도'선택시, common code에서 '전라남도'의 code값인 '전남'  \n" +
+            "- districtSearchKey : String / 선택 / 팝업창에서 '지역명 검색'부분에 직접입력한 값. \n" +
+            "- fishSpecies : String[] / 선택 / 팝업창에서 선택한 어종에 해당하는 common code의 code값들의 배열.\n" +
+            "- sort : String / 선택 / 글들의 정렬기준. / 'createdDate', 'likeCount', 'commentCount' 중 하나 입력. "+
+            "- header에 세션토큰 필요.\n" +
+            "응답 필드 ) \n" +
+            "- ")
+    @GetMapping("/fishingDiary/list/{page}")
+    public Page<FishingDiaryDtoForPage> getFishingDiaryList(
+            @PathVariable("page") int page,
+            @RequestParam(value = "districtList", required = false) String[] districtList,
+            @RequestParam(value = "searchKey", required = false, defaultValue = "") String districtSearchKey,
+            @RequestParam(value = "fishSpeciesList", required = false) String[] fishSpecies,
+            @RequestParam(value = "sort", required = false, defaultValue = "createdDate") String sort,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        if(sort.equals("time") || sort.equals("like") || sort.equals("comment")){
+            throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
+        }
+
+        return fishingDiaryService.getFishingDiaryList(page, districtList, districtSearchKey, fishSpecies, sort, token);
+    }
+
+    /*유저조행기 리스트 출력*/
+    /*@ApiOperation(value = "어복스토리 - 유저조행기 목록 출력",notes = "" +
+            "")
+    @GetMapping("/fishingBlog/list/{page}")
+    public Page<>*/
 
 }

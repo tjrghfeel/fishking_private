@@ -46,7 +46,7 @@ public class ReviewService {
                 .orElseThrow(()->new ResourceNotFoundException("goods not found for this id :: "+dto.getGoodsId()));
         Member author = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        Ship ship = shipRepository.findByGoods(goods);
+        Ship ship = goods.getShip();
 
         /*리뷰저장*/
         Review review = Review.builder()
