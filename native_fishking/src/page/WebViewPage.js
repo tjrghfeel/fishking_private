@@ -13,6 +13,9 @@ export default inject('WebViewStore')(
             WebViewStore.goBack(),
           );
         }
+        setTimeout(() => {
+          this.setState({splashFlex: 0, webviewFlex: 1});
+        }, 1000);
       }
       componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress');
@@ -35,13 +38,15 @@ export default inject('WebViewStore')(
           WebViewStore: {applicationUrl},
         } = this.props;
         return (
-          <WebView
-            uri={applicationUrl}
-            onNavigationStateChange={(state) =>
-              this.onNavigationStateChange(state)
-            }
-            onMessage={(nativeEvent) => this.onMessage(nativeEvent)}
-          />
+          <React.Fragment>
+            <WebView
+              uri={applicationUrl}
+              onNavigationStateChange={(state) =>
+                this.onNavigationStateChange(state)
+              }
+              onMessage={(nativeEvent) => this.onMessage(nativeEvent)}
+            />
+          </React.Fragment>
         );
       }
     },

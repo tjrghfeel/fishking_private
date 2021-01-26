@@ -35,8 +35,6 @@ export default inject(
         if (this.file.current?.files.length > 0) {
           const file = this.file.current?.files[0];
 
-          console.log(file);
-
           const form = new FormData();
           form.append("file", file);
           form.append("filePublish", "one2one");
@@ -100,14 +98,6 @@ export default inject(
             <div className="container nopadding">
               <div className="card">
                 <form className="form-line mt-3">
-                  <div className="form-group">
-                    <select
-                      className="form-control"
-                      id="exampleFormControlSelect1"
-                    >
-                      <option>카테고리를 선택해 주세요.</option>
-                    </select>
-                  </div>
                   <div className="form-group">
                     <input
                       type="text"
