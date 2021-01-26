@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.model.fishing;
 
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.common.Location;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -62,9 +64,13 @@ public class ShipDTO {
 
 
 
+//        @ApiModelProperty(name = "어종")
+//        @Builder.Default
+//        private List<CommonCode> fishSpecies = new ArrayList<>();
+
         @ApiModelProperty(name = "어종")
         @Builder.Default
-        private List<CommonCode> fishSpecies = new ArrayList<>();
+        private List<CommonCodeDTO> fishSpecies = new ArrayList<>();
 /*
         private List<ShipFishSpecies> shipFishSpecies;
 */
@@ -74,18 +80,32 @@ public class ShipDTO {
        // private Company company;
 
 
+//        public static ShipDTO.ShipDTOResp ofOld(Ship ship){
+//            return ShipDTOResp.builder()
+//                    .id(ship.getId())
+//                    .shipName(ship.getShipName())
+//                    .sido(ship.getShipName())
+//                    .sigungu(ship.getSigungu())
+//                    .distance(ship.getDistance())
+//                    .location(ship.getLiveLocation()== null?ship.getLocation():ship.getLiveLocation())
+//                    .address(ship.getAddress())
+//                    .fishSpecies(ship.getFishSpecies())
+//                    .fishSpeciesCount(ship.getFishSpecies().size())
+//         //           .company(ship.getCompany())
+//                    .build();
+//        }
+
         public static ShipDTO.ShipDTOResp of(Ship ship){
             return ShipDTOResp.builder()
                     .id(ship.getId())
                     .shipName(ship.getShipName())
-                    .sido(ship.getShipName())
+                    .sido(ship.getSido())
                     .sigungu(ship.getSigungu())
                     .distance(ship.getDistance())
                     .location(ship.getLiveLocation()== null?ship.getLocation():ship.getLiveLocation())
                     .address(ship.getAddress())
-                    .fishSpecies(ship.getFishSpecies())
+                    .fishSpecies(ship.getFishSpecies().stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList()))
                     .fishSpeciesCount(ship.getFishSpecies().size())
-         //           .company(ship.getCompany())
                     .build();
         }
 

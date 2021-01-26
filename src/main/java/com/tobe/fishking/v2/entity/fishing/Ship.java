@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.entity.fishing;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
@@ -97,8 +98,9 @@ public class Ship extends BaseTime {  //선상
     //녹화영상 FileEntity
 
     // EXEC sp_addextendedproperty 'MS_Description', N'어종', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
-    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinColumn(name = "ships_fish_species", columnDefinition = "comment '어종'  ")
+    @JsonBackReference
     private final List<CommonCode> fishSpecies = new ArrayList<>();
 
 
@@ -106,6 +108,7 @@ public class Ship extends BaseTime {  //선상
     @OneToMany
     @JoinColumn(name = "ship_rtvideos_id" , columnDefinition = "bigint  comment '실시간영상'  ")
     //  @Builder.Default
+    @JsonBackReference
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();
 
 

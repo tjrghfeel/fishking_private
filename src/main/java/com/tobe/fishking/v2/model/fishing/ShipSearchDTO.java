@@ -13,6 +13,7 @@ import javax.validation.Valid;
 @ToString
 public class ShipSearchDTO {
 
+    private @Valid String fishingType;
     private @Valid String orderBy;
     private @Valid Integer pageNumber;
     private @Valid Integer size;
