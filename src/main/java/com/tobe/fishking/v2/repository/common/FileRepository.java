@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.repository.common;
 
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public interface FileRepository extends BaseRepository<FileEntity, Long> {
     public Optional<FileEntity> findByFileUrl(@Param("fileUrl") String fileUrl);
 
     public List<FileEntity> findByPidAndFilePublish(Long pid, FilePublish filePublish);
+    public List<FileEntity> findByPidAndFilePublishAndFileType(Long pid, FilePublish filePublish, FileType fileType);
 
     @Query("select a from FileEntity a where a.filePublish = :filePublish and  a.isRepresent = :isRepresent")
     public Optional<FileEntity> findFileEntityByAndFilePublish(FilePublish filePublish, Boolean isRepresent );

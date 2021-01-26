@@ -33,4 +33,7 @@ public interface LoveToRepository extends JpaRepository<LoveTo, Long> {
             nativeQuery = true
     )
     int countLikeCountForCompanyProfile(@Param("memberId") Long memberId);
+
+    /*takeType, linkId, createdBy로 검색*/
+    LoveTo findByLinkIdAndTakeTypeAndCreatedBy(Long linkId, TakeType takeType, Member createdBy);
 }

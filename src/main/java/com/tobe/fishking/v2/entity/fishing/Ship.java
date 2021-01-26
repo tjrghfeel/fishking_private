@@ -52,7 +52,7 @@ public class Ship extends BaseTime {  //선상
     private FishingType fishingType;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'주소', 'USER', DBO, 'TABLE', ship, 'COLUMN',  address
-    @Column(columnDefinition = "varchar(100)   comment '주소'  ")
+    @Column(columnDefinition = "varchar(100)   comment '선박주소'  ")
     private String address;
 
 

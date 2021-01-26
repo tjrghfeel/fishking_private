@@ -3,7 +3,9 @@ package com.tobe.fishking.v2.entity.fishing;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -100,6 +102,15 @@ public class FishingDiary extends BaseTime {
 
     @Column(columnDefinition = "varchar(200) comment '미끼'")
     private String fishingLure;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(columnDefinition = "int comment '선상/갯바위'")
+    private FishingType fishingType;
+
+    @ManyToMany(targetEntity = CommonCode.class)
+    @JoinColumn(name = "fishing_diary_fishing_species", columnDefinition = " comment  '어종'  ")
+    @Builder.Default
+    private List<CommonCode> fishingSpecies = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id")
@@ -235,5 +246,22 @@ public class FishingDiary extends BaseTime {
     }
 
 //댓글은 Comment  구분장 dependentType 은 조화잉ㄹ지
+
+    /*글쓰기 수정*/
+    public FishingDiary modify(
+            Ship ship, String title, String content, String fishSpecies, String tideTime, String fishTechnic,
+            String fishLure, Member modifiedBy
+    ){
+        this.ship = ship;
+        this.title = title;
+        this.contents = content;
+        this.fishingSpeciesName = fishSpecies;
+        this.fishingTideTime = tideTime;
+        this.fishingTechnic = fishTechnic;
+        this.fishingLure = fishLure;
+        this.modifiedBy = modifiedBy;
+        return this;
+    }
+
 
 }
