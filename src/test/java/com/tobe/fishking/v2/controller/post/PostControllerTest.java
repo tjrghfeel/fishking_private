@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
+import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.entity.fishing.TblSubmitQueue;
 import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.NoNameDTO;
 import com.tobe.fishking.v2.model.auth.PhoneAuthDto;
+import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
@@ -20,6 +23,7 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.CouponService;
+import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
 import org.apache.commons.io.FilenameUtils;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
@@ -108,6 +112,8 @@ public class PostControllerTest {
     MemberService memberService;
     @Autowired
     TblSubmitQueueRepository tblSubmitQueueRepository;
+    @Autowired
+    FishingDiaryService fishingDiaryService;
 
     @Test
     public void fileTest() throws Exception {
@@ -139,6 +145,9 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
+        fishingDiaryService.getFishingDiaryList(
+                0,"fishingDiary",null,"","content",
+                19L,null,"createdDate","19",false);
 
         return;
     }

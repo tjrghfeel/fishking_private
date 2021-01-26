@@ -7,13 +7,16 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.LoveTo;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.OperatorType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingLure;
 import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
@@ -21,22 +24,17 @@ import com.tobe.fishking.v2.enums.fishing.TideTime;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.common.ShareStatus;
-import com.tobe.fishking.v2.model.fishing.FishingDiaryDTO;
-import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
-import com.tobe.fishking.v2.model.fishing.ModifyFishingDiaryDto;
-import com.tobe.fishking.v2.model.fishing.WriteFishingDiaryDto;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
-import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
-import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
-import com.tobe.fishking.v2.repository.common.FileRepository;
-import com.tobe.fishking.v2.repository.common.PopularRepository;
+import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.FishingDiarySpecs;
 import com.tobe.fishking.v2.utils.NativeResultProcessUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,6 +62,8 @@ public class FishingDiaryService {
     private final FileRepository fileRepository;
     private final BoardRepository boardRepo;
     private final UploadService uploadService;
+    private final LoveToRepository loveToRepository;
+    private final Environment env;
 
     private static int searchSize = 0;
     //검색 -- 통합검색
@@ -189,7 +189,7 @@ public class FishingDiaryService {
                 .contents(dto.getContent())
 //                .location()
                 .fishingSpeciesName(fishSpecies)
-                .fishingDate(dto.getWriteDate().toString())
+                .fishingDate(dto.getFishingDate().toString())
                 .fishingTideTime(tideTime)
                 .fishingTechnic(fishTechnic)
                 .fishingLure(fishLure)
@@ -369,52 +369,125 @@ public class FishingDiaryService {
     }
 */
 
-    /*조항일지 리스트 출력*/
+    /*어복스토리 리스트 출력
+    * 인자 )
+    * - category : fishingDiary / fishingBlog. 필수.
+    * - districtList : 지역검색. common code의 행정구역 1단계 코드값 배열. 해당없으면 null
+    * - searchKey : 검색 키워드. 해당없으면 빈문자열 ""
+    * - searchTarget : searchKey가 적용될 항목. content / title / address 중 1. 해당없으면 null
+    * - shipId : 특정 선박에 대한 글만 검색하고자할때. 해당없으면 null.
+    * - fishSpecies : 어종검색. 글 작성시 선택한 어종을 기준으로 검색. 해당없으면 null.
+    * - sort : 정렬기준. createdDate / likeCount / commentCount 중 1. 필수.
+    * - token : 세션토큰. 필수
+    * - myPost : 자신의 글만 볼지 아닐지. 필수. */
     @Transactional
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(
-            int page, String[] districtList, String searchKey, String[] fishSpecies, String sort, String token) throws ResourceNotFoundException {
+            int page, String category, String[] districtList, String searchKey, String searchTarget, Long shipId,
+            String[] fishSpecies, String sort, String token, Boolean myPost) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        /*어종검색*/
-        /*ArrayList<Long> fishSpeciesCommonCodeIdList= new ArrayList<>();
-        List<CommonCode> fishSpeciesCommonCodeList = null;
-        if(fishSpecies!=null && fishSpecies.length!=0) {
-            CodeGroup codeGroup = codeGroupRepo.findByCode("fishspecies");
-            fishSpeciesCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList(fishSpecies.clone()));
-            for(int i=0; i<fishSpeciesCommonCodeList.size(); i++){
-                fishSpeciesCommonCodeIdList.add(fishSpeciesCommonCodeList.get(i).getId());
-            }
-        }*/
+        /*카테고리*/
+        FilePublish filePublish = FilePublish.valueOf(category);
         /*지역검색*/
         String districtRegex=null;
         if(districtList!=null&&districtList.length!=0) {
             CodeGroup codeGroup = codeGroupRepo.findByCode("districtL1");
             List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList(districtList.clone()));
-            for (int i = 0; i < districtListCommonCodeList.size(); i++) {
-                districtRegex += districtListCommonCodeList.get(i).getCodeName() + "|";
+            districtRegex = districtListCommonCodeList.get(0).getCodeName();
+            for (int i = 1; i < districtListCommonCodeList.size(); i++) {
+                districtRegex += "|"+districtListCommonCodeList.get(i).getCodeName() ;
             }
-            districtRegex = districtRegex.substring(districtRegex.length() - 1, districtRegex.length());
         }
         /*어종검색*/
         String fishSpeciesRegex=null;
         if(fishSpecies!=null&&fishSpecies.length!=0) {
             CodeGroup codeGroup = codeGroupRepo.findByCode("fishspecies");
             List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList(fishSpecies.clone()));
-            for (int i = 0; i < districtListCommonCodeList.size(); i++) {
-                fishSpeciesRegex += districtListCommonCodeList.get(i).getCodeName() + "|";
+            fishSpeciesRegex = districtListCommonCodeList.get(0).getCodeName();
+            for (int i = 1; i < districtListCommonCodeList.size(); i++) {
+                fishSpeciesRegex += "|"+districtListCommonCodeList.get(i).getCodeName() ;
             }
-            fishSpeciesRegex = fishSpeciesRegex.substring(fishSpeciesRegex.length() - 1, fishSpeciesRegex.length());
         }
 
-        if(districtList!=null && districtList.length==0){districtList=null;}
+        Pageable pageable = PageRequest.of(page, 30);
+        if(sort.equals("createdDate")){
+            return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
+                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, member.getId(),myPost,searchTarget,shipId,pageable);}
+        else if(sort.equals("likeCount")){
+            return fishingDiaryRepo.getFishingDiaryListOrderByLikeCount(
+                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, member.getId(),myPost,searchTarget,shipId,pageable);}
+        else{
+            return fishingDiaryRepo.getFishingDiaryListOrderByCommentCount(
+                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, member.getId(),myPost,searchTarget,shipId,pageable);}
+    }
 
-        Pageable pageable = PageRequest.of(page, 10, JpaSort.unsafe(Sort.Direction.DESC,"("+sort+")"));
-        return fishingDiaryRepo.getFishingDiaryList(
-                districtRegex, fishSpeciesRegex, searchKey, member.getId(), pageable
-        );
-//        return fishingDiaryRepo.getFishingDiaryList2(
-//            districtList, fishSpeciesCommonCodeList, searchKey, pageable
-//        );
+    /*어복스토리 상세보기*/
+    @Transactional
+    public FishingDiaryDetailDto getFishingDiaryDetail(Long fishingDiaryId, String token) throws ResourceNotFoundException {
+        FishingDiaryDetailDto result = null;
+
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        FishingDiary fishingDiary  = fishingDiaryRepo.findById(fishingDiaryId)
+                .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
+
+        /*닉네임부분 설정.*/
+        String nickName = null;
+        if(fishingDiary.getFilePublish()==FilePublish.fishingDiary){nickName = fishingDiary.getShip().getShipName();}
+        else if(fishingDiary.getFilePublish()==FilePublish.fishingBlog){ nickName = fishingDiary.getMember().getNickName();}
+        /*isLikeTo 설정*/
+        Boolean isLikeTo = null;
+        TakeType takeType = TakeType.valueOf(fishingDiary.getFilePublish().getKey());
+        LoveTo loveTo = loveToRepository.findByLinkIdAndTakeTypeAndCreatedBy(fishingDiaryId,takeType, member);
+        if(loveTo!=null){ isLikeTo = true;}
+        else { isLikeTo = false; }
+        /*isScraped 설정*/
+
+        /*imageUrlList 설정*/
+        ArrayList<String> imageUrlList = new ArrayList<>();
+        String path = env.getProperty("file.downloadUrl");
+        List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileType(
+                fishingDiaryId, fishingDiary.getFilePublish(), FileType.image);
+        for(int i=0; i<fileEntityList.size(); i++){
+            FileEntity fileEntity = fileEntityList.get(i);
+            imageUrlList.add(path + "/" +fileEntity.getFileUrl() + "/" + fileEntity.getStoredFile());
+        }
+        /*비디오 url 설정*/
+        String videoUrl = null;
+        List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileType(
+                fishingDiaryId, fishingDiary.getFilePublish(), FileType.video);
+        if(video.size()!=0){videoUrl = path + "/" + video.get(0).getFileUrl() + "/" + video.get(0).getStoredFile();}
+
+        /*글의 조회수 증가*/
+        fishingDiary.getStatus().plusViewCount();
+
+        result = FishingDiaryDetailDto.builder()
+                .authorId(fishingDiary.getMember().getId())
+                .fishingDiaryId(fishingDiary.getId())
+                .shipId(fishingDiary.getShip().getId())
+                .nickName(nickName)
+                .profileImage(fishingDiary.getMember().getProfileImage())
+                .isLive(true)
+                .fishingType(fishingDiary.getFishingType().getValue())
+                .title(fishingDiary.getTitle())
+                .createdDate(fishingDiary.getCreatedDate())
+                .fishingSpecies(fishingDiary.getFishingSpeciesName())
+                .fishingDate(fishingDiary.getFishingDate())
+                .tide(fishingDiary.getFishingTideTime())
+                .fishingLure(fishingDiary.getFishingLure())
+                .fishingTechnic(fishingDiary.getFishingTechnic())
+                .content(fishingDiary.getContents())
+                .imageUrlList(imageUrlList)
+                .videoUrl(videoUrl)
+                .isLikeTo(isLikeTo)
+//                .isScraped()
+                .likeCount(fishingDiary.getStatus().getLikeCount())
+                .commentCount(fishingDiary.getStatus().getCommentCount())
+//                .scrapCount(fishingDiary.getStatus().get)
+                .viewCount(fishingDiary.getStatus().getViewCount())
+                .build();
+
+        return result;
     }
 
 /*

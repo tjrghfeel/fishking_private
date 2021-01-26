@@ -54,18 +54,18 @@ public class MyMenuController {
             "   id : 게시글의 id \n" +
             "   profileImage : 작성자 프로필 사진 download url \n" +
             "   address : 게시글의 대상 선상의 주소 \n" +
-            "   goodsId : 게시글 대상 상품의 id\n" +
             "   shipId : 게시글 대상 상품의 선상id\n" +
             "   memberId : 작성자 id \n" +
             "   nickName : 작성자 닉네임\n" +
             "   fishingType : 선상인지 갯바위인지 \n" +
             "       ㄴ ship : 선상\n" +
             "       ㄴ sealocks : 갯바위\n " +
-            "   isLikeTo : 게시글에 대한 좋아요 여부(사용x)\n" +
+            "   isLikeTo : 게시글에 대한 좋아요 여부\n" +
             "   createdDate : 작성일자 \n" +
             "   likeCount : 좋아요 수 \n" +
             "   commentCount : 댓글 수 \n" +
             "   scrapCount : 스크랩 수 \n" +
+            "   title : 글 제목\n" +
             "   contents : 게시글 내용(일부만 출력)\n" +
             "   fileList : 이미지 파일 download url 리스트")
     @GetMapping("/myFishingPostList/{page}")
@@ -106,7 +106,6 @@ public class MyMenuController {
             "   id : 게시글의 id \n" +
             "   profileImage : 작성자 프로필 사진 download url \n" +
             "   address : 게시글의 대상 선상의 주소 \n" +
-            "   goodsId : 게시글 대상 상품의 id\n" +
             "   shipId : 게시글 대상 상품의 선상id\n" +
             "   memberId : 작성자 id \n" +
             "   nickName : 작성자 닉네임\n" +
@@ -118,6 +117,7 @@ public class MyMenuController {
             "   likeCount : 좋아요 수 \n" +
             "   commentCount : 댓글 수 \n" +
             "   scrapCount : 스크랩 수 \n" +
+            "   title : 글 제목\n" +
             "   contents : 게시글 내용(일부만 출력)\n" +
             "   fileList : 이미지 파일 download url 리스트")
     @GetMapping("/myFishingDiaryScrap/{page}")

@@ -154,7 +154,7 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
                     "   and if(:isRegistered is null, true, (c.is_registered = :isRegistered)) " +
                     "   and if(:createdDayStart is null, true, (c.created_date > :createdDayStart)) " +
                     "   and if(:createdDayEnd is null, true, (c.created_date < :createdDayEnd)) " +
-                    "  ",
+                    " ",
             nativeQuery = true
     )
     Page<CompanyManageDtoForPage> findCompanyListByConditions(

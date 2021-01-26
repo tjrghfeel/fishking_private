@@ -9,6 +9,7 @@ import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.fishing.ShipDTO;
 import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
+import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
@@ -38,7 +39,6 @@ public class ShipService {
     private final FileRepository fileRepo;
     private final ShipRepository shipRepo;
     private final PopularRepository popularRepo;
-
 
 
     /*
@@ -121,8 +121,10 @@ public class ShipService {
 
     }
 
-
-
-
+    /* 선상, 갯바위 리스트 */
+    public Page<Ship> getShips(ShipSearchDTO shipSearchDTO) {
+        Pageable pageable = PageRequest.of(shipSearchDTO.getPageNumber(), shipSearchDTO.getSize());
+        return shipRepo.searchAll(shipSearchDTO, pageable);
+    }
 
 }

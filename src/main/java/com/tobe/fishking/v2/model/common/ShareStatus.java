@@ -1,11 +1,13 @@
 package com.tobe.fishking.v2.model.common;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
+@Getter
 @NoArgsConstructor
 public class ShareStatus {
 

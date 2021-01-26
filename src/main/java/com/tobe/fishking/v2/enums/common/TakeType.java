@@ -6,9 +6,9 @@ public enum TakeType    implements IEnumModel   {
 
     goods("상품"),
     ship("업체"),
-    fishkingDaily("조황일지"),
+    fishingDiary("조황일지"),
     fishingBlog("조행기"),
-    comment("댓글"),
+    fishingComment("댓글"),
     fishkingTv("어복TV");
 
     private String value;
