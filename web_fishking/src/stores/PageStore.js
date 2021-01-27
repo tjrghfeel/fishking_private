@@ -41,17 +41,29 @@ const PageStore = new (class {
     const accessToken = localStorage.getItem("@accessToken") || null;
     if (accessToken !== null) this.loggedIn = true;
   };
-  setScrollEvent = (onScroll) => {
-    window.addEventListener("scroll", () => {
-      const scrollHeight =
-        document.scrollingElement.scrollHeight - window.outerHeight;
-      const itemHeight = 80;
-      const scrollPosition = window.pageYOffset;
+  setScrollEvent = (onScroll, element) => {
+    if (element) {
+      element.addEventListener("scroll", () => {
+        const scrollHeight = element.scrollHeight - element.offsetHeight;
+        const itemHeight = 80;
+        const scrollPosition = element.scrollTop;
 
-      if (scrollPosition + itemHeight >= scrollHeight) {
-        onScroll();
-      }
-    });
+        if (scrollPosition + itemHeight >= scrollHeight) {
+          onScroll();
+        }
+      });
+    } else {
+      window.addEventListener("scroll", () => {
+        const scrollHeight =
+          document.scrollingElement.scrollHeight - window.outerHeight;
+        const itemHeight = 80;
+        const scrollPosition = window.pageYOffset;
+
+        if (scrollPosition + itemHeight >= scrollHeight) {
+          onScroll();
+        }
+      });
+    }
   };
   setState = (state) => {
     this.state = {

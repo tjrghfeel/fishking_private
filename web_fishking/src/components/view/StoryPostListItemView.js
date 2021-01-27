@@ -15,13 +15,13 @@ export default inject("DataStore")(
         likeCount = 0,
         commentCount = 0,
         scrapCount = 0,
+        isLikeTo = false,
+        isScraped = false,
       },
       data,
       showLikeIcon = false,
       showCommentIcon = false,
       showScrapIcon = false,
-      isLike = false,
-      isScrap = false,
       onClick,
       onClickProfile,
       onClickLike,
@@ -120,7 +120,7 @@ export default inject("DataStore")(
           <nav className="nav nav-pills nav-comment nav-justified">
             {showLikeIcon && (
               <a
-                className={"nav-link" + (isLike ? " active" : "")}
+                className={"nav-link" + (isLikeTo ? " active" : "")}
                 onClick={() => (onClickLike ? onClickLike(data) : null)}
               >
                 <span className="icon icon-good"></span>좋아요
@@ -136,7 +136,7 @@ export default inject("DataStore")(
             )}
             {showScrapIcon && (
               <a
-                className={"nav-link" + (isScrap ? " active" : "")}
+                className={"nav-link" + (isScraped ? " active" : "")}
                 onClick={() => (onClickScrap ? onClickScrap(data) : null)}
               >
                 <span className="icon icon-scrap"></span>스크랩

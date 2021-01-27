@@ -14,6 +14,8 @@ import SelectPlaceModal from "./modal/SelectPlaceModal";
 import SelectLocationModal from "./modal/SelectLocationModal";
 import AddCouponModal from "./modal/AddCouponModal";
 import SNSModal from "./modal/SNSModal";
+import SelectAreaModal from "./modal/SelectAreaModal";
+import SelectStorySortModal from "./modal/SelectStorySortModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -25,6 +27,9 @@ import CsTab from "./layout/CsTab";
 import QnaTab from "./layout/QnaTab";
 import StoryMyTab from "./layout/StoryMyTab";
 import ZzimTab from "./layout/ZzimTab";
+import StoryTab from "./layout/StoryTab";
+import StoryDetailTab from "./layout/StoryDetailTab";
+
 /********** ********** ********** ********** **********/
 /** ITEM */
 /********** ********** ********** ********** **********/
@@ -50,6 +55,8 @@ import ZzimListItemView from "./view/ZzimListItemView";
 import CouponMyListItemView from "./view/CouponMyListItemView";
 import CouponAvailableListItemView from "./view/CouponAvailableListItemView";
 import ReservationMyListItemView from "./view/ReservationMyListItemView";
+import FilterListView from "./view/FilterListView";
+import StoryPostListItemView from "./view/StoryPostListItemView";
 
 export default {
   /********** MODAL **********/
@@ -67,6 +74,8 @@ export default {
     SelectLocationModal,
     AddCouponModal,
     SNSModal,
+    SelectAreaModal,
+    SelectStorySortModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
@@ -77,6 +86,8 @@ export default {
     QnaTab,
     StoryMyTab,
     ZzimTab,
+    StoryTab,
+    StoryDetailTab,
   },
   /********** ITEM **********/
   ITEM: {},
@@ -100,5 +111,7 @@ export default {
     CouponMyListItemView,
     CouponAvailableListItemView,
     ReservationMyListItemView,
+    FilterListView,
+    StoryPostListItemView,
   },
 };

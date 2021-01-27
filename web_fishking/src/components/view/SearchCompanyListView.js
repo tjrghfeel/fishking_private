@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Components from "../../components";
+import SearchCompanyListItemView from "./SearchCompanyListItemView";
 
 export default inject(
   "PageStore",
@@ -13,38 +13,62 @@ export default inject(
         this.state = {
           page: 0,
           list: [],
+          isPending: false,
           isEnd: false,
           keyword: "",
+          totalElements: 0,
         };
       }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        const { parent, PageStore } = this.props;
+        PageStore.setScrollEvent(() => {
+          this.loadPageData(this.state.page + 1);
+        }, document.querySelector(`#${parent} .modal-body`));
+        this.loadPageData();
+      }
+
       loadPageData = async (page = 0, keyword = "") => {
-        const { APIStore, PageStore } = this.props;
+        const { parent, APIStore } = this.props;
 
-        if (page > 0 && PageStore.state.isEnd) return;
+        if ((page > 0 && this.state.isEnd) || this.state.isPending) return;
 
-        PageStore.setState({ page, keyword });
-        const {
-          content,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get("/v2/api/fishingDiary/searchShip/" + page);
+        try {
+          this.setState({ page, keyword, isPending: true });
+          const {
+            content,
+            totalElements,
+            pageable: { pageSize = 0 },
+          } = await APIStore._get("/v2/api/fishingDiary/searchShip/" + page, {
+            keyword,
+          });
 
-        console.log(JSON.stringify(content));
-        if (page === 0) {
-          PageStore.setState({ list: content });
-          setTimeout(() => {
-            window.scrollTo(0, 0);
-          }, 100);
-        } else {
-          PageStore.setState({ list: PageStore.state.list.concat(content) });
+          console.log(JSON.stringify(content));
+          if (page === 0) {
+            this.setState({ list: content, totalElements });
+            setTimeout(() => {
+              document.querySelector(`#${parent} .modal-body`).scrollTo(0, 0);
+            }, 100);
+          } else {
+            this.setState({ list: this.state.list.concat(content) });
+          }
+          if (content.length < pageSize) {
+            this.setState({ isEnd: true });
+          } else {
+            this.setState({ isEnd: false });
+          }
+        } catch (err) {
+          this.setState({ list: [], totalElements: 0, isEnd: true });
+        } finally {
+          this.setState({ isPending: false });
         }
-        if (content.length < pageSize) {
-          PageStore.setState({ isEnd: true });
-        } else {
-          PageStore.setState({ isEnd: false });
-        }
+      };
+
+      onClick = (item) => {
+        const { onClick } = this.props;
+        onClick(item);
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -55,7 +79,7 @@ export default inject(
             {/** 검색 */}
             <div className="container nopadding mt-3 mb-0">
               <form className="form-search">
-                <a href="search-all.html">
+                <a>
                   <img
                     src="/assets/img/svg/form-search.svg"
                     alt=""
@@ -64,11 +88,16 @@ export default inject(
                 </a>
                 <input
                   className="form-control mr-sm-2"
-                  type="search"
+                  type="text"
                   placeholder="업체명 또는 키워드로 검색하세요."
-                  aria-label="Search"
+                  onKeyDown={(e) => {
+                    if (e.keyCode === 13) {
+                      e.preventDefault();
+                      this.loadPageData(0, e.target.value);
+                    }
+                  }}
                 />
-                <a href="search.html">
+                <a>
                   <img src="/assets/img/svg/navbar-search.svg" alt="Search" />
                 </a>
               </form>
@@ -78,8 +107,10 @@ export default inject(
               <div className="row no-gutters d-flex align-items-center">
                 <div className="col-6">
                   <p className="mt-2 pl-2">
-                    ‘쭈꾸미’ 검색결과{" "}
-                    <strong className="text-primary">71건</strong>
+                    ‘{this.state.keyword}’ 검색결과{" "}
+                    <strong className="text-primary">
+                      {Intl.NumberFormat().format(this.state.totalElements)}건
+                    </strong>
                   </p>
                 </div>
                 <div className="col-6 text-right">
@@ -116,91 +147,13 @@ export default inject(
             </div>
             {/** 업체 */}
             <div className="container nopadding mt-3 mb-0">
-              <a href="boat-detail.html">
-                <div className="card card-sm">
-                  <div className="row no-gutters">
-                    <div className="cardimgWrap">
-                      <img
-                        src="/assets/img/sample/boat1.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                      <span className="play">
-                        <img src="/assets/img/svg/live-play.svg" alt="" />
-                      </span>
-                      <span className="play-time">20:17</span>
-                    </div>
-                    <div className="cardInfoWrap">
-                      <div className="card-body">
-                        <h6>어복황제3호</h6>
-                        <p>
-                          <strong className="text-primary">쭈꾸미, 우럭</strong>{" "}
-                          <img
-                            src="/assets/img/fish/fish_icon_02.svg"
-                            alt=""
-                            className="fish-cate"
-                          />
-                          13
-                          <br />
-                          <span className="grey">선상&nbsp;|</span>&nbsp;전남
-                          진도군 27km
-                          <br />
-                        </p>
-                        <div className="card-price">
-                          <small className="orange">실시간예약</small>
-                          <h5>
-                            <strong>40,000</strong>
-                            <small>원~</small>
-                          </h5>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <hr />
-              <a href="boat-detail.html">
-                <div className="card card-sm">
-                  <div className="row no-gutters">
-                    <div className="cardimgWrap">
-                      <img
-                        src="/assets/img/sample/boat2.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                      <span className="play">
-                        <img src="/assets/img/svg/live-play.svg" alt="" />
-                      </span>
-                      <span className="play-live">LIVE</span>
-                    </div>
-                    <div className="cardInfoWrap">
-                      <div className="card-body">
-                        <h6>어복황제3호</h6>
-                        <p>
-                          <strong className="text-primary">쭈꾸미, 우럭</strong>{" "}
-                          <img
-                            src="/assets/img/fish/fish_icon_01.svg"
-                            alt=""
-                            className="fish-cate"
-                          />
-                          13
-                          <br />
-                          <span className="grey">선상&nbsp;|</span>&nbsp;전남
-                          진도군 27km
-                        </p>
-                        <div className="card-price">
-                          <small className="orange">실시간예약</small>
-                          <h5>
-                            <strong>40,000</strong>
-                            <small>원~</small>
-                          </h5>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <hr />
+              {this.state.list.map((data, index) => (
+                <SearchCompanyListItemView
+                  key={index}
+                  data={data}
+                  onClick={this.onClick}
+                />
+              ))}
             </div>
           </React.Fragment>
         );

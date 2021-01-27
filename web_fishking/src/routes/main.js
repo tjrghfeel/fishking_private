@@ -19,8 +19,24 @@ export default inject()(
           <Route exact path={`${match.url}/boat`} component={MainBoatPage} />
           {/** 메인 > 갯바위 */}
           <Route exact path={`${match.url}/rock`} component={MainRockPage} />
-          {/** 메인 > 스토리 */}
-          <Route exact path={`${match.url}/story`} component={MainStoryPage} />
+          {/** 메인 > 스토리 > 조황일지 */}
+          <Route
+            exact
+            path={`${match.url}/story/post`}
+            component={MainStoryPage}
+          />
+          {/** 메인 > 스토리 > 어복TV */}
+          <Route
+            exact
+            path={`${match.url}/story/tv`}
+            component={MainStoryPage}
+          />
+          {/** 메인 > 스토리 > 유저조행기 */}
+          <Route
+            exact
+            path={`${match.url}/story/user`}
+            component={MainStoryPage}
+          />
           {/** 메인 > 마이 */}
           <Route exact path={`${match.url}/my`} component={MainMyPage} />
         </Switch>
