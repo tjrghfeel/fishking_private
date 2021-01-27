@@ -15,6 +15,7 @@ import javax.validation.Valid;
 public class CommonCodeDTO {
     private @Valid Long id;
     private @Valid CodeGroup codeGroup;
+    private @Valid String codeGroupName;
     private @Valid String code;
     private @Valid String codeName;
     private @Valid String extraValue1;
@@ -28,5 +29,16 @@ public class CommonCodeDTO {
                 .extraValue1(extraValue1)
                 .remark(remark)
                 .build();
+    }
+
+    public static CommonCodeDTO fromEntity(CommonCode code) {
+        CommonCodeDTO r = new CommonCodeDTO();
+        r.id = code.getId();
+        r.codeGroupName = code.getCodeGroup().getName();
+        r.code = code.getCode();
+        r.codeName = code.getCodeName();
+        r.extraValue1 = code.getExtraValue1();
+        r.remark = code.getRemark();
+        return r;
     }
 }

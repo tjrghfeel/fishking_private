@@ -28,6 +28,7 @@ public interface FishingDiaryDtoForPage {
     @Value("#{@mapperUtility.transEnumFishingType(target.fishingType)}")
     String getFishingType();
     Boolean getIsLikeTo();
+    Boolean getIsScraped();
     //private String location; //사진 찍은 위치 (로마)
     //private String fishingSpeciesName;
     //private String fishingDate;

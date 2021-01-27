@@ -228,5 +228,6 @@ public class CommonController {
                 request.getFile("file"), request.getParameter("filePublish"), request.getHeader("Authorization"));
     }
 
+    /*pre업로드한 파일 삭제*/
 
 }

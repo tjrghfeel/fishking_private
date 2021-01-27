@@ -9,6 +9,8 @@ build/
 web_fishking/node_modules
 native_fishking/node_modules
 
+web_fishking/.eslintcache
+
 src/main/generated
 
 ### STS ###

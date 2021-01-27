@@ -24,7 +24,7 @@ public class WriteFishingDiaryDto {
     private String[] fishingSpecies;
     @NotNull(message = "날짜 항목이 비었습니다.")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate writeDate;
+    private LocalDate fishingDate;
 
     private String tide;
 

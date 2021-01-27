@@ -1,11 +1,13 @@
 package com.tobe.fishking.v2.model.common;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
+@Getter
 @NoArgsConstructor
 public class ShareStatus {
 
@@ -21,4 +23,12 @@ public class ShareStatus {
         this.commentCount = commentCount;
         this.shareCount = shareCount;
     }
+
+    public void plusViewCount(){this.viewCount++;}
+    public void plusLikeCount(){this.likeCount++;}
+    public void plusCommentCount(){this.commentCount++;}
+    public void plusShareCount(){this.shareCount++;}
+    public void subLikeCount(){this.likeCount--;}
+    public void subCommentCount(){this.commentCount--;}
+    public void subShareCount(){this.shareCount--;}
 }

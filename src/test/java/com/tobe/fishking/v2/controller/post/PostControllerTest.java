@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
+import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.entity.fishing.TblSubmitQueue;
 import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.NoNameDTO;
 import com.tobe.fishking.v2.model.auth.PhoneAuthDto;
+import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
@@ -20,6 +23,7 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.CouponService;
+import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
 import org.apache.commons.io.FilenameUtils;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
@@ -30,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -38,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.print.Pageable;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -106,6 +112,8 @@ public class PostControllerTest {
     MemberService memberService;
     @Autowired
     TblSubmitQueueRepository tblSubmitQueueRepository;
+    @Autowired
+    FishingDiaryService fishingDiaryService;
 
     @Test
     public void fileTest() throws Exception {
@@ -137,9 +145,10 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        Float aaa = 1.2F;
-        Float bbb = 2.4F;
-        System.out.println(aaa/2);
+        fishingDiaryService.getFishingDiaryList(
+                0,"fishingDiary",null,"","content",
+                19L,null,"createdDate","19",false);
+
         return;
     }
     @Transactional

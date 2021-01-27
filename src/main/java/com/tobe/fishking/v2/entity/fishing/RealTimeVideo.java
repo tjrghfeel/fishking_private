@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.entity.fishing;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import lombok.*;
@@ -17,12 +18,13 @@ public class RealTimeVideo extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', realtime_video, 'COLUMN',  id
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'선상', 'USER', DBO, 'TABLE', realtime_video, 'COLUMN',  ship_id
     @ManyToOne
     @JoinColumn(name="rtvideos_ship_id" , columnDefinition = "bigint  NOT NULL   comment '선상'")
+    @JsonManagedReference
     private Ship ships;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'번호', 'USER', DBO, 'TABLE', realtime_video, 'COLUMN',  r_no

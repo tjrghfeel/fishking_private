@@ -16,7 +16,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 
-public interface ShipRepository extends BaseRepository<Ship, Long> {
+public interface ShipRepository extends BaseRepository<Ship, Long>, ShipRepositoryCustom {
 
 
     /*member가 만든 company가 만든 ship을 가져오는 메소드.
