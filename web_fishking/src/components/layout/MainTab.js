@@ -30,7 +30,7 @@ export default inject("PageStore")(
               </a>
               <a
                 className={"nav-link" + (activeIndex === 3 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/story`)}
+                onClick={() => PageStore.push(`/main/story/post`)}
               >
                 <figure className="tab_story"></figure>
                 어복스토리

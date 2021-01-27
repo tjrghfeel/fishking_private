@@ -79,7 +79,7 @@ export default inject(
       onClickReview = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        console.log(JSON.stringify(item));
+        PageStore.push(`/reservation/review/add/${item.goodsId}`);
       };
       /********** ********** ********** ********** **********/
       /** render */
