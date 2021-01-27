@@ -128,7 +128,7 @@ public class ShipService {
 
     /* 선상, 갯바위 리스트 */
     public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO) {
-        Pageable pageable = PageRequest.of(shipSearchDTO.getPageNumber()-1, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+        Pageable pageable = PageRequest.of(shipSearchDTO.getPageNumber(), shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
         return shipRepo.searchAll(shipSearchDTO, pageable);
     }
 }

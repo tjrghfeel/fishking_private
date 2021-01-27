@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.model.fishing;
 
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.common.Location;
 import lombok.Getter;
@@ -28,27 +29,21 @@ public class ShipListResponse {
     private int sold;
 
     public ShipListResponse(
-            Long   id ,
-            String shipName,
-            String sido,
-            String sigungu,
-            double distance,
-            Location location,
-            String address,
             Integer lowPrice,
-            Integer sold
-//            List<CommonCode> fishSpecies
+            Integer sold,
+            Ship ship
     ) {
-        this.id = id;
+        List<CommonCode> species = ship.getFishSpecies();
+        this.id = ship.getId();
         this.shipImageFileUrl = "";
-        this.shipName = shipName;
-        this.sido = sido;
-        this.sigungu = sigungu;
-        this.distance = distance;
-        this.location = location;
-        this.address = address;
-//        this.fishSpecies = fishSpecies.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
-//        this.fishSpeciesCount = fishSpecies.size();
+        this.shipName = ship.getShipName();
+        this.sido = ship.getSido();
+        this.sigungu = ship.getSigungu();
+        this.distance = ship.getDistance();
+        this.location = ship.getLocation();
+        this.address = ship.getAddress();
+        this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
+        this.fishSpeciesCount = species.size();
         this.lowPrice = lowPrice==null?0:lowPrice;
         this.sold = sold==null?0:sold;
     }

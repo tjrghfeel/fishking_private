@@ -63,10 +63,6 @@ public class SwaggerConfig {
                 .licenseUrl("http://kaimobile.com")
                 .version(BASE_VER)
                 .build() ;
-
-
-
-
     }
 
 

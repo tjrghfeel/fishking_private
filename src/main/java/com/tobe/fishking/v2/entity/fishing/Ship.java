@@ -11,6 +11,8 @@ import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -47,6 +49,9 @@ public class Ship extends BaseTime {  //선상
         this.goods = goods;
     }
 */
+    @OneToMany(mappedBy = "ship")
+    private List<Goods> goods;
+
     @Column(columnDefinition = "int   comment '구분:선상/갯바위'  ")
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private FishingType fishingType;
@@ -98,11 +103,23 @@ public class Ship extends BaseTime {  //선상
     //녹화영상 FileEntity
 
     // EXEC sp_addextendedproperty 'MS_Description', N'어종', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
-    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "ships_fish_species", columnDefinition = "comment '어종'  ")
     @JsonBackReference
     private final List<CommonCode> fishSpecies = new ArrayList<>();
 
+    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "ships_services", columnDefinition = "comment '서비스 제공'  ")
+    @JsonBackReference
+    private final List<CommonCode> services = new ArrayList<>();
+
+    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "ships_facilities", columnDefinition = "comment '편의시설'  ")
+    @JsonBackReference
+    private final List<CommonCode> facilities = new ArrayList<>();
 
     // EXEC sp_addextendedproperty 'MS_Description', N'실시간영상', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
     @OneToMany
@@ -110,7 +127,6 @@ public class Ship extends BaseTime {  //선상
     //  @Builder.Default
     @JsonBackReference
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();
-
 
 
     @ApiModelProperty(name ="뷰-좋아요수")
@@ -151,11 +167,12 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "int default 0 comment '리뷰 수'")
     private int reviewCount;
 
+
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
     private Member createdBy;
-
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  modified_by
     @ManyToOne
