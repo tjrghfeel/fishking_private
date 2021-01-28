@@ -7,7 +7,7 @@ export default inject("PageStore")(
       <nav className="nav nav-pills nav-menu nav-justified">
         <a
           className={"nav-link" + (activeIndex === 0 ? " active" : "")}
-          onClick={() => PageStore.push(`/main/story/post`)}
+          onClick={() => PageStore.push(`/main/story/diary`)}
         >
           조황일지
         </a>
