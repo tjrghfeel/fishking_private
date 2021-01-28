@@ -99,36 +99,35 @@ public class ShipService {
     /*지도에 선상 위치 및 정보를 위한 Method*/
     public List<ShipDTO.ShipDTOResp> getShipListsForMap(FilePublish filePublish) {
 
-        if (FilePublish.ship != filePublish) return null;
-
-        FishingType fishingType = filePublish.name().equals("ship") ? FishingType.ship : FishingType.seaRocks;
-
-   //     List<Ship> shipEntityList = shipRepo.findAllShipAndLocation();
-
-        //List<Ship> shipEntityList = shipRepo.findAllShipAndLocation(fishingType);
-        List<Ship> shipEntityList = shipRepo.findAllShipAndLocationByFishingType(fishingType);
-
-        List<ShipDTO.ShipDTOResp> shipDTORespList = shipEntityList.stream().map(ShipDTO.ShipDTOResp::of).collect(Collectors.toList());  //O
-
-        //대표이미지
-        for (int i = 0; i < shipDTORespList.size(); i++) {
-
-            ShipDTO.ShipDTOResp entity = (ShipDTO.ShipDTOResp) shipDTORespList.get(i);
-
-            FileEntity shipFile = fileRepo.findTop1ByPidAndFilePublishAndIsRepresent(entity.getId(), FilePublish.ship, true);
-
-
-            if (shipFile != null) entity.setShipImageFileUrl(shipFile.getDownloadThumbnailUrl());
-            else entity.setShipImageFileUrl("https://");
-
-            // entity.setFishSpeciesCount(entity.getFishSpecies() == null? 0:entity.getFishSpecies().size());
-            shipDTORespList.set(i, entity);
-
-        }
-
-        return shipDTORespList;
-
-
+//        if (FilePublish.ship != filePublish) return null;
+//
+//        FishingType fishingType = filePublish.name().equals("ship") ? FishingType.ship : FishingType.seaRocks;
+//
+//   //     List<Ship> shipEntityList = shipRepo.findAllShipAndLocation();
+//
+//        //List<Ship> shipEntityList = shipRepo.findAllShipAndLocation(fishingType);
+//        List<Ship> shipEntityList = shipRepo.findAllShipAndLocationByFishingType(fishingType);
+//
+//        List<ShipDTO.ShipDTOResp> shipDTORespList = shipEntityList.stream().map(ShipDTO.ShipDTOResp::of).collect(Collectors.toList());  //O
+//
+//        //대표이미지
+//        for (int i = 0; i < shipDTORespList.size(); i++) {
+//
+//            ShipDTO.ShipDTOResp entity = (ShipDTO.ShipDTOResp) shipDTORespList.get(i);
+//
+//            FileEntity shipFile = fileRepo.findTop1ByPidAndFilePublishAndIsRepresent(entity.getId(), FilePublish.ship, true);
+//
+//
+//            if (shipFile != null) entity.setShipImageFileUrl(shipFile.getDownloadThumbnailUrl());
+//            else entity.setShipImageFileUrl("https://");
+//
+//            // entity.setFishSpeciesCount(entity.getFishSpecies() == null? 0:entity.getFishSpecies().size());
+//            shipDTORespList.set(i, entity);
+//
+//        }
+//
+//        return shipDTORespList;
+        return new ArrayList<ShipDTO.ShipDTOResp>();
     }
 
     /* 선상, 갯바위 리스트 */
