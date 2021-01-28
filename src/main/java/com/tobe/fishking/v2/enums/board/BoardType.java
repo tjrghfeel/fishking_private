@@ -20,7 +20,8 @@ public  enum BoardType implements IEnumModel {
     profile("프로필"),
     fishingBlog("유저조행기"),
     fishingDiary("조항일지"),
-    review("리뷰");
+    review("리뷰"),
+    comment("댓글");
 
     private String value;
 

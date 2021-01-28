@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.enums.common.*;
 import com.tobe.fishking.v2.enums.fishing.*;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.*;
+import com.tobe.fishking.v2.model.common.DeleteFileDto;
 import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.response.ListResult;
 import com.tobe.fishking.v2.service.ResponseService;
@@ -15,6 +16,7 @@ import com.tobe.fishking.v2.service.common.CommonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jcodec.api.JCodecException;
+import org.jcodec.common.UsedViaReflection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -221,7 +223,7 @@ public class CommonController {
             "   fishkingTv : 어복TV에 파일업로드\n" +
             "   companyRequest : 업체요청에 파일업로드\n" +
             "   profile : 프로필에 파일업로드\n" +
-            "   review : 리뷰에 파일업로드 ")
+            "   review : 리뷰에 파일업로드 \n")
     @PostMapping("/filePreUpload")
     public FilePreUploadResponseDto preUploadFile(MultipartHttpServletRequest request) throws IOException, ResourceNotFoundException, JCodecException {
         return commonService.preUploadFile(
@@ -229,5 +231,17 @@ public class CommonController {
     }
 
     /*pre업로드한 파일 삭제*/
+    @ApiOperation(value="파일 삭제",notes = "" +
+            "요청 필드 ) \n" +
+            "- fileId : /v2/api/filePreUpload에서 반환받은 파일의 id.\n" +
+            "응답 필드 ) 삭제 성공시 true. \n")
+    @DeleteMapping("/fileDelete")
+    public Boolean deleteFile(
+            @RequestBody DeleteFileDto dto,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return commonService.deleteFile(dto,token);
+    }
+
 
 }

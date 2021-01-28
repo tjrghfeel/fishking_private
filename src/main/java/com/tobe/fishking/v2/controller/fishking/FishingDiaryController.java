@@ -241,4 +241,35 @@ public class FishingDiaryController {
         return fishingDiaryService.getFishingDiaryDetail(fishingDiaryId,token);
     }
 
+    /*스크랩 추가*/
+    @ApiOperation(value = "스크랩 추가",notes = "" +
+            "요청필드 ) \n" +
+            "- fishingDiaryId : 조항일지,유저조행기의 id\n" +
+            "- 헤더에 세션토큰 필요\n" +
+            "응답 필드 ) \n" +
+            "- 스크랩 성공시 true, 이미 스크랩되어있으면 false. \n")
+    @PostMapping("/fishingDiary/scrap")
+    public Boolean addScrap(
+            @RequestBody AddScrapDto dto,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return fishingDiaryService.addScrap(dto,token);
+    }
+    /*스크랩 삭제*/
+    @ApiOperation(value = "스크랩 삭제",notes = "" +
+            "요청필드 ) \n" +
+            "- fishingDiaryId : 조항일지,유저조행기의 id\n" +
+            "- 헤더에 세션토큰 필요\n" +
+            "응답 필드 ) \n" +
+            "- 스크랩 삭제 성공시 true, 스크랩 되어있지 않았으면 false. \n")
+    @DeleteMapping("/fishingDiary/scrap")
+    public Boolean deleteScrap(
+            @RequestBody DeleteScrapDto dto,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return fishingDiaryService.deleteScrap(dto,token);
+    }
+
+
+
 }

@@ -29,9 +29,9 @@ public class FishingDiaryDetailDto {
     private ArrayList<String> imageUrlList;
     private String videoUrl;
     private Boolean isLikeTo;
-//    private Boolean isScraped;
+    private Boolean isScraped;
     private int likeCount;
     private int commentCount;
-//    private int scrapCount;
+    private int scrapCount;
     private int viewCount;
 }

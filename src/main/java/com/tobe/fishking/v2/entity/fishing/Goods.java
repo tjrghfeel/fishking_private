@@ -11,6 +11,8 @@ import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -46,6 +48,9 @@ public class Goods extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'일자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  fishing_date
     @Column(columnDefinition = "varchar(8) comment  '일자'  ")
     private String fishingDate;
+
+    @OneToMany(mappedBy = "goods")
+    private List<GoodsFishingDate> fishingDates;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'배출발시간', 'USER', DBO, 'TABLE', goods, 'COLUMN',  ship_start_time
     @Column(columnDefinition = "varchar(4) comment  '배출발시간'  ")
@@ -114,9 +119,6 @@ public class Goods extends BaseTime {
     @Builder.Default
     private List<CommonCode> fishingLures = new ArrayList<>();
 
-
-
-
     // EXEC sp_addextendedproperty 'MS_Description', N'적립포인트', 'USER', DBO, 'TABLE', goods, 'COLUMN',  accumulate_point
     @Column(columnDefinition = "float  default 0.0  comment  '적립포인트'  ")
     private Double accumulatePoint;
@@ -172,6 +174,12 @@ public class Goods extends BaseTime {
 
     @Column(columnDefinition = " varchar(100)  comment '물때'  ")
     private String fishingTideTime;
+
+    @ManyToMany(targetEntity = CommonCode.class)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "goods_genres", columnDefinition = " comment  '장르'  ")
+    @Builder.Default
+    private List<CommonCode> genres = new ArrayList<>();
 
     // 생성자
     public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {

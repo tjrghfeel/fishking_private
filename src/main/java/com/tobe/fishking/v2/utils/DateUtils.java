@@ -39,4 +39,12 @@ public class DateUtils
                 "STR_TO_DATE({0}, '%Y-%m-%d %H:%i:%s')",
                 getDateInFormat(value));
     }
+
+    public static LocalDate getDateFromString(String stringDate) {
+        return stringDate.isEmpty() ? null : LocalDate.parse(stringDate, FORMATTER);
+    }
+
+    public static LocalDateTime getDatetimeFromString(String stringDatetime) {
+        return stringDatetime.isEmpty() ? null : LocalDateTime.parse(stringDatetime, FORMATTER_TIME);
+    }
 }

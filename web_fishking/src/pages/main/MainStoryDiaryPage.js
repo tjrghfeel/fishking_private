@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
+import PageStore from "../../stores/PageStore";
 const {
   LAYOUT: { MainTab, NavigationLayout, StoryTab },
   MODAL: { SelectAreaModal, SelectFishModal, SelectStorySortModal },
@@ -14,6 +15,19 @@ export default inject(
 )(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.selAreaModal = React.createRef(null);
+        this.selFishModal = React.createRef(null);
+        this.state = {
+          selAreaActive: false,
+          selFishActive: false,
+          selSortActive: false,
+          textArea: "지역",
+          textFish: "어종",
+          textSort: "정렬",
+        };
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
@@ -72,7 +86,7 @@ export default inject(
       onClick = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/story/detail/${item.id}`);
+        PageStore.push(`/story/diary/detail/${item.id}`);
       };
       onClickProfile = (item) => {
         const { PageStore } = this.props;
@@ -91,7 +105,7 @@ export default inject(
               PageStore.state.list,
               "id",
               item.id,
-              { isLikeTo: false }
+              { isLikeTo: false, likeCount: item.likeCount - 1 }
             );
             PageStore.setState({ list });
           }
@@ -105,7 +119,7 @@ export default inject(
               PageStore.state.list,
               "id",
               item.id,
-              { isLikeTo: true }
+              { isLikeTo: true, likeCount: item.likeCount + 1 }
             );
             PageStore.setState({ list });
           }
@@ -113,6 +127,69 @@ export default inject(
       };
       onClickComment = async (item) => {};
       onClickScrap = async (item) => {};
+      onSelectedArea = (selected) => {
+        const { PageStore } = this.props;
+        let districtList = null;
+        if (selected.length > 0) {
+          this.setState({
+            selAreaActive: true,
+            textArea: `지역(${selected.length})`,
+          });
+          districtList = "";
+          for (let i = 0; i < selected.length; i++) {
+            const item = selected[i];
+            if (i === selected.length - 1) {
+              districtList += item;
+            } else {
+              districtList += item.concat(",");
+            }
+          }
+        } else {
+          this.setState({ selAreaActive: false, textArea: `지역` });
+        }
+        PageStore.setState({ districtList });
+        this.loadPageData(0);
+      };
+      onSelectedFish = (selected) => {
+        const { PageStore } = this.props;
+        let fishSpeciesList = null;
+        if (selected.length > 0) {
+          this.setState({
+            selFishActive: true,
+            textFish: `어종(${selected.length})`,
+          });
+          fishSpeciesList = "";
+          for (let i = 0; i < selected.length; i++) {
+            const item = selected[i];
+            if (i === selected.length - 1) {
+              fishSpeciesList += item.code;
+            } else {
+              fishSpeciesList += item.code.concat(",");
+            }
+          }
+        } else {
+          this.setState({ selFishActive: false, textFish: "어종" });
+        }
+        PageStore.setState({ fishSpeciesList });
+        this.loadPageData(0);
+      };
+      onSelectedSort = (selected) => {
+        const { PageStore } = this.props;
+        PageStore.setState({ sort: selected.value });
+        this.loadPageData(0);
+      };
+      onClearArea = () => {
+        this.selAreaModal.current?.onInit();
+        PageStore.setState({ districtList: null });
+        this.setState({ selAreaActive: false, textArea: `지역` });
+        this.loadPageData(0);
+      };
+      onClearFish = () => {
+        this.selFishModal.current?.onInit();
+        PageStore.setState({ fishSpeciesList: null });
+        this.setState({ selFishActive: false, textFish: "어종" });
+        this.loadPageData(0);
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -121,49 +198,18 @@ export default inject(
         return (
           <React.Fragment>
             <SelectAreaModal
+              ref={this.selAreaModal}
               id={"selAreaModal"}
-              onSelected={(selected) => {
-                let districtList = null;
-                if (selected.length > 0) {
-                  districtList = "";
-                  for (let i = 0; i < selected.length; i++) {
-                    const item = selected[i];
-                    if (i === selected.length - 1) {
-                      districtList += item;
-                    } else {
-                      districtList += item.concat(",");
-                    }
-                  }
-                }
-                PageStore.setState({ districtList });
-                this.loadPageData(0);
-              }}
+              onSelected={this.onSelectedArea}
             />
             <SelectFishModal
+              ref={this.selFishModal}
               id={"selFishModal"}
-              onSelected={(selected) => {
-                let fishSpeciesList = null;
-                if (selected.length > 0) {
-                  fishSpeciesList = "";
-                  for (let i = 0; i < selected.length; i++) {
-                    const item = selected[i];
-                    if (i === selected.length - 1) {
-                      fishSpeciesList += item.code;
-                    } else {
-                      fishSpeciesList += item.code.concat(",");
-                    }
-                  }
-                }
-                PageStore.setState({ fishSpeciesList });
-                this.loadPageData(0);
-              }}
+              onSelected={this.onSelectedFish}
             />
             <SelectStorySortModal
               id={"selSortModal"}
-              onSelected={(selected) => {
-                PageStore.setState({ sort: selected.value });
-                this.loadPageData(0);
-              }}
+              onSelected={this.onSelectedSort}
             />
 
             <NavigationLayout title={"어복스토리"} showSearchIcon={true} />
@@ -172,9 +218,23 @@ export default inject(
             {/** Filter */}
             <FilterListView
               list={[
-                { text: "지역", modalTarget: "selAreaModal" },
-                { text: "어종", modalTarget: "selFishModal" },
-                { text: "정렬", modalTarget: "selSortModal" },
+                {
+                  text: this.state.textArea,
+                  modalTarget: "selAreaModal",
+                  isActive: this.state.selAreaActive,
+                  onClickClear: this.onClearArea,
+                },
+                {
+                  text: this.state.textFish,
+                  modalTarget: "selFishModal",
+                  isActive: this.state.selFishActive,
+                  onClickClear: this.onClearFish,
+                },
+                {
+                  text: this.state.textSort,
+                  modalTarget: "selSortModal",
+                  isActive: this.state.selSortActive,
+                },
               ]}
             />
 

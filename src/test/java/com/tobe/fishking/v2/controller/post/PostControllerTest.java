@@ -144,10 +144,14 @@ public class PostControllerTest {
     }
 
     @Test
+    @Transactional
     public void noName() throws Exception {
-        fishingDiaryService.getFishingDiaryList(
-                0,"fishingDiary",null,"","content",
-                19L,null,"createdDate","19",false);
+        FishingDiary fishingDiary = fishingDiaryRepository.findById(38L)
+                .orElseThrow(()->new ResourceNotFoundException(""));
+        Member member = memberRepository.findById(19L)
+                .orElseThrow(()->new ResourceNotFoundException(""));
+        List<Member> list = fishingDiary.getScrapMembers();
+        list.add(member);
 
         return;
     }
