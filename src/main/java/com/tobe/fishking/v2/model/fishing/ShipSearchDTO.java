@@ -22,9 +22,6 @@ public class ShipSearchDTO {
     @ApiParam(value = "정렬순서. 인기순: 'popular', 거리순: 'distance', 낮은가격순: 'lowPrice', 높은가격순: 'highPrice', 리뷰순: 'review', 판매순: 'sold'", example = "lowPrice")
     private @Valid String orderBy = "";
 
-    @ApiParam(value = "페이지. 0부터 시작", example = "0")
-    private @Valid Integer pageNumber = 1;
-
     @ApiParam(value = "페이지 당 데이터 수.", example = "5")
     private @Valid Integer size = 5;
 

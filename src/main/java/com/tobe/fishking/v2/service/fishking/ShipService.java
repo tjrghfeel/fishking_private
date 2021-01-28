@@ -5,17 +5,17 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.Popular;
+import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.fishing.ShipDTO;
-import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
-import com.tobe.fishking.v2.model.fishing.ShipListResponse;
-import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.common.EventRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
+import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,8 @@ public class ShipService {
     private final FileRepository fileRepo;
     private final ShipRepository shipRepo;
     private final PopularRepository popularRepo;
+    private final FishingDiaryRepository fishingDiaryRepository;
+    private final EventRepository eventRepository;
 
 
     /*
@@ -127,8 +129,21 @@ public class ShipService {
     }
 
     /* 선상, 갯바위 리스트 */
-    public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO) {
-        Pageable pageable = PageRequest.of(shipSearchDTO.getPageNumber(), shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+    public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO, int page) {
+        Pageable pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
         return shipRepo.searchAll(shipSearchDTO, pageable);
+    }
+
+    /* 선상, 갯바위 배 정보 */
+    public ShipResponse getShipDetail(Long ship_id) {
+        ShipResponse response = shipRepo.getDetail(ship_id);
+        List<FishingDiary> diaries = fishingDiaryRepository.getDiaryByShipId(response.getId());
+        List<FishingDiary> blogs = fishingDiaryRepository.getBlogByShipId(response.getId());
+        response.setFishingDiary(diaries.stream().map(FishingDiaryDTO.FishingDiaryDTOResp::of).collect(Collectors.toList()).subList(0,3));
+        response.setFishingDiaryCount(diaries.size());
+        response.setFishingDiary(blogs.stream().map(FishingDiaryDTO.FishingDiaryDTOResp::of).collect(Collectors.toList()).subList(0,3));
+        response.setFishingBlogCount(blogs.size());
+        response.setEvents(eventRepository.getEventTitleByShip(ship_id));
+        return response;
     }
 }

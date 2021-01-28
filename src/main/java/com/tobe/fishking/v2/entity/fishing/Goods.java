@@ -50,6 +50,7 @@ public class Goods extends BaseTime {
     private String fishingDate;
 
     @OneToMany(mappedBy = "goods")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<GoodsFishingDate> fishingDates;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'배출발시간', 'USER', DBO, 'TABLE', goods, 'COLUMN',  ship_start_time
@@ -104,6 +105,7 @@ public class Goods extends BaseTime {
 
     @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_fish_species", columnDefinition = " comment  '상품 어종'  ")
+    @LazyCollection(LazyCollectionOption.FALSE)
     @Builder.Default
     private List<CommonCode> fishSpecies = new ArrayList<>();
 

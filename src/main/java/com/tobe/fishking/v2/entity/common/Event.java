@@ -19,7 +19,7 @@ public class Event extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', event, 'COLUMN',  id
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'이벤트명', 'USER', DBO, 'TABLE', event, 'COLUMN',  title

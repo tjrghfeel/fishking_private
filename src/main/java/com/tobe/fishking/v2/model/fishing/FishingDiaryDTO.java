@@ -128,7 +128,7 @@ public class FishingDiaryDTO {
         @ApiModelProperty(value="생성자")
         private Member createdBy;
 
-        @ApiModelProperty(value="경동")
+        @ApiModelProperty(value="경도")
         private double writeLongitude;
 
         @ApiModelProperty(value="위도")
@@ -145,7 +145,8 @@ public class FishingDiaryDTO {
                     .fishingLocation(fishingDiary.getFishingLocation())
                     .status(fishingDiary.getStatus())
                     .createdBy(fishingDiary.getMember())
-                    .writeLatitude(fishingDiary.getWriteLatitude())
+                    .writeLatitude(fishingDiary.getWriteLatitude()==null?0L:fishingDiary.getWriteLatitude())
+                    .writeLongitude(fishingDiary.getWriteLongitude()==null?0L:fishingDiary.getWriteLongitude())
                     .build();
         }
 
