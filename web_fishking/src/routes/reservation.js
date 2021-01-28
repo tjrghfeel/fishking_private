@@ -4,6 +4,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import ReservationMyPage from "../pages/reservation/ReservationMyPage";
 import ReservationMyDetailPage from "../pages/reservation/ReservationMyDetailPage";
+import ReservationReviewAddPage from "../pages/reservation/ReservationReviewAddPage";
 
 export default inject()(
   observer(({ match }) => {
@@ -17,6 +18,12 @@ export default inject()(
             exact
             path={`${match.url}/my/detail/:id`}
             component={ReservationMyDetailPage}
+          />
+          {/** 예약 > 리뷰작성 */}
+          <Route
+            exact
+            path={`${match.url}/review/add/:goodsId`}
+            component={ReservationReviewAddPage}
           />
         </Switch>
       </BrowserRouter>

@@ -7,6 +7,7 @@ import StoryMyPostPage from "../pages/story/StoryMyPostPage";
 import StoryMyCommentPage from "../pages/story/StoryMyCommentPage";
 import StoryMyScrapPage from "../pages/story/StoryMyScrapPage";
 import StoryMyReviewPage from "../pages/story/StoryMyReviewPage";
+import StoryDetailPage from "../pages/story/StoryDetailPage";
 
 export default inject()(
   observer(({ match }) => {
@@ -40,13 +41,12 @@ export default inject()(
             path={`${match.url}/my/review`}
             component={StoryMyReviewPage}
           />
-
-          {/** 스토리 > 조황일지 */}
-          <Route exact path={`${match.url}/post`} component={StoryAddPage} />
-          {/** 스토리 > 어복TV */}
-          <Route exact path={`${match.url}/tv`} component={StoryAddPage} />
-          {/** 스토리 > 유저조행기 */}
-          <Route exact path={`${match.url}/user`} component={StoryAddPage} />
+          {/** 스토리 > 조황일지 > 상세 */}
+          <Route
+            exact
+            path={`${match.url}/diary/detail/:id`}
+            component={StoryDetailPage}
+          />
         </Switch>
       </BrowserRouter>
     );

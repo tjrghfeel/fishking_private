@@ -36,6 +36,18 @@ const ModalStore = new (class {
     if (text.length >= 2 && text.length <= 7) return true;
     else return false;
   };
+  removeItemOfArrayByItem = (list = [], item = null) => {
+    let index = -1;
+    for (let i = 0; i < list.length; i++) {
+      if (list[i] === item) {
+        index = i;
+        break;
+      }
+    }
+    const before = list.slice(0, index);
+    const after = list.slice(index + 1, list.length);
+    return before.concat(after);
+  };
   removeItemOfArrayByKey = (list = [], keyData = "", keyValue = "") => {
     let index = -1;
     for (let i = 0; i < list.length; i++) {

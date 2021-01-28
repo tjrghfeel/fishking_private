@@ -17,6 +17,14 @@ const APIStore = new (class {
       runInAction(async () => {
         this.isLoading = true;
         try {
+          if (params) {
+            const keys = Object.keys(params);
+            for (let key of keys) {
+              if (params[key] instanceof Array) {
+              }
+            }
+          }
+
           const response = await Http.request(
             url,
             "GET",

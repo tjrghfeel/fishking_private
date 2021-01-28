@@ -90,7 +90,10 @@ export default inject(
               id={"selPlaceModal"}
               onSelected={(selected) => console.log(JSON.stringify(selected))}
             />
-            <SelectLocationModal id={"selLocationModal"} />
+            <SelectLocationModal
+              id={"selLocationModal"}
+              onSelected={(selected) => console.log(JSON.stringify(selected))}
+            />
 
             <NavigationLayout title={"글쓰기"} showBackIcon={true} />
 
