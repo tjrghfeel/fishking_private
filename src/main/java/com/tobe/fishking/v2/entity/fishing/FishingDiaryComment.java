@@ -57,6 +57,12 @@ public class FishingDiaryComment extends BaseTime {
     @Column(columnDefinition = "varchar(2000) comment '내용 ' ", nullable = false)
     private String contents;
 
+    @Column(columnDefinition = "int not null default 0 comment '좋아요 수 '")
+    private int likeCount;
+
+    @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
+    private Boolean isDeleted;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', comment, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint  NOT NULL   comment '생성자'  ")
@@ -79,5 +85,13 @@ public class FishingDiaryComment extends BaseTime {
 
     public FishingDiaryComment() {
 
+    }
+
+    public void plusLikeCount(){this.likeCount++;}
+    public void subLikeCount(){this.likeCount--;}
+    public void delete(){this.isDeleted = true;}
+
+    public void modify(String content){
+        this.contents = content;
     }
 }

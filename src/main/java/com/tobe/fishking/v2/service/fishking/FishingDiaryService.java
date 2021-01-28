@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.LoveTo;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
+import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -442,6 +443,10 @@ public class FishingDiaryService {
         if(loveTo!=null){ isLikeTo = true;}
         else { isLikeTo = false; }
         /*isScraped 설정*/
+        Boolean isScraped = null;
+        List<Member> scrapMemberList = fishingDiary.getScrapMembers();
+        if(scrapMemberList.contains(member)){ isScraped = true; }
+        else { isScraped = false; }
 
         /*imageUrlList 설정*/
         ArrayList<String> imageUrlList = new ArrayList<>();
@@ -466,7 +471,7 @@ public class FishingDiaryService {
                 .fishingDiaryId(fishingDiary.getId())
                 .shipId(fishingDiary.getShip().getId())
                 .nickName(nickName)
-                .profileImage(fishingDiary.getMember().getProfileImage())
+                .profileImage(path + fishingDiary.getMember().getProfileImage())
                 .isLive(true)
                 .fishingType(fishingDiary.getFishingType().getValue())
                 .title(fishingDiary.getTitle())
@@ -480,15 +485,55 @@ public class FishingDiaryService {
                 .imageUrlList(imageUrlList)
                 .videoUrl(videoUrl)
                 .isLikeTo(isLikeTo)
-//                .isScraped()
+                .isScraped(isScraped)
                 .likeCount(fishingDiary.getStatus().getLikeCount())
                 .commentCount(fishingDiary.getStatus().getCommentCount())
-//                .scrapCount(fishingDiary.getStatus().get)
+                .scrapCount(fishingDiary.getStatus().getShareCount())
                 .viewCount(fishingDiary.getStatus().getViewCount())
                 .build();
 
         return result;
     }
+
+    /*스크랩 추가*/
+    @Transactional
+    public Boolean addScrap(AddScrapDto dto, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        FishingDiary fishingDiary = fishingDiaryRepo.findById(dto.getFishingDiaryId())
+                .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+dto.getFishingDiaryId()));
+
+        /*이미 스크랩되어있는지 확인*/
+        List<Member> scrapMemberList = fishingDiary.getScrapMembers();
+        if(scrapMemberList.contains(member)){ return false; }
+        else {
+            scrapMemberList.add(member);
+            /*fishingDiary에 스크랩수 증가*/
+            fishingDiary.getStatus().plusShareCount();
+            return  true;
+        }
+    }
+    /*스크랩 삭제*/
+    @Transactional
+    public Boolean deleteScrap(DeleteScrapDto dto, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        FishingDiary fishingDiary = fishingDiaryRepo.findById(dto.getFishingDiaryId())
+                .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+dto.getFishingDiaryId()));
+
+        /*스크랩되어있는지 확인후, 삭제*/
+        List<Member> scrapMemberList = fishingDiary.getScrapMembers();
+        if(scrapMemberList.contains(member)){
+            scrapMemberList.remove(member);
+            /*fishingDiary의 스크랩수 감소*/
+            fishingDiary.getStatus().subShareCount();
+            return true;
+        }
+        else{ return false;}
+    }
+
+
+
 
 /*
 

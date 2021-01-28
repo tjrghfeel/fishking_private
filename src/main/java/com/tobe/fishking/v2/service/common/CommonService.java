@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.model.common.DeleteFileDto;
 import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -190,5 +191,20 @@ public class CommonService {
                 .build();
 
         return dto;
+    }
+
+    @Transactional
+    public Boolean deleteFile(DeleteFileDto dto, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        FileEntity file = fileRepo.findById(dto.getFileId())
+                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getFileId()));
+
+        if(member != file.getCreatedBy() && member.getRoles() != Role.admin){
+            throw new RuntimeException("해당 파일에 대한 삭제권한이 없습니다.");
+        }
+
+        uploadService.removeFileEntity(dto.getFileId());
+        return true;
     }
 }
