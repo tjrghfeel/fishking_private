@@ -8,6 +8,12 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+/*
+gradle  추가 필요
+// https://mvnrepository.com/artifact/com.ibm.icu/icu4j
+  compile group: 'com.ibm.icu', name: 'icu4j', version: '68.1'
+
+ */
 
 public class HolidayUtil {
     private static String[] solarArr = new String[]{"0101", "0301", "0505", "0606", "0815", "1225"};
@@ -183,7 +189,7 @@ public class HolidayUtil {
      * @return 양력날짜 (yyyyMMdd)
      */
 
-    private static String convertLunarToSolar(String yyyymmdd) {
+    public static String convertLunarToSolar(String yyyymmdd) {
         ChineseCalendar cc = new ChineseCalendar();
         Calendar cal = Calendar.getInstance();
 
@@ -245,7 +251,7 @@ public class HolidayUtil {
      * @param 양력날짜 (yyyyMMdd)
      * @return 음력날짜 (yyyyMMdd)
      */
-    private static String converSolarToLunar(String date) {
+    public static String converSolarToLunar(String date) {
         ChineseCalendar cc = new ChineseCalendar();
         Calendar cal = Calendar.getInstance();
 

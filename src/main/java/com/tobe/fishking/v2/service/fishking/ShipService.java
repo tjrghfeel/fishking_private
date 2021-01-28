@@ -101,7 +101,10 @@ public class ShipService {
 
         FishingType fishingType = filePublish.name().equals("ship") ? FishingType.ship : FishingType.seaRocks;
 
-        List<Ship> shipEntityList = shipRepo.findAllShipAndLocation();
+   //     List<Ship> shipEntityList = shipRepo.findAllShipAndLocation();
+
+        //List<Ship> shipEntityList = shipRepo.findAllShipAndLocation(fishingType);
+        List<Ship> shipEntityList = shipRepo.findAllShipAndLocationByFishingType(fishingType);
 
         List<ShipDTO.ShipDTOResp> shipDTORespList = shipEntityList.stream().map(ShipDTO.ShipDTOResp::of).collect(Collectors.toList());  //O
 
