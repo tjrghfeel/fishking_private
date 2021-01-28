@@ -17,11 +17,12 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class NoNameDTO {
+    private Long id;
+    private String stringList;
 
-    @Size(min=1,max=3,message="size valid error")
-    ArrayList<String> aaa;
-    @NotNull(message = "not null")
-    String bbb;
-
-
+    private String contents;
+    private Boolean parent;
+    /*public NoNameDTO(Long id, String stringList, String contents){
+        System.out.println("hello");
+    }*/
 }

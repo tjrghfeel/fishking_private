@@ -146,7 +146,7 @@ public class FishingDiary extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
     @ManyToMany(targetEntity = Member.class)
-    @JoinColumn(name = "fishing_diary_scrap_by", columnDefinition = "bigint not null   comment '스크랩 사용자'  ")
+    @JoinColumn(name = "fishing_diary_scrap_members", columnDefinition = "bigint not null   comment '스크랩 사용자'  ")
     //  @Builder.Default
     private final List<Member> scrapMembers = new ArrayList<>();
 

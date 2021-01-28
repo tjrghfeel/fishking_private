@@ -90,7 +90,7 @@ public class MyMenuController {
             "   time : 댓글작성 시간\n" +
             "   fishingDiaryId : 본글의 id")
     @GetMapping("/myFishingCommentList/{page}")
-    public Page<FishingDiaryCommentDtoForPage> getMyFishingDiaryComment(
+    public Page<MyFishingDiaryCommentDtoForPage> getMyFishingDiaryComment(
             HttpServletRequest request,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {

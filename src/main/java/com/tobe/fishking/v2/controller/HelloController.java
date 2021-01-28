@@ -47,8 +47,8 @@ public class HelloController {
     }
 
     @PostMapping("/noName")
-    public String noName(MultipartFile file) throws ResourceNotFoundException, IOException, JCodecException {
-        helloService.noName(file);
+    public String noName() throws ResourceNotFoundException, IOException, JCodecException {
+        helloService.noName();
 
         return "asbdsf";
     }

@@ -6,7 +6,9 @@ import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Comment;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
+import com.tobe.fishking.v2.model.NoNameDTO;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage;
+import com.tobe.fishking.v2.model.fishing.MyFishingDiaryCommentDtoForPage;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -53,11 +56,57 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
                     "   and c.dependent_type is not null ",
             nativeQuery = true
     )
-    Page<FishingDiaryCommentDtoForPage> findByMember(@Param("member") Member member, Pageable pageable);
+    Page<MyFishingDiaryCommentDtoForPage> findByMember(@Param("member") Member member, Pageable pageable);
 
     /*회원탈퇴시 회원이 작성한 comment를 비활성화 처리해주는 메소드.*/
     /*@Modifying
     @Query("update FishingDiaryComment f set f.isActive = false where f.createdBy = :member")
     int updateIsActiveByMember(@Param("member") Member member);*/
+
+    boolean existsById(Long id);
+
+    /*게시글의 댓글 목록 검색 메소드*/
+    @Query(
+            value = "select " +
+                    "   new com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage(" +
+                    "   m.id, " +
+                    "   c.id, " +
+                    "   case when c.isDeleted=true " +
+                    "       then (select concat(:path,extraValue1) from CommonCode where code='noImg' and codeGroup.id=92) " +
+                    "       else  concat(:path,m.profileImage) end, " +
+                    "   case when c.isDeleted=true then '****' else m.nickName end, " +
+                    "   c.createdDate, " +
+                    "   case when c.isDeleted=true then '삭제된 댓글입니다' else c.contents end, " +
+                    "   case when c.isDeleted=true " +
+                    "       then null " +
+                    "       else (select concat(:path,'/',f.fileUrl,'/',f.storedFile) from FileEntity f where f.pid = c.id and f.filePublish=7) end, " +
+                    "   c.likeCount, " +
+                    "   (exists (select l.id from LoveTo l where l.createdBy.id=:memberId and l.takeType=4 and l.linkId=c.id)), " +
+                    "   case when c.parentId = 0 then false else true end, " +
+                    "   c.parentId " +
+                    "   ) " +
+                    "from FishingDiaryComment c join Member m on c.createdBy.id = m.id " +
+                    "where " +
+                    "   c.fishingDiary.id = :fishingDiaryId " +
+                    "   and c.parentId = :parentId " +
+                    "order by c.createdDate "
+    )
+    List<FishingDiaryCommentDtoForPage> getCommentList(
+            @Param("fishingDiaryId") Long fishingDiaryId,
+            @Param("parentId") Long parentId,
+            @Param("memberId") Long memberId,
+            @Param("path") String path
+    );
+
+    @Query("select new com.tobe.fishking.v2.model.NoNameDTO(" +
+            "   c.id, " +
+            "   c.contents, " +
+            "   c.contents, " +
+            "   case when c.parentId is null then true else false end " +
+            ") " +
+            "from FishingDiaryComment c "
+//            "where case when 1 = 1 then true else false end "
+    )
+    List<NoNameDTO> noName();
 }
 

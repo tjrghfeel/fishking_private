@@ -54,7 +54,7 @@ export default inject(
             });
           }
           if (resolve) {
-            this.setState({ isLikeTo: !isLikeTo });
+            this.loadPageData();
           }
         };
         onClickShare = () => {
