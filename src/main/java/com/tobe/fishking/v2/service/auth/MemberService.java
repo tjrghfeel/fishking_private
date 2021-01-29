@@ -480,7 +480,7 @@ public class MemberService {
         resultDto.setSnsType("kakao");
         String clientId = "f0685b27f74d3f456d396195ca40796e";
         String redirectUrl = "https://www.fishkingapp.com/v2/api/kakaoAuthCode";
-        String clientSecret = "LhhI6bSQYOCzBf7FLfnLGA0Ud2qsGTkV";
+//        String clientSecret = "LhhI6bSQYOCzBf7FLfnLGA0Ud2qsGTkV";
 
         /*받은 응답이 에러가있을경우 예외처리.*/
         if(error!=null){
@@ -488,14 +488,14 @@ public class MemberService {
         }
 
         /*접근코드 받아오기. */
-        System.out.println("접근코드 받아오기");
+        System.out.println("get accessToken");
         String url = "https://kauth.kakao.com/oauth/token";
         String method = "POST";
         Map<String,String> parameter = new HashMap<String, String>();
         parameter.put("grant_type","authorization_code");
         parameter.put("client_id",clientId);
         parameter.put("redirect_uri",redirectUrl);
-        parameter.put("client_secret",clientSecret);
+//        parameter.put("client_secret",clientSecret);
         parameter.put("code",code);
 //        parameter.put("refresh_token",""); 갱신때 필수.
 //        parameter.put("access_token","");     삭제때 필수.
