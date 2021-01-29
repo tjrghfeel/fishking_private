@@ -488,6 +488,7 @@ public class MemberService {
         }
 
         /*접근코드 받아오기. */
+        System.out.println("접근코드 받아오기");
         String url = "https://kauth.kakao.com/oauth/token";
         String method = "POST";
         Map<String,String> parameter = new HashMap<String, String>();
@@ -516,8 +517,10 @@ public class MemberService {
 //        if(responseError!=null){
 //            throw new RuntimeException("접근 토큰 요청 에러\nerror code : "+ responseError + "\nerror description : "+responseErrorDescription);
 //        }
+        System.out.println("accessToken :: "+accessToken);
 
         /*회원정보 받아오기. */
+        System.out.println("회원정보 받아오기");
         url = "https://kapi.kakao.com/v2/user/me";
         method = "POST";
 
@@ -845,17 +848,19 @@ public class MemberService {
         http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         http.setRequestProperty("Authorization",token);
         http.connect();
+        System.out.println("http response : "+http);
         try(OutputStream os = http.getOutputStream()) {
             os.write(out);
         }
         // Do something with http.getInputStream()
         int responseCode = http.getResponseCode();
         BufferedReader br;
+        System.out.println("response code : "+responseCode);
 
         if(responseCode == 200) { // 정상 호출
             br = new BufferedReader(new InputStreamReader(http.getInputStream()));
         } else {  // 에러 발생
-            br = new BufferedReader(new InputStreamReader(http.getErrorStream()));
+            br = new BufferedReader(new InputStreamReader(http.getInputStream()));
         }
         String inputLine;
         StringBuffer res = new StringBuffer();
