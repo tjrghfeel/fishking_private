@@ -11,7 +11,7 @@ export default inject("DataStore")(
   observer(
     forwardRef(({ id, DataStore, onSelected }, ref) => {
       const [list, setList] = useState([]);
-      const [selected, setSelected] = useState([]);
+      const [selected, setSelected] = useState(null);
       useEffect(() => {
         (async () => {
           const resolve = await DataStore.getCodes("152", 2);
@@ -19,18 +19,23 @@ export default inject("DataStore")(
         })();
       }, [DataStore, setList]);
       const onChange = useCallback(
-        (code) => {
-          if (selected.indexOf(code) !== -1) {
-            const array = DataStore.removeItemOfArrayByItem(selected, code);
-            setSelected(array);
+        (e, data) => {
+          const elements = document.querySelectorAll(
+            "#".concat(id).concat(' input[type="checkbox"]')
+          );
+          for (let element of elements) {
+            if (element !== e.target) element.checked = false;
+          }
+          if (e.target.checked) {
+            setSelected(data);
           } else {
-            setSelected(selected.concat(code));
+            setSelected(null);
           }
         },
         [DataStore, selected, setSelected]
       );
       const onInit = useCallback(() => {
-        setSelected([]);
+        setSelected(null);
         const elements = document.querySelectorAll(
           "#".concat(id).concat(' input[type="checkbox"]')
         );
@@ -74,7 +79,7 @@ export default inject("DataStore")(
                                 type="checkbox"
                                 className="add-contrast"
                                 data-role="collar"
-                                onChange={(e) => onChange(data.code)}
+                                onChange={(e) => onChange(e, data)}
                               />
                               <span className="control-indicator"></span>
                               <span className="control-text">

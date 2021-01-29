@@ -61,7 +61,7 @@ public class MemberController {
 
     /*회원가입시 문자인증 api
     * */
-    @ApiOperation(value = "회원가입 문자인증 문자 보내기",notes = "" +
+    /*@ApiOperation(value = "회원가입 문자인증 문자 보내기",notes = "" +
             "- 회원가입시, 문자 인증 문자를 보내고 해당 문자인증 건에 대한 id를 반환한다. 인증번호를 보낼때 이 id값을 같이 보내야 한다. " +
             "- 요청 필드 )\n" +
             "   areaCode : 지역번호 및 휴대폰 앞번호\n" +
@@ -70,7 +70,7 @@ public class MemberController {
     @PostMapping("/signUp/sendSms")
     public Long sendSms(@RequestBody PhoneAuthDto dto){
         return memberService.sendSmsForSignup(dto);
-    }
+    }*/
 
     /*문자인증 확인
     * - 인증번호 보내면 일치하는지 확인. */
@@ -163,6 +163,19 @@ public class MemberController {
     public Long requestSmsAuthForPwSearch(@RequestBody PhoneAuthDto dto){
         return memberService.sendSmsForPwReset(dto);
     }
+    /*아이디확인 및 비밀번호 재설정 - 인증번호 통과후 이름과 아이디 알려주는 api. */
+    @ApiOperation(value = "아아디 확인 및 비밀번호 재설정 - 이름, 아이디 확인",notes = "" +
+            "요청필드 ) \n" +
+            "- phoneAuthId : Long / 문자인증건의 id\n" +
+            "응답 필드 ) \n" +
+            "- memberName : String / 회원실명\n" +
+            "- uid : String / 회원 아이디\n")
+    @PutMapping("/findPw/uid")
+    public CheckNameAndUidDto getNameAndUid(
+            @RequestBody CheckUidDto dto
+    ) throws ResourceNotFoundException {
+        return memberService.getNameAndUid(dto);
+    }
     /*비밀번호 찾기 이후, 재설정.
     * - 핸드폰인증 후 뜨는 비번변경창에서 새 비밀번호입력후 변경클릭하면 들어오는 요청.
     * - 세션토큰에 해당하는 member의 비번을 새 비밀번호로 변경*/
@@ -179,12 +192,12 @@ public class MemberController {
     }
 
     /*아이디 찾기*/
-    @ApiOperation(value = "아이디 찾기",notes = "" +
+    /*@ApiOperation(value = "아이디 찾기",notes = "" +
             "- 문자인증 이후, 아이디 반환해주는 api. \n ")
     @GetMapping("/findId/smsAuthReq")
     public String findId(@RequestParam Long phoneAuthId, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
         return memberService.findId(phoneAuthId, token);
-    }
+    }*/
 
     /*로그인*/
     @ApiOperation(value = "로그인")
@@ -232,11 +245,11 @@ public class MemberController {
     ) throws IOException {
         SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
 
-        if(dto.getResultType().equals("singUp")){
+        if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
+            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
         }
         return;
     }
@@ -254,7 +267,7 @@ public class MemberController {
     ) throws IOException {
         SnsLoginResponseDto dto = memberService.snsLoginForFacebook(snsId);
 
-        if(dto.getResultType().equals("singUp")){
+        if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
@@ -289,7 +302,7 @@ public class MemberController {
     ) throws IOException {
         SnsLoginResponseDto dto = memberService.snsLoginForNaver(code,state,error,errorDescription);
 
-        if(dto.getResultType().equals("singUp")){
+        if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{

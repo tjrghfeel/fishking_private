@@ -44,7 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.print.Pageable;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -145,15 +147,8 @@ public class PostControllerTest {
 
     @Test
     @Transactional
-    public void noName() throws Exception {
-        FishingDiary fishingDiary = fishingDiaryRepository.findById(38L)
-                .orElseThrow(()->new ResourceNotFoundException(""));
-        Member member = memberRepository.findById(19L)
-                .orElseThrow(()->new ResourceNotFoundException(""));
-        List<Member> list = fishingDiary.getScrapMembers();
-        list.add(member);
-
-        return;
+    public String noName() throws Exception {
+        return "";
     }
     @Transactional
     public void updateMember() throws ResourceNotFoundException {

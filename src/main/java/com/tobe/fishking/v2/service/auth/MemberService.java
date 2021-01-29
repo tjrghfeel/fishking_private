@@ -334,6 +334,27 @@ public class MemberService {
             return requestSmsAuth(dto);
         }
     }
+    /*아이디확인 및 비밀번호 재설정 - 인증번호 통과후 이름과 아이디 확인. */
+    @Transactional
+    public CheckNameAndUidDto getNameAndUid(CheckUidDto dto) throws ResourceNotFoundException {
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(dto.getPhoneAuthId())
+                .orElseThrow(()->new ResourceNotFoundException("phoneAuth not found for this id :: "+dto.getPhoneAuthId()));
+
+        if(phoneAuth.getIsCertified()==false){
+            throw new RuntimeException("인증이 확인되지 않은 번호입니다. ");
+        }
+
+        Member member = memberRepository.findByAreaCodeAndLocalNumber(phoneAuth.getPhoneNumber().getAreaCode(),phoneAuth.getPhoneNumber().getLocalNumber());
+        if(member == null){
+            throw new RuntimeException("해당 전화번호로 가입한 회원이 없습니다.");
+        }
+
+        CheckNameAndUidDto resultDto = CheckNameAndUidDto.builder()
+                .memberName(member.getMemberName())
+                .uid(member.getUid())
+                .build();
+        return resultDto;
+    }
     /*비번변경 메소드
     * - 비번암호화하여 번호에 해당하는 멤버의 비번필드에 update. */
     @Transactional
@@ -458,8 +479,8 @@ public class MemberService {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
         resultDto.setSnsType("kakao");
         String clientId = "f0685b27f74d3f456d396195ca40796e";
-        String redirectUrl = "http://112.220.72.178:6081/fishkingV2/v2/api/kakaoAuthCode";
-        String clientSecret = "LhhI6bSQYOCzBf7FLfnLGA0Ud2qsGTkV";
+        String redirectUrl = "https://www.fishkingapp.com/v2/api/kakaoAuthCode";
+//        String clientSecret = "LhhI6bSQYOCzBf7FLfnLGA0Ud2qsGTkV";
 
         /*받은 응답이 에러가있을경우 예외처리.*/
         if(error!=null){
@@ -467,13 +488,14 @@ public class MemberService {
         }
 
         /*접근코드 받아오기. */
+        System.out.println("get accessToken");
         String url = "https://kauth.kakao.com/oauth/token";
         String method = "POST";
         Map<String,String> parameter = new HashMap<String, String>();
         parameter.put("grant_type","authorization_code");
         parameter.put("client_id",clientId);
         parameter.put("redirect_uri",redirectUrl);
-        parameter.put("client_secret",clientSecret);
+//        parameter.put("client_secret",clientSecret);
         parameter.put("code",code);
 //        parameter.put("refresh_token",""); 갱신때 필수.
 //        parameter.put("access_token","");     삭제때 필수.
@@ -495,8 +517,10 @@ public class MemberService {
 //        if(responseError!=null){
 //            throw new RuntimeException("접근 토큰 요청 에러\nerror code : "+ responseError + "\nerror description : "+responseErrorDescription);
 //        }
+        System.out.println("accessToken :: "+accessToken);
 
         /*회원정보 받아오기. */
+        System.out.println("회원정보 받아오기");
         url = "https://kapi.kakao.com/v2/user/me";
         method = "POST";
 
@@ -808,41 +832,80 @@ public class MemberService {
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection)con;
         http.setRequestMethod(method); // PUT is another valid option
-        http.setDoOutput(true);
 
-        /*Map<String,String> arguments = new HashMap<>();
+        if(method.equals("GET")){
+//            StringJoiner sj = new StringJoiner("&");
+//            for(Map.Entry<String,String> entry : parameter.entrySet())
+//                sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+//                        + URLEncoder.encode(entry.getValue(), "UTF-8"));
+//            byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+//            int length = out.length;
+
+//            http.setFixedLengthStreamingMode(length);
+//            http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            http.setRequestProperty("Authorization",token);
+            http.connect();
+            System.out.println("http response : "+http);
+//            try(OutputStream os = http.getOutputStream()) {
+//                os.write(out);
+//            }
+            // Do something with http.getInputStream()
+            int responseCode = http.getResponseCode();
+            BufferedReader br;
+            System.out.println("response code : "+responseCode);
+
+            if(responseCode == 200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            } else {  // 에러 발생
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            }
+            String inputLine;
+            StringBuffer res = new StringBuffer();
+            while ((inputLine = br.readLine()) != null) {
+                res.append(inputLine);
+            }
+            br.close();
+            return res.toString();
+        }
+        else /*if(method.equals("POST"))*/{
+            /*Map<String,String> arguments = new HashMap<>();
         arguments.put("username", "root");
         arguments.put("password", "sjh76HSn!"); // This is a fake password obviously*/
-        StringJoiner sj = new StringJoiner("&");
-        for(Map.Entry<String,String> entry : parameter.entrySet())
-            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
-                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
-        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
-        int length = out.length;
+            http.setDoOutput(true);
+            StringJoiner sj = new StringJoiner("&");
+            for(Map.Entry<String,String> entry : parameter.entrySet())
+                sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                        + URLEncoder.encode(entry.getValue(), "UTF-8"));
+            byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+            int length = out.length;
 
-        http.setFixedLengthStreamingMode(length);
-        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        http.setRequestProperty("Authorization",token);
-        http.connect();
-        try(OutputStream os = http.getOutputStream()) {
-            os.write(out);
-        }
-        // Do something with http.getInputStream()
-        int responseCode = http.getResponseCode();
-        BufferedReader br;
+            http.setFixedLengthStreamingMode(length);
+            http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            http.setRequestProperty("Authorization",token);
+            http.connect();
+            System.out.println("http response : "+http);
+            try(OutputStream os = http.getOutputStream()) {
+                os.write(out);
+            }
+            // Do something with http.getInputStream()
+            int responseCode = http.getResponseCode();
+            BufferedReader br;
+            System.out.println("response code : "+responseCode);
 
-        if(responseCode == 200) { // 정상 호출
-            br = new BufferedReader(new InputStreamReader(http.getInputStream()));
-        } else {  // 에러 발생
-            br = new BufferedReader(new InputStreamReader(http.getErrorStream()));
+            if(responseCode == 200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            } else {  // 에러 발생
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            }
+            String inputLine;
+            StringBuffer res = new StringBuffer();
+            while ((inputLine = br.readLine()) != null) {
+                res.append(inputLine);
+            }
+            br.close();
+            return res.toString();
         }
-        String inputLine;
-        StringBuffer res = new StringBuffer();
-        while ((inputLine = br.readLine()) != null) {
-            res.append(inputLine);
-        }
-        br.close();
-        return res.toString();
+
         /*if(responseCode==200) {
             return res.toString();
         } else {
