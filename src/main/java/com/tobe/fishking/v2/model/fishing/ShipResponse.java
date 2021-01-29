@@ -44,6 +44,7 @@ public class ShipResponse {
     private String noticeTitle;
     private String notice;
     private List<String> events;
+    private Boolean liked;
 
     @QueryProjection
     public ShipResponse(Ship ship) {
@@ -70,5 +71,6 @@ public class ShipResponse {
         this.ownerWording = ship.getOwnerWording();
         this.noticeTitle = ship.getNoticeTitle();
         this.notice = ship.getNotice();
+        this.liked = false;
     }
 }

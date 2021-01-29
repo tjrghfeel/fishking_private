@@ -58,25 +58,25 @@ import java.util.regex.Pattern;
 @Service
 public class MemberService {
 
-    private MemberRepository memberRepository;
-    private PostRepository postRepository;
-    private TakeRepository takeRepository;
-    private GoodsRepository goodsRepository;
-    private LoveToRepository loveToRepository;
-    private ShipRepository shipRepository;
-    private FileRepository fileRepository;
-    private FishingDiaryRepository fishingDiaryRepository;
-    private ReviewRepository reviewRepository;
-    private FishingDiaryCommentRepository fishingDiaryCommentRepository;
-    private CouponMemberRepository couponMemberRepository;
-    private UploadService uploadService;
-    private PasswordEncoder encoder;
-    private PhoneAuthRepository phoneAuthRepository;
-    private Environment env;
-    private CommonCodeRepository commonCodeRepository;
-    private CodeGroupRepository codeGroupRepository;
-    private TblSubmitQueueRepository tblSubmitQueueRepository;
-    private CompanyRepository companyRepository;
+    private final MemberRepository memberRepository;
+    private final PostRepository postRepository;
+    private final TakeRepository takeRepository;
+    private final GoodsRepository goodsRepository;
+    private final LoveToRepository loveToRepository;
+    private final ShipRepository shipRepository;
+    private final FileRepository fileRepository;
+    private final FishingDiaryRepository fishingDiaryRepository;
+    private final ReviewRepository reviewRepository;
+    private final FishingDiaryCommentRepository fishingDiaryCommentRepository;
+    private final CouponMemberRepository couponMemberRepository;
+    private final UploadService uploadService;
+    private final PasswordEncoder encoder;
+    private final PhoneAuthRepository phoneAuthRepository;
+    private final Environment env;
+    private final CommonCodeRepository commonCodeRepository;
+    private final CodeGroupRepository codeGroupRepository;
+    private final TblSubmitQueueRepository tblSubmitQueueRepository;
+    private final CompanyRepository companyRepository;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);

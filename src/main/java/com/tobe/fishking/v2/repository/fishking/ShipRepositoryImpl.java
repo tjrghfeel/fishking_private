@@ -11,7 +11,6 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.fishing.QShipResponse;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.ShipResponse;
@@ -25,7 +24,6 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
 import static com.tobe.fishking.v2.utils.QueryDslUtil.getSortedColumn;

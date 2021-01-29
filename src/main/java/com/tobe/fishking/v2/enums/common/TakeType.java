@@ -5,7 +5,7 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 public enum TakeType    implements IEnumModel   {
 
     goods("상품"),
-    ship("업체"),
+    ship("선박"),
     fishingDiary("조황일지"),
     fishingBlog("조행기"),
     comment("댓글"),

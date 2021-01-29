@@ -9,6 +9,7 @@ public enum OrderStatus   implements IEnumModel   {
     payment("결제"),
 
     book("예약 대기"),
+    bookRunning("예약 진행중"),
     waitBook("대기자 예약"),
     bookFix("예약 확정"),
     bookCancel("예약 취소"),

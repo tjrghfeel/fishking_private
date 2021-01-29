@@ -56,6 +56,7 @@ public class BoardController {
     public Board createBoard(@Valid @RequestBody Board board) {
         return boardRepository.save(board);
     }
+
     @ApiOperation(value = "게시판 수정", notes = "게시판을 수정합니다.")
     @PutMapping("/boards/{id}")
     public ResponseEntity<Board> updateBoard(@PathVariable(value = "id") Long boardId,

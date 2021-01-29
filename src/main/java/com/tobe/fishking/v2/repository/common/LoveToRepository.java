@@ -36,4 +36,7 @@ public interface LoveToRepository extends JpaRepository<LoveTo, Long> {
 
     /*takeType, linkId, createdBy로 검색*/
     LoveTo findByLinkIdAndTakeTypeAndCreatedBy(Long linkId, TakeType takeType, Member createdBy);
+
+    @Query("select count(l) from LoveTo l where l.linkId = :linkId and l.createdBy = :createBy")
+    Integer findByLinkIdAndMember(Long linkId, Member createBy);
 }

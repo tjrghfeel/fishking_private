@@ -4,19 +4,21 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
+import com.tobe.fishking.v2.entity.fishing.OrderDetails;
+import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
-import com.tobe.fishking.v2.repository.common.EventRepository;
-import com.tobe.fishking.v2.repository.common.FileRepository;
-import com.tobe.fishking.v2.repository.common.PopularRepository;
-import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
-import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,10 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +45,11 @@ public class ShipService {
     private final PopularRepository popularRepo;
     private final FishingDiaryRepository fishingDiaryRepository;
     private final EventRepository eventRepository;
+    private final ObserverCodeRepository observerCodeRepository;
+    private final LoveToRepository loveToRepository;
+    private final OrdersRepository ordersRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
+    private final GoodsRepository goodsRepository;
 
 
     /*
@@ -131,13 +135,15 @@ public class ShipService {
     }
 
     /* 선상, 갯바위 리스트 */
+    @Transactional
     public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO, int page) {
         Pageable pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
         return shipRepo.searchAll(shipSearchDTO, pageable);
     }
 
     /* 선상, 갯바위 배 정보 */
-    public ShipResponse getShipDetail(Long ship_id) {
+    @Transactional
+    public ShipResponse getShipDetail(Long ship_id, String sessionToken) {
         ShipResponse response = shipRepo.getDetail(ship_id);
         List<FishingDiary> diaries = fishingDiaryRepository.getDiaryByShipId(response.getId());
         List<FishingDiary> blogs = fishingDiaryRepository.getBlogByShipId(response.getId());
@@ -146,6 +152,52 @@ public class ShipService {
         response.setFishingDiary(blogs.stream().map(FishingDiaryDTO.FishingDiaryDTOResp::of).collect(Collectors.toList()).subList(0,3));
         response.setFishingBlogCount(blogs.size());
         response.setEvents(eventRepository.getEventTitleByShip(ship_id));
+
+        if (!sessionToken.equals("")) {
+            Optional<Member> member = memberRepo.findBySessionToken(sessionToken);
+            member.ifPresent(value -> response.setLiked(loveToRepository.findByLinkIdAndMember(response.getId(), value) > 0));
+        }
         return response;
     }
+
+    /* 선상 예약 */
+    @Transactional
+    public Long reserve(ReserveDTO reserveDTO, Member member) {
+        Orders order = Orders.builder()
+                .orderDate(reserveDTO.getDate())
+                .totalAmount(reserveDTO.getTotalPrice().intValue())
+                .discountAmount(reserveDTO.getDiscountPrice().intValue())
+                .paymentAmount(reserveDTO.getPaymentPrice().intValue())
+                .isPay(false)
+                .orderStatus(OrderStatus.bookRunning)
+                .createdBy(member)
+                .modifiedBy(member)
+                .build();
+        ordersRepository.save(order);
+
+        OrderDetails details = OrderDetails.builder()
+                .goods(goodsRepository.getOne(reserveDTO.getGoodsId()))
+                .orders(order)
+                .personnel(reserveDTO.getPersonCount())
+                .price(reserveDTO.getTotalPrice().intValue() / reserveDTO.getPersonCount())
+                .totalAmount(reserveDTO.getTotalPrice().intValue())
+                .createdBy(member)
+                .modifiedBy(member)
+                .build();
+        orderDetailsRepository.save(details);
+        return order.getId();
+    }
+
+//    public void calcDistance() {
+//        List<Ship> ships = shipRepo.findAll();
+//        for (Ship ship : ships) {
+//            List<ObserverCode> codes = observerCodeRepository.findAll();
+//            ObserverCode code = codes.stream()
+//                    .sorted(Comparator.comparing(e -> e.distanceFrom(ship.getLocation())))
+//                    .collect(Collectors.toList())
+//                    .get(0);
+//            ship.setObserverCode(code.getCode());
+//            shipRepo.save(ship);
+//        }
+//    }
 }

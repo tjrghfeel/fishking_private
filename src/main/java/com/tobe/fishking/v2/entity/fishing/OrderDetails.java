@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 @Builder
 @AllArgsConstructor
-
 @Table(name = "orders_details")
 public class OrderDetails extends BaseTime {
 
@@ -19,8 +18,9 @@ public class OrderDetails extends BaseTime {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY) // AUTO //mssql
 // @Column(columnDefinition = "comment 'id'  ")
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'조황정보', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  fishing_ships
     @ManyToOne
     @JoinColumn(name = "order_detail_goods_id", columnDefinition = "bigint  not null   comment '조황정보'  ")
@@ -44,13 +44,10 @@ public class OrderDetails extends BaseTime {
     @Column(columnDefinition = "float comment '총가격'  ")
     private Integer totalAmount;
 
-
-
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
     private Member createdBy;
-
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  modified_by
     @ManyToOne
