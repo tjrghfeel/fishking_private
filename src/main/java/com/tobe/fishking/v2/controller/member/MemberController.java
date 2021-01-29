@@ -253,9 +253,27 @@ public class MemberController {
         }
         return;
     }
+    /*페이스북 인증코드 받는 메소드*/
+    @ApiOperation(value = "페이스북 인증 코드 받는 api",notes = "" +
+            "")
+    @PostMapping("/facebookAuthCode")
+    public void getFacebookAuthCode(
+//            @RequestParam("response_type") String responseType,
+            @RequestParam("code") String code,
+            HttpServletResponse response
+    ) throws IOException {
+        SnsLoginResponseDto dto = memberService.snsLoginForFacebook(code);
 
+        if(dto.getResultType().equals("signUp")){
+            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+        }
+        else{
+            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
+        }
+        return;
+    }
     /*페이스북 로그인 연동 id받는 메소드 */
-    @ApiOperation(value = "페이스북 로그인 연동 id를 받아 로그인 및 회원가입 중간 처리해주는 메소드",notes = "" +
+    /*@ApiOperation(value = "페이스북 로그인 연동 id를 받아 로그인 및 회원가입 중간 처리해주는 메소드",notes = "" +
             "js를 이용해 페북 로그인을 한뒤, 이 api로 로그인 연동id가 넘어오면, 이 id에 대해 회원가입 여부를 판단후, 로그인처리 또는" +
             " 회원가입 중간처리를 해준다.\n" +
             "요청 필드  ) \n" +
@@ -274,7 +292,7 @@ public class MemberController {
             response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
-    }
+    }*/
 
     /*naver 인증코드받는 메소드
     * - 인증코드를 받고 접근코드 요청을 보냄. */

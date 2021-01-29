@@ -598,10 +598,133 @@ public class MemberService {
         }
     }
 
+    /*sns로그인. 페북*/
+    @Transactional
+    public SnsLoginResponseDto snsLoginForFacebook(String code) throws IOException {
+        SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
+        resultDto.setSnsType("facebook");
+        String clientId = "697267061151978";
+        String redirectUrl = "https://www.fishkingapp.com/v2/api/facebookAuthCode";
+        String clientSecret = "9fd9e2b178cedaf3f3af5f3e090f03d1";
+
+        /*받은 응답이 에러가있을경우 예외처리.*/
+//        if(error!=null){
+//            throw new RuntimeException("인증 코드 요청 에러\nerror code : "+ error );
+//        }
+
+        /*접근코드 받아오기. */
+        System.out.println("get accessToken");
+        String url = "https://graph.facebook.com/v9.0/oauth/access_token";
+        String method = "GET";
+        Map<String,String> parameter = new HashMap<String, String>();
+        parameter.put("client_id",clientId);
+        parameter.put("redirect_uri",redirectUrl);
+        parameter.put("client_secret",clientSecret);
+        parameter.put("code",code);
+//        parameter.put("refresh_token",""); 갱신때 필수.
+//        parameter.put("access_token","");     삭제때 필수.
+//        parameter.put("service_provider",""); 삭제때 필수.
+
+        String responseForAccessCode = sendRequest(url,method,parameter,"");
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
+
+//        String responseError = (String)mapForAccessCode.get("error");//카카오엔 따로 없음.
+//        String responseErrorDescription = (String)mapForAccessCode.get("error_description");//카카오엔 따로 없음.
+        String accessToken = (String)mapForAccessCode.get("access_token");
+//        String refreshToken = (String)mapForAccessCode.get("refreshToken");
+        String tokenType = (String)mapForAccessCode.get("token_type");
+//        String expiresInString = (String)mapForAccessCode.get("expires_in");
+//        Integer expiresIn = null;
+//        if(expiresInString!=null){expiresIn = Integer.parseInt(expiresInString);}
+
+//        if(responseError!=null){
+//            throw new RuntimeException("접근 토큰 요청 에러\nerror code : "+ responseError + "\nerror description : "+responseErrorDescription);
+//        }
+        System.out.println("accessToken :: "+accessToken);
+
+        /*회원정보 받아오기. */
+        System.out.println("회원정보 받아오기");
+        url = "https://graph.facebook.com/me?fields=id&access_token="+accessToken;
+        method = "GET";
+
+        String responseForUsrInfo = sendRequest(url,method,new HashMap<String,String>(),"");
+        Map<String,Object> mapForUsrInfo = mapper.readValue(responseForUsrInfo, Map.class);
+//        Map<String,Object> usrInfo = (Map<String,Object>)mapForUsrInfo.get("id");
+
+//        String errorCode = (String)mapForUsrInfo.get("code");
+//        String errorMessage = (String)mapForUsrInfo.get("msg");
+        Long usrId = new Long((Integer)mapForUsrInfo.get("id"));
+//        String usrNickName = (String)usrInfo.get("nickname");
+//        String usrName = (String)usrInfo.get("name");
+//        String usrEmail = (String)usrInfo.get("email");
+//        String usrGender = (String)usrInfo.get("gender");
+//        String usrAge = (String)usrInfo.get("age");
+//        String usrProfileImage = (String)usrInfo.get("profile_image");
+//        String usrMobile = (String)usrInfo.get("mobile");
+
+        /*에러응답시 예외처리*/
+//        if(errorCode!=null){
+//            throw new RuntimeException("프로필 조회 에러\ncode : "+errorCode+"\nmsg : "+errorMessage);
+//        }
+
+        /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
+        Member member = memberRepository.findBySnsIdAndSnsType(usrId.toString(), SNSType.facebook);
+        /*이미 가입된 회원일 경우, 로그인 처리. */
+        if(member !=null){
+            resultDto.setResultType("login");
+
+            /*세션토큰이 이미 존재하면 해당세션토큰반환*/
+            if(member.getSessionToken()!=null){
+                resultDto.setSessionToken(member.getSessionToken());
+            }
+            /*세션토큰이 존재하지 않으면 새로생성한 세션토큰반환.*/
+            else{
+                String rawToken = member.getUid() + LocalDateTime.now();
+                String sessionToken = encoder.encode(rawToken);
+
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(sessionToken);
+            }
+            return resultDto;
+        }
+        /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
+         * - 회원가입페이지로 라다이렉트.
+         * - sns api에서 넘겨준 sns연동id를 반환. */
+        else{
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.facebook.getValue()+usrId)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password("tempPassword")//임시값. 수정필요.
+                    .email("tempEmail")//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.facebook)
+                    .snsId(usrId.toString())
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
+            return resultDto;
+        }
+    }
     /*sns로그인. 페북
     * - 페북로그인 연동id로 가입된 회원이 있는지확인하고, 있으면 로그인처리, 없으면 회원가입 중간처리. */
     @Transactional
-    public SnsLoginResponseDto snsLoginForFacebook(String snsId){
+    public SnsLoginResponseDto snsLoginForFacebook2(String snsId){
         SnsLoginResponseDto resultDto = new SnsLoginResponseDto();
         resultDto.setSnsType("facebook");
 
