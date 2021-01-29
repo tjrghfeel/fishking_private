@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Long> {
+public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Long>, FishingDiaryCustom {
 
     //
  //   Page<FishingDiary> findFishingDiariesByFishSpeciesIsContaining(String fishSpeciesName, Pageable pageable, Integer totalElements);

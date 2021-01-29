@@ -17,6 +17,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -50,7 +51,8 @@ public class Ship extends BaseTime {  //선상
     }
 */
     @OneToMany(mappedBy = "ship")
-    private List<Goods> goods;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<Goods> goods;
 
     @Column(columnDefinition = "int   comment '구분:선상/갯바위'  ")
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
@@ -96,12 +98,22 @@ public class Ship extends BaseTime {  //선상
     @Column(nullable = false, columnDefinition = "int default 0  comment '추천업체'  ")
     private Boolean isRecommend;
 
+    @Column(columnDefinition = "varchar(500) comment '사장님한마디 제목'  ")
+    private String ownerWordingTitle;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'사장님한마디', 'USER', DBO, 'TABLE', ship, 'COLUMN',  owner_wording
     @Column(columnDefinition = "varchar(500) comment '사장님한마디'  ")
     private String ownerWording;
 
-    //녹화영상 FileEntity
+    @Column(columnDefinition = "varchar(500) comment '공지 제목'  ")
+    private String noticeTitle;
 
+    // EXEC sp_addextendedproperty 'MS_Description', N'사장님한마디', 'USER', DBO, 'TABLE', ship, 'COLUMN',  owner_wording
+    @Column(columnDefinition = "varchar(500) comment '공지'  ")
+    private String notice;
+
+
+    //녹화영상 FileEntity
     // EXEC sp_addextendedproperty 'MS_Description', N'어종', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
     @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -120,6 +132,12 @@ public class Ship extends BaseTime {  //선상
     @JoinColumn(name = "ships_facilities", columnDefinition = "comment '편의시설'  ")
     @JsonBackReference
     private final List<CommonCode> facilities = new ArrayList<>();
+
+    @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "ships_devices", columnDefinition = "comment '보유장비'  ")
+    @JsonBackReference
+    private final List<CommonCode> devices = new ArrayList<>();
 
     // EXEC sp_addextendedproperty 'MS_Description', N'실시간영상', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
     @OneToMany

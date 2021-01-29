@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
@@ -64,5 +65,13 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
             " left outer join fetch s.fishSpecies r \n" +
             " join s.location pi where pi.longitude is not null or pi.longitude is not null ")
     List<Ship> findAllShipAndLocation();
+
+
+//    @Query("select s from Ship s \n" +
+//            " left outer join fetch s.fishSpecies r \n" +
+//            " join s.location pi  \n" +
+//            " join s.fishingType ft  \n" +
+//            " where pi.longitude is not null and pi.longitude is not null  and ft = :fishingType ")
+//    List<Ship> findAllShipAndLocationByFishingType(@Param("fishingType") FishingType fishingType);
 
 }

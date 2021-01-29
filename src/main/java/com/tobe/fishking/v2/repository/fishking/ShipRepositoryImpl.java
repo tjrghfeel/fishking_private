@@ -12,7 +12,9 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
+import com.tobe.fishking.v2.model.fishing.QShipResponse;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
+import com.tobe.fishking.v2.model.fishing.ShipResponse;
 import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -133,5 +135,17 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 return ship.shiipRealTimeVideos.size().eq(0);
             }
         }
+    }
+
+    @Override
+    public ShipResponse getDetail(Long ship_id) {
+        ShipResponse result = queryFactory
+                .select(new QShipResponse(
+                        ship
+                ))
+                .from(ship)
+                .where(ship.id.eq(ship_id))
+                .fetchOne();
+        return result;
     }
 }

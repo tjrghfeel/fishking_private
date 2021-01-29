@@ -4,15 +4,17 @@ import com.tobe.fishking.v2.model.common.WriteReviewDto;
 import com.tobe.fishking.v2.service.common.ReviewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "Review")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/v2/api")
 public class ReviewManageController {
-    @Autowired
-    ReviewService reviewService;
+
+    private final ReviewService reviewService;
 
     /*리뷰 생성*/
     /*@ApiOperation(value = "리뷰 생성",notes = "" +

@@ -16,6 +16,7 @@ import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.ReviewRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,18 +27,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewService {
 
-    @Autowired
-    ReviewRepository reviewRepository;
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired
-    GoodsRepository goodsRepository;
-    @Autowired
-    FileRepository fileRepository;
-    @Autowired
-    ShipRepository shipRepository;
+    private final ReviewRepository reviewRepository;
+    private final MemberRepository memberRepository;
+    private final GoodsRepository goodsRepository;
+    private final FileRepository fileRepository;
+    private final ShipRepository shipRepository;
 
     /*리뷰 작성*/
     @Transactional
