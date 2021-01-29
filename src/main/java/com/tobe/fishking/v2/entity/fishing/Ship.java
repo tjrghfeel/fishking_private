@@ -146,6 +146,8 @@ public class Ship extends BaseTime {  //선상
     @JsonBackReference
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();
 
+    @Column(columnDefinition = "varchar(7) comment '관측소 번호' ")
+    private String observerCode;
 
     @ApiModelProperty(name ="뷰-좋아요수")
     private ShareStatus status;
@@ -215,5 +217,9 @@ public class Ship extends BaseTime {  //선상
         this.serviceByReview = (reviewCount*this.serviceByReview + service)/(reviewCount+1);
         this.totalAvgByReview = (this.tasteByReview+this.cleanByReview+this.serviceByReview)/3;
         this.reviewCount++;
+    }
+
+    public void setObserverCode(String code) {
+        this.observerCode = code;
     }
 }

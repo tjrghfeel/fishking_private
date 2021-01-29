@@ -2,14 +2,10 @@ package com.tobe.fishking.v2.model.fishing;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
-import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Set;
@@ -48,6 +44,7 @@ public class ShipResponse {
     private String noticeTitle;
     private String notice;
     private List<String> events;
+    private Boolean liked;
 
     @QueryProjection
     public ShipResponse(Ship ship) {
@@ -74,5 +71,6 @@ public class ShipResponse {
         this.ownerWording = ship.getOwnerWording();
         this.noticeTitle = ship.getNoticeTitle();
         this.notice = ship.getNotice();
+        this.liked = false;
     }
 }

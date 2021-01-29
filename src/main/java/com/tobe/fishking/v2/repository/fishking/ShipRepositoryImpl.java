@@ -11,7 +11,6 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.fishing.QShipResponse;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.ShipResponse;
@@ -25,7 +24,6 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
 import static com.tobe.fishking.v2.utils.QueryDslUtil.getSortedColumn;
@@ -102,7 +100,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
     }
 
     private BooleanExpression inSpecies(List<String> species) {
-        return species.isEmpty() ? null : ship.fishSpecies.any().codeName.in(species);
+        return species.isEmpty() ? null : ship.fishSpecies.any().code.in(species);
     }
 
     private BooleanExpression inFishingDate(String fishingDate) {
@@ -114,15 +112,15 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
     }
 
     private BooleanExpression inGenres(List<String> genres) {
-        return genres.isEmpty() ? null : ship.goods.any().genres.any().codeName.in(genres);
+        return genres.isEmpty() ? null : ship.goods.any().genres.any().code.in(genres);
     }
 
     private BooleanExpression inServices(List<String> services) {
-        return services.isEmpty() ? null : ship.services.any().codeName.in(services);
+        return services.isEmpty() ? null : ship.services.any().code.in(services);
     }
 
     private BooleanExpression inFacilities(List<String> facilities) {
-        return facilities.isEmpty() ? null : ship.facilities.any().codeName.in(facilities);
+        return facilities.isEmpty() ? null : ship.facilities.any().code.in(facilities);
     }
 
     private BooleanExpression hasRealTimeVideos(Boolean hasRealTimeVideo) {

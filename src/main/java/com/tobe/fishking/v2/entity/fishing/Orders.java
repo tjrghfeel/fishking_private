@@ -21,11 +21,11 @@ public class Orders extends BaseTime {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY) // AUTO //mssql
 // @Column(columnDefinition = "comment 'id'  ")
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'주문일자', 'USER', DBO, 'TABLE', orders, 'COLUMN',  order_date
-    @Column(columnDefinition = "varchar(8) not null   comment '주문일자'  ")
+    @Column(columnDefinition = "varchar(10) not null   comment '주문일자'  ")
     private String orderDate;
 
     //(예정)승선자는  어떻게 처리?
