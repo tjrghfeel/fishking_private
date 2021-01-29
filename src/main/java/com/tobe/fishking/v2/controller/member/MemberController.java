@@ -256,7 +256,7 @@ public class MemberController {
     /*페이스북 인증코드 받는 메소드*/
     @ApiOperation(value = "페이스북 인증 코드 받는 api",notes = "" +
             "")
-    @PostMapping("/facebookAuthCode")
+    @GetMapping("/facebookAuthCode")
     public void getFacebookAuthCode(
 //            @RequestParam("response_type") String responseType,
             @RequestParam("code") String code,
