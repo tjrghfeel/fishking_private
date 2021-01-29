@@ -245,7 +245,7 @@ public class MemberController {
     ) throws IOException {
         SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
 
-        if(dto.getResultType().equals("singUp")){
+        if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
@@ -267,7 +267,7 @@ public class MemberController {
     ) throws IOException {
         SnsLoginResponseDto dto = memberService.snsLoginForFacebook(snsId);
 
-        if(dto.getResultType().equals("singUp")){
+        if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
@@ -302,7 +302,7 @@ public class MemberController {
     ) throws IOException {
         SnsLoginResponseDto dto = memberService.snsLoginForNaver(code,state,error,errorDescription);
 
-        if(dto.getResultType().equals("singUp")){
+        if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{

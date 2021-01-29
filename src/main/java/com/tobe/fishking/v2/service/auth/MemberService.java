@@ -479,7 +479,7 @@ public class MemberService {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
         resultDto.setSnsType("kakao");
         String clientId = "f0685b27f74d3f456d396195ca40796e";
-        String redirectUrl = "http://112.220.72.178:6081/fishkingV2/v2/api/kakaoAuthCode";
+        String redirectUrl = "https://www.fishkingapp.com/v2/api/kakaoAuthCode";
         String clientSecret = "LhhI6bSQYOCzBf7FLfnLGA0Ud2qsGTkV";
 
         /*받은 응답이 에러가있을경우 예외처리.*/
