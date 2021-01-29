@@ -334,6 +334,27 @@ public class MemberService {
             return requestSmsAuth(dto);
         }
     }
+    /*아이디확인 및 비밀번호 재설정 - 인증번호 통과후 이름과 아이디 확인. */
+    @Transactional
+    public CheckNameAndUidDto getNameAndUid(CheckUidDto dto) throws ResourceNotFoundException {
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(dto.getPhoneAuthId())
+                .orElseThrow(()->new ResourceNotFoundException("phoneAuth not found for this id :: "+dto.getPhoneAuthId()));
+
+        if(phoneAuth.getIsCertified()==false){
+            throw new RuntimeException("인증이 확인되지 않은 번호입니다. ");
+        }
+
+        Member member = memberRepository.findByAreaCodeAndLocalNumber(phoneAuth.getPhoneNumber().getAreaCode(),phoneAuth.getPhoneNumber().getLocalNumber());
+        if(member == null){
+            throw new RuntimeException("해당 전화번호로 가입한 회원이 없습니다.");
+        }
+
+        CheckNameAndUidDto resultDto = CheckNameAndUidDto.builder()
+                .memberName(member.getMemberName())
+                .uid(member.getUid())
+                .build();
+        return resultDto;
+    }
     /*비번변경 메소드
     * - 비번암호화하여 번호에 해당하는 멤버의 비번필드에 update. */
     @Transactional
