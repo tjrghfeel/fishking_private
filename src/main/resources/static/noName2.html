@@ -49,10 +49,14 @@
         });
     }
 
+    function logout(){FB.logout();}
+
 </script>
 
 <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
 </fb:login-button>
+
+<button onclick="logout()">logout</button>
 
 <div id="status">
 </div>
