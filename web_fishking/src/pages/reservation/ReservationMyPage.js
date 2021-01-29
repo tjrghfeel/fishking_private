@@ -66,12 +66,12 @@ export default inject(
         PageStore.storeState();
         PageStore.push(`/reservation/my/detail/${item.id}`);
       };
-      onClickFind = (item) => {
+      onClickMap = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
         console.log(JSON.stringify(item));
       };
-      onClickAgain = (item) => {
+      onClickReservation = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
         console.log(JSON.stringify(item));
@@ -81,6 +81,7 @@ export default inject(
         PageStore.storeState();
         PageStore.push(`/reservation/review/add/${item.goodsId}`);
       };
+      onClickCancel = (item) => {};
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -157,9 +158,10 @@ export default inject(
                   key={index}
                   data={data}
                   onClick={this.onClick}
-                  onClickFind={this.onClickFind}
-                  onClickAgain={this.onClickAgain}
+                  onClickMap={this.onClickMap}
+                  onClickReservation={this.onClickReservation}
                   onClickReview={this.onClickReview}
+                  onClickCancel={this.onClickCancel}
                 />
               ))}
             <p className="clearfix">

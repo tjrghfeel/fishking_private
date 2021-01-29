@@ -42,17 +42,17 @@ export default inject(
 
           // 예약상태
           let ordersStatusClassName = "status";
-          if (resolve.ordersStatus === "예약 대기")
+          if (resolve.orderStatus === "예약 대기")
             ordersStatusClassName += " status2";
-          else if (resolve.ordersStatus === "대기자 예약")
+          else if (resolve.orderStatus === "대기자 예약")
             ordersStatusClassName += " status1";
-          else if (resolve.ordersStatus === "예약 확정")
+          else if (resolve.orderStatus === "예약 확정")
             ordersStatusClassName += " status4";
-          else if (resolve.ordersStatus === "취소 완료")
+          else if (resolve.orderStatus === "취소 완료")
             ordersStatusClassName += " status6";
-          else if (resolve.ordersStatus === "출조 완료")
+          else if (resolve.orderStatus === "출조 완료")
             ordersStatusClassName += " status5";
-          else if (resolve.ordersStatus === "예약 완료")
+          else if (resolve.orderStatus === "예약 완료")
             ordersStatusClassName += " status3";
           this.setState({ ordersStatusClassName });
 
@@ -391,40 +391,47 @@ export default inject(
               </div>
               <p className="space mt-2"></p>
 
-              <div className="container nopadding mb-2">
-                <div className="float-right">
-                  <a onClick={this.onClickCancelInfo}>
-                    <img src="/assets/img/svg/icon-noti.svg" alt="" />
-                  </a>
-                </div>
-                <p className="mt-1">
-                  <small className="red">
-                    해당 상품은 출항 12시간 이후부터 취소는 불가능합니다.{" "}
-                  </small>
-                </p>
-                <br />
-                <p>
-                  <a
-                    onClick={this.onClickCancel1}
-                    className="btn btn-third btn-block btn-sm mt-1 mb-1"
-                  >
-                    취소하기
-                  </a>
-                </p>
-              </div>
-
-              <div className="fixed-bottom">
-                <div className="row no-gutters">
-                  <div className="col-12">
-                    <a
-                      onClick={this.requestReservation}
-                      className="btn btn-secondary btn-lg btn-block"
-                    >
-                      다시 예약하기
+              {(this.state.orderStatus === "대기자 예약" ||
+                this.state.orderStatus === "예약 대기" ||
+                this.state.orderStatus === "예약 완료") && (
+                <div className="container nopadding mb-2">
+                  <div className="float-right">
+                    <a onClick={this.onClickCancelInfo}>
+                      <img src="/assets/img/svg/icon-noti.svg" alt="" />
                     </a>
                   </div>
+                  <p className="mt-1">
+                    <small className="red">
+                      해당 상품은 출항 12시간 이후부터 취소는 불가능합니다.{" "}
+                    </small>
+                  </p>
+                  <br />
+                  <p>
+                    <a
+                      onClick={this.onClickCancel1}
+                      className="btn btn-third btn-block btn-sm mt-1 mb-1"
+                    >
+                      취소하기
+                    </a>
+                  </p>
                 </div>
-              </div>
+              )}
+
+              {(this.state.orderStatus === "출조 완료" ||
+                this.state.orderStatus === "취소 완료") && (
+                <div className="fixed-bottom">
+                  <div className="row no-gutters">
+                    <div className="col-12">
+                      <a
+                        onClick={this.requestReservation}
+                        className="btn btn-secondary btn-lg btn-block"
+                      >
+                        다시 예약하기
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/** 취소/환불규정 모달 */}
               <div

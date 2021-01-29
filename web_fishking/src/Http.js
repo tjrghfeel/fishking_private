@@ -1,4 +1,5 @@
 import axios from "axios";
+import ModalStore from "./stores/ModalStore";
 
 /** 공통 설정 */
 const http = axios.create({
@@ -12,23 +13,32 @@ http.defaults.headers.common["Accept"] = "application/json";
 export default (() => {
   const request = (url, method, headers = {}, params, data) => {
     return new Promise((resolve, reject) => {
-      http
-        .request({
-          url,
-          method,
-          headers: {
-            ...headers,
-            Authorization: localStorage.getItem("@accessToken") || null,
-          },
-          params,
-          data,
-        })
-        .then((response, xhr) => {
-          resolve(response.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
+      // ##### >> API 요청시 권한 (로그인여부) 체크
+      if (
+        (localStorage.getItem("@accessToken") || null) === null &&
+        url === "/v2/api/loveto"
+      ) {
+        ModalStore.openModal("Alert", { body: "로그인이 필요합니다." });
+        reject("NOT FOUND ACCESS TOKEN");
+      } else {
+        http
+          .request({
+            url,
+            method,
+            headers: {
+              ...headers,
+              Authorization: localStorage.getItem("@accessToken") || null,
+            },
+            params,
+            data,
+          })
+          .then((response, xhr) => {
+            resolve(response.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      }
     });
   };
 

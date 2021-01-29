@@ -15,10 +15,11 @@ export default inject()(
         ordersNum,
       },
       data,
-      onClick,
-      onClickFind,
-      onClickAgain,
-      onClickReview,
+      onClick, // 상세
+      onClickCancel, // 취소하기
+      onClickReview, // 리뷰작성
+      onClickReservation, // 다시예약
+      onClickMap, // 길찾기
     }) => {
       let ordersStatusClassName = "status";
       if (ordersStatus === "예약 대기") ordersStatusClassName += " status2";
@@ -83,17 +84,21 @@ export default inject()(
                 </div>
               </div>
             </a>
-            {ordersStatus === "예약 확정" && (
+            {(ordersStatus === "대기자 예약" ||
+              ordersStatus === "예약 대기" ||
+              ordersStatus === "예약 완료") && (
               <a
-                onClick={() => (onClickFind ? onClickFind(data) : null)}
+                onClick={() => (onClickCancel ? onClickCancel(data) : null)}
                 className="btn btn-third btn-block btn-sm mt-1 mb-1"
               >
-                길찾기
+                취소하기
               </a>
             )}
             {ordersStatus === "취소 완료" && (
               <a
-                onClick={() => (onClickAgain ? onClickAgain(data) : null)}
+                onClick={() =>
+                  onClickReservation ? onClickReservation(data) : null
+                }
                 className="btn btn-third btn-block btn-sm mt-1 mb-1"
               >
                 다시예약하기
@@ -103,7 +108,9 @@ export default inject()(
               <div className="row no-gutters">
                 <div className="col-6 padding-sm">
                   <a
-                    onClick={() => (onClickAgain ? onClickAgain(data) : null)}
+                    onClick={() =>
+                      onClickReservation ? onClickReservation(data) : null
+                    }
                     className="btn btn-third btn-block btn-sm mt-1 mb-1"
                   >
                     다시예약하기
@@ -118,6 +125,14 @@ export default inject()(
                   </a>
                 </div>
               </div>
+            )}
+            {ordersStatus === "예약 확정" && (
+              <a
+                onClick={() => (onClickMap ? onClickMap(data) : null)}
+                className="btn btn-third btn-block btn-sm mt-1 mb-1"
+              >
+                길찾기
+              </a>
             )}
           </div>
         </div>
