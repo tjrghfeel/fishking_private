@@ -102,7 +102,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
     }
 
     private BooleanExpression inSpecies(List<String> species) {
-        return species.isEmpty() ? null : ship.fishSpecies.any().codeName.in(species);
+        return species.isEmpty() ? null : ship.fishSpecies.any().code.in(species);
     }
 
     private BooleanExpression inFishingDate(String fishingDate) {
@@ -114,15 +114,15 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
     }
 
     private BooleanExpression inGenres(List<String> genres) {
-        return genres.isEmpty() ? null : ship.goods.any().genres.any().codeName.in(genres);
+        return genres.isEmpty() ? null : ship.goods.any().genres.any().code.in(genres);
     }
 
     private BooleanExpression inServices(List<String> services) {
-        return services.isEmpty() ? null : ship.services.any().codeName.in(services);
+        return services.isEmpty() ? null : ship.services.any().code.in(services);
     }
 
     private BooleanExpression inFacilities(List<String> facilities) {
-        return facilities.isEmpty() ? null : ship.facilities.any().codeName.in(facilities);
+        return facilities.isEmpty() ? null : ship.facilities.any().code.in(facilities);
     }
 
     private BooleanExpression hasRealTimeVideos(Boolean hasRealTimeVideo) {

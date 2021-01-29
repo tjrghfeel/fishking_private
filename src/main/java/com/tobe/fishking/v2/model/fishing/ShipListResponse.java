@@ -7,7 +7,6 @@ import com.tobe.fishking.v2.model.common.Location;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

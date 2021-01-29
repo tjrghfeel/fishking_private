@@ -28,16 +28,16 @@ public class ShipSearchDTO {
     @ApiParam(value = "날짜 검색. 하루 선택 yyyy-MM-dd", example = "2021-01-26")
     private @Valid String fishingDate = "";
 
-    @ApiParam(value = "어종검색 리스트", example = "[고등어, 우럭]")
+    @ApiParam(value = "어종검색 리스트 ", example = "[rockcod, mackerel]")
     private @Valid List<String> species = new ArrayList<>();
 
-    @ApiParam(value = "옵션-서비스제공 리스트", example = "[조식, 사진촬영]")
+    @ApiParam(value = "옵션-서비스제공 리스트", example = "[breakfast, picture]")
     private @Valid List<String> services = new ArrayList<>();
 
-    @ApiParam(value = "옵션-편의시설 리스트", example = "[wifi, 스낵, 화장실]")
+    @ApiParam(value = "옵션-편의시설 리스트", example = "[wifi, snack, toilet]")
     private @Valid List<String> facilities = new ArrayList<>();
 
-    @ApiParam(value = "옵션-장르 리스트", example = "[다운샷]")
+    @ApiParam(value = "옵션-장르 리스트", example = "[downshot]")
     private @Valid List<String> genres = new ArrayList<>();
 
     @ApiParam(value = "지역검색. 시도 범위", example = "인천광역시")

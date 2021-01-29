@@ -15,6 +15,7 @@ import com.tobe.fishking.v2.service.ResponseService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.jcodec.common.UsedViaReflection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,12 @@ import java.util.stream.Collectors;
 
 @Api(tags = "Common")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/v2/api")
 public class CommonController {
-    @Autowired
-    ResponseService responseService;
-    @Autowired
-    CommonService commonService;
+
+    private final ResponseService responseService;
+    private final CommonService commonService;
 
     /*CodeGroup 추가 api*/
     @ApiOperation(value = "CodeGroup 추가", notes = "" +
@@ -114,13 +115,14 @@ public class CommonController {
     /*Code Group에 맞는 CommonCode목록을 반환해주는 api. */
     /*!!!!!common code들에 대한 설명 써두기, api검색을 db의 id가 아닌 스트링으로 하도록 변경 고려. */
     @ApiOperation(value = "Common Code 목록 출력", notes = "Common Group에 해당하는 CommonCode목록 출력. 다음은 code group id 목록이다. \n" +
-            "80 : 어종 \n" +
-            "83 : 지역 \n" +
-//            "84 : 낚시기법 \n" +
-            "85 : 서비스 \n" +
-            "86 : 가격 \n" +
-            "87 : 편의시설 \n" +
-            "89 : 미끼 종류 \n" +
+            "80     : 어종 \n" +
+            "83     : 지역 \n" +
+            "84     : 장르 \n" +
+            "85     : 서비스 \n" +
+            "86     : 가격 \n" +
+            "87     : 편의시설 \n" +
+            "89     : 미끼 종류 \n" +
+            "153    : 보유장비 \n" +
             "- 지역 codegroup안에 지역들은 level 1, 2로 분류되며, level1 지역은 level2지역을 포함한다. level1은 '수도권','충청남도'와 같은" +
             "   넓은 범위의 지역, level2는 그 안의 '시/군/구'단위의 지역을 말한다. \n" +
             "- level2 지역들은 extraValue1필드 안에 상위 level1 지역의 code를 가지고 있다. " +

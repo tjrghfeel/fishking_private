@@ -2,14 +2,10 @@ package com.tobe.fishking.v2.model.fishing;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.Ship;
-import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Set;
