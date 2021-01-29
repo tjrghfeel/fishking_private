@@ -91,10 +91,14 @@ export default inject(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             {/** Navigation */}
-            <NavigationLayout title={"비밀번호 재설정"} showBackIcon={true} />
+            <NavigationLayout
+              title={"아이디확인 및 비밀번호재설정"}
+              showBackIcon={true}
+            />
 
             {/** 정보 */}
             <div className="container nopadding mt-1">
@@ -149,7 +153,7 @@ export default inject(
                         onClick={this.requestValid}
                         className="btn btn-grey btn-lg btn-block"
                       >
-                        비밀번호 찾기
+                        인증번호 확인
                       </a>
                     </div>
                   </form>
@@ -159,6 +163,17 @@ export default inject(
 
             {this.state.valid && (
               <div className="container nopadding">
+                <div style={{ textAlign: "center" }}>
+                  /name/의 아이디는 /id/ 입니다.
+                </div>
+                <div className="form-group pt-2">
+                  <a
+                    onClick={() => PageStore.push(`/member/login`)}
+                    className="btn btn-primary btn-lg btn-block"
+                  >
+                    확인
+                  </a>
+                </div>
                 <div className="mt-4">
                   <form className="form-line mt-	1">
                     <div className="form-group">
@@ -200,7 +215,7 @@ export default inject(
                         onClick={this.onChangePassword}
                         className="btn btn-primary btn-lg btn-block"
                       >
-                        비밀번호 변경
+                        비밀번호 재설정
                       </a>
                     </div>
                   </form>
