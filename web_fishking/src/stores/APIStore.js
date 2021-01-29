@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import Http from "../Http";
+import PageStore from "./PageStore";
 
 const APIStore = new (class {
   constructor(props) {

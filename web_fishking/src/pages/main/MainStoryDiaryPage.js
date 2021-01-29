@@ -39,7 +39,7 @@ export default inject(
           list: [],
           category: "fishingDiary",
           page: 0,
-          districtList: null,
+          district: null,
           fishSpeciesList: null,
           sort: "createdDate",
         });
@@ -61,12 +61,10 @@ export default inject(
           pageable: { pageSize = 0 },
         } = await APIStore._get("/v2/api/fishingDiary/list/" + page, {
           category: PageStore.state.category,
-          districtList: PageStore.state.districtList,
+          district: PageStore.state.district,
           fishSpeciesList: PageStore.state.fishSpeciesList,
           sort: PageStore.state.sort,
         });
-
-        console.log(JSON.stringify(content));
 
         if (page === 0) {
           PageStore.setState({ list: content });
@@ -128,26 +126,16 @@ export default inject(
       onClickComment = async (item) => {};
       onClickScrap = async (item) => {};
       onSelectedArea = (selected) => {
+        if (selected === null) return;
+
+        console.log(JSON.stringify(selected));
         const { PageStore } = this.props;
-        let districtList = null;
-        if (selected.length > 0) {
-          this.setState({
-            selAreaActive: true,
-            textArea: `지역(${selected.length})`,
-          });
-          districtList = "";
-          for (let i = 0; i < selected.length; i++) {
-            const item = selected[i];
-            if (i === selected.length - 1) {
-              districtList += item;
-            } else {
-              districtList += item.concat(",");
-            }
-          }
+        if (selected === null) {
+          this.setState({ selAreaActive: false });
         } else {
-          this.setState({ selAreaActive: false, textArea: `지역` });
+          this.setState({ selAreaActive: true });
         }
-        PageStore.setState({ districtList });
+        PageStore.setState({ district: selected });
         this.loadPageData(0);
       };
       onSelectedFish = (selected) => {
