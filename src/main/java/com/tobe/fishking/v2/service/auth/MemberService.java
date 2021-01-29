@@ -832,43 +832,80 @@ public class MemberService {
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection)con;
         http.setRequestMethod(method); // PUT is another valid option
-        http.setDoOutput(true);
 
-        /*Map<String,String> arguments = new HashMap<>();
+
+        if(method.equals("GET")){
+//            StringJoiner sj = new StringJoiner("&");
+//            for(Map.Entry<String,String> entry : parameter.entrySet())
+//                sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+//                        + URLEncoder.encode(entry.getValue(), "UTF-8"));
+//            byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+//            int length = out.length;
+
+//            http.setFixedLengthStreamingMode(length);
+//            http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            http.setRequestProperty("Authorization",token);
+            http.connect();
+            System.out.println("http response : "+http);
+//            try(OutputStream os = http.getOutputStream()) {
+//                os.write(out);
+//            }
+            // Do something with http.getInputStream()
+            int responseCode = http.getResponseCode();
+            BufferedReader br;
+            System.out.println("response code : "+responseCode);
+
+            if(responseCode == 200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            } else {  // 에러 발생
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            }
+            String inputLine;
+            StringBuffer res = new StringBuffer();
+            while ((inputLine = br.readLine()) != null) {
+                res.append(inputLine);
+            }
+            br.close();
+            return res.toString();
+        }
+        else /*if(method.equals("POST"))*/{
+            /*Map<String,String> arguments = new HashMap<>();
         arguments.put("username", "root");
         arguments.put("password", "sjh76HSn!"); // This is a fake password obviously*/
-        StringJoiner sj = new StringJoiner("&");
-        for(Map.Entry<String,String> entry : parameter.entrySet())
-            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
-                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
-        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
-        int length = out.length;
+            StringJoiner sj = new StringJoiner("&");
+            for(Map.Entry<String,String> entry : parameter.entrySet())
+                sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                        + URLEncoder.encode(entry.getValue(), "UTF-8"));
+            byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+            int length = out.length;
 
-        http.setFixedLengthStreamingMode(length);
-        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        http.setRequestProperty("Authorization",token);
-        http.connect();
-        System.out.println("http response : "+http);
-        try(OutputStream os = http.getOutputStream()) {
-            os.write(out);
-        }
-        // Do something with http.getInputStream()
-        int responseCode = http.getResponseCode();
-        BufferedReader br;
-        System.out.println("response code : "+responseCode);
+            http.setFixedLengthStreamingMode(length);
+            http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            http.setRequestProperty("Authorization",token);
+            http.connect();
+            System.out.println("http response : "+http);
+            try(OutputStream os = http.getOutputStream()) {
+                os.write(out);
+            }
+            // Do something with http.getInputStream()
+            int responseCode = http.getResponseCode();
+            BufferedReader br;
+            System.out.println("response code : "+responseCode);
 
-        if(responseCode == 200) { // 정상 호출
-            br = new BufferedReader(new InputStreamReader(http.getInputStream()));
-        } else {  // 에러 발생
-            br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            if(responseCode == 200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            } else {  // 에러 발생
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            }
+            String inputLine;
+            StringBuffer res = new StringBuffer();
+            while ((inputLine = br.readLine()) != null) {
+                res.append(inputLine);
+            }
+            br.close();
+            return res.toString();
         }
-        String inputLine;
-        StringBuffer res = new StringBuffer();
-        while ((inputLine = br.readLine()) != null) {
-            res.append(inputLine);
-        }
-        br.close();
-        return res.toString();
+
         /*if(responseCode==200) {
             return res.toString();
         } else {
