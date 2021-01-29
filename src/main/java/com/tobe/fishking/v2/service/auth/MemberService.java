@@ -833,7 +833,6 @@ public class MemberService {
         HttpURLConnection http = (HttpURLConnection)con;
         http.setRequestMethod(method); // PUT is another valid option
 
-
         if(method.equals("GET")){
 //            StringJoiner sj = new StringJoiner("&");
 //            for(Map.Entry<String,String> entry : parameter.entrySet())
@@ -872,6 +871,7 @@ public class MemberService {
             /*Map<String,String> arguments = new HashMap<>();
         arguments.put("username", "root");
         arguments.put("password", "sjh76HSn!"); // This is a fake password obviously*/
+            http.setDoOutput(true);
             StringJoiner sj = new StringJoiner("&");
             for(Map.Entry<String,String> entry : parameter.entrySet())
                 sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
