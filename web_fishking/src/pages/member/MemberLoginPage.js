@@ -140,7 +140,7 @@ export default inject(
                 </a>
                 <p class="text-center mt-3">
                   <a onClick={() => PageStore.push(`/member/findpw`)}>
-                    <small class="grey">비밀번호를 잊으셨나요?</small>
+                    <small class="grey">아이디확인 및 비밀번호재설정</small>
                   </a>
                 </p>
                 <a
