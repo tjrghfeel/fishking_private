@@ -650,7 +650,7 @@ public class MemberService {
 
 //        String errorCode = (String)mapForUsrInfo.get("code");
 //        String errorMessage = (String)mapForUsrInfo.get("msg");
-        Long usrId = new Long((Integer)mapForUsrInfo.get("id"));
+        String usrId = (String)mapForUsrInfo.get("id");
 //        String usrNickName = (String)usrInfo.get("nickname");
 //        String usrName = (String)usrInfo.get("name");
 //        String usrEmail = (String)usrInfo.get("email");
@@ -665,7 +665,7 @@ public class MemberService {
 //        }
 
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
-        Member member = memberRepository.findBySnsIdAndSnsType(usrId.toString(), SNSType.facebook);
+        Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.facebook);
         /*이미 가입된 회원일 경우, 로그인 처리. */
         if(member !=null){
             resultDto.setResultType("login");
@@ -708,7 +708,7 @@ public class MemberService {
                     .isActive(false)
                     .isCertified(false)
                     .snsType(SNSType.facebook)
-                    .snsId(usrId.toString())
+                    .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
                     .build();
             newMember = memberRepository.save(newMember);
