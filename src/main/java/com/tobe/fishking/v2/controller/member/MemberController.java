@@ -250,7 +250,7 @@ public class MemberController {
             response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("/member/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
+            response.sendRedirect("/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
         }
         return;
     }
@@ -269,7 +269,7 @@ public class MemberController {
             response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("/member/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
+            response.sendRedirect("/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
     }
@@ -325,7 +325,7 @@ public class MemberController {
             response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("/member/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
+            response.sendRedirect("/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
     }
