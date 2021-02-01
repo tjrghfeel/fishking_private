@@ -62,16 +62,22 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
     Ship findByGoods(@Param("goods") Goods goods);
 
     @Query("select s from Ship s \n" +
-            " left outer join fetch s.fishSpecies r \n" +
+            " left outer join fetch s.fishSpecies \n" +
             " join s.location pi where pi.longitude is not null or pi.longitude is not null ")
     List<Ship> findAllShipAndLocation();
 
 
-//    @Query("select s from Ship s \n" +
-//            " left outer join fetch s.fishSpecies r \n" +
-//            " join s.location pi  \n" +
-//            " join s.fishingType ft  \n" +
-//            " where pi.longitude is not null and pi.longitude is not null  and ft = :fishingType ")
-//    List<Ship> findAllShipAndLocationByFishingType(@Param("fishingType") FishingType fishingType);
+
+    /*@Query("select s from Ship s \n" +
+            " left outer join fetch s.fishSpecies r \n" +
+            " join s.location pi  \n" +
+            " join s.fishingType ft  \n" +
+            " where pi.longitude is not null and pi.longitude is not null  and ft = :fishingType ")
+    */
+
+
+    @Query(value="select s.* from Ship s \n" +
+            " where s.longitude is not null and s.longitude is not null  and s.fishing_type = :fishingType ", nativeQuery = true)
+    List<Ship> findAllShipAndLocationByFishingType(@Param("fishingType") FishingType fishingType);
 
 }
