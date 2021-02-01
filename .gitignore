@@ -7,6 +7,7 @@ build/
 !application.yml
 
 web_fishking/node_modules
+web_smartmarine/node_modules
 native_fishking/node_modules
 
 web_fishking/.eslintcache
