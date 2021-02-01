@@ -614,18 +614,14 @@ public class MemberService {
 
         /*접근코드 받아오기. */
         System.out.println("get accessToken");
-        String url = "https://graph.facebook.com/v9.0/oauth/access_token";
+        String url = "https://graph.facebook.com/v9.0/oauth/access_token?" +
+                "client_id="+clientId+
+                "&redirect_uri="+redirectUrl+
+                "&client_secret="+clientSecret+
+                "&code="+code;
         String method = "GET";
-        Map<String,String> parameter = new HashMap<String, String>();
-        parameter.put("client_id",clientId);
-        parameter.put("redirect_uri",redirectUrl);
-        parameter.put("client_secret",clientSecret);
-        parameter.put("code",code);
-//        parameter.put("refresh_token",""); 갱신때 필수.
-//        parameter.put("access_token","");     삭제때 필수.
-//        parameter.put("service_provider",""); 삭제때 필수.
 
-        String responseForAccessCode = sendRequest(url,method,parameter,"");
+        String responseForAccessCode = sendRequest(url,method,new HashMap<String,String>(),"");
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
 

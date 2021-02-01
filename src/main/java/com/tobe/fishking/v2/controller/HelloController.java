@@ -146,7 +146,7 @@ public class HelloController {
         response.sendRedirect("https://www.facebook.com/v9.0/dialog/oauth?" +
                 "client_id=697267061151978" +
                 "&redirect_uri=https://www.fishkingapp.com/v2/api/facebookAuthCode" +
-                "&state=abcd");
+                "");
 
         return "";
     }
