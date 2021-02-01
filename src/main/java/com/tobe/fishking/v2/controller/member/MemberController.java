@@ -218,18 +218,19 @@ public class MemberController {
     @ApiOperation(value = "pass인증 callback url",notes = "" +
             "회원가입 단계 마지막 본인인증 단계에서 사용하는 pass의 callback url.\n" +
             "실명과 핸드폰번호 데이터를 가지고 회원가입 처리 후, 로그인 처리.  \n" +
-            "?????\n" +
             "")
     @RequestMapping("/passAuthCode")
     public void getPassAuthCode(
             @RequestParam(value = "code",required = false) String code,
             @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "error",required = false) String error,
-            @RequestParam(value = "message",required = false) String message
+            @RequestParam(value = "message",required = false) String message,
+            HttpServletResponse response
     ) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, ResourceNotFoundException {
         String sessionToken = memberService.passAuth(code,state,error,message);
 
         /*!!!!!form을 사용해 post로 프런트의 페이지로 보내주는 jsp로 이동. view사용하여 model에 세션코드저장해서보내줌.*/
+        response.sendRedirect("/member/login");
 
         return ;
     }
@@ -246,10 +247,10 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
+            response.sendRedirect("/member/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
         }
         return;
     }
@@ -265,10 +266,10 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForFacebook(code);
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
+            response.sendRedirect("/member/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
     }
@@ -321,10 +322,10 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForNaver(code,state,error,errorDescription);
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
+            response.sendRedirect("/member/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
     }
