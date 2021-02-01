@@ -28,7 +28,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -146,9 +147,18 @@ public class PostControllerTest {
     }
 
     @Test
-    @Transactional
-    public String noName() throws Exception {
-        return "";
+    public void noName() throws Exception {
+        Member member = Member.builder()
+                .email("helaf.sejfl")
+                .isCertified(true)
+                .isActive(true)
+                .password("helsjkf")
+                .roles(Role.member)
+                .uid("sehjrflke")
+                .phoneNumber(new PhoneNumber("010","73693401"))
+                .build();
+        memberRepository.save(member);
+        return ;
     }
     @Transactional
     public void updateMember() throws ResourceNotFoundException {

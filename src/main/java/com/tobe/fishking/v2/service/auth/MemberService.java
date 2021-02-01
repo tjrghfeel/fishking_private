@@ -473,13 +473,14 @@ public class MemberService {
         String rawToken = member.getUid() + LocalDateTime.now();
         sessionToken = encoder.encode(rawToken);
 
-        member.setSessionToken(sessionToken);
+        String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+        member.setSessionToken(encodingToken);
         return sessionToken;
     }
 
     /*sns로그인. kakao*/
     @Transactional
-    public SnsLoginResponseDto snsLoginForKakao(String code, String state, String error) throws IOException {
+    public SnsLoginResponseDto snsLoginForKakao(String code, String state, String error) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
         resultDto.setSnsType("kakao");
         String clientId = "f0685b27f74d3f456d396195ca40796e";
@@ -563,7 +564,8 @@ public class MemberService {
                 String rawToken = member.getUid() + LocalDateTime.now();
                 String sessionToken = encoder.encode(rawToken);
 
-                member.setSessionToken(sessionToken);
+                String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+                member.setSessionToken(encodingToken);
                 resultDto.setSessionToken(sessionToken);
             }
             return resultDto;
@@ -636,7 +638,7 @@ public class MemberService {
 
     /*sns로그인. 페북*/
     @Transactional
-    public SnsLoginResponseDto snsLoginForFacebook(String code) throws IOException {
+    public SnsLoginResponseDto snsLoginForFacebook(String code) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
         resultDto.setSnsType("facebook");
         String clientId = "697267061151978";
@@ -715,7 +717,8 @@ public class MemberService {
                 String rawToken = member.getUid() + LocalDateTime.now();
                 String sessionToken = encoder.encode(rawToken);
 
-                member.setSessionToken(sessionToken);
+                String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+                member.setSessionToken(encodingToken);
                 resultDto.setSessionToken(sessionToken);
             }
             return resultDto;
@@ -753,66 +756,12 @@ public class MemberService {
             return resultDto;
         }
     }
-    /*sns로그인. 페북
-    * - 페북로그인 연동id로 가입된 회원이 있는지확인하고, 있으면 로그인처리, 없으면 회원가입 중간처리. */
-    @Transactional
-    public SnsLoginResponseDto snsLoginForFacebook2(String snsId){
-        SnsLoginResponseDto resultDto = new SnsLoginResponseDto();
-        resultDto.setSnsType("facebook");
-
-        Member member = memberRepository.findBySnsIdAndSnsType(snsId, SNSType.facebook);
-        if(member!=null){/*기존 회원가입되어있으면,*/
-            resultDto.setResultType("login");
-            if(member.getSessionToken()!=null){/*이미 로그인되어있으면,*/
-                resultDto.setSessionToken(member.getSessionToken());
-            }
-            else{/*로그인되어있지 않으면, */
-                String sessionToken=null;
-                /*세션토큰 생성 및 저장. */
-                String rawToken = member.getUid() + LocalDateTime.now();
-                sessionToken = encoder.encode(rawToken);
-
-                member.setSessionToken(sessionToken);
-                resultDto.setSessionToken(sessionToken);
-            }
-            return resultDto;
-        }
-        else{/*회원가입되어있지 않으면, */
-            resultDto.setResultType("signUp");
-
-            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
-            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
-
-            Member newMember = Member.builder()
-                    .uid(SNSType.facebook.getValue()+snsId)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                    .password(snsId)//임시값. 수정필요.
-                    .email(snsId)//임시값. 수정필요.
-//                    .gender(gender)
-                    .roles(Role.member)
-                    .profileImage(noProfileImage.getExtraValue1())
-                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
-                    .isCertified(false)
-                    .snsType(SNSType.facebook)
-                    .snsId(snsId)
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
-                    .build();
-            newMember = memberRepository.save(newMember);
-
-            resultDto.setMemberId(newMember.getId());
-            return resultDto;
-        }
-    }
 
     /*sns로그인. naver
     * - OAuth방식으로 인증코드를 받아 접근코드받기, 회원정보가져오기를 수행하고 처음 접속하는 회원이면 회원가입처리, 아니면 로그인 처리를 해준다.
     * - */
     @Transactional
-    public SnsLoginResponseDto snsLoginForNaver(String code, String state, String error, String errorDescription) throws IOException {
+    public SnsLoginResponseDto snsLoginForNaver(String code, String state, String error, String errorDescription) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
         resultDto.setSnsType("naver");
         String clientId = "xQF6XDWPhMC665JO2kSq";
@@ -892,7 +841,8 @@ public class MemberService {
                 String rawToken = member.getUid() + LocalDateTime.now();
                 String sessionToken = encoder.encode(rawToken);
 
-                member.setSessionToken(sessionToken);
+                String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+                member.setSessionToken(encodingToken);
                 resultDto.setSessionToken(sessionToken);
             }
             return resultDto;

@@ -230,7 +230,7 @@ public class MemberController {
         String sessionToken = memberService.passAuth(code,state,error,message);
 
         /*!!!!!form을 사용해 post로 프런트의 페이지로 보내주는 jsp로 이동. view사용하여 model에 세션코드저장해서보내줌.*/
-        response.sendRedirect("/member/login");
+        response.sendRedirect("/main/home?loggedIn=true&accesstoken="+sessionToken);
 
         return ;
     }
@@ -243,7 +243,7 @@ public class MemberController {
         @RequestParam(value = "state",required = false) String state,
         @RequestParam(value = "error",required = false) String error,
         HttpServletResponse response
-    ) throws IOException {
+    ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
 
         if(dto.getResultType().equals("signUp")){
@@ -262,7 +262,7 @@ public class MemberController {
 //            @RequestParam("response_type") String responseType,
             @RequestParam("code") String code,
             HttpServletResponse response
-    ) throws IOException {
+    ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SnsLoginResponseDto dto = memberService.snsLoginForFacebook(code);
 
         if(dto.getResultType().equals("signUp")){
@@ -318,7 +318,7 @@ public class MemberController {
             @RequestParam(value = "error",required = false) String error,
             @RequestParam(value = "error_description",required = false) String errorDescription,
             HttpServletResponse response
-    ) throws IOException {
+    ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SnsLoginResponseDto dto = memberService.snsLoginForNaver(code,state,error,errorDescription);
 
         if(dto.getResultType().equals("signUp")){
