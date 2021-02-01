@@ -474,8 +474,8 @@ public class MemberService {
         sessionToken = encoder.encode(rawToken);
 
         String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
-        member.setSessionToken(encodingToken);
-        return sessionToken;
+        member.setSessionToken(sessionToken);
+        return encodingToken;
     }
 
     /*sns로그인. kakao*/
@@ -565,8 +565,8 @@ public class MemberService {
                 String sessionToken = encoder.encode(rawToken);
 
                 String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
-                member.setSessionToken(encodingToken);
-                resultDto.setSessionToken(sessionToken);
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(encodingToken);
             }
             return resultDto;
         }
@@ -718,8 +718,8 @@ public class MemberService {
                 String sessionToken = encoder.encode(rawToken);
 
                 String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
-                member.setSessionToken(encodingToken);
-                resultDto.setSessionToken(sessionToken);
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(encodingToken);
             }
             return resultDto;
         }
@@ -842,8 +842,8 @@ public class MemberService {
                 String sessionToken = encoder.encode(rawToken);
 
                 String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
-                member.setSessionToken(encodingToken);
-                resultDto.setSessionToken(sessionToken);
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(encodingToken);
             }
             return resultDto;
         }

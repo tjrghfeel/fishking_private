@@ -20,6 +20,7 @@ import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 //import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.AES;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.CouponService;
@@ -148,16 +149,9 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        Member member = Member.builder()
-                .email("helaf.sejfl")
-                .isCertified(true)
-                .isActive(true)
-                .password("helsjkf")
-                .roles(Role.member)
-                .uid("sehjrflke")
-                .phoneNumber(new PhoneNumber("010","73693401"))
-                .build();
-        memberRepository.save(member);
+        String aaa = "DtTeLi8bgkybbJFkN4ZbgrhYVJjT+IEvBsZXuJqqYGPagrLu67RliiqNCI3bf3nhg/lOx8aT9/E6DqHyzOeSaQ==";
+        String bbb = AES.aesEncode(aaa,env.getProperty("encrypKey.key"));
+        System.out.println(">>>"+bbb);
         return ;
     }
     @Transactional
