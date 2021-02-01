@@ -42,6 +42,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByNickName(String nickName);
     /*휴대폰 번호 중복체크*/
     boolean existsByPhoneNumber(PhoneNumber phoneNumber);
+    /*pass인증번호 중복체크*/
+    boolean existsByCertifiedNo(String certifiedNo);
+
     /*@Query(value = "select exists (select * from member m where m.areacode = :areaCode and m.localnumber = :localNumber)",
         nativeQuery = true
     )

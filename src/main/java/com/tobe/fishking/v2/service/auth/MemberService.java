@@ -218,8 +218,7 @@ public class MemberService {
     /*회원가입 중간단계 - 회원정보입력*/
     @Transactional
     public Long insertMemberInfo(SignUpDto signUpDto) throws ResourceNotFoundException {
-        Member member = memberRepository.findById(signUpDto.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+signUpDto.getMemberId()));
+        Member member = null;
 
         /*uid 중복 확인*/
         if(checkUidDup(signUpDto.getEmail())==1){
@@ -237,7 +236,10 @@ public class MemberService {
         String encodedPw = encoder.encode(signUpDto.getPw());
 
         /*sns를 통해 가입하는경우.*/
-        if(member!=null){
+        if(signUpDto.getMemberId()!=null){
+            member = memberRepository.findById(signUpDto.getMemberId())
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+signUpDto.getMemberId()));
+
             member.setUid(signUpDto.getEmail());
             member.setNickName(signUpDto.getNickName());
             member.setPassword(encodedPw);
@@ -408,7 +410,6 @@ public class MemberService {
 
         /*받은 응답이 에러가있을경우 예외처리.*/
         if(error!=null){
-            memberRepository.delete(member);
             throw new RuntimeException(error + ", "+message);
         }
 
@@ -437,7 +438,6 @@ public class MemberService {
         String messageForAccessToken = (String)mapForAccessCode.get("message");
 
         if(errorForAccessToken!=null){
-            memberRepository.delete(member);
             throw new RuntimeException("pass 접근코드 받기 에러\nerror : "+errorForAccessToken+"\nmessage : "+messageForAccessToken);
         }
 
@@ -453,6 +453,10 @@ public class MemberService {
         String plid = (String)userInfo.get("plid");
         String phoneNo = (String)userInfo.get("phoneNo");
         String name = (String)userInfo.get("name");
+
+        if(memberRepository.existsByCertifiedNo(plid)){
+            throw new RuntimeException("이미 가입된 회원입니다.");
+        }
 
         phoneNo = AES.aesDecode(phoneNo, passClientPw.substring(0,16));
         name = AES.aesDecode(name, passClientPw.substring(0,16));
@@ -547,7 +551,7 @@ public class MemberService {
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
         Member member = memberRepository.findBySnsIdAndSnsType(usrId.toString(), SNSType.kakao);
         /*이미 가입된 회원일 경우, 로그인 처리. */
-        if(member !=null){
+        if(member !=null && member.getIsCertified()==true){
             resultDto.setResultType("login");
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
@@ -562,6 +566,38 @@ public class MemberService {
                 member.setSessionToken(sessionToken);
                 resultDto.setSessionToken(sessionToken);
             }
+            return resultDto;
+        }
+        /*회원가입 중간에 나갔었던 경우. */
+        else if(member !=null && member.getIsCertified()==false){
+            memberRepository.delete(member);
+
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.kakao.getValue()+usrId)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password("tempPassword")//임시값. 수정필요.
+                    .email("tempEmail")//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.kakao)
+                    .snsId(usrId.toString())
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
             return resultDto;
         }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
