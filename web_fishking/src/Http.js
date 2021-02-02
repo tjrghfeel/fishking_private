@@ -36,6 +36,8 @@ export default (() => {
             resolve(response.data);
           })
           .catch((err) => {
+            console.error(`message:${err.message}`);
+            console.error(`stack:${err.stack}`);
             reject(err);
           });
       }

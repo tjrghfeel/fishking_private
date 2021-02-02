@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import qs from "qs";
 
 const PageStore = new (class {
   constructor(props) {
@@ -27,6 +28,12 @@ const PageStore = new (class {
   goBack = () => {
     // this.history.goBack();
     window.history.back();
+  };
+  getQueryParams = () => {
+    const params = qs.parse(this.history.location.search, {
+      ignoreQueryPrefix: true,
+    });
+    return params;
   };
   setLogin = (accessToken = null) => {
     if (accessToken !== null) {

@@ -17,21 +17,111 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+  "ModalStore"
 )(
   observer(
     class extends React.Component {
       constructor(props) {
         super(props);
         this.file = React.createRef(null);
+        this.title = React.createRef(null);
         this.state = {
           uploaded: [],
+          category: "fishingBlog",
+          title: "",
+          fishingSpecies: [],
+          fishingSpeciesName: [],
+          fishingDate: null,
+          tide: null,
+          tideName: "",
+          fishingTechnicList: null,
+          fishingTechnicListName: [],
+          fishingLureList: null,
+          fishingLureListName: [],
+          fishingType: null,
+          fishingTypeName: "",
+          shipId: null,
+          shipData: {},
+          content: "",
+          videoId: null,
         };
       }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      onSubmit = async () => {
+        const { ModalStore, APIStore } = this.props;
+        const {
+          category,
+          title,
+          fishingSpecies,
+          fishingDate,
+          tide,
+          fishingTechnicList,
+          fishingLureList,
+          fishingType,
+          shipId,
+          content,
+          fileList = [],
+          uploaded,
+          videoId,
+        } = this.state;
+        for (let file of uploaded) {
+          fileList.push(file.fileId);
+        }
+
+        if (title === "") {
+          ModalStore.openModal("Alert", { body: "제목을 입력해주세요." });
+          return;
+        }
+        if (fishingSpecies.length === 0) {
+          ModalStore.openModal("Alert", { body: "어종을 선택해주세요." });
+          return;
+        }
+        if (fishingDate === null) {
+          ModalStore.openModal("Alert", { body: "날짜를 선택해주세요." });
+          return;
+        }
+        if (shipId === null) {
+          ModalStore.openModal("Alert", {
+            body: "업체 또는 위치를 선택해주세요.",
+          });
+          return;
+        }
+        if (content === "") {
+          ModalStore.openModal("Alert", { body: "내용을 입력해주세요." });
+          return;
+        }
+        if (fileList.length === 0) {
+          ModalStore.openModal("Alert", { body: "이미지를 업로드해주세요." });
+          return;
+        }
+
+        const resolve = await APIStore._post("/v2/api/fishingDiary", {
+          category,
+          title,
+          fishingSpecies,
+          fishingDate,
+          tide,
+          fishingTechnicList,
+          fishingLureList,
+          fishingType,
+          shipId,
+          content,
+          fileList,
+          videoId,
+        });
+        console.log(JSON.stringify(resolve));
+      };
       uploadFile = async () => {
+        const { ModalStore } = this.props;
+        if (this.state.uploaded.length >= 20) {
+          ModalStore.openModal("Alert", { body: "최대 20장까지 가능합니다." });
+          this.file.current.value = null;
+          return;
+        }
+
         if (this.file.current?.files.length > 0) {
           const file = this.file.current?.files[0];
 
@@ -68,31 +158,95 @@ export default inject(
           <React.Fragment>
             <SelectFishModal
               id={"selFishModal"}
-              onSelected={(selected) => console.log(JSON.stringify(selected))}
+              onSelected={(selected) => {
+                const fishingSpecies = [];
+                const fishingSpeciesName = [];
+                if (selected.length > 0) {
+                  for (let item of selected) {
+                    fishingSpecies.push(item.code);
+                    fishingSpeciesName.push(item.codeName);
+                  }
+                }
+                this.setState({ fishingSpecies, fishingSpeciesName });
+              }}
             />
             <SelectDateModal
               id={"selDateModal"}
-              onSelected={(selected) => console.log(JSON.stringify(selected))}
+              onSelected={(selected) => {
+                if (selected) {
+                  const year = selected.getFullYear();
+                  const month =
+                    selected.getMonth() + 1 < 10
+                      ? "0".concat(selected.getMonth() + 1)
+                      : selected.getMonth() + 1;
+                  const date =
+                    selected.getDate() < 10
+                      ? "0".concat(selected.getDate())
+                      : selected.getDate();
+                  this.setState({ fishingDate: `${year}-${month}-${date}` });
+                }
+              }}
             />
             <SelectTideModal
               id={"selTideModal"}
-              onSelected={(selected) => console.log(JSON.stringify(selected))}
+              onSelected={(selected) =>
+                this.setState({
+                  tide: selected === null ? null : selected.key,
+                  tideName: selected === null ? "" : selected.value,
+                })
+              }
             />
             <SelectTechnicModal
               id={"selTechnicModal"}
-              onSelected={(selected) => console.log(JSON.stringify(selected))}
+              onSelected={(selected) => {
+                let fishingTechnicList = null;
+                const fishingTechnicListName = [];
+                if (selected.length > 0) {
+                  fishingTechnicList = [];
+                  for (let item of selected) {
+                    fishingTechnicList.push(item.key);
+                    fishingTechnicListName.push(item.value);
+                  }
+                }
+                this.setState({ fishingTechnicList, fishingTechnicListName });
+              }}
             />
             <SelectLureModal
               id={"selLureModal"}
-              onSelected={(selected) => console.log(JSON.stringify(selected))}
+              onSelected={(selected) => {
+                let fishingLureList = null;
+                const fishingLureListName = [];
+                if (selected.length > 0) {
+                  fishingLureList = [];
+                  for (let item of selected) {
+                    fishingLureList.push(item.code);
+                    fishingLureListName.push(item.codeName);
+                  }
+                }
+                this.setState({ fishingLureList, fishingLureListName });
+              }}
             />
             <SelectPlaceModal
               id={"selPlaceModal"}
-              onSelected={(selected) => console.log(JSON.stringify(selected))}
+              onSelected={(selected) =>
+                this.setState({
+                  fishingType: selected === null ? null : selected.key,
+                  fishingTypeName: selected === null ? "" : selected.value,
+                })
+              }
             />
             <SelectLocationModal
               id={"selLocationModal"}
-              onSelected={(selected) => console.log(JSON.stringify(selected))}
+              onSelected={(selected) => {
+                if (selected.itemType === "Company") {
+                  this.setState({
+                    shipId: selected.shipId,
+                    shipData: selected,
+                  });
+                } else if (selected.itemType === "Location") {
+                  this.setState({ shipId: null, shipData: selected });
+                }
+              }}
             />
 
             <NavigationLayout title={"글쓰기"} showBackIcon={true} />
@@ -103,11 +257,14 @@ export default inject(
                 <form className="form-line mt-3">
                   <div className="form-group">
                     <input
+                      ref={this.title}
                       type="text"
                       className="form-control"
-                      id="inputPhone"
                       placeholder="제목을 입력해 주세요. (30자 이하) "
-                      value=""
+                      value={this.state.title}
+                      onChange={(e) =>
+                        this.setState({ title: e.target.value.substr(0, 30) })
+                      }
                     />
                   </div>
                 </form>
@@ -122,6 +279,11 @@ export default inject(
                   </dt>
                   <a data-toggle="modal" data-target="#selFishModal">
                     <dd>
+                      {this.state.fishingSpeciesName.map((data, index) => (
+                        <React.Fragment key={index}>
+                          {data.concat(" ")}
+                        </React.Fragment>
+                      ))}
                       <img
                         src="/assets/img/svg/arrow-right.svg"
                         alt=""
@@ -134,7 +296,17 @@ export default inject(
                   </dt>
                   <a data-toggle="modal" data-target="#selDateModal">
                     <dd>
-                      2020년 8월 17일 월요일{" "}
+                      {this.state.fishingDate && (
+                        <React.Fragment>
+                          {this.state.fishingDate.substr(0, 4).concat("년 ")}
+                          {this.state.fishingDate.substr(5, 2).concat("월 ")}
+                          {this.state.fishingDate.substr(8, 2).concat("일 ")}
+                          {this.state.fishingDate
+                            .replace(/[-]/g, "")
+                            .getWeek()
+                            .concat("요일")}
+                        </React.Fragment>
+                      )}
                       <img
                         src="/assets/img/svg/arrow-right.svg"
                         alt=""
@@ -145,6 +317,7 @@ export default inject(
                   <dt>물때</dt>
                   <a data-toggle="modal" data-target="#selTideModal">
                     <dd>
+                      {this.state.tideName}
                       <img
                         src="/assets/img/svg/arrow-right.svg"
                         alt=""
@@ -155,6 +328,11 @@ export default inject(
                   <dt>낚시 기법</dt>
                   <a data-toggle="modal" data-target="#selTechnicModal">
                     <dd>
+                      {this.state.fishingTechnicListName.map((data, index) => (
+                        <React.Fragment key={index}>
+                          {data.concat(" ")}
+                        </React.Fragment>
+                      ))}
                       <img
                         src="/assets/img/svg/arrow-right.svg"
                         alt=""
@@ -165,6 +343,11 @@ export default inject(
                   <dt>미끼</dt>
                   <a data-toggle="modal" data-target="#selLureModal">
                     <dd>
+                      {this.state.fishingLureListName.map((data, index) => (
+                        <React.Fragment key={index}>
+                          {data.concat(" ")}
+                        </React.Fragment>
+                      ))}
                       <img
                         src="/assets/img/svg/arrow-right.svg"
                         alt=""
@@ -175,6 +358,7 @@ export default inject(
                   <dt>낚시 장소</dt>
                   <a data-toggle="modal" data-target="#selPlaceModal">
                     <dd>
+                      {this.state.fishingTypeName}
                       <img
                         src="/assets/img/svg/arrow-right.svg"
                         alt=""
@@ -192,7 +376,11 @@ export default inject(
                   <div className="row no-gutters d-flex align-items-center">
                     <div className="cardimgWrap">
                       <img
-                        src="/assets/img/sample/boat2.jpg"
+                        src={
+                          this.state.shipData.itemType === "Company"
+                            ? this.state.shipData.thumbnailUrl
+                            : "/assets/img/sample/boat2.jpg"
+                        }
                         className="img-fluid"
                         alt=""
                       />
@@ -204,8 +392,10 @@ export default inject(
                           alt=""
                           className="float-right-arrow"
                         />
-                        <h6>어복황제3호</h6>
-                        <p>인천 중구 축항대로 142</p>
+                        {this.state.shipData.itemType === "Company" && (
+                          <h6>{this.state.shipData.name}</h6>
+                        )}
+                        <p>{this.state.shipData.address}</p>
                       </div>
                     </div>
                   </div>
@@ -224,7 +414,11 @@ export default inject(
                       placeholder="대표 어종, 조황 날짜, 업체 또는 지역을 등록하지 않으면 글이 등록되지 않습니다.
 사진(필수항목)은 최대 50장 까지, 동영상(선택항목)은 1개만 등록 가능합니다.
 계좌번호, 전화번호, 홈페이지, 중복 게시글이 포함된 경우 삭제됩니다."
-                      id="inputMemo"
+                      onChange={(e) =>
+                        this.setState({
+                          content: e.target.value.substr(0, 1000),
+                        })
+                      }
                     ></textarea>
                   </div>
                 </div>
@@ -252,7 +446,7 @@ export default inject(
                   </a>
                 </div>
                 {this.state.uploaded.map((data, index) => (
-                  <div className="col-3">
+                  <div className="col-3" key={index}>
                     <div className="box-round-grey">
                       <a
                         onClick={() => this.removeUploadFile(data.fileId)}
@@ -307,7 +501,10 @@ export default inject(
             <div className="fixed-bottom">
               <div className="row no-gutters">
                 <div className="col-12">
-                  <a href="#none" className="btn btn-primary btn-lg btn-block">
+                  <a
+                    onClick={this.onSubmit}
+                    className="btn btn-primary btn-lg btn-block"
+                  >
                     올리기
                   </a>
                 </div>

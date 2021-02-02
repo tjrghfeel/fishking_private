@@ -26,6 +26,8 @@ export default inject(
           valid: false,
           newPassword1: "",
           newPassword2: "",
+          userName: "",
+          userId: "",
         };
       }
       /********** ********** ********** ********** **********/
@@ -37,11 +39,21 @@ export default inject(
 
         if (!DataStore.isMobile(mobile)) return;
 
+        console.log(
+          JSON.stringify({
+            areaCode: mobile.substr(0, 3),
+            localNumber: mobile.substr(3, mobile.length),
+          })
+        );
         const codeId = await APIStore._post("/v2/api/findPw/smsAuthReq", {
           areaCode: mobile.substr(0, 3),
           localNumber: mobile.substr(3, mobile.length),
         });
         this.setState({ codeId });
+        const findInfo = await APIStore._put("/v2/api/findPw/uid", {
+          phoneAuthId: codeId,
+        });
+        this.setState({ userName: findInfo.memberName, userId: findInfo.uid });
       };
 
       requestValid = async () => {
@@ -164,7 +176,7 @@ export default inject(
             {this.state.valid && (
               <div className="container nopadding">
                 <div style={{ textAlign: "center" }}>
-                  /name/의 아이디는 /id/ 입니다.
+                  {this.state.userName}의 아이디는 {this.state.userId} 입니다.
                 </div>
                 <div className="form-group pt-2">
                   <a

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { inject, observer } from "mobx-react";
 import SearchCompanyListView from "../view/SearchCompanyListView";
-import SearchMyPositionMapView from "../view/SearchMyPositionMapView";
+import SelectLocationByMapView from "../view/SelectLocationByMapView";
 
 export default inject("DataStore")(
   observer(({ id, onSelected }) => {
@@ -45,13 +45,22 @@ export default inject("DataStore")(
                   parent={id}
                   onClick={(item) => {
                     if (onSelected) {
-                      onSelected(item);
+                      onSelected({ itemType: "Company", ...item });
                     }
                     dismiss.current?.click();
                   }}
                 />
               )}
-              {active === 1 && <SearchMyPositionMapView />}
+              {active === 1 && (
+                <SelectLocationByMapView
+                  onSelected={(selected) => {
+                    if (onSelected) {
+                      onSelected({ itemType: "Location", address: selected });
+                    }
+                    dismiss.current?.click();
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
