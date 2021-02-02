@@ -131,7 +131,7 @@ public class MainController {
 
 
     @ApiOperation(value = "선박현황 ", notes = "선박수, 업체수 조회한다.   ")
-    @GetMapping(value = "/getCountShipComany")
+    @GetMapping(value = "/getMaininfoByMarine")
     public HashMap<String, Long> getMaininfoByMarine(){
 
         var marineCount  = new HashMap<String, Long>();
