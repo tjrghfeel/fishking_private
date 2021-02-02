@@ -23,6 +23,11 @@ const {
 export default inject("PageStore")(
   observer(({ PageStore, history }) => {
     PageStore.setHistory(history);
+    // # SNS 로그인 콜백 체크
+    const { loggedIn = false, accesstoken = null } = PageStore.getQueryParams();
+    if (loggedIn && accesstoken !== null) {
+      PageStore.setLogin(accesstoken);
+    }
     // # 로그인 체크
     PageStore.loadLogin();
     useEffect(() => {

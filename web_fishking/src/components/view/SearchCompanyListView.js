@@ -45,7 +45,6 @@ export default inject(
             keyword,
           });
 
-          console.log(JSON.stringify(content));
           if (page === 0) {
             this.setState({ list: content, totalElements });
             setTimeout(() => {
