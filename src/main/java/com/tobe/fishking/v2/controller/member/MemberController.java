@@ -132,7 +132,7 @@ public class MemberController {
                 "&client_id=uWHHuitm5at159jXPlc5" +
                 "&redirect_uri=https://www.fishkingapp.com/v2/api/passAuthCode" +
                 "&state=abcd";
-        String method = "POST";
+        String method = "GET";
         Map<String,String> parameter = new HashMap<String, String>();
 
         String responseForAccessCode = memberService.sendRequest(url,method,parameter,"");
