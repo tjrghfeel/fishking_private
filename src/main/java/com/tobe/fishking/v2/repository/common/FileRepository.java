@@ -28,6 +28,8 @@ public interface FileRepository extends BaseRepository<FileEntity, Long> {
 
     public FileEntity findTop1ByPidAndFilePublishAndIsRepresent(Long pid, FilePublish filePublish, Boolean represent);
 
+    @Query("select f from FileEntity f where f.id in :idList")
+    List<FileEntity> findAllById(@Param("idList") Long[] id);
 
         // public List<FileEntity> findByPostId(Post post);
 /*

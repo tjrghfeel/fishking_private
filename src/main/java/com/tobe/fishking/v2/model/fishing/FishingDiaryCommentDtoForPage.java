@@ -25,13 +25,15 @@ public class FishingDiaryCommentDtoForPage {
     private Boolean isChildComment;
     private Long parentId;
     private List<FishingDiaryCommentDtoForPage> childList;
+    private Boolean isMine;
 
     public FishingDiaryCommentDtoForPage(
             Long authorId, Long commentId, String profileImage, String nickName, LocalDateTime writeTime,
-            String content, String fileUrl, Integer likeCount, Boolean isLikeTo, Boolean isChildComment, Long parentId
+            String content, String fileUrl, Integer likeCount, Boolean isLikeTo, Boolean isChildComment, Long parentId,
+            Boolean isMine
     ){
         this.authorId=authorId; this.commentId=commentId; this.profileImage= profileImage; this.nickName=nickName;
         this.writeTime=writeTime; this.content=content; this.fileUrl=fileUrl; this.likeCount=likeCount;
-        this.isLikeTo=isLikeTo; this.isChildComment=isChildComment; this.parentId=parentId;
+        this.isLikeTo=isLikeTo; this.isChildComment=isChildComment; this.parentId=parentId; this.isMine=isMine;
     }
 }

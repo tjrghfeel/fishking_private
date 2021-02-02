@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Location {
-    private Long longitude;
-    private Long latitude;
+    private Double longitude;
+    private Double latitude;
 
-    public Location(Long longitude, Long latitude) {
+    public Location(Double longitude, Double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }

@@ -135,13 +135,13 @@ public class FishingDiary extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'위도', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  latitude
     //@Column(columnDefinition=" INT(11) NOT NULL COMMENT '0 for no action, 1 for executed, 2 for validated, 3 for aproved'  ")
     @Column(columnDefinition = "float   comment '위도'  ")
-    private Long writeLatitude;
+    private Double writeLatitude;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'경도', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  longitude
     //@Column(columnDefinition=" INT(11) NOT NULL COMMENT '0 for no action, 1 for executed, 2 for validated, 3 for aproved'  ")
     @Column(columnDefinition = "float   comment '경도'  ")
-    private Long writeLongitude;
+    private Double writeLongitude;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'스크랩 사용자', 'USER', DBO, 'TABLE', tide_journal, 'COLUMN',  fishing_rtvideos
@@ -154,6 +154,9 @@ public class FishingDiary extends BaseTime {
     //   @AttributeOverride(name = "shareCount", column = @Column(name = "SHARE"))
     @Embedded
     private ShareStatus status;
+
+    @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
+    private Boolean isDeleted;
 
 /*
     @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
@@ -176,8 +179,8 @@ public class FishingDiary extends BaseTime {
             , String location, String fishingSpeciesName, String fishingDate, String fishingTideTime
             , double fishLength, double fishWeight, Set<FishingDiaryFishingTechnics> fishingDiaryFishingTechnics
             , Set<FishingDiaryFishingLures> fishingDiaryFishingLures
-            , String fishingLocation, String writeLocation, Long writeLatitude
-            , Long writeLongitude, Member createdBy, Member modifiedBy) {
+            , String fishingLocation, String writeLocation, Double writeLatitude
+            , Double writeLongitude, Boolean isDeleted, Member createdBy, Member modifiedBy) {
 
         this.board = board;
         this.ship = ship;
@@ -197,6 +200,7 @@ public class FishingDiary extends BaseTime {
         this.writeLocation = writeLocation;
         this.writeLatitude = writeLatitude;
         this.writeLongitude = writeLongitude;
+        this.isDeleted = isDeleted;
         this.createdBy = createdBy;
         this.modifiedBy = modifiedBy;
     }
@@ -216,7 +220,7 @@ public class FishingDiary extends BaseTime {
             String title, String contents, String location, String fishingSpeciesName
             , String fishingDate, String fishingTideTime, double fishLength
             , double fishWeight, Set<FishingDiaryFishingTechnics> fishingDiaryFishingTechnics
-            , Set<FishingDiaryFishingLures> fishingDiaryFishingLures, String fishingLocation, String writeLocation, Long writeLatitude, Long writelongitude, Member createdBy, Member modifiedBy) {
+            , Set<FishingDiaryFishingLures> fishingDiaryFishingLures, String fishingLocation, String writeLocation, Double writeLatitude, Double writelongitude, Member createdBy, Member modifiedBy) {
 
         this.title = title;
         this.contents = contents;
@@ -249,19 +253,25 @@ public class FishingDiary extends BaseTime {
 
     /*글쓰기 수정*/
     public FishingDiary modify(
-            Ship ship, String title, String content, String fishSpecies, String tideTime, String fishTechnic,
-            String fishLure, Member modifiedBy
+            Ship ship, String title, String content, String fishSpecies, String fishingDate, String tideTime, String fishTechnic,
+            String fishLure, FishingType fishingType, String fishingLocation, Double latitude, Double longitude, Member modifiedBy
     ){
         this.ship = ship;
         this.title = title;
         this.contents = content;
         this.fishingSpeciesName = fishSpecies;
+        this.fishingDate = fishingDate;
         this.fishingTideTime = tideTime;
         this.fishingTechnic = fishTechnic;
         this.fishingLure = fishLure;
+        this.fishingType = fishingType;
+        this.fishingLocation = fishingLocation;
+        this.writeLatitude = latitude;
+        this.writeLongitude = longitude;
         this.modifiedBy = modifiedBy;
         return this;
     }
 
+    public void delete(){this.isDeleted = true;}
 
 }

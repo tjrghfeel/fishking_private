@@ -47,7 +47,7 @@ class FishingDiaryCUDServiceTest extends IntegrationTest {
                 .fishingType(FishingType.ship)
                 .goodsId(10L)
                 .memberId(5L)
-                .location(new Location(100L, 200L))
+                .location(new Location(100D, 200D))
                 .date(LocalDate.now())
                 .boardId(73L)
                 .build();

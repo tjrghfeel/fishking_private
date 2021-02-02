@@ -149,11 +149,10 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        String aaa = "DtTeLi8bgkybbJFkN4ZbgrhYVJjT+IEvBsZXuJqqYGPagrLu67RliiqNCI3bf3nhg/lOx8aT9/E6DqHyzOeSaQ==";
-        String bbb = AES.aesEncode(aaa,env.getProperty("encrypKey.key"));
-        System.out.println(">>>"+bbb);
-        return ;
+        Long[] idList = new Long[]{784L,785L};
+        fileRepo.findAllById(idList);
     }
+
     @Transactional
     public void updateMember() throws ResourceNotFoundException {
 

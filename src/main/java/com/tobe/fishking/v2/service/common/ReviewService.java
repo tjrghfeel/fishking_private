@@ -9,6 +9,7 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.DeleteReviewDto;
+import com.tobe.fishking.v2.model.common.ModifyReviewDto;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.common.WriteReviewDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -75,6 +76,46 @@ public class ReviewService {
         }
 
         return review.getId();
+    }
+
+    /*리뷰 수정*/
+    @Transactional
+    public Boolean modifyReview(ModifyReviewDto dto, String token) throws ResourceNotFoundException {
+        Review review = reviewRepository.findById(dto.getReviewId())
+                .orElseThrow(()->new ResourceNotFoundException("review not found for this id :: "+dto.getReviewId()));
+        Goods goods = review.getGoods();
+        Member author = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Ship ship = goods.getShip();
+
+        if(review.getMember()!=author && author.getRoles()!=Role.admin){
+            throw new RuntimeException("해당 리뷰에 대한 수정 권한이 없습니다.");
+        }
+
+        /*리뷰수정.*/
+        review.modify(dto.getCleanScore(),dto.getServiceScore(),dto.getTasteScore(),dto.getContent(),author);
+        review = reviewRepository.save(review);
+
+        /*ship에 리뷰 평점 적용*/
+        ship.applyReviewGrade(dto.getTasteScore(),dto.getCleanScore(),dto.getServiceScore());
+
+        /*이미지 파일들 수정*/
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(review.getId(), FilePublish.review);
+        for(int i=0; i<preFileList.size(); i++){
+            preFileList.get(i).setIsDelete(true);
+        }
+        if(dto.getFileList().length>0){
+            Long[] fileIdList = dto.getFileList();
+
+            for(int i=0; i<fileIdList.length; i++){
+                Long fileId = fileIdList[i];
+                FileEntity fileEntity = fileRepository.findById(fileId)
+                        .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+fileId));
+                fileEntity.saveTemporaryFile(review.getId());
+            }
+        }
+
+        return true;
     }
 
     /*리뷰 삭제*/

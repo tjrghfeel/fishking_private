@@ -92,6 +92,7 @@ public class FishingDiaryCommentController {
             "- isLikeTo : Boolean / 현재 회원의 댓글에 대한 좋야요 여부\n" +
             "- isChildComment : Boolean / 현재 댓글이 대댓글인지 여부\n" +
             "- parentId : Long / 현재 댓글이 대댓글이라면 상위 댓글의 id / 대댓글이 아닌 댓글이라면 값은 0. \n" +
+            "- isMine : Boolean / 현재 댓글이 자신의 댓글인지. \n" +
             "- childList : 현재 댓글에 대한 대댓글 목록. / 똑같은 필드를 가지는 객체를 리스트로 가지고 있으며, " +
             "   대댓글이 없을시 리스트가 비어있다.  ")
     @GetMapping("/fishingDiaryComment")

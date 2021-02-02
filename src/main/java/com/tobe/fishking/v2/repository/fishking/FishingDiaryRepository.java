@@ -150,7 +150,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "       when d.file_publish = 6 then s.ship_name " +
                     "       end " +
                     "   ) nickName, " +
-                    "   s.address address, " +
+                    "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
                     "   if(m.is_active=true, d.title, '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
                     "   if(m.is_active=true, LEFT(d.contents,50), '탈퇴한 회원의 글입니다.') contents, " +
@@ -167,28 +167,28 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
                     "       group by f2.pid order by f2.file_no), null) filePathList " +
-                    "from fishing_diary d join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
-                    "   and if(:searchTarget = 'address',s.address like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     " group by d.id " +
                     "order by createdDate desc ",
             countQuery = "select d.id " +
-                    "from fishing_diary d join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
-                    "   and if(:searchTarget = 'address',s.address like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +

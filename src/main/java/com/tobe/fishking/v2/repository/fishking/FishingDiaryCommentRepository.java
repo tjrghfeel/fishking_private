@@ -83,7 +83,8 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
                     "   c.likeCount, " +
                     "   (exists (select l.id from LoveTo l where l.createdBy.id=:memberId and l.takeType=4 and l.linkId=c.id)), " +
                     "   case when c.parentId = 0 then false else true end, " +
-                    "   c.parentId " +
+                    "   c.parentId," +
+                    "   case when c.createdBy.id=:memberId then true else false end " +
                     "   ) " +
                     "from FishingDiaryComment c join Member m on c.createdBy.id = m.id " +
                     "where " +

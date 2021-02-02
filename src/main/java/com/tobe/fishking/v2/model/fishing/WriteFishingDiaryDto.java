@@ -33,7 +33,6 @@ public class WriteFishingDiaryDto {
     private String[] fishingLureList;
 
     private String fishingType;
-    @NotNull(message = "업체id가 비었습니다. ")
     private Long shipId;
     @NotNull(message = "내용 항목이 비었습니다. ")
     @Size(min=5,max=1000,message="내용은 5자~1000자 이어야 합니다.")
@@ -41,5 +40,9 @@ public class WriteFishingDiaryDto {
     @Size(min=1,max = 20, message = "사진 항목이 비었습니다.")
     private Long[] fileList;
     private Long videoId;
+
+    private String address;
+    private Double latitude;
+    private Double longitude;
 
 }

@@ -75,29 +75,15 @@ public class MapperUtility {
     public String transFishingDate(String fishingDate, String fishingStartTime){return fishingDate+" "+fishingStartTime;}
 
     /*enum값 변환 메소드*/
-    public String transEnumQuestionType(int ordinal){
-        return QuestionType.values()[ordinal].getValue();
-    }
-    public String transEnumChannelType(int ordinal){
-        return ChannelType.values()[ordinal].getValue();
-    }
-    public String transEnumCouponType(int ordinal){
-        return CouponType.values()[ordinal].getValue();
-    }
-    public String transEnumFishingType(int ordinal){
-        return FishingType.values()[ordinal].getValue();
-    }
-    public String transEnumDependentType(int ordinal){
-        return DependentType.values()[ordinal].getValue();
-    }
-    public String transEnumOrderStatus(int ordinal){
-        return OrderStatus.values()[ordinal].getValue();
-    }
-    public String transEnumAlertType(int ordinal){
-        return AlertType.values()[ordinal].getValue();
-    }
-    public String transEnumFilePublish(int ordinal){return FilePublish.values()[ordinal].getValue();}
-    public String transEnumMeridiem(int ordinal){return Meridiem.values()[ordinal].getValue();}
+    public String transEnumQuestionType(Integer ordinal){ if(ordinal!=null){return QuestionType.values()[ordinal].getValue();}else return null; }
+    public String transEnumChannelType(Integer ordinal){ if(ordinal!=null){return ChannelType.values()[ordinal].getValue();}else return null; }
+    public String transEnumCouponType(Integer ordinal){ if(ordinal!=null){return CouponType.values()[ordinal].getValue();}else return null;}
+    public String transEnumFishingType(Integer ordinal){ if(ordinal!=null){return FishingType.values()[ordinal].getValue();}else return null;}
+    public String transEnumDependentType(Integer ordinal){if(ordinal!=null){return DependentType.values()[ordinal].getValue();}else return null;}
+    public String transEnumOrderStatus(Integer ordinal){if(ordinal!=null){return OrderStatus.values()[ordinal].getValue();}else return null;}
+    public String transEnumAlertType(Integer ordinal){if(ordinal!=null){return AlertType.values()[ordinal].getValue();}else return null;}
+    public String transEnumFilePublish(Integer ordinal){if(ordinal!=null){return FilePublish.values()[ordinal].getValue();}else return null;}
+    public String transEnumMeridiem(Integer ordinal){if(ordinal!=null){return Meridiem.values()[ordinal].getValue();}else return null;}
 
     /*public String transEnum(int ordinal){
         return .values()[ordinal].getValue();

@@ -127,7 +127,8 @@ public class FileEntity extends BaseTime {
 
     /*isRepresent필드 변경*/
     public void setRepresent(Boolean value){this.isRepresent =value;}
-
+    /*삭제처리*/
+    public void setIsDelete(boolean value){this.isDelete=value;}
 
 
 

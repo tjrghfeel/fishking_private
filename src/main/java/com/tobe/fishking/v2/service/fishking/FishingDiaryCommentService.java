@@ -103,10 +103,14 @@ public class FishingDiaryCommentService {
         comment.modify(content);
         commentRepository.save(comment);
 
-        if(fileId != null) {
-            FileEntity fileEntity = fileRepository.findById(fileId)
-                    .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + fileId));
-            fileEntity.saveTemporaryFile(comment.getId());
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(commentId, FilePublish.comment);
+        for(int i=0; i<preFileList.size(); i++){
+            preFileList.get(i).setIsDelete(true);
+        }
+        if(fileId!=null){
+            FileEntity file = fileRepository.findById(fileId)
+                    .orElseThrow(()->new ResourceNotFoundException("comment not found for this id :: "+fileId));
+            file.saveTemporaryFile(commentId);
         }
         return true;
     }

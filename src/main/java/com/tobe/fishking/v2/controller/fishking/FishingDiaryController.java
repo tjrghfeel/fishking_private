@@ -44,29 +44,66 @@ public class FishingDiaryController {
             "- fishingLureList : String[] (값 없을시 null) / 선택 / 미끼 / Common > /v2/api/commonCode/{groupId}에서 반환하는 codeGroup값 89을 " +
             "가지는 commonCode 미끼목록의 'code'값. \n" +
             "- fishingType : String (값 없을시 null) / 선택 / 선상인지 갯바위인지 / Common > /v2/api/value에서 반환하는 'fishingType'의 키값.\n" +
-            "- shipId : Long / 필수 / 글의 대상이 되는 선상id\n" +
+            "- shipId : Long (값 없을시 null) / 선택 / 글의 대상이 되는 선상id\n" +
             "- content : String / 필수 / 내용 / 5~1000자\n" +
             "- fileList : Long[] / 필수 / Common > /v2/api/filePreUpload를 통해 미리업로드한 파일의 id. / 최소1장부터 20장까지 가능.\n" +
-            "- videoId : Long (값 없을시 null) / 선택 / Common > /v2/api/filePreUpload를 통해 미리업로드한 동영상 파일의 id.\n"+
+            "- videoId : Long (값 없을시 null) / 선택 / Common > /v2/api/filePreUpload를 통해 미리업로드한 동영상 파일의 id.\n" +
+            "- address : String (선박선택시 null) / 선택 / '위치선택'을 통해 선택한 위치의 주소값.\n" +
+            "- latitude : Double (선박선택시 null) / 선택 / '위치선택'을 통해 선택한 위치의 위도값\n" +
+            "- longitude : Double (선박선택시 null) / 선택 / '위치선택'을 통해 선택한 위치의 경도값\n"+
             "응답 필드 ) 생성된 글의 id \n")
     @PostMapping("/fishingDiary")
     public Long writeFishingDiary(
             @RequestBody @Valid WriteFishingDiaryDto dto,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
+        /*선박 또는 '위치선택' 둘중 하나는 반드시 입력했는지 검증. */
+        if(dto.getShipId()==null && dto.getAddress()==null && dto.getLatitude()==null && dto.getLongitude()==null){
+            throw new RuntimeException("shipId와 address 중 하나는 반드시 존재해야 합니다.");
+        }
+        else if(dto.getShipId()!=null && dto.getAddress()!=null){
+            throw new RuntimeException("shipId와 address 둘중 하나만 입력하여야 합니다.");
+        }
+
         return fishingDiaryService.writeFishingDiary(dto,token);
     }
 
     /*글쓰기 수정*/
-    /*@ApiOperation(value = "조항일지, 유저조행기 수정",notes = "" +
-            "")
+    @ApiOperation(value = "조항일지, 유저조행기 수정",notes = "" +
+            "요청 필드 ) \n" +
+            "- fishingDiaryId : Long / 필수 / 수정하려는 글의 id\n" +
+            "- title : String / 필수 / 제목 / 5자~30자 사이.\n" +
+            "- fishingSpecies : String[] / 필수 / 어종 리스트 / Common > /v2/api/commonCode/{groupId}에서 반환하는 codeGroup값 80을 " +
+            "가지는 commonCode 어종리스트의 'code'값. \n" +
+            "- fishingDate : LocalDate(yyyy-mm-dd) / 필수 / 낚시 날짜\n" +
+            "- tide : String (값 없을시 null) / 선택 / 물때 / Common > /v2/api/value에서 반환하는 'tideTime'의 키값.\n" +
+            "- fishingTechnicList : String[] (값 없을시 null) / 선택 / 낚시 기법 / Common > /v2/api/value에서 반환하는 'fishingTechnic'의 키값.\n" +
+            "- fishingLureList : String[] (값 없을시 null) / 선택 / 미끼 / Common > /v2/api/commonCode/{groupId}에서 반환하는 codeGroup값 89을 " +
+            "가지는 commonCode 미끼목록의 'code'값. \n" +
+            "- fishingType : String (값 없을시 null) / 선택 / 선상인지 갯바위인지 / Common > /v2/api/value에서 반환하는 'fishingType'의 키값.\n" +
+            "- shipId : Long (값 없을시 null) / 선택 / 글의 대상이 되는 선상id\n" +
+            "- content : String / 필수 / 내용 / 5~1000자\n" +
+            "- fileList : Long[] / 필수 / Common > /v2/api/filePreUpload를 통해 미리업로드한 파일의 id. / 최소1장부터 20장까지 가능.\n" +
+            "- videoId : Long (값 없을시 null) / 선택 / Common > /v2/api/filePreUpload를 통해 미리업로드한 동영상 파일의 id.\n" +
+            "- address : String (선박선택시 null) / 선택 / '위치선택'을 통해 선택한 위치의 주소값.\n" +
+            "- latitude : Double (선박선택시 null) / 선택 / '위치선택'을 통해 선택한 위치의 위도값\n" +
+            "- longitude : Double (선박선택시 null) / 선택 / '위치선택'을 통해 선택한 위치의 경도값\n"+
+            "응답 필드 ) 수정 성공시 true. \n")
     @PutMapping("/fishingDiary")
     public Boolean modifyFishingDiary(
             @RequestBody @Valid ModifyFishingDiaryDto dto,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
+        /*선박 또는 '위치선택' 둘중 하나는 반드시 입력했는지 검증. */
+        if(dto.getShipId()==null && dto.getAddress()==null && dto.getLatitude()==null && dto.getLongitude()==null){
+            throw new RuntimeException("shipId와 address 중 하나는 반드시 존재해야 합니다.");
+        }
+        else if(dto.getShipId()!=null && dto.getAddress()!=null){
+            throw new RuntimeException("shipId와 address 둘중 하나만 입력하여야 합니다.");
+        }
+
         return fishingDiaryService.modifyFishingDiary(dto,token);
-    }*/
+    }
 
     /*글쓰기 - ship검색*/
     @ApiOperation(value = "글쓰기 - ship검색",notes = "" +
@@ -232,13 +269,27 @@ public class FishingDiaryController {
             "- likeCount : Integer / 좋아요수 \n" +
             "- commentCount : Integer / 댓글수 \n" +
             "- scrapCount : Integer / 스크랩 수\n" +
-            "- viewCount : Integer / 조회수\n")
+            "- viewCount : Integer / 조회수\n" +
+            "- isMine : Boolean / 해당글이 자신의 글인지 여부\n")
     @GetMapping("/fishingDiary/detail")
     public FishingDiaryDetailDto getFishingDiaryDetail(
             @RequestParam("fishingDiaryId") Long fishingDiaryId,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return fishingDiaryService.getFishingDiaryDetail(fishingDiaryId,token);
+    }
+
+    /*조항일지, 유저조행기 삭제*/
+    @ApiOperation(value = "조항일지, 유저조행기 삭제",notes = "" +
+            "요청 필드 ) \n" +
+            "- fishingDiaryId : 삭제하려는 게시글 id\n" +
+            "응답 필드 ) 삭제 성공시 true\n")
+    @DeleteMapping("/fishingDiary")
+    public Boolean deleteFishingDiary(
+            @RequestBody @Valid DeleteFishingDiary dto,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return fishingDiaryService.deleteFishingDiary(dto,token);
     }
 
     /*스크랩 추가*/

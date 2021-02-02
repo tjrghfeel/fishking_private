@@ -112,18 +112,30 @@ public class MemberController {
     }
 
     /*회원가입 중간단계 - 회원정보입력*/
-    @ApiOperation(value = "회원가입 - 회원정보입력",notes = "" +
-            "회원가입 단계중, 회원정보 입력후 이를 등록하는 api. \n" +
+    @ApiOperation(value = "회원정보입력 완료 및 pass인증 요청",notes = "" +
+            "회원가입 단계중, 회원정보 입력후 pass인증 요청 api. pass인증버튼 클릭시 호출, 이전단계에서 입력한 회원정보를 함께 보내주어야한다. \n" +
+            "회원정보 임시저장 및 pass인증을 호출해 준다. \n" +
             "요청 필드 ) \n" +
-            "- memberId : Long / sns를 통해 회원가입진행중일 경우 입력. \n\tㄴ sns로그인 후 리다이렉트 url에 있는 파라미터 'memberId'를 입력해주면된다.\n" +
-            "- email : String / 이메일. 이메일 형식에 맞아야한다\n" +
-            "- pw : String / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
-            "- nickName : String / 닉네임. 4~10자. \n" +
-            "응답 )\n" +
-            "- 회원가입 진행중인 member의 id. " )
-    @PostMapping("/signUp/info")
-    public Long insertMemberInfo(@RequestBody SignUpDto dto) throws ResourceNotFoundException {
-        return memberService.insertMemberInfo(dto);
+            "- memberId : Long / 선택 / sns를 통해 회원가입진행중일 경우 입력. \n\tㄴ sns로그인 후 리다이렉트 url에 있는 파라미터 'memberId'를 입력해주면된다.\n" +
+            "- email : String / 필수 / 이메일. 이메일 형식에 맞아야한다\n" +
+            "- pw : String / 필수 / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
+            "- nickName : String / 필수 / 닉네임. 4~10자. \n" +
+            "" )
+    @PostMapping("/signUp/infoAndPassRequest")
+    public void insertMemberInfo(@RequestBody SignUpDto dto) throws ResourceNotFoundException, IOException {
+        /*회원정보 저장. */
+        memberService.insertMemberInfo(dto);
+
+        /*pass인증 요청.*/
+        String url = "https://id.passlogin.com/oauth2/authorize?" +
+                "response_type=code" +
+                "&client_id=uWHHuitm5at159jXPlc5" +
+                "&redirect_uri=https://www.fishkingapp.com/v2/api/passAuthCode" +
+                "&state=abcd";
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+
+        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"");
     }
 
     /*회원가입 - 회원정보입력
@@ -160,7 +172,7 @@ public class MemberController {
             "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)\n" +
             "- 응답 ) 문자인증건의 id ")
     @PostMapping("/findPw/smsAuthReq")
-    public Long requestSmsAuthForPwSearch(@RequestBody PhoneAuthDto dto){
+    public Long requestSmsAuthForPwSearch(@RequestBody @Valid PhoneAuthDto dto){
         return memberService.sendSmsForPwReset(dto);
     }
     /*아이디확인 및 비밀번호 재설정 - 인증번호 통과후 이름과 아이디 알려주는 api. */

@@ -67,5 +67,12 @@ public class Review extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = " bigint not null  comment '수정자'")
     private Member modifiedBy;
 
-
+    public void modify(
+        Double cleanScore, Double serviceScore, Double tasteScore, String content, Member modifiedBy
+    ){
+        this.cleanByReview = cleanScore; this.tasteByReview = tasteScore;
+        this.serviceByReview = serviceScore; this.content = content;
+        this.totalAvgByReview = (cleanScore + serviceScore + tasteScore)/3;
+        this.modifiedBy = modifiedBy;
+    }
 }

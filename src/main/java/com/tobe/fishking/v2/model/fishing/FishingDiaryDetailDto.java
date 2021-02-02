@@ -34,4 +34,5 @@ public class FishingDiaryDetailDto {
     private int commentCount;
     private int scrapCount;
     private int viewCount;
+    private Boolean isMine;
 }
