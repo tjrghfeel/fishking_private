@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -80,4 +81,8 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
             " where s.longitude is not null and s.longitude is not null  and s.fishing_type = :fishingType ", nativeQuery = true)
     List<Ship> findAllShipAndLocationByFishingType(@Param("fishingType") FishingType fishingType);
 
+
+
+    @Query(value = "SELECT COUNT(id) FROM Ship WHERE isActive = true")
+    Long findAllByIsActive();
 }

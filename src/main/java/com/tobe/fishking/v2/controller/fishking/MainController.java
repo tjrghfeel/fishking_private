@@ -1,8 +1,10 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
@@ -11,20 +13,15 @@ import com.tobe.fishking.v2.model.response.SingleResult;
 import com.tobe.fishking.v2.service.ResponseService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.common.PopularService;
-import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
-import com.tobe.fishking.v2.service.fishking.GoodsService;
-import com.tobe.fishking.v2.service.fishking.PlacesService;
-import com.tobe.fishking.v2.service.fishking.ShipService;
+import com.tobe.fishking.v2.service.fishking.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +34,9 @@ import java.util.Map;
 public class MainController {
 
     private final GoodsService goodsService;
+    private final CompanyService companyService;
     private final ShipService shipService;
+
 
     private final CommonService commonService;
     private final PopularService popularService;
@@ -113,14 +112,14 @@ public class MainController {
 
         if (!filePublish.name().equals("fishingBlog") ) // 조행기가 아니면
         {
-            //갯바위
+        /*    //갯바위
             if (filePublish.name().equals("seaRocks")) {
                 map.put(filePublish.name(), responseService.getListResult(placesService.getPlacesListsForMap(filePublish)));
-            } else{
+            } else{*/
             //선상
                 //map.put(filePublish.name(),  responseService.getListResult(goodsService.getGoodListsForMap(filePublish)));
                 map.put(filePublish.name(), responseService.getListResult(shipService.getShipListsForMap(filePublish)));
-            }
+          //  }
         }
         else
             map.put(filePublish.name(), responseService.getListResult(fishingDiaryService.getFishingDiaryListsForMap(filePublish)));
@@ -129,6 +128,33 @@ public class MainController {
 
 
     }
+
+
+    @ApiOperation(value = "선박현황 ", notes = "선박수, 업체수 조회한다.   ")
+    @GetMapping(value = "/getCountShipComany")
+    public HashMap<String, Long> getMaininfoByMarine(){
+
+        var marineCount  = new HashMap<String, Long>();
+
+        marineCount.put("company", companyService.findAllByIsRegistered());
+        marineCount.put("ship", shipService.findAllShipCount());
+
+        //marineCount.put("reservat, shipService.findAllShipCount());
+
+
+
+        // arrayList.add(new Map<String, Object>);
+
+
+        //arrayList.add("0번 아이템 입니다.");
+
+        return marineCount;
+
+    }
+
+
+
+
 
 
 }
