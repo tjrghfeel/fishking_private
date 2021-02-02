@@ -10,11 +10,9 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.fishing.QShipResponse;
-import com.tobe.fishking.v2.model.fishing.ShipListResponse;
-import com.tobe.fishking.v2.model.fishing.ShipResponse;
-import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
+import com.tobe.fishking.v2.model.fishing.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,7 +21,9 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import static com.tobe.fishking.v2.entity.common.QLoveTo.loveTo;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
 import static com.tobe.fishking.v2.utils.QueryDslUtil.getSortedColumn;
@@ -39,12 +39,13 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
         List<OrderSpecifier> ORDERS = new ArrayList<>();
         NumberPath<Integer> aliasPrice = Expressions.numberPath(Integer.class, "price");
         NumberPath<Integer> aliasSold = Expressions.numberPath(Integer.class, "sold");
+        NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
 
         if (!isEmpty(pageable.getSort())) {
             for (Sort.Order order: pageable.getSort()) {
                 switch (order.getProperty()) {
                     case "popular":
-                        OrderSpecifier<?> orderPopular = getSortedColumn(Order.DESC, ship, "reviewCount");
+                        OrderSpecifier<?> orderPopular = aliasLiked.desc();
                         ORDERS.add(orderPopular);
                         break;
                     case "distance":
@@ -76,6 +77,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .select(Projections.constructor(ShipListResponse.class,
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
+                        ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
                         ship
                 ))
                 .from(ship)
@@ -83,6 +85,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         inSpecies(shipSearchDTO.getSpecies()),
                         inFishingDate(shipSearchDTO.getFishingDate()),
                         eqSido(shipSearchDTO.getSido()),
+                        eqSigungu(shipSearchDTO.getSigungu()),
                         inGenres(shipSearchDTO.getGenres()),
                         inServices(shipSearchDTO.getServices()),
                         inFacilities(shipSearchDTO.getFacilities()),
@@ -109,6 +112,10 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
 
     private BooleanExpression eqSido(String sido) {
         return sido.isEmpty() ? null : ship.sido.containsIgnoreCase(sido);
+    }
+
+    private BooleanExpression eqSigungu(String sigungu) {
+        return sigungu.isEmpty() ? null : ship.sigungu.containsIgnoreCase(sigungu);
     }
 
     private BooleanExpression inGenres(List<String> genres) {
@@ -144,6 +151,18 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .from(ship)
                 .where(ship.id.eq(ship_id))
                 .fetchOne();
+        return result;
+    }
+
+    @Override
+    public List<GoodsResponse> getShipGoods(Long ship_id) {
+        List<GoodsResponse> result = queryFactory
+                .select(Projections.constructor(GoodsResponse.class,
+                        goods
+                ))
+                .from(goods)
+                .where(goods.ship.id.eq(ship_id))
+                .fetch();
         return result;
     }
 }

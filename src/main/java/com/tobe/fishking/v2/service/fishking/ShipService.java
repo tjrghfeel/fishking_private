@@ -133,7 +133,12 @@ public class ShipService {
     /* 선상, 갯바위 리스트 */
     @Transactional
     public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO, int page) {
-        Pageable pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+        Pageable pageable;
+        if (shipSearchDTO.getOrderBy().equals("")) {
+            pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+        } else {
+            pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+        }
         return shipRepo.searchAll(shipSearchDTO, pageable);
     }
 
@@ -153,6 +158,13 @@ public class ShipService {
             Optional<Member> member = memberRepo.findBySessionToken(sessionToken);
             member.ifPresent(value -> response.setLiked(loveToRepository.findByLinkIdAndMember(response.getId(), value) > 0));
         }
+        return response;
+    }
+
+    /* 선상, 갯바위 배 정보 */
+    @Transactional
+    public List<GoodsResponse> getShipGoods(Long ship_id) {
+        List<GoodsResponse> response = shipRepo.getShipGoods(ship_id);
         return response;
     }
 

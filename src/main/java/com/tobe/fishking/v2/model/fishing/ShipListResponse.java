@@ -30,6 +30,7 @@ public class ShipListResponse {
     public ShipListResponse(
             Integer lowPrice,
             Integer sold,
+            Long liked,
             Ship ship
     ) {
         List<CommonCode> species = ship.getFishSpecies();
