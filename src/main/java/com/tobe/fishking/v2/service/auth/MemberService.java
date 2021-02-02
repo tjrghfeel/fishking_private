@@ -222,12 +222,10 @@ public class MemberService {
 
         /*uid 중복 확인*/
         if(checkUidDup(signUpDto.getEmail())==1){
-            memberRepository.delete(member);
             throw new EmailDupException("이메일이 중복됩니다");
         }
         /*닉네임 중복 확인*/
         if(checkNickNameDup(signUpDto.getNickName())==1){
-            memberRepository.delete(member);
             throw new RuntimeException("닉네임이 중복됩니다");
         }
 
