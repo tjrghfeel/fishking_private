@@ -7,13 +7,13 @@ export default inject("PageStore")(
       <nav className="nav nav-pills nav-menu nav-justified">
         <a
           className={"nav-link" + (activeIndex === 0 ? " active" : "")}
-          onClick={() => PageStore.push(`/cs/qna/add`)}
+          onClick={() => PageStore.push(`/police/cs/qna/add`)}
         >
           문의하기
         </a>
         <a
           className={"nav-link" + (activeIndex === 1 ? " active" : "")}
-          onClick={() => PageStore.push(`/cs/qna/list`)}
+          onClick={() => PageStore.push(`/police/cs/qna/list`)}
         >
           문의내역
         </a>

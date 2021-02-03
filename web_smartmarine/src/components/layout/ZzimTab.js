@@ -7,13 +7,13 @@ export default inject("PageStore")(
       <nav className="nav nav-pills nav-menu nav-justified">
         <a
           className={"nav-link" + (activeIndex === 0 ? " active" : "")}
-          onClick={() => PageStore.push(`/zzim/boat`)}
+          onClick={() => PageStore.push(`/police/zzim/boat`)}
         >
           선상
         </a>
         <a
           className={"nav-link" + (activeIndex === 1 ? " active" : "")}
-          onClick={() => PageStore.push(`/zzim/rock`)}
+          onClick={() => PageStore.push(`/police/zzim/rock`)}
         >
           갯바위
         </a>
