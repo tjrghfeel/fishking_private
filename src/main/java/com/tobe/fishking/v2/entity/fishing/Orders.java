@@ -66,6 +66,10 @@ public class Orders extends BaseTime {
 
     @Column(columnDefinition = "varchar(20) comment '예약번호'")
     private String ordersNum;
+
+    @Column(columnDefinition = "varchar(30) comment '주문번호' ")
+    private String orderNumber;
+
 /*
 
 - 결제수단
@@ -91,4 +95,8 @@ public class Orders extends BaseTime {
     private Member modifiedBy;
 
 
+    public void setOrderNumber(String orderNumber, Member member) {
+        this.orderNumber = orderNumber;
+        this.modifiedBy = member;
+    }
 }

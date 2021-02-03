@@ -3,7 +3,8 @@ spring:
 
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:log4jdbc:mysql://116.125.120.86:3306/fishking?serverTimezone=UTC&characterEncoding=UTF-8
+#    url: jdbc:log4jdbc:mysql://192.168.0.58:7002/fishking?serverTimezone=UTC&characterEncoding=UTF-8
     username: fishking      #sa        # username: fishluck
     password: fishking12#$  #P@ssw0rd  # password: fishluck123!
     platform: mysql
