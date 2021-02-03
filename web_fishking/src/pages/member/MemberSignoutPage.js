@@ -25,7 +25,7 @@ export default inject(
             "/v2/api/profileManage/delete"
           );
           if (resolve === 0) {
-            PageStore.push(`/main/home`);
+            PageStore.push(`/cust/main/home`);
           }
         }
       };

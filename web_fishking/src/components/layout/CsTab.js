@@ -7,19 +7,19 @@ export default inject("PageStore")(
       <nav className="nav nav-pills nav-menu nav-justified">
         <a
           className={"nav-link" + (activeIndex === 0 ? " active" : "")}
-          onClick={() => PageStore.push(`/cs/faq`)}
+          onClick={() => PageStore.push(`/cust/cs/faq`)}
         >
           자주하는 질문
         </a>
         <a
           className={"nav-link" + (activeIndex === 1 ? " active" : "")}
-          onClick={() => PageStore.push(`/cs/apply`)}
+          onClick={() => PageStore.push(`/cust/cs/apply`)}
         >
           업체등록요청
         </a>
         <a
           className={"nav-link" + (activeIndex === 2 ? " active" : "")}
-          onClick={() => PageStore.push(`/cs/qna/add`)}
+          onClick={() => PageStore.push(`/cust/cs/qna/add`)}
         >
           1:1문의하기
         </a>

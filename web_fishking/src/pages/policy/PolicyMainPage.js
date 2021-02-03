@@ -25,7 +25,7 @@ export default inject("PageStore")(
             <div className="container nopadding mt-0">
               <div className="pt-0">
                 <hr className="full mt-0 mb-3" />
-                <a onClick={() => PageStore.push(`/policy/terms`)}>
+                <a onClick={() => PageStore.push(`/cust/policy/terms`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">이용약관</div>
                     <div className="col-8 text-right"></div>
@@ -38,7 +38,7 @@ export default inject("PageStore")(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/policy/privacy`)}>
+                <a onClick={() => PageStore.push(`/cust/policy/privacy`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">개인정보처리방침</div>
                     <div className="col-8 text-right"></div>
@@ -51,7 +51,7 @@ export default inject("PageStore")(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/policy/cancel`)}>
+                <a onClick={() => PageStore.push(`/cust/policy/cancel`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">취소 및 환불 규정</div>
                     <div className="col-8 text-right"></div>
@@ -64,7 +64,7 @@ export default inject("PageStore")(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/policy/lbs`)}>
+                <a onClick={() => PageStore.push(`/cust/policy/lbs`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">위치기반 서비스 이용약관</div>
                     <div className="col-8 text-right"></div>
@@ -77,7 +77,7 @@ export default inject("PageStore")(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/policy/agree`)}>
+                <a onClick={() => PageStore.push(`/cust/policy/agree`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">개인정보 제 3자 제공 동의</div>
                     <div className="col-8 text-right"></div>

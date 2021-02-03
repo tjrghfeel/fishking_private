@@ -86,7 +86,7 @@ export default inject(
       goToMenu = (item) => {
         const { PageStore } = this.props;
         if (item.requiredLoggedIn && !PageStore.loggedIn) {
-          PageStore.push(`/member/login`);
+          PageStore.push(`/cust/member/login`);
         } else {
           PageStore.push(item.pathname);
         }
@@ -141,7 +141,7 @@ export default inject(
                     <h6>
                       <strong>{state.nickName}</strong>
                       <a
-                        onClick={() => PageStore.push(`/set/profile`)}
+                        onClick={() => PageStore.push(`/cust/set/profile`)}
                         className="btn btn-round-grey btn-xs float-right"
                       >
                         프로필
@@ -166,7 +166,7 @@ export default inject(
             {/** 예약/쿠폰 */}
             <div className="container nopadding">
               {loggedIn && (
-                <a onClick={() => PageStore.push(`/reservation/my`)}>
+                <a onClick={() => PageStore.push(`/cust/reservation/my`)}>
                   <div className="card-round-box">
                     <div className="row no-gutters d-flex align-items-center">
                       <div className="col-7">
@@ -194,7 +194,7 @@ export default inject(
               )}
               {!loggedIn && (
                 <a
-                  onClick={() => PageStore.push(`/member/login`)}
+                  onClick={() => PageStore.push(`/cust/member/login`)}
                   className="btn btn-primary btn-round btn-lg btn-block cs-padding"
                 >
                   로그인 및 회원가입 하기
@@ -205,8 +205,8 @@ export default inject(
                 <div className="col-4 text-right">
                   <a
                     onClick={() => {
-                      if (loggedIn) PageStore.push(`/coupon/my`);
-                      else PageStore.push(`/member/login`);
+                      if (loggedIn) PageStore.push(`/cust/coupon/my`);
+                      else PageStore.push(`/cust/member/login`);
                     }}
                   >
                     <strong className="text-primary large">
@@ -223,7 +223,7 @@ export default inject(
                 <div className="col-1"></div>
                 <div className="col-2">알림</div>
                 <div className="col-3 text-right">
-                  <a onClick={() => PageStore.push(`/cs/alarm`)}>
+                  <a onClick={() => PageStore.push(`/cust/cs/alarm`)}>
                     <strong className="text-primary large">
                       {Intl.NumberFormat().format(state.alertCount || 0)}
                     </strong>
@@ -237,7 +237,7 @@ export default inject(
                 </div>
               </div>
               <p className="space mt-3 mb-0"></p>
-              <a onClick={() => PageStore.push(`/coupon/available`)}>
+              <a onClick={() => PageStore.push(`/cust/coupon/available`)}>
                 <div className="row no-gutters d-flex align-items-center mt-2">
                   <div className="col-9">
                     <strong>

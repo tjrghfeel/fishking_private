@@ -64,7 +64,7 @@ export default inject(
       onClick = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/reservation/my/detail/${item.id}`);
+        PageStore.push(`/cust/reservation/my/detail/${item.id}`);
       };
       onClickMap = (item) => {
         const { PageStore } = this.props;
@@ -79,7 +79,7 @@ export default inject(
       onClickReview = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/reservation/review/add/${item.goodsId}`);
+        PageStore.push(`/cust/reservation/review/add/${item.goodsId}`);
       };
       onClickCancel = (item) => {};
       /********** ********** ********** ********** **********/

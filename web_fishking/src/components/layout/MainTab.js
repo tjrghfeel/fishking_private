@@ -10,34 +10,34 @@ export default inject("PageStore")(
             <nav className="nav nav-pills nav-tab nav-justified">
               <a
                 className={"nav-link" + (activeIndex === 0 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/home`)}
+                onClick={() => PageStore.push(`/cust/main/home`)}
               >
                 <figure className="tab_home"></figure>홈
               </a>
               <a
                 className={"nav-link" + (activeIndex === 1 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/boat`)}
+                onClick={() => PageStore.push(`/cust/main/boat`)}
               >
                 <figure className="tab_boat"></figure>
                 선상
               </a>
               <a
                 className={"nav-link" + (activeIndex === 2 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/rock`)}
+                onClick={() => PageStore.push(`/cust/main/rock`)}
               >
                 <figure className="tab_rock"></figure>
                 갯바위
               </a>
               <a
                 className={"nav-link" + (activeIndex === 3 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/story/diary`)}
+                onClick={() => PageStore.push(`/cust/main/story/diary`)}
               >
                 <figure className="tab_story"></figure>
                 어복스토리
               </a>
               <a
                 className={"nav-link" + (activeIndex === 4 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/my`)}
+                onClick={() => PageStore.push(`/cust/main/my`)}
               >
                 <figure className="tab_my"></figure>
                 마이메뉴

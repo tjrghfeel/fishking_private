@@ -48,7 +48,7 @@ export default inject(
         });
         if (response) {
           PageStore.setLogin(response);
-          PageStore.push(`/main/my`);
+          PageStore.push(`/cust/main/my`);
         } else {
           this.password.current?.classList.add("is-invalid");
         }
@@ -139,12 +139,12 @@ export default inject(
                   로그인
                 </a>
                 <p class="text-center mt-3">
-                  <a onClick={() => PageStore.push(`/member/findpw`)}>
+                  <a onClick={() => PageStore.push(`/cust/member/findpw`)}>
                     <small class="grey">아이디확인 및 비밀번호재설정</small>
                   </a>
                 </p>
                 <a
-                  onClick={() => PageStore.push(`/member/signup`)}
+                  onClick={() => PageStore.push(`/cust/member/signup`)}
                   class="btn btn-grey btn-lg btn-block mt-4"
                 >
                   이메일로 가입하기
@@ -207,14 +207,14 @@ export default inject(
                 <p class="text-center mt-4">
                   어복황제 로그인/회원가입시 <br />
                   <a
-                    onClick={() => PageStore.push(`/policy/terms`)}
+                    onClick={() => PageStore.push(`/cust/policy/terms`)}
                     class="text-primary"
                   >
                     이용약관
                   </a>{" "}
                   및{" "}
                   <a
-                    onClick={() => PageStore.push(`/policy/privacy`)}
+                    onClick={() => PageStore.push(`/cust/policy/privacy`)}
                     class="text-primary"
                   >
                     개인정보취급방침

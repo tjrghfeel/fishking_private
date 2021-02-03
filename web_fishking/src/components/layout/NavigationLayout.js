@@ -42,7 +42,7 @@ export default inject("PageStore")(
             <span className="navbar-title">{title && title}</span>
             {showSetIcon && (
               <a
-                onClick={() => PageStore.push(`/set/main`)}
+                onClick={() => PageStore.push(`/cust/set/main`)}
                 className="fixed-top-right-two"
               >
                 <img src="/cust/assets/img/svg/navbar-set.svg" alt="Set" />
@@ -50,7 +50,7 @@ export default inject("PageStore")(
             )}
             {showSearchIcon && (
               <a
-                onClick={() => PageStore.push(`/search/all`)}
+                onClick={() => PageStore.push(`/cust/search/all`)}
                 className="fixed-top-right"
               >
                 <img

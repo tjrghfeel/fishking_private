@@ -7,19 +7,19 @@ export default inject("PageStore")(
       <nav className="nav nav-pills nav-menu nav-justified">
         <a
           className={"nav-link" + (activeIndex === 0 ? " active" : "")}
-          onClick={() => PageStore.push(`/main/story/diary`)}
+          onClick={() => PageStore.push(`/cust/main/story/diary`)}
         >
           조황일지
         </a>
         <a
           className={"nav-link" + (activeIndex === 1 ? " active" : "")}
-          onClick={() => PageStore.push(`/main/story/tv`)}
+          onClick={() => PageStore.push(`/cust/main/story/tv`)}
         >
           어복TV
         </a>
         <a
           className={"nav-link" + (activeIndex === 2 ? " active" : "")}
-          onClick={() => PageStore.push(`/main/story/user`)}
+          onClick={() => PageStore.push(`/cust/main/story/user`)}
         >
           유저조행기
         </a>
