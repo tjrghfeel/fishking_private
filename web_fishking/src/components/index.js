@@ -16,6 +16,7 @@ import AddCouponModal from "./modal/AddCouponModal";
 import SNSModal from "./modal/SNSModal";
 import SelectAreaModal from "./modal/SelectAreaModal";
 import SelectStorySortModal from "./modal/SelectStorySortModal";
+import SelectCompanySortModal from "./modal/SelectCompanySortModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -77,6 +78,7 @@ export default {
     SNSModal,
     SelectAreaModal,
     SelectStorySortModal,
+    SelectCompanySortModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
