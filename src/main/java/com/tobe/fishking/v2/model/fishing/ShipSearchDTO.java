@@ -43,6 +43,9 @@ public class ShipSearchDTO {
     @ApiParam(value = "지역검색. 시도 범위", example = "인천광역시")
     private @Valid String sido = "";
 
+    @ApiParam(value = "지역검색. 시군구 범위", example = "중구")
+    private @Valid String sigungu = "";
+
     @ApiParam(value = "실시간영상 유무 빈값의 경우 전부", example = "false")
     private @Valid Boolean hasRealTimeVideo = null;
 

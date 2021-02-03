@@ -184,9 +184,13 @@ public class Ship extends BaseTime {  //선상
     // EXEC sp_addextendedproperty 'MS_Description', N'청결도평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(columnDefinition = "float  default 0.0  comment  '청결도평점'  ")
     private Double cleanByReview;
+
     @Column(columnDefinition = "int default 0 comment '리뷰 수'")
     private int reviewCount;
 
+
+    @Column(columnDefinition = "tinyint(1) default 1 comment '운행여부'")
+    private boolean isActive;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by
