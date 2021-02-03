@@ -57,6 +57,7 @@ import CouponAvailableListItemView from "./view/CouponAvailableListItemView";
 import ReservationMyListItemView from "./view/ReservationMyListItemView";
 import FilterListView from "./view/FilterListView";
 import StoryPostListItemView from "./view/StoryPostListItemView";
+import StoryDetailCommentListItemView from "./view/StoryDetailCommentListItemView";
 
 export default {
   /********** MODAL **********/
@@ -113,5 +114,6 @@ export default {
     ReservationMyListItemView,
     FilterListView,
     StoryPostListItemView,
+    StoryDetailCommentListItemView,
   },
 };

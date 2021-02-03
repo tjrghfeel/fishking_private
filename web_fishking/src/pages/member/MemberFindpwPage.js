@@ -9,7 +9,8 @@ const {
 export default inject(
   "APIStore",
   "DataStore",
-  "PageStore"
+  "PageStore",
+  "ModalStore"
 )(
   observer(
     class extends React.Component {
@@ -34,26 +35,28 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       requestCode = async () => {
-        const { APIStore, DataStore } = this.props;
+        const { APIStore, DataStore, ModalStore } = this.props;
         const { mobile } = this.state;
 
         if (!DataStore.isMobile(mobile)) return;
 
-        console.log(
-          JSON.stringify({
+        try {
+          const codeId = await APIStore._post("/v2/api/findPw/smsAuthReq", {
             areaCode: mobile.substr(0, 3),
             localNumber: mobile.substr(3, mobile.length),
-          })
-        );
-        const codeId = await APIStore._post("/v2/api/findPw/smsAuthReq", {
-          areaCode: mobile.substr(0, 3),
-          localNumber: mobile.substr(3, mobile.length),
-        });
-        this.setState({ codeId });
-        const findInfo = await APIStore._put("/v2/api/findPw/uid", {
-          phoneAuthId: codeId,
-        });
-        this.setState({ userName: findInfo.memberName, userId: findInfo.uid });
+          });
+          this.setState({ codeId });
+          const findInfo = await APIStore._put("/v2/api/findPw/uid", {
+            phoneAuthId: codeId,
+          });
+          this.setState({
+            userName: findInfo.memberName,
+            userId: findInfo.uid,
+          });
+        } catch (err) {
+          ModalStore.openModal("Alert", { body: "휴대폰번호를 확인해주세요." });
+          return;
+        }
       };
 
       requestValid = async () => {

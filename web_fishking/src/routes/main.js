@@ -6,6 +6,7 @@ import MainHomePage from "../pages/main/MainHomePage";
 import MainBoatPage from "../pages/main/MainBoatPage";
 import MainRockPage from "../pages/main/MainRockPage";
 import MainStoryDiaryPage from "../pages/main/MainStoryDiaryPage";
+import MainStoryUserPage from "../pages/main/MainStoryUserPage";
 import MainMyPage from "../pages/main/MainMyPage";
 
 export default inject()(
@@ -35,7 +36,7 @@ export default inject()(
           <Route
             exact
             path={`${match.url}/story/user`}
-            component={MainStoryDiaryPage}
+            component={MainStoryUserPage}
           />
           {/** 메인 > 마이 */}
           <Route exact path={`${match.url}/my`} component={MainMyPage} />

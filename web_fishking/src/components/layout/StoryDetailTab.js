@@ -8,6 +8,7 @@ export default inject()(
       likeCount = 0,
       commentCount = 0,
       onClickLike,
+      onClickComment,
       onClickShare,
       onClickReservation,
     }) => {
@@ -22,7 +23,10 @@ export default inject()(
                 <span className="icon icon-good"></span>{" "}
                 {Intl.NumberFormat().format(likeCount)}
               </a>
-              <a className="nav-link">
+              <a
+                onClick={() => (onClickComment ? onClickComment() : null)}
+                className="nav-link"
+              >
                 <span className="icon icon-comment"></span>{" "}
                 {Intl.NumberFormat().format(commentCount)}
               </a>

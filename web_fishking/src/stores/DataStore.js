@@ -136,18 +136,23 @@ const ModalStore = new (class {
         let row = [];
         for (let i = 0; i < resolve.list.length; i++) {
           const item = resolve.list[i];
-          const { id, code, codeName } = item;
+          const { id, code, codeName, extraValue1 } = item;
           if (columnLength === 0) {
-            codes.push({ id, code, codeName });
+            codes.push({ id, code, codeName, extraValue1 });
           } else {
-            row.push({ id, code, codeName });
+            row.push({ id, code, codeName, extraValue1 });
             if (row.length === columnLength) {
               codes.push(row);
               row = [];
             }
             if (i === resolve.list.length - 1) {
               while (row.length < columnLength) {
-                row.push({ id: null, code: null, codeName: null });
+                row.push({
+                  id: null,
+                  code: null,
+                  codeName: null,
+                  extraValue1: null,
+                });
               }
               codes.push(row);
             }
@@ -156,6 +161,36 @@ const ModalStore = new (class {
       }
 
       return codes;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+  makeArrayToColumns = (resolve, columnLength = 0) => {
+    try {
+      const items = [];
+      if (resolve.length > 0) {
+        let row = [];
+        for (let i = 0; i < resolve.length; i++) {
+          const item = resolve[i];
+          if (columnLength === 0) {
+            items.push(item);
+          } else {
+            row.push(item);
+            if (row.length === columnLength) {
+              items.push(row);
+              row = [];
+            }
+            if (i === resolve.length - 1) {
+              while (row.length < columnLength) {
+                row.push({});
+              }
+              items.push(row);
+            }
+          }
+        }
+      }
+      return items;
     } catch (err) {
       console.error(err);
       return null;

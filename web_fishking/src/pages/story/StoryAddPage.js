@@ -51,7 +51,7 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       onSubmit = async () => {
-        const { ModalStore, APIStore } = this.props;
+        const { ModalStore, APIStore, PageStore } = this.props;
         const {
           category,
           title,
@@ -112,7 +112,15 @@ export default inject(
           fileList,
           videoId,
         });
-        console.log(JSON.stringify(resolve));
+
+        if (resolve) {
+          ModalStore.openModal("Alert", {
+            body: "등록되었습니다.",
+            onOk: () => {
+              PageStore.goBack();
+            },
+          });
+        }
       };
       uploadFile = async () => {
         const { ModalStore } = this.props;
