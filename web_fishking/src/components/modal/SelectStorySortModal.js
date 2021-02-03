@@ -13,17 +13,17 @@ export default inject()(
         {
           text: "최신순",
           value: "createDate",
-          imgSrc: "/assets/img/svg/sort-latest.svg",
+          imgSrc: "/cust/assets/img/svg/sort-latest.svg",
         },
         {
           text: "좋아요순",
           value: "likeCount",
-          imgSrc: "/assets/img/svg/sort-recommand.svg",
+          imgSrc: "/cust/assets/img/svg/sort-recommand.svg",
         },
         {
           text: "댓글순",
           value: "commentCount",
-          imgSrc: "/assets/img/svg/sort-comment.svg",
+          imgSrc: "/cust/assets/img/svg/sort-comment.svg",
         },
       ];
       const [selected, setSelected] = useState(0);
@@ -49,13 +49,19 @@ export default inject()(
             <div className="modal-content">
               <div className="modal-header bg-primary d-flex justify-content-center">
                 <a data-dismiss="modal" className="nav-left">
-                  <img src="/assets/img/svg/navbar-back.svg" alt="뒤로가기" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-back.svg"
+                    alt="뒤로가기"
+                  />
                 </a>
                 <h5 className="modal-title" id={id.concat("Label")}>
                   정렬선택
                 </h5>
                 <a className="nav-right" onClick={onInit}>
-                  <img src="/assets/img/svg/navbar-refresh.svg" alt="Refresh" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-refresh.svg"
+                    alt="Refresh"
+                  />
                   <span>초기화</span>
                 </a>
               </div>

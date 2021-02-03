@@ -33,7 +33,7 @@ export default inject("PageStore")(
     useEffect(() => {
       (async () => {
         // # 카카오 라이브러리
-        await PageStore.injectScript("/assets/js/kakao.min.js", {
+        await PageStore.injectScript("/cust/assets/js/kakao.min.js", {
           global: true,
         });
         Kakao.init(process.env.REACT_APP_KAKAO_JAVASCRIPT_KEY);
@@ -60,7 +60,7 @@ export default inject("PageStore")(
         })(document, "script", "facebook-jssdk");
         // # 네이버 라이브러리
         await PageStore.injectScript(
-          "/assets/js/naveridlogin_js_sdk_2.0.0.js",
+          "/cust/assets/js/naveridlogin_js_sdk_2.0.0.js",
           {
             global: true,
           }
@@ -105,37 +105,37 @@ export default inject("PageStore")(
       <BrowserRouter>
         <Switch>
           {/** 메인 */}
-          <Route path={`/main`} component={MainRoute} />
+          <Route path={`/cust/main`} component={MainRoute} />
 
           {/** 멤버 */}
-          <Route path={`/member`} component={MemberRoute} />
+          <Route path={`/cust/member`} component={MemberRoute} />
 
           {/** 설정 */}
-          <Route path={`/set`} component={SetRoute} />
+          <Route path={`/cust/set`} component={SetRoute} />
 
           {/** 약관및정책 */}
-          <Route path={`/policy`} component={PolicyRoute} />
+          <Route path={`/cust/policy`} component={PolicyRoute} />
 
           {/** 고객센터 */}
-          <Route path={`/cs`} component={CsRoute} />
+          <Route path={`/cust/cs`} component={CsRoute} />
 
           {/** 스토리 */}
-          <Route path={`/story`} component={StoryRoute} />
+          <Route path={`/cust/story`} component={StoryRoute} />
 
           {/** 찜 */}
-          <Route path={`/zzim`} component={ZzimRoute} />
+          <Route path={`/cust/zzim`} component={ZzimRoute} />
 
           {/** 쿠폰 */}
-          <Route path={`/coupon`} component={CouponRoute} />
+          <Route path={`/cust/coupon`} component={CouponRoute} />
 
           {/** 검색 */}
-          <Route path={`/search`} component={SearchRoute} />
+          <Route path={`/cust/search`} component={SearchRoute} />
 
           {/** 예약 */}
-          <Route path={`/reservation`} component={ReservationRoute} />
+          <Route path={`/cust/reservation`} component={ReservationRoute} />
 
           {/** 기본 리디렉션 */}
-          <Redirect from={`*`} to={`/main/home`} />
+          <Redirect from={`*`} to={`/cust/main/home`} />
         </Switch>
         <LoadingLayout />
         <AlertModal />

@@ -148,7 +148,7 @@ export default inject(
                       className="fixed-top-right"
                     >
                       <img
-                        src="/assets/img/svg/icon-ellipsis-white.svg"
+                        src="/cust/assets/img/svg/icon-ellipsis-white.svg"
                         alt="Search"
                       />
                     </a>

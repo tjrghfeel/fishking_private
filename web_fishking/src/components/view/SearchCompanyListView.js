@@ -80,7 +80,7 @@ export default inject(
               <form className="form-search">
                 <a>
                   <img
-                    src="/assets/img/svg/form-search.svg"
+                    src="/cust/assets/img/svg/form-search.svg"
                     alt=""
                     className="icon-search"
                   />
@@ -97,7 +97,10 @@ export default inject(
                   }}
                 />
                 <a>
-                  <img src="/assets/img/svg/navbar-search.svg" alt="Search" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-search.svg"
+                    alt="Search"
+                  />
                 </a>
               </form>
             </div>

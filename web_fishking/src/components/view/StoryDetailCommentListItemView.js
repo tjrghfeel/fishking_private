@@ -60,7 +60,7 @@ export default inject()(
                   }
                 >
                   <img
-                    src="/assets/img/svg/icon-ellipsis.svg"
+                    src="/cust/assets/img/svg/icon-ellipsis.svg"
                     alt="메뉴더보기"
                   />
                 </a>

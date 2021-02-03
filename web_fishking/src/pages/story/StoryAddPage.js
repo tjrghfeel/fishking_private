@@ -293,7 +293,7 @@ export default inject(
                         </React.Fragment>
                       ))}
                       <img
-                        src="/assets/img/svg/arrow-right.svg"
+                        src="/cust/assets/img/svg/arrow-right.svg"
                         alt=""
                         className="add"
                       />
@@ -316,7 +316,7 @@ export default inject(
                         </React.Fragment>
                       )}
                       <img
-                        src="/assets/img/svg/arrow-right.svg"
+                        src="/cust/assets/img/svg/arrow-right.svg"
                         alt=""
                         className="add"
                       />
@@ -327,7 +327,7 @@ export default inject(
                     <dd>
                       {this.state.tideName}
                       <img
-                        src="/assets/img/svg/arrow-right.svg"
+                        src="/cust/assets/img/svg/arrow-right.svg"
                         alt=""
                         className="add"
                       />
@@ -342,7 +342,7 @@ export default inject(
                         </React.Fragment>
                       ))}
                       <img
-                        src="/assets/img/svg/arrow-right.svg"
+                        src="/cust/assets/img/svg/arrow-right.svg"
                         alt=""
                         className="add"
                       />
@@ -357,7 +357,7 @@ export default inject(
                         </React.Fragment>
                       ))}
                       <img
-                        src="/assets/img/svg/arrow-right.svg"
+                        src="/cust/assets/img/svg/arrow-right.svg"
                         alt=""
                         className="add"
                       />
@@ -368,7 +368,7 @@ export default inject(
                     <dd>
                       {this.state.fishingTypeName}
                       <img
-                        src="/assets/img/svg/arrow-right.svg"
+                        src="/cust/assets/img/svg/arrow-right.svg"
                         alt=""
                         className="add"
                       />
@@ -387,7 +387,7 @@ export default inject(
                         src={
                           this.state.shipData.itemType === "Company"
                             ? this.state.shipData.thumbnailUrl
-                            : "/assets/img/sample/boat2.jpg"
+                            : "/cust/assets/img/sample/boat2.jpg"
                         }
                         className="img-fluid"
                         alt=""
@@ -396,7 +396,7 @@ export default inject(
                     <div className="cardInfoWrap">
                       <div className="card-body">
                         <img
-                          src="/assets/img/svg/arrow-right.svg"
+                          src="/cust/assets/img/svg/arrow-right.svg"
                           alt=""
                           className="float-right-arrow"
                         />
@@ -446,7 +446,7 @@ export default inject(
                   <a onClick={() => this.file.current?.click()}>
                     <div className="box-round-grey">
                       <img
-                        src="/assets/img/svg/icon-plus-blue.svg"
+                        src="/cust/assets/img/svg/icon-plus-blue.svg"
                         alt=""
                         className="icon-sm icon-plus"
                       />
@@ -460,7 +460,7 @@ export default inject(
                         onClick={() => this.removeUploadFile(data.fileId)}
                         className="del"
                       >
-                        <img src="/assets/img/svg/icon_close_white.svg" />
+                        <img src="/cust/assets/img/svg/icon_close_white.svg" />
                       </a>
                       <img
                         src={data.downloadUrl}
@@ -477,7 +477,7 @@ export default inject(
               <div className="card card-box">
                 <h6 className="card-header-white text-center">
                   <img
-                    src="/assets/img/svg/icon-alert.svg"
+                    src="/cust/assets/img/svg/icon-alert.svg"
                     alt=""
                     className="vam"
                   />

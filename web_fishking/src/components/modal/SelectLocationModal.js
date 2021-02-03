@@ -19,7 +19,10 @@ export default inject("DataStore")(
           <div className="modal-content">
             <div className="modal-header bg-primary d-flex justify-content-center">
               <a ref={dismiss} data-dismiss="modal" className="nav-left">
-                <img src="/assets/img/svg/navbar-back.svg" alt="뒤로가기" />
+                <img
+                  src="/cust/assets/img/svg/navbar-back.svg"
+                  alt="뒤로가기"
+                />
               </a>
               <h5 className="modal-title" id={id.concat("Label")}>
                 업체&위치 등록

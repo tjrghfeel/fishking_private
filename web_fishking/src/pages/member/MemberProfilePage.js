@@ -98,7 +98,10 @@ export default inject(
             <div className="profilewrap">
               <div className="float-top-left">
                 <a onClick={() => PageStore.goBack()}>
-                  <img src="/assets/img/svg/navbar-back.svg" alt="뒤로가기" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-back.svg"
+                    alt="뒤로가기"
+                  />
                 </a>
               </div>
               <div className="imgWrap">
@@ -121,7 +124,7 @@ export default inject(
                       className="img-upload btn btn-circle btn-circle-sm btn-white float_btn"
                     >
                       <img
-                        src="/assets/img/svg/icon-photo.svg"
+                        src="/cust/assets/img/svg/icon-photo.svg"
                         alt=""
                         className="icon-photo"
                       />
@@ -166,7 +169,10 @@ export default inject(
                       onClick={() => PageStore.push(`/set/profile`)}
                     >
                       <figure>
-                        <img src="/assets/img/svg/icon-profile.svg" alt="" />
+                        <img
+                          src="/cust/assets/img/svg/icon-profile.svg"
+                          alt=""
+                        />
                       </figure>
                       <span>프로필 관리</span>
                     </a>
@@ -175,7 +181,10 @@ export default inject(
                       onClick={() => PageStore.push(`/story/add`)}
                     >
                       <figure>
-                        <img src="/assets/img/svg/mymenu-write.svg" alt="" />
+                        <img
+                          src="/cust/assets/img/svg/mymenu-write.svg"
+                          alt=""
+                        />
                       </figure>
                       <span>글쓰기</span>
                     </a>
@@ -184,7 +193,7 @@ export default inject(
                       onClick={() => PageStore.push(`/story/my/post`)}
                     >
                       <figure>
-                        <img src="/assets/img/svg/icon-post.svg" alt="" />
+                        <img src="/cust/assets/img/svg/icon-post.svg" alt="" />
                       </figure>
                       <span>내 글 관리</span>
                     </a>
@@ -193,7 +202,7 @@ export default inject(
                       onClick={() => PageStore.push(`/zzim/boat`)}
                     >
                       <figure>
-                        <img src="/assets/img/svg/icon-heart.svg" alt="" />
+                        <img src="/cust/assets/img/svg/icon-heart.svg" alt="" />
                       </figure>
                       <span>찜 목록</span>
                     </a>
@@ -204,7 +213,10 @@ export default inject(
                     {this.state.isCompany && (
                       <a className="nav-link">
                         <figure>
-                          <img src="/assets/img/svg/icon-home.svg" alt="" />
+                          <img
+                            src="/cust/assets/img/svg/icon-home.svg"
+                            alt=""
+                          />
                         </figure>
                         <span>업체 바로가기</span>
                       </a>
@@ -214,20 +226,26 @@ export default inject(
                       onClick={() => PageStore.push(`/search/all`)}
                     >
                       <figure>
-                        <img src="/assets/img/svg/icon-search-b.svg" alt="" />
+                        <img
+                          src="/cust/assets/img/svg/icon-search-b.svg"
+                          alt=""
+                        />
                       </figure>
                       <span>검색하기</span>
                     </a>
                     <a className="nav-link">
                       <figure>
-                        <img src="/assets/img/svg/icon-post.svg" alt="" />
+                        <img src="/cust/assets/img/svg/icon-post.svg" alt="" />
                       </figure>
                       <span>작성 글 보기</span>
                     </a>
                     {this.state.isCompany && (
                       <a className="nav-link">
                         <figure>
-                          <img src="/assets/img/svg/icon-reserv.svg" alt="" />
+                          <img
+                            src="/cust/assets/img/svg/icon-reserv.svg"
+                            alt=""
+                          />
                         </figure>
                         <span>예약하기</span>
                       </a>

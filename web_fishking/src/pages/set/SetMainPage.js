@@ -80,7 +80,7 @@ export default inject(
                         <div className="col-8 text-right"></div>
                         <div className="col-1 text-right pl-1">
                           <img
-                            src="/assets/img/svg/cal-arrow-right.svg"
+                            src="/cust/assets/img/svg/cal-arrow-right.svg"
                             alt=""
                           />
                         </div>
@@ -97,7 +97,10 @@ export default inject(
                       <span className="status-icon status6">최신버전</span>
                     </div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>

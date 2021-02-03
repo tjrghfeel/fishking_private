@@ -13,32 +13,32 @@ export default inject()(
         {
           text: "인기순",
           value: "popular",
-          imgSrc: "/assets/img/svg/sort-best.svg",
+          imgSrc: "/cust/assets/img/svg/sort-best.svg",
         },
         {
           text: "거리순",
           value: "distance",
-          imgSrc: "/assets/img/svg/sort-distance.svg",
+          imgSrc: "/cust/assets/img/svg/sort-distance.svg",
         },
         {
           text: "낮은가격순",
           value: "lowPrice",
-          imgSrc: "/assets/img/svg/sort-lowprice.svg",
+          imgSrc: "/cust/assets/img/svg/sort-lowprice.svg",
         },
         {
           text: "높은가격순",
           value: "highPrice",
-          imgSrc: "/assets/img/svg/sort-highprice.svg",
+          imgSrc: "/cust/assets/img/svg/sort-highprice.svg",
         },
         {
           text: "리뷰순",
           value: "review",
-          imgSrc: "/assets/img/svg/sort-review.svg",
+          imgSrc: "/cust/assets/img/svg/sort-review.svg",
         },
         {
           text: "판매순",
           value: "sell",
-          imgSrc: "/assets/img/svg/sort-sell.svg",
+          imgSrc: "/cust/assets/img/svg/sort-sell.svg",
         },
       ];
       const [selected, setSelected] = useState(0);
@@ -64,13 +64,19 @@ export default inject()(
             <div className="modal-content">
               <div className="modal-header bg-primary d-flex justify-content-center">
                 <a data-dismiss="modal" className="nav-left">
-                  <img src="/assets/img/svg/navbar-back.svg" alt="뒤로가기" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-back.svg"
+                    alt="뒤로가기"
+                  />
                 </a>
                 <h5 className="modal-title" id={id.concat("Label")}>
                   정렬선택
                 </h5>
                 <a className="nav-right" onClick={onInit}>
-                  <img src="/assets/img/svg/navbar-refresh.svg" alt="Refresh" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-refresh.svg"
+                    alt="Refresh"
+                  />
                   <span>초기화</span>
                 </a>
               </div>

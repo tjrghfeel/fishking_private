@@ -154,7 +154,10 @@ export default inject(
               <div className="profilewrap">
                 <div className="float-top-left">
                   <a onClick={() => PageStore.goBack()}>
-                    <img src="/assets/img/svg/navbar-back.svg" alt="뒤로가기" />
+                    <img
+                      src="/cust/assets/img/svg/navbar-back.svg"
+                      alt="뒤로가기"
+                    />
                   </a>
                 </div>
                 <a
@@ -162,14 +165,14 @@ export default inject(
                   className="img-upload btn btn-circle btn-circle-sm btn-white float_btm_right"
                 >
                   <img
-                    src="/assets/img/svg/icon-photo.svg"
+                    src="/cust/assets/img/svg/icon-photo.svg"
                     alt=""
                     className="icon-photo"
                   />
                 </a>
                 <div className="imgWrap">
                   <img
-                    src="/assets/img/bg-profile04.jpg"
+                    src="/cust/assets/img/bg-profile04.jpg"
                     className="d-block w-100"
                     alt=""
                   />
@@ -186,7 +189,7 @@ export default inject(
                       className="img-upload btn btn-circle btn-circle-sm btn-white float_btn"
                     >
                       <img
-                        src="/assets/img/svg/icon-photo.svg"
+                        src="/cust/assets/img/svg/icon-photo.svg"
                         alt=""
                         className="icon-photo"
                       />
@@ -215,7 +218,10 @@ export default inject(
                     </div>
                     <div className="col-8 text-right">{state.nickName}</div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -229,7 +235,10 @@ export default inject(
                       {state.statusMessage || "상태메시지를 입력해 주세요."}
                     </div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -243,7 +252,10 @@ export default inject(
                       {(state.areaCode || "").concat(state.localNumber || "")}
                     </div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -257,7 +269,10 @@ export default inject(
                       {(state.email || "").maskEmail()}
                     </div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -269,7 +284,10 @@ export default inject(
                     </div>
                     <div className="col-8 text-right"></div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>

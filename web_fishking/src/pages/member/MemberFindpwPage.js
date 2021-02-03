@@ -118,7 +118,7 @@ export default inject(
             {/** 정보 */}
             <div className="container nopadding mt-1">
               <h5 className="text-center">
-                <img src="/assets/img/svg/logo.svg" alt="" />
+                <img src="/cust/assets/img/svg/logo.svg" alt="" />
               </h5>
             </div>
 

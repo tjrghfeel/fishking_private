@@ -213,7 +213,7 @@ export default inject(
                         className="float-photo"
                       >
                         <img
-                          src="/assets/img/svg/icon-photo.svg"
+                          src="/cust/assets/img/svg/icon-photo.svg"
                           alt="사진"
                           className="icon-sm"
                         />

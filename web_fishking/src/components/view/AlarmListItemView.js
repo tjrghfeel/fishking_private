@@ -39,7 +39,7 @@ export default inject()(
               </div>
               <div className="col-1 text-right">
                 <a onClick={() => (onDelete ? onDelete(data) : null)}>
-                  <img src="/assets/img/svg/icon_close_grey.svg" alt="" />
+                  <img src="/cust/assets/img/svg/icon_close_grey.svg" alt="" />
                 </a>
               </div>
             </div>
