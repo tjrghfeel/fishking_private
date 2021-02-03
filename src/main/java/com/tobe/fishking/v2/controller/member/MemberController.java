@@ -122,16 +122,16 @@ public class MemberController {
             "- nickName : String / 필수 / 닉네임. 4~10자. \n" +
             "" )
     @PostMapping("/signUp/infoAndPassRequest")
-    public void insertMemberInfo(@RequestBody SignUpDto dto) throws ResourceNotFoundException, IOException {
+    public void insertMemberInfo(@RequestBody SignUpDto dto, HttpServletResponse response) throws ResourceNotFoundException, IOException {
         /*회원정보 저장. */
-        memberService.insertMemberInfo(dto);
+        Long memberId = memberService.insertMemberInfo(dto);
 
         /*pass인증 요청.*/
         String url = "https://id.passlogin.com/oauth2/authorize?" +
                 "response_type=code" +
                 "&client_id=uWHHuitm5at159jXPlc5" +
                 "&redirect_uri=https://www.fishkingapp.com/v2/api/passAuthCode" +
-                "&state=abcd";
+                "&state="+memberId;
         String method = "POST";
         Map<String,String> parameter = new HashMap<String, String>();
 
