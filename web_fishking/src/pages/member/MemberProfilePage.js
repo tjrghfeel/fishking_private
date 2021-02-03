@@ -166,7 +166,7 @@ export default inject(
                   <React.Fragment>
                     <a
                       className="nav-link"
-                      onClick={() => PageStore.push(`/cust/set/profile`)}
+                      onClick={() => PageStore.push(`/set/profile`)}
                     >
                       <figure>
                         <img
@@ -178,7 +178,7 @@ export default inject(
                     </a>
                     <a
                       className="nav-link"
-                      onClick={() => PageStore.push(`/cust/story/add`)}
+                      onClick={() => PageStore.push(`/story/add`)}
                     >
                       <figure>
                         <img
@@ -190,7 +190,7 @@ export default inject(
                     </a>
                     <a
                       className="nav-link"
-                      onClick={() => PageStore.push(`/cust/story/my/post`)}
+                      onClick={() => PageStore.push(`/story/my/post`)}
                     >
                       <figure>
                         <img src="/cust/assets/img/svg/icon-post.svg" alt="" />
@@ -199,7 +199,7 @@ export default inject(
                     </a>
                     <a
                       className="nav-link"
-                      onClick={() => PageStore.push(`/cust/zzim/boat`)}
+                      onClick={() => PageStore.push(`/zzim/boat`)}
                     >
                       <figure>
                         <img src="/cust/assets/img/svg/icon-heart.svg" alt="" />
@@ -223,7 +223,7 @@ export default inject(
                     )}
                     <a
                       className="nav-link"
-                      onClick={() => PageStore.push(`/cust/search/all`)}
+                      onClick={() => PageStore.push(`/search/all`)}
                     >
                       <figure>
                         <img

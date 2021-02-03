@@ -43,7 +43,7 @@ export default inject(
         const resolve = APIStore._post("/v2/api/logout");
         if (resolve) {
           PageStore.setLogin(null);
-          PageStore.push(`/cust/member/login`);
+          PageStore.push(`/member/login`);
         }
       };
       /********** ********** ********** ********** **********/

@@ -15,7 +15,7 @@ export default inject("PageStore")(
       onClick = (item) => {};
       onClickProfile = (item) => {
         const { PageStore } = this.props;
-        PageStore.push(`/cust/member/profile/${item.memberId}`);
+        PageStore.push(`/member/profile/${item.memberId}`);
       };
       onClickComment = (item) => {};
       /********** ********** ********** ********** **********/
@@ -31,7 +31,7 @@ export default inject("PageStore")(
               customButton={
                 <React.Fragment>
                   <a
-                    onClick={() => PageStore.push(`/cust/story/add`)}
+                    onClick={() => PageStore.push(`/story/add`)}
                     className="fixed-top-right text-white"
                   >
                     글쓰기

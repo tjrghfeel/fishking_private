@@ -28,7 +28,7 @@ export default inject("PageStore")(
             this.setState({ text: error });
           } else if (accesstoken !== null) {
             PageStore.setLogin(accesstoken);
-            PageStore.push(`/cust/main/my`);
+            PageStore.push(`/main/my`);
           } else {
             this.setState({ text: "잘못된 접근입니다." });
           }

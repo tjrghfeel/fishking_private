@@ -57,7 +57,7 @@ export default inject(
       onClickItem = async (type, data, index) => {
         const { PageStore, ModalStore, APIStore, DataStore } = this.props;
         if (type === "profile") {
-          PageStore.push(`/cust/member/profile/${data.authorId}`);
+          PageStore.push(`/member/profile/${data.authorId}`);
         } else if (type === "more") {
           ModalStore.openModal("Select", {
             selectOptions: ["수정하기", "삭제하기", "닫기"],

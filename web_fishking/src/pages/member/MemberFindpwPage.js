@@ -99,7 +99,7 @@ export default inject(
           phoneAuthId,
         });
         if (response) {
-          PageStore.push(`/cust/main/my`);
+          PageStore.push(`/main/my`);
         }
       };
       /********** ********** ********** ********** **********/
@@ -183,7 +183,7 @@ export default inject(
                 </div>
                 <div className="form-group pt-2">
                   <a
-                    onClick={() => PageStore.push(`/cust/member/login`)}
+                    onClick={() => PageStore.push(`/member/login`)}
                     className="btn btn-primary btn-lg btn-block"
                   >
                     확인

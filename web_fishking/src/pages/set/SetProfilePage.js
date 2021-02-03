@@ -211,7 +211,7 @@ export default inject(
                   <div className="col-1 text-right pl-1"></div>
                 </div>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/cust/set/profile/nickname`)}>
+                <a onClick={() => PageStore.push(`/set/profile/nickname`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">
                       <small className="grey">닉네임</small>
@@ -226,7 +226,7 @@ export default inject(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/cust/set/profile/status`)}>
+                <a onClick={() => PageStore.push(`/set/profile/status`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">
                       <small className="grey">상태메시지</small>
@@ -260,7 +260,7 @@ export default inject(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/cust/set/profile/email`)}>
+                <a onClick={() => PageStore.push(`/set/profile/email`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">
                       <small className="grey">이메일 변경</small>
@@ -277,7 +277,7 @@ export default inject(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a onClick={() => PageStore.push(`/cust/set/profile/password`)}>
+                <a onClick={() => PageStore.push(`/set/profile/password`)}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">
                       <small className="grey">비밀번호 변경</small>

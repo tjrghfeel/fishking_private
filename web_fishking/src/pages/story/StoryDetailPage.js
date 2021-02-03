@@ -67,7 +67,7 @@ export default inject(
               params: { category, id },
             },
           } = this.props;
-          PageStore.push(`/cust/story/${category}/comment/${id}`);
+          PageStore.push(`/story/${category}/comment/${id}`);
         };
         onClickShare = () => {
           const { ModalStore } = this.props;

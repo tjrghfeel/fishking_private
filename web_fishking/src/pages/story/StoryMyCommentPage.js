@@ -26,7 +26,7 @@ export default inject("PageStore")(
               customButton={
                 <React.Fragment>
                   <a
-                    onClick={() => PageStore.push(`/cust/story/add`)}
+                    onClick={() => PageStore.push(`/story/add`)}
                     className="fixed-top-right text-white"
                   >
                     글쓰기

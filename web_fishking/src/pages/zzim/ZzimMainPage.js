@@ -51,7 +51,7 @@ export default inject(
                     backgroundSize: "cover",
                   }}
                 >
-                  <a onClick={() => PageStore.push(`/cust/zzim/boat`)}>
+                  <a onClick={() => PageStore.push(`/zzim/boat`)}>
                     <h4>
                       <span className="icon-heart-white">
                         {Intl.NumberFormat().format(this.state.shipCount)}
@@ -72,7 +72,7 @@ export default inject(
                     backgroundSize: "cover",
                   }}
                 >
-                  <a onClick={() => PageStore.push(`/cust/zzim/rock`)}>
+                  <a onClick={() => PageStore.push(`/zzim/rock`)}>
                     <h4>
                       <span className="icon-heart-white">
                         {Intl.NumberFormat().format(this.state.sealocksCount)}

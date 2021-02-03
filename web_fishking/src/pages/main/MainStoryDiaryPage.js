@@ -84,12 +84,12 @@ export default inject(
       onClick = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/cust/story/diary/detail/${item.id}`);
+        PageStore.push(`/story/diary/detail/${item.id}`);
       };
       onClickProfile = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/cust/member/profile/${item.memberId}`);
+        PageStore.push(`/member/profile/${item.memberId}`);
       };
       onClickLike = async (item) => {
         const { APIStore, DataStore, PageStore } = this.props;
@@ -126,7 +126,7 @@ export default inject(
       onClickComment = async (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/cust/story/diary/comment/${item.id}`);
+        PageStore.push(`/story/diary/comment/${item.id}`);
       };
       onClickScrap = async (item) => {
         const { APIStore, DataStore, PageStore } = this.props;
