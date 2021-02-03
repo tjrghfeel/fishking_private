@@ -8,6 +8,7 @@ import StoryMyCommentPage from "../pages/story/StoryMyCommentPage";
 import StoryMyScrapPage from "../pages/story/StoryMyScrapPage";
 import StoryMyReviewPage from "../pages/story/StoryMyReviewPage";
 import StoryDetailPage from "../pages/story/StoryDetailPage";
+import StoryCommentPage from "../pages/story/StoryCommentPage";
 
 export default inject()(
   observer(({ match }) => {
@@ -41,11 +42,17 @@ export default inject()(
             path={`${match.url}/my/review`}
             component={StoryMyReviewPage}
           />
-          {/** 스토리 > 조황일지 > 상세 */}
+          {/** 스토리 > 조황일지/유저조행기 > 상세 */}
           <Route
             exact
-            path={`${match.url}/diary/detail/:id`}
+            path={`${match.url}/:category/detail/:id`}
             component={StoryDetailPage}
+          />
+          {/** 스토리 > 조황일지/유저조행기 > 댓글 */}
+          <Route
+            exact
+            path={`${match.url}/:category/comment/:id`}
+            component={StoryCommentPage}
           />
         </Switch>
       </BrowserRouter>

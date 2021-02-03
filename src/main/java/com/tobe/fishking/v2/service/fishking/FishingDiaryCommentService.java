@@ -129,6 +129,11 @@ public class FishingDiaryCommentService {
 
         comment.delete();
 
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(dto.getCommentId(), FilePublish.comment);
+        for(int i=0; i<preFileList.size(); i++){
+            preFileList.get(i).setIsDelete(true);
+        }
+
         /*원글의 댓글수 필드 감소*/
         if(comment.getDependentType() == DependentType.fishingBlog || comment.getDependentType() == DependentType.fishingDiary){
             FishingDiary fishingDiary = fishingDiaryRepository.findById(comment.getLinkId())

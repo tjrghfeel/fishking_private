@@ -123,19 +123,19 @@ export default inject(
                 <nav className="nav nav-pills nav-sel nav-my nav-arrow nav-col-3">
                   <a className="nav-link" href="#none">
                     <figure>
-                      <img src="/assets/img/svg/reserv1.svg" alt="" />
+                      <img src="/cust/assets/img/svg/reserv1.svg" alt="" />
                     </figure>
                     <span>결제완료</span>
                   </a>
                   <a className="nav-link" href="#none">
                     <figure>
-                      <img src="/assets/img/svg/reserv2.svg" alt="" />
+                      <img src="/cust/assets/img/svg/reserv2.svg" alt="" />
                     </figure>
                     <span>알림발송</span>
                   </a>
                   <a className="nav-link" href="#none">
                     <figure>
-                      <img src="/assets/img/svg/reserv3.svg" alt="" />
+                      <img src="/cust/assets/img/svg/reserv3.svg" alt="" />
                     </figure>
                     <span>예약확정</span>
                   </a>

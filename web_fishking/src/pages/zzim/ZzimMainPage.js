@@ -47,7 +47,7 @@ export default inject(
                   className="rows"
                   style={{
                     background:
-                      "url(/assets/img/bg_zzim1.jpg) no-repeat top left",
+                      "url(/cust/assets/img/bg_zzim1.jpg) no-repeat top left",
                     backgroundSize: "cover",
                   }}
                 >
@@ -68,7 +68,7 @@ export default inject(
                   className="rows"
                   style={{
                     background:
-                      "url(/assets/img/bg_zzim2.jpg) no-repeat top left",
+                      "url(/cust/assets/img/bg_zzim2.jpg) no-repeat top left",
                     backgroundSize: "cover",
                   }}
                 >

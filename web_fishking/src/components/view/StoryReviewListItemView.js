@@ -63,15 +63,15 @@ export default inject()(
                 data-rateit-starheight="16"
               ></div>
               <span className="grey">손맛</span>{" "}
-              <img src="/assets/img/star1.png" alt="" className="vam" />{" "}
+              <img src="/cust/assets/img/star1.png" alt="" className="vam" />{" "}
               {tasteByReview.toFixed(1)}
               &nbsp;&nbsp;
               <span className="grey">서비스</span>{" "}
-              <img src="/assets/img/star1.png" alt="" className="vam" />{" "}
+              <img src="/cust/assets/img/star1.png" alt="" className="vam" />{" "}
               {serviceByReview.toFixed(1)}
               &nbsp;&nbsp;
               <span className="grey">청결도</span>{" "}
-              <img src="/assets/img/star1.png" alt="" className="vam" />{" "}
+              <img src="/cust/assets/img/star1.png" alt="" className="vam" />{" "}
               {cleanByReview.toFixed(1)}
             </p>
             <hr className="clearfix" />

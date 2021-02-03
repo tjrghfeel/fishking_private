@@ -109,7 +109,7 @@ public class HelloController {
 
     @GetMapping("/pass")
     public String pass(HttpServletResponse response) throws IOException {
-//        response.sendRedirect("http://www.naver.com");
+        response.sendRedirect("http://www.naver.com");
         String url = "https://id.passlogin.com/oauth2/authorize?" +
                 "response_type=code" +
                 "&client_id=uWHHuitm5at159jXPlc5" +

@@ -29,7 +29,7 @@ export default inject()(
                 onClick={() => (onDelete ? onDelete(data) : null)}
               >
                 <img
-                  src="/assets/img/svg/icon_close_grey.svg"
+                  src="/cust/assets/img/svg/icon_close_grey.svg"
                   alt=""
                   className="vam"
                 />

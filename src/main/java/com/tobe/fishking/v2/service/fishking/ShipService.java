@@ -33,6 +33,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -187,6 +189,10 @@ public class ShipService {
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();
+        ordersRepository.save(order);
+
+        String orderNumber = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + order.getId().toString();
+        order.setOrderNumber(orderNumber, member);
         ordersRepository.save(order);
 
         OrderDetails details = OrderDetails.builder()

@@ -160,7 +160,7 @@ export default inject(
                       className="fixed-top-right"
                     >
                       <img
-                        src="/assets/img/svg/navbar-share.svg"
+                        src="/cust/assets/img/svg/navbar-share.svg"
                         alt="공유하기"
                       />
                     </a>
@@ -191,7 +191,7 @@ export default inject(
                         className="btn btn-third btn-block btn-sm mt-1 mb-1"
                       >
                         <img
-                          src="/assets/img/svg/icon-note.svg"
+                          src="/cust/assets/img/svg/icon-note.svg"
                           alt=""
                           className="vam"
                         />{" "}
@@ -204,7 +204,7 @@ export default inject(
                         className="btn btn-third btn-block btn-sm mt-1 mb-1"
                       >
                         <img
-                          src="/assets/img/svg/icon-map.svg"
+                          src="/cust/assets/img/svg/icon-map.svg"
                           alt=""
                           className="vam"
                         />{" "}
@@ -217,7 +217,7 @@ export default inject(
                         className="btn btn-third btn-block btn-sm mt-1 mb-1"
                       >
                         <img
-                          src="/assets/img/svg/icon-copy.svg"
+                          src="/cust/assets/img/svg/icon-copy.svg"
                           alt=""
                           className="vam"
                         />{" "}
@@ -232,7 +232,7 @@ export default inject(
                 <div className="card card-box">
                   <h6 className="card-header-white text-center">
                     <img
-                      src="/assets/img/svg/icon-alert.svg"
+                      src="/cust/assets/img/svg/icon-alert.svg"
                       alt=""
                       className="vam"
                     />
@@ -260,7 +260,7 @@ export default inject(
                   <h5 className="text-center">
                     <span className="text-primary">
                       <img
-                        src="/assets/img/svg/icon-dday.svg"
+                        src="/cust/assets/img/svg/icon-dday.svg"
                         alt=""
                         className="vam"
                       />
@@ -397,7 +397,7 @@ export default inject(
                 <div className="container nopadding mb-2">
                   <div className="float-right">
                     <a onClick={this.onClickCancelInfo}>
-                      <img src="/assets/img/svg/icon-noti.svg" alt="" />
+                      <img src="/cust/assets/img/svg/icon-noti.svg" alt="" />
                     </a>
                   </div>
                   <p className="mt-1">
@@ -454,7 +454,7 @@ export default inject(
                     <div className="modal-body">
                       <h6 className="text-center red">
                         <img
-                          src="/assets/img/svg/icon-alert.svg"
+                          src="/cust/assets/img/svg/icon-alert.svg"
                           alt=""
                           className="vam"
                         />

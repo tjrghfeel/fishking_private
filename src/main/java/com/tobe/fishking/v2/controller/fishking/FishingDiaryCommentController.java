@@ -52,7 +52,11 @@ public class FishingDiaryCommentController {
 
     /*댓글 수정*/
     @ApiOperation(value = "댓글 수정",notes = "" +
-            "")
+            "요청 필드 ) \n" +
+            "- commontId : Long / 필수 / 삭제하려는 댓글 id\n" +
+            "- content : String / 필수 / 수정된 댓글 내용\n" +
+            "- fileId : Long / 선택 (없을시 null) / Common > /v2/api/filePreUpload 를 통해 업로드한 파일의 id\n" +
+            "응답 필드 ) 수정 성공시 true\n")
     @PutMapping("/fishingDiaryComment")
     public Boolean modifyFishingDiaryComment(
             @RequestBody @Valid ModifyFishingDiaryCommentDto dto,

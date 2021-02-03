@@ -53,13 +53,19 @@ export default inject("DataStore")(
             <div className="modal-content">
               <div className="modal-header bg-primary d-flex justify-content-center">
                 <a data-dismiss="modal" className="nav-left">
-                  <img src="/assets/img/svg/navbar-back.svg" alt="뒤로가기" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-back.svg"
+                    alt="뒤로가기"
+                  />
                 </a>
                 <h5 className="modal-title" id={id.concat("Label")}>
                   날짜선택
                 </h5>
                 <a onClick={onInit} className="nav-right">
-                  <img src="/assets/img/svg/navbar-refresh.svg" alt="Refresh" />
+                  <img
+                    src="/cust/assets/img/svg/navbar-refresh.svg"
+                    alt="Refresh"
+                  />
                   <span>초기화</span>
                 </a>
               </div>

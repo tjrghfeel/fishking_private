@@ -20,4 +20,7 @@ public class ReservePersonDTO {
 
     @ApiParam(value = "승선자 생년월일")
     private @Valid String birthdate;
+
+    @ApiParam(value = "승선자 승선위치")
+    private @Valid String position;
 }

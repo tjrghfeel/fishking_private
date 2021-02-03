@@ -37,7 +37,7 @@ export default inject(
           isPending: false,
           isEnd: false,
           list: [],
-          category: "fishingDiary",
+          category: "fishingBlog",
           page: 0,
           district: null,
           fishSpeciesList: null,
@@ -84,7 +84,7 @@ export default inject(
       onClick = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/story/diary/detail/${item.id}`);
+        PageStore.push(`/story/user/detail/${item.id}`);
       };
       onClickProfile = (item) => {
         const { PageStore } = this.props;
@@ -234,7 +234,7 @@ export default inject(
             />
 
             <NavigationLayout title={"어복스토리"} showSearchIcon={true} />
-            <StoryTab activeIndex={0} />
+            <StoryTab activeIndex={2} />
 
             {/** Filter */}
             <FilterListView
