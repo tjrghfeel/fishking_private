@@ -144,16 +144,17 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   s.id shipId, " +
                     "   m.id memberId, " +
                     "   d.created_date as createdDate, " +
-                    "   if(m.is_active = true, m.profile_image, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg')) profileImage, " +
+                    "   if(m.is_active = false or d.is_deleted = true, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg'), m.profile_image ) profileImage, " +
                     "   (select case " +
+                    "       when d.is_deleted = true then '****' " +
                     "       when d.file_publish = 5 then if(m.is_active=true, m.nick_name, '탈퇴한 회원입니다') " +
                     "       when d.file_publish = 6 then s.ship_name " +
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
-                    "   if(m.is_active=true, d.title, '탈퇴한 회원의 글입니다.') title, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
-                    "   if(m.is_active=true, LEFT(d.contents,50), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
                     "   (select case when exists (select l.id from loveto as l " +
                     "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
                     "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
@@ -161,12 +162,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.like_count likeCount, " +
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
-                    "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
-                    "       group by f2.pid order by f2.file_no), null) fileNameList, " +
-                    "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       group by f2.pid order by f2.file_no)) fileNameList, " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
-                    "       group by f2.pid order by f2.file_no), null) filePathList " +
+                    "       group by f2.pid order by f2.file_no)) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   d.file_publish = :category " +
@@ -213,16 +214,17 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   s.id shipId, " +
                     "   m.id memberId, " +
                     "   d.created_date as createdDate, " +
-                    "   if(m.is_active = true, m.profile_image, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg')) profileImage, " +
+                    "   if(m.is_active = false or d.is_deleted = true, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg'), m.profile_image ) profileImage, " +
                     "   (select case " +
+                    "       when d.is_deleted = true then '****' " +
                     "       when d.file_publish = 5 then if(m.is_active=true, m.nick_name, '탈퇴한 회원입니다') " +
                     "       when d.file_publish = 6 then s.ship_name " +
                     "       end " +
                     "   ) nickName, " +
-                    "   s.address address, " +
-                    "   if(m.is_active=true, d.title, '탈퇴한 회원의 글입니다.') title, " +
+                    "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
-                    "   if(m.is_active=true, LEFT(d.contents,50), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
                     "   (select case when exists (select l.id from loveto as l " +
                     "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
                     "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
@@ -230,34 +232,34 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.like_count likeCount, " +
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
-                    "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
-                    "       group by f2.pid order by f2.file_no), null) fileNameList, " +
-                    "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       group by f2.pid order by f2.file_no)) fileNameList, " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
-                    "       group by f2.pid order by f2.file_no), null) filePathList " +
-                    "from fishing_diary d join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "       group by f2.pid order by f2.file_no)) filePathList " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
-                    "   and if(:searchTarget = 'address',s.address like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     " group by d.id " +
                     "order by likeCount desc ",
             countQuery = "select d.id " +
-                    "from fishing_diary d join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
-                    "   and if(:searchTarget = 'address',s.address like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
@@ -282,16 +284,17 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   s.id shipId, " +
                     "   m.id memberId, " +
                     "   d.created_date as createdDate, " +
-                    "   if(m.is_active = true, m.profile_image, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg')) profileImage, " +
+                    "   if(m.is_active = false or d.is_deleted = true, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg'), m.profile_image ) profileImage, " +
                     "   (select case " +
+                    "       when d.is_deleted = true then '****' " +
                     "       when d.file_publish = 5 then if(m.is_active=true, m.nick_name, '탈퇴한 회원입니다') " +
                     "       when d.file_publish = 6 then s.ship_name " +
                     "       end " +
                     "   ) nickName, " +
-                    "   s.address address, " +
-                    "   if(m.is_active=true, d.title, '탈퇴한 회원의 글입니다.') title, " +
+                    "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
-                    "   if(m.is_active=true, LEFT(d.contents,50), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
                     "   (select case when exists (select l.id from loveto as l " +
                     "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
                     "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
@@ -299,34 +302,34 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.like_count likeCount, " +
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
-                    "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
-                    "       group by f2.pid order by f2.file_no), null) fileNameList, " +
-                    "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       group by f2.pid order by f2.file_no)) fileNameList, " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
-                    "       group by f2.pid order by f2.file_no), null) filePathList " +
-                    "from fishing_diary d join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "       group by f2.pid order by f2.file_no)) filePathList " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
-                    "   and if(:searchTarget = 'address',s.address like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     " group by d.id " +
                     "order by commentCount desc ",
             countQuery = "select d.id " +
-                    "from fishing_diary d join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
-                    "   and if(:searchTarget = 'address',s.address like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +

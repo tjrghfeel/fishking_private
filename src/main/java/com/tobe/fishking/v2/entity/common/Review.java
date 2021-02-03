@@ -56,6 +56,9 @@ public class Review extends BaseTime {
     @Column(nullable = false, columnDefinition = "varchar(2000) comment '내용'")
     private String content;
 
+    @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
+    private Boolean isDeleted;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', review, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null  comment '생성자'")
@@ -75,4 +78,5 @@ public class Review extends BaseTime {
         this.totalAvgByReview = (cleanScore + serviceScore + tasteScore)/3;
         this.modifiedBy = modifiedBy;
     }
+    public void delete(){this.isDeleted=true;}
 }

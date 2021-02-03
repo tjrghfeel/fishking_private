@@ -133,10 +133,10 @@ public class ReviewService {
         /*삭제*/
         List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(review.getId(), FilePublish.review);
         for(int i=0; i<fileList.size(); i++){
-            fileRepository.delete(fileList.get(i));
+            fileList.get(i).setIsDelete(true);
         }
 
-        reviewRepository.delete(review);
+        review.delete();
         return true;
     }
 
