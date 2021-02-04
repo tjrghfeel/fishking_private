@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.enums.fishing.FishSpecies;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
 //import com.tobe.fishking.v2.model.fishing.ParamsGoods;
+import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -182,6 +183,10 @@ public class Goods extends BaseTime {
     @JoinColumn(name = "goods_genres", columnDefinition = " comment  '장르'  ")
     @Builder.Default
     private List<CommonCode> genres = new ArrayList<>();
+
+    @Column(columnDefinition = "int comment '예약타입' ")
+    @Enumerated(EnumType.ORDINAL)
+    private ReserveType reserveType;
 
     // 생성자
     public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {

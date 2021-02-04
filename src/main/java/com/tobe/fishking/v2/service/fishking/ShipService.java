@@ -7,10 +7,7 @@ import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
-import com.tobe.fishking.v2.entity.fishing.OrderDetails;
-import com.tobe.fishking.v2.entity.fishing.Orders;
-import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
@@ -21,6 +18,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
+import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,7 +51,9 @@ public class ShipService {
     private final LoveToRepository loveToRepository;
     private final OrdersRepository ordersRepository;
     private final OrderDetailsRepository orderDetailsRepository;
+    private final RideShipRepository rideShipRepository;
     private final GoodsRepository goodsRepository;
+    private final GoodsFishingDateRepository goodsFishingDateRepository;
 
 
     /*
@@ -178,14 +178,15 @@ public class ShipService {
 
     /* 선상 예약 */
     @Transactional
-    public Long reserve(ReserveDTO reserveDTO, Member member) {
+    public OrderResponse reserve(ReserveDTO reserveDTO, Member member) {
         Orders order = Orders.builder()
-                .orderDate(reserveDTO.getDate())
+                .orderDate(DateUtils.getDateInFormat(LocalDate.now()))
+                .fishingDate(reserveDTO.getDate())
                 .totalAmount(reserveDTO.getTotalPrice().intValue())
                 .discountAmount(reserveDTO.getDiscountPrice().intValue())
                 .paymentAmount(reserveDTO.getPaymentPrice().intValue())
                 .isPay(false)
-                .orderStatus(OrderStatus.bookRunning)
+                .orderStatus(OrderStatus.receipt)
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();
@@ -201,12 +202,41 @@ public class ShipService {
                 .personnel(reserveDTO.getPersonCount())
                 .price(reserveDTO.getTotalPrice().intValue() / reserveDTO.getPersonCount())
                 .totalAmount(reserveDTO.getTotalPrice().intValue())
+                .positions(reserveDTO.getPositions().stream().map(Object::toString).collect(Collectors.joining(",")))
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();
         orderDetailsRepository.save(details);
-        return order.getId();
+
+        for (ReservePersonDTO reservePersonDTO : reserveDTO.getPersons()) {
+            RideShip rideShip = RideShip.builder()
+                    .ordersDetail(details)
+                    .birthday(reservePersonDTO.getBirthdate())
+                    .name(reservePersonDTO.getName())
+                    .phoneNumber(reservePersonDTO.getPhone())
+                    .build();
+            rideShipRepository.save(rideShip);
+        }
+
+        GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(reserveDTO.getGoodsId(), reserveDTO.getDate());
+        goodsFishingDate.addWaitNumber(reserveDTO.getPersonCount());
+        goodsFishingDateRepository.save(goodsFishingDate);
+
+        return new OrderResponse(order.getId(),
+                orderNumber,
+                details.getGoods().getName(),
+                reserveDTO.getPaymentPrice().intValue(),
+                member.getMemberName(),
+                member.getEmail(),
+                member.getPhoneNumber().getFullNumber(),
+                reserveDTO.getPayMethod());
     }
+
+//    public List<String> getShipPositions(Long goods_id) {
+//        Goods goods = goodsRepository.getOne(goods_id);
+//        Ship ship = goods.getShip();
+//        List<String> positions = Arrays.stream(ship.getPositions().split(",")).collect(Collectors.toList());
+//    }
 
 //    public void calcDistance() {
 //        List<Ship> ships = shipRepo.findAll();

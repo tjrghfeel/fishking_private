@@ -28,6 +28,7 @@ public class GoodsResponse {
     private Integer maxPersonnel;
     private Integer reservationPersonal;
     private String observerCode;
+    private String key;
 
     @Builder
     public GoodsResponse(Goods goods) {
@@ -42,5 +43,6 @@ public class GoodsResponse {
         this.maxPersonnel = goods.getMaxPersonnel();
         this.reservationPersonal = goods.getReservationPersonnel().intValue();
         this.observerCode = goods.getShip().getObserverCode();
+        this.key = "9A149EFA2607650AB11D9F0C3";
     }
 }

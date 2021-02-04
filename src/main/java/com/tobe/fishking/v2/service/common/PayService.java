@@ -1,5 +1,16 @@
 package com.tobe.fishking.v2.service.common;
 
+import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.fishing.Goods;
+import com.tobe.fishking.v2.entity.fishing.GoodsFishingDate;
+import com.tobe.fishking.v2.entity.fishing.OrderDetails;
+import com.tobe.fishking.v2.entity.fishing.Orders;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.enums.fishing.ReserveType;
+import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
+import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
+import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import com.tobe.fishking.v2.utils.KSPayWebHostBean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,7 +19,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PayService {
 
-    public void payResult(String rcid, String rctype, String rhash, String rcancel) {
+    private final MemberRepository memberRepository;
+    private final OrdersRepository ordersRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
+    private final GoodsFishingDateRepository goodsFishingDateRepository;
+
+    public Long payResult(String rcid, String rctype, String rhash, String rcancel) {
         /* rcid 없으면 결제를 끝까지 진행하지 않고 중간에 결제취소 */
         String	authyn =  "";
         String	trno   =  "";
@@ -44,29 +60,39 @@ public class PayService {
                 if (null != authyn && 1 == authyn.length()) {
                     if (authyn.equals("O")) {
                         resultcd = "0000";
+
+//                        Orders order = ordersRepository.getOne(Long.parseLong(ordno));
+//                        OrderDetails orderDetails = orderDetailsRepository.findByOrders(order);
+//                        Member member = memberRepository.getOne(Long.parseLong(msg1));
+//                        Goods goods = orderDetails.getGoods();
+//                        GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
+//                        order.paid(member);
+//                        if (goods.getReserveType() == ReserveType.auto) {
+//                            if (orderDetails.getPersonnel() <= (goods.getMaxPersonnel() - goodsFishingDate.getReservedNumber())) {
+//                                order.changeStatus(OrderStatus.bookConfirm);
+//                                goodsFishingDate.addReservedNumber(orderDetails.getPersonnel());
+//                            } else {
+//                                order.changeStatus(OrderStatus.waitBook);
+//                                goodsFishingDate.addWaitNumber(orderDetails.getPersonnel());
+//                            }
+//                        } else {
+//                            order.changeStatus(OrderStatus.bookRunning);
+//                        }
+//                        ordersRepository.save(order);
+//                        goodsFishingDateRepository.save(goodsFishingDate);
+//                        return order.getId();
+                        return 0L;
                     } else {
                         resultcd = authno.trim();
+                        return -1L;
                     }
                 }
-                System.out.println(rcid);
-                System.out.println(rctype);
-                System.out.println(resultcd);
-                System.out.println(authyn);
-                System.out.println(trno);
-                System.out.println(trddt);
-                System.out.println(trdtm);
-                System.out.println(amt);
-                System.out.println(authno);
-                System.out.println(msg1);
-                System.out.println(msg2);
-                System.out.println(ordno);
-                System.out.println(isscd);
-                System.out.println(aqucd);
-                System.out.println(result);
             }
         } else {
             authyn="X";
             msg1 = "취소";
+            return -1L;
         }
+        return -1L;
     }
 }
