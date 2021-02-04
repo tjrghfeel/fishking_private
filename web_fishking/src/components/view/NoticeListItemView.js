@@ -20,7 +20,7 @@ export default inject()(
               </small>
             </div>
             <div className="col-1 text-right pl-1">
-              <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+              <img src="/cust/assets/img/svg/cal-arrow-right.svg" alt="" />
             </div>
           </div>
         </a>

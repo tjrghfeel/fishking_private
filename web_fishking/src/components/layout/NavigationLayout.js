@@ -32,8 +32,8 @@ export default inject("PageStore")(
                 <img
                   src={
                     transparent
-                      ? "/assets/img/svg/navbar-back-black.svg"
-                      : "/assets/img/svg/navbar-back.svg"
+                      ? "/cust/assets/img/svg/navbar-back-black.svg"
+                      : "/cust/assets/img/svg/navbar-back.svg"
                   }
                   alt="뒤로가기"
                 />
@@ -45,7 +45,7 @@ export default inject("PageStore")(
                 onClick={() => PageStore.push(`/set/main`)}
                 className="fixed-top-right-two"
               >
-                <img src="/assets/img/svg/navbar-set.svg" alt="Set" />
+                <img src="/cust/assets/img/svg/navbar-set.svg" alt="Set" />
               </a>
             )}
             {showSearchIcon && (
@@ -53,7 +53,10 @@ export default inject("PageStore")(
                 onClick={() => PageStore.push(`/search/all`)}
                 className="fixed-top-right"
               >
-                <img src="/assets/img/svg/navbar-search.svg" alt="Search" />
+                <img
+                  src="/cust/assets/img/svg/navbar-search.svg"
+                  alt="Search"
+                />
               </a>
             )}
             {customButton && <React.Fragment>{[customButton]}</React.Fragment>}

@@ -92,7 +92,7 @@ export default inject(
             {/** 정보 */}
             <div className="container nopadding mt-1">
               <h5 className="text-center">
-                <img src="/assets/img/svg/logo.svg" alt="" />
+                <img src="/cust/assets/img/svg/logo.svg" alt="" />
               </h5>
             </div>
 
@@ -157,7 +157,7 @@ export default inject(
                       class="btn btn-sns-kakao btn-yellow btn-lg btn-block"
                     >
                       <img
-                        src="/assets/img/svg/icon-sns-kakao.svg"
+                        src="/cust/assets/img/svg/icon-sns-kakao.svg"
                         alt=""
                         class="vam"
                       />
@@ -170,7 +170,7 @@ export default inject(
                       class="btn btn-sns-facebook btn-lg btn-block"
                     >
                       <img
-                        src="/assets/img/svg/icon-sns-facebook.svg"
+                        src="/cust/assets/img/svg/icon-sns-facebook.svg"
                         alt=""
                         class="vam"
                       />
@@ -183,7 +183,7 @@ export default inject(
                       class="btn btn-sns-naver btn-lg btn-block"
                     >
                       <img
-                        src="/assets/img/svg/icon-sns-naver.svg"
+                        src="/cust/assets/img/svg/icon-sns-naver.svg"
                         alt=""
                         class="vam"
                       />
@@ -196,7 +196,7 @@ export default inject(
                       class="btn btn-sns-apple btn-lg btn-block"
                     >
                       <img
-                        src="/assets/img/svg/icon-sns-apple.svg"
+                        src="/cust/assets/img/svg/icon-sns-apple.svg"
                         alt=""
                         class="vam"
                       />

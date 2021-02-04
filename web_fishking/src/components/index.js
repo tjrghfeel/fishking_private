@@ -16,6 +16,7 @@ import AddCouponModal from "./modal/AddCouponModal";
 import SNSModal from "./modal/SNSModal";
 import SelectAreaModal from "./modal/SelectAreaModal";
 import SelectStorySortModal from "./modal/SelectStorySortModal";
+import SelectCompanySortModal from "./modal/SelectCompanySortModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -57,6 +58,7 @@ import CouponAvailableListItemView from "./view/CouponAvailableListItemView";
 import ReservationMyListItemView from "./view/ReservationMyListItemView";
 import FilterListView from "./view/FilterListView";
 import StoryPostListItemView from "./view/StoryPostListItemView";
+import StoryDetailCommentListItemView from "./view/StoryDetailCommentListItemView";
 
 export default {
   /********** MODAL **********/
@@ -76,6 +78,7 @@ export default {
     SNSModal,
     SelectAreaModal,
     SelectStorySortModal,
+    SelectCompanySortModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
@@ -113,5 +116,6 @@ export default {
     ReservationMyListItemView,
     FilterListView,
     StoryPostListItemView,
+    StoryDetailCommentListItemView,
   },
 };

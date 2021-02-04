@@ -25,7 +25,7 @@ export default inject()(
               <br />
               <br />
               <img
-                src="/assets/img/app-icon-smartboat.png"
+                src="/cust/assets/img/app-icon-smartboat.png"
                 alt=""
                 className="icon-xlg mt-3"
               />

@@ -11,19 +11,34 @@ export default inject()(
     forwardRef(({ id, onSelected }, ref) => {
       const list = [
         {
-          text: "최신순",
-          value: "createDate",
-          imgSrc: "/cust/assets/img/svg/sort-latest.svg",
+          text: "인기순",
+          value: "popular",
+          imgSrc: "/cust/assets/img/svg/sort-best.svg",
         },
         {
-          text: "좋아요순",
-          value: "likeCount",
-          imgSrc: "/cust/assets/img/svg/sort-recommand.svg",
+          text: "거리순",
+          value: "distance",
+          imgSrc: "/cust/assets/img/svg/sort-distance.svg",
         },
         {
-          text: "댓글순",
-          value: "commentCount",
-          imgSrc: "/cust/assets/img/svg/sort-comment.svg",
+          text: "낮은가격순",
+          value: "lowPrice",
+          imgSrc: "/cust/assets/img/svg/sort-lowprice.svg",
+        },
+        {
+          text: "높은가격순",
+          value: "highPrice",
+          imgSrc: "/cust/assets/img/svg/sort-highprice.svg",
+        },
+        {
+          text: "리뷰순",
+          value: "review",
+          imgSrc: "/cust/assets/img/svg/sort-review.svg",
+        },
+        {
+          text: "판매순",
+          value: "sell",
+          imgSrc: "/cust/assets/img/svg/sort-sell.svg",
         },
       ];
       const [selected, setSelected] = useState(0);

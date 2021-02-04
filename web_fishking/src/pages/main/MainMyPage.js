@@ -20,49 +20,49 @@ export default inject(
         {
           text: "글쓰기",
           pathname: "/story/add",
-          img: "/assets/img/svg/mymenu-write.svg",
+          img: "/cust/assets/img/svg/mymenu-write.svg",
           requiredLoggedIn: true,
         },
         {
           text: "내글관리",
           pathname: "/story/my/post",
-          img: "/assets/img/svg/mymenu-mypost.svg",
+          img: "/cust/assets/img/svg/mymenu-mypost.svg",
           requiredLoggedIn: true,
         },
         {
           text: "찜한업체",
           pathname: "/zzim/main",
-          img: "/assets/img/svg/mymenu-zzim.svg",
+          img: "/cust/assets/img/svg/mymenu-zzim.svg",
           requiredLoggedIn: true,
         },
         {
           text: "실시간조황",
           pathname: "",
-          img: "/assets/img/svg/mymenu-live.svg",
+          img: "/cust/assets/img/svg/mymenu-live.svg",
           requiredLoggedIn: false,
         },
         {
           text: "물때",
           pathname: "",
-          img: "/assets/img/svg/mymenu-tide.svg",
+          img: "/cust/assets/img/svg/mymenu-tide.svg",
           requiredLoggedIn: false,
         },
         {
           text: "공지사항",
           pathname: "/cs/notice/list",
-          img: "/assets/img/svg/mymenu-notice.svg",
+          img: "/cust/assets/img/svg/mymenu-notice.svg",
           requiredLoggedIn: false,
         },
         {
           text: "이벤트",
           pathname: "",
-          img: "/assets/img/svg/mymenu-event.svg",
+          img: "/cust/assets/img/svg/mymenu-event.svg",
           requiredLoggedIn: false,
         },
         {
           text: "고객센터",
           pathname: "/cs/faq",
-          img: "/assets/img/svg/mymenu-cs.svg",
+          img: "/cust/assets/img/svg/mymenu-cs.svg",
           requiredLoggedIn: false,
         },
       ];
@@ -171,7 +171,7 @@ export default inject(
                     <div className="row no-gutters d-flex align-items-center">
                       <div className="col-7">
                         <img
-                          src="/assets/img/svg/icon-reservation.svg"
+                          src="/cust/assets/img/svg/icon-reservation.svg"
                           alt="Set"
                           className="vam mr-1"
                         />
@@ -183,7 +183,7 @@ export default inject(
                         </strong>
                         <small className="text-secondary">건</small>
                         <img
-                          src="/assets/img/svg/arrow-grey.svg"
+                          src="/cust/assets/img/svg/arrow-grey.svg"
                           alt="Set"
                           className="vam ml-1"
                         />
@@ -214,7 +214,7 @@ export default inject(
                     </strong>
                     <small className="text-secondary">장</small>
                     <img
-                      src="/assets/img/svg/arrow-grey.svg"
+                      src="/cust/assets/img/svg/arrow-grey.svg"
                       alt="Set"
                       className="vam ml-1"
                     />
@@ -229,7 +229,7 @@ export default inject(
                     </strong>
                     <small className="text-secondary">건</small>
                     <img
-                      src="/assets/img/svg/arrow-grey.svg"
+                      src="/cust/assets/img/svg/arrow-grey.svg"
                       alt="Set"
                       className="vam ml-1"
                     />
@@ -247,7 +247,7 @@ export default inject(
                   </div>
                   <div className="col-3 text-right">
                     <img
-                      src="/assets/img/svg/img-coupon.svg"
+                      src="/cust/assets/img/svg/img-coupon.svg"
                       alt="Set"
                       className="vam ml-1"
                     />
@@ -288,7 +288,7 @@ export default inject(
                 <div className="col-6">
                   <a className="btn btn-yellow btn-round btn-lg btn-block cs-padding">
                     <img
-                      src="/assets/img/svg/icon-talk.svg"
+                      src="/cust/assets/img/svg/icon-talk.svg"
                       alt="Set"
                       className="vam mr-1"
                     />
@@ -301,7 +301,7 @@ export default inject(
                     className="btn btn-grey btn-round btn-lg btn-block cs-padding"
                   >
                     <img
-                      src="/assets/img/svg/icon-call.svg"
+                      src="/cust/assets/img/svg/icon-call.svg"
                       alt="Set"
                       className="vam mr-1"
                     />

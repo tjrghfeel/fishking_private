@@ -24,7 +24,7 @@ export default inject()(
                   <img src={thumbnailUrl} className="img-fluid" alt="" />
                   {isVideo && (
                     <span className="play">
-                      <img src="/assets/img/svg/live-play.svg" alt="" />
+                      <img src="/cust/assets/img/svg/live-play.svg" alt="" />
                     </span>
                   )}
                 </div>

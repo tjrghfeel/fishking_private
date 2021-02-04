@@ -132,7 +132,7 @@ export default inject(
               {/** 정보 */}
               <div className="container nopadding mt-1">
                 <h5 className="text-center">
-                  <img src="/assets/img/svg/logo.svg" alt="" />
+                  <img src="/cust/assets/img/svg/logo.svg" alt="" />
                 </h5>
                 <div className="text-right">
                   <div className="pay-bg">
@@ -335,7 +335,7 @@ export default inject(
                         <div className="card-round-box">
                           <h6 className="text-center text-primary">
                             <img
-                              src="/assets/img/svg/icon-phone.svg"
+                              src="/cust/assets/img/svg/icon-phone.svg"
                               alt=""
                               className="vam mb-2"
                             />

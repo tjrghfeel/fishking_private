@@ -26,16 +26,19 @@ export default inject(
         }
 
         loadPageData = async () => {
-          const {
+          let {
             match: {
-              params: { id: fishingDiaryId },
+              params: { id: fishingDiaryId, category },
             },
             APIStore,
           } = this.props;
+          if (category === "diary") category = "fishingDiary";
+          else if (category === "user") category = "fishingBlog";
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
-          this.setState(resolve);
+
+          this.setState({ ...resolve, category });
         };
 
         onClickLike = async () => {
@@ -45,17 +48,26 @@ export default inject(
           if (isLikeTo) {
             resolve = await APIStore._delete("/v2/api/loveto", {
               linkId: fishingDiaryId,
-              takeType: "fishingDiary",
+              takeType: this.state.category,
             });
           } else {
             resolve = await APIStore._post("/v2/api/loveto", {
               linkId: fishingDiaryId,
-              takeType: "fishingDiary",
+              takeType: this.state.category,
             });
           }
           if (resolve) {
             this.loadPageData();
           }
+        };
+        onClickComment = () => {
+          const {
+            PageStore,
+            match: {
+              params: { category, id },
+            },
+          } = this.props;
+          PageStore.push(`/story/${category}/comment/${id}`);
         };
         onClickShare = () => {
           const { ModalStore } = this.props;
@@ -68,10 +80,40 @@ export default inject(
         onClickReservation = () => {
           console.log("reservation");
         };
+        onSelectFunction = async (selected) => {
+          const { APIStore, ModalStore } = this.props;
+          if (selected.index === 0) {
+            // scrap
+            let resolve = null;
+            if (this.state.isScraped) {
+              resolve = await APIStore._delete("/v2/api/fishingDiary/scrap", {
+                fishingDiaryId: this.state.fishingDiaryId,
+              });
+            } else {
+              resolve = await APIStore._post("/v2/api/fishingDiary/scrap", {
+                fishingDiaryId: this.state.fishingDiaryId,
+              });
+            }
+            if (resolve) {
+              ModalStore.openModal("Alert", { body: "처리되었습니다." });
+              this.loadPageData();
+            }
+          } else if (selected.index === 1) {
+            // alert
+            const resolve = await APIStore._post("/v2/api/addAccuse", {
+              linkId: this.state.fishingDiaryId,
+              targetType: "fishingDiary",
+            });
+            if (resolve) {
+              ModalStore.openModal("Alert", { body: "신고되었습니다." });
+            }
+          }
+        };
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
         render() {
+          const { ModalStore } = this.props;
           return (
             <React.Fragment>
               <NavigationLayout
@@ -88,6 +130,30 @@ export default inject(
                   </React.Fragment>
                 }
                 showBackIcon={true}
+                customButton={
+                  <React.Fragment>
+                    <a
+                      onClick={() =>
+                        ModalStore.openModal("Select", {
+                          selectOptions: [
+                            this.state.isScraped
+                              ? "스크랩 취소하기"
+                              : "스크랩하기",
+                            "신고하기",
+                            "닫기",
+                          ],
+                          onSelect: this.onSelectFunction,
+                        })
+                      }
+                      className="fixed-top-right"
+                    >
+                      <img
+                        src="/cust/assets/img/svg/icon-ellipsis-white.svg"
+                        alt="Search"
+                      />
+                    </a>
+                  </React.Fragment>
+                }
               />
 
               {/** 타이틀 */}
@@ -162,6 +228,7 @@ export default inject(
                 likeCount={this.state.likeCount}
                 commentCount={this.state.commentCount}
                 onClickLike={this.onClickLike}
+                onClickComment={this.onClickComment}
                 onClickShare={this.onClickShare}
                 onClickReservation={this.onClickReservation}
               />

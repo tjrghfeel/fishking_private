@@ -30,7 +30,10 @@ export default inject("PageStore")(
                     <div className="col-3 pl-2">이용약관</div>
                     <div className="col-8 text-right"></div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -40,7 +43,10 @@ export default inject("PageStore")(
                     <div className="col-3 pl-2">개인정보처리방침</div>
                     <div className="col-8 text-right"></div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -50,7 +56,10 @@ export default inject("PageStore")(
                     <div className="col-3 pl-2">취소 및 환불 규정</div>
                     <div className="col-8 text-right"></div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -60,7 +69,10 @@ export default inject("PageStore")(
                     <div className="col-3 pl-2">위치기반 서비스 이용약관</div>
                     <div className="col-8 text-right"></div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
@@ -70,7 +82,10 @@ export default inject("PageStore")(
                     <div className="col-3 pl-2">개인정보 제 3자 제공 동의</div>
                     <div className="col-8 text-right"></div>
                     <div className="col-1 text-right pl-1">
-                      <img src="/assets/img/svg/cal-arrow-right.svg" alt="" />
+                      <img
+                        src="/cust/assets/img/svg/cal-arrow-right.svg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </a>
