@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.board.Comment;
+import com.tobe.fishking.v2.entity.common.Event;
 import com.tobe.fishking.v2.entity.common.LoveTo;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
@@ -8,9 +10,12 @@ import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.MakeLoveToDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.board.CommentRepository;
+import com.tobe.fishking.v2.repository.common.EventRepository;
 import com.tobe.fishking.v2.repository.common.LoveToRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +31,10 @@ public class LoveToService {
     FishingDiaryRepository fishingDiaryRepository;
     @Autowired
     FishingDiaryCommentRepository fishingDiaryCommentRepository;
+    @Autowired
+    EventRepository eventRepository;
+    @Autowired
+    CommentRepository commentRepository;
 
     /*좋아요 추가*/
     @Transactional
@@ -46,6 +55,16 @@ public class LoveToService {
                 FishingDiaryComment fishingDiaryComment = fishingDiaryCommentRepository.findById(dto.getLinkId())
                         .orElseThrow(()->new ResourceNotFoundException("fishingDiaryComment not found for this id :: "+dto.getLinkId()));
                 fishingDiaryComment.plusLikeCount();
+            }
+            else if(dto.getTakeType().equals("event")){
+                Event event = eventRepository.findById(dto.getLinkId())
+                        .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+dto.getLinkId()));
+                event.getStatus().plusLikeCount();
+            }
+            else if(dto.getTakeType().equals("commonComment")){
+                Comment comment = commentRepository.findById(dto.getLinkId())
+                        .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+dto.getLinkId()));
+                comment.plusLikeCount();
             }
 
             LoveTo loveTo = LoveTo.builder()
@@ -80,6 +99,11 @@ public class LoveToService {
                 FishingDiaryComment fishingDiaryComment = fishingDiaryCommentRepository.findById(dto.getLinkId())
                         .orElseThrow(()->new ResourceNotFoundException("fishingDiaryComment not found for this id :: "+dto.getLinkId()));
                 fishingDiaryComment.subLikeCount();
+            }
+            else if(dto.getTakeType().equals("event")){
+                Event event = eventRepository.findById(dto.getLinkId())
+                        .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+dto.getLinkId()));
+                event.getStatus().subLikeCount();
             }
 
             loveToRepository.delete(preLoveTo);

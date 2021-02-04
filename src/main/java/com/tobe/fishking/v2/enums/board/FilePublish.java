@@ -14,12 +14,14 @@ public enum FilePublish implements IEnumModel {
     notice("공지사항"),
     fishingBlog("조행기"),
     fishingDiary("조행일지"),
-    comment("답글"),
+    comment("조항일지,조행기 댓글"),
     fishkingTv("어복TV"),
     companyRequest("업체요청"),
     profile("프로필"),
     review("리뷰"),
-    seaRocks("갯바위");
+    seaRocks("갯바위"),
+    event("이벤트"),
+    commonComment("댓글");
 
 
     private String value;
