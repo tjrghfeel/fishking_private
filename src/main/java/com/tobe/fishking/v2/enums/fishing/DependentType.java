@@ -6,7 +6,8 @@ public enum DependentType   implements IEnumModel   {
 
     board("게시판"),
     fishingDiary("조황일지"),
-    fishingBlog("조황기");
+    fishingBlog("조황기"),
+    event("이벤트");
 
     private String value;
     DependentType(String value) {

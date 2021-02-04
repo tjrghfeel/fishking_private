@@ -61,7 +61,10 @@ public class MapperUtility {
     }
     /*path와 file name을 합쳐서 도커환경인지 로컬환경인지에 따라 download url을 만들어주는 메소드 */
     public String transDownLoadUrl(String filePath, String fileName){
-        return env.getProperty("file.downloadUrl") + "/" + filePath + "/" + fileName;
+        if(filePath!=null && fileName !=null) {
+            return env.getProperty("file.downloadUrl") + "/" + filePath + "/" + fileName;
+        }
+        else return null;
     }
 
     /*알림 메세지 내용 생성 메소드*/

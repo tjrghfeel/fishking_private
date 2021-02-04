@@ -134,7 +134,7 @@ public class MemberService {
      * - pNum과 인증번호를 db에 저장.
      * - 반환 ) 전송 실패시 false. 성공시 true. */
     @Transactional
-    public Long requestSmsAuth(PhoneAuthDto dto){
+    public Long  requestSmsAuth(PhoneAuthDto dto){
         String areaCode = dto.getAreaCode();
         String localNumber = dto.getLocalNumber();
         Long phoneAuthId=null;

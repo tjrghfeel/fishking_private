@@ -21,7 +21,8 @@ public  enum BoardType implements IEnumModel {
     fishingBlog("유저조행기"),
     fishingDiary("조항일지"),
     review("리뷰"),
-    comment("댓글");
+    comment("댓글"),
+    event("이벤트");
 
     private String value;
 

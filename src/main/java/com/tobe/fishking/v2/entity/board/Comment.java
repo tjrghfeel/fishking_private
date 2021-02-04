@@ -36,7 +36,7 @@ public class Comment extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'게시판유형', 'USER', DBO, 'TABLE', comment, 'COLUMN',  board_type
     @Column(columnDefinition = "int  comment '게시판종류' ")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private DependentType dependentType;
 
     @Column(nullable = true, columnDefinition ="INT  comment 'Link ID ' ")
@@ -54,9 +54,8 @@ public class Comment extends BaseTime {
     @Column(columnDefinition = "varchar(2000) comment '내용 ' ", nullable = false)
     private String contents;
 
-    @Transient // DB에 영향을 미치지 않는다.
     @Column(columnDefinition = "int comment '좋아요수' ")
-    private int likeCount;
+    private Integer likeCount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', comment, 'COLUMN',  created_by
     @ManyToOne
@@ -68,12 +67,23 @@ public class Comment extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
+    private Boolean isDeleted;
+
+    /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     @JsonIdentityReference(alwaysAsId=true)
     @JsonProperty("post_id")
-    private Post post;
+    private Post post;*/
+
+    public void plusLikeCount(){this.likeCount++;}
+    public void subLikeCount(){this.likeCount--;}
+    public void delete(){this.isDeleted = true;}
+
+    public void modify(String content){
+        this.contents = content;
+    }
 
 }
