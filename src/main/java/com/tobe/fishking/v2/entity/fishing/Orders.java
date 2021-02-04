@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Entity
 @Builder
 @AllArgsConstructor
-
 @Table(name = "orders")
 public class Orders extends BaseTime {
 
@@ -27,6 +26,9 @@ public class Orders extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'주문일자', 'USER', DBO, 'TABLE', orders, 'COLUMN',  order_date
     @Column(columnDefinition = "varchar(10) not null   comment '주문일자'  ")
     private String orderDate;
+
+    @Column(columnDefinition = "varchar(10) not null   comment '주문한 조업일자'  ")
+    private String fishingDate;
 
     //(예정)승선자는  어떻게 처리?
 
@@ -70,6 +72,12 @@ public class Orders extends BaseTime {
     @Column(columnDefinition = "varchar(30) comment '주문번호' ")
     private String orderNumber;
 
+    @Column(columnDefinition = "varchar(30) comment '거래번호' ")
+    private String tradeNumber;
+
+    @Column(columnDefinition = "varchar(30) comment '카드사 승인번호' ")
+    private String confirmNumber;
+
 /*
 
 - 결제수단
@@ -99,4 +107,20 @@ public class Orders extends BaseTime {
         this.orderNumber = orderNumber;
         this.modifiedBy = member;
     }
+
+    public void changeStatus(OrderStatus status) {
+        this.orderStatus = status;
+    }
+
+    public void paid(Member member) {
+        this.isPay = true;
+        this.modifiedBy = member;
+    }
+
+    public void cancelled(Member member) {
+        this.isPay = false;
+        this.modifiedBy = member;
+    }
+
+
 }

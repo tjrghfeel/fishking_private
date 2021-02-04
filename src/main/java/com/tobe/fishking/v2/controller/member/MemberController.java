@@ -7,12 +7,14 @@ import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.auth.*;
+import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -367,6 +369,36 @@ public class MemberController {
     }
 
     /*상대방 글 보기 api*/
+    @ApiOperation(value = "상대방 글 보기",notes = "" +
+            "요청 필드 ) \n" +
+            "- userId : 상대방 id\n" +
+            "응답 필드 ) \n" +
+            "응답 필드 )\n" +
+            "- id : 게시글의 id \n" +
+            "- profileImage : 작성자 프로필 사진 download url \n" +
+            "- address : 게시글의 대상 선상의 주소 \n" +
+            "- shipId : 게시글 대상 상품의 선상id\n" +
+            "- memberId : 작성자 id \n" +
+            "- nickName : 작성자 닉네임\n" +
+            "- fishingType : 선상인지 갯바위인지 \n" +
+            "\tㄴ ship : 선상\n" +
+            "\tㄴ sealocks : 갯바위\n " +
+            "- isLikeTo : 게시글에 대한 좋아요 여부\n" +
+            "- createdDate : 작성일자 \n" +
+            "- likeCount : 좋아요 수 \n" +
+            "- commentCount : 댓글 수 \n" +
+            "- scrapCount : 스크랩 수 \n" +
+            "- title : 글 제목\n" +
+            "- contents : 게시글 내용(일부만 출력)\n" +
+            "- fileList : 이미지 파일 download url 리스트")
+    @GetMapping("/profile/fishingDiary/{page}")
+    public Page<FishingDiaryDtoForPage> getUserFishingDiary(
+            @RequestParam("userId") Long userId,
+            @PathVariable("page") int page,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return memberService.getUserFishingDiary(userId,page,token);
+    }
 
     /*프로필 관리 페이지 조회.
     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환. */

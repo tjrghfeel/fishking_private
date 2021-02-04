@@ -15,13 +15,14 @@ public class PayController {
     private final PayService payService;
 
     @PostMapping("/payresult")
-    public void payResult(HttpServletRequest request) {
+    public String payResult(HttpServletRequest request) {
         String rcid		= request.getParameter("reCommConId"		);
         String rctype	= request.getParameter("reCommType"		);
         String rhash	= request.getParameter("reHash"			);
         String rcancel  = request.getParameter("reCnclType"			);   // 1 취소응답, 0 정상응답
 
-        payService.payResult(rcid, rctype, rhash, rcancel);
+        Long orderId = payService.payResult(rcid, rctype, rhash, rcancel);
+        return "redirect:/cust/payment/result?orderId="+orderId.toString();
     }
 
 }

@@ -149,8 +149,8 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        Long[] idList = new Long[]{784L,785L};
-        fileRepo.findAllById(idList);
+        System.out.println("result1 >>> "+AES.aesDecode("이서준",env.getProperty("encrypKey.key")));
+        System.out.println("result1 >>> "+AES.aesEncode("이서준",env.getProperty("encrypKey.key")));
     }
 
     @Transactional

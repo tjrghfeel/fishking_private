@@ -88,7 +88,7 @@ public class MyMenuService {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page,10);
-        return fishingDiaryRepository.findByMember(member,pageable);
+        return fishingDiaryRepository.findByMember(member, member,pageable);
     }
 
     /*내글관리 - 댓글

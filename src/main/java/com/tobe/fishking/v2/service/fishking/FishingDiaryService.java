@@ -465,6 +465,9 @@ public class FishingDiaryService {
         FishingDiary fishingDiary  = fishingDiaryRepo.findById(fishingDiaryId)
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
 
+        if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
+        else if(fishingDiary.getIsDeleted() == true){ throw new RuntimeException("삭제된 게시물입니다.");}
+
         /*닉네임부분 설정.*/
         String nickName = null;
         if(fishingDiary.getFilePublish()==FilePublish.fishingDiary){nickName = fishingDiary.getShip().getShipName();}

@@ -8,10 +8,7 @@ import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.admin.post.ModifyOne2oneAnswerDto;
-import com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage;
-import com.tobe.fishking.v2.model.admin.post.PostSearchConditionDto;
-import com.tobe.fishking.v2.model.admin.post.WriteOne2oneAnswerDto;
+import com.tobe.fishking.v2.model.admin.post.*;
 import com.tobe.fishking.v2.model.board.UpdatePostDTO;
 import com.tobe.fishking.v2.model.board.WritePostDTO;
 import com.tobe.fishking.v2.model.common.AddAlertDto;
@@ -67,13 +64,15 @@ public class PostManagerService {
             throws NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException,
             BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         /*findAllByConditions()에 넘겨줄 인자들 변환해주는 부분*/
-        String key = env.getProperty("encrypKey.key");
-        if(dto.getAuthorName()!=null){dto.setAuthorName(AES.aesEncode(dto.getAuthorName(),key));}
         Integer channelType = (dto.getChannelType()==null)? null : (ChannelType.valueOf(dto.getChannelType()).ordinal());
         Integer questionType = (dto.getQuestionType()==null)? null : (QuestionType.valueOf(dto.getQuestionType()).ordinal());
         Integer returnType = (dto.getReturnType()==null)? null : (ReturnType.valueOf(dto.getReturnType()).ordinal());
 
-        Pageable pageable = PageRequest.of(page,10, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
+        Pageable pageable=null;
+        if(dto.getSort()!=null) {
+            pageable = PageRequest.of(page, 50, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));//JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")")
+        }
+        else pageable = PageRequest.of(page,50);
 
         return postRepository.findAllByConditions(
                 dto.getId(),
@@ -84,7 +83,7 @@ public class PostManagerService {
                 dto.getTitle(),
                 dto.getContents(),
                 dto.getAuthorId(),
-                dto.getAuthorName(),
+                dto.getNickName(),
                 returnType,
                 dto.getReturnNoAddress(),
                 dto.getCreatedAt(),
