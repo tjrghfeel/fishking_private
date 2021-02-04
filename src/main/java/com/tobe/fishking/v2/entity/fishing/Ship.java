@@ -63,6 +63,11 @@ public class Ship extends BaseTime {  //선상
     private String address;
 
 
+    // EXEC sp_addextendedproperty 'MS_Description', N'주소', 'USER', DBO, 'TABLE', ship, 'COLUMN',  address
+    @Column(columnDefinition = "varchar(100)   comment '선장'  ")
+    private String captain;
+
+
     // EXEC sp_addextendedproperty 'MS_Description', N'시도', 'USER', DBO, 'TABLE', ship, 'COLUMN',  sido
     @Column(columnDefinition = "varchar(30)   comment '시도'  ")
     private String sido;
@@ -90,7 +95,7 @@ public class Ship extends BaseTime {  //선상
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'탑승인원', 'USER', DBO, 'TABLE', ship, 'COLUMN',  boarding_person
-    @Column(columnDefinition = "int  comment '탑승인원'  ")
+    @Column(columnDefinition = "int  comment '탑승인원-정원'  ")
     private Integer boardingPerson;
 
 
@@ -189,8 +194,11 @@ public class Ship extends BaseTime {  //선상
     private int reviewCount;
 
 
-    @Column(columnDefinition = "tinyint(1) default 1 comment '운행여부'")
+    @Column(columnDefinition = "tinyint(1) default 1 comment '운행여부(페업)'")
     private boolean isActive;
+
+    @Column(columnDefinition = "tinyint(1) default 0  comment '출항여부(출항중 or 정박중)'")
+    private boolean departStatus;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by

@@ -23,7 +23,7 @@ public class OrderDetails extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'조황정보', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  fishing_ships
     @ManyToOne
-    @JoinColumn(name = "order_detail_goods_id", columnDefinition = "bigint  not null   comment '조황정보'  ")
+    @JoinColumn(name = "order_detail_goods_id", columnDefinition = "bigint  not null   comment '상품-조황정보'  ")
     private Goods goods;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'조황정보', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  fishing_ships
@@ -34,6 +34,10 @@ public class OrderDetails extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'인원', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  personnel
     @Column(columnDefinition = "float  comment  '인원'  ")
     private Integer personnel;
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'인원', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  personnel
+    @Column(columnDefinition = "float  comment  '승선인원'  ")
+    private Integer ridePersonnel;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'가격', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  price
     @Column(columnDefinition = "float comment '가격'  ")

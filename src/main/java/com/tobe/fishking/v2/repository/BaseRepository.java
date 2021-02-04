@@ -8,10 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
+import java.util.List;
 
 @NoRepositoryBean
 public interface BaseRepository<T, ID extends Serializable> extends JpaRepository<T,ID> {
+
     Page<T> findAll(Pageable pageable, Integer totalElements);
     Page<T> findAll(Specification<T> spec, Pageable pageable, Integer totalElements);
     Page<T> findAll(Specification<T> spec, Pageable pageable, Integer totalElements, Sort sort);
+
+    List<T> findAll(Specification<T> spec);
+
 }

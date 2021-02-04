@@ -39,6 +39,10 @@ public class RideShip extends BaseTime {
     @Column(columnDefinition = "varchar(8)   comment '생년월일'  ")
     private String birthday;
 
+    // EXEC sp_addextendedproperty 'MS_Description', N'생년월일', 'USER', DBO, 'TABLE', ride_ship, 'COLUMN',  birthday
+    @Column(columnDefinition = "varchar(15)   comment '연락처'  ")
+    private String contactNumber;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'거주지-시도', 'USER', DBO, 'TABLE', ride_ship, 'COLUMN',  residence_city
     @Column(columnDefinition = "varchar(50)   comment '거주지-시도'  ")
     private String residenceCity;
