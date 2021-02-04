@@ -28,7 +28,7 @@ public class PostSearchConditionDto {
     private String title;
     private String contents;
     private Long authorId;
-    private String authorName;
+    private String nickName;
     private String returnType;
     private String returnNoAddress;
     private String createdAt;

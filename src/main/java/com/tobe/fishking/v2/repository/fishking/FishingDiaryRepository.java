@@ -74,19 +74,23 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
             "       group by f2.pid order by f2.file_no), null) filePathList " +
             "from fishing_diary as d, ship as s, Member as m  " +
-            "where d.fishing_diary_member_id = :member " +
+            "where d.fishing_diary_member_id = :user " +
             "   and d.fishing_diary_ship_id = s.id " +
             "   and d.fishing_diary_member_id = m.id " +
+            "   and d.is_deleted = false " +
+            "   and m.is_active = true " +
             "order by d.created_date desc ",
             countQuery = "select d.id " +
                     "from fishing_diary as d, ship as s, Member as m  " +
-                    "where d.fishing_diary_member_id = :member " +
+                    "where d.fishing_diary_member_id = :user " +
                     "   and d.fishing_diary_ship_id = s.id " +
                     "   and d.fishing_diary_member_id = m.id " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     "order by d.created_date desc ",
             nativeQuery = true
     )
-    Page<FishingDiaryDtoForPage> findByMember(@Param("member") Member member, Pageable pageable);
+    Page<FishingDiaryDtoForPage> findByMember(@Param("user") Member user, @Param("member") Member member, Pageable pageable);
     
     /*마이메뉴 - 내글관리 - 스크랩 에서 스크랩한 게시글 목록을 가져와주는 메소드*/
     @Query(value = "select " +
@@ -125,6 +129,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "   and sm.fishing_diary_id = d.id " +
             "   and d.fishing_diary_ship_id = s.id " +
             "   and d.fishing_diary_member_id = m.id " +
+            "   and d.is_deleted = false " +
+            "   and m.is_active = true " +
             "order by d.created_date desc ",
             countQuery = "select d.id " +
                     "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm  " +
@@ -132,6 +138,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and sm.fishing_diary_id = d.id " +
                     "   and d.fishing_diary_ship_id = s.id " +
                     "   and d.fishing_diary_member_id = m.id " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     "order by d.created_date desc ",
             nativeQuery = true
     )
@@ -179,6 +187,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     " group by d.id " +
                     "order by createdDate desc ",
             countQuery = "select d.id " +
@@ -193,6 +203,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     " group by d.id ",
             nativeQuery = true
     )
@@ -249,6 +261,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     " group by d.id " +
                     "order by likeCount desc ",
             countQuery = "select d.id " +
@@ -263,6 +277,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     " group by d.id ",
             nativeQuery = true
     )
@@ -319,6 +335,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     " group by d.id " +
                     "order by commentCount desc ",
             countQuery = "select d.id " +
@@ -333,6 +351,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
                     "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
                     "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
                     " group by d.id ",
             nativeQuery = true
     )
@@ -424,6 +444,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                        "   , FileEntity  b " +
                        "    where  a.writeLongitude is not null  and  a.writeLatitude is not null  and a.filePublish = :filePublish and a.id = b.pid and b.isRepresent = true and b.id is not null ")
     List<Tuple> findAllFishingDiaryAndLocation(@Param("filePublish") FilePublish filePublish);
+
 
 }
 

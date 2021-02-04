@@ -3,7 +3,11 @@ package com.tobe.fishking.v2.repository.board;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
+import com.tobe.fishking.v2.enums.board.QuestionType;
+import com.tobe.fishking.v2.enums.board.ReturnType;
+import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage;
+import com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage2;
 import com.tobe.fishking.v2.model.board.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -224,7 +228,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   p.modified_date modifiedDate  " +
                     "from post p join board b on (p.board_id = b.id) " +
                     "where " +
-                    "   if(:postId is null,true,(p.id = :postId)) " +
+                    "   (:postId is null or (:postId is not null and p.id = :postId))" +
+//                    "   if(:postId is null,true,(p.id = :postId)) " +
                     "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
                     "   and if(:parentId is null,true,(p.parent_id = :parentId)) " +
                     "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
@@ -284,6 +289,55 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             Pageable pageable
     );
 
+    @Query(
+            value = "select " +
+                    "   new com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage2(" +
+                    "       p, b"+
+                    "   ) " +
+                    "from Post p join Board b on (p.board = b) " +
+                    "where " +
+                    "   (:postId is null or (:postId is not null and p.id = :postId)) " +
+                    "   and (:boardId is null or (:boardId is not null and p.board.id = :boardId))" +
+                    "   and (:parentId is null or (:parentId is not null and p.parent_id = :parentId)) " +
+                    "   and (:channelType is null or (:channelType is not null and p.channelType = :channelType)) " +
+                    "   and (:questionType is null or (:questionType is not null and p.questionType = :questionType)) " +
+                    "   and (:title is null or (:title is not null and p.title like %:title%)) " +
+                    "   and (:content is null or (:content is not null and p.contents like %:content%)) " +
+                    "   and (:authorId is null or (:authorId is not null and p.author.id = :authorId)) " +
+                    "   and (:nickName is null or (:nickName is not null and p.author.nickName like %:nickName%)) " +
+                    "   and (:returnType is null or (:returnType is not null and p.returnType = :returnType)) " +
+                    "   and (:returnNoAddress is null or (:returnNoAddress is not null and p.returnNoAddress like %:returnNoAddress%)) " +
+                    "   and (:createdAt is null or (:createdAt is not null and p.createdAt like %:createdAt%)) " +
+                    "   and (:isSecret is null or (:isSecret is not null and p.isSecret = :isSecret)) " +
+                    "   and (:createdDateStart is null or (:createdDateStart is not null and p.createdDate > :createdDateStart)) " +
+                    "   and (:createdDateEnd is null or (:createdDateEnd is not null and p.createdDate < :createdDateEnd)) " +
+                    "   and (:modifiedDateStart is null or (:modifiedDateStart is not null and p.modifiedDate > :modifiedDateStart)) " +
+                    "   and (:modifiedDateEnd is null or (:modifiedDateEnd is not null and p.modifiedDate < :modifiedDateEnd)) "
+    )
+    Page<PostManageDtoForPage2> findAllByConditions2(
+            @Param("postId") Long postId,
+            @Param("boardId") Long boardId,
+            @Param("parentId") Long parentId,
+            @Param("channelType") ChannelType channelType,
+            @Param("questionType") QuestionType questionType,
+            @Param("title") String title,
+            @Param("content") String content,
+            @Param("authorId") Long authorId,
+            @Param("nickName") String nickName,
+            @Param("returnType") ReturnType returnType,
+            @Param("returnNoAddress") String returnNoAddress,
+            @Param("createdAt") String createdAt,
+            @Param("isSecret") Boolean isSecret,
+            @Param("createdDateStart") LocalDate createdDateStart,
+            @Param("createdDateEnd") LocalDate createdDateEnd,
+            @Param("modifiedDateStart") LocalDate modifiedDateStart,
+            @Param("modifiedDateEnd") LocalDate modifiedDateEnd,
+            Pageable pageable
+    );
+
     @Query("select p from Post p where p.title like concat('%', :title, '%')")
     List<Post> getPostContainTitle(String title);
+
+    @Query("select coalesce(1, (select 'hello' from Post p2)) from Post p ")
+    String noName(@Param("aaa") String aaa);
 }

@@ -1,10 +1,7 @@
 package com.tobe.fishking.v2.controller.admin;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.admin.post.ModifyOne2oneAnswerDto;
-import com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage;
-import com.tobe.fishking.v2.model.admin.post.PostSearchConditionDto;
-import com.tobe.fishking.v2.model.admin.post.WriteOne2oneAnswerDto;
+import com.tobe.fishking.v2.model.admin.post.*;
 import com.tobe.fishking.v2.service.admin.PostManagerService;
 import com.tobe.fishking.v2.service.board.PostService;
 import io.swagger.annotations.Api;

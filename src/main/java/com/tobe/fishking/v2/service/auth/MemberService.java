@@ -15,6 +15,7 @@ import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.*;
 import com.tobe.fishking.v2.model.auth.*;
+import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
@@ -24,6 +25,9 @@ import lombok.AllArgsConstructor;
 
 
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -201,7 +205,7 @@ public class MemberService {
             return 2;
         }
         else{
-            if(memberRepository.existsByUid(uid)){return 1;}
+            if(memberRepository.existsByUidAndIsActive(uid,true)){return 1;}
             else return 0;
         }
     }
@@ -555,7 +559,8 @@ public class MemberService {
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
             if(member.getSessionToken()!=null){
-                resultDto.setSessionToken(member.getSessionToken());
+                String encodingToken = AES.aesEncode(member.getSessionToken(),env.getProperty("encrypKey.key"));
+                resultDto.setSessionToken(encodingToken);
             }
             /*세션토큰이 존재하지 않으면 새로생성한 세션토큰반환.*/
             else{
@@ -708,7 +713,8 @@ public class MemberService {
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
             if(member.getSessionToken()!=null){
-                resultDto.setSessionToken(member.getSessionToken());
+                String encodingToken = AES.aesEncode(member.getSessionToken(),env.getProperty("encrypKey.key"));
+                resultDto.setSessionToken(encodingToken);
             }
             /*세션토큰이 존재하지 않으면 새로생성한 세션토큰반환.*/
             else{
@@ -832,7 +838,8 @@ public class MemberService {
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
             if(member.getSessionToken()!=null){
-                resultDto.setSessionToken(member.getSessionToken());
+                String encodingToken = AES.aesEncode(member.getSessionToken(),env.getProperty("encrypKey.key"));
+                resultDto.setSessionToken(encodingToken);
             }
             /*세션토큰이 존재하지 않으면 새로생성한 세션토큰반환.*/
             else{
@@ -1023,11 +1030,13 @@ public class MemberService {
         String sessionToken=null;
         /*아디,비번 확인*/
         Member member = memberRepository.findByUid(loginDTO.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this uid :: "+loginDTO.getMemberId()));
+                .orElseThrow(()->new ResourceNotFoundException("아이디가 존재하지 않습니다"));
         if(member==null){
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
+            /*탈퇴한 회원인 경우*/
+            if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
             /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
                 return member.getSessionToken();
@@ -1132,6 +1141,20 @@ public class MemberService {
             }
 
         return userProfileDTO;
+    }
+
+    /*상대방 게시글 보기*/
+    @Transactional
+    public Page<FishingDiaryDtoForPage> getUserFishingDiary(Long userId, int page, String token) throws ResourceNotFoundException {
+        Member user = memberRepository.findById(userId)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+userId));
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+
+        if(user.getIsActive() == false){throw new RuntimeException("해당 회원은 탈퇴한 회원입니다.");}
+
+        Pageable pageable = PageRequest.of(page,10);
+        return fishingDiaryRepository.findByMember(user,member,pageable);
     }
 
     /*프로필 관리 페이지 보기
