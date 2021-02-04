@@ -38,11 +38,11 @@ public class RiderShipDTO {
         private Long rideShipId;
         private String shipPassengerName;
         private String gender;  //남, 여
-        private String birthDay;  //yy.mm.dd
+        private String birthDay;  //yy.mm.dd∂
         private String residenceCity;
         private String residenceGungu;
-        private String contactNumber;
-        private boolean isFingerPrint;
+        private String phoneNumber;
+        private boolean bFingerPrint;
 
 
         public static RiderShipDTO.BoardingListByOrdersDTOResp of(RideShip rideShip) {
@@ -54,8 +54,8 @@ public class RiderShipDTO {
                     .birthDay(rideShip.getBirthday())
                     .residenceCity(rideShip.getResidenceCity())
                     .residenceGungu(rideShip.getResidenceGungu())
-                    .contactNumber(rideShip.getContactNumber())
-                    .isFingerPrint(rideShip.isRide())
+                    .phoneNumber(rideShip.getPhoneNumber())
+                    .bFingerPrint(rideShip.isBFingerPrint())
                     .build();
         }
 

@@ -170,12 +170,13 @@ public class MainController {
         return responseService.getListResult(ordersService.findAllByOrderDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))));
     }
 
-/*
+
     @ApiOperation(value = " 승선확인 -명단리스트 ", notes = "승선확인 -명단리스트.   ")
     @GetMapping(value = "/getBoardingListForGoodsByMarine")
     public ListResult<RiderShipDTO.BoardingListByOrdersDTOResp> getBoardingListForGoodsByMarine(Long goodsId){
+        if (goodsId == null ) return null;
         return responseService.getListResult(ordersService.findAllByBoardingList(goodsId));
     }
-*/
+
 
 }

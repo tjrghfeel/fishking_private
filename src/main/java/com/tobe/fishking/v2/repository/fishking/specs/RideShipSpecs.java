@@ -16,7 +16,7 @@ public class RideShipSpecs {
             public Predicate toPredicate(Root<RideShip> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 
                 if(goodsId <= 0.0) return null;
-                return builder.equal(root.get("orderDetails").get("goods").get("id"), goodsId);
+                return builder.equal(root.get("ordersDetail").get("goods").get("id"), goodsId);
             }
         };
     }

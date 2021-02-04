@@ -76,7 +76,7 @@ public class OrdersInfoDTO {
                     .ordersPersonal(orderDtails.getPersonnel().longValue())
                     .ridePersonnel(orderDtails.getRidePersonnel().longValue())
                     .boardingPerson(orderDtails.getGoods().getShip().getBoardingPerson().longValue())
-                    .shipDapartStatus(true)  //무조건 출항중
+                    .shipDapartStatus(orderDtails.getGoods().getShip().isDepartStatus())
                     .location(orderDtails.getGoods().getShip().getLiveLocation())
                     .build();
         }
