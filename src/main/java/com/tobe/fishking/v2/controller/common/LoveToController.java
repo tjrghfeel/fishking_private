@@ -24,7 +24,7 @@ public class LoveToController {
             "요청필드 )\n" +
             "- linkId : Long / 필수 / 좋아요 대상의 id\n" +
             "- takeType : String / 필수 / 좋아요 대상의 유형 / goods(\"상품\"), ship(\"업체\"), fishingDiary(\"조황일지\")," +
-            "    fishingBlog(\"조행기\"), comment(\"댓글\"), fishkingTv(\"어복TV\")\n" +
+            "    fishingBlog(\"조행기\"), comment(\"댓글\"), fishkingTv(\"어복TV\"), event('이벤트')\n" +
             "응답 필드 ) 좋아요 추가 성공시 true, 넘겨준 필드값에 해당하는 좋아요가 이미 존재할시 false. ")
     @PostMapping("/loveto")
     public Boolean addLoveTo(
