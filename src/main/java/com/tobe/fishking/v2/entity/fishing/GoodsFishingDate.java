@@ -32,6 +32,14 @@ public class GoodsFishingDate extends BaseTime {
     @Column(columnDefinition = "varchar(10) commnet '조업일 문자열' ")
     private String fishingDateString;
 
+    @Column(columnDefinition = "int comment '예약된 인원'")
+    private Integer reservedNumber;
+
+    @Column(columnDefinition = "int comment '대기중인 인원'")
+    private Integer waitNumber;
+
+
+
     @ManyToOne
     @JoinColumn(name="created_by" ,   updatable= false , columnDefinition  = " bigint not null comment '생성자'")
     private Member createdBy;
@@ -46,6 +54,8 @@ public class GoodsFishingDate extends BaseTime {
         this.goods = goods;
         this.fishingDateString = fishingDateString;
         this.fishingDate = getDateFromString(fishingDateString);
+        this.reservedNumber = 0;
+        this.waitNumber = 0;
         this.createdBy = member;
         this.modifiedBy = member;
     }
@@ -54,5 +64,13 @@ public class GoodsFishingDate extends BaseTime {
         this.fishingDateString = fishingDateString;
         this.fishingDate = getDateFromString(fishingDateString);
         this.modifiedBy = member;
+    }
+
+    public void addReservedNumber(Integer number) {
+        this.reservedNumber += number;
+    }
+
+    public void addWaitNumber(Integer number) {
+        this.waitNumber += number;
     }
 }

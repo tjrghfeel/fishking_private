@@ -203,6 +203,8 @@ public class Ship extends BaseTime {  //선상
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    @Column(columnDefinition = "varchar(100) comment '승선위치' ")
+    private String positions;
 
     @Builder
     public Ship(Long id, String shipName, Company company, Member member, SeaDirection seaDirection ) {

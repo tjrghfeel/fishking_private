@@ -29,7 +29,7 @@ public class ReserveDTO {
     @ApiParam(value = "쿠폰 적용 후 가격")
     private @Valid Long paymentPrice;
 
-    @ApiParam(value = "예약일 yyyy-MM-dd")
+    @ApiParam(value = "예약한 조업일 yyyy-MM-dd")
     private @Valid String date;
 
     @ApiParam(value = "예약자 이름")
@@ -46,4 +46,7 @@ public class ReserveDTO {
 
     @ApiParam(value = "승선자 승선위치 리스트")
     private @Valid List<Integer> positions;
+
+    @ApiParam(value = "결제수단. 신용카드: '1000000000', 가상계좌: '0100000000', 계좌이체: '0010000000', 휴대폰결제: '0000010000'")
+    private @Valid String payMethod;
 }

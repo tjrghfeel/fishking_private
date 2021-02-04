@@ -18,7 +18,7 @@ public class RideShip extends BaseTime {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // IDENTITY //mssql
 // @Column(columnDefinition = "comment 'id'  ")
-@Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
+    @Column(updatable=false,nullable=false ,columnDefinition = "bigint  comment 'id' ")
     private Long id;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'오더상세', 'USER', DBO, 'TABLE', orders, 'COLUMN',  fishing_ships
@@ -48,6 +48,8 @@ public class RideShip extends BaseTime {
     @Column(columnDefinition = "varchar(50)   comment '거주지-군구'  ")
     private String residenceGungu;
 
+    @Column(columnDefinition = "varchar(15)   comment '핸드폰번호'  ")
+    private String phoneNumber;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'승선여부', 'USER', DBO, 'TABLE', ride_ship, 'COLUMN',  is_ride
     @Column(columnDefinition = "bit  default 0  comment '승선여부'  ")
@@ -89,6 +91,19 @@ public class RideShip extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    @Builder
+    public RideShip(OrderDetails ordersDetail, String name, String birthday, String phoneNumber, Member member) {
+        this.ordersDetail = ordersDetail;
+        this.name = name;
+        this.birthday = birthday;
+        this.phoneNumber = phoneNumber;
+        this.createdBy = member;
+        this.modifiedBy = member;
+    }
 
+    public void updateFingerPrint(String fingerPrint, Member member) {
+        this.fingerPrint = fingerPrint;
+        this.modifiedBy = member;
+    }
 
 }

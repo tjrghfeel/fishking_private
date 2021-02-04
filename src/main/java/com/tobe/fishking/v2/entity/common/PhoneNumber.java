@@ -39,4 +39,8 @@ public class PhoneNumber {
         this.localNumber = localNumber;
         this.phoneNumberInfo = phoneNumberInfo;
     }
+
+    public String getFullNumber() {
+        return this.areaCode + this.localNumber;
+    }
 }

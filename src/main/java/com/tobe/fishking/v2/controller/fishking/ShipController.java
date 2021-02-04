@@ -55,7 +55,7 @@ public class ShipController {
 
     @ApiOperation(value = "예약", notes = "예약정보 전화번호는 '-' 포함")
     @PostMapping("/ship/reserve")
-    public Long Reserve(
+    public OrderResponse Reserve(
             @RequestHeader(name = "Authorization") String sessionToken,
             ReserveDTO reserveDTO) {
         Member member = memberService.getMemberBySessionToken(sessionToken);

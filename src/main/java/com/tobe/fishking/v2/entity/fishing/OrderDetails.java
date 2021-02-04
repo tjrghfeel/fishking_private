@@ -44,6 +44,9 @@ public class OrderDetails extends BaseTime {
     @Column(columnDefinition = "float comment '총가격'  ")
     private Integer totalAmount;
 
+    @Column(columnDefinition = "varchar(100) comment '승선위치' ")
+    private String positions;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', orders_details, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")
