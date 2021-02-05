@@ -12,6 +12,7 @@ import ZzimRoute from "./zzim";
 import CouponRoute from "./coupon";
 import SearchRoute from "./search";
 import ReservationRoute from "./reservation";
+import PayRoute from "./pay";
 
 export default inject("PageStore")(
   observer(({ PageStore, history, match }) => {
@@ -58,6 +59,9 @@ export default inject("PageStore")(
             path={`${match.url}/reservation`}
             component={ReservationRoute}
           />
+
+          {/** 결제 */}
+          <Route path={`${match.url}/pay`} component={PayRoute} />
 
           {/** 기본 리디렉션 */}
           <Redirect from={`*`} to={`${match.url}/main/home`} />
