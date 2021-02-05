@@ -28,7 +28,6 @@ public interface OrderDetailsRepository extends BaseRepository<OrderDetails, Lon
     RiderShipDTO.RiderShipDTOResp findAllByDateAndRider(@Param("orderDate") String orderdate, @Param("orderStatus") OrderStatus orderStatus);
 
 
-
     // List<OrderDetails> findAll(Specification<OrderDetails> orderDetailsSpecification);
 /*
     @Query(value = "SELECT s " +

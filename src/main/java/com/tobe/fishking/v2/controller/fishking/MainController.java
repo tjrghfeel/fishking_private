@@ -167,7 +167,7 @@ public class MainController {
     @ApiOperation(value = " 출항현황 ", notes = "출항현황 Map.   ")
     @GetMapping(value = "/getShipDepartInfoByMarine")
     public ListResult<OrdersInfoDTO.ShipByOrdersDTOResp> getShipDepartInfoByMarine(){
-        return responseService.getListResult(ordersService.findAllByOrderDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))));
+        return responseService.getListResult(ordersService.findAllByFishingDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))));
     }
 
 
