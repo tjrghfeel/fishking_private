@@ -25,6 +25,7 @@ import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.CouponService;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
+import com.tobe.fishking.v2.service.fishking.MyMenuService;
 import org.apache.commons.io.FilenameUtils;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
@@ -55,6 +56,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -118,6 +120,10 @@ public class PostControllerTest {
     TblSubmitQueueRepository tblSubmitQueueRepository;
     @Autowired
     FishingDiaryService fishingDiaryService;
+    @Autowired
+    TidalLevelRepository tidalLevelRepository;
+    @Autowired
+    MyMenuService myMenuService;
 
     @Test
     public void fileTest() throws Exception {
@@ -149,8 +155,7 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        System.out.println("result1 >>> "+AES.aesDecode("이서준",env.getProperty("encrypKey.key")));
-        System.out.println("result1 >>> "+AES.aesEncode("이서준",env.getProperty("encrypKey.key")));
+        myMenuService.setHighAndLowWater(LocalDate.now());
     }
 
     @Transactional

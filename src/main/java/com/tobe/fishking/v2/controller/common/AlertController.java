@@ -27,7 +27,8 @@ public class AlertController {
             "   alertType : String / 알람 종류 / couponExpire(\"쿠폰 만료 알림\"), reservationComplete(\"예약완료\")\n" +
             "   entityType : String / 알림과 관련있는 entity의 종류\n" +
             "   pid : Long / 알림과 관련있는 entity의 id\n" +
-            "   createdBy : Long / 현재알림을 생성하고있는 회원 id\n")
+            "   createdBy : Long / 현재알림을 생성하고있는 회원 id\n" +
+            "   alertTime : String / 알림")
     @PostMapping("/alert")
     public Long addAlert(@RequestBody AddAlertDto dto) throws ResourceNotFoundException {
         return alertService.addAlert(dto);
