@@ -84,7 +84,7 @@ export default inject("DataStore")(
               <div className="modal-header bg-primary d-flex justify-content-center">
                 <a data-dismiss="modal" className="nav-left">
                   <img
-                    src="/cust/assets/img/svg/navbar-back.svg"
+                    src="/assets/cust/img/svg/navbar-back.svg"
                     alt="뒤로가기"
                   />
                 </a>
@@ -93,7 +93,7 @@ export default inject("DataStore")(
                 </h5>
                 <a className="nav-right" onClick={onInit}>
                   <img
-                    src="/cust/assets/img/svg/navbar-refresh.svg"
+                    src="/assets/cust/img/svg/navbar-refresh.svg"
                     alt="Refresh"
                   />
                   <span>초기화</span>

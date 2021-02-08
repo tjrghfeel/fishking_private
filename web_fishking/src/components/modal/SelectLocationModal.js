@@ -20,7 +20,7 @@ export default inject("DataStore")(
             <div className="modal-header bg-primary d-flex justify-content-center">
               <a ref={dismiss} data-dismiss="modal" className="nav-left">
                 <img
-                  src="/cust/assets/img/svg/navbar-back.svg"
+                  src="/assets/cust/img/svg/navbar-back.svg"
                   alt="뒤로가기"
                 />
               </a>

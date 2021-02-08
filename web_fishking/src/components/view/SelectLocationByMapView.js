@@ -35,7 +35,7 @@ export default inject("PageStore")(
           }
 
           // const image = new kakao.maps.MarkerImage(
-          //   "/cust/assets/img/svg/marker-boat-white.svg",
+          //   "/assets/cust/img/svg/marker-boat-white.svg",
           //   new kakao.maps.Size(64, 69),
           //   { offset: new kakao.maps.Point(27, 69) }
           // );
@@ -92,7 +92,7 @@ export default inject("PageStore")(
                   {/*  className="pointer img-sm"*/}
                   {/*  style={{ top: "310px", left: "225px" }}*/}
                   {/*>*/}
-                  {/*  <img src="/cust/assets/img/svg/marker-boat-white.svg" />*/}
+                  {/*  <img src="/assets/cust/img/svg/marker-boat-white.svg" />*/}
                   {/*</a>*/}
                 </div>
               </div>

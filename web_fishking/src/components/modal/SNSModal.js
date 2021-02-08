@@ -16,7 +16,7 @@ export default inject("ModalStore")(
             <div className="modal-body text-center">
               <a className="nav-expander" data-dismiss="modal">
                 <img
-                  src="/cust/assets/img/svg/icon_close_grey.svg"
+                  src="/assets/cust/img/svg/icon_close_grey.svg"
                   alt="팝업닫기"
                 />
               </a>
@@ -27,7 +27,7 @@ export default inject("ModalStore")(
                   <a onClick={() => (onSelect ? onSelect("KAKAO") : null)}>
                     <figure>
                       <img
-                        src="/cust/assets/img/svg/sns_kakaotalk.svg"
+                        src="/assets/cust/img/svg/sns_kakaotalk.svg"
                         alt="카카오톡"
                       />
                     </figure>
@@ -38,7 +38,7 @@ export default inject("ModalStore")(
                   <a onClick={() => (onSelect ? onSelect("FACEBOOK") : null)}>
                     <figure>
                       <img
-                        src="/cust/assets/img/svg/sns_facebook.svg"
+                        src="/assets/cust/img/svg/sns_facebook.svg"
                         alt="페이스북"
                       />
                     </figure>
@@ -49,7 +49,7 @@ export default inject("ModalStore")(
                   <a onClick={() => (onSelect ? onSelect("KAKAOSTORY") : null)}>
                     <figure>
                       <img
-                        src="/cust/assets/img/svg/sns_kakaostory.svg"
+                        src="/assets/cust/img/svg/sns_kakaostory.svg"
                         alt="카카오스토리"
                       />
                     </figure>
@@ -60,7 +60,7 @@ export default inject("ModalStore")(
                   <a onClick={() => (onSelect ? onSelect("INSTAGRAM") : null)}>
                     <figure>
                       <img
-                        src="/cust/assets/img/svg/sns_instagram.svg"
+                        src="/assets/cust/img/svg/sns_instagram.svg"
                         alt="인스타그램"
                       />
                     </figure>
@@ -71,7 +71,7 @@ export default inject("ModalStore")(
                   <a onClick={() => (onSelect ? onSelect("MORE") : null)}>
                     <figure>
                       <img
-                        src="/cust/assets/img/svg/sns_more.svg"
+                        src="/assets/cust/img/svg/sns_more.svg"
                         alt="더보기"
                       />
                     </figure>

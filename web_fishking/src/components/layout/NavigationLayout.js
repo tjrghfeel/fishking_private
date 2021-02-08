@@ -32,8 +32,8 @@ export default inject("PageStore")(
                 <img
                   src={
                     transparent
-                      ? "/cust/assets/img/svg/navbar-back-black.svg"
-                      : "/cust/assets/img/svg/navbar-back.svg"
+                      ? "/assets/cust/img/svg/navbar-back-black.svg"
+                      : "/assets/cust/img/svg/navbar-back.svg"
                   }
                   alt="뒤로가기"
                 />
@@ -45,7 +45,7 @@ export default inject("PageStore")(
                 onClick={() => PageStore.push(`/set/main`)}
                 className="fixed-top-right-two"
               >
-                <img src="/cust/assets/img/svg/navbar-set.svg" alt="Set" />
+                <img src="/assets/cust/img/svg/navbar-set.svg" alt="Set" />
               </a>
             )}
             {showSearchIcon && (
@@ -54,7 +54,7 @@ export default inject("PageStore")(
                 className="fixed-top-right"
               >
                 <img
-                  src="/cust/assets/img/svg/navbar-search.svg"
+                  src="/assets/cust/img/svg/navbar-search.svg"
                   alt="Search"
                 />
               </a>

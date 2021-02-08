@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import qs from "qs";
+import * as path from "path";
 
 const PageStore = new (class {
   constructor(props) {
@@ -19,8 +20,8 @@ const PageStore = new (class {
     this.history = history;
   };
   push = (pathname) => {
-    // this.history.push(pathname);
-    window.location.href = pathname;
+    const service = this.history.location.pathname.split("/")[1];
+    window.location.href = `/${service}${pathname}`;
   };
   reload = () => {
     window.location.reload();

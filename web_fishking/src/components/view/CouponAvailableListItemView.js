@@ -55,7 +55,7 @@ export default inject()(
                 <small>
                   쿠폰 다운받기&nbsp;
                   <img
-                    src="/cust/assets/img/svg/icon-down.svg"
+                    src="/assets/cust/img/svg/icon-down.svg"
                     alt=""
                     className="vam"
                   />

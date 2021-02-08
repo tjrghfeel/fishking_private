@@ -64,7 +64,7 @@ export default inject("DataStore")(
                 <h5>{nickName}</h5>
                 <p>
                   <img
-                    src="/cust/assets/img/svg/icon-map-grey.svg"
+                    src="/assets/cust/img/svg/icon-map-grey.svg"
                     alt=""
                     className="vam"
                   />

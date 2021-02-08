@@ -13,17 +13,17 @@ export default inject()(
         {
           text: "최신순",
           value: "createDate",
-          imgSrc: "/cust/assets/img/svg/sort-latest.svg",
+          imgSrc: "/assets/cust/img/svg/sort-latest.svg",
         },
         {
           text: "좋아요순",
           value: "likeCount",
-          imgSrc: "/cust/assets/img/svg/sort-recommand.svg",
+          imgSrc: "/assets/cust/img/svg/sort-recommand.svg",
         },
         {
           text: "댓글순",
           value: "commentCount",
-          imgSrc: "/cust/assets/img/svg/sort-comment.svg",
+          imgSrc: "/assets/cust/img/svg/sort-comment.svg",
         },
       ];
       const [selected, setSelected] = useState(0);
@@ -50,7 +50,7 @@ export default inject()(
               <div className="modal-header bg-primary d-flex justify-content-center">
                 <a data-dismiss="modal" className="nav-left">
                   <img
-                    src="/cust/assets/img/svg/navbar-back.svg"
+                    src="/assets/cust/img/svg/navbar-back.svg"
                     alt="뒤로가기"
                   />
                 </a>
@@ -59,7 +59,7 @@ export default inject()(
                 </h5>
                 <a className="nav-right" onClick={onInit}>
                   <img
-                    src="/cust/assets/img/svg/navbar-refresh.svg"
+                    src="/assets/cust/img/svg/navbar-refresh.svg"
                     alt="Refresh"
                   />
                   <span>초기화</span>

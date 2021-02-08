@@ -2,9 +2,11 @@ package com.tobe.fishking.v2.repository.fishking.specs;
 
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -94,6 +96,16 @@ public class ShipSpecs {
         return predicate;
     }
 
+
+    public static Specification<Ship> fishingType(FishingType fishingType) {
+        return new Specification<Ship>() {
+            @Override
+            public Predicate toPredicate(Root<Ship> root,
+                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
+                return cb.equal(root.get("fishingType"), fishingType);
+            }
+        };
+    }
 
 }
 

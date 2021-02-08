@@ -3,12 +3,14 @@ package com.tobe.fishking.v2.repository.fishking;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
+import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -62,13 +64,13 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
     @Query("select s from Ship s  where s = (select g.ship from Goods g where g = :goods)")
     Ship findByGoods(@Param("goods") Goods goods);
 
+/*
     @Query("select s from Ship s \n" +
             " left outer join fetch s.fishSpecies \n" +
             " join s.location pi where pi.longitude is not null or pi.longitude is not null ")
     List<Ship> findAllShipAndLocation();
 
-
-
+*/
     /*@Query("select s from Ship s \n" +
             " left outer join fetch s.fishSpecies r \n" +
             " join s.location pi  \n" +
@@ -81,8 +83,14 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
             " where s.longitude is not null and s.longitude is not null  and s.fishing_type = :fishingType ", nativeQuery = true)
     List<Ship> findAllShipAndLocationByFishingType(@Param("fishingType") FishingType fishingType);
 
+   // List<Ship> findAll(Specification<Ship> ShipSpecification);
 
 
     @Query(value = "SELECT COUNT(id) FROM Ship WHERE isActive = true")
     Long findAllByIsActive();
+
+    // _shipRepository.count(new GroupBySpecification(toSpecification(filter),parameters));
+
+
+
 }

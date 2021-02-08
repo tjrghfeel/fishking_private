@@ -111,7 +111,6 @@ public class ShipDTO {
 
 
 
-
 /*        // Entity -> DTO
         public static com.tobe.fishking.v2.model.fishing.ShipDTO.ShipDTOResp of(Ship ship) {
 

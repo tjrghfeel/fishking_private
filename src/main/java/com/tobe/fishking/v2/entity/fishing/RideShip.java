@@ -63,7 +63,7 @@ public class RideShip extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'지문', 'USER', DBO, 'TABLE', ride_ship, 'COLUMN',  is_finger_print
     @Column(columnDefinition = "bit default 0   comment '지문확인'  ")
-    private boolean isFingerPrint;
+    private boolean bFingerPrint;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'경찰청지문확인: 0:수집 1:전송 2:확인 9:전송실패', 'USER', DBO, 'TABLE', ride_ship, 'COLUMN',  status_certified

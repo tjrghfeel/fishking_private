@@ -17,7 +17,7 @@ export default inject()(
               className="btn btn-circle btn-circle-sm pt-0 mt-2 mr-2 float-right"
             >
               <img
-                src="/cust/assets/img/svg/icon-question.svg"
+                src="/assets/cust/img/svg/icon-question.svg"
                 alt=""
                 className="vam"
               />
@@ -33,7 +33,7 @@ export default inject()(
                   className="btn btn-circle btn-circle-sm pt-0 mt-2 mr-2 float-right"
                 >
                   <img
-                    src="/cust/assets/img/svg/icon_close_white.svg"
+                    src="/assets/cust/img/svg/icon_close_white.svg"
                     alt=""
                     className="vam"
                   />

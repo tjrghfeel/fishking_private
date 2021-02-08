@@ -4,16 +4,8 @@ import { inject, observer } from "mobx-react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Components from "../components";
 
-import MainRoute from "./main";
-import MemberRoute from "./member";
-import SetRoute from "./set";
-import PolicyRoute from "./policy";
-import CsRoute from "./cs";
-import StoryRoute from "./story";
-import ZzimRoute from "./zzim";
-import CouponRoute from "./coupon";
-import SearchRoute from "./search";
-import ReservationRoute from "./reservation";
+import CustRoute from "./cust";
+import PoliceRoute from "./police";
 
 const {
   MODAL: { AlertModal, ConfirmModal, CouponModal, SelectModal, SNSModal },
@@ -21,19 +13,11 @@ const {
 } = Components;
 
 export default inject("PageStore")(
-  observer(({ PageStore, history }) => {
-    PageStore.setHistory(history);
-    // # SNS 로그인 콜백 체크
-    const { loggedIn = false, accesstoken = null } = PageStore.getQueryParams();
-    if (loggedIn && accesstoken !== null) {
-      PageStore.setLogin(accesstoken);
-    }
-    // # 로그인 체크
-    PageStore.loadLogin();
+  observer(({ PageStore }) => {
     useEffect(() => {
       (async () => {
         // # 카카오 라이브러리
-        await PageStore.injectScript("/cust/assets/js/kakao.min.js", {
+        await PageStore.injectScript("/assets/cust/js/kakao.min.js", {
           global: true,
         });
         Kakao.init(process.env.REACT_APP_KAKAO_JAVASCRIPT_KEY);
@@ -60,7 +44,7 @@ export default inject("PageStore")(
         })(document, "script", "facebook-jssdk");
         // # 네이버 라이브러리
         await PageStore.injectScript(
-          "/cust/assets/js/naveridlogin_js_sdk_2.0.0.js",
+          "/assets/cust/js/naveridlogin_js_sdk_2.0.0.js",
           {
             global: true,
           }
@@ -104,35 +88,11 @@ export default inject("PageStore")(
     return (
       <BrowserRouter>
         <Switch>
-          {/** 메인 */}
-          <Route path={`/cust/main`} component={MainRoute} />
+          {/** 어복황제 */}
+          <Route path={`/cust`} component={CustRoute} />
 
-          {/** 멤버 */}
-          <Route path={`/cust/member`} component={MemberRoute} />
-
-          {/** 설정 */}
-          <Route path={`/cust/set`} component={SetRoute} />
-
-          {/** 약관및정책 */}
-          <Route path={`/cust/policy`} component={PolicyRoute} />
-
-          {/** 고객센터 */}
-          <Route path={`/cust/cs`} component={CsRoute} />
-
-          {/** 스토리 */}
-          <Route path={`/cust/story`} component={StoryRoute} />
-
-          {/** 찜 */}
-          <Route path={`/cust/zzim`} component={ZzimRoute} />
-
-          {/** 쿠폰 */}
-          <Route path={`/cust/coupon`} component={CouponRoute} />
-
-          {/** 검색 */}
-          <Route path={`/cust/search`} component={SearchRoute} />
-
-          {/** 예약 */}
-          <Route path={`/cust/reservation`} component={ReservationRoute} />
+          {/** 해경 */}
+          <Route path={`/police`} component={PoliceRoute} />
 
           {/** 기본 리디렉션 */}
           <Redirect from={`*`} to={`/cust/main/home`} />

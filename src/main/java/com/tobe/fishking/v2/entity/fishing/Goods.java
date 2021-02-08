@@ -47,7 +47,7 @@ public class Goods extends BaseTime {
     private FishingType fishingType;*/
 
     // EXEC sp_addextendedproperty 'MS_Description', N'일자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  fishing_date
-    @Column(columnDefinition = "varchar(8) comment  '일자'  ")
+    @Column(columnDefinition = "varchar(8) comment  '일자-출항일'  ")
     private String fishingDate;
 
     @OneToMany(mappedBy = "goods")

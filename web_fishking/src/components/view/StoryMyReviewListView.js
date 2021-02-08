@@ -69,7 +69,7 @@ export default inject(
               <div className="container nopadding mt-3 mb-0 text-center">
                 <p className="mt-5 mb-3">
                   <img
-                    src="/cust/assets/img/svg/icon-review-no.svg"
+                    src="/assets/cust/img/svg/icon-review-no.svg"
                     alt=""
                     className="icon-lg"
                   />
