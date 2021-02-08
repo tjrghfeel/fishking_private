@@ -158,7 +158,7 @@ public class MemberService {
         /* 문자 전송. */
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         TblSubmitQueue tblSubmitQueue = TblSubmitQueue.builder()
-                .usrId("6314")
+                .usrId("6328")
                 .smsGb("1")
                 .usedCd("00")
                 .reservedFg("I")
