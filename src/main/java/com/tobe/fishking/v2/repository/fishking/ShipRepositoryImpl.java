@@ -82,13 +82,13 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 ))
                 .from(ship)
                 .where(eqFishingType(shipSearchDTO.getFishingType()),
-                        inSpecies(shipSearchDTO.getSpecies()),
+                        inSpecies(shipSearchDTO.getSpeciesList()),
                         inFishingDate(shipSearchDTO.getFishingDate()),
                         eqSido(shipSearchDTO.getSido()),
                         eqSigungu(shipSearchDTO.getSigungu()),
-                        inGenres(shipSearchDTO.getGenres()),
-                        inServices(shipSearchDTO.getServices()),
-                        inFacilities(shipSearchDTO.getFacilities()),
+                        inGenres(shipSearchDTO.getGenresList()),
+                        inServices(shipSearchDTO.getServicesList()),
+                        inFacilities(shipSearchDTO.getFacilitiesList()),
                         hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo())
                 )
                 .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
@@ -151,18 +151,6 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .from(ship)
                 .where(ship.id.eq(ship_id))
                 .fetchOne();
-        return result;
-    }
-
-    @Override
-    public List<GoodsResponse> getShipGoods(Long ship_id) {
-        List<GoodsResponse> result = queryFactory
-                .select(Projections.constructor(GoodsResponse.class,
-                        goods
-                ))
-                .from(goods)
-                .where(goods.ship.id.eq(ship_id))
-                .fetch();
         return result;
     }
 }

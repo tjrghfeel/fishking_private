@@ -29,6 +29,8 @@ public class GoodsResponse {
     private Integer reservationPersonal;
     private String observerCode;
     private String key;
+    private List<String> positions;
+    private List<String> usedPositions;
 
     @Builder
     public GoodsResponse(Goods goods) {
@@ -41,7 +43,7 @@ public class GoodsResponse {
         this.fishingDates = goods.getFishingDates().stream().sorted(Comparator.comparing(GoodsFishingDate::getFishingDate)).map(GoodsFishingDate::getFishingDateString).collect(Collectors.toList());
         this.minPersonnel = goods.getMinPersonnel();
         this.maxPersonnel = goods.getMaxPersonnel();
-        this.reservationPersonal = goods.getReservationPersonnel().intValue();
+        this.reservationPersonal = goods.getReservationPersonnel() == null ? 0 : goods.getReservationPersonnel().intValue();
         this.observerCode = goods.getShip().getObserverCode();
         this.key = "9A149EFA2607650AB11D9F0C3";
     }

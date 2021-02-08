@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
@@ -35,4 +36,6 @@ public interface OrderDetailsRepository extends BaseRepository<OrderDetails, Lon
             " where s.orders.orderDate = :orderDate  "  )
     List<OrderDetails> findAllByOrderStatusAndOrderDate(@Param("orderDate") String orderDate);
 */
+    @Query("select o from OrderDetails o where o.goods = :goods and o.orders.fishingDate = :date")
+    List<OrderDetails> getByGoodsAndDate(Goods goods, String date);
 }

@@ -12,5 +12,4 @@ import java.util.List;
 public interface ShipRepositoryCustom {
     Page<ShipListResponse> searchAll(ShipSearchDTO shipSearchDTO, Pageable pageable);
     ShipResponse getDetail(Long ship_id);
-    List<GoodsResponse> getShipGoods(Long ship_id);
 }

@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface GoodsRepository extends BaseRepository<Goods, Long> {
+public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepositoryCustom {
 
     //추천업체
     Page<Goods> findAllByIsRecommend(Pageable pageable, Integer totalElements);
