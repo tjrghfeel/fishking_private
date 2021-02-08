@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -29,16 +30,16 @@ public class ShipSearchDTO {
     private @Valid String fishingDate = "";
 
     @ApiParam(value = "어종검색 리스트 ", example = "[rockcod, mackerel]")
-    private @Valid List<String> species = new ArrayList<>();
+    private @Valid List<String> speciesList = new ArrayList<>();
 
     @ApiParam(value = "옵션-서비스제공 리스트", example = "[breakfast, picture]")
-    private @Valid List<String> services = new ArrayList<>();
+    private @Valid List<String> servicesList = new ArrayList<>();
 
     @ApiParam(value = "옵션-편의시설 리스트", example = "[wifi, snack, toilet]")
-    private @Valid List<String> facilities = new ArrayList<>();
+    private @Valid List<String> facilitiesList = new ArrayList<>();
 
     @ApiParam(value = "옵션-장르 리스트", example = "[downshot]")
-    private @Valid List<String> genres = new ArrayList<>();
+    private @Valid List<String> genresList = new ArrayList<>();
 
     @ApiParam(value = "지역검색. 시도 범위", example = "인천광역시")
     private @Valid String sido = "";

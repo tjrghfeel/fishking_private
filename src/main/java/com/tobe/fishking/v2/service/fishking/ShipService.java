@@ -175,13 +175,38 @@ public class ShipService {
     /* 선상, 갯바위 배 정보 */
     @Transactional
     public List<GoodsResponse> getShipGoods(Long ship_id) {
-        List<GoodsResponse> response = shipRepo.getShipGoods(ship_id);
+        List<GoodsResponse> response = goodsRepository.getShipGoods(ship_id);
         return response;
+    }
+
+    @Transactional
+    public Map<String, Object> getGoodsDatePositions(Long goods_id, String date) {
+        Goods goods = goodsRepository.getOne(goods_id);
+        List<OrderDetails> orders = orderDetailsRepository.getByGoodsAndDate(goods, date);
+        List<String> availablePositions = new ArrayList<>();
+        List<String> usedPositions = new ArrayList<>();
+        availablePositions = Arrays.asList(goods.getShip().getPositions().split(",").clone());
+        for (OrderDetails details : orders) {
+            usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("used", usedPositions);
+        result.put("total", availablePositions);
+        return result;
+    }
+
+    @Transactional
+    public GoodsResponse getGoodsDetail(Long goods_id) {
+        Goods goods = goodsRepository.getOne(goods_id);
+        return GoodsResponse.builder()
+                .goods(goods)
+                .build();
     }
 
     /* 선상 예약 */
     @Transactional
     public OrderResponse reserve(ReserveDTO reserveDTO, Member member) {
+        Goods goods = goodsRepository.getOne(reserveDTO.getGoodsId());
         Orders order = Orders.builder()
                 .orderDate(DateUtils.getDateInFormat(LocalDate.now()))
                 .fishingDate(reserveDTO.getDate())
@@ -190,6 +215,7 @@ public class ShipService {
                 .paymentAmount(reserveDTO.getPaymentPrice().intValue())
                 .isPay(false)
                 .orderStatus(OrderStatus.receipt)
+                .goods(goods)
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();
@@ -200,12 +226,12 @@ public class ShipService {
         ordersRepository.save(order);
 
         OrderDetails details = OrderDetails.builder()
-                .goods(goodsRepository.getOne(reserveDTO.getGoodsId()))
+                .goods(goods)
                 .orders(order)
                 .personnel(reserveDTO.getPersonCount())
                 .price(reserveDTO.getTotalPrice().intValue() / reserveDTO.getPersonCount())
                 .totalAmount(reserveDTO.getTotalPrice().intValue())
-                .positions(reserveDTO.getPositions().stream().map(Object::toString).collect(Collectors.joining(",")))
+                .positions(reserveDTO.getPositionsList().stream().map(Object::toString).collect(Collectors.joining(",")))
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();
@@ -217,12 +243,13 @@ public class ShipService {
                     .birthday(reservePersonDTO.getBirthdate())
                     .name(reservePersonDTO.getName())
                     .phoneNumber(reservePersonDTO.getPhone())
+                    .createdBy(member)
+                    .modifiedBy(member)
                     .build();
             rideShipRepository.save(rideShip);
         }
 
         GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(reserveDTO.getGoodsId(), reserveDTO.getDate());
-        goodsFishingDate.addWaitNumber(reserveDTO.getPersonCount());
         goodsFishingDateRepository.save(goodsFishingDate);
 
         return new OrderResponse(order.getId(),

@@ -78,6 +78,10 @@ public class Orders extends BaseTime {
     @Column(columnDefinition = "varchar(30) comment '카드사 승인번호' ")
     private String confirmNumber;
 
+    @ManyToOne
+    @JoinColumn(name = "goods", columnDefinition = "bigint comment '상품' ")
+    private Goods goods;
+
 /*
 
 - 결제수단
