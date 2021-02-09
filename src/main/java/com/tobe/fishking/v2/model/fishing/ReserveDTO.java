@@ -41,8 +41,8 @@ public class ReserveDTO {
     @ApiParam(value = "승선자 수")
     private @Valid Integer personCount;
 
-    @ApiParam(value = "승선자 리스트")
-    private @Valid List<ReservePersonDTO> persons;
+//    @ApiParam(value = "승선자 리스트")
+//    private @Valid List<Map<String, Object>> persons;
 
     @ApiParam(value = "승선자 승선위치 리스트")
     private @Valid List<Integer> positionsList;

@@ -101,17 +101,21 @@ public class ShipController {
     @ApiOperation(value = "예약", notes = "예약정보 전화번호는 '-' 포함. positionsList 는 무시하시면 됩니다.")
     @PostMapping("/ship/reserve")
     public String Reserve(
-            @RequestHeader(name = "Authorization") String sessionToken,
+//            @RequestHeader(name = "Authorization") String sessionToken,
             ReserveDTO reserveDTO,
             @RequestParam(value = "positions[]") Integer[] positions,
+            @RequestParam(value = "personsName[]") String[] personsName,
+            @RequestParam(value = "personsPhone[]") String[] personsPhone,
+            @RequestParam(value = "personsBirthdate[]") String[] personsBirthdate,
+            @RequestParam(value = "memberId", required = false) Long member_id,
             Model model) {
-        Member member = memberService.getMemberBySessionToken(sessionToken);
+//        Member member = memberService.getMemberBySessionToken(sessionToken);
         if (positions != null) {
             if (positions.length != 0) {
                 reserveDTO.setPositionsList(Arrays.asList(positions.clone()));
             }
         }
-        OrderResponse response = shipService.reserve(reserveDTO, member);
+        OrderResponse response = shipService.reserve(reserveDTO, member_id, personsName, personsPhone, personsBirthdate);
         model.addAttribute("pay", response);
         return "pay_request";
     }

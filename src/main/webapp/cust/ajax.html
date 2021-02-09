@@ -6,7 +6,29 @@
     <title>Title</title>
 </head>
 <body>
-    <button onclick="test();">ajax</button>
+    <form action="/v2/api/ship/reserve" method="post">
+        <input name="goodsId" placeholder="goodsId" /> <br/>
+        <input name="totalPrice" placeholder="totalPrice" /> <br/>
+        <input name="discountPrice" placeholder="discountPrice" /> <br/>
+        <input name="paymentPrice" placeholder="paymentPrice" /> <br/>
+        <input name="couponId" placeholder="couponId" /> <br/>
+        <input name="date" placeholder="date" /> <br/>
+        <input name="payMethod" placeholder="payMethod" value="1000000000" /> <br/>
+        <input name="personCount" placeholder="personCount" /> <br/>
+        <input name="personsName[]" placeholder="person[0].name" /> <br/>
+        <input name="personsPhone[]" placeholder="person[0].phone" /> <br/>
+        <input name="personsBirthdate[]" placeholder="person[0].birthdate" /> <br/>
+        <input name="personsName[]" placeholder="person[1].name" /> <br/>
+        <input name="personsPhone[]" placeholder="person[1].phone" /> <br/>
+        <input name="personsBirthdate[]" placeholder="person[1].birthdate" /> <br/>
+        <input name="positions[]" placeholder="position[0]" /> <br/>
+        <input name="positions[]" placeholder="position[1]" /> <br/>
+        <input name="reservePersonName" placeholder="reservePersonName" /> <br/>
+        <input name="reservePersonPhone" placeholder="reservePersonPhone" /> <br/>
+        <button>버튼</button>
+    </form>
+
+<!--    <button onclick="test();">ajax</button>-->
 </body>
 <script type="text/javascript">
     function test() {
