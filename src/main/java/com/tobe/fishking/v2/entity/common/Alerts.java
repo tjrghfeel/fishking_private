@@ -64,6 +64,9 @@ public class Alerts extends BaseTime {
     @JoinColumn(columnDefinition = " bigint not null comment '알림받는이' ")
     public Member receiver;
 
+    @Column(columnDefinition = "datetime comment '알림 시간'")
+    private LocalDateTime alertTime;
+
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', alerts, 'COLUMN',  created_by
     @ManyToOne

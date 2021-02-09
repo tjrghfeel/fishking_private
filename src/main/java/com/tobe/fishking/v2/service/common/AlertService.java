@@ -42,9 +42,14 @@ public class AlertService {
         Member createdBy = memberRepo.findById(dto.getCreatedBy())
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getCreatedBy()));
 
+        EntityType entityType = null;
+        if(dto.getEntityType()!=null){
+            entityType = EntityType.valueOf(dto.getEntityType());
+        }
+
         Alerts alerts = Alerts.builder()
                 .alertType(AlertType.valueOf(dto.getAlertType()))
-                .entityType(EntityType.valueOf(dto.getEntityType()))
+                .entityType(entityType)
                 .pid(dto.getPid())
                 .isRead(false)
                 .content(dto.getContent())

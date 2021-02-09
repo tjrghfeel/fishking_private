@@ -12,7 +12,11 @@ public enum AlertType implements IEnumModel {
     fishingDiary("조황일지",""),
     oneToQuery("1:1문의 답변 완료 알림", "작성하신 문의 글에 답변이 완료되었습니다. "),
     reservationComplete("예약완료", "예약이 완료되었습니다. 어복황제와 함께 똑똑한 바다낚시를 즐겨보세요!"),
-    tideTime("물때알림","");
+    tideLevel("간조,만조 알림",""),
+    tide("물때 알림","");
+
+
+
 
 
     private String value;

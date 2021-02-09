@@ -1,7 +1,5 @@
 package com.tobe.fishking.v2.controller.fishking;
 
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
-import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -14,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 /*마이메뉴 안에 있더라도 찜, 쿠폰 등과 같은 다룰 api가 좀있는 것들은 컨트롤러를 따로 빼내었고
 * 여기엔 그 이외의 것들이 있다. */
@@ -234,5 +234,46 @@ public class MyMenuController {
     }
 
 
+    /*물때 - 항구? 목록 반환*/
+    @ApiOperation(value = "관측 지점 목록 반환",notes = "" +
+            "")
+    @GetMapping("/searchPointList")
+    public List<ObserverDtoList> getSearchPointList(
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return myMenuService.getSearchPointList( token);
+    }
 
+    /*오늘의 물때정보 반환*/
+    /*@ApiOperation(value = "",notes = "" +
+            "")
+    @GetMapping("/todayTide")
+    public TodayTideDto getTodayTide(
+            @RequestParam("observerId") Long observerId,
+            @RequestHeader("Authorization") String token
+    ) throws IOException, ResourceNotFoundException {
+        return myMenuService.getTodayTide(observerId,token);
+    }*/
+
+    /*조위 알림 추가*/
+    /*@ApiOperation(value = "오늘의 물때 알림 추가",notes = "" +
+            "")
+    @PostMapping("/addTideLevelAlert")
+    public Long addTideLevelAlert(
+            @RequestHeader("Authorization") String token,
+            @RequestBody AddTideLevelAlertDto dto
+    ){
+        return myMenuService.
+    }*/
+
+    /*물때 알림 추가*/
+    /*@ApiOperation(value = "물때 알림 추가",notes = "" +
+            "")
+    @PostMapping("/addTideAlert")
+    public Long addTideAlert(
+            @RequestBody AddTideAlertDto dto,
+            @RequestHeader("Authorization") String token
+    ){
+
+    }*/
 }

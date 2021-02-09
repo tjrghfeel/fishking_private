@@ -1,8 +1,12 @@
 package com.tobe.fishking.v2.service.fishking;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.fishing.*;
+import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
@@ -10,6 +14,7 @@ import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -18,9 +23,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MyMenuService {
@@ -48,7 +58,12 @@ public class MyMenuService {
     Environment env;
     @Autowired
     AlertsRepository alertsRepository;
-
+    @Autowired
+    ObserverCodeRepository observerCodeRepository;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    TidalLevelRepository tidalLevelRepository;
 
     /*마이메뉴 페이지 조회 처리 메소드
     * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
@@ -182,4 +197,121 @@ public class MyMenuService {
         return ordersDetailDto;
     }
 
+    /*관측지점 목록 반환*/
+    @Transactional
+    public List<ObserverDtoList> getSearchPointList(String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+
+        return observerCodeRepository.getObserverList(member.getId());
+    }
+
+    /*오늘의 물때정보 반환*/
+    /*@Transactional
+    public TodayTideDto getTodayTide(Long observerId, String token) throws IOException, ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        ObserverCode observer = observerCodeRepository.findById(observerId)
+                .orElseThrow(()->new ResourceNotFoundException("observer code not found for this id :: "+observerId));
+
+        String weather = null;
+        String todayDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst" +
+                "?serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +
+                "&numOfRows=50&pageNo=1" +
+                "&dataType=JSON" +
+                "&base_date="+todayDate+"" +
+                "&base_time=0500" +
+                "&nx=" +observer.getXGrid()+
+                "&ny="+observer.getYGrid();
+        String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
+        System.out.println("result>>> "+response);
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
+        Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
+        Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
+        Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
+        ArrayList<Map<String,Object>> tempResponse5 = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+
+//        Map<String,Object> tempResponse5 = (Map<String,Object>)tempResponse4.get("response");
+
+
+//        String plid = (String)userInfo.get("plid");
+
+
+        String[] tideTimeList =null;
+        String[] tideLevelList =null;
+
+        String[] alertKeyList = null;
+
+        TodayTideDto result = TodayTideDto.builder()
+                .observerId(observerId)
+                .observerName(observer.getName())
+//                .isAlerted()
+//                .weather()
+                .build();
+        return result;
+
+
+    }*/
+
+    /*오늘의 물때정보 알람 설정(조위알람) */
+    /*@Transactional
+    public Long addTideLevelAlert(
+            AlertType alertType,
+            String token
+    ){
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+
+
+
+        Alerts alerts = Alerts.builder()
+                .alertType()
+                .content()
+                .isRead()
+                .receiver()
+                .alertTime()
+                .createdBy()
+                .build();
+    }*/
+
+    /*물때 알림 추가*/
+    /*@Transactional
+    public Long addTideAlert(Long observerId, Integer[] tide, Integer[] day, Integer[] time ){
+
+
+    }*/
+
+    /*만조,간조 설정*/
+    @Transactional
+    public void setHighAndLowWater(LocalDate date){
+        List<TidalLevel> tidalLevelList = tidalLevelRepository.findAllByDate(date);
+        TidalLevel preLevel = null;
+        TidalLevel currentLevel = null;
+
+        Boolean status = null;//true : 조위 증가 상태, false : 조위 감소 상태
+        for(int i=0; i<tidalLevelList.size(); i++){
+            if(preLevel.getLevel() < currentLevel.getLevel() && status == false){ currentLevel.setLowWater();}
+            else if(preLevel.getLevel() > currentLevel.getLevel() && status == true){currentLevel.setHighWater();}
+            else{status = status;}
+
+//            if()
+
+        }
+
+        /*for(int i=0; i<tidalLevelList.size()-2; i++){
+            preLevel = tidalLevelList.get(i);
+            currentLevel = tidalLevelList.get(i+1);
+            nextLevel = tidalLevelList.get(i+2);
+
+            if(preLevel.getLevel() < currentLevel.getLevel() && currentLevel.getLevel() >= nextLevel.getLevel()){
+                currentLevel.setHighWater();
+            }
+            else if(preLevel.getLevel() > currentLevel.getLevel() && currentLevel.getLevel() < nextLevel.getLevel()){
+                currentLevel.setLowWater();
+            }
+        }*/
+
+    }
 }

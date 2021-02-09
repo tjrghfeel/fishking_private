@@ -244,7 +244,7 @@ public class MemberController {
         String sessionToken = memberService.passAuth(code,state,error,message);
 
         /*!!!!!form을 사용해 post로 프런트의 페이지로 보내주는 jsp로 이동. view사용하여 model에 세션코드저장해서보내줌.*/
-        response.sendRedirect("/main/home?loggedIn=true&accesstoken="+sessionToken);
+        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+sessionToken);
 
         return ;
     }
@@ -261,10 +261,10 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
         }
         return;
     }
@@ -280,10 +280,10 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForFacebook(code);
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
     }
@@ -336,10 +336,10 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForNaver(code,state,error,errorDescription);
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
-            response.sendRedirect("/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
     }

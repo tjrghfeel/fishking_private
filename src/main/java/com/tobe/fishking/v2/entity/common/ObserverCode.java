@@ -26,6 +26,11 @@ public class ObserverCode extends BaseTime {
 
     private Location location;
 
+    @Column(columnDefinition = "int comment 'x격자'")
+    private Integer xGrid;
+    @Column(columnDefinition = "int comment 'y격자'")
+    private Integer yGrid;
+
     @Builder
     public ObserverCode(String code, Location location) {
         this.code = code;
