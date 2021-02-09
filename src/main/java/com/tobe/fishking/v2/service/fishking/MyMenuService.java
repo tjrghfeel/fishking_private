@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.entity.common.TidalLevel;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
@@ -13,6 +14,7 @@ import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.repository.common.TidalLevelRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -284,34 +286,32 @@ public class MyMenuService {
     }*/
 
     /*만조,간조 설정*/
-    @Transactional
-    public void setHighAndLowWater(LocalDate date){
-        List<TidalLevel> tidalLevelList = tidalLevelRepository.findAllByDate(date);
-        TidalLevel preLevel = null;
-        TidalLevel currentLevel = null;
-
-        Boolean status = null;//true : 조위 증가 상태, false : 조위 감소 상태
-        for(int i=0; i<tidalLevelList.size(); i++){
-            if(preLevel.getLevel() < currentLevel.getLevel() && status == false){ currentLevel.setLowWater();}
-            else if(preLevel.getLevel() > currentLevel.getLevel() && status == true){currentLevel.setHighWater();}
-            else{status = status;}
-
-//            if()
-
-        }
-
-        /*for(int i=0; i<tidalLevelList.size()-2; i++){
-            preLevel = tidalLevelList.get(i);
-            currentLevel = tidalLevelList.get(i+1);
-            nextLevel = tidalLevelList.get(i+2);
-
-            if(preLevel.getLevel() < currentLevel.getLevel() && currentLevel.getLevel() >= nextLevel.getLevel()){
-                currentLevel.setHighWater();
-            }
-            else if(preLevel.getLevel() > currentLevel.getLevel() && currentLevel.getLevel() < nextLevel.getLevel()){
-                currentLevel.setLowWater();
-            }
-        }*/
-
-    }
+//    @Transactional
+//    public void setHighAndLowWater(LocalDate date){
+//        List<TidalLevel> tidalLevelList = tidalLevelRepository.findAllByDate(date);
+//        TidalLevel preLevel = null;
+//        TidalLevel currentLevel = null;
+//
+//        Boolean status = null;//true : 조위 증가 상태, false : 조위 감소 상태
+//        for(int i=0; i<tidalLevelList.size(); i++){
+//            if(preLevel.getLevel() < currentLevel.getLevel() && status == false){ currentLevel.setLowWater();}
+//            else if(preLevel.getLevel() > currentLevel.getLevel() && status == true){currentLevel.setHighWater();}
+//            else{status = status;}
+////            if()
+//        }
+//
+//        /*for(int i=0; i<tidalLevelList.size()-2; i++){
+//            preLevel = tidalLevelList.get(i);
+//            currentLevel = tidalLevelList.get(i+1);
+//            nextLevel = tidalLevelList.get(i+2);
+//
+//            if(preLevel.getLevel() < currentLevel.getLevel() && currentLevel.getLevel() >= nextLevel.getLevel()){
+//                currentLevel.setHighWater();
+//            }
+//            else if(preLevel.getLevel() > currentLevel.getLevel() && currentLevel.getLevel() < nextLevel.getLevel()){
+//                currentLevel.setLowWater();
+//            }
+//        }*/
+//
+//    }
 }
