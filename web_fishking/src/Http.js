@@ -7,7 +7,7 @@ const http = axios.create({
 });
 
 http.defaults.headers.common["Authorization"] =
-  localStorage.getItem("@accessToken") || null;
+  localStorage.getItem("@accessToken") || "";
 http.defaults.headers.common["Accept"] = "application/json";
 
 export default (() => {
@@ -27,7 +27,7 @@ export default (() => {
             method,
             headers: {
               ...headers,
-              Authorization: localStorage.getItem("@accessToken") || null,
+              Authorization: localStorage.getItem("@accessToken") || "",
             },
             params,
             data,

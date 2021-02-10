@@ -61,27 +61,27 @@ public class PayService {
                     if (authyn.equals("O")) {
                         resultcd = "0000";
 
-//                        Orders order = ordersRepository.getOne(Long.parseLong(ordno));
-//                        OrderDetails orderDetails = orderDetailsRepository.findByOrders(order);
-//                        Member member = memberRepository.getOne(Long.parseLong(msg1));
-//                        Goods goods = orderDetails.getGoods();
-//                        GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
-//                        order.paid(member);
-//                        if (goods.getReserveType() == ReserveType.auto) {
-//                            if (orderDetails.getPersonnel() <= (goods.getMaxPersonnel() - goodsFishingDate.getReservedNumber())) {
-//                                order.changeStatus(OrderStatus.bookConfirm);
-//                                goodsFishingDate.addReservedNumber(orderDetails.getPersonnel());
-//                            } else {
-//                                order.changeStatus(OrderStatus.waitBook);
-//                                goodsFishingDate.addWaitNumber(orderDetails.getPersonnel());
-//                            }
-//                        } else {
-//                            order.changeStatus(OrderStatus.bookRunning);
-//                        }
-//                        ordersRepository.save(order);
-//                        goodsFishingDateRepository.save(goodsFishingDate);
-//                        return order.getId();
-                        return 0L;
+                        Orders order = ordersRepository.getOne(Long.parseLong(ordno));
+                        OrderDetails orderDetails = orderDetailsRepository.findByOrders(order);
+                        Member member = memberRepository.getOne(Long.parseLong(msg1));
+                        Goods goods = orderDetails.getGoods();
+                        GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
+                        order.paid(member);
+                        if (goods.getReserveType() == ReserveType.auto) {
+                            if (orderDetails.getPersonnel() <= (goods.getMaxPersonnel() - goodsFishingDate.getReservedNumber())) {
+                                order.changeStatus(OrderStatus.bookConfirm);
+                                goodsFishingDate.addReservedNumber(orderDetails.getPersonnel());
+                            } else {
+                                order.changeStatus(OrderStatus.waitBook);
+                                goodsFishingDate.addWaitNumber(orderDetails.getPersonnel());
+                            }
+                        } else {
+                            order.changeStatus(OrderStatus.bookRunning);
+                        }
+                        ordersRepository.save(order);
+                        goodsFishingDateRepository.save(goodsFishingDate);
+                        return order.getId();
+//                        return 0L;
                     } else {
                         resultcd = authno.trim();
                         return -1L;

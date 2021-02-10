@@ -212,6 +212,13 @@ public class ShipService {
         member = memberOpt.orElseGet(() -> memberRepo.getOne(22L));
 
         Goods goods = goodsRepository.getOne(reserveDTO.getGoodsId());
+
+//        List<OrderDetails> orders = orderDetailsRepository.getByGoodsAndDate(goods, reserveDTO.getDate());
+//        List<String> usedPositions = new ArrayList<>();
+//        for (OrderDetails details : orders) {
+//            usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
+//        }
+
         Orders order = Orders.builder()
                 .orderDate(DateUtils.getDateInFormat(LocalDate.now()))
                 .fishingDate(reserveDTO.getDate())

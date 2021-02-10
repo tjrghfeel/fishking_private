@@ -5,7 +5,8 @@ export default new (class {
   constructor() {
     makeAutoObservable(this);
   }
-  applicationUrl = 'http://3.34.51.244:40080/';
+  // applicationUrl = 'http://3.34.51.244:40080/';
+  applicationUrl = 'https://fishkingapp.com/cust';
   /** observable :: webview 객체 */
   webview = null;
   /** observable :: 최근 히스토리 도메인 */

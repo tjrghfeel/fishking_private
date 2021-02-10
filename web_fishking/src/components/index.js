@@ -59,6 +59,8 @@ import ReservationMyListItemView from "./view/ReservationMyListItemView";
 import FilterListView from "./view/FilterListView";
 import StoryPostListItemView from "./view/StoryPostListItemView";
 import StoryDetailCommentListItemView from "./view/StoryDetailCommentListItemView";
+import CompanyPremiumListItemView from "./view/CompanyPremiumListItemView";
+import CompanyListItemView from "./view/CompanyListItemView";
 
 export default {
   /********** MODAL **********/
@@ -117,5 +119,7 @@ export default {
     FilterListView,
     StoryPostListItemView,
     StoryDetailCommentListItemView,
+    CompanyPremiumListItemView,
+    CompanyListItemView,
   },
 };
