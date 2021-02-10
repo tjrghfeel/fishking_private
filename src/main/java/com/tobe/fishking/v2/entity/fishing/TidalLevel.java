@@ -32,15 +32,11 @@ public class TidalLevel extends BaseTime {
     @Column(columnDefinition = "int comment '조위'")
     private Integer level;
 
-    @Column(columnDefinition = "bit comment '만조여부'")
-    private Boolean isHighWater;
-    @Column(columnDefinition = "bit comment '간조여부'")
-    private Boolean isLowWater;
+    @Column(columnDefinition = "varchar(6) null comment '만조간조'")
+    private String peak;
 
     @ManyToOne
     @JoinColumn(name="observer_code_id", columnDefinition = "bigint not null comment '관측소 코드'")
     private ObserverCode observerCode;
 
-    public void setHighWater(){this.isHighWater = true; }
-    public void setLowWater(){this.isLowWater = true;}
 }

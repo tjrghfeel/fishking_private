@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.entity.common;
 
 import com.tobe.fishking.v2.entity.BaseTime;
+import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.model.common.Location;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +31,9 @@ public class ObserverCode extends BaseTime {
     private Integer xGrid;
     @Column(columnDefinition = "int comment 'y격자'")
     private Integer yGrid;
+
+    @Column(columnDefinition = "int comment '해면'")
+    private SeaDirection seaDirection;
 
     @Builder
     public ObserverCode(String code, Location location) {

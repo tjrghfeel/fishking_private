@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.entity.common;
+/*package com.tobe.fishking.v2.entity.common;
 
 import com.tobe.fishking.v2.entity.BaseTime;
 import lombok.Getter;
@@ -30,4 +30,4 @@ public class TidalLevel extends BaseTime {
     @JoinColumn(name="observer_code_id", columnDefinition  = " bigint not null comment '관측소코드' ")
     private ObserverCode observerCode;
 
-}
+}*/

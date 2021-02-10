@@ -13,7 +13,10 @@ public enum SeaDirection   implements IEnumModel {
     eastSouth("남해동부"),
     northEast("동해북부"),
     centralEast("동해중부"),
-    southEast("동해남부");
+    southEast("동해남부"),
+    west("서해"),
+    east("동해"),
+    south("남해");
 
     private String value;
 

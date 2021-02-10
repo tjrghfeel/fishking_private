@@ -22,7 +22,8 @@ public enum EntityType implements IEnumModel {
     phoneAuth(""),
     ship(""),
     fileEntity(""),
-    tblSubmitQueue("");
+    tblSubmitQueue(""),
+    observerCode("");
 
 
     private String value;
