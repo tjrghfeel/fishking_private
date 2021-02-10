@@ -6,6 +6,7 @@ import Components from "../components";
 
 import CustRoute from "./cust";
 import PoliceRoute from "./police";
+import BlankPage from "../pages/BlankPage";
 
 const {
   MODAL: { AlertModal, ConfirmModal, CouponModal, SelectModal, SNSModal },
@@ -88,14 +89,14 @@ export default inject("PageStore")(
     return (
       <BrowserRouter>
         <Switch>
+          {/** 빈화면 */}
+          <Route exact path={`/`} component={BlankPage} />
+
           {/** 어복황제 */}
           <Route path={`/cust`} component={CustRoute} />
 
           {/** 해경 */}
           <Route path={`/police`} component={PoliceRoute} />
-
-          {/** 기본 리디렉션 */}
-          <Redirect from={`*`} to={`/cust/main/home`} />
         </Switch>
         <LoadingLayout />
         <AlertModal />

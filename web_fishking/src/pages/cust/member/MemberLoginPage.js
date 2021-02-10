@@ -47,7 +47,7 @@ export default inject(
           password,
         });
         if (response) {
-          PageStore.setLogin(response);
+          PageStore.setAccessToken(response, "cust", "Y");
           PageStore.push(`/main/my`);
         } else {
           this.password.current?.classList.add("is-invalid");

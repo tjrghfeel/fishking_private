@@ -31,23 +31,36 @@ const PageStore = new (class {
     window.history.back();
   };
   getQueryParams = () => {
-    const params = qs.parse(this.history.location.search, {
+    const params = qs.parse(window.location.search, {
       ignoreQueryPrefix: true,
     });
     return params;
   };
-  setLogin = (accessToken = null) => {
-    if (accessToken !== null) {
-      localStorage.setItem("@accessToken", accessToken);
-      this.loggedIn = true;
-    } else {
+  setAccessToken = (
+    accessToken = null,
+    service = "cust" | "police",
+    auto = "Y" | "N"
+  ) => {
+    if (accessToken === null) {
       localStorage.removeItem("@accessToken");
-      this.loggedIn = false;
+      localStorage.removeItem(`@accessToken_${service}`);
+      sessionStorage.removeItem("@accessToken");
+      sessionStorage.removeItem(`@accessToken_${service}`);
+    } else {
+      if (auto === "Y")
+        localStorage.setItem(`@accessToken_${service}`, accessToken);
+      else sessionStorage.setItem(`@accessToken_${service}`, accessToken);
     }
   };
-  loadLogin = () => {
-    const accessToken = localStorage.getItem("@accessToken") || null;
-    if (accessToken !== null) this.loggedIn = true;
+  loadAccessToken = (service = "cust" | "police") => {
+    const accessToken =
+      localStorage.getItem(`@accessToken_${service}`) ||
+      sessionStorage.getItem(`@accessToken_${service}`) ||
+      null;
+    if (accessToken !== null) {
+      localStorage.setItem(`@accessToken`, accessToken);
+      this.loggedIn = true;
+    }
   };
   setScrollEvent = (onScroll, element) => {
     if (element) {

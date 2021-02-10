@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
   LAYOUT: { MainTab, NavigationLayout },
-  VIEW: { FilterListView },
+  VIEW: { FilterListView, CompanyPremiumListItemView, CompanyListItemView },
   MODAL: {
     SelectDateModal,
     SelectAreaModal,
@@ -12,7 +12,10 @@ const {
   },
 } = Components;
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "APIStore"
+)(
   observer(
     class extends React.Component {
       constructor(props) {
@@ -34,7 +37,81 @@ export default inject("PageStore")(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        const { PageStore } = this.props;
+        const restored = PageStore.restoreState({
+          isPending: false,
+          isEnd: false,
+          list: [],
+          fishingType: "ship",
+          page: 0,
+          size: 20,
+          hasRealTimeVideo: null,
+          fishingDate: null,
+          sido: null,
+          species: ["melfish", "afish"],
+          orderBy: null,
+          facilities: null,
+          genres: null,
+          services: null,
+        });
+        PageStore.setScrollEvent(() => {
+          this.loadPageData(PageStore.state.page + 1);
+        });
+        if (!restored) this.loadPageData();
+      }
 
+      loadPageData = async (page = 0) => {
+        const { APIStore, PageStore } = this.props;
+
+        if ((page > 0 && PageStore.state.isEnd) || APIStore.isLoading) return;
+
+        PageStore.setState({ page, isPending: true });
+
+        console.log(
+          JSON.stringify({
+            fishingType: PageStore.state.fishingType,
+            hasRealTimeVideo: PageStore.state.hasRealTimeVideo,
+            fishingDate: PageStore.state.fishingDate,
+            sido: PageStore.state.sido,
+            species: PageStore.state.species,
+            orderBy: PageStore.state.orderBy,
+            facilities: PageStore.state.facilities,
+            genres: PageStore.state.genres,
+            services: PageStore.state.services,
+          })
+        );
+        const {
+          content,
+          pageable: { pageSize = 0 },
+        } = await APIStore._get(`/v2/api/ships/${page}`, {
+          fishingType: PageStore.state.fishingType,
+          hasRealTimeVideo: PageStore.state.hasRealTimeVideo,
+          fishingDate: PageStore.state.fishingDate,
+          sido: PageStore.state.sido,
+          species: PageStore.state.species,
+          orderBy: PageStore.state.orderBy,
+          facilities: PageStore.state.facilities,
+          genres: PageStore.state.genres,
+          services: PageStore.state.services,
+        });
+
+        console.log(JSON.stringify(content));
+
+        if (page === 0) {
+          PageStore.setState({ list: content });
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 100);
+        } else {
+          PageStore.setState({ list: PageStore.state.list.concat(content) });
+        }
+        if (content.length < pageSize) {
+          PageStore.setState({ isEnd: true });
+        } else {
+          PageStore.setState({ isEnd: false });
+        }
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -93,6 +170,14 @@ export default inject("PageStore")(
                 },
               ]}
             />
+
+            {/** Content */}
+            <div className="container nopadding">
+              <CompanyPremiumListItemView />
+              <p className="clearfix"></p>
+              <h6 className="text-secondary mb-3">일반</h6>
+              <CompanyListItemView />
+            </div>
 
             <MainTab activeIndex={1} />
           </React.Fragment>

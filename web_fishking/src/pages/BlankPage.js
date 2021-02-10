@@ -13,7 +13,7 @@ export default inject("PageStore")(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        return <React.Fragment>BlankPage</React.Fragment>;
+        return <React.Fragment></React.Fragment>;
       }
     }
   )

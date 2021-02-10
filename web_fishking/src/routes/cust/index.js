@@ -16,14 +16,15 @@ import PayRoute from "./pay";
 
 export default inject("PageStore")(
   observer(({ PageStore, history, match }) => {
-    PageStore.setHistory(history);
     // # SNS 로그인 콜백 체크
     const { loggedIn = false, accesstoken = null } = PageStore.getQueryParams();
     if (loggedIn && accesstoken !== null) {
-      PageStore.setLogin(accesstoken);
+      PageStore.setAccessToken(accesstoken, "cust", "Y");
     }
-    // # 로그인 체크
-    PageStore.loadLogin();
+
+    // # >>>>> 기본 설정
+    PageStore.setHistory(history);
+    PageStore.loadAccessToken("cust");
     return (
       <BrowserRouter>
         <Switch>
