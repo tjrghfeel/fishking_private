@@ -54,7 +54,7 @@
     <input hidden type=text name=sndEmail size=30 id="sndEmail" maxlength=50 value="" th:value="${pay.getEmail()}">
     <input hidden type=text name=sndMobile size=30 id="sndMobile" maxlength=12 value="" th:value="${pay.getPhoneNumber()}">
     <input type=hidden name=sndCharSet value="utf-8">                                    <!-- 가맹점 문자열 체어셋 -->
-    <input type=hidden name=sndReply value="/payresult">
+    <input type=hidden name=sndReply th:value="${pay.getReply()}">
     <input type=hidden name=sndEscrow id="sndEscrow" value="0">                           <!--에스크로적용여부-- 0: 적용안함, 1: 적용함 -->
     <input type=hidden name=sndVirExpDt id="sndVirExpDt" value="">                            <!-- 마감일시 -->
     <input type=hidden name=sndVirExpTm id="sndVirExpTm" value="">                            <!-- 마감시간 -->
