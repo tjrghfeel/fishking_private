@@ -31,6 +31,7 @@ public class GoodsResponse {
     private String key;
     private List<String> positions;
     private List<String> usedPositions;
+    private String shipMaxPersonnel;
 
     @Builder
     public GoodsResponse(Goods goods) {
@@ -46,5 +47,6 @@ public class GoodsResponse {
         this.reservationPersonal = goods.getReservationPersonnel() == null ? 0 : goods.getReservationPersonnel().intValue();
         this.observerCode = goods.getShip().getObserverCode();
         this.key = "9A149EFA2607650AB11D9F0C3";
+        this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
     }
 }
