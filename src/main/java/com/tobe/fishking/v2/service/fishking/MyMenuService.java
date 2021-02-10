@@ -198,13 +198,13 @@ public class MyMenuService {
     }
 
     /*관측지점 목록 반환*/
-    @Transactional
+    /*@Transactional
     public List<ObserverDtoList> getSearchPointList(String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
 
-        return observerCodeRepository.getObserverList(member.getId());
-    }
+        return observerCodeRepository.getObserverList(member.getId(), );
+    }*/
 
     /*오늘의 물때정보 반환*/
     /*@Transactional
