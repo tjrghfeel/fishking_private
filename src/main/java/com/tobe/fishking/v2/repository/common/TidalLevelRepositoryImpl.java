@@ -25,7 +25,7 @@ public class TidalLevelRepositoryImpl implements TidalLevelRepositoryCustom {
                         tidalLevel.peak
                 ))
                 .from(tidalLevel)
-                .where(tidalLevel.date.eq(date), tidalLevel.observerCode.code.eq(code))
+                .where(tidalLevel.date.eq(date), tidalLevel.observerCode.code.eq(code), tidalLevel.peak.isNotNull())
                 .fetchResults();
         return results.getResults();
     }

@@ -107,7 +107,7 @@ public class ShipController {
             @RequestParam(value = "personsName[]") String[] personsName,
             @RequestParam(value = "personsPhone[]") String[] personsPhone,
             @RequestParam(value = "personsBirthdate[]") String[] personsBirthdate,
-            @RequestParam(value = "memberId", required = false) Long member_id,
+            @RequestParam(value = "token", required = false) String token,
             Model model) {
 //        Member member = memberService.getMemberBySessionToken(sessionToken);
         if (positions != null) {
@@ -115,7 +115,7 @@ public class ShipController {
                 reserveDTO.setPositionsList(Arrays.asList(positions.clone()));
             }
         }
-        OrderResponse response = shipService.reserve(reserveDTO, member_id, personsName, personsPhone, personsBirthdate);
+        OrderResponse response = shipService.reserve(reserveDTO, token, personsName, personsPhone, personsBirthdate);
         model.addAttribute("pay", response);
         return "pay_request";
     }

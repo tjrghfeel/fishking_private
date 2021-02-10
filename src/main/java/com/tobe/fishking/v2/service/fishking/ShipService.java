@@ -205,9 +205,12 @@ public class ShipService {
 
     /* 선상 예약 */
     @Transactional
-    public OrderResponse reserve(ReserveDTO reserveDTO, Long member_id, String[] names, String[] phones, String[] birthdates) {
-        Member member;
-        member = memberRepo.getOne(Objects.requireNonNullElse(member_id, 22L));
+    public OrderResponse reserve(ReserveDTO reserveDTO, String token, String[] names, String[] phones, String[] birthdates) {
+        Member member = null;
+//        member = memberRepo.getOne(Objects.requireNonNullElse(member_id, 22L));
+        Optional<Member> memberOpt = memberRepo.findBySessionToken(token);
+        member = memberOpt.orElseGet(() -> memberRepo.getOne(22L));
+
         Goods goods = goodsRepository.getOne(reserveDTO.getGoodsId());
         Orders order = Orders.builder()
                 .orderDate(DateUtils.getDateInFormat(LocalDate.now()))
@@ -258,9 +261,9 @@ public class ShipService {
                 orderNumber,
                 details.getGoods().getName(),
                 reserveDTO.getPaymentPrice().intValue(),
-                member.getMemberName(),
+                reserveDTO.getReservePersonName(),
                 member.getEmail(),
-                member.getPhoneNumber().getFullNumber(),
+                reserveDTO.getReservePersonPhone(),
                 reserveDTO.getPayMethod());
     }
 

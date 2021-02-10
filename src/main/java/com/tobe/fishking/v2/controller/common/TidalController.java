@@ -22,13 +22,9 @@ public class TidalController {
 
     @ApiOperation(value = "날짜, 관측소 코드로 조위 데이터 ", notes = "date: yyyy-MM-dd")
     @GetMapping("/tidalPeak")
-    public Map<String, Object> findAllByDateAndCode(
+    public List<TidalLevelResponse> findAllByDateAndCode(
             @RequestParam("date") String date,
             @RequestParam("code") String code) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("date", date);
-        response.put("code", code);
-        response.put("data", commonService.findAllByDateAndCode(date, code));
-        return response;
+        return commonService.findAllByDateAndCode(date, code);
     }
 }
