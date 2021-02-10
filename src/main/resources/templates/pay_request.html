@@ -15,7 +15,6 @@
 
         //_frm.target = '_blank';
         _frm.submit();
-
     }
 
     // function _pay(_frm) {
@@ -41,27 +40,27 @@
 <!-----------------------------------------<Part 1. KSPayWeb Form: 결과페이지주소 설정 > ---------------------------------------->
 <!--결제 완료후 결과값을 받아처리할 결과페이지의 주소-->
 <form id="payForm" name=KSPayWeb method=post action="https://kspay.ksnet.to/store/KSPayMobileV1.4/KSPayPWeb.jsp">
-    <input type=text name=sndPaymethod id="sndPaymethod" size=10 maxlength=10 value="1000000000" th:value="${pay.getPayMethod()}">
-    <input type=text name=sndStoreid size=10 maxlength=10 value="2999199900" th:value="${pay.getShopNumber()}">
-    <input type=text name=sndCurrencytype size=30 maxlength=3 value="WON">
-    <input type=text name=sndOrdernumber id="sndOrdernumber" size=30 maxlength=30 value="" th:value="${pay.getOrderNumber()}">
-    <input type=text name=sndAllregid size=30 maxlength=13 value="">
-    <input type=text name=sndInstallmenttype id="sndInstallmenttype" size=30 maxlength=30 value="0" th:value="${pay.getInstallMentType()}">
-    <input type=text name=sndInteresttype id="sndInteresttype" size=30 maxlength=30 value="NONE" th:value="${pay.getInterestType()}">
-    <input type=text name=sndShowcard size=30 id="sndShowcard" maxlength=30 value="C" th:value="${pay.getShowCard()}">
-    <input type=text name=sndGoodname size=30 id="sndGoodname" maxlength=30 value="" th:value="${pay.getGoodsName()}">
-    <input type=text name=sndAmount size=30 maxlength=9 id="sndAmount" value="" th:value="${pay.getAmount()}">
-    <input type=text name=sndOrdername size=30 id="sndOrdername" maxlength=20 value="" th:value="${pay.getOrderName()}">
-    <input type=text name=sndEmail size=30 id="sndEmail" maxlength=50 value="" th:value="${pay.getEmail()}">
-    <input type=text name=sndMobile size=30 id="sndMobile" maxlength=12 value="" th:value="${pay.getPhoneNumber()}">
+    <input hidden type=text name=sndPaymethod id="sndPaymethod" size=10 maxlength=10 value="1000000000" th:value="${pay.getPayMethod()}">
+    <input hidden type=text name=sndStoreid size=10 maxlength=10 value="2999199900" th:value="${pay.getShopNumber()}">
+    <input hidden type=text name=sndCurrencytype size=30 maxlength=3 value="WON">
+    <input hidden type=text name=sndOrdernumber id="sndOrdernumber" size=30 maxlength=30 value="" th:value="${pay.getOrderNumber()}">
+    <input hidden type=text name=sndAllregid size=30 maxlength=13 value="">
+    <input hidden type=text name=sndInstallmenttype id="sndInstallmenttype" size=30 maxlength=30 value="0" th:value="${pay.getInstallMentType()}">
+    <input hidden type=text name=sndInteresttype id="sndInteresttype" size=30 maxlength=30 value="NONE" th:value="${pay.getInterestType()}">
+    <input hidden type=text name=sndShowcard size=30 id="sndShowcard" maxlength=30 value="C" th:value="${pay.getShowCard()}">
+    <input hidden type=text name=sndGoodname size=30 id="sndGoodname" maxlength=30 value="" th:value="${pay.getGoodsName()}">
+    <input hidden type=text name=sndAmount size=30 maxlength=9 id="sndAmount" value="" th:value="${pay.getAmount()}">
+    <input hidden type=text name=sndOrdername size=30 id="sndOrdername" maxlength=20 value="" th:value="${pay.getOrderName()}">
+    <input hidden type=text name=sndEmail size=30 id="sndEmail" maxlength=50 value="" th:value="${pay.getEmail()}">
+    <input hidden type=text name=sndMobile size=30 id="sndMobile" maxlength=12 value="" th:value="${pay.getPhoneNumber()}">
     <input type=hidden name=sndCharSet value="utf-8">                                    <!-- 가맹점 문자열 체어셋 -->
-    <input type=hidden name=sndReply value="/payresult">
+    <input type=hidden name=sndReply th:value="${pay.getReply()}">
     <input type=hidden name=sndEscrow id="sndEscrow" value="0">                           <!--에스크로적용여부-- 0: 적용안함, 1: 적용함 -->
     <input type=hidden name=sndVirExpDt id="sndVirExpDt" value="">                            <!-- 마감일시 -->
     <input type=hidden name=sndVirExpTm id="sndVirExpTm" value="">                            <!-- 마감시간 -->
-    <input type=hidden name=sndStoreName value="(주)투비">                  <!--회사명을 한글로 넣어주세요(최대20byte)-->
-    <input type=hidden name=sndStoreNameEng value="()ToBe}">                       <!--회사명을 영어로 넣어주세요(최대20byte)-->
-    <input type=hidden name=sndStoreDomain value="http://www.kspay_test.co.kr"> <!-- 회사 도메인을 http://를 포함해서 넣어주세요-->
+    <input type=hidden name=sndStoreName value="주식회사 투비">                  <!--회사명을 한글로 넣어주세요(최대20byte)-->
+    <input type=hidden name=sndStoreNameEng value="tobe">                       <!--회사명을 영어로 넣어주세요(최대20byte)-->
+    <input type=hidden name=sndStoreDomain value="http://www.to-be.kr/"> <!-- 회사 도메인을 http://를 포함해서 넣어주세요-->
     <input type=hidden name=sndGoodType value="1">                                           <!--실물(1) / 디지털(2) -->
     <input type=hidden name=sndUseBonusPoint value="">                                       <!-- 포인트거래시 60 -->
     <input type=hidden name=sndRtApp value="">

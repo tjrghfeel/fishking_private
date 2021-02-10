@@ -40,7 +40,8 @@ public class OrderResponse {
         this.showCard = "C";
         this.installMentType = "ALL(0)";
         this.interestType = "NONE";
-        this.reply = "/payresult";
+//        this.reply = "http://112.220.72.178:8083/payresult";
+        this.reply = "https://fishkingapp.com/payresult";
         this.shopNumber = "2999199900";
         this.payMethod = payMethod;
     }

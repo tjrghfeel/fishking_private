@@ -26,6 +26,9 @@ public class TidalLevel extends BaseTime {
     @Column(columnDefinition = "datetime comment '날짜 시간'")
     private LocalDateTime dateTime;
 
+    @Column(columnDefinition = "varchar(6) comment '만조간조' ")
+    private String peak;
+
     @ManyToOne
     @JoinColumn(name="observer_code_id", columnDefinition  = " bigint not null comment '관측소코드' ")
     private ObserverCode observerCode;

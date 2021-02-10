@@ -9,9 +9,10 @@ import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.common.DeleteFileDto;
 import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.common.FilesDTO;
+import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
-import com.tobe.fishking.v2.repository.common.FileRepository;
-import com.tobe.fishking.v2.repository.common.PopularRepository;
+import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.springframework.core.env.Environment;
@@ -26,8 +27,6 @@ import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
-import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
-import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,6 +43,7 @@ public class CommonService {
     private final MemberRepository memberRepo;
     private final FileRepository fileRepo;
     private final PopularRepository popularRepo;
+    private final TidalLevelRepository tidalLevelRepository;
     private final UploadService uploadService;
     private final Environment env;
 
@@ -206,5 +206,10 @@ public class CommonService {
 
         uploadService.removeFileEntity(dto.getFileId());
         return true;
+    }
+
+    @Transactional
+    public List<TidalLevelResponse> findAllByDateAndCode(String date, String code) {
+        return tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), code);
     }
 }

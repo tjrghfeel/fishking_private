@@ -7,9 +7,7 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.common.AlertType;
-import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
-import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -17,8 +15,6 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
-import com.tobe.fishking.v2.utils.DateUtils;
-import com.tobe.fishking.v2.utils.HolidayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -26,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.tobe.fishking.v2.utils.DateUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -69,8 +64,6 @@ public class MyMenuService {
     MemberService memberService;
     @Autowired
     TidalLevelRepository tidalLevelRepository;
-
-    HolidayUtil holidayUtil;
 
     /*마이메뉴 페이지 조회 처리 메소드
     * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
@@ -206,103 +199,17 @@ public class MyMenuService {
 
     /*관측지점 목록 반환*/
     @Transactional
-    public List<ObserverDtoList> getSearchPointList(String token, AlertType alertType) throws ResourceNotFoundException {
+    public List<ObserverDtoList> getSearchPointList(String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
 
-        return observerCodeRepository.getObserverList(member.getId(), alertType);
+        return observerCodeRepository.getObserverList(member.getId());
     }
 
     /*오늘의 물때정보 반환*/
-    @Transactional
+    /*@Transactional
     public TodayTideDto getTodayTide(Long observerId, String token) throws IOException, ResourceNotFoundException {
-        TodayTideDto result = null;
-
         Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        ObserverCode observer = observerCodeRepository.findById(observerId)
-                .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
-        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertType(
-                member, observerId, EntityType.observerCode, AlertType.tide);
-        /*tideTimeList*/
-        ArrayList<String> tideTimeList = new ArrayList<>();
-        ArrayList<String> tideLevelList = new ArrayList<>();
-        List<TidalLevel> tideList = tidalLevelRepository.findAllByDateAndIsHighWaterAndIsLowWaters(LocalDate.now(), observer);
-        for(int i=0; i<tideList.size(); i++){
-            String tideTime = tideList.get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-            String tideLevel = tideList.get(i).getLevel().toString();
-            tideTimeList.add(tideTime);
-            tideLevelList.add(tideLevel);
-        }
-
-        result = TodayTideDto.builder()
-                .observerId(observerId)
-                .observerName(observer.getName())
-                .isAlerted(isAlerted)
-                .date(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .tideTimeList(tideTimeList)
-                .tideLevelList(tideLevelList)
-                .build();
-
-        /*알림 리스트*/
-        Boolean[] alertList = new Boolean[10];
-
-        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member, AlertType.tideLevel, observerId,false);
-        for(int i=0; i<preAlertList.size(); i++){
-            String content = preAlertList.get(i).getContent();
-            String[] contentToken = content.split(" ");
-            String highLow = contentToken[1];
-            Integer time = Integer.parseInt(contentToken[2]);
-
-            if(highLow.equals("high")){
-                switch (time){
-                    case -2: result.setHighWaterBefore2(true);break;
-                    case -1: result.setHighWaterBefore1(true);break;
-                    case 0: result.setHighWater(true);break;
-                    case 1: result.setHighWaterAfter1(true);break;
-                    case 2: result.setHighWaterAfter2(true);break;
-                }
-            }
-            else if(highLow.equals("low")){
-                switch (time){
-                    case -2: result.setLowWaterBefore2(true);break;
-                    case -1: result.setLowWaterBefore1(true);break;
-                    case 0: result.setLowWater(true);break;
-                    case 1: result.setLowWaterAfter1(true);break;
-                    case 2: result.setLowWaterAfter2(true);break;
-                }
-            }
-        }
-
-        /*오늘의 날씨 */
-        /*String weather = null;
-        String todayDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String url = "http://www.khoa.go.kr/oceangrid/grid/api/fcIndexOfType/search.do?" +
-                "ServiceKey=ezm3hM52KibRN1SR6Rg3vA==" +
-                "&Type=SD" +
-                "&ResultType=json";
-        String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
-        System.out.println("result>>> "+response);
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
-        Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("result");
-        Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("data");
-        ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse3;
-        for(int i=0; i<dataList.size(); i++){
-            if(dataList.get(i).get("name").equals(observer.getName())){
-                result.setWeather(dataList.get(i).get("w"));
-            }
-        }*/
-
-//        Map<String,Object> tempResponse5 = (Map<String,Object>)tempResponse4.get("response");
-
-
-//        String plid = (String)userInfo.get("plid");
-
-        return result;
-
-
-        /*Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer code not found for this id :: "+observerId));
@@ -343,202 +250,66 @@ public class MyMenuService {
 //                .isAlerted()
 //                .weather()
                 .build();
-        return result;*/
-
-
-    }
-
-    /*오늘의 물때정보 알람 설정(조위알람) */
-    @Transactional
-    public Long addTideLevelAlert(
-            Integer tideHighLow, Integer time, Long observerId, String token
-    ) throws ResourceNotFoundException {
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        ObserverCode observer = observerCodeRepository.findById(observerId)
-                .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
-
-        String highLow = (tideHighLow==0)? "low" : "high";
-        List<TidalLevel> list = tidalLevelRepository.findTop2ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
-                LocalDateTime.now(), highLow, observer
-        );
-
-        LocalDateTime alertTime = list.get(0).getDateTime();
-        alertTime = alertTime.minusHours(time);
-        if(alertTime.compareTo(LocalDateTime.now())<0){
-            alertTime = list.get(1).getDateTime();
-            alertTime = alertTime.minusHours(time);
-        }
-
-        Alerts alerts = Alerts.builder()
-                .alertType(AlertType.tideLevel)
-                .entityType(EntityType.observerCode)
-                .pid(observerId)
-                .content(observer.getName()+" "+highLow+" "+time)
-                .isRead(false)
-                .isSent(false)
-                .receiver(member)
-                .alertTime(alertTime)
-                .createdBy(member)
-                .build();
-        alerts = alertsRepository.save(alerts);
-        return alerts.getId();
-    }
-
-    /*날짜별 물때정보 출력*/
-    @Transactional
-    public TideByDateDto getTideByDate(
-        Long observerId, String dateString, String token
-    ) throws ResourceNotFoundException {
-        TideByDateDto result = null;
-
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        ObserverCode observer = observerCodeRepository.findById(observerId)
-                .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
-        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertType(
-                member, observerId, EntityType.observerCode, AlertType.tide);
-        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
-        /*tideTimeList*/
-        ArrayList<String> tideTimeList = new ArrayList<>();
-        ArrayList<String> tideLevelList = new ArrayList<>();
-        List<TidalLevel> tideList = tidalLevelRepository.findAllByDateAndIsHighWaterAndIsLowWaters(date, observer);
-        for(int i=0; i<tideList.size(); i++){
-            String tideTime = tideList.get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-            String tideLevel = tideList.get(i).getLevel().toString();
-            tideTimeList.add(tideTime);
-            tideLevelList.add(tideLevel);
-        }
-        /*알림 리스트*/
-        Boolean[] alertTideList = new Boolean[15];
-        Boolean[] alertDayList = new Boolean[7];
-        Boolean[] alertTimeList = new Boolean[5];
-
-        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member, AlertType.tide, observerId,false);
-        for(int i=0; i<preAlertList.size(); i++){
-            String content = preAlertList.get(i).getContent();
-            String[] contentToken = content.split(" ");
-            Integer[] data = new Integer[]{Integer.parseInt(contentToken[1]), Integer.parseInt(contentToken[2]),Integer.parseInt(contentToken[3])};
-            alertTideList[data[0]-1] = true;
-            alertDayList[data[1]-1] = true;
-            switch (data[2]){
-                case 0: alertTimeList[0] = true; break;
-                case 3: alertTimeList[1] = true; break;
-                case 6: alertTimeList[2] = true;break;
-                case 9: alertTimeList[3] = true; break;
-                case 12: alertTimeList[4] = true; break;
-            }
-        }
-
-
-        result = TideByDateDto.builder()
-                .observerId(observerId)
-                .observerName(observer.getName())
-                .isAlerted(isAlerted)
-                .date(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .tideTimeList(tideTimeList)
-                .tideLevelList(tideLevelList)
-                .alertTideList(alertTideList)
-                .alertDayList(alertDayList)
-                .alertTimeList(alertTimeList)
-                .build();
         return result;
-    }
 
-    /*물때 알림 추가*/
-    @Transactional
-    public Long addTideAlert(Long observerId, Integer[] tideList, Integer[] dayList, Integer[] timeList, String token ) throws ResourceNotFoundException {
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        ObserverCode observer = observerCodeRepository.findById(observerId)
-                .orElseThrow(()->new ResourceNotFoundException("observer code not found for this id :: "+observerId));
-        SeaDirection seaDirection = observer.getSeaDirection();
-
-        /*기존 알림들 삭제*/
-        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member, AlertType.tide, observerId,false);
-        alertsRepository.deleteAll(preAlertList);
-
-        /*알림 추가*/
-        String todaySolar = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String todayLunar = holidayUtil.converSolarToLunar(todaySolar);
-
-        for(int i=0; i<tideList.length; i++){
-            /*물때 계산*/
-            Integer afterDays = null; //알람 요청한 물때가 현재로부터 몇일 후인지.
-            if(seaDirection == SeaDirection.west){
-                Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
-                Integer tide = (lunarDay+6)%15;
-                afterDays = tideList[i] - tide;
-                if(afterDays<0) afterDays += 15;
-            }
-            else if(seaDirection == SeaDirection.east || seaDirection == SeaDirection.south){
-                Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
-                Integer tide = (lunarDay+6)%15 +1;
-                afterDays = tideList[i] - tide;
-                if(afterDays<0) afterDays += 15;
-            }
-
-            for(int j=0; j<dayList.length; j++){
-
-                afterDays = afterDays - dayList[j];
-                if(afterDays < 0) afterDays += 15;//알림 시점이 지났으면 다음 물때에 대해 알림을 설정해준다.
-
-                LocalDateTime today = LocalDateTime.now();
-                today = today.plusDays(afterDays);
-
-                for(int l=0; l<timeList.length; l++){
-                    today = today.withHour(timeList[l]).withMinute(0).withSecond(0);
-
-                    Alerts alerts = Alerts.builder()
-                            .alertType(AlertType.tide)
-                            .content(observer.getName()+" "+tideList[i]+" "+dayList[j]+" "+timeList[l])
-                            .isRead(false)
-                            .receiver(member)
-                            .alertTime(today)
-                            .entityType(EntityType.observerCode)
-                            .pid(observerId)
-                            .isSent(false)
-                            .createdBy(member)
-                            .build();
-                    alerts = alertsRepository.save(alerts);
-                    alerts.getAlertTime();
-                }
-            }
-        }
-
-
-        return 1L;
-    }
-
-    /*만조,간조 설정*/
-    /*@Transactional
-    public void setHighAndLowWater(LocalDate date){
-        List<TidalLevel> tidalLevelList = tidalLevelRepository.findAllByDate(date);
-        TidalLevel preLevel = null;
-        TidalLevel currentLevel = null;
-
-        Boolean status = null;//true : 조위 증가 상태, false : 조위 감소 상태
-        for(int i=0; i<tidalLevelList.size(); i++){
-            if(preLevel.getLevel() < currentLevel.getLevel() && status == false){ currentLevel.setLowWater();}
-            else if(preLevel.getLevel() > currentLevel.getLevel() && status == true){currentLevel.setHighWater();}
-            else{status = status;}
-
-//            if()
-
-        }
-
-        *//*for(int i=0; i<tidalLevelList.size()-2; i++){
-            preLevel = tidalLevelList.get(i);
-            currentLevel = tidalLevelList.get(i+1);
-            nextLevel = tidalLevelList.get(i+2);
-
-            if(preLevel.getLevel() < currentLevel.getLevel() && currentLevel.getLevel() >= nextLevel.getLevel()){
-                currentLevel.setHighWater();
-            }
-            else if(preLevel.getLevel() > currentLevel.getLevel() && currentLevel.getLevel() < nextLevel.getLevel()){
-                currentLevel.setLowWater();
-            }
-        }*//*
 
     }*/
+
+    /*오늘의 물때정보 알람 설정(조위알람) */
+    /*@Transactional
+    public Long addTideLevelAlert(
+            AlertType alertType,
+            String token
+    ){
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+
+
+
+        Alerts alerts = Alerts.builder()
+                .alertType()
+                .content()
+                .isRead()
+                .receiver()
+                .alertTime()
+                .createdBy()
+                .build();
+    }*/
+
+    /*물때 알림 추가*/
+    /*@Transactional
+    public Long addTideAlert(Long observerId, Integer[] tide, Integer[] day, Integer[] time ){
+
+
+    }*/
+
+    /*만조,간조 설정*/
+//    @Transactional
+//    public void setHighAndLowWater(LocalDate date){
+//        List<TidalLevel> tidalLevelList = tidalLevelRepository.findAllByDate(date);
+//        TidalLevel preLevel = null;
+//        TidalLevel currentLevel = null;
+//
+//        Boolean status = null;//true : 조위 증가 상태, false : 조위 감소 상태
+//        for(int i=0; i<tidalLevelList.size(); i++){
+//            if(preLevel.getLevel() < currentLevel.getLevel() && status == false){ currentLevel.setLowWater();}
+//            else if(preLevel.getLevel() > currentLevel.getLevel() && status == true){currentLevel.setHighWater();}
+//            else{status = status;}
+////            if()
+//        }
+//
+//        /*for(int i=0; i<tidalLevelList.size()-2; i++){
+//            preLevel = tidalLevelList.get(i);
+//            currentLevel = tidalLevelList.get(i+1);
+//            nextLevel = tidalLevelList.get(i+2);
+//
+//            if(preLevel.getLevel() < currentLevel.getLevel() && currentLevel.getLevel() >= nextLevel.getLevel()){
+//                currentLevel.setHighWater();
+//            }
+//            else if(preLevel.getLevel() > currentLevel.getLevel() && currentLevel.getLevel() < nextLevel.getLevel()){
+//                currentLevel.setLowWater();
+//            }
+//        }*/
+//
+//    }
 }

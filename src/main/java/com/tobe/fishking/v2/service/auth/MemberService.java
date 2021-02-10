@@ -1424,4 +1424,9 @@ public class MemberService {
         }
     }
 
+    @Transactional
+    public Member getMemberById(Long member_id) {
+        return memberRepository.getOne(member_id);
+    }
+
 }

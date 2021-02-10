@@ -18,6 +18,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.repository.common.TidalLevelRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 //import com.tobe.fishking.v2.service.AES;
 import com.tobe.fishking.v2.service.AES;
