@@ -24,11 +24,12 @@ public class GoodsResponse {
     private String endTime;
     private List<String> fishSpecies;
     private List<String> fishingDates;
+    private String startFishingDates;
+    private String endFishingDates;
     private Integer minPersonnel;
     private Integer maxPersonnel;
     private Integer reservationPersonal;
     private String observerCode;
-    private String key;
     private List<String> positions;
     private List<String> usedPositions;
     private String shipMaxPersonnel;
@@ -42,11 +43,12 @@ public class GoodsResponse {
         this.endTime = goods.getFishingEndTime();
         this.fishSpecies = goods.getFishSpecies().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
         this.fishingDates = goods.getFishingDates().stream().sorted(Comparator.comparing(GoodsFishingDate::getFishingDate)).map(GoodsFishingDate::getFishingDateString).collect(Collectors.toList());
+        this.startFishingDates = this.fishingDates.get(0);
+        this.endFishingDates = this.fishingDates.get(this.fishingDates.size()-1);
         this.minPersonnel = goods.getMinPersonnel();
         this.maxPersonnel = goods.getMaxPersonnel();
         this.reservationPersonal = goods.getReservationPersonnel() == null ? 0 : goods.getReservationPersonnel().intValue();
         this.observerCode = goods.getShip().getObserverCode();
-        this.key = "9A149EFA2607650AB11D9F0C3";
         this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
     }
 }

@@ -3,6 +3,8 @@ package com.tobe.fishking.v2.model.fishing;
 import com.querydsl.core.annotations.QueryProjection;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
+import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class ShipResponse {
 
     private Long id;
+    private String fishingType;
     private String name;
     private String address;
     private String sido;
@@ -31,13 +34,15 @@ public class ShipResponse {
     private Double serviceByReview;
     private Double cleanByReview;
     private Integer reviewCount;
+    private String profileImage;
+    private String liveVideo;
     private Set<GoodsResponse> goods;
     private List<String> services;
     private List<String> facilities;
     private List<String> devices;
-    private List<FishingDiaryDTO.FishingDiaryDTOResp> fishingDiary;
+    private List<FishingDiarySmallResponse> fishingDiary;
     private Integer fishingDiaryCount;
-    private List<FishingDiaryDTO.FishingDiaryDTOResp> fishingBlog;
+    private List<FishingDiarySmallResponse> fishingBlog;
     private Integer fishingBlogCount;
     private String ownerWordingTitle;
     private String ownerWording;
@@ -49,6 +54,7 @@ public class ShipResponse {
     @QueryProjection
     public ShipResponse(Ship ship) {
         this.id = ship.getId();
+        this.fishingType = ship.getFishingType().getKey();
         this.name = ship.getShipName();
         this.address = ship.getAddress();
         this.sido = ship.getSido();
@@ -72,5 +78,7 @@ public class ShipResponse {
         this.noticeTitle = ship.getNoticeTitle();
         this.notice = ship.getNotice();
         this.liked = false;
+        this.profileImage = "";
+        this.liveVideo = "";
     }
 }
