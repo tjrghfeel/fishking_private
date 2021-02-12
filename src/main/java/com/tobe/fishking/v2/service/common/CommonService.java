@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -9,6 +10,7 @@ import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.common.DeleteFileDto;
 import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.common.FilesDTO;
+import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +47,7 @@ public class CommonService {
     private final FileRepository fileRepo;
     private final PopularRepository popularRepo;
     private final TidalLevelRepository tidalLevelRepository;
+    private final ObserverCodeRepository observerCodeRepository;
     private final UploadService uploadService;
     private final Environment env;
 
@@ -211,5 +215,11 @@ public class CommonService {
     @Transactional
     public List<TidalLevelResponse> findAllByDateAndCode(String date, String code) {
         return tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), code);
+    }
+
+    @Transactional
+    public List<ObserverCodeResponse> getAllObserverCode() {
+        List<ObserverCode> list = observerCodeRepository.findAll();
+        return list.stream().map(ObserverCodeResponse::new).collect(Collectors.toList());
     }
 }
