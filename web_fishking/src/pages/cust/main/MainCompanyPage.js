@@ -14,6 +14,7 @@ const {
     SelectAreaModal,
     SelectFishModal,
     SelectCompanySortModal,
+    SelectCompanyOptionModal,
   },
 } = Components;
 
@@ -43,12 +44,20 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       componentDidMount() {
-        const { PageStore } = this.props;
+        const {
+          PageStore,
+          match: {
+            params: { fishingType },
+          },
+        } = this.props;
+        let type = "";
+        if (fishingType == "boat") type = "ship";
+        else if (fishingType == "rock") type = "seaRocks";
         const restored = PageStore.restoreState({
           isPending: false,
           isEnd: false,
           list: [],
-          fishingType: "seaRocks",
+          fishingType: type,
           page: 0,
           size: 20,
           hasRealTimeVideo: "",
@@ -105,9 +114,14 @@ export default inject(
         }
       };
       onClick = async (item) => {
-        const { PageStore } = this.props;
+        const {
+          PageStore,
+          match: {
+            params: { fishingType },
+          },
+        } = this.props;
         PageStore.storeState();
-        PageStore.push(`/company/ship/detail/${item.id}`);
+        PageStore.push(`/company/${fishingType}/detail/${item.id}`);
       };
       onClickFAB = async (text) => {
         const { PageStore } = this.props;
@@ -120,7 +134,12 @@ export default inject(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { PageStore } = this.props;
+        const {
+          PageStore,
+          match: {
+            params: { fishingType },
+          },
+        } = this.props;
         return (
           <React.Fragment>
             <SelectDateModal
@@ -165,6 +184,42 @@ export default inject(
               id={"selSortModal"}
               onSelected={(selected) => {
                 PageStore.setState({ orderBy: selected.value });
+                this.loadPageData(0);
+              }}
+            />
+            <SelectCompanyOptionModal
+              id={"selOptionModal"}
+              onSelected={(selectedService, selectedFacility) => {
+                if (
+                  (selectedService !== null && selectedService.length > 0) ||
+                  (selectedFacility !== null && selectedFacility.length > 0)
+                ) {
+                  this.setState({ filterOptionActive: true });
+                } else {
+                  this.setState({ filterOptionActive: false });
+                }
+
+                if (selectedService === null || selectedService.length === 0) {
+                  PageStore.setState({ sevices: null });
+                } else {
+                  const services = [];
+                  for (let item of selectedService) {
+                    services.push(item.code);
+                  }
+                  PageStore.setState({ services });
+                }
+                if (
+                  selectedFacility === null ||
+                  selectedFacility.length === 0
+                ) {
+                  PageStore.setState({ facilities: null });
+                } else {
+                  const facilities = [];
+                  for (let item of selectedFacility) {
+                    facilities.push(item.code);
+                  }
+                  PageStore.setState({ facilities });
+                }
                 this.loadPageData(0);
               }}
             />
@@ -226,6 +281,12 @@ export default inject(
                 {
                   text: this.state.filterOptionText,
                   isActive: this.state.filterOptionActive,
+                  modalTarget: "selOptionModal",
+                  onClickClear: () => {
+                    this.setState({ filterOptionActive: false });
+                    PageStore.setState({ services: null, facilities: null });
+                    this.loadPageData(0);
+                  },
                 },
               ]}
             />
@@ -264,7 +325,7 @@ export default inject(
               onClick={this.onClickFAB}
             />
 
-            <MainTab activeIndex={2} />
+            <MainTab activeIndex={fishingType == "boat" ? 1 : 2} />
           </React.Fragment>
         );
       }

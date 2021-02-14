@@ -3,6 +3,64 @@ import { BrowserRouter, Route } from "react-router-dom";
 import Routers from "./routes";
 
 //
+Date.prototype.format = function (join = "-") {
+  const year = this.getFullYear();
+  const month =
+    this.getMonth() + 1 < 10
+      ? "0".concat(this.getMonth() + 1)
+      : this.getMonth() + 1;
+  const date =
+    this.getDate() + 1 < 10 ? "0".concat(this.getDate()) : this.getDate();
+  return year + join + month + join + date;
+};
+Date.prototype.toString = function () {
+  const year = this.getFullYear();
+  const month =
+    this.getMonth() + 1 < 10
+      ? "0".concat(this.getMonth() + 1)
+      : this.getMonth() + 1;
+  const date =
+    this.getDate() + 1 < 10 ? "0".concat(this.getDate()) : this.getDate();
+  let week = this.getDay();
+  switch (week) {
+    case 0:
+      week = "일";
+      break;
+    case 1:
+      week = "월";
+      break;
+    case 2:
+      week = "화";
+      break;
+    case 3:
+      week = "수";
+      break;
+    case 4:
+      week = "목";
+      break;
+    case 5:
+      week = "금";
+      break;
+    case 6:
+      week = "토";
+      break;
+  }
+
+  return `${year}년 ${month}월 ${date}일 (${week})`;
+};
+// # >>>>> HHmm => 오전|오후 0시 0분
+String.prototype.formatTime01 = function () {
+  if (this.length === 0) return "";
+  let hour = this.substr(0, 2);
+  let min = this.substr(2, 2);
+  let ampm = "";
+  if (hour < 12) ampm = "오전";
+  else {
+    ampm = "오후";
+    hour = hour - 12;
+  }
+  return `${ampm} ${hour}시 ${min}분`;
+};
 String.prototype.maskEmail = function () {
   const index = this.indexOf("@");
   return this.substr(0, 3)

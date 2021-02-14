@@ -22,6 +22,14 @@ const NativeStore = new (class {
       window.location.href = url;
     }
   }
+  clipboardCopy(text) {
+    if (window.isNative) {
+    } else {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("복사되었습니다.");
+      });
+    }
+  }
 })();
 
 export default NativeStore;

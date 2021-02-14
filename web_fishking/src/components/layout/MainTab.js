@@ -16,14 +16,14 @@ export default inject("PageStore")(
               </a>
               <a
                 className={"nav-link" + (activeIndex === 1 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/boat`)}
+                onClick={() => PageStore.push(`/main/company/boat`)}
               >
                 <figure className="tab_boat"></figure>
                 선상
               </a>
               <a
                 className={"nav-link" + (activeIndex === 2 ? " active" : "")}
-                onClick={() => PageStore.push(`/main/rock`)}
+                onClick={() => PageStore.push(`/main/company/rock`)}
               >
                 <figure className="tab_rock"></figure>
                 갯바위

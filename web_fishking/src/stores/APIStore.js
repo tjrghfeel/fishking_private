@@ -18,22 +18,29 @@ const APIStore = new (class {
       runInAction(async () => {
         this.isLoading = true;
         try {
-          // if (params) {
-          //   const keys = Object.keys(params);
-          //   url += "?";
-          //   for (let key of keys) {
-          //     if (params[key] === null) continue;
-          //     url += `${key}=${encodeURI(JSON.stringify(params[key]))}&`;
-          //   }
-          // }
-          // console.log("url");
-          // console.log(url);
+          if (params) {
+            const keys = Object.keys(params);
+            url += "?";
+            for (let key of keys) {
+              if (params[key] === null) continue;
+
+              if (params[key] instanceof Array) {
+                for (let p of params[key]) {
+                  url += `${encodeURI(key.concat("[]"))}=${encodeURI(p)}&`;
+                }
+              } else {
+                url += `${encodeURI(key)}=${encodeURI(params[key])}&`;
+              }
+            }
+          }
+          console.log(JSON.stringify(params));
+          console.log(url);
 
           const response = await Http.request(
             url,
             "GET",
             headers,
-            params,
+            // params,
             null
           );
           this.isLoading = false;

@@ -102,29 +102,30 @@ export default inject("DataStore")(
               <div className="modal-body">
                 <div className="padding">
                   <h6 className="modal-title-sub">지역별 선택</h6>
-                  {list.map((item, index1) => (
-                    <div className="row" key={index1}>
-                      {item.map((data, index2) => (
-                        <div className="col" key={index2}>
-                          {data.id && (
-                            <label className="control checkbox">
-                              <input
-                                type="checkbox"
-                                className="add-contrast"
-                                data-role="collar"
-                                data-level="lv1"
-                                onChange={(e) => onSelectLv1(e, data)}
-                              />
-                              <span className="control-indicator"></span>
-                              <span className="control-text">
-                                {data.codeName}
-                              </span>
-                            </label>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ))}
+                  {list &&
+                    list.map((item, index1) => (
+                      <div className="row" key={index1}>
+                        {item.map((data, index2) => (
+                          <div className="col" key={index2}>
+                            {data.id && (
+                              <label className="control checkbox">
+                                <input
+                                  type="checkbox"
+                                  className="add-contrast"
+                                  data-role="collar"
+                                  data-level="lv1"
+                                  onChange={(e) => onSelectLv1(e, data)}
+                                />
+                                <span className="control-indicator"></span>
+                                <span className="control-text">
+                                  {data.codeName}
+                                </span>
+                              </label>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
                   {areaList.length > 0 && (
                     <React.Fragment>
                       <h6 className="modal-title-sub">행정구역 선택</h6>

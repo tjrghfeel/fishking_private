@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 import MainRoute from "./main";
+import CompanyRoute from "./company";
 import MemberRoute from "./member";
 import SetRoute from "./set";
 import PolicyRoute from "./policy";
@@ -13,6 +14,7 @@ import CouponRoute from "./coupon";
 import SearchRoute from "./search";
 import ReservationRoute from "./reservation";
 import PayRoute from "./pay";
+import GuideRoute from "./guide";
 
 export default inject("PageStore")(
   observer(({ PageStore, history, match }) => {
@@ -30,6 +32,9 @@ export default inject("PageStore")(
         <Switch>
           {/** 메인 */}
           <Route path={`${match.url}/main`} component={MainRoute} />
+
+          {/** 업체 */}
+          <Route path={`${match.url}/company`} component={CompanyRoute} />
 
           {/** 멤버 */}
           <Route path={`${match.url}/member`} component={MemberRoute} />
@@ -63,6 +68,9 @@ export default inject("PageStore")(
 
           {/** 결제 */}
           <Route path={`${match.url}/pay`} component={PayRoute} />
+
+          {/** 가이드 */}
+          <Route path={`${match.url}/guide`} component={GuideRoute} />
 
           {/** 기본 리디렉션 */}
           <Redirect from={`*`} to={`${match.url}/main/home`} />
