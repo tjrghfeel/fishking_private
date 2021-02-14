@@ -22,6 +22,7 @@ import com.tobe.fishking.v2.repository.common.TidalLevelRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 //import com.tobe.fishking.v2.service.AES;
 import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.FishkingScheduler;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.CouponService;
@@ -156,7 +157,11 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        myMenuService.setHighAndLowWater(LocalDate.now());
+        FishkingScheduler s = new FishkingScheduler();
+        s.checkTideAlert();
+
+        return;
+
     }
 
     @Transactional

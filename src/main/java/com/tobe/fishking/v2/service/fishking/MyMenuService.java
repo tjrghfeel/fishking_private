@@ -5,7 +5,6 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
-import com.tobe.fishking.v2.entity.common.TidalLevel;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
@@ -14,7 +13,6 @@ import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
-import com.tobe.fishking.v2.repository.common.TidalLevelRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,13 +198,13 @@ public class MyMenuService {
     }
 
     /*관측지점 목록 반환*/
-    @Transactional
+    /*@Transactional
     public List<ObserverDtoList> getSearchPointList(String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
 
-        return observerCodeRepository.getObserverList(member.getId());
-    }
+        return observerCodeRepository.getObserverList(member.getId(), );
+    }*/
 
     /*오늘의 물때정보 반환*/
     /*@Transactional

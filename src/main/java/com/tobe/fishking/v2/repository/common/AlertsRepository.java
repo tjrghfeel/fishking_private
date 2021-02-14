@@ -2,6 +2,8 @@ package com.tobe.fishking.v2.repository.common;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Alerts;
+import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.model.common.AlertListForPage;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
@@ -9,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface AlertsRepository extends BaseRepository<Alerts, Long> {
@@ -53,4 +58,10 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
         nativeQuery = true
     )
     int countBySessionToken(@Param("token") String token);
+
+    List<Alerts> findAllByReceiverAndAlertTypeAndPidAndIsSent(Member receiver, AlertType alertType, Long pid, Boolean isSent);
+
+    Boolean existsByReceiverAndPidAndEntityTypeAndAlertType(Member receiver, Long pid, EntityType entityType, AlertType alertType);
+
+    List<Alerts> findAllByAlertTypeAndIsSentAndAlertTime(AlertType alertType, Boolean isSent, LocalDateTime alertTime);
 }

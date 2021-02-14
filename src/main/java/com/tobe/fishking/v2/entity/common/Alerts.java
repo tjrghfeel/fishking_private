@@ -38,7 +38,7 @@ public class Alerts extends BaseTime {
     @Builder.Default
     private List<CommonCode> alert_sets = new ArrayList<>();
 
-    @Column(columnDefinition = "comment   '알람구분'  ") //분류(어떤종류의 알람인지. 새글알람인지, 쿠폰만료알람인지 등)
+    @Column(columnDefinition = "comment null  '알람구분'  ") //분류(어떤종류의 알람인지. 새글알람인지, 쿠폰만료알람인지 등)
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
     private AlertType alertType;
 
@@ -55,6 +55,9 @@ public class Alerts extends BaseTime {
 
     @Column(columnDefinition = "bit default 0 not null  comment '읽음확인' ") //0 안읽음 1:읽음
     private boolean isRead;
+
+    @Column(columnDefinition = "bit default 0 not null comment '전송 여부'")
+    private Boolean isSent;
 
     @LastModifiedDate  //isRead 가 업데이트되면 자동으로 저장
     @Column(columnDefinition = "datetime  comment '확인일시'  ")

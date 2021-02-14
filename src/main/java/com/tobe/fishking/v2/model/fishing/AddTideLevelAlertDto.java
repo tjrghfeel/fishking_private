@@ -11,5 +11,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class AddTideLevelAlertDto {
     @NotNull
-    private String alertType;
+    private Integer tideHighLow;
+    private Integer time;
+    private Long observerId;
 }

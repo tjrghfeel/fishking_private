@@ -1,5 +1,7 @@
 package com.tobe.fishking.v2.controller.common;
 
+import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.service.common.CommonService;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v2/api")
@@ -26,5 +29,20 @@ public class TidalController {
             @RequestParam("date") String date,
             @RequestParam("code") String code) {
         return commonService.findAllByDateAndCode(date, code);
+    }
+
+    @ApiOperation(value = "관측소코드 리스트", notes = "관측소 코드 얻기" +
+            "\n id: 관측소 id" +
+            "\n code: 관측소코드" +
+            "\n name: 관측소이름" +
+            "\n latitude: 관측소 위도" +
+            "\n longitude: 관측소 경도" +
+            "\n seaDirection: 서해, 동해, 남해" +
+            "\n xgrid: xgrid 값" +
+            "\n ygrid: ygrid 값" +
+            "")
+    @GetMapping("/observers")
+    public List<ObserverCodeResponse> getObserver() {
+        return commonService.getAllObserverCode();
     }
 }

@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -235,14 +236,14 @@ public class MyMenuController {
 
 
     /*물때 - 항구? 목록 반환*/
-    @ApiOperation(value = "관측 지점 목록 반환",notes = "" +
+    /*@ApiOperation(value = "관측 지점 목록 반환",notes = "" +
             "")
     @GetMapping("/searchPointList")
     public List<ObserverDtoList> getSearchPointList(
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
-        return myMenuService.getSearchPointList( token);
-    }
+        return myMenuService.getSearchPointList( token, AlertType.tide);
+    }*/
 
     /*오늘의 물때정보 반환*/
     /*@ApiOperation(value = "",notes = "" +
@@ -262,18 +263,34 @@ public class MyMenuController {
     public Long addTideLevelAlert(
             @RequestHeader("Authorization") String token,
             @RequestBody AddTideLevelAlertDto dto
-    ){
-        return myMenuService.
+    ) throws ResourceNotFoundException {
+        return myMenuService.addTideLevelAlert(dto.getTideHighLow(), dto.getTime(), dto.getObserverId(), token);
     }*/
+
+    /*날짜별 물때정보*/
+    /*@ApiOperation(value = "날짜별 물때정보",notes = "")
+    @GetMapping("/tideByDate")
+    public TideByDateDto getTideByDate(
+            @RequestParam("observerId") Long observerId,
+            @RequestParam("date") String date,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return myMenuService.getTideByDate(observerId,date,token);
+    }*/
+
 
     /*물때 알림 추가*/
     /*@ApiOperation(value = "물때 알림 추가",notes = "" +
-            "")
+            "요청 필드  ) \n" +
+            "- observerId : Long / 필수 / 위치의 id\n" +
+            "- tide : Integer[] / 필수 / 알림 물때의 리스트\n" +
+            "- day : Integer[] / 필수 / 몇일 전에 알림을 받을지 리스트\n" +
+            "- time : Integer[] / 필수 / 몇시에 알림을 받을지 리스트\n")
     @PostMapping("/addTideAlert")
     public Long addTideAlert(
             @RequestBody AddTideAlertDto dto,
             @RequestHeader("Authorization") String token
-    ){
-
+    ) throws ResourceNotFoundException {
+        return myMenuService.addTideAlert(dto.getObserverId(),dto.getTide(),dto.getDay(),dto.getTime(),token);
     }*/
 }

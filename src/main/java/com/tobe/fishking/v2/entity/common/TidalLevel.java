@@ -34,3 +34,4 @@ public class TidalLevel extends BaseTime {
     private ObserverCode observerCode;
 
 }
+
