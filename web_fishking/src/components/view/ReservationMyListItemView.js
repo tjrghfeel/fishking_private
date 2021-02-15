@@ -86,6 +86,7 @@ export default inject()(
             </a>
             {(ordersStatus === "대기자 예약" ||
               ordersStatus === "예약 대기" ||
+              ordersStatus === "예약 진행중" ||
               ordersStatus === "예약 완료") && (
               <a
                 onClick={() => (onClickCancel ? onClickCancel(data) : null)}

@@ -20,6 +20,8 @@ import SelectCompanySortModal from "./modal/SelectCompanySortModal";
 import SelectCompanyOptionModal from "./modal/SelectCompanyOptionModal";
 import CompanyGoodsDetailModal from "./modal/CompanyGoodsDetailModal";
 import SelectReservationCouponModal from "./modal/SelectReservationCouponModal";
+import ConfirmReservationCancelModal from "./modal/ConfirmReservationCancelModal";
+import SelectReservationCancelReasonModal from "./modal/SelectReservationCancelReasonModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -92,6 +94,8 @@ export default {
     SelectCompanyOptionModal,
     CompanyGoodsDetailModal,
     SelectReservationCouponModal,
+    ConfirmReservationCancelModal,
+    SelectReservationCancelReasonModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {

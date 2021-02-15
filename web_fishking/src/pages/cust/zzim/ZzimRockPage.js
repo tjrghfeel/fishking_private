@@ -26,7 +26,7 @@ export default inject(
 
             <ZzimTab activeIndex={1} />
 
-            <ZzimListView fishingType={"sealocks"} />
+            <ZzimListView fishingType={"seaRocks"} />
           </React.Fragment>
         );
       }

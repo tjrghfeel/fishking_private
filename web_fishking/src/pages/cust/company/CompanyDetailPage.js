@@ -120,10 +120,6 @@ export default inject(
             },
           });
         };
-        openGoodsDetail = (data) => {
-          this.setState({ goodsDetail: data });
-          $("#goodsModal").modal("show");
-        };
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
@@ -283,11 +279,7 @@ export default inject(
                 <h5>판매상품</h5>
                 {this.state.goods &&
                   this.state.goods.map((data, index) => (
-                    <CompanyGoodListItemView
-                      key={index}
-                      data={data}
-                      onClick={(data) => this.openGoodsDetail(data)}
-                    />
+                    <CompanyGoodListItemView key={index} data={data} />
                   ))}
               </div>
 

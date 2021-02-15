@@ -5,6 +5,7 @@ import { withRouter } from "react-router-dom";
 import Components from "../../../components";
 const {
   LAYOUT: { NavigationLayout },
+  MODAL: { ConfirmReservationCancelModal, SelectReservationCancelReasonModal },
 } = Components;
 
 export default inject(
@@ -17,7 +18,6 @@ export default inject(
       class extends React.Component {
         constructor(props) {
           super(props);
-          this.check1 = React.createRef(null);
           this.state = {};
         }
         /********** ********** ********** ********** **********/
@@ -393,6 +393,7 @@ export default inject(
 
               {(this.state.orderStatus === "대기자 예약" ||
                 this.state.orderStatus === "예약 대기" ||
+                this.state.orderStatus === "예약 진행중" ||
                 this.state.orderStatus === "예약 완료") && (
                 <div className="container nopadding mb-2">
                   <div className="float-right">
@@ -434,187 +435,14 @@ export default inject(
               )}
 
               {/** 취소/환불규정 모달 */}
-              <div
-                className="modal fade"
-                id="cancelModal"
-                tabIndex="-1"
-                aria-labelledby="cancelModalLabel"
-                aria-hidden="true"
-              >
-                <div className="modal-dialog modal-sm modal-dialog-centered">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h5
-                        className="modal-title text-center"
-                        id="cancelModalLabel"
-                      >
-                        결제 취소
-                      </h5>
-                    </div>
-                    <div className="modal-body">
-                      <h6 className="text-center red">
-                        <img
-                          src="/assets/cust/img/svg/icon-alert.svg"
-                          alt=""
-                          className="vam"
-                        />
-                        &nbsp;결제한 모든 상품이 취소처리 됩니다.
-                      </h6>
-                      <hr />
-                      <ul className="list">
-                        <li>
-                          결제 시 사용하신 쿠폰은 취소 확정 시 취소 및 환불
-                          규정에 따라 소멸 처리되며 재발급이 불가합니다.
-                        </li>
-                        <li className="red">
-                          출항 12시간 이후부터 취소는 불가능합니다.
-                        </li>
-                      </ul>
-                      <hr />
-                      <label className="control radio">
-                        <input
-                          ref={this.check1}
-                          type="checkbox"
-                          className="add-contrast"
-                          data-role="collar"
-                        />
-                        <span className="control-indicator"></span>
-                        <span className="control-text">
-                          모두 확인하였으며 이에 동의합니다
-                        </span>
-                      </label>
-                    </div>
-                    <div className="modal-footer-btm">
-                      <div className="row no-gutters">
-                        <div className="col-6">
-                          <a
-                            onClick={this.onClickCancel2}
-                            className="btn btn-primary btn-lg btn-block"
-                          >
-                            다음
-                          </a>
-                        </div>
-                        <div className="col-6">
-                          <a
-                            className="btn btn-third btn-lg btn-block"
-                            data-dismiss="modal"
-                          >
-                            닫기
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="modal fade"
-                id="reasonModal"
-                tabIndex="-1"
-                aria-labelledby="reasonModalLabel"
-                aria-hidden="true"
-              >
-                <div className="modal-dialog modal-sm modal-dialog-centered">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h5
-                        className="modal-title text-center"
-                        id="reasonModalLabel"
-                      >
-                        결제 취소 사유 선택
-                      </h5>
-                    </div>
-                    <div className="modal-body">
-                      <label className="control radio">
-                        <input
-                          type="radio"
-                          className="add-contrast"
-                          data-role="collar"
-                        />
-                        <span className="control-indicator"></span>
-                        <span className="control-text">
-                          다른 업체 이용 예정
-                        </span>
-                      </label>
-                      <br />
-                      <label className="control radio">
-                        <input
-                          type="radio"
-                          className="add-contrast"
-                          data-role="collar"
-                        />
-                        <span className="control-indicator"></span>
-                        <span className="control-text">비싼가격</span>
-                      </label>
-                      <br />
-                      <label className="control radio">
-                        <input
-                          type="radio"
-                          className="add-contrast"
-                          data-role="collar"
-                        />
-                        <span className="control-indicator"></span>
-                        <span className="control-text">단순변심</span>
-                      </label>
-                      <br />
-                      <label className="control radio">
-                        <input
-                          type="radio"
-                          className="add-contrast"
-                          data-role="collar"
-                        />
-                        <span className="control-indicator"></span>
-                        <span className="control-text">서비스 불만족</span>
-                      </label>
-                      <br />
-                      <label className="control radio">
-                        <input
-                          type="radio"
-                          className="add-contrast"
-                          data-role="collar"
-                        />
-                        <span className="control-indicator"></span>
-                        <span className="control-text">날짜 잘못 선택</span>
-                      </label>
-                      <br />
-                      <label className="control radio">
-                        <input
-                          type="radio"
-                          className="add-contrast"
-                          data-role="collar"
-                        />
-                        <span className="control-indicator"></span>
-                        <span className="control-text">현장에서 결제 예정</span>
-                      </label>
-                      <br />
-                    </div>
-                    <div className="modal-footer-btm">
-                      <div className="row no-gutters">
-                        <div className="col-6">
-                          <a
-                            onClick={this.requestCancel}
-                            className="btn btn-primary btn-lg btn-block"
-                            data-dismiss="modal"
-                            data-toggle="modal"
-                            data-target="#reasonModal"
-                          >
-                            취소하기
-                          </a>
-                        </div>
-                        <div className="col-6">
-                          <a
-                            className="btn btn-third btn-lg btn-block"
-                            data-dismiss="modal"
-                          >
-                            닫기
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <ConfirmReservationCancelModal
+                id={"cancelModal"}
+                onClick={() => {
+                  $("#cancelModal").modal("hide");
+                  $("#reasonModal").modal("show");
+                }}
+              />
+              <SelectReservationCancelReasonModal id={"reasonModal"} />
             </React.Fragment>
           );
         }
