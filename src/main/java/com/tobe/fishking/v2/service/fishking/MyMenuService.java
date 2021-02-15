@@ -478,7 +478,7 @@ public class MyMenuService {
 
         /*알림 추가*/
         String todaySolar = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String todayLunar = holidayUtil.converSolarToLunar(todaySolar);
+        String todayLunar = holidayUtil.convertSolarToLunar(todaySolar);
 
         for(int i=0; i<tideList.length; i++){
             /*물때 계산*/
