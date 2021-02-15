@@ -23,7 +23,12 @@ public class TidalController {
 
     private final CommonService commonService;
 
-    @ApiOperation(value = "날짜, 관측소 코드로 조위 데이터 ", notes = "date: yyyy-MM-dd")
+    @ApiOperation(value = "날짜, 관측소 코드로 조위 데이터 ", notes = "date: yyyy-MM-dd" +
+            "\n [{" +
+            "\n     dateTime: 날짜" +
+            "\n     level: 조위" +
+            "\n     peak: 고조/저조" +
+            "\n }, ... ]")
     @GetMapping("/tidalPeak")
     public List<TidalLevelResponse> findAllByDateAndCode(
             @RequestParam("date") String date,
@@ -31,7 +36,9 @@ public class TidalController {
         return commonService.findAllByDateAndCode(date, code);
     }
 
-    @ApiOperation(value = "물때 ", notes = "date: yyyy-MM-dd")
+    @ApiOperation(value = "물때 ", notes = "date: yyyy-MM-dd" +
+            "\n date: 날짜" +
+            "\n tideTime: 물때 (ex 11물)")
     @GetMapping("/tideTime")
     public Map<String, Object> getTideTimeFromDate(
             @RequestParam("date") String date) {

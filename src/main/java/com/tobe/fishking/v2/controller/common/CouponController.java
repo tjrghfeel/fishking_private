@@ -102,7 +102,7 @@ public class CouponController {
     @ApiOperation(value = "사용 가능한 쿠폰 리스트 조회",notes = "현재 로그인한 회원이 다운받은 쿠폰들 중에서 사용가능한 전체 쿠폰목록 반환. \n" +
             "- 다운가능한 쿠폰을 다운받으면 '내 쿠폰함'에 들어가며, '내 쿠폰'이 되어 사용이 가능해진다. " +
             "- 필드 )\n" +
-            "   coupons: [{" +
+            "   coupons: [{ \n" +
             "   id : '내 쿠폰' id \n" +
             "   coupon : 쿠폰id \n" +
             "   couponType : 쿠폰 유형(정액/정률) / amount(\"정액\"), rate(\"정률\")\n" +
@@ -121,7 +121,7 @@ public class CouponController {
             "   isUsable : 쿠폰이 현재 사용가능상태인지 불가한상태인지\n" +
             "   brfIntroduction : 쿠폰 간략 소개\n" +
             "   couponDescription : 쿠폰 설명\n" +
-            "}, ... ]" +
+            "}, ... ] \n" +
             "size: 쿠폰 갯수")
     @GetMapping("/usableCoupons")
     public Map<String, Object> getAllCouponMemberList(
