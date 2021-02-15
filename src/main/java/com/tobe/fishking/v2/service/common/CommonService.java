@@ -15,6 +15,7 @@ import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.utils.DateUtils;
+import com.tobe.fishking.v2.utils.HolidayUtil;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.springframework.core.env.Environment;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -215,6 +217,20 @@ public class CommonService {
     @Transactional
     public List<TidalLevelResponse> findAllByDateAndCode(String date, String code) {
         return tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), code);
+    }
+
+    public Map<String, Object> findTideTime(String date) {
+        int lunarDay = Integer.parseInt(HolidayUtil.convertSolarToLunar(date.replaceAll("-", "")).substring(8, 10));
+        int tideTime = (lunarDay + 7) % 15;
+        String tideTimeString;
+        if (tideTime == 0) {
+            tideTimeString = "조금";
+        } else {
+            tideTimeString = String.valueOf(tideTime) + "물";
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("tideTime", tideTimeString);
+        return result;
     }
 
     @Transactional

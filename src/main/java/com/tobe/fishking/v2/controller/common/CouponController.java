@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Api(tags={"쿠폰"})
 @RestController
@@ -94,6 +97,41 @@ public class CouponController {
             @RequestParam(value = "sort", required = false, defaultValue = "basic") String sort) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         return  couponService.getCouponMemberList(sessionToken, page, sort);
+    }
+
+    @ApiOperation(value = "사용 가능한 쿠폰 리스트 조회",notes = "현재 로그인한 회원이 다운받은 쿠폰들 중에서 사용가능한 전체 쿠폰목록 반환. \n" +
+            "- 다운가능한 쿠폰을 다운받으면 '내 쿠폰함'에 들어가며, '내 쿠폰'이 되어 사용이 가능해진다. " +
+            "- 필드 )\n" +
+            "   coupons: [{" +
+            "   id : '내 쿠폰' id \n" +
+            "   coupon : 쿠폰id \n" +
+            "   couponType : 쿠폰 유형(정액/정률) / amount(\"정액\"), rate(\"정률\")\n" +
+            "   couponCode : 쿠폰 코드\n" +
+            "   member : '내 쿠폰'의 소유자 회원id\n" +
+            "   isUse : '내 쿠폰' 사용여부\n" +
+            "   regDate : '내 쿠폰' 다운받은 시기\n" +
+            "   useDate : '내 쿠폰' 사용한 시기\n" +
+            "   orders : '내 쿠폰'을 사용한 결제건의 id \n" +
+            "   createdBy : '내 쿠폰'다운받은 사람\n" +
+            "   modifiedBy : '내 쿠폰' 수정한 사람\n" +
+            "   couponName : 쿠폰 이름\n" +
+            "   saleValues : 할인률\n" +
+            "   effectiveDays : 유효기간 \n" +
+            "   isIssue : 쿠폰이 현재 발행 중/ 발행 중지 인지\n" +
+            "   isUsable : 쿠폰이 현재 사용가능상태인지 불가한상태인지\n" +
+            "   brfIntroduction : 쿠폰 간략 소개\n" +
+            "   couponDescription : 쿠폰 설명\n" +
+            "}, ... ]" +
+            "size: 쿠폰 갯수")
+    @GetMapping("/usableCoupons")
+    public Map<String, Object> getAllCouponMemberList(
+            HttpServletRequest request) throws ResourceNotFoundException {
+        String sessionToken = request.getHeader("Authorization");
+        Map<String, Object> result = new HashMap<>();
+        List<CouponMemberDTO> coupons = couponService.getAllCouponMemberList(sessionToken);
+        result.put("coupons", coupons);
+        result.put("size", coupons.size());
+        return result;
     }
 
     /*쿠폰 전체 다운받기

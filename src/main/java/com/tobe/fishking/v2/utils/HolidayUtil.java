@@ -48,7 +48,7 @@ public class HolidayUtil {
 
     /**
      * 해당일자가 대체공휴일에 해당하는 지 확인
-     * @param 양력날짜 (yyyyMMdd)
+     * @param date 양력날짜 (yyyyMMdd)
      * @return 대체 공휴일이면 true
      */
     private static boolean isHolidayAlternate(String date) {
@@ -126,7 +126,7 @@ public class HolidayUtil {
 
     /**
      * 해당일자가 음력 법정공휴일에 해당하는 지 확인
-     * @param 양력날짜 (yyyyMMdd)
+     * @param date 양력날짜 (yyyyMMdd)
      * @return 음력 공휴일이면 true
      */
     private static boolean isHolidayLunar(String date) {
@@ -185,8 +185,8 @@ public class HolidayUtil {
     */
 /**
      * 음력날짜를 양력날짜로 변환
-     * @param 음력날짜 (yyyyMMdd)
-     * @return 양력날짜 (yyyyMMdd)
+     * @param yyyymmdd 음력날짜 (yyyyMMdd)
+     * @return yyyymmdd 양력날짜 (yyyyMMdd)
      */
 
     public static String convertLunarToSolar(String yyyymmdd) {
@@ -229,7 +229,7 @@ public class HolidayUtil {
 
     /**
      * 양력날짜의 요일을 리턴
-     * @param 양력날짜 (yyyyMMdd)
+     * @param day 양력날짜 (yyyyMMdd)
      * @return 요일(int)
      */
     private static int getDayOfWeek(String day) {
@@ -248,10 +248,10 @@ public class HolidayUtil {
 
     /**
      * 양력날짜를 음력날짜로 변환
-     * @param 양력날짜 (yyyyMMdd)
-     * @return 음력날짜 (yyyyMMdd)
+     * @param date 양력날짜 (yyyyMMdd)
+     * @return 음력날짜 (yyyy-MM-dd)
      */
-    public static String converSolarToLunar(String date) {
+    public static String convertSolarToLunar(String date) {
         ChineseCalendar cc = new ChineseCalendar();
         Calendar cal = Calendar.getInstance();
 

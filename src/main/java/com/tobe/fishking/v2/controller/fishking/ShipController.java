@@ -169,10 +169,10 @@ public class ShipController {
     public String Reserve(
 //            @RequestHeader(name = "Authorization") String sessionToken,
             ReserveDTO reserveDTO,
-            @RequestParam(value = "positions[]") Integer[] positions,
-            @RequestParam(value = "personsName[]") String[] personsName,
-            @RequestParam(value = "personsPhone[]") String[] personsPhone,
-            @RequestParam(value = "personsBirthdate[]") String[] personsBirthdate,
+            @RequestParam(value = "positions") Integer[] positions,
+            @RequestParam(value = "personsName") String[] personsName,
+            @RequestParam(value = "personsPhone") String[] personsPhone,
+            @RequestParam(value = "personsBirthdate") String[] personsBirthdate,
             @RequestParam(value = "token", required = false) String token,
             Model model) {
 //        Member member = memberService.getMemberBySessionToken(sessionToken);

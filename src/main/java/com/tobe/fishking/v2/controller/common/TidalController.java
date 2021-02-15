@@ -31,6 +31,15 @@ public class TidalController {
         return commonService.findAllByDateAndCode(date, code);
     }
 
+    @ApiOperation(value = "물때 ", notes = "date: yyyy-MM-dd")
+    @GetMapping("/tideTime")
+    public Map<String, Object> getTideTimeFromDate(
+            @RequestParam("date") String date) {
+        Map<String, Object> result = commonService.findTideTime(date);
+        result.put("date", date);
+         return result;
+    }
+
     @ApiOperation(value = "관측소코드 리스트", notes = "관측소 코드 얻기" +
             "\n id: 관측소 id" +
             "\n code: 관측소코드" +

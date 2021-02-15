@@ -1,11 +1,8 @@
 package com.tobe.fishking.v2.service.fishking;
 
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -13,7 +10,6 @@ import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
-import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -21,22 +17,16 @@ import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import com.tobe.fishking.v2.utils.DateUtils;
-import com.tobe.fishking.v2.utils.SpecBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -68,13 +58,13 @@ public class ShipService {
 
 
     /*
-     *//*업체요청시 등록한 증빙서류File에 대한 downloadUrl을 받아오기위해 FileEntity들을 가져와줌. *//*
+     *//*업체요청시 등록한 증빙서류 File 에 대한 downloadUrl 을 받아오기위해 FileEntity 들을 가져와줌. *//*
     FileEntity ship = fileRepository.findById(ship.getId())
             .orElseThrow(()->new ResourceNotFoundException("files not found for this id ::"+company.getBizNoFileId()));
 
     */
 
-    //검색 --  name으로 검색
+    //검색 --  name 으로 검색
     public Page<ShipDTO.ShipDTOResp> getShipList(Pageable pageable,
                                                  @RequestParam(required = false) Map<String, Object> searchRequest,   ///total를 제외한 모든 것 조회
                                                  Integer totalElement) {
@@ -207,6 +197,7 @@ public class ShipService {
         Map<String, Object> result = new HashMap<>();
         result.put("used", usedPositions);
         result.put("total", availablePositions);
+        result.put("type", goods.getShip().getWeight());
         return result;
     }
 
@@ -265,13 +256,7 @@ public class ShipService {
         orderDetailsRepository.save(details);
 
         for (int idx = 0 ; idx < names.length; idx++) {
-            RideShip rideShip = RideShip.builder()
-                    .ordersDetail(details)
-                    .birthday(birthdates[idx])
-                    .name(names[idx])
-                    .phoneNumber(phones[idx])
-                    .member(member)
-                    .build();
+            RideShip rideShip =  new RideShip(details, names[idx], birthdates[idx], phones[idx], member);
             rideShipRepository.save(rideShip);
         }
 
