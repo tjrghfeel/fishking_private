@@ -24,7 +24,7 @@ export default inject()(
           {/** 예약 > 리뷰작성 */}
           <Route
             exact
-            path={`${match.url}/review/add/:goodsId`}
+            path={`${match.url}/review/add/:id`}
             component={ReservationReviewAddPage}
           />
           {/** 예약 > 상품예약 */}

@@ -53,6 +53,7 @@ export default inject(
           fishingDiaryId,
         });
         this.setState({ list: resolve });
+        console.log(JSON.stringify(resolve));
       };
       onClickItem = async (type, data, index) => {
         const { PageStore, ModalStore, APIStore, DataStore } = this.props;
@@ -77,13 +78,14 @@ export default inject(
             });
           }
           if (resolve) {
-            const list = DataStore.updateItemOfArrayByKey(
-              this.state.list,
-              "commentId",
-              data.commentId,
-              { isLikeTo: !data.isLikeTo }
-            );
-            this.setState({ list });
+            // const list = DataStore.updateItemOfArrayByKey(
+            //   this.state.list,
+            //   "commentId",
+            //   data.commentId,
+            //   { isLikeTo: !data.isLikeTo }
+            // );
+            // this.setState({ list });
+            this.loadPageData();
           }
         }
       };
@@ -102,12 +104,13 @@ export default inject(
                 { commentId: data.commentId }
               );
               if (resolve) {
-                const list = DataStore.removeItemOfArrayByKey(
-                  this.state.list,
-                  "commentId",
-                  data.commentId
-                );
-                this.setState({ list });
+                // const list = DataStore.removeItemOfArrayByKey(
+                //   this.state.list,
+                //   "commentId",
+                //   data.commentId
+                // );
+                // this.setState({ list });
+                this.loadPageData();
               }
             },
           });
@@ -188,12 +191,24 @@ export default inject(
             </div>
 
             {this.state.list.map((data, index) => (
-              <StoryDetailCommentListItemView
-                key={index}
-                index={index}
-                data={data}
-                onClick={this.onClickItem}
-              />
+              <React.Fragment>
+                <StoryDetailCommentListItemView
+                  key={index}
+                  index={index}
+                  data={data}
+                  onClick={this.onClickItem}
+                />
+                {data.childList &&
+                  data.childList.length > 0 &&
+                  data.childList.map((child, index2) => (
+                    <StoryDetailCommentListItemView
+                      key={index2}
+                      index={index2}
+                      data={child}
+                      onClick={this.onClickItem}
+                    />
+                  ))}
+              </React.Fragment>
             ))}
 
             <div className="tab_barwrap fixed-bottom">

@@ -120,10 +120,6 @@ export default inject(
             },
           });
         };
-        openGoodsDetail = (data) => {
-          this.setState({ goodsDetail: data });
-          $("#goodsModal").modal("show");
-        };
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
@@ -283,21 +279,14 @@ export default inject(
                 <h5>판매상품</h5>
                 {this.state.goods &&
                   this.state.goods.map((data, index) => (
-                    <CompanyGoodListItemView
-                      key={index}
-                      data={data}
-                      onClick={(data) => this.openGoodsDetail(data)}
-                    />
+                    <CompanyGoodListItemView key={index} data={data} />
                   ))}
               </div>
 
               {/** 조황일지 */}
               <div className="container nopadding">
                 <h5>
-                  <a
-                    href="boat-detail-fishlog.html"
-                    className="float-right-more"
-                  >
+                  <a href="boat-detail-user.html" className="float-right-more">
                     전체보기
                   </a>
                   조황일지{" "}
@@ -307,30 +296,11 @@ export default inject(
                     )}
                   </span>
                 </h5>
-                <div className="slideList imglogList">
-                  <ul className="listWrap">
-                    <li className="item">
-                      <a href="boat-detail-fishlog.html">
-                        <div className="imglogWrap">
-                          <img
-                            src="/assets/cust/img/sample/photo1.jpg"
-                            alt=""
-                          />
-                        </div>
-                      </a>
-                    </li>
-                    <li className="item">
-                      <a href="boat-detail-fishlog.html">
-                        <div className="imglogWrap">
-                          <img
-                            src="/assets/cust/img/sample/photo1.jpg"
-                            alt=""
-                          />
-                        </div>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                {this.state.fishingDiary &&
+                  this.state.fishingDiary.map((data, index) => (
+                    <GoodsBlogListItemView key={index} data={data} />
+                  ))}
+                <div className="mt-5"></div>
               </div>
 
               {/** 유저조행기 */}
