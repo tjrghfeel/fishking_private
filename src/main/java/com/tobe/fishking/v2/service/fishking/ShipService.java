@@ -1,39 +1,32 @@
 package com.tobe.fishking.v2.service.fishking;
 
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
-import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import com.tobe.fishking.v2.utils.DateUtils;
-import com.tobe.fishking.v2.utils.SpecBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -46,6 +39,7 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @RequiredArgsConstructor
 public class ShipService {
 
+    private final Environment env;
     private final UploadService uploadService;
     private final MemberRepository memberRepo;
     private final FileRepository fileRepo;
@@ -60,16 +54,17 @@ public class ShipService {
     private final RideShipRepository rideShipRepository;
     private final GoodsRepository goodsRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
+    private final FileRepository fileRepository;
 
 
     /*
-     *//*업체요청시 등록한 증빙서류File에 대한 downloadUrl을 받아오기위해 FileEntity들을 가져와줌. *//*
+     *//*업체요청시 등록한 증빙서류 File 에 대한 downloadUrl 을 받아오기위해 FileEntity 들을 가져와줌. *//*
     FileEntity ship = fileRepository.findById(ship.getId())
             .orElseThrow(()->new ResourceNotFoundException("files not found for this id ::"+company.getBizNoFileId()));
 
     */
 
-    //검색 --  name으로 검색
+    //검색 --  name 으로 검색
     public Page<ShipDTO.ShipDTOResp> getShipList(Pageable pageable,
                                                  @RequestParam(required = false) Map<String, Object> searchRequest,   ///total를 제외한 모든 것 조회
                                                  Integer totalElement) {
@@ -159,9 +154,20 @@ public class ShipService {
         ShipResponse response = shipRepo.getDetail(ship_id);
         List<FishingDiary> diaries = fishingDiaryRepository.getDiaryByShipId(response.getId());
         List<FishingDiary> blogs = fishingDiaryRepository.getBlogByShipId(response.getId());
-        response.setFishingDiary(diaries.stream().map(FishingDiaryDTO.FishingDiaryDTOResp::of).collect(Collectors.toList()).subList(0, 3));
+        List<FishingDiarySmallResponse> diaryResponse = new ArrayList<>();
+        List<FishingDiarySmallResponse> blogResponse = new ArrayList<>();
+
+        for (FishingDiary diary : diaries) {
+            diaryResponse.add(getDiarySmallResponse(diary));
+        }
+
+        for (FishingDiary blog : blogs) {
+            blogResponse.add(getDiarySmallResponse(blog));
+        }
+
+        response.setFishingDiary(diaryResponse.subList(0, 3));
         response.setFishingDiaryCount(diaries.size());
-        response.setFishingDiary(blogs.stream().map(FishingDiaryDTO.FishingDiaryDTOResp::of).collect(Collectors.toList()).subList(0, 3));
+        response.setFishingDiary(blogResponse.subList(0, 3));
         response.setFishingBlogCount(blogs.size());
         response.setEvents(eventRepository.getEventTitleByShip(ship_id));
 
@@ -175,8 +181,7 @@ public class ShipService {
     /* 선상, 갯바위 배 정보 */
     @Transactional
     public List<GoodsResponse> getShipGoods(Long ship_id) {
-        List<GoodsResponse> response = goodsRepository.getShipGoods(ship_id);
-        return response;
+        return goodsRepository.getShipGoods(ship_id);
     }
 
     @Transactional
@@ -192,6 +197,7 @@ public class ShipService {
         Map<String, Object> result = new HashMap<>();
         result.put("used", usedPositions);
         result.put("total", availablePositions);
+        result.put("type", goods.getShip().getWeight());
         return result;
     }
 
@@ -250,14 +256,7 @@ public class ShipService {
         orderDetailsRepository.save(details);
 
         for (int idx = 0 ; idx < names.length; idx++) {
-            RideShip rideShip = RideShip.builder()
-                    .ordersDetail(details)
-                    .birthday(birthdates[idx])
-                    .name(names[idx])
-                    .phoneNumber(phones[idx])
-                    .createdBy(member)
-                    .modifiedBy(member)
-                    .build();
+            RideShip rideShip =  new RideShip(details, names[idx], birthdates[idx], phones[idx], member);
             rideShipRepository.save(rideShip);
         }
 
@@ -272,6 +271,19 @@ public class ShipService {
                 member.getEmail(),
                 reserveDTO.getReservePersonPhone(),
                 reserveDTO.getPayMethod());
+    }
+
+    private FishingDiarySmallResponse getDiarySmallResponse(FishingDiary diary) {
+        ArrayList<String> imageUrlList = new ArrayList<>();
+        String path = env.getProperty("file.downloadUrl");
+        List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileType(
+                diary.getId(), diary.getFilePublish(), FileType.image);
+        for(int i=0; i<fileEntityList.size(); i++){
+            if (i > 3) break;
+            FileEntity fileEntity = fileEntityList.get(i);
+            imageUrlList.add(path + "/" +fileEntity.getFileUrl() + "/" + fileEntity.getStoredFile());
+        }
+        return new FishingDiarySmallResponse(diary, imageUrlList, fileEntityList.size()-imageUrlList.size());
     }
 
 //    public List<String> getShipPositions(Long goods_id) {

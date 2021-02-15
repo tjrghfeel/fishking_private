@@ -17,6 +17,11 @@ import SNSModal from "./modal/SNSModal";
 import SelectAreaModal from "./modal/SelectAreaModal";
 import SelectStorySortModal from "./modal/SelectStorySortModal";
 import SelectCompanySortModal from "./modal/SelectCompanySortModal";
+import SelectCompanyOptionModal from "./modal/SelectCompanyOptionModal";
+import CompanyGoodsDetailModal from "./modal/CompanyGoodsDetailModal";
+import SelectReservationCouponModal from "./modal/SelectReservationCouponModal";
+import ConfirmReservationCancelModal from "./modal/ConfirmReservationCancelModal";
+import SelectReservationCancelReasonModal from "./modal/SelectReservationCancelReasonModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -61,6 +66,11 @@ import StoryPostListItemView from "./view/StoryPostListItemView";
 import StoryDetailCommentListItemView from "./view/StoryDetailCommentListItemView";
 import CompanyPremiumListItemView from "./view/CompanyPremiumListItemView";
 import CompanyListItemView from "./view/CompanyListItemView";
+import CompanyGoodListItemView from "./view/CompanyGoodListItemView";
+import ReservationGoodsListItemView from "./view/ReservationGoodsListItemView";
+import FABView from "./view/FABView";
+import GoodsBlogListItemView from "./view/GoodsBlogListItemView";
+import ShipType01PositionView from "./view/ShipType01PositionView";
 
 export default {
   /********** MODAL **********/
@@ -81,6 +91,11 @@ export default {
     SelectAreaModal,
     SelectStorySortModal,
     SelectCompanySortModal,
+    SelectCompanyOptionModal,
+    CompanyGoodsDetailModal,
+    SelectReservationCouponModal,
+    ConfirmReservationCancelModal,
+    SelectReservationCancelReasonModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
@@ -121,5 +136,10 @@ export default {
     StoryDetailCommentListItemView,
     CompanyPremiumListItemView,
     CompanyListItemView,
+    CompanyGoodListItemView,
+    ReservationGoodsListItemView,
+    FABView,
+    GoodsBlogListItemView,
+    ShipType01PositionView,
   },
 };

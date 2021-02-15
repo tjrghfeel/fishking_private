@@ -37,6 +37,7 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
+          console.log(JSON.stringify(resolve));
 
           this.setState({ ...resolve, category });
         };
@@ -78,7 +79,8 @@ export default inject(
           });
         };
         onClickReservation = () => {
-          console.log("reservation");
+          const { PageStore } = this.props;
+          PageStore.push(`/reservation/goods/${this.state.shipId}`);
         };
         onSelectFunction = async (selected) => {
           const { APIStore, ModalStore } = this.props;

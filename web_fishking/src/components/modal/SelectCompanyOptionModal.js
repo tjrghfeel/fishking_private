@@ -1,56 +1,74 @@
 import React, {
   useState,
+  useEffect,
   useCallback,
   useImperativeHandle,
   forwardRef,
 } from "react";
 import { inject, observer } from "mobx-react";
 
-export default inject()(
+export default inject("DataStore")(
   observer(
-    forwardRef(({ id, onSelected }, ref) => {
-      const list = [
-        {
-          text: "인기순",
-          value: "popular",
-          imgSrc: "/assets/cust/img/svg/sort-best.svg",
-        },
-        {
-          text: "거리순",
-          value: "distance",
-          imgSrc: "/assets/cust/img/svg/sort-distance.svg",
-        },
-        {
-          text: "낮은가격순",
-          value: "lowPrice",
-          imgSrc: "/assets/cust/img/svg/sort-lowprice.svg",
-        },
-        {
-          text: "높은가격순",
-          value: "highPrice",
-          imgSrc: "/assets/cust/img/svg/sort-highprice.svg",
-        },
-        {
-          text: "리뷰순",
-          value: "review",
-          imgSrc: "/assets/cust/img/svg/sort-review.svg",
-        },
-        {
-          text: "판매순",
-          value: "sell",
-          imgSrc: "/assets/cust/img/svg/sort-sell.svg",
-        },
-      ];
-      const [selected, setSelected] = useState(0);
+    forwardRef(({ id, onSelected, DataStore }, ref) => {
+      const [arrService, setArrService] = useState([]); // # 서비스
+      const [arrFac, setArrFac] = useState([]); // # 편의시설
+      const [selectedService, setSelectedService] = useState([]);
+      const [selectedFac, setSelectedFac] = useState([]);
+
+      useEffect(() => {
+        (async () => {
+          let resolve = await DataStore.getCodes("85", 3);
+          setArrService(resolve);
+
+          resolve = await DataStore.getCodes("87", 3);
+          setArrFac(resolve);
+        })();
+      }, [setArrFac, setArrService, DataStore]);
+
       const onChange = useCallback(
-        (index) => {
-          setSelected(index);
+        (type = "service" | "facility", checked, item) => {
+          if (type === "service") {
+            if (checked) {
+              selectedService.push(item);
+              setSelectedService(selectedService);
+            } else {
+              const selected = DataStore.removeItemOfArrayByKey(
+                selectedService,
+                "id",
+                item.id
+              );
+              setSelectedService(selected);
+            }
+          } else if (type === "facility") {
+            if (checked) {
+              selectedFac.push(item);
+              setSelectedFac(selectedFac);
+            } else {
+              const selected = DataStore.removeItemOfArrayByKey(
+                selectedFac,
+                "id",
+                item.id
+              );
+              setSelectedFac(selected);
+            }
+          }
         },
-        [setSelected]
+        [
+          selectedService,
+          setSelectedService,
+          selectedFac,
+          setSelectedFac,
+          DataStore,
+        ]
       );
       const onInit = useCallback(() => {
-        setSelected(0);
-      }, [setSelected]);
+        setSelectedFac([]);
+        setSelectedService([]);
+        const elements = document.querySelectorAll(`#${id} input`);
+        for (let element of elements) {
+          element.checked = false;
+        }
+      }, [setSelectedFac, setSelectedService]);
       useImperativeHandle(ref, () => ({ onInit }));
       return (
         <div
@@ -70,7 +88,7 @@ export default inject()(
                   />
                 </a>
                 <h5 className="modal-title" id={id.concat("Label")}>
-                  정렬선택
+                  옵션선택
                 </h5>
                 <a className="nav-right" onClick={onInit}>
                   <img
@@ -82,25 +100,63 @@ export default inject()(
               </div>
               <div className="modal-body">
                 <div className="padding">
-                  <ul className="nav nav-pills nav-sel nav-col-3 mt-4">
-                    {list.map((data, index) => (
-                      <a
-                        className={
-                          "nav-link" + (selected === index ? " active" : "")
-                        }
-                        onClick={() => onChange(index)}
-                      >
-                        <figure>
-                          <img src={data.imgSrc} alt={data.text} />
-                        </figure>
-                        <span>{data.text}</span>
-                      </a>
-                    ))}
-                  </ul>
+                  <h6 className="modal-title-sub">서비스 제공</h6>
+                  {arrService.map((data, index) => (
+                    <div className="row" key={index}>
+                      {data.map((item, index2) => (
+                        <div className="col" key={index2}>
+                          {item.id !== null && (
+                            <label className="control checkbox">
+                              <input
+                                type="checkbox"
+                                className="add-contrast"
+                                data-role="collar"
+                                onChange={(e) => {
+                                  onChange("service", e.target.checked, item);
+                                }}
+                              />
+                              <span className="control-indicator"></span>
+                              <span className="control-text">
+                                {item.codeName}
+                              </span>
+                            </label>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+
+                  <h6 className="modal-title-sub">편의시설</h6>
+                  {arrFac.map((data, index) => (
+                    <div className="row" key={index}>
+                      {data.map((item, index2) => (
+                        <div className="col" key={index2}>
+                          {item.id !== null && (
+                            <label className="control checkbox">
+                              <input
+                                type="checkbox"
+                                className="add-contrast"
+                                data-role="collar"
+                                onChange={(e) => {
+                                  onChange("facility", e.target.checked, item);
+                                }}
+                              />
+                              <span className="control-indicator"></span>
+                              <span className="control-text">
+                                {item.codeName}
+                              </span>
+                            </label>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               </div>
               <a
-                onClick={() => (onSelected ? onSelected(list[selected]) : null)}
+                onClick={() =>
+                  onSelected ? onSelected(selectedService, selectedFac) : null
+                }
                 className="btn btn-primary btn-lg btn-block btn-btm"
                 data-dismiss="modal"
               >

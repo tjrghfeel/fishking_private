@@ -169,6 +169,8 @@ public class Ship extends BaseTime {  //선상
     } )
     private Location liveLocation;
 
+    @Column(columnDefinition = "varchar(300) comment '선박사진 경로' ")
+    private String profileImage;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'업체', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by
     @ManyToOne

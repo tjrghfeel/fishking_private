@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import MainHomePage from "../../pages/cust/main/MainHomePage";
-import MainBoatPage from "../../pages/cust/main/MainBoatPage";
+import MainCompanyPage from "../../pages/cust/main/MainCompanyPage";
 import MainRockPage from "../../pages/cust/main/MainRockPage";
 import MainStoryDiaryPage from "../../pages/cust/main/MainStoryDiaryPage";
 import MainStoryUserPage from "../../pages/cust/main/MainStoryUserPage";
@@ -16,10 +16,12 @@ export default inject()(
         <Switch>
           {/** 메인 > 홈 */}
           <Route exact path={`${match.url}/home`} component={MainHomePage} />
-          {/** 메인 > 선상 */}
-          <Route exact path={`${match.url}/boat`} component={MainBoatPage} />
-          {/** 메인 > 갯바위 */}
-          <Route exact path={`${match.url}/rock`} component={MainRockPage} />
+          {/** 메인 > 업체 > 선상 | 갯바위 */}
+          <Route
+            exact
+            path={`${match.url}/company/:fishingType`}
+            component={MainCompanyPage}
+          />
           {/** 메인 > 스토리 > 조황일지 */}
           <Route
             exact

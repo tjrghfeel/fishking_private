@@ -1,4 +1,4 @@
-/* global Kakao, FB, naver, AppleID */
+/* global Kakao, FB, naver, AppleID, $ */
 import React, { useEffect } from "react";
 import { inject, observer } from "mobx-react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
@@ -85,6 +85,30 @@ export default inject("PageStore")(
           usePopup: false,
         });
       })();
+      // # 토글 버튼
+      $(".toggle_menu").on("click", function () {
+        $(".toggle_menu>span").stop().toggleClass("on");
+        $(this).stop().toggleClass("on");
+      });
+
+      let chkNum = 0;
+      $(".toggle_menu").click(function () {
+        if (chkNum == 0) {
+          $(".toggle_menu>span").stop().addClass("on");
+          $("nav").stop().addClass("view");
+          $(".navbar").stop().addClass("on");
+          $(this).stop().addClass("on");
+          $(".allmenu").fadeIn();
+          chkNum = 1;
+        } else {
+          $(".toggle_menu>span").stop().removeClass("on");
+          $("nav").stop().removeClass("view");
+          $(".navbar").stop().removeClass("on");
+          $(this).stop().removeClass("on");
+          $(".allmenu").fadeOut();
+          chkNum = 0;
+        }
+      });
     }, []);
     return (
       <BrowserRouter>

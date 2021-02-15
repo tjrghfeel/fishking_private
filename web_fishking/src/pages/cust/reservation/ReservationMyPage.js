@@ -79,7 +79,7 @@ export default inject(
       onClickReview = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/reservation/review/add/${item.goodsId}`);
+        PageStore.push(`/reservation/review/add/${item.id}`);
       };
       onClickCancel = (item) => {};
       /********** ********** ********** ********** **********/

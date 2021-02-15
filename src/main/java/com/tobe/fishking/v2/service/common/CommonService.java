@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -9,10 +10,12 @@ import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.common.DeleteFileDto;
 import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.common.FilesDTO;
+import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.utils.DateUtils;
+import com.tobe.fishking.v2.utils.HolidayUtil;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.springframework.core.env.Environment;
@@ -32,8 +35,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +49,7 @@ public class CommonService {
     private final FileRepository fileRepo;
     private final PopularRepository popularRepo;
     private final TidalLevelRepository tidalLevelRepository;
+    private final ObserverCodeRepository observerCodeRepository;
     private final UploadService uploadService;
     private final Environment env;
 
@@ -211,5 +217,25 @@ public class CommonService {
     @Transactional
     public List<TidalLevelResponse> findAllByDateAndCode(String date, String code) {
         return tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), code);
+    }
+
+    public Map<String, Object> findTideTime(String date) {
+        int lunarDay = Integer.parseInt(HolidayUtil.convertSolarToLunar(date.replaceAll("-", "")).substring(8, 10));
+        int tideTime = (lunarDay + 7) % 15;
+        String tideTimeString;
+        if (tideTime == 0) {
+            tideTimeString = "조금";
+        } else {
+            tideTimeString = String.valueOf(tideTime) + "물";
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("tideTime", tideTimeString);
+        return result;
+    }
+
+    @Transactional
+    public List<ObserverCodeResponse> getAllObserverCode() {
+        List<ObserverCode> list = observerCodeRepository.findAll();
+        return list.stream().map(ObserverCodeResponse::new).collect(Collectors.toList());
     }
 }

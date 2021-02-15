@@ -84,6 +84,13 @@ public class CouponService {
         return couponMemberRepository.findCouponMemberListOrderByBasic(member, false, LocalDateTime.now(), pageable);
     }
 
+    @Transactional
+    public List<CouponMemberDTO> getAllCouponMemberList(String sessionToken) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
+        return couponMemberRepository.findAllCouponMemberListOrderByPopular(member, false, LocalDateTime.now());
+    }
+
     /*모든 쿠폰 다운로드
     * - */
     @Transactional
