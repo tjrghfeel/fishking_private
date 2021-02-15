@@ -151,7 +151,10 @@ public class ShipController {
         return shipService.getGoodsDetail(goods_id);
     }
 
-    @ApiOperation(value = "해당 상품 날짜 승선위치 ", notes = "해당 상품의 날짜 승선위치. date: yyyy-MM-dd")
+    @ApiOperation(value = "해당 상품 날짜 승선위치 ", notes = "해당 상품의 날짜 승선위치. date: yyyy-MM-dd" +
+            "\n total: 배의 승선위치 ([1,2,3,4,5,6] 인 경우 1~6번 위치만 사용한다고 등록) " +
+            "\n used: 이미 예약된 승선위치 ([1,2] 인 경우 1,2 번 위치는 이미 예약)" +
+            "\n type: 배의 타입 3, 5, 9 세 값중 하나가 전달되며 각각 3톤 (8인승), 5톤 (18인승), 9톤 (22인승)")
     @GetMapping("/goods/{goods_id}/position")
     @ResponseBody
     public Map<String, Object> getGoodsDatePositions(@PathVariable Long goods_id, @RequestParam String date) {
