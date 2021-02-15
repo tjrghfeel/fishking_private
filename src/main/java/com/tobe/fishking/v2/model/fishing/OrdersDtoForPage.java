@@ -7,13 +7,14 @@ import java.time.LocalDateTime;
 public interface OrdersDtoForPage {
     Long getId();
     Long getGoodsId();
+    Long getShipId();
     @Value("#{@mapperUtility.transDownLoadUrl(target.shipImageFileUrl, target.shipImageFileName)}")
     String getShipImageUrl();
     String getShipName();
     @Value("#{@mapperUtility.transEnumFishingType(target.fishingType)}")
     String getFishingType();
     String getSigungu();
-    Double getDistance();
+//    Double getDistance();
     @Value("#{@mapperUtility.transEnumOrderStatus(target.ordersStatus)}")
     String getOrdersStatus();
 //    Integer getDDay();

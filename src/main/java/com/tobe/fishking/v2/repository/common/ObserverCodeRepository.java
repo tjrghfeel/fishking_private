@@ -17,8 +17,10 @@ public interface ObserverCodeRepository extends BaseRepository<ObserverCode, Lon
             value = "select " +
                     "   o.id observerId, " +
                     "   o.name observerName, " +
+                    "   o.code observerCode, " +
                     "   if( (select count(a.id) from alerts a " +
-                    "           where a.receiver_id = :memberId and o.id = a.pid and a.entity_type = 20 and a.alert_type = :alertType), true, false) isAlerted " +
+                    "           where a.receiver_id = :memberId and o.id = a.pid and a.entity_type = 20 " +
+                    "           and a.alert_type = :alertType), true, false) isAlerted " +
                     "from observer_code o " +
                     "",
             countQuery = "select o.id from observer_code o ",

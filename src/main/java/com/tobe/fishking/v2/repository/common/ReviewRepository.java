@@ -28,7 +28,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "   (select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
             "       where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) goodsFishSpecies, " +
             "   g.meridiem meridiem, " +
-            "   s.distance distance, " +
+//            "   s.distance distance, " +
             "   g.fishing_tide_time fishingTideTime, " +
             "   r.total_avg_by_review totalAvgByReview, " +
             "   r.taste_by_review tasteByReview, " +

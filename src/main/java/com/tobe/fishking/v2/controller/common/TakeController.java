@@ -48,7 +48,7 @@ public class TakeController {
     /*선상 낚시 찜 목록 조회*/
     @ApiOperation(value = "선상/갯바위 상품 찜 목록 조회",notes = "" +
             "- 요청 필드 )\n" +
-            "   fishingType : 선상/갯바위 / ship(\"선상\"), sealocks(\"갯바위\")\n" +
+            "   fishingType : String / 필수 / 선상 또는 갯바위 / ship(\"선상\"), seaRocks(\"갯바위\")\n" +
             "- 응답 필드 ) \n" +
             "   takeId : 찜id \n" +
             "   goodsId : 찜한 상품의 id\n" +
@@ -69,6 +69,9 @@ public class TakeController {
             HttpServletRequest request
         ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
+        if(!(fishingType.equals("ship") || fishingType.equals("seaRocks")) ){
+            throw new RuntimeException("fishingType 값에는 'ship' 또는 'seaRocks'만 가능합니다.");
+        }
         return takeService.getFishingTypeFishTakeList(fishingType, sessionToken,page);
     }
 

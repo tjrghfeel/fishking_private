@@ -18,7 +18,7 @@ public interface ReviewDto {
     String getGoodsFishSpecies();
     @Value("#{@mapperUtility.transEnumMeridiem(target.meridiem)}")
     String getMeridiem();
-    Double getDistance();
+//    Double getDistance();
     String getFishingTideTime();
     Double getTotalAvgByReview();
     Double getTasteByReview();

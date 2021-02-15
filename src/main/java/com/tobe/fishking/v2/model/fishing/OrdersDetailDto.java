@@ -23,11 +23,13 @@ import java.util.List;
 @Builder
 public class OrdersDetailDto {
     private Long id;
+    private Long shipId;
+    private Long goodsId;
     private  String shipName;
     private String orderStatus;
     private String fishingType;
     private String sigungu;
-    private Double distance;
+//    private Double distance;
     private String fishingDate;
     private String fishSpecies;
     private String meridiem;

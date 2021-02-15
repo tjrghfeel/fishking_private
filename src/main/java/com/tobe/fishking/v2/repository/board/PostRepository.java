@@ -59,12 +59,12 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "from post p " +
             "where p.board_id = (select b.id from board b where b.board_type = 2) " +
             "   and p.author_id = :member " +
-            "order by  p.created_date ",
+            "order by  p.created_date desc",
             countQuery = "select p.id " +
                     "from post p " +
                     "where p.board_id = (select b.id from board b where b.board_type = 2) " +
                     "   and p.author_id = :member " +
-                    "order by p.created_date ",
+                    "order by p.created_date desc",
             nativeQuery = true
     )
     Page<QnADtoForPage> findAllQnAList(@Param("member") Member member, Pageable pageable);

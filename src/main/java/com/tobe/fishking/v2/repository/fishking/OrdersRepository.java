@@ -38,6 +38,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query(value = "select " +
             "   o.id id, " +
             "   g.id goodsId, " +
+            "   s.id shipId, " +
             "   (select f.file_url from files f " +
             "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
             "   (select f.thumbnail_file from files f " +
@@ -45,7 +46,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   s.ship_name shipName, " +
             "   s.fishing_type fishingType, " +
             "   s.sigungu sigungu, " +
-            "   s.distance distance, " +
+//            "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
             "   g.fishing_date fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
@@ -75,6 +76,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query(value = "select " +
             "   o.id id, " +
             "   g.id goodsId, " +
+            "   s.id shipId, " +
             "   (select f.file_url from files f " +
             "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
             "   (select f.thumbnail_file from files f " +
@@ -82,7 +84,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   s.ship_name shipName, " +
             "   s.fishing_type fishingType, " +
             "   s.sigungu sigungu, " +
-            "   s.distance distance, " +
+//            "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
             "   g.fishing_date fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +

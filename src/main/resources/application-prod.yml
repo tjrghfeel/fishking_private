@@ -25,7 +25,7 @@ spring:
 
 file :
   location : /mnt/nfs/files/
-  downloadUrl : fishkingapp.com/resource
+  downloadUrl : https://www.fishkingapp.com/resource
 
 
 logging:

@@ -223,6 +223,7 @@ public class FishingDiaryService {
                 .fishingLocation(fishingLocation)
                 .writeLatitude(latitude)
                 .writeLongitude(longitude)
+                .isDeleted(false)
                 .build();
         fishingDiary = fishingDiaryRepo.save(fishingDiary);
 

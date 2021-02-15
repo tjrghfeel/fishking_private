@@ -149,7 +149,7 @@ public class MyMenuController {
             "   meridiem : 낚시 시간대가 오전/오후 인지\n" +
             "       ㄴ am : 오전\n" +
             "       ㄴ pm : 오후\n " +
-            "   distance : 거리\n" +
+//            "   distance : 거리\n" +
             "   fishingTideTime : 물때\n" +
             "   totalAvgByReview : 리뷰 총 평점\n" +
             "   tasteByReview : 손맛 평점 \n" +
@@ -178,13 +178,14 @@ public class MyMenuController {
             "- 필드 )\n" +
             "   id : 예약id\n" +
             "   goodsId : 예약한 상품의 id\n" +
+            "   shipId : 상품이 속한 선박의 id\n" +
             "   shipImageUrl : 선상 대표이미지 download url\n" +
             "   shipName : 선상명\n" +
             "   fishingType : 선상낚시 / 갯바위 낚시\n" +
             "       ㄴ ship : 선상\n" +
             "       ㄴ sealocks : 갯바위\n " +
             "   sigungu : 주소(시,군,구)\n" +
-            "   distance : 거리\n" +
+//            "   distance : 거리\n" +
             "   orderStatus : 예약상태 / book(\"예약 대기\"), waitBook(\"대기자 예약\"), bookFix(\"예약 확정\"), bookCancel(\"예약 취소\")," +
             "    fishingComplete(\"출조 완료\"), bookConfirm(\"예약 완료\")\n" +
             "   fishingDate : 낚시일\n" +
@@ -206,12 +207,14 @@ public class MyMenuController {
             "- \n" +
             "- 필드 ) \n" +
             "   id : 예약id\n" +
+            "   shipId : 상품이 속한 선박의 id\n" +
+            "   goodsId : 상품의 id\n" +
             "   shipName : 선상명\n" +
             "   orderStatus : 예약상태 / book(\"예약 대기\"), waitBook(\"대기자 예약\"), bookFix(\"예약 확정\"), bookCancel(\"예약 취소\")," +
             "    fishingComplete(\"출조 완료\"), bookConfirm(\"예약 완료\")\n" +
             "   fishingType : 선상낚시/갯바위낚시 / ship(\"선상\"), sealocks(\"갯바위\")\n" +
             "   sigungu : 주소(시,군,구)\n" +
-            "   distance : 거리\n" +
+//            "   distance : 거리\n" +
             "   fishingDate : 낚시일\n" +
             "   fishSpecies : 어종\n" +
             "   meridiem : 낚시 시간대 오전/오후\n" +
@@ -236,17 +239,24 @@ public class MyMenuController {
 
 
     /*물때 - 항구? 목록 반환*/
-    /*@ApiOperation(value = "관측 지점 목록 반환",notes = "" +
-            "")
+    @ApiOperation(value = "관측 지점 목록 반환",notes = "" +
+            "" +
+            "요청 필드 ) \n" +
+            "- 헤더에 세션토큰 필요\n" +
+            "응답 필드 ) \n" +
+            "- observerId : Long / 관측소의 id\n" +
+            "- observerName : String / 관측소 명\n" +
+            "- observerCode : String / 관측소 코드\n" +
+            "- isAlerted : Boolean / 현재 관측소에 대해 알람이 설정되어 있는지여부\n")
     @GetMapping("/searchPointList")
     public List<ObserverDtoList> getSearchPointList(
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return myMenuService.getSearchPointList( token, AlertType.tide);
-    }*/
+    }
 
     /*오늘의 물때정보 반환*/
-    /*@ApiOperation(value = "",notes = "" +
+    @ApiOperation(value = "",notes = "" +
             "")
     @GetMapping("/todayTide")
     public TodayTideDto getTodayTide(
@@ -254,21 +264,21 @@ public class MyMenuController {
             @RequestHeader("Authorization") String token
     ) throws IOException, ResourceNotFoundException {
         return myMenuService.getTodayTide(observerId,token);
-    }*/
+    }
 
     /*조위 알림 추가*/
-    /*@ApiOperation(value = "오늘의 물때 알림 추가",notes = "" +
+    @ApiOperation(value = "오늘의 물때 알림 추가",notes = "" +
             "")
     @PostMapping("/addTideLevelAlert")
-    public Long addTideLevelAlert(
+    public Boolean addTideLevelAlert(
             @RequestHeader("Authorization") String token,
             @RequestBody AddTideLevelAlertDto dto
     ) throws ResourceNotFoundException {
-        return myMenuService.addTideLevelAlert(dto.getTideHighLow(), dto.getTime(), dto.getObserverId(), token);
-    }*/
+        return myMenuService.addTideLevelAlert(dto.getHighTideAlert(), dto.getLowTideAlert(), dto.getObserverId(), token);
+    }
 
     /*날짜별 물때정보*/
-    /*@ApiOperation(value = "날짜별 물때정보",notes = "")
+    @ApiOperation(value = "날짜별 물때정보",notes = "")
     @GetMapping("/tideByDate")
     public TideByDateDto getTideByDate(
             @RequestParam("observerId") Long observerId,
@@ -276,11 +286,11 @@ public class MyMenuController {
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return myMenuService.getTideByDate(observerId,date,token);
-    }*/
+    }
 
 
     /*물때 알림 추가*/
-    /*@ApiOperation(value = "물때 알림 추가",notes = "" +
+    @ApiOperation(value = "물때 알림 추가",notes = "" +
             "요청 필드  ) \n" +
             "- observerId : Long / 필수 / 위치의 id\n" +
             "- tide : Integer[] / 필수 / 알림 물때의 리스트\n" +
@@ -292,5 +302,5 @@ public class MyMenuController {
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return myMenuService.addTideAlert(dto.getObserverId(),dto.getTide(),dto.getDay(),dto.getTime(),token);
-    }*/
+    }
 }

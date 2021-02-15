@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 public interface ObserverDtoList {
     Long getObserverId();
      String getObserverName();
+     String getObserverCode();
     @Value("#{@mapperUtility.transIntToBoolean(target.isAlerted)}")
      Boolean getIsAlerted();
 

@@ -149,7 +149,8 @@ public class FishingDiaryController {
             "   ex) 팝업창에서 '전라남도'선택시, common code에서 '전라남도'의 code값인 '전남'  \n" +
             "- districtSearchKey : String / 선택 / 팝업창에서 '지역명 검색'부분에 직접입력한 값. \n" +
             "- fishSpecies : String[] / 선택 / 팝업창에서 선택한 어종에 해당하는 common code의 code값들의 배열.\n" +
-            "- sort : String / 선택 / 글들의 정렬기준. / 'createdDate', 'likeCount', 'commentCount' 중 하나 입력. "+
+            "- shipId : Long / 선택 / 선박의 id. 특정 선박에 대한 조항일지 또는 유저조행기만 보려할때 입력.\n" +
+            "- sort : String / 선택 / 글들의 정렬기준. / 'createdDate', 'likeCount', 'commentCount' 중 하나 입력. \n"+
             "- header에 세션토큰 필요.\n" +
             "응답 필드 )\n" +
             "- id : Long / 게시글의 id \n" +
@@ -177,6 +178,7 @@ public class FishingDiaryController {
             @RequestParam(value = "districtList", required = false) String[] districtList,
             @RequestParam(value = "searchKey", required = false, defaultValue = "") String districtSearchKey,
             @RequestParam(value = "fishSpeciesList", required = false) String[] fishSpecies,
+            @RequestParam(value = "shipId",required = false) Long shipId,
             @RequestParam(value = "sort", required = false, defaultValue = "createdDate") String sort,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
@@ -188,7 +190,7 @@ public class FishingDiaryController {
         }
 
         return fishingDiaryService.getFishingDiaryList(
-                page, category, districtList, districtSearchKey, "address",null, fishSpecies, sort, token, false);
+                page, category, districtList, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
     }
 
 
