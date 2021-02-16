@@ -44,6 +44,10 @@ export default inject(
 
           const { APIStore } = this.props;
 
+          const tideTime = await APIStore._get(`/v2/api/tideTime`, {date:selected.format("-")});
+          console.log(JSON.stringify(tideTime));
+          this.setState({tideTime: tideTime.tideTime});
+
           if (this.state.goods && this.state.goods.length > 0) {
             const resolve = await APIStore._get("/v2/api/tidalPeak", {
               code: this.state.goods[0]["observerCode"],
@@ -132,7 +136,7 @@ export default inject(
                           />
                         </figure>
                         <span className="large">
-                          물때 <strong className="point">5물</strong>
+                          물때<br/><strong className="point">{this.state.tideTime}</strong>
                           <br />
                           <small>북서풍 1.94m/s</small>
                         </span>

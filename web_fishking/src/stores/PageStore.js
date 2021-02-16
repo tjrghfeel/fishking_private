@@ -20,8 +20,16 @@ const PageStore = new (class {
     this.history = history;
   };
   push = (pathname) => {
-    const service = this.history.location.pathname.split("/")[1];
-    window.location.href = `/${service}${pathname}`;
+    let service = this.history.location.pathname.split("/")[1];
+    if (
+      pathname.indexOf("/cust") !== -1 ||
+      pathname.indexOf("/police") !== -1 ||
+      pathname.indexOf("/common") !== -1
+    )
+      service = "";
+    else service = "/" + service;
+    console.log(`${service}${pathname}`);
+    window.location.href = `${service}${pathname}`;
   };
   reload = () => {
     window.location.reload();

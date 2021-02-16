@@ -74,7 +74,7 @@ export default inject(
       onClickReservation = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        console.log(JSON.stringify(item));
+        PageStore.push(`/company/${item.fishingType === '선상'? 'boat' : 'rock'}/detail/${item.shipId}`);
       };
       onClickReview = (item) => {
         const { PageStore } = this.props;

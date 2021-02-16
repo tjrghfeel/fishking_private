@@ -14,6 +14,7 @@ import CouponRoute from "./coupon";
 import SearchRoute from "./search";
 import ReservationRoute from "./reservation";
 import PayRoute from "./pay";
+import EventRoute from "./event";
 import GuideRoute from "./guide";
 
 export default inject("PageStore")(
@@ -68,6 +69,9 @@ export default inject("PageStore")(
 
           {/** 결제 */}
           <Route path={`${match.url}/pay`} component={PayRoute} />
+
+          {/** 이벤트 */}
+          <Route path={`${match.url}/event`} component={EventRoute} />
 
           {/** 가이드 */}
           <Route path={`${match.url}/guide`} component={GuideRoute} />
