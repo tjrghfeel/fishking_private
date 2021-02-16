@@ -138,6 +138,9 @@ export default inject(
         };
         requestReservation = () => {
           // TODO : 다시 예약하기
+            console.log(JSON.stringify(this.state));
+            const { PageStore } = this.props;
+            PageStore.push(`/company/${this.state.fishingType === '선상'? 'boat' : 'rock'}/detail/${this.state.shipId}`);
         };
         /********** ********** ********** ********** **********/
         /** render */

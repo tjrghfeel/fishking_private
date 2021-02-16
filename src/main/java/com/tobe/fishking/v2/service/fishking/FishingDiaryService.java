@@ -419,14 +419,18 @@ public class FishingDiaryService {
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(
             int page, String category, String[] districtList, String searchKey, String searchTarget, Long shipId,
             String[] fishSpecies, String sort, String token, Boolean myPost) throws ResourceNotFoundException {
-        Member member = memberRepo.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Long memberId = null;
+        if(token !=null){
+            Member member = memberRepo.findBySessionToken(token)
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+            memberId = member.getId();
+        }
         /*카테고리*/
         FilePublish filePublish = FilePublish.valueOf(category);
         /*지역검색*/
         String districtRegex=null;
         if(districtList!=null&&districtList.length!=0) {
-            CodeGroup codeGroup = codeGroupRepo.findByCode("districtL1");
+            CodeGroup codeGroup = codeGroupRepo.findByCode("districtL2");
             List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList(districtList.clone()));
             districtRegex = districtListCommonCodeList.get(0).getCodeName();
             for (int i = 1; i < districtListCommonCodeList.size(); i++) {
@@ -447,13 +451,13 @@ public class FishingDiaryService {
         Pageable pageable = PageRequest.of(page, 30);
         if(sort.equals("createdDate")){
             return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
-                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, member.getId(),myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
         else if(sort.equals("likeCount")){
             return fishingDiaryRepo.getFishingDiaryListOrderByLikeCount(
-                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, member.getId(),myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
         else{
             return fishingDiaryRepo.getFishingDiaryListOrderByCommentCount(
-                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, member.getId(),myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
     }
 
     /*어복스토리 상세보기*/
@@ -461,8 +465,12 @@ public class FishingDiaryService {
     public FishingDiaryDetailDto getFishingDiaryDetail(Long fishingDiaryId, String token) throws ResourceNotFoundException {
         FishingDiaryDetailDto result = null;
 
-        Member member = memberRepo.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Member member = null;
+        if(token !=null){
+            member = memberRepo.findBySessionToken(token)
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        }
+
         FishingDiary fishingDiary  = fishingDiaryRepo.findById(fishingDiaryId)
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
 

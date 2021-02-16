@@ -4,10 +4,7 @@ package com.tobe.fishking.v2.controller.fishking;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.fishing.DeleteFishingDiaryCommentDto;
-import com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage;
-import com.tobe.fishking.v2.model.fishing.MakeFishingDiaryCommentDto;
-import com.tobe.fishking.v2.model.fishing.ModifyFishingDiaryCommentDto;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryCommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -80,29 +77,32 @@ public class FishingDiaryCommentController {
 
     /*댓글 목록 출력*/
     @ApiOperation(value = "댓글 목록 가져오기",notes = "" +
-            "조항일지 또는 유저조행기에 대한 댓글 목록을 가져온다. 댓글에 대한 댓글(대댓글)이 가능하며, 대댓글의 깊이는 2(댓글에 대한 댓글까지만)이다. " +
+            "조항일지 또는 유저조행기에 대한 댓글 목록을 가져온다. 댓글에 대한 댓글(대댓글)이 가능하며, 대댓글의 깊이는 2(댓글에 대한 댓글까지만)이다. \n" +
             "요청 필드 ) \n" +
             "- fishingDiaryId : Long / 필수 / 원글id\n" +
             "- 헤더에 세션토큰 필요\n" +
             "응답 필드 ) \n" +
-            "- authorId : Long / 댓글 작성자 id\n" +
-            "- commentId : Long / 댓글 id\n" +
-            "- profileImage : String / 댓글 작성자 프사 url\n" +
-            "- nickName : String / 댓글 작성자 닉네임\n" +
-            "- writeTime : LocalDateTime / 댓글 작성 시각\n" +
-            "- content : String / 댓글 내용\n" +
-            "- fileUrl : String / 댓글 내용 - 이미지 파일 url\n" +
-            "- likeCount : Integer / 댓글에 대한 좋아요수\n" +
-            "- isLikeTo : Boolean / 현재 회원의 댓글에 대한 좋야요 여부\n" +
-            "- isChildComment : Boolean / 현재 댓글이 대댓글인지 여부\n" +
-            "- parentId : Long / 현재 댓글이 대댓글이라면 상위 댓글의 id / 대댓글이 아닌 댓글이라면 값은 0. \n" +
-            "- isMine : Boolean / 현재 댓글이 자신의 댓글인지. \n" +
-            "- childList : 현재 댓글에 대한 대댓글 목록. / 똑같은 필드를 가지는 객체를 리스트로 가지고 있으며, " +
+            "- commentCount : Integer / 총 댓글 수 \n" +
+            "- fishingDiaryTitle : String / 본글 제목\n" +
+            "- commentList : 댓글객체의 배열. 아래는 항목들.\n" +
+            "\t\t\t- authorId : Long / 댓글 작성자 id\n" +
+            "\t\t\t- commentId : Long / 댓글 id\n" +
+            "\t\t\t- profileImage : String / 댓글 작성자 프사 url\n" +
+            "\t\t\t- nickName : String / 댓글 작성자 닉네임\n" +
+            "\t\t\t- writeTime : LocalDateTime / 댓글 작성 시각\n" +
+            "\t\t\t- content : String / 댓글 내용\n" +
+            "\t\t\t- fileUrl : String / 댓글 내용 - 이미지 파일 url\n" +
+            "\t\t\t- likeCount : Integer / 댓글에 대한 좋아요수\n" +
+            "\t\t\t- isLikeTo : Boolean / 현재 회원의 댓글에 대한 좋야요 여부\n" +
+            "\t\t\t- isChildComment : Boolean / 현재 댓글이 대댓글인지 여부\n" +
+            "\t\t\t- parentId : Long / 현재 댓글이 대댓글이라면 상위 댓글의 id / 대댓글이 아닌 댓글이라면 값은 0. \n" +
+            "\t\t\t- isMine : Boolean / 현재 댓글이 자신의 댓글인지. \n" +
+            "\t\t\t- childList : 현재 댓글에 대한 대댓글 목록. / 똑같은 필드를 가지는 객체를 리스트로 가지고 있으며, " +
             "   대댓글이 없을시 리스트가 비어있다.  ")
     @GetMapping("/fishingDiaryComment")
-    public List<FishingDiaryCommentDtoForPage> getCommentList(
+    public FishingDiaryCommentPageDto getCommentList(
         @RequestParam("fishingDiaryId") Long fishingDiaryId,
-        @RequestHeader("Authorization") String token
+        @RequestHeader(value = "Authorization", required = false) String token
     ) throws ResourceNotFoundException {
         return commentService.getCommentList(fishingDiaryId,token);
     }

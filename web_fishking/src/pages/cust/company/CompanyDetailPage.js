@@ -39,7 +39,6 @@ export default inject(
             APIStore,
             PageStore,
           } = this.props;
-          console.log(id);
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           console.log(JSON.stringify(resolve));
           this.setState(resolve);
@@ -124,7 +123,12 @@ export default inject(
         /** render */
         /********** ********** ********** ********** **********/
         render() {
-          const { PageStore } = this.props;
+          const {
+            PageStore,
+            match: {
+              params: { id },
+            },
+          } = this.props;
           return (
             <React.Fragment>
               <CompanyGoodsDetailModal
@@ -286,7 +290,12 @@ export default inject(
               {/** 조황일지 */}
               <div className="container nopadding">
                 <h5>
-                  <a href="boat-detail-user.html" className="float-right-more">
+                  <a
+                    onClick={() =>
+                      PageStore.push(`/main/story/diary?shipId=${id}`)
+                    }
+                    className="float-right-more"
+                  >
                     전체보기
                   </a>
                   조황일지{" "}
@@ -306,7 +315,12 @@ export default inject(
               {/** 유저조행기 */}
               <div className="container nopadding">
                 <h5>
-                  <a href="boat-detail-user.html" className="float-right-more">
+                  <a
+                    onClick={() =>
+                      PageStore.push(`/main/story/user?shipId=${id}`)
+                    }
+                    className="float-right-more"
+                  >
                     전체보기
                   </a>
                   유저조행기{" "}
@@ -402,7 +416,14 @@ export default inject(
                 <h5>위치정보</h5>
                 <ul className="notice">
                   <li>
-                    <a href="boat-detail-map.html" className="float-right-more">
+                    <a
+                      onClick={() =>
+                        PageStore.push(
+                          `/common/mapview?name=${this.state.name}&lat=${this.state.latitude}&lon=${this.state.longitude}`
+                        )
+                      }
+                      className="float-right-more"
+                    >
                       <img
                         src="/assets/cust/img/svg/icon-location.svg"
                         alt=""
@@ -466,68 +487,77 @@ export default inject(
               </div>
 
               {/** 사장님 한마디 */}
-              <div className="container nopadding">
-                <h5>사장님 한마디</h5>
-                <ul className="notice">
-                  <li className="icon-notice">
-                    {this.state.ownerWordingTitle && (
-                      <React.Fragment>
-                        <strong>{this.state.ownerWordingTitle}</strong>
-                        <br />
-                      </React.Fragment>
-                    )}
-                    <small>{this.state.ownerWording}</small>
-                  </li>
-                </ul>
-                <div className="space"></div>
-              </div>
+              {(this.state.ownerWordingTitle || this.state.ownerWording) && (
+                <div className="container nopadding">
+                  <h5>사장님 한마디</h5>
+                  <ul className="notice">
+                    <li className="icon-notice">
+                      {this.state.ownerWordingTitle && (
+                        <React.Fragment>
+                          <strong>{this.state.ownerWordingTitle}</strong>
+                          <br />
+                        </React.Fragment>
+                      )}
+                      {this.state.ownerWording && (
+                        <small>{this.state.ownerWording}</small>
+                      )}
+                    </li>
+                  </ul>
+                  <div className="space"></div>
+                </div>
+              )}
 
               {/** 이벤트 */}
-              <div className="container nopadding">
-                <h5>
-                  <a className="float-right-more">전체보기</a>
-                  이벤트
-                </h5>
-                <ul className="notice">
-                  {this.state.events &&
-                    this.state.events.map((data, index) => (
+              {this.state.events && (
+                <div className="container nopadding">
+                  <h5>
+                    <a
+                      onClick={() => PageStore.push(`/event/list`)}
+                      className="float-right-more"
+                    >
+                      전체보기
+                    </a>
+                    이벤트
+                  </h5>
+                  <ul className="notice">
+                    {this.state.events.map((data, index) => (
                       <li className="icon-event" key={index}>
                         {data}
                       </li>
                     ))}
-                </ul>
-                <div className="space"></div>
-              </div>
+                  </ul>
+                  <div className="space"></div>
+                </div>
+              )}
 
               {/** 공지사항 */}
-              <div className="container nopadding">
-                <h5>공지사항</h5>
-                <ul className="notice">
-                  <li className="icon-notice">
-                    {this.state.noticeTitle && (
-                      <React.Fragment>
-                        <strong>{this.state.noticeTitle}</strong>
-                        <br />
-                      </React.Fragment>
-                    )}
-                    <small>{this.state.notice}</small>
-                  </li>
-                  {/*<li className="notice-grey">*/}
-                  {/*  <small>*/}
-                  {/*    7~8월 13세 이하 어린이 선비 무료 <br />*/}
-                  {/*    (어린이 예약 시 보호자와 함께 주문하셔야 예약이*/}
-                  {/*    가능합니다.)*/}
-                  {/*  </small>*/}
-                  {/*</li>*/}
-                </ul>
-                <div className="space"></div>
-              </div>
+              {(this.state.noticeTitle || this.state.notice) && (
+                <div className="container nopadding">
+                  <h5>공지사항</h5>
+                  <ul className="notice">
+                    <li className="icon-notice">
+                      {this.state.noticeTitle && (
+                        <React.Fragment>
+                          <strong>{this.state.noticeTitle}</strong>
+                          <br />
+                        </React.Fragment>
+                      )}
+                      {this.state.notice && <small>{this.state.notice}</small>}
+                    </li>
+                  </ul>
+                  <div className="space"></div>
+                </div>
+              )}
 
               {/** 선박정보 */}
               <div className="container nopadding">
                 <h5>선박정보</h5>
                 <ul className="notice">
-                  <li>51톤(t) | 촤소 15명 , 최대 59명 탑승</li>
+                  <li>
+                    {this.state.weight === 3 && "3톤(t) | 8인승"}
+                    {this.state.weight === 5 && "5톤(t) | 18인승"}
+                    {this.state.weight === 9 && "9톤(t) | 22인승"}
+                  </li>
                 </ul>
                 <div className="space"></div>
               </div>
@@ -656,9 +686,7 @@ export default inject(
                   </div>
                   <div className="col-9">
                     <a
-                      onClick={() =>
-                        PageStore.push(`/reservation/goods/${this.state.id}`)
-                      }
+                      onClick={() => PageStore.push(`/reservation/goods/${id}`)}
                       className="btn btn-primary btn-lg btn-block"
                     >
                       예약하기

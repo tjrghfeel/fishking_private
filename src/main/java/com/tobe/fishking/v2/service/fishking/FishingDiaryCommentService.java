@@ -9,10 +9,7 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.fishing.DeleteFishingDiaryCommentDto;
-import com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage;
-import com.tobe.fishking.v2.model.fishing.MakeFishingDiaryCommentDto;
-import com.tobe.fishking.v2.model.fishing.ModifyFishingDiaryCommentDto;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
@@ -146,23 +143,35 @@ public class FishingDiaryCommentService {
 
     /*댓글 목록 가져오기*/
     @Transactional
-    public List<FishingDiaryCommentDtoForPage> getCommentList(Long fishingDiaryId, String token) throws ResourceNotFoundException {
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+    public FishingDiaryCommentPageDto getCommentList(Long fishingDiaryId, String token) throws ResourceNotFoundException {
+        FishingDiaryCommentPageDto result = null;
+        int commentCount = 0;
+        Member member =null;
+        if(token!=null) {
+            member = memberRepository.findBySessionToken(token)
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
+        }
         FishingDiary fishingDiary = fishingDiaryRepository.findById(fishingDiaryId)
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
         String path = env.getProperty("file.downloadUrl");
 
         //댓글목록 가져옴.
-        List<FishingDiaryCommentDtoForPage> parentCommentList = commentRepository.getCommentList(fishingDiaryId,0L,member.getId(),path);
+        List<FishingDiaryCommentDtoForPage> parentCommentList = commentRepository.getCommentList(fishingDiaryId,0L,member,path);
+        commentCount += parentCommentList.size();
         //각 댓글들에 대해, 대댓글 목록 가져와 저장.
         for(int i=0; i<parentCommentList.size(); i++){
             FishingDiaryCommentDtoForPage parentComment = parentCommentList.get(i);
             List<FishingDiaryCommentDtoForPage> childCommentList = commentRepository.getCommentList(
-                    fishingDiaryId,parentComment.getCommentId(),member.getId(),path);
+                    fishingDiaryId,parentComment.getCommentId(),member,path);
+            commentCount += childCommentList.size();
             parentComment.setChildList(childCommentList);
         }
 
-        return parentCommentList;
+        result = FishingDiaryCommentPageDto.builder()
+                .commentList(parentCommentList)
+                .commentCount(commentCount)
+                .fishingDiaryTitle(fishingDiary.getTitle())
+                .build();
+        return result;
     }
 }

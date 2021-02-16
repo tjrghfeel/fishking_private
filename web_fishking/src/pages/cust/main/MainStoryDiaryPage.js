@@ -33,6 +33,7 @@ export default inject(
       /********** ********** ********** ********** **********/
       componentDidMount() {
         const { PageStore } = this.props;
+        const qp = PageStore.getQueryParams();
         const restored = PageStore.restoreState({
           isPending: false,
           isEnd: false,
@@ -42,6 +43,7 @@ export default inject(
           district: null,
           fishSpeciesList: null,
           sort: "createdDate",
+          shipId: qp.shipId || null,
         });
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
@@ -64,6 +66,7 @@ export default inject(
           district: PageStore.state.district,
           fishSpeciesList: PageStore.state.fishSpeciesList,
           sort: PageStore.state.sort,
+          shipId: PageStore.state.shipId,
         });
 
         if (page === 0) {

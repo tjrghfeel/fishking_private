@@ -55,7 +55,7 @@ export default inject(
         },
         {
           text: "이벤트",
-          pathname: "",
+          pathname: "/event/list",
           img: "/assets/cust/img/svg/mymenu-event.svg",
           requiredLoggedIn: false,
         },

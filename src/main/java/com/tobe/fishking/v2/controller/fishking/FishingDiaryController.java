@@ -145,7 +145,7 @@ public class FishingDiaryController {
             "아무 지역 선택하지 않으면, 모든 지역을 선택한것으로 간주.\n" +
             "요청 필드 ) \n" +
             "- category : String / 필수 / 검색하려는 글이 조항일지인지 유저조행기인지. / fishingDiary(조항일지), fishingBlog(유저조행기) 중 택 1.\n" +
-            "- districtList : String[] / 선택 / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. \n" +
+            "- districtList : String[] / 선택 / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. 행정구역2단계에 해당하는 코드값들임.\n" +
             "   ex) 팝업창에서 '전라남도'선택시, common code에서 '전라남도'의 code값인 '전남'  \n" +
             "- districtSearchKey : String / 선택 / 팝업창에서 '지역명 검색'부분에 직접입력한 값. \n" +
             "- fishSpecies : String[] / 선택 / 팝업창에서 선택한 어종에 해당하는 common code의 code값들의 배열.\n" +
@@ -180,7 +180,7 @@ public class FishingDiaryController {
             @RequestParam(value = "fishSpeciesList", required = false) String[] fishSpecies,
             @RequestParam(value = "shipId",required = false) Long shipId,
             @RequestParam(value = "sort", required = false, defaultValue = "createdDate") String sort,
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization", required = false) String token
     ) throws ResourceNotFoundException {
         if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount"))){
             throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
@@ -276,7 +276,7 @@ public class FishingDiaryController {
     @GetMapping("/fishingDiary/detail")
     public FishingDiaryDetailDto getFishingDiaryDetail(
             @RequestParam("fishingDiaryId") Long fishingDiaryId,
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
         return fishingDiaryService.getFishingDiaryDetail(fishingDiaryId,token);
     }

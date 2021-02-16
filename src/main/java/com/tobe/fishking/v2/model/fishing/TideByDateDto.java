@@ -1,8 +1,10 @@
 package com.tobe.fishking.v2.model.fishing;
 
+import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,8 +18,9 @@ public class TideByDateDto {
     private String date;
 //    private String tide;
 //    private String weather;
-    private ArrayList<String> tideTimeList;
-    private ArrayList<String> tideLevelList;
+    private List<TidalLevelResponse> tideList;
+//    private ArrayList<String> tideTimeList;
+//    private ArrayList<String> tideLevelList;
     private Boolean[] alertTideList;
     private Boolean[] alertDayList;
     private Boolean[] alertTimeList;
