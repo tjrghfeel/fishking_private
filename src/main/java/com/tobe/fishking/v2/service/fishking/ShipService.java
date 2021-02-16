@@ -11,6 +11,7 @@ import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
+import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
@@ -55,6 +56,7 @@ public class ShipService {
     private final GoodsRepository goodsRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final FileRepository fileRepository;
+    private final ReviewRepository reviewRepository;
 
 
     /*
@@ -165,9 +167,18 @@ public class ShipService {
             blogResponse.add(getDiarySmallResponse(blog));
         }
 
-        response.setFishingDiary(diaryResponse.subList(0, 3));
+        if (diaryResponse.size() > 3) {
+            response.setFishingDiary(diaryResponse.subList(0, 3));
+        } else {
+            response.setFishingDiary(diaryResponse);
+        }
         response.setFishingDiaryCount(diaries.size());
-        response.setFishingDiary(blogResponse.subList(0, 3));
+
+        if (blogResponse.size() > 3) {
+            response.setFishingDiary(blogResponse.subList(0, 3));
+        } else {
+            response.setFishingDiary(blogResponse);
+        }
         response.setFishingBlogCount(blogs.size());
         response.setEvents(eventRepository.getEventTitleByShip(ship_id));
 
@@ -309,5 +320,10 @@ public class ShipService {
     public Long findAllShipCount() {
         return shipRepo.findAllByIsActive();
     }
+
+//    @Transactional
+//    public Page<ReviewDto> getShipReviews(Integer page, Long shipId) {
+//
+//    }
 
 }

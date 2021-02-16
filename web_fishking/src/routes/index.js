@@ -6,6 +6,7 @@ import Components from "../components";
 
 import CustRoute from "./cust";
 import PoliceRoute from "./police";
+import CommonRoute from "./common";
 import BlankPage from "../pages/BlankPage";
 
 const {
@@ -121,6 +122,9 @@ export default inject("PageStore")(
 
           {/** 해경 */}
           <Route path={`/police`} component={PoliceRoute} />
+
+          {/** 공통 */}
+          <Route path={`/common`} component={CommonRoute} />
         </Switch>
         <LoadingLayout />
         <AlertModal />

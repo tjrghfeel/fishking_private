@@ -5,7 +5,7 @@ import Components from "../../../components";
 import APIStore from "../../../stores/APIStore";
 const {
   LAYOUT: { NavigationLayout },
-  VIEW: { ShipType01PositionView },
+  VIEW: { ShipType3PositionView, ShipType5PositionView, ShipType9PositionView },
   MODAL: { SelectReservationCouponModal },
 } = Components;
 
@@ -18,16 +18,29 @@ export default inject(
       constructor(props) {
         super(props);
         this.state = {
-          reservePersonName: "",
-          reservePersonPhone: "",
-          personCount: 0,
+          goodsId: null, // 상품id
+          date: "", // 예약날짜
+          reservePersonName: "", // 예약자 이름
+          reservePersonPhone: "", // 예약자 전화번호
+          personCount: 0, // 승선자 수
+          personsName: [], // 승선자 정보
+          personsPhone: [], // 승선자 정보
+          personsBirthdate: [], // 승선자 정보
+          positions: [], // 승선위치 정보
+          payMethod: "1000000000", // 결제수단
+          discountPrice: 0, // 할인가격
+          couponId: 0, // 사용쿠폰 id
+          paymentPrice: 0, // 쿠폰 적용 후 가격
+          totalPrice: 0, // 총 가격
+
+          step: 1, // 진행단계
+          goodsName: "", // 상품명
+          goodsPrice: 0, // 상품단가
+          boat: {}, // 승선위치정보
+          coupons: [], // 쿠폰 목록
           persons: [],
-          personsName: [],
-          personsPhone: [],
-          personsBirthdate: [],
-          positions: [],
-          payMethod: "1000000000",
           payAgree: false,
+          couponName: "쿠폰 선택하기 ",
         };
         this.reservePersonName = React.createRef(null);
         this.reservePersonPhone = React.createRef(null);
@@ -48,17 +61,19 @@ export default inject(
           },
           APIStore,
         } = this.props;
+        // >>>>> 상품정보
         let resolve = await APIStore._get(`/v2/api/goods/${goodsId}`);
-        this.setState({ data: resolve, date, step: 1 });
-        console.log(JSON.stringify(resolve));
-
-        resolve = await APIStore._get(`/v2/api/usableCouponList/0`);
-        this.setState({ coupons: resolve });
-        console.log(JSON.stringify(resolve));
+        this.setState({
+          goodsName: resolve.name,
+          goodsPrice: resolve.price,
+          goodsId,
+          date,
+        });
       };
 
       onSubmit = async () => {
         if (this.state.step === 1) {
+          // >>>>> Step-1 :: validate
           if (this.state.reservePersonName === "") {
             this.reservePersonName.current?.classList.add("is-invalid");
             return;
@@ -77,12 +92,14 @@ export default inject(
           } else {
             this.personCount.current?.classList.remove("is-invalid");
           }
+          // >>>>> Step-2 :: prepare
           const arr = [];
           for (let i = 0; i < this.state.personCount; i++) {
             arr.push({ name: "", phone: "", birthdate: "" });
           }
           this.setState({ persons: arr, step: 2 });
         } else if (this.state.step === 2) {
+          // >>>>> Step-2 :: validate
           const personsName = [];
           const personsPhone = [];
           const personsBirthdate = [];
@@ -120,35 +137,73 @@ export default inject(
             personsBirthdate,
             step: 3,
           });
+          // >>>>> Step-3 :: prepare
+          const resolve = await APIStore._get(
+            `/v2/api/goods/${this.state.goodsId}/position`,
+            {
+              date: this.state.date,
+            }
+          );
+          this.setState({ boat: resolve });
+          console.log("boat -> " + JSON.stringify(resolve));
         } else if (this.state.step === 3) {
+          // >>>>> Step-3 :: validate
           const selected = this.ship.current?.selected;
           if (selected.length === 0) {
             alert("위치를 선택해주세요.");
             return;
           }
-          this.setState({ positions: selected, step: 4 });
+          const positions = [];
+          for (let s of selected) {
+            positions.push(new Number(s));
+          }
+          this.setState({ positions, step: 4 });
+          // >>>>> Step-4 :: prepare
+          const resolve = await APIStore._get(`/v2/api/usableCoupons`);
+          this.setState({ coupons: resolve });
         } else if (this.state.step === 4) {
+          // >>>>> Step-4 :: validate
           if (!this.state.payAgree) {
             alert("약관에 동의해주세요.");
             return false;
           }
 
+          const {
+            goodsId,
+            date,
+            reservePersonName,
+            reservePersonPhone,
+            personCount,
+            personsName,
+            personsPhone,
+            personsBirthdate,
+            positions,
+            payMethod,
+            discountPrice,
+            couponId,
+            paymentPrice,
+            totalPrice,
+            token = localStorage.getItem("@accessToken") || "",
+          } = this.state;
+
           const params = {
-            token: localStorage.getItem("@accessToken") || "",
-            reservePersonName: this.state.reservePersonName,
-            reservePersonPhone: this.state.reservePersonPhone,
-            "personsName[]": this.state.personsName,
-            "personsPhone[]": this.state.personsPhone,
-            "personsBirthdate[]": this.state.personsBirthdate,
-            "positions[]": this.state.positions,
-            couponId: 0,
-            date: this.state.date,
-            discountPrice: 0,
-            goodsId: this.props.match.params.goodsId,
-            paymentPrice:
-              this.state.personCount * (this.state.data?.price || 0),
-            totalPrice: this.state.personCount * (this.state.data?.price || 0),
+            goodsId,
+            date,
+            reservePersonName,
+            reservePersonPhone,
+            personCount,
+            personsName,
+            personsPhone,
+            personsBirthdate,
+            positions,
+            payMethod,
+            discountPrice,
+            couponId,
+            paymentPrice,
+            totalPrice,
+            token,
           };
+          console.log(JSON.stringify(params));
 
           // const resolve = await APIStore._post(`/v2/api/ship/reserve`, params);
           // console.log(JSON.stringify(resolve));
@@ -165,14 +220,39 @@ export default inject(
       render() {
         return (
           <React.Fragment>
-            <SelectReservationCouponModal id={"selResevationCouponModal"} />
+            <SelectReservationCouponModal
+              id={"selResevationCouponModal"}
+              data={this.state.coupons}
+              price={this.state.personCount * (this.state.goodsPrice || 0)}
+              onSelect={(selected, discount) => {
+                if (selected !== null) {
+                  this.setState({
+                    couponName: selected.couponName,
+                    couponId: selected.id,
+                    discountPrice: discount,
+                    paymentPrice:
+                      this.state.goodsPrice * this.state.personCount - discount,
+                    totalPrice:
+                      this.state.goodsPrice * this.state.personCount - discount,
+                  });
+                } else {
+                  this.setState({
+                    couponName: "쿠폰 선택하기",
+                    couponId: null,
+                    discountPrice: discount,
+                    totalPrice:
+                      this.state.goodsPrice * this.state.personCount - discount,
+                  });
+                }
+              }}
+            />
 
             <NavigationLayout title={"예약하기"} showBackIcon={true} />
 
             {/** 정보 */}
             <div className="container nopadding mt-1">
               <h5 className="text-center">
-                {this.state.data?.name}
+                {this.state.goodsName}
                 <br />
                 <small className="red">
                   {this.state.date && (
@@ -254,7 +334,7 @@ export default inject(
 
                   <div className="card-round-box-grey">
                     <h6 className="card-header-white text-center">
-                      {this.state.data?.name}
+                      {this.state.goodsName}
                     </h6>
                     <form className="form-line mt-3">
                       <div className="form-group row mb-1">
@@ -268,7 +348,7 @@ export default inject(
                             id="inputName"
                             placeholder=""
                             value={Intl.NumberFormat().format(
-                              this.state.data?.price || 0
+                              this.state.goodsPrice || 0
                             )}
                             disabled
                           />
@@ -345,7 +425,7 @@ export default inject(
                             placeholder=""
                             value={Intl.NumberFormat().format(
                               this.state.personCount *
-                                (this.state.data?.price || 0)
+                                (this.state.goodsPrice || 0)
                             )}
                             disabled
                           />
@@ -422,11 +502,25 @@ export default inject(
             {/** # >>>>> Step . 2 >>>>> END */}
 
             {/** # >>>>> Step . 3 >>>>> START */}
-            {this.state.step === 3 && (
-              <ShipType01PositionView
+            {this.state.step === 3 && this.state.boat?.type === 3 && (
+              <ShipType3PositionView
                 ref={this.ship}
-                name={this.state.data?.name}
-                personCount={this.state.personCount}
+                data={this.state.boat}
+                count={this.state.personCount}
+              />
+            )}
+            {this.state.step === 3 && this.state.boat?.type === 5 && (
+              <ShipType5PositionView
+                ref={this.ship}
+                data={this.state.boat}
+                count={this.state.personCount}
+              />
+            )}
+            {this.state.step === 3 && this.state.boat?.type === 9 && (
+              <ShipType9PositionView
+                ref={this.ship}
+                data={this.state.boat}
+                count={this.state.personCount}
               />
             )}
             {/** # >>>>> Step . 3 >>>>> END */}
@@ -440,17 +534,17 @@ export default inject(
                     <div className="form-group">
                       <p className="text-muted text-center">
                         <span className="grey">적용 가능 쿠폰</span> | 상품 할인{" "}
-                        <strong className="text-primary">3장</strong>, 장바구니
-                        할인 <strong className="text-primary">0장</strong>
+                        <strong className="text-primary">
+                          {this.state.coupons?.size || 0}장
+                        </strong>
                       </p>
                       <hr className="pt-1 pb-1" />
                       <a
-                        href="#none"
                         className="form-control form-select"
                         data-toggle="modal"
                         data-target="#selResevationCouponModal"
                       >
-                        쿠폰 선택하기
+                        {this.state.couponName}
                       </a>
                     </div>
                   </form>
@@ -479,7 +573,7 @@ export default inject(
                           value={Intl.NumberFormat()
                             .format(
                               this.state.personCount *
-                                (this.state.data?.price || 0)
+                                (this.state.goodsPrice || 0)
                             )
                             .concat("원")}
                           disabled
@@ -504,7 +598,9 @@ export default inject(
                           className="form-control no-line form-price"
                           id="inputName"
                           placeholder=""
-                          value="0원"
+                          value={Intl.NumberFormat().format(
+                            this.state.discountPrice
+                          )}
                           disabled
                         />
                       </div>
@@ -529,8 +625,8 @@ export default inject(
                           placeholder=""
                           value={Intl.NumberFormat()
                             .format(
-                              this.state.personCount *
-                                (this.state.data?.price || 0)
+                              this.state.goodsPrice * this.state.personCount -
+                                this.state.discountPrice
                             )
                             .concat("원")}
                           disabled

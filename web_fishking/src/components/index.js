@@ -70,7 +70,11 @@ import CompanyGoodListItemView from "./view/CompanyGoodListItemView";
 import ReservationGoodsListItemView from "./view/ReservationGoodsListItemView";
 import FABView from "./view/FABView";
 import GoodsBlogListItemView from "./view/GoodsBlogListItemView";
-import ShipType01PositionView from "./view/ShipType01PositionView";
+import ShipType3PositionView from "./view/ShipType3PositionView";
+import ShipType5PositionView from "./view/ShipType5PositionView";
+import ShipType9PositionView from "./view/ShipType9PositionView";
+import EventListItemView from "./view/EventListItemView";
+import CommentListItemView from "./view/CommentListItemView";
 
 export default {
   /********** MODAL **********/
@@ -140,6 +144,10 @@ export default {
     ReservationGoodsListItemView,
     FABView,
     GoodsBlogListItemView,
-    ShipType01PositionView,
+    ShipType3PositionView,
+    ShipType5PositionView,
+    ShipType9PositionView,
+    EventListItemView,
+    CommentListItemView,
   },
 };
