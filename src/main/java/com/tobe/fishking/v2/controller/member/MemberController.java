@@ -363,9 +363,11 @@ public class MemberController {
             "   isCompany : boolean / 업체의 프로필인지 여부. \n" +
             "   companyId : Long / 업체의 id\n")
     @GetMapping("/profile")
-    public UserProfileDTO getUserProfile(@RequestParam("userId") Long userId, HttpServletRequest request) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return memberService.getUserProfile(userId, sessionToken);
+    public UserProfileDTO getUserProfile(
+            @RequestParam("userId") Long userId,
+            @RequestHeader(value = "Authorization",required = false) String token
+    ) throws ResourceNotFoundException {
+        return memberService.getUserProfile(userId, token);
     }
 
     /*상대방 글 보기 api*/
@@ -395,7 +397,7 @@ public class MemberController {
     public Page<FishingDiaryDtoForPage> getUserFishingDiary(
             @RequestParam("userId") Long userId,
             @PathVariable("page") int page,
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
         return memberService.getUserFishingDiary(userId,page,token);
     }

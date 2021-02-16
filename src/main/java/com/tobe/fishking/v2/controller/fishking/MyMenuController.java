@@ -71,11 +71,10 @@ public class MyMenuController {
             "   fileList : 이미지 파일 download url 리스트")
     @GetMapping("/myFishingPostList/{page}")
     public Page<FishingDiaryDtoForPage> getMyFishingDiary(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return myMenuService.getMyFishingDiary(sessionToken, page);
+        return myMenuService.getMyFishingDiary(token, page);
     }
 
     /*내글관리 - 댓글
@@ -92,11 +91,10 @@ public class MyMenuController {
             "   fishingDiaryId : 본글의 id")
     @GetMapping("/myFishingCommentList/{page}")
     public Page<MyFishingDiaryCommentDtoForPage> getMyFishingDiaryComment(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return myMenuService.getMyFishingDiaryComment(sessionToken,page);
+        return myMenuService.getMyFishingDiaryComment(token,page);
     }
     
     /*내글관리 - 스크랩
@@ -123,11 +121,10 @@ public class MyMenuController {
             "   fileList : 이미지 파일 download url 리스트")
     @GetMapping("/myFishingDiaryScrap/{page}")
     public Page<FishingDiaryDtoForPage> getMyFishingDiaryScrap(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return myMenuService.getMyFishingDiaryScrap(sessionToken, page);
+        return myMenuService.getMyFishingDiaryScrap(token, page);
     }
 
     /*내글관리 - 리뷰
@@ -146,9 +143,9 @@ public class MyMenuController {
             "   nickName : 작성자 닉네임\n" +
             "   fishingDate : 낚시일\n" +
             "   goodsFishSpecies : 어종\n" +
-            "   meridiem : 낚시 시간대가 오전/오후 인지\n" +
-            "       ㄴ am : 오전\n" +
-            "       ㄴ pm : 오후\n " +
+//            "   meridiem : 낚시 시간대가 오전/오후 인지\n" +
+//            "       ㄴ am : 오전\n" +
+//            "       ㄴ pm : 오후\n " +
 //            "   distance : 거리\n" +
             "   fishingTideTime : 물때\n" +
             "   totalAvgByReview : 리뷰 총 평점\n" +
@@ -159,11 +156,10 @@ public class MyMenuController {
             "   fileList : 이미지 파일 download url 리스트")
     @GetMapping("/myReviewList/{page}")
     public Page<ReviewDto> getReviewList(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
     ) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return myMenuService.getMyReview(sessionToken, page);
+        return myMenuService.getMyReview(token, page);
     }
 
     /*예약 내역 리스트 보기
@@ -193,11 +189,10 @@ public class MyMenuController {
     @GetMapping("/myOrdersList/{page}")
     public Page<OrdersDtoForPage> getMyOrdersList(
             @PathVariable("page") int page,
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @RequestParam(value = "sort", required = false, defaultValue = "none") String sort
     ) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return myMenuService.getMyOrdersList(sessionToken, page, sort);
+        return myMenuService.getMyOrdersList(token, page, sort);
     }
 
     /*예약 상세보기
@@ -242,7 +237,7 @@ public class MyMenuController {
     @ApiOperation(value = "관측 지점 목록 반환",notes = "" +
             "" +
             "요청 필드 ) \n" +
-            "- 헤더에 세션토큰 필요\n" +
+            "- 헤더에 세션토큰 (선택)\n" +
             "응답 필드 ) \n" +
             "- observerId : Long / 관측소의 id\n" +
             "- observerName : String / 관측소 명\n" +
@@ -250,25 +245,54 @@ public class MyMenuController {
             "- isAlerted : Boolean / 현재 관측소에 대해 알람이 설정되어 있는지여부\n")
     @GetMapping("/searchPointList")
     public List<ObserverDtoList> getSearchPointList(
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
         return myMenuService.getSearchPointList( token, AlertType.tide);
     }
 
     /*오늘의 물때정보 반환*/
-    @ApiOperation(value = "",notes = "" +
+    @ApiOperation(value = "오늘의 물때 정보",notes = "" +
+            "요청 필드 ) \n" +
+            "- observerId : Long / 필수 / 관측소 id\n" +
+            "- 헤더에 세션토큰 (선택)\n" +
+            "응답 필드 ) \n" +
+            "- observerId : Long / 관측소 id\n" +
+            "- observerName : String / 관측소명\n" +
+            "- isAlerted : Boolean / 현재 관측소에 대해 알림설정이 되어있는지 여부\n" +
+            "- date : String / 오늘 날짜\n" +
+            "- weather : String / 현재 날씨\n" +
+            "- tideList : \n [{ +\n" +
+            "            \n     dateTime: 날짜 +\n" +
+            "            \n     level: 조위 +\n" +
+            "            \n     peak: 고조/저조 +\n" +
+            "            \n }, ... ]" +
+            "- highWater : Boolean / 만조 알림 여부\n" +
+            "- highWaterBefore1 : Boolean / 만조 1시간 전 알림 여부\n" +
+            "- highWaterBefore2 : Boolean / 만조 2시간 전 알림 여부\n" +
+            "- highWaterAfter1 : Boolean / 만조 1시간 후 알림 여부\n" +
+            "- highWaterAfter2 : Boolean / 만조 2시간 후 알림 여부\n" +
+            "- lowWater : Boolean / 간조 알림 여부\n" +
+            "- lowWaterBefore1 : Boolean / 간조 1시간 전 알림 여부\n" +
+            "- lowWaterBefore2 : Boolean / 간조 2시간 전 알림 여부\n" +
+            "- lowWaterAfter1 : Boolean / 간조 1시간 후 알림 여부\n" +
+            "- lowWaterAfter2 : Boolean / 간조 2시간 후 알림 여부\n" +
             "")
     @GetMapping("/todayTide")
     public TodayTideDto getTodayTide(
             @RequestParam("observerId") Long observerId,
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization",required = false) String token
     ) throws IOException, ResourceNotFoundException {
         return myMenuService.getTodayTide(observerId,token);
     }
 
     /*조위 알림 추가*/
     @ApiOperation(value = "오늘의 물때 알림 추가",notes = "" +
-            "")
+            "요청 필드 ) \n" +
+            "- highTideAlert : Integer[] / 만조 알람 시간이 들어있는 배열. ex) 만조 두시간 전 알림 : -2, 만조 한시간 후 알림 : 1, 만조 알림 : 0\n" +
+            "- lowTideAlert : Integer[] / 간조 알림 시간이 들어있는 배열. highTideAlert와 동일한 방식.\n" +
+            "- observerId : Long / 관측소 id\n" +
+            "- 헤더에 세션토큰 필수. \n" +
+            "응답필드 ) 성공시 true\n")
     @PostMapping("/addTideLevelAlert")
     public Boolean addTideLevelAlert(
             @RequestHeader("Authorization") String token,
@@ -278,12 +302,29 @@ public class MyMenuController {
     }
 
     /*날짜별 물때정보*/
-    @ApiOperation(value = "날짜별 물때정보",notes = "")
+    @ApiOperation(value = "날짜별 물때정보",notes = "" +
+            "요청 필드 ) \n" +
+            "- observerId : Long / 필수 / 관측소 id\n" +
+            "- date : String / 필수 / 날짜. 'yyyy-MM-dd'형태.\n" +
+            "- 헤더에 세션토큰 (선택)\n" +
+            "응답 필드 ) \n" +
+            "- observerId : Long / 관측소 id\n" +
+            "- observerName : String / 관측소 명\n" +
+            "- isAlerted : Boolean / 현재 관측소에 대해 알림이 설정되어있는지 여부\n" +
+            "- date : String / 날짜\n" +
+            "- tideList : \n [{ +\n" +
+            "            \n     dateTime: 날짜 +\n" +
+            "            \n     level: 조위 +\n" +
+            "            \n     peak: 고조/저조 +\n" +
+            "            \n }, ... ]" +
+            "- alertTideList : Boolean형 배열 / 물때 알림 여부. index순서대로 1물,2물,...,13물,14물,조금.\n" +
+            "- alertDayList : Boolean형 배열 / 몇일전 알림 여부. index순서대로 1일전,2일전,...,7일전\n" +
+            "- alertTimeList : Boolean형 배열 / 몇시 알림 여부. index순서대로 0시,3시,6시,9시,12시\n")
     @GetMapping("/tideByDate")
     public TideByDateDto getTideByDate(
             @RequestParam("observerId") Long observerId,
             @RequestParam("date") String date,
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
         return myMenuService.getTideByDate(observerId,date,token);
     }
@@ -295,9 +336,10 @@ public class MyMenuController {
             "- observerId : Long / 필수 / 위치의 id\n" +
             "- tide : Integer[] / 필수 / 알림 물때의 리스트\n" +
             "- day : Integer[] / 필수 / 몇일 전에 알림을 받을지 리스트\n" +
-            "- time : Integer[] / 필수 / 몇시에 알림을 받을지 리스트\n")
+            "- time : Integer[] / 필수 / 몇시에 알림을 받을지 리스트\n" +
+            "응답 필드 ) 성공시 true\n")
     @PostMapping("/addTideAlert")
-    public Long addTideAlert(
+    public Boolean addTideAlert(
             @RequestBody AddTideAlertDto dto,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {

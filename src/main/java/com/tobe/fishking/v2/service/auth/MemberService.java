@@ -1072,8 +1072,12 @@ public class MemberService {
             /*userId로부터 Member를 가져온다. */
             Member profileMember = memberRepository.findById(profileUserId)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+profileUserId));
-            Member me = memberRepository.findBySessionToken(sessionToken)
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
+            Long meId = null;
+            if(sessionToken !=null) {
+                Member me = memberRepository.findBySessionToken(sessionToken)
+                        .orElseThrow(() -> new ResourceNotFoundException("member not found for this sessionToken :: " + sessionToken));
+                meId = me.getId();
+            }
             Company profileCompany = companyRepository.findByMember(profileMember);
 
         /*가져온 데이터들을 UserProfileDTO에 저장. (본인이 아닌 경우, '업체찜수'를 추가해준다)  */
@@ -1090,7 +1094,7 @@ public class MemberService {
                         .build();
 
                 /*본인인 경우를 표시. */
-                if (profileUserId.equals(me.getId())) {
+                if (profileUserId.equals(meId)) {
                     int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);
                     ;//회원이 작성한 조행기 개수.
                     int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
@@ -1100,7 +1104,7 @@ public class MemberService {
                     userProfileDTO.setLikeCount(likeCount);
                 }
                 /*본인이 아닌 다른 일반회원의 프로필일 경우*/
-                else if ((profileUserId != me.getId()) && profileCompany == null) {
+                else if ((profileUserId != meId) && profileCompany == null) {
                     int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//회원이 작성한 조행기 개수.
                     int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
                     int likeCount = loveToRepository.countByCreatedBy(profileMember);//회원이 좋아요한 개수.
@@ -1110,7 +1114,7 @@ public class MemberService {
                     userProfileDTO.setTakeCount(takeCount);
                 }
                 /*업체회원인 경우*/
-                else if ((profileUserId != me.getId()) && profileCompany != null) {
+                else if ((profileUserId != meId) && profileCompany != null) {
                     int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//업체가 작성한 조항일지 개수.
                     int likeCount = loveToRepository.countLikeCountForCompanyProfile(profileMember.getId());//조항일지 등에서 받은 좋아요수.
                     int takeCount = takeRepository.countForCompanyProfile(profileCompany.getId());//업체가 받은 총 찜수.
@@ -1148,9 +1152,11 @@ public class MemberService {
     public Page<FishingDiaryDtoForPage> getUserFishingDiary(Long userId, int page, String token) throws ResourceNotFoundException {
         Member user = memberRepository.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+userId));
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
-
+        Member member = null;
+        if(token != null) {
+            member = memberRepository.findBySessionToken(token)
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this sessionToken ::" + token));
+        }
         if(user.getIsActive() == false){throw new RuntimeException("해당 회원은 탈퇴한 회원입니다.");}
 
         Pageable pageable = PageRequest.of(page,10);

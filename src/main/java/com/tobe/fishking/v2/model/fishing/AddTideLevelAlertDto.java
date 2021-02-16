@@ -10,9 +10,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Builder
 public class AddTideLevelAlertDto {
-    @NotNull
-    private Integer tideHighLow;
-    private Integer time;
+//    @NotNull
+//    private Integer tideHighLow;
+//    private Integer time;
     private Integer[] highTideAlert;
     private Integer[] lowTideAlert;
     private Long observerId;

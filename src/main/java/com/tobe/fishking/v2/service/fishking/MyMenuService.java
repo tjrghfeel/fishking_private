@@ -14,10 +14,12 @@ import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
+import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -208,41 +210,49 @@ public class MyMenuService {
     /*관측지점 목록 반환*/
     @Transactional
     public List<ObserverDtoList> getSearchPointList(String token, AlertType alertType) throws ResourceNotFoundException {
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-
-        return observerCodeRepository.getObserverList(member.getId(), alertType);
+        Long memberId = null;
+        if(token != null) {
+            Member member = memberRepository.findBySessionToken(token)
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
+            memberId = member.getId();
+        }
+        return observerCodeRepository.getObserverList(memberId, alertType);
     }
 
     /*오늘의 물때정보 반환*/
     @Transactional
     public TodayTideDto getTodayTide(Long observerId, String token) throws IOException, ResourceNotFoundException {
         TodayTideDto result = null;
-
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Member member = null;
+        if(token !=null) {
+            member = memberRepository.findBySessionToken(token)
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
+        }
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
         Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertType(
                 member, observerId, EntityType.observerCode, AlertType.tide);
         /*tideTimeList*/
-        ArrayList<String> tideTimeList = new ArrayList<>();
-        ArrayList<String> tideLevelList = new ArrayList<>();
-        List<TidalLevel> tideList = tidalLevelRepository.findAllByDateAndIsHighWaterAndIsLowWaters(LocalDate.now(), observer);
-        for(int i=0; i<tideList.size(); i++){
-            String tideTime = tideList.get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-            String tideLevel = tideList.get(i).getLevel().toString();
-            tideTimeList.add(tideTime);
-            tideLevelList.add(tideLevel);
-        }
+//        ArrayList<String> tideTimeList = new ArrayList<>();
+//        ArrayList<String> tideLevelList = new ArrayList<>();
+//        List<TidalLevel> tideList = tidalLevelRepository.findAllByDateAndIsHighWaterAndIsLowWaters(LocalDate.now(), observer);
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<TidalLevelResponse> tideList = tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), observer.getCode());
+//        for(int i=0; i<tideList.size(); i++){
+//            String tideTime = tideList.get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+//            String tideLevel = tideList.get(i).getLevel().toString();
+//            tideTimeList.add(tideTime);
+//            tideLevelList.add(tideLevel);
+//        }
 
         result = TodayTideDto.builder()
                 .observerId(observerId)
                 .observerName(observer.getName())
                 .isAlerted(isAlerted)
                 .date(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .tideTimeList(tideTimeList)
-                .tideLevelList(tideLevelList)
+                .tideList(tideList)
+//                .tideTimeList(tideTimeList)
+//                .tideLevelList(tideLevelList)
                 .build();
 
         /*알림 리스트*/
@@ -409,24 +419,28 @@ public class MyMenuService {
             Long observerId, String dateString, String token
     ) throws ResourceNotFoundException {
         TideByDateDto result = null;
-
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Member member = null;
+        if(token != null) {
+            member = memberRepository.findBySessionToken(token)
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
+        }
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
         Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertType(
                 member, observerId, EntityType.observerCode, AlertType.tide);
-        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
+//        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
         /*tideTimeList*/
-        ArrayList<String> tideTimeList = new ArrayList<>();
-        ArrayList<String> tideLevelList = new ArrayList<>();
-        List<TidalLevel> tideList = tidalLevelRepository.findAllByDateAndIsHighWaterAndIsLowWaters(date, observer);
-        for(int i=0; i<tideList.size(); i++){
-            String tideTime = tideList.get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-            String tideLevel = tideList.get(i).getLevel().toString();
-            tideTimeList.add(tideTime);
-            tideLevelList.add(tideLevel);
-        }
+//        ArrayList<String> tideTimeList = new ArrayList<>();
+//        ArrayList<String> tideLevelList = new ArrayList<>();
+//        List<TidalLevel> tideList = tidalLevelRepository.findAllByDateAndIsHighWaterAndIsLowWaters(date, observer);
+//        for(int i=0; i<tideList.size(); i++){
+//            String tideTime = tideList.get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+//            String tideLevel = tideList.get(i).getLevel().toString();
+//            tideTimeList.add(tideTime);
+//            tideLevelList.add(tideLevel);
+//        }
+        List<TidalLevelResponse> tideList = tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(dateString), observer.getCode());
+
         /*알림 리스트*/
         Boolean[] alertTideList = new Boolean[15];
         Boolean[] alertDayList = new Boolean[7];
@@ -454,8 +468,9 @@ public class MyMenuService {
                 .observerName(observer.getName())
                 .isAlerted(isAlerted)
                 .date(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .tideTimeList(tideTimeList)
-                .tideLevelList(tideLevelList)
+                .tideList(tideList)
+//                .tideTimeList(tideTimeList)
+//                .tideLevelList(tideLevelList)
                 .alertTideList(alertTideList)
                 .alertDayList(alertDayList)
                 .alertTimeList(alertTimeList)
@@ -465,7 +480,7 @@ public class MyMenuService {
 
     /*물때 알림 추가*/
     @Transactional
-    public Long addTideAlert(Long observerId, Integer[] tideList, Integer[] dayList, Integer[] timeList, String token ) throws ResourceNotFoundException {
+    public Boolean addTideAlert(Long observerId, Integer[] tideList, Integer[] dayList, Integer[] timeList, String token ) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         ObserverCode observer = observerCodeRepository.findById(observerId)
@@ -525,7 +540,7 @@ public class MyMenuService {
         }
 
 
-        return 1L;
+        return true;
 
     }
 

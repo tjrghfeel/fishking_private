@@ -81,10 +81,10 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
                     "       then null " +
                     "       else (select concat(:path,'/',f.fileUrl,'/',f.storedFile) from FileEntity f where f.pid = c.id and f.filePublish=7) end, " +
                     "   c.likeCount, " +
-                    "   (exists (select l.id from LoveTo l where l.createdBy.id=:memberId and l.takeType=4 and l.linkId=c.id)), " +
+                    "   (exists (select l.id from LoveTo l where l.createdBy.id=:member and l.takeType=4 and l.linkId=c.id)), " +
                     "   case when c.parentId = 0 then false else true end, " +
                     "   c.parentId," +
-                    "   case when c.createdBy.id=:memberId then true else false end " +
+                    "   case when c.createdBy.id=:member then true else false end " +
                     "   ) " +
                     "from FishingDiaryComment c join Member m on c.createdBy.id = m.id " +
                     "where " +
@@ -95,7 +95,7 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
     List<FishingDiaryCommentDtoForPage> getCommentList(
             @Param("fishingDiaryId") Long fishingDiaryId,
             @Param("parentId") Long parentId,
-            @Param("memberId") Long memberId,
+            @Param("member") Member member,
             @Param("path") String path
     );
 

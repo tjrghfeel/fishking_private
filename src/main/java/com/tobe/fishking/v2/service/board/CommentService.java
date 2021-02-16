@@ -12,6 +12,7 @@ import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.board.CommentDtoForPage;
+import com.tobe.fishking.v2.model.board.CommentPageDto;
 import com.tobe.fishking.v2.model.board.DeleteCommentDto;
 import com.tobe.fishking.v2.model.fishing.DeleteFishingDiaryCommentDto;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage;
@@ -151,25 +152,36 @@ public class CommentService {
 
     /*댓글 목록 가져오기*/
     @Transactional
-    public List<CommentDtoForPage> getCommentList(Long linkId, DependentType dependentType, String token) throws ResourceNotFoundException {
+    public CommentPageDto getCommentList(Long linkId, DependentType dependentType, String token) throws ResourceNotFoundException {
+        CommentPageDto result = null;
+        Integer commentCount =0;
+        String title = null;
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         if(dependentType==DependentType.event){
             Event event = eventRepository.findById(linkId)
                     .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+linkId));
+            title = event.getTitle();
         }
         String path = env.getProperty("file.downloadUrl");
 
         //댓글목록 가져옴.
         List<CommentDtoForPage> parentCommentList = commentRepository.getCommentList(linkId, dependentType,0L,member.getId(),path);
+        commentCount += parentCommentList.size();
         //각 댓글들에 대해, 대댓글 목록 가져와 저장.
         for(int i=0; i<parentCommentList.size(); i++){
             CommentDtoForPage parentComment = parentCommentList.get(i);
             List<CommentDtoForPage> childCommentList = commentRepository.getCommentList(
                     linkId,dependentType,parentComment.getCommentId(),member.getId(),path);
+            commentCount += childCommentList.size();
             parentComment.setChildList(childCommentList);
         }
+        result = CommentPageDto.builder()
+                .title(title)
+                .commentCount(commentCount)
+                .commentList(parentCommentList)
+                .build();
 
-        return parentCommentList;
+        return result;
     }
 }

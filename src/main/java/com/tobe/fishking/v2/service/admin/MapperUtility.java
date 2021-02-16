@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.utils.HolidayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 /*native query로 인터페이스형dto에 바로 db데이터를 담을때, 해당 데이터에 대해 처리를 해주는 함수들의 모음 클래스.
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 public class MapperUtility {
     @Autowired
     Environment env;
+    HolidayUtil holidayUtil;
 
     /*String형 암호화에 대해 decode하는 함수.
     * - 개인정보들이 암호화되어 db에 들어가있는데 native query로 검색시 암호화된데이터가 그대로 나오는 이슈가있다.
@@ -92,7 +96,12 @@ public class MapperUtility {
         return .values()[ordinal].getValue();
     }*/
 
-
+    public String getTide(String date){
+        String todayLunar = holidayUtil.convertSolarToLunar(date);
+        Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
+        Integer tide = (lunarDay+6)%15+1;
+        return tide.toString();
+    }
 
 
 

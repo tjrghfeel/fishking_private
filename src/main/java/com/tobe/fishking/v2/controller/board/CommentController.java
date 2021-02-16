@@ -2,10 +2,7 @@ package com.tobe.fishking.v2.controller.board;
 
 import com.tobe.fishking.v2.enums.fishing.DependentType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.board.CommentDtoForPage;
-import com.tobe.fishking.v2.model.board.DeleteCommentDto;
-import com.tobe.fishking.v2.model.board.MakeCommentDto;
-import com.tobe.fishking.v2.model.board.ModifyCommentDto;
+import com.tobe.fishking.v2.model.board.*;
 import com.tobe.fishking.v2.model.fishing.DeleteFishingDiaryCommentDto;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryCommentDtoForPage;
 import com.tobe.fishking.v2.model.fishing.MakeFishingDiaryCommentDto;
@@ -87,22 +84,25 @@ public class CommentController {
             "- dependentType : String / 필수 / 어떤 종류의 대상에 대한 댓글인지 / 'event' 중 하나.\n" +
             "- 헤더에 세션토큰 필요\n" +
             "응답 필드 ) \n" +
-            "- authorId : Long / 댓글 작성자 id\n" +
-            "- commentId : Long / 댓글 id\n" +
-            "- profileImage : String / 댓글 작성자 프사 url\n" +
-            "- nickName : String / 댓글 작성자 닉네임\n" +
-            "- writeTime : LocalDateTime / 댓글 작성 시각\n" +
-            "- content : String / 댓글 내용\n" +
-            "- fileUrl : String / 댓글 내용 - 이미지 파일 url\n" +
-            "- likeCount : Integer / 댓글에 대한 좋아요수\n" +
-            "- isLikeTo : Boolean / 현재 회원의 댓글에 대한 좋야요 여부\n" +
-            "- isChildComment : Boolean / 현재 댓글이 대댓글인지 여부\n" +
-            "- parentId : Long / 현재 댓글이 대댓글이라면 상위 댓글의 id / 대댓글이 아닌 댓글이라면 값은 0. \n" +
-            "- isMine : Boolean / 현재 댓글이 자신의 댓글인지. \n" +
-            "- childList : 현재 댓글에 대한 대댓글 목록. / 똑같은 필드를 가지는 객체를 리스트로 가지고 있으며, " +
+            "- title : String / 원글의 제목\n" +
+            "- commentCount : Integer / 댓글 수 \n" +
+            "- commentList : 댓글 객체 배열. 아래는 객체의 항목들\n" +
+            "\t\t\t- authorId : Long / 댓글 작성자 id\n" +
+            "\t\t\t- commentId : Long / 댓글 id\n" +
+            "\t\t\t- profileImage : String / 댓글 작성자 프사 url\n" +
+            "\t\t\t- nickName : String / 댓글 작성자 닉네임\n" +
+            "\t\t\t- writeTime : LocalDateTime / 댓글 작성 시각\n" +
+            "\t\t\t- content : String / 댓글 내용\n" +
+            "\t\t\t- fileUrl : String / 댓글 내용 - 이미지 파일 url\n" +
+            "\t\t\t- likeCount : Integer / 댓글에 대한 좋아요수\n" +
+            "\t\t\t- isLikeTo : Boolean / 현재 회원의 댓글에 대한 좋야요 여부\n" +
+            "\t\t\t- isChildComment : Boolean / 현재 댓글이 대댓글인지 여부\n" +
+            "\t\t\t- parentId : Long / 현재 댓글이 대댓글이라면 상위 댓글의 id / 대댓글이 아닌 댓글이라면 값은 0. \n" +
+            "\t\t\t- isMine : Boolean / 현재 댓글이 자신의 댓글인지. \n" +
+            "\t\t\t- childList : 현재 댓글에 대한 대댓글 목록. / 똑같은 필드를 가지는 객체를 리스트로 가지고 있으며, " +
             "   대댓글이 없을시 리스트가 비어있다.  ")
     @GetMapping("/comment")
-    public List<CommentDtoForPage> getCommentList(
+    public CommentPageDto getCommentList(
             @RequestParam("linkId") Long linkId,
             @RequestParam("dependentType") String dependentType,
             @RequestHeader("Authorization") String token
