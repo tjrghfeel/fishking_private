@@ -11,22 +11,24 @@ import com.tobe.fishking.v2.model.*;
 import com.tobe.fishking.v2.model.common.DeleteFileDto;
 import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.response.ListResult;
+import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.service.ResponseService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
-import org.jcodec.common.UsedViaReflection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,6 +44,8 @@ public class CommonController {
 
     private final ResponseService responseService;
     private final CommonService commonService;
+
+    private final HttpRequestService httpRequestService;
 
     /*CodeGroup 추가 api*/
     @ApiOperation(value = "CodeGroup 추가", notes = "" +
@@ -245,5 +249,29 @@ public class CommonController {
         return commonService.deleteFile(dto,token);
     }
 
+    @GetMapping("/toast")
+    public String toastTest() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnsupportedEncodingException {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4MTYiLCJleHAiOjE2MTQzMTk1NjgsImF1ZCI6ImJhODQ5Y2IwLTY5Y2MtMTFlYi04NDFhLTAwNTA1NmFjN2YwMiIsImlzcyI6ImRldkB0by1iZS5rciJ9.dN2G1QMyaPiEbUpVvmlA1gboHq5tPSTemUfiX8J8kU0";
+        String result = "";
+        List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
+        for (Map<String, Object> camera : cameras) {
+            String serial = camera.get("serialNo").toString();
+            if (serial.equals("0023637698D5")) {
+                String type = camera.get("recordType").toString();
+                String streamStatus = camera.get("streamStatus").toString();
+                String controlStatus = camera.get("controlStatus").toString();
+                if (type.equals("24h")) {
+                    if (streamStatus.equals("on")) {
+                        result = httpRequestService.getPlayUrl(token, serial);
+                    }
+                } else {
+                    if (controlStatus.equals("on")) {
+                        result = httpRequestService.getPlayUrl(token, serial);
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
 }

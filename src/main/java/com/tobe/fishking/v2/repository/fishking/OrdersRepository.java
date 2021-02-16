@@ -106,4 +106,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             @Param("member") Member member,
             Pageable pageable);
 
+    @Query("select o from Orders o where o.orderNumber = :orderNumber")
+    Orders getOrdersByOrderNumber(String orderNumber);
 }

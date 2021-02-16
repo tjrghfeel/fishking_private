@@ -61,9 +61,9 @@ public class PayService {
                     if (authyn.equals("O")) {
                         resultcd = "0000";
 
-                        Orders order = ordersRepository.getOne(Long.parseLong(ordno));
+                        Orders order = ordersRepository.getOrdersByOrderNumber(ordno);
                         OrderDetails orderDetails = orderDetailsRepository.findByOrders(order);
-                        Member member = memberRepository.getOne(Long.parseLong(msg1));
+                        Member member = order.getCreatedBy();
                         Goods goods = orderDetails.getGoods();
                         GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
                         order.paid(member);
