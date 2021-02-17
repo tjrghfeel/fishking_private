@@ -17,6 +17,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
+import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -28,6 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -57,6 +62,8 @@ public class ShipService {
     private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final FileRepository fileRepository;
     private final ReviewRepository reviewRepository;
+    private final HttpRequestService httpRequestService;
+    private final RealTimeVideoRepository realTimeVideoRepository;
 
 
     /*
@@ -185,6 +192,46 @@ public class ShipService {
         if (!sessionToken.equals("")) {
             Optional<Member> member = memberRepo.findBySessionToken(sessionToken);
             member.ifPresent(value -> response.setLiked(loveToRepository.findByLinkIdAndMember(response.getId(), value) > 0));
+        }
+
+        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(ship_id);
+        if (videos.size() > 0) {
+            RealTimeVideo video = videos.get(0);
+            try {
+                String token = httpRequestService.refreshToken(video.getToken());
+                if (!token.equals("")) {
+                    List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
+                    for (Map<String, Object> camera : cameras) {
+                        String serial = camera.get("serialNo").toString();
+                        if (serial.equals(video.getSerial())) {
+                            String type = camera.get("recordType").toString();
+                            String streamStatus = camera.get("streamStatus").toString();
+                            String controlStatus = camera.get("controlStatus").toString();
+                            String liveUrl = "";
+                            if (type.equals("24h")) {
+                                if (streamStatus.equals("on")) {
+                                    liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                }
+                            } else {
+                                if (controlStatus.equals("on")) {
+                                    liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                }
+                            }
+                            response.setLiveVideo(liveUrl);
+                        }
+                    }
+                    for (RealTimeVideo v : videos) {
+                        v.updateToken(token);
+                        realTimeVideoRepository.save(v);
+                    }
+                }
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+            }
         }
         return response;
     }

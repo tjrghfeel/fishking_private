@@ -60,5 +60,20 @@ public class RealTimeVideo extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    @Column(columnDefinition = "varchar(10) comment '타입' ")
+    private String type;
+
+    @Column(columnDefinition = "varchar(400) comment '토큰' ")
+    private String token;
+
+    @Column(columnDefinition = "varchar(100) comment '이름' ")
+    private String name;
+
+    @Column(columnDefinition = "varchar(100) comment '시리얼넘버' ")
+    private String serial;
+
+    public void updateToken(String token) {
+        this.token = token;
+    }
 
 }

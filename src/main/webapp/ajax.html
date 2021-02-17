@@ -6,33 +6,33 @@
     <title>Title</title>
 </head>
 <body>
-    <form action="/v2/api/ship/reserve" method="post">
-        <input name="goodsId" placeholder="goodsId" value="1" /> <br/>
-        <input name="totalPrice" placeholder="totalPrice" value="1000" /> <br/>
-        <input name="discountPrice" placeholder="discountPrice" value="0" /> <br/>
-        <input name="paymentPrice" placeholder="paymentPrice" value="1000" /> <br/>
-<!--        <input name="couponId" placeholder="couponId" /> <br/>-->
-        <input name="date" placeholder="date" value="2021-02-19" /> <br/>
-        <input name="payMethod" placeholder="payMethod" value="1000000000" /> <br/>
-        <input name="personCount" placeholder="personCount" value="1" /> <br/>
-        <input name="personsName" placeholder="person[0].name" /> <br/>
-        <input name="personsPhone" placeholder="person[0].phone" /> <br/>
-        <input name="personsBirthdate" placeholder="person[0].birthdate" /> <br/>
-        <input name="personsName" placeholder="person[1].name" /> <br/>
-        <input name="personsPhone" placeholder="person[1].phone" /> <br/>
-        <input name="personsBirthdate" placeholder="person[1].birthdate" /> <br/>
-<!--        <input name="personsName[]" placeholder="person[1].name" /> <br/>-->
-<!--        <input name="personsPhone[]" placeholder="person[1].phone" /> <br/>-->
-<!--        <input name="personsBirthdate[]" placeholder="person[1].birthdate" /> <br/>-->
-        <input name="positions" placeholder="position[0]" value="5" /> <br/>
-        <input name="positions" placeholder="position[1]" value="5" /> <br/>
-<!--        <input name="positions[]" placeholder="position[1]" /> <br/>-->
-        <input name="reservePersonName" placeholder="reservePersonName" /> <br/>
-        <input name="reservePersonPhone" placeholder="reservePersonPhone" /> <br/>
-        <button>버튼</button>
-    </form>
+<!--    <form action="/v2/api/ship/reserve" method="post">-->
+<!--        <input name="goodsId" placeholder="goodsId" value="1" /> <br/>-->
+<!--        <input name="totalPrice" placeholder="totalPrice" value="1000" /> <br/>-->
+<!--        <input name="discountPrice" placeholder="discountPrice" value="0" /> <br/>-->
+<!--        <input name="paymentPrice" placeholder="paymentPrice" value="1000" /> <br/>-->
+<!--&lt;!&ndash;        <input name="couponId" placeholder="couponId" /> <br/>&ndash;&gt;-->
+<!--        <input name="date" placeholder="date" value="2021-02-19" /> <br/>-->
+<!--        <input name="payMethod" placeholder="payMethod" value="1000000000" /> <br/>-->
+<!--        <input name="personCount" placeholder="personCount" value="1" /> <br/>-->
+<!--        <input name="personsName" placeholder="person[0].name" /> <br/>-->
+<!--        <input name="personsPhone" placeholder="person[0].phone" /> <br/>-->
+<!--        <input name="personsBirthdate" placeholder="person[0].birthdate" /> <br/>-->
+<!--        <input name="personsName" placeholder="person[1].name" /> <br/>-->
+<!--        <input name="personsPhone" placeholder="person[1].phone" /> <br/>-->
+<!--        <input name="personsBirthdate" placeholder="person[1].birthdate" /> <br/>-->
+<!--&lt;!&ndash;        <input name="personsName[]" placeholder="person[1].name" /> <br/>&ndash;&gt;-->
+<!--&lt;!&ndash;        <input name="personsPhone[]" placeholder="person[1].phone" /> <br/>&ndash;&gt;-->
+<!--&lt;!&ndash;        <input name="personsBirthdate[]" placeholder="person[1].birthdate" /> <br/>&ndash;&gt;-->
+<!--        <input name="positions" placeholder="position[0]" value="5" /> <br/>-->
+<!--        <input name="positions" placeholder="position[1]" value="5" /> <br/>-->
+<!--&lt;!&ndash;        <input name="positions[]" placeholder="position[1]" /> <br/>&ndash;&gt;-->
+<!--        <input name="reservePersonName" placeholder="reservePersonName" /> <br/>-->
+<!--        <input name="reservePersonPhone" placeholder="reservePersonPhone" /> <br/>-->
+<!--        <button>버튼</button>-->
+<!--    </form>-->
 
-<!--    <button onclick="test();">ajax</button>-->
+    <button onclick="test();">ajax</button>
 </body>
 <script type="text/javascript">
     function test() {
@@ -62,10 +62,12 @@
                 payMethod: '1000000000',
                 paymentPrice: 1000,
                 personCount: 1,
-                persons: persons,
-                positions: [1],
-                reservePersonName: '박세중',
-                reservePersonPhone: '010-8476-4876',
+                'positions[]': [3,4],
+                'personsName[]': ['123', '124'],
+                'personsPhone[]': ['123', '124'],
+                'personsBirthdate[]': ['123', '124'],
+                reservePersonName: '123',
+                reservePersonPhone: '123',
                 totalPrice: 1000
             }
         })

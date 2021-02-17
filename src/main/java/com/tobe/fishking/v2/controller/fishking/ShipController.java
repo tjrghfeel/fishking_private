@@ -98,7 +98,7 @@ public class ShipController {
             "\n " +
             "\n 상단 이미지관련" +
             "\n     liveVideo가 빈 문자열이 아닌 경우: 해당 주소를 video 태그로 보여준다. " +
-            "\n         (기본적으로HTML5  video  tag를사용하여재생할수있고m3u8 재생을위해추가적인javascript 라이브러리가필요하다.(hls.js : https://github.com/video-dev/hls.js/)) " +
+            "\n         (기본적으로HTML5  video  tag를사용하여재생할수있고m3u8 재생을위해추가적인javascript 라이브러리가필요하다.(hls.js : https://github.com/video-dev/hls.js/)) /playVideo.html 참고" +
             "\n     liveVideo가 빈 문자열이고 profileImage가 빈 문자열 아닌 경우: profileImage를 보여준다. " +
             "\n     둘 다 빈 문자열인 경우: 기본 이미지를 보여준다. (선박 등록시 처리 할 예정이라 추후에 빈 이미지는 없을 예정입니다) " +
             "\n 기획 전달 사항" +
@@ -167,15 +167,31 @@ public class ShipController {
 //        return shipService.getShipDetail(ship_id);
 //    }
 
-    @ApiOperation(value = "예약", notes = "예약정보 전화번호는 '-' 포함. positionsList 는 무시하시면 됩니다.")
+    @ApiOperation(value = "예약", notes = "예약정보 전화번호는 '-' 포함. positionsList 는 무시하시면 됩니다." +
+            "\n id: 주문 id" +
+            "\n orderNumber: 주문번호, sndOrdernumber 으로 ksnet에 넘깁니다. " +
+            "\n goodsName: 상품명, sndGoodname 으로 ksnet에 넘깁니다.  " +
+            "\n amount: 결제금액, sndAmount 로 ksnet에 넘깁니다.  " +
+            "\n orderName: 주문자 이름, sndOrdername 으로 ksnet에 넘깁니다.  " +
+            "\n email: 주문자 이메일, sndEmail 로 ksnet에 넘깁니다.  " +
+            "\n phoneNumber: 주문자 전화번호, sndMobile 로 ksnet에 넘깁니다.  " +
+            "\n showCard: 보여지는 카드사, sndShowcard 로 ksnet에 넘깁니다.  " +
+            "\n installMentType: 선택 가능한 할부 개월 수, sndInstallmenttype 으로 ksnet에 넘깁니다.  " +
+            "\n interestType: 가맹점부담 무이자 할부 설정값, sndInterestype 으로 ksnet에 넘깁니다.  " +
+            "\n reply: 리턴주소, sndReply 로 ksnet에 넘깁니다.  " +
+            "\n shopNumber: 상점번호, sndStoreid 로 ksnet에 넘깁니다. " +
+            "\n payMethod: 결제방식, sndPaymethod 로 ksnet에 넘깁니다. " +
+            "\n" +
+            "\n /pay_request.html 와 /ajax.html 을 참고해주세요")
     @PostMapping("/ship/reserve")
-    public String Reserve(
+    @ResponseBody
+    public OrderResponse Reserve(
 //            @RequestHeader(name = "Authorization") String sessionToken,
             ReserveDTO reserveDTO,
-            @RequestParam(value = "positions") Integer[] positions,
-            @RequestParam(value = "personsName") String[] personsName,
-            @RequestParam(value = "personsPhone") String[] personsPhone,
-            @RequestParam(value = "personsBirthdate") String[] personsBirthdate,
+            @RequestParam(value = "positions[]") Integer[] positions,
+            @RequestParam(value = "personsName[]") String[] personsName,
+            @RequestParam(value = "personsPhone[]") String[] personsPhone,
+            @RequestParam(value = "personsBirthdate[]") String[] personsBirthdate,
             @RequestParam(value = "token", required = false) String token,
             Model model) {
 //        Member member = memberService.getMemberBySessionToken(sessionToken);
@@ -185,8 +201,9 @@ public class ShipController {
             }
         }
         OrderResponse response = shipService.reserve(reserveDTO, token, personsName, personsPhone, personsBirthdate);
-        model.addAttribute("pay", response);
-        return "pay_request";
+//        model.addAttribute("pay", response);
+//        return "pay_request";
+        return response;
     }
 
 //    @ApiOperation(value = "거리계산")
