@@ -83,7 +83,7 @@ public class FishingDiaryCommentController {
             "- 헤더에 세션토큰 필요\n" +
             "응답 필드 ) \n" +
             "- commentCount : Integer / 총 댓글 수 \n" +
-            "- fishingDiaryTitle : String / 본글 제목\n" +
+            "- title : String / 본글 제목\n" +
             "- commentList : 댓글객체의 배열. 아래는 항목들.\n" +
             "\t\t\t- authorId : Long / 댓글 작성자 id\n" +
             "\t\t\t- commentId : Long / 댓글 id\n" +

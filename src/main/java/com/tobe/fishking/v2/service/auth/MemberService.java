@@ -708,7 +708,7 @@ public class MemberService {
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
         Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.facebook);
         /*이미 가입된 회원일 경우, 로그인 처리. */
-        if(member !=null){
+        if(member !=null && member.getIsCertified() == true){
             resultDto.setResultType("login");
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
@@ -725,6 +725,37 @@ public class MemberService {
                 member.setSessionToken(sessionToken);
                 resultDto.setSessionToken(encodingToken);
             }
+            return resultDto;
+        }
+        else if(member != null && member.getIsCertified() == false){
+            memberRepository.delete(member);
+
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.facebook.getValue()+usrId)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password("tempPassword")//임시값. 수정필요.
+                    .email("tempEmail")//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.facebook)
+                    .snsId(usrId)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
             return resultDto;
         }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
@@ -833,7 +864,7 @@ public class MemberService {
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
         Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.naver);
         /*이미 가입된 회원일 경우, 로그인 처리. */
-        if(member !=null){
+        if(member !=null && member.getIsCertified() == true){
             resultDto.setResultType("login");
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
@@ -850,6 +881,37 @@ public class MemberService {
                 member.setSessionToken(sessionToken);
                 resultDto.setSessionToken(encodingToken);
             }
+            return resultDto;
+        }
+        else if(member != null && member.getIsCertified() == false){
+            memberRepository.delete(member);
+
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(SNSType.naver.getValue()+usrId)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password(usrId)//임시값. 수정필요.
+                    .email(usrId)//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.naver)
+                    .snsId(usrId)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
             return resultDto;
         }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.

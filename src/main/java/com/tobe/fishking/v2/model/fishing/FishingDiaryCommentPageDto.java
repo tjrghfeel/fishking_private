@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 public class FishingDiaryCommentPageDto {
     private int commentCount;
-    private String fishingDiaryTitle;
+    private String title;
     private List<FishingDiaryCommentDtoForPage> commentList;
 }

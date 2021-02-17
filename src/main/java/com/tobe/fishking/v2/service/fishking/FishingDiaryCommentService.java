@@ -170,7 +170,7 @@ public class FishingDiaryCommentService {
         result = FishingDiaryCommentPageDto.builder()
                 .commentList(parentCommentList)
                 .commentCount(commentCount)
-                .fishingDiaryTitle(fishingDiary.getTitle())
+                .title(fishingDiary.getTitle())
                 .build();
         return result;
     }
