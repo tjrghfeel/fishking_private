@@ -50,11 +50,32 @@ public class HelloController {
     }
 
     @GetMapping("/noName")
-    public String noName(Model model) throws ResourceNotFoundException, IOException, JCodecException {
+    @ResponseBody
+    public String noName() throws ResourceNotFoundException, IOException, JCodecException {
 //        helloService.noName();
 
-        model.addAttribute("hello","hello2");
-        return "kakaoStoryShare";
+        String url = "https://kapi.kakao.com/v1/api/story/post/link";
+
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+        Map<String,Object> linkInfo = new HashMap<>();
+        linkInfo.put("url","https://www.naver.com/");
+        linkInfo.put("requested_url","http://www.naver.com");
+        linkInfo.put("host","www.naver.com");
+        linkInfo.put("title","네이버");
+        String[] images = new String[0];
+//        images[0]="https://scrap.kakaocdn.net/dn/nkXw7/hyJjUgljO0/zWVKuMmy1ofio3fKxU1G41/img.png?width=270&height=270&face=0_0_270_270";
+//        images[1]="https://scrap.kakaocdn.net/dn/5uAY1/hyJitkkYyB/NRXglmbYeBm0kHoqHkJF50/img.png?width=270&height=270&face=0_0_270_270";
+        linkInfo.put("image",images);
+        linkInfo.put("description","네이버 메인에서 어쩌구");
+        linkInfo.put("type","website");
+        linkInfo.put("section","");
+        parameter.put("link_info",linkInfo.toString());
+        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"");
+
+        return responseForAccessCode;
+//        model.addAttribute("hello","hello2");
+//        return "kakaoStoryShare";
 
     }
 

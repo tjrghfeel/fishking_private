@@ -485,6 +485,11 @@ public class FishingDiaryService {
         String nickName = null;
         if(fishingDiary.getFilePublish()==FilePublish.fishingDiary){nickName = fishingDiary.getShip().getShipName();}
         else if(fishingDiary.getFilePublish()==FilePublish.fishingBlog){ nickName = fishingDiary.getMember().getNickName();}
+        /*fishingType 설정*/
+        String fishingType = null;
+        if(fishingDiary.getFishingType()!=null){
+            fishingType = fishingDiary.getFishingType().getValue();
+        }
         /*isLikeTo 설정*/
         Boolean isLikeTo = null;
         TakeType takeType = TakeType.valueOf(fishingDiary.getFilePublish().getKey());
@@ -526,7 +531,7 @@ public class FishingDiaryService {
                 .nickName(nickName)
                 .profileImage(path + fishingDiary.getMember().getProfileImage())
                 .isLive(true)
-                .fishingType(fishingDiary.getFishingType().getValue())
+                .fishingType(fishingType)
                 .title(fishingDiary.getTitle())
                 .createdDate(fishingDiary.getCreatedDate())
                 .fishingSpecies(fishingDiary.getFishingSpeciesName())
