@@ -3,6 +3,8 @@ package com.tobe.fishking.v2.service.fishking;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -10,6 +12,8 @@ import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.AddShipDTO;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -64,6 +68,8 @@ public class ShipService {
     private final ReviewRepository reviewRepository;
     private final HttpRequestService httpRequestService;
     private final RealTimeVideoRepository realTimeVideoRepository;
+    private final CompanyRepository companyRepository;
+    private final CommonCodeRepository codeRepository;
 
 
     /*
@@ -372,5 +378,19 @@ public class ShipService {
 //    public Page<ReviewDto> getShipReviews(Integer page, Long shipId) {
 //
 //    }
-
+    
+    @Transactional
+    public Long addShip(AddShipDTO addShipDTO, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+        Company company = companyRepository.findByMember(member);
+        List<ObserverCode> codes = observerCodeRepository.findAll();
+        Ship ship = addShipDTO.toEntity(member, company, codes);
+        shipRepo.save(ship);
+        List<CommonCode> serviceList = new ArrayList<>();
+//        for (String service : addShipDTO.getServices()) {
+////            serviceList.add(codeRepository.find)
+//        }
+        return -1L;
+    }
 }

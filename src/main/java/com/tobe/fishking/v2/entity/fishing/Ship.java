@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 
+import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.model.common.Location;
@@ -22,7 +23,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Builder
+//@Builder
 @AllArgsConstructor
 @Table(name = "ship")
 public class Ship extends BaseTime {  //선상
@@ -216,14 +217,56 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(100) comment '승선위치' ")
     private String positions;
 
+//    @Builder
+//    public Ship(Long id, String shipName, Company company, Member member, SeaDirection seaDirection ) {
+//        this.id = id;
+//        this.shipName = shipName;
+//        this.company = company;
+//        this.createdBy = member;
+//        this.modifiedBy = member;
+//        this.seaDirection = seaDirection;
+//    }
+
     @Builder
-    public Ship(Long id, String shipName, Company company, Member member, SeaDirection seaDirection ) {
-        this.id = id;
-        this.shipName = shipName;
+    public Ship(String name,
+                FishingType fishingType,
+                String address,
+                String sido,
+                String sigungu,
+                String tel,
+                Double weight,
+                Integer boardingPerson,
+                String ownerWordingTitle,
+                String ownerWording,
+                String noticeTitle,
+                String notice,
+                Location location,
+                String profileImage,
+                Company company,
+                Member createdBy,
+                String code,
+                String positions) {
+        this.shipName = name;
+        this.fishingType = fishingType;
+        this.address = address;
+        this.sido = sido;
+        this.sigungu = sigungu;
+        this.tel = tel;
+        this.weight = weight;
+        this.boardingPerson = boardingPerson;
+        this.ownerWordingTitle = ownerWordingTitle;
+        this.ownerWording = ownerWording;
+        this.noticeTitle = noticeTitle;
+        this.notice = notice;
+        this.location = location;
+        this.profileImage = profileImage;
         this.company = company;
-        this.createdBy = member;
-        this.modifiedBy = member;
-        this.seaDirection = seaDirection;
+        this.createdBy = createdBy;
+        this.modifiedBy = createdBy;
+        this.positions = positions;
+        this.isActive = true;
+        this.departStatus = false;
+        this.observerCode = code;
     }
 
     /*리뷰 평점 적용*/
