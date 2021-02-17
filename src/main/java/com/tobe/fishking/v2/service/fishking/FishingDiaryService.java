@@ -473,6 +473,10 @@ public class FishingDiaryService {
 
         FishingDiary fishingDiary  = fishingDiaryRepo.findById(fishingDiaryId)
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
+        Long shipId = null;
+        if(fishingDiary.getShip()!=null){
+            shipId = fishingDiary.getShip().getId();
+        }
 
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
         else if(fishingDiary.getIsDeleted() == true){ throw new RuntimeException("삭제된 게시물입니다.");}
@@ -518,7 +522,7 @@ public class FishingDiaryService {
         result = FishingDiaryDetailDto.builder()
                 .authorId(fishingDiary.getMember().getId())
                 .fishingDiaryId(fishingDiary.getId())
-                .shipId(fishingDiary.getShip().getId())
+                .shipId(shipId)
                 .nickName(nickName)
                 .profileImage(path + fishingDiary.getMember().getProfileImage())
                 .isLive(true)

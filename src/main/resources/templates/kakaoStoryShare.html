@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <title></title>
+
+<body>
+
+    <script src="/files/js/kakao.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var aaa = [[${hello.getName()}]];
+        /*]]>*/
+        console.log(aaa);
+        function shareStoryWeb() {
+            Kakao.Story.share({
+                url: 'https://developers.kakao.com',
+                text: '카카오 개발자 사이트로 놀러오세요! #개발자 #카카오 :)',
+            })
+        }
+
+        shareStoryWeb();
+    </script>
+</body>
+</html>

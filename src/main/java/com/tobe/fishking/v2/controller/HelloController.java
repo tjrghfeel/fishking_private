@@ -2,8 +2,6 @@ package com.tobe.fishking.v2.controller;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.HelloResponseDto;
-import com.tobe.fishking.v2.model.NoNameDTO;
-import com.tobe.fishking.v2.model.auth.SignUpDto;
 import com.tobe.fishking.v2.service.HelloService;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import io.swagger.annotations.Api;
@@ -11,27 +9,20 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
 
 @Api(tags = {"Hello Test"})
 @RequiredArgsConstructor
-@RestController
+@Controller
 @RequestMapping(value = "/v2/api")
 public class HelloController {
     @Autowired
@@ -48,46 +39,22 @@ public class HelloController {
     }
 
     @GetMapping("/noName2")
-    public HelloResponseDto helloDto(
+    public String helloDto(
             HttpSession session,
             @RequestParam("name") String name,
-            @RequestParam("amount") int amount
+            @RequestParam("amount") int amount,
+            Model model
     ) {
-        return new HelloResponseDto(name, amount);
+        model.addAttribute("hello",new HelloResponseDto(name, amount));
+        return "kakaoStoryShare";
     }
 
     @GetMapping("/noName")
-    public String noName() throws ResourceNotFoundException, IOException, JCodecException {
+    public String noName(Model model) throws ResourceNotFoundException, IOException, JCodecException {
 //        helloService.noName();
 
-        URL url = new URL("http://www.naver.com");
-        URLConnection con = url.openConnection();
-        HttpURLConnection http = (HttpURLConnection)con;
-        http.setRequestMethod("GET"); // PUT is another valid option
-
-        http.setRequestProperty("Authorization","aaahello");
-        http.connect();
-        System.out.println("http response : "+http);
-//            try(OutputStream os = http.getOutputStream()) {
-//                os.write(out);
-//            }
-        // Do something with http.getInputStream()
-        int responseCode = http.getResponseCode();
-        BufferedReader br;
-        System.out.println("response code : "+responseCode);
-
-        if(responseCode == 200) { // 정상 호출
-            br = new BufferedReader(new InputStreamReader(http.getInputStream()));
-        } else {  // 에러 발생
-            br = new BufferedReader(new InputStreamReader(http.getInputStream()));
-        }
-        String inputLine;
-        StringBuffer res = new StringBuffer();
-        while ((inputLine = br.readLine()) != null) {
-            res.append(inputLine);
-        }
-        br.close();
-        return res.toString();
+        model.addAttribute("hello","hello2");
+        return "kakaoStoryShare";
 
     }
 
