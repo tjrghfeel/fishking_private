@@ -22,7 +22,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                         goods
                 ))
                 .from(goods)
-                .where(goods.ship.id.eq(ship_id))
+                .where(goods.ship.id.eq(ship_id), goods.isUse.eq(true))
                 .fetchResults();
         return result.getResults();
     }

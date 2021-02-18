@@ -125,25 +125,25 @@ public class Ship extends BaseTime {  //선상
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "ships_fish_species", columnDefinition = "comment '어종'  ")
     @JsonBackReference
-    private final List<CommonCode> fishSpecies = new ArrayList<>();
+    private List<CommonCode> fishSpecies = new ArrayList<>();
 
     @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "ships_services", columnDefinition = "comment '서비스 제공'  ")
     @JsonBackReference
-    private final List<CommonCode> services = new ArrayList<>();
+    private List<CommonCode> services = new ArrayList<>();
 
     @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "ships_facilities", columnDefinition = "comment '편의시설'  ")
     @JsonBackReference
-    private final List<CommonCode> facilities = new ArrayList<>();
+    private List<CommonCode> facilities = new ArrayList<>();
 
     @ManyToMany(targetEntity= CommonCode.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "ships_devices", columnDefinition = "comment '보유장비'  ")
     @JsonBackReference
-    private final List<CommonCode> devices = new ArrayList<>();
+    private List<CommonCode> devices = new ArrayList<>();
 
     // EXEC sp_addextendedproperty 'MS_Description', N'실시간영상', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
     @OneToMany
@@ -280,5 +280,21 @@ public class Ship extends BaseTime {  //선상
 
     public void setObserverCode(String code) {
         this.observerCode = code;
+    }
+
+    public void setFishSpecies(List<CommonCode> fishSpecies) {
+        this.fishSpecies = fishSpecies;
+    }
+
+    public void setServices(List<CommonCode> services) {
+        this.services = services;
+    }
+
+    public void setFacilities(List<CommonCode> facilities) {
+        this.facilities = facilities;
+    }
+
+    public void setDevices(List<CommonCode> devices) {
+        this.devices = devices;
     }
 }

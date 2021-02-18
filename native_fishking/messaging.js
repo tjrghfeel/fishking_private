@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 messaging()
@@ -25,6 +26,7 @@ messaging().onMessage((message) => {
   console.log('[Messaging] Foreground Mode');
   console.log(JSON.stringify(message));
 });
+export let token = null;
 export default (async () => {
   const hasPermission = await messaging().hasPermission();
   if (
@@ -33,6 +35,6 @@ export default (async () => {
   ) {
     await messaging().requestPermission();
   }
-  const token = await messaging().getToken();
+  token = await messaging().getToken();
   console.log('[Messaging] token -> ' + token);
 })();

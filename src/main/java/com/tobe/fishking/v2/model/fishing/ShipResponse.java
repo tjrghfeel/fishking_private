@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.model.fishing;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import io.swagger.annotations.ApiParam;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,7 +71,7 @@ public class ShipResponse {
         this.serviceByReview = ship.getServiceByReview();
         this.cleanByReview = ship.getCleanByReview();
         this.reviewCount = ship.getReviewCount();
-        this.goods = ship.getGoods().stream().map(GoodsResponse::new).collect(Collectors.toSet());
+        this.goods = ship.getGoods().stream().filter(Goods::getIsUse).map(GoodsResponse::new).collect(Collectors.toSet());
         this.services = ship.getServices().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
         this.facilities = ship.getFacilities().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
         this.devices = ship.getDevices().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
@@ -80,5 +82,7 @@ public class ShipResponse {
         this.liked = false;
         this.profileImage = "";
         this.liveVideo = "";
+        this.fishingDiary = new ArrayList<>();
+        this.fishingBlog = new ArrayList<>();
     }
 }

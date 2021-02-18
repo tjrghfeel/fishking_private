@@ -6,6 +6,9 @@ import WebView from '../component/WebView';
 export default inject('WebViewStore')(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+      }
       componentDidMount() {
         const {WebViewStore} = this.props;
         if (Platform.OS === 'android') {
@@ -31,6 +34,7 @@ export default inject('WebViewStore')(
 
         if (process === 'Linking') {
           Linking.openURL(data);
+        } else if (process === 'getToken') {
         }
       }
       render() {

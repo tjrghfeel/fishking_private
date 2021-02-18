@@ -1,6 +1,7 @@
 import React, {useRef, useEffect} from 'react';
 import {WebView} from 'react-native-webview';
 import {inject, observer} from 'mobx-react';
+import {token} from '../../messaging';
 
 export default inject('WebViewStore')(
   observer(({WebViewStore, uri, onNavigationStateChange, onMessage}) => {
@@ -15,6 +16,7 @@ export default inject('WebViewStore')(
         }
       });
     });
+    console.log('token -> ' + token);
 
     return (
       <WebView
@@ -36,6 +38,7 @@ export default inject('WebViewStore')(
         onMessage={({nativeEvent}) => onMessage(nativeEvent)}
         injectedJavaScriptBeforeContentLoaded={`
             window.isNative = true;
+            window.fcm_token = '${token}'
             true;
             `}
       />
