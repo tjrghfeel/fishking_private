@@ -204,6 +204,7 @@ public class ShipService {
             RealTimeVideo video = videos.get(0);
             try {
                 String token = httpRequestService.refreshToken(video.getToken());
+                realTimeVideoRepository.updateToken(token, video.getToken());
                 if (!token.equals("")) {
                     List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
                     for (Map<String, Object> camera : cameras) {
@@ -224,10 +225,6 @@ public class ShipService {
                             }
                             response.setLiveVideo(liveUrl);
                         }
-                    }
-                    for (RealTimeVideo v : videos) {
-                        v.updateToken(token);
-                        realTimeVideoRepository.save(v);
                     }
                 }
             } catch (KeyStoreException e) {

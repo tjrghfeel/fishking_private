@@ -41,7 +41,6 @@ public class HttpRequestService {
     private final String CAM_SERVICE_URL = "service/v1/";
     private final String vendorId = "tobe";
     private final String vendorPw = "toastcam1!";
-    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4MTYiLCJleHAiOjE2MTQzMTk1NjgsImF1ZCI6ImJhODQ5Y2IwLTY5Y2MtMTFlYi04NDFhLTAwNTA1NmFjN2YwMiIsImlzcyI6ImRldkB0by1iZS5rciJ9.dN2G1QMyaPiEbUpVvmlA1gboHq5tPSTemUfiX8J8kU0";
 
     public String getToken() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
         CloseableHttpClient httpClient = getHttpClient();
@@ -90,8 +89,6 @@ public class HttpRequestService {
             System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
-//            Gson gson = new Gson();
             Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
 
             httpClient.close();
