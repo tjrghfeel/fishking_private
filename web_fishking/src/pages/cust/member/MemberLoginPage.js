@@ -45,6 +45,7 @@ export default inject(
         const response = await APIStore._post("/v2/api/login", {
           memberId,
           password,
+          registrationToken: window.fcm_token || null,
         });
         if (response) {
           PageStore.setAccessToken(response, "cust", "Y");

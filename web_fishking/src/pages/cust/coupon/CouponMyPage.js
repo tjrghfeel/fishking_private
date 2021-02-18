@@ -68,25 +68,25 @@ export default inject(
         const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <AddCouponModal
-              id={"addCouponModal"}
-              onOk={(code) => console.log(code)}
-            />
+            {/*<AddCouponModal*/}
+            {/*  id={"addCouponModal"}*/}
+            {/*  onOk={(code) => console.log(code)}*/}
+            {/*/>*/}
 
             <NavigationLayout
               title={"쿠폰함"}
               showBackIcon={true}
-              customButton={
-                <React.Fragment key={1}>
-                  <a
-                    className="fixed-top-right text-white"
-                    data-toggle="modal"
-                    data-target="#addCouponModal"
-                  >
-                    쿠폰등록
-                  </a>
-                </React.Fragment>
-              }
+              // customButton={
+              //   <React.Fragment key={1}>
+              //     <a
+              //       className="fixed-top-right text-white"
+              //       data-toggle="modal"
+              //       data-target="#addCouponModal"
+              //     >
+              //       쿠폰등록
+              //     </a>
+              //   </React.Fragment>
+              // }
             />
 
             <div className="filterWrap mb-4">
