@@ -56,9 +56,9 @@ export default inject("DataStore")(
               )}
               {active === 1 && (
                 <SelectLocationByMapView
-                  onSelected={(selected) => {
+                  onSelected={({ address, lat, lng }) => {
                     if (onSelected) {
-                      onSelected({ itemType: "Location", address: selected });
+                      onSelected({ itemType: "Location", address, lat, lng });
                     }
                     dismiss.current?.click();
                   }}

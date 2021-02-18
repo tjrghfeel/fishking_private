@@ -10,7 +10,6 @@ export default inject()(
         fishingDate,
         goodsFishSpecies,
         meridiem,
-        distance,
         fishingTideTime,
         tasteByReview = 0,
         serviceByReview = 0,
@@ -47,11 +46,7 @@ export default inject()(
               <span className="tag">
                 {goodsFishSpecies}({meridiem === "0" ? "오전" : "오후"})
               </span>{" "}
-              <span className="grey">
-                {" "}
-                {distance && <React.Fragment>{distance}m</React.Fragment>}
-                {fishingTideTime}
-              </span>
+              <span className="grey">{fishingTideTime}</span>
             </p>
             <p>
               <div

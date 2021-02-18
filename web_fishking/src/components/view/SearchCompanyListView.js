@@ -35,6 +35,8 @@ export default inject(
 
         if ((page > 0 && this.state.isEnd) || this.state.isPending) return;
 
+        if (keyword === "") keyword = null;
+
         try {
           this.setState({ page, keyword, isPending: true });
           const {
@@ -109,42 +111,43 @@ export default inject(
               <div className="row no-gutters d-flex align-items-center">
                 <div className="col-6">
                   <p className="mt-2 pl-2">
-                    ‘{this.state.keyword}’ 검색결과{" "}
+                    {this.state.keyword && `'${this.state.keyword}'`}
+                    검색결과{" "}
                     <strong className="text-primary">
                       {Intl.NumberFormat().format(this.state.totalElements)}건
                     </strong>
                   </p>
                 </div>
-                <div className="col-6 text-right">
-                  <div className="custom-control custom-radio custom-control-inline">
-                    <input
-                      type="radio"
-                      id="customRadioInline1"
-                      name="customRadioInline1"
-                      className="custom-control-input"
-                    />
-                    <label
-                      className="custom-control-label"
-                      htmlFor="customRadioInline1"
-                    >
-                      거리순
-                    </label>
-                  </div>
-                  <div className="custom-control custom-radio custom-control-inline">
-                    <input
-                      type="radio"
-                      id="customRadioInline2"
-                      name="customRadioInline1"
-                      className="custom-control-input"
-                    />
-                    <label
-                      className="custom-control-label"
-                      htmlFor="customRadioInline2"
-                    >
-                      명칭순
-                    </label>
-                  </div>
-                </div>
+                {/*<div className="col-6 text-right">*/}
+                {/*  <div className="custom-control custom-radio custom-control-inline">*/}
+                {/*    <input*/}
+                {/*      type="radio"*/}
+                {/*      id="customRadioInline1"*/}
+                {/*      name="customRadioInline1"*/}
+                {/*      className="custom-control-input"*/}
+                {/*    />*/}
+                {/*    <label*/}
+                {/*      className="custom-control-label"*/}
+                {/*      htmlFor="customRadioInline1"*/}
+                {/*    >*/}
+                {/*      거리순*/}
+                {/*    </label>*/}
+                {/*  </div>*/}
+                {/*  <div className="custom-control custom-radio custom-control-inline">*/}
+                {/*    <input*/}
+                {/*      type="radio"*/}
+                {/*      id="customRadioInline2"*/}
+                {/*      name="customRadioInline1"*/}
+                {/*      className="custom-control-input"*/}
+                {/*    />*/}
+                {/*    <label*/}
+                {/*      className="custom-control-label"*/}
+                {/*      htmlFor="customRadioInline2"*/}
+                {/*    >*/}
+                {/*      명칭순*/}
+                {/*    </label>*/}
+                {/*  </div>*/}
+                {/*</div>*/}
               </div>
             </div>
             {/** 업체 */}

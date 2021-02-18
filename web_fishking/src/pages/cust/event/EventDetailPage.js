@@ -128,11 +128,7 @@ export default inject(
                     </a>
                     <a
                       onClick={() =>
-                        PageStore.push(
-                          `/event/comment/${
-                            this.state.eventId
-                          }?title=${encodeURI(this.state.eventTitle)}`
-                        )
+                        PageStore.push(`/event/comment/${this.state.eventId}`)
                       }
                       className="nav-link"
                     >

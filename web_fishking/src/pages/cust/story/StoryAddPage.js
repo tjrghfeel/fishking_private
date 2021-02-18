@@ -45,6 +45,9 @@ export default inject(
           shipData: {},
           content: "",
           videoId: null,
+          address: null,
+          latitude: null,
+          longitude: null,
         };
       }
       /********** ********** ********** ********** **********/
@@ -66,6 +69,9 @@ export default inject(
           fileList = [],
           uploaded,
           videoId,
+          address,
+          latitude,
+          longitude,
         } = this.state;
         for (let file of uploaded) {
           fileList.push(file.fileId);
@@ -83,7 +89,7 @@ export default inject(
           ModalStore.openModal("Alert", { body: "날짜를 선택해주세요." });
           return;
         }
-        if (shipId === null) {
+        if (shipId === null && address === null) {
           ModalStore.openModal("Alert", {
             body: "업체 또는 위치를 선택해주세요.",
           });
@@ -111,8 +117,31 @@ export default inject(
           content,
           fileList,
           videoId,
+          address,
+          latitude,
+          longitude,
         });
 
+        console.log(
+          JSON.stringify({
+            category,
+            title,
+            fishingSpecies,
+            fishingDate,
+            tide,
+            fishingTechnicList,
+            fishingLureList,
+            fishingType,
+            shipId,
+            content,
+            fileList,
+            videoId,
+            address,
+            latitude,
+            longitude,
+          })
+        );
+        if (true) return;
         if (resolve) {
           ModalStore.openModal("Alert", {
             body: "등록되었습니다.",
@@ -246,13 +275,20 @@ export default inject(
             <SelectLocationModal
               id={"selLocationModal"}
               onSelected={(selected) => {
+                console.log(JSON.stringify(selected));
                 if (selected.itemType === "Company") {
                   this.setState({
                     shipId: selected.shipId,
                     shipData: selected,
                   });
                 } else if (selected.itemType === "Location") {
-                  this.setState({ shipId: null, shipData: selected });
+                  this.setState({
+                    shipId: null,
+                    shipData: { address: selected.address },
+                    address: selected.address,
+                    latitude: selected.lat,
+                    longitude: selected.lng,
+                  });
                 }
               }}
             />
