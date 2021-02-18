@@ -15,7 +15,9 @@ import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.AddShipDTO;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
+import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.ReviewDto;
+import com.tobe.fishking.v2.model.common.ReviewResponse;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
@@ -25,10 +27,7 @@ import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -188,9 +187,9 @@ public class ShipService {
         response.setFishingDiaryCount(diaries.size());
 
         if (blogResponse.size() > 3) {
-            response.setFishingDiary(blogResponse.subList(0, 3));
+            response.setFishingBlog(blogResponse.subList(0, 3));
         } else {
-            response.setFishingDiary(blogResponse);
+            response.setFishingBlog(blogResponse);
         }
         response.setFishingBlogCount(blogs.size());
         response.setEvents(eventRepository.getEventTitleByShip(ship_id));
@@ -386,11 +385,51 @@ public class ShipService {
         Company company = companyRepository.findByMember(member);
         List<ObserverCode> codes = observerCodeRepository.findAll();
         Ship ship = addShipDTO.toEntity(member, company, codes);
-        shipRepo.save(ship);
+
+        List<CommonCode> speciesList = new ArrayList<>();
+        for (String species : addShipDTO.getFishSpecies()) {
+            speciesList.add(codeRepository.getByCode(species));
+        }
+        ship.setFishSpecies(speciesList);
+
         List<CommonCode> serviceList = new ArrayList<>();
-//        for (String service : addShipDTO.getServices()) {
-////            serviceList.add(codeRepository.find)
-//        }
+        for (String service : addShipDTO.getServices()) {
+            serviceList.add(codeRepository.getByCode(service));
+        }
+        ship.setServices(serviceList);
+
+        List<CommonCode> facilityList = new ArrayList<>();
+        for (String facility : addShipDTO.getFacilities()) {
+            facilityList.add(codeRepository.getByCode(facility));
+        }
+        ship.setFacilities(facilityList);
+
+        List<CommonCode> deviceList = new ArrayList<>();
+        for (String device : addShipDTO.getDevices()) {
+            deviceList.add(codeRepository.getByCode(device));
+        }
+        ship.setDevices(deviceList);
+
+        shipRepo.save(ship);
+
         return -1L;
+    }
+
+    @Transactional
+    public Map<String, Object> getReviewByShip(Long shipId, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ReviewResponse> responses = reviewRepository.getShipReviews(shipId, pageable);
+        List<ReviewResponse> contents = responses.getContent();
+        for (ReviewResponse review : contents) {
+            review.setImages(fileRepo.findByPidAndFilePublish(review.getId(), FilePublish.review).stream().map(FilesDTO::of).collect(Collectors.toList()));
+        }
+        Map<String, Object> result = new HashMap<>();
+        Ship ship = shipRepo.getOne(shipId);
+        result.put("reviews", new PageImpl<>(contents, pageable, responses.getTotalElements()));
+        result.put("average", ship.getTotalAvgByReview());
+        result.put("taste", ship.getTasteByReview());
+        result.put("service", ship.getServiceByReview());
+        result.put("clean", ship.getCleanByReview());
+        return result;
     }
 }

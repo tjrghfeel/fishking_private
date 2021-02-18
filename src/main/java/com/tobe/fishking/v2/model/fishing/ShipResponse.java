@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -80,5 +81,7 @@ public class ShipResponse {
         this.liked = false;
         this.profileImage = "";
         this.liveVideo = "";
+        this.fishingDiary = new ArrayList<>();
+        this.fishingBlog = new ArrayList<>();
     }
 }

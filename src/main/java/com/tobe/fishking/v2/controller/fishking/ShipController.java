@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.common.ReviewResponse;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
@@ -204,6 +205,49 @@ public class ShipController {
 //        model.addAttribute("pay", response);
 //        return "pay_request";
         return response;
+    }
+
+    @ApiOperation(value = "선박 리뷰 리스트", notes = "해당 선박의 리뷰 리스트 page 는 0부터 시작" +
+            "\n average: 전체 평균," +
+            "\n taste: 전체 손맛," +
+            "\n service: 전체 서비스," +
+            "\n clean: 전체 청결도," +
+            "\n reviews: { " +
+            "\n     content: [{" +
+            "\n     id: 리뷰 id" +
+            "\n     goodsId: 상품 id " +
+            "\n     shipId: 선박 id  " +
+            "\n     memberId: 작성자 id  " +
+            "\n     profileImage: 작성자 프로필 사진  " +
+            "\n     nickName: 작성자 닉네임 " +
+            "\n     fishingDate: 상품 출조일 " +
+            "\n     goodsName: 상품명 " +
+            "\n     fishingTideTime: 출조일의 물때 " +
+            "\n     avgByReview: 평점 평균 " +
+            "\n     tasteByReview: 손맛 평점 " +
+            "\n     serviceByReview: 서비스 평점 " +
+            "\n     cleanByReview: 청결도 평점 " +
+            "\n     content: 내용 " +
+            "\n     images: 사진 [{" +
+            "\n         files_id: 파일 아이디" +
+            "\n         download_url: 파일 주소" +
+            "\n     }, ... ]" +
+            "\n }, ... ]," +
+            "\n ...," +
+            "\n totalElements: 총 내용 개수," +
+            "\n totalPages: 총 페이지 수 " +
+            "\n first: 첫페이지 여부" +
+            "\n end: 마지막 페이지 여부" +
+            "\n empty: content 가 비어있는가 여부 }" +
+            "\n" +
+            "\n 퍼블상의 우럭(오후) 는 상품명입니다. 풍향 풍속 데이터 안보여주시면 됩니다.")
+    @GetMapping("/ship/{ship_id}/review/{page}")
+    @ResponseBody
+    public Map<String, Object> getShipReviews(
+            @PathVariable Long ship_id,
+            @PathVariable Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
+        return shipService.getReviewByShip(ship_id, page, size);
     }
 
 //    @ApiOperation(value = "거리계산")

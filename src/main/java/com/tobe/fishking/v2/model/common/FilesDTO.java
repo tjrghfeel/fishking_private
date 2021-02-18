@@ -25,7 +25,7 @@ public class FilesDTO {
     public static FilesDTO of(FileEntity files){
         return FilesDTO.builder()
                 .filesId(files.getId())
-                .downloadUrl(files.getDownloadUrl())
+                .downloadUrl("https://www.fishkingapp.com/resource/review/" + files.getStoredFile())
                 .build();
     }
 

@@ -5,9 +5,7 @@ import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.fishing.Company;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.Location;
-import com.tobe.fishking.v2.model.fishing.GoodsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,6 @@ import lombok.Setter;
 import javax.validation.Valid;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -36,6 +33,7 @@ public class AddShipDTO {
     private @Valid Double latitude;
     private @Valid Double longitude;
     private @Valid String profileImage;
+    private @Valid List<String> fishSpecies;
     private @Valid List<String> services;
     private @Valid List<String> facilities;
     private @Valid List<String> devices;
