@@ -18,4 +18,6 @@ public class LoginDTO {
     
     @NotNull(message = "pw가 비었습니다")
     private String password;
+
+    private String registrationToken;
 }

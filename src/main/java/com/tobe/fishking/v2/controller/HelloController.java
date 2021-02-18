@@ -54,32 +54,25 @@ public class HelloController {
     public String noName() throws ResourceNotFoundException, IOException, JCodecException {
 //        helloService.noName();
 
-        String url = "https://kapi.kakao.com/v1/api/story/post/link";
-
-        String method = "POST";
-        Map<String,String> parameter = new HashMap<String, String>();
-        Map<String,Object> linkInfo = new HashMap<>();
-        linkInfo.put("url","https://www.naver.com/");
-        linkInfo.put("requested_url","http://www.naver.com");
-        linkInfo.put("host","www.naver.com");
-        linkInfo.put("title","네이버");
-        String[] images = new String[0];
-//        images[0]="https://scrap.kakaocdn.net/dn/nkXw7/hyJjUgljO0/zWVKuMmy1ofio3fKxU1G41/img.png?width=270&height=270&face=0_0_270_270";
-//        images[1]="https://scrap.kakaocdn.net/dn/5uAY1/hyJitkkYyB/NRXglmbYeBm0kHoqHkJF50/img.png?width=270&height=270&face=0_0_270_270";
-        linkInfo.put("image",images);
-        linkInfo.put("description","네이버 메인에서 어쩌구");
-        linkInfo.put("type","website");
-        linkInfo.put("section","");
-        parameter.put("link_info",linkInfo.toString());
-        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"");
-
-        return responseForAccessCode;
+//        String url = "https://kapi.kakao.com/v1/api/story/post/link";
+//
+//        String method = "POST";
+//        Map<String,String> parameter = new HashMap<String, String>();
+//        parameter.put("permission","A");
+//        parameter.put("link_info","{   \"url\": \"https://www.naver.com/\",   \"requested_url\": \"http://www.naver.com\",   \"host\": \"www.naver.com\",   \"title\": \"네이버\",   \"image\": [     \"https://scrap.kakaocdn.net/dn/bnkNcK/hyJjXLh5Pb/UqZAdKMcRvgAFch8jqxU81/img.png?width=270&height=270&face=0_0_270_270\",     \"https://scrap.kakaocdn.net/dn/mdLqG/hyJjXEwPFZ/80nmPIkINCrgc834c9AML1/img.png?width=270&height=270&face=0_0_270_270\"   ],   \"description\": \"네이버 메인에서 다양한 정보와 유용한 컨텐츠를 만나 보세요\",   \"type\": \"website\",   \"section\": \"\" }");
+//        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"Bearer 6vK1LmfsKp40E5tU1Wj_2rhfwU-2i2uYP1xO4wopyV8AAAF3sw3Edw");
+        String url = "https://fcm.googleapis.com/fcm/send";
+        Map<String,String> parameter = new HashMap<>();
+        parameter.put("json","{ \"data\": {\"score\": \"5x1\", \"time\": \"15:10\"},\"to\" : \"bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...\"}");
+        String response = memberService.sendRequest(url, "JSON", parameter,"key=aaa");
+        return response;
 //        model.addAttribute("hello","hello2");
 //        return "kakaoStoryShare";
 
     }
 
     @GetMapping("/naver")
+    @ResponseBody
     public String naver(HttpServletResponse response) throws IOException {
 //        response.sendRedirect("http://www.naver.com");
         String url = "https://nid.naver.com/oauth2.0/authorize?" +
@@ -96,6 +89,7 @@ public class HelloController {
     }
 
     @GetMapping("/pass")
+    @ResponseBody
     public String pass(HttpServletResponse response) throws IOException {
 //        response.sendRedirect("http://www.naver.com");
         String url = "https://id.passlogin.com/oauth2/authorize?" +
@@ -112,6 +106,7 @@ public class HelloController {
     }
 
     @GetMapping("/kakao")
+    @ResponseBody
     public String kakao(HttpServletResponse response) throws IOException {
         response.sendRedirect("https://kauth.kakao.com/oauth/authorize?" +
                 "response_type=code" +
@@ -130,6 +125,7 @@ public class HelloController {
         return "";
     }
     @GetMapping("/facebook")
+    @ResponseBody
     public String facebook(HttpServletResponse response) throws IOException {
         response.sendRedirect("https://www.facebook.com/v9.0/dialog/oauth?" +
                 "client_id=697267061151978" +

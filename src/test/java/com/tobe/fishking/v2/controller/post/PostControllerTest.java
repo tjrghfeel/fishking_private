@@ -1,11 +1,11 @@
 package com.tobe.fishking.v2.controller.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.auth.oauth2.GoogleCredentials;
+/*import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Message;*/
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
@@ -162,7 +162,7 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        FirebaseOptions options = FirebaseOptions.builder()
+        /*FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.getApplicationDefault())
                 .setDatabaseUrl("https://<DATABASE_NAME>.firebaseio.com/")
                 .build();
@@ -183,7 +183,7 @@ public class PostControllerTest {
         // registration token.
         String response = FirebaseMessaging.getInstance().send(message);
         // Response is a message ID string.
-        System.out.println("Successfully sent message: " + response);
+        System.out.println("Successfully sent message: " + response);*/
         return;
 
     }

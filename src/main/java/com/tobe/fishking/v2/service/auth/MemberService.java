@@ -1003,7 +1003,6 @@ public class MemberService {
         URL url = new URL(inputUrl);
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection)con;
-        http.setRequestMethod(method); // PUT is another valid option
 
         if(method.equals("GET")){
 //            StringJoiner sj = new StringJoiner("&");
@@ -1015,6 +1014,7 @@ public class MemberService {
 
 //            http.setFixedLengthStreamingMode(length);
 //            http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            http.setRequestMethod("GET");
             http.setRequestProperty("Authorization",token);
             http.connect();
             System.out.println("http response : "+http);
@@ -1039,10 +1039,11 @@ public class MemberService {
             br.close();
             return res.toString();
         }
-        else /*if(method.equals("POST"))*/{
+        else if(method.equals("POST")){
             /*Map<String,String> arguments = new HashMap<>();
         arguments.put("username", "root");
         arguments.put("password", "sjh76HSn!"); // This is a fake password obviously*/
+            http.setRequestMethod("POST");
             http.setDoOutput(true);
             StringJoiner sj = new StringJoiner("&");
             for(Map.Entry<String,String> entry : parameter.entrySet())
@@ -1077,6 +1078,54 @@ public class MemberService {
             br.close();
             return res.toString();
         }
+        else if(method.equals("JSON")){
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
+
+            String json = parameter.get("json");
+
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            http.setRequestProperty("Accept","application/json");
+            http.setRequestProperty("Authorization",token);
+            http.connect();
+            System.out.println("http response : "+http);
+            try(OutputStream os = http.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+            StringBuilder response = null;
+            try(BufferedReader br = new BufferedReader(
+                    new InputStreamReader(http.getInputStream(),"utf-8"))){
+                response = new StringBuilder();
+                String responseLine = null;
+                while((responseLine = br.readLine()) != null){
+                    response.append(responseLine.trim());
+                }
+                System.out.println(response.toString());
+
+            }
+            return response.toString();
+            // Do something with http.getInputStream()
+            /*int responseCode = http.getResponseCode();
+            BufferedReader br;
+            System.out.println("response code : "+responseCode);
+
+            if(responseCode == 200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            } else {  // 에러 발생
+                br = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            }
+            String inputLine;
+            StringBuffer res = new StringBuffer();
+            while ((inputLine = br.readLine()) != null) {
+                res.append(inputLine);
+            }
+            br.close();*/
+
+        }
+        else{
+            return "일치하는 method가 없습니다.";
+        }
 
         /*if(responseCode==200) {
             return res.toString();
@@ -1101,13 +1150,15 @@ public class MemberService {
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
             /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
-                return member.getSessionToken();
+                member.setRegistrationToken(loginDTO.getRegistrationToken());
+                sessionToken = member.getSessionToken();
             }
             else {
                 /*세션토큰 생성 및 저장. */
                 String rawToken = member.getUid() + LocalDateTime.now();
                 sessionToken = encoder.encode(rawToken);
 
+                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 member.setSessionToken(sessionToken);
             }
         }
