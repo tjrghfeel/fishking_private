@@ -36,6 +36,9 @@ export default (() => {
             resolve(response.data);
           })
           .catch((err) => {
+            ModalStore.openModal("Alert", {
+              body: "요청 중 에러가 발생하였습니다.",
+            });
             console.error(`message:${err.message}`);
             console.error(`stack:${err.stack}`);
             reject(err);
