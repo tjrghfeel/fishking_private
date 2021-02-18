@@ -90,6 +90,9 @@ public class Member {
     @Embedded
     private Address address;
 
+    @Column(columnDefinition = "varchar(100) comment '푸쉬알림용 등록토큰'")
+    private String registrationToken;
+
     @Builder
     public Member(Long id, String uid,
                   String memberName, String nickName,
@@ -131,4 +134,5 @@ public class Member {
     public void deActivateMember() {
         isActive = false;
     }
+    public void setRegistrationToken(String token){this.registrationToken = token;}
 }
