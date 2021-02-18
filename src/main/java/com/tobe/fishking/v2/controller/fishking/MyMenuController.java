@@ -334,7 +334,7 @@ public class MyMenuController {
     @ApiOperation(value = "물때 알림 추가",notes = "" +
             "요청 필드  ) \n" +
             "- observerId : Long / 필수 / 위치의 id\n" +
-            "- tide : Integer[] / 필수 / 알림 물때의 리스트\n" +
+            "- tide : Integer[] / 필수 / 알림 물때의 리스트 / 1물 : 배열에 1추가, 조금 : 15입력. \n" +
             "- day : Integer[] / 필수 / 몇일 전에 알림을 받을지 리스트\n" +
             "- time : Integer[] / 필수 / 몇시에 알림을 받을지 리스트\n" +
             "응답 필드 ) 성공시 true\n")

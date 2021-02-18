@@ -1138,26 +1138,32 @@ public class MemberService {
      * - 아디, 비번확인하고 아니면 예외처리??, 맞으면 세션토큰생성하여 저장하고 반환. */
     @Transactional
     public String login(LoginDTO loginDTO) throws ResourceNotFoundException {
+        System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
         Member member = memberRepository.findByUid(loginDTO.getMemberId())
                 .orElseThrow(()->new ResourceNotFoundException("아이디가 존재하지 않습니다"));
+        System.out.println("memberId : "+member.getId());
         if(member==null){
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
+            System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
             /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
+                System.out.println("token already exists");
                 member.setRegistrationToken(loginDTO.getRegistrationToken());
                 sessionToken = member.getSessionToken();
             }
             else {
+                System.out.println("token not exists");
                 /*세션토큰 생성 및 저장. */
                 String rawToken = member.getUid() + LocalDateTime.now();
                 sessionToken = encoder.encode(rawToken);
 
+                System.out.println("token : "+sessionToken);
                 member.setRegistrationToken(loginDTO.getRegistrationToken());
                 member.setSessionToken(sessionToken);
             }

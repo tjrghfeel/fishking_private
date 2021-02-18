@@ -76,4 +76,5 @@ public class Alerts extends BaseTime {
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint NOT NULL   comment '생성자'  ")
     private Member createdBy;
 
+    public void sent(){this.isSent=true;}
 }

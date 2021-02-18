@@ -495,21 +495,30 @@ public class MyMenuService {
         String todaySolar = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String todayLunar = holidayUtil.convertSolarToLunar(todaySolar);
 
+        String[] contentTideList = new String[tideList.length];
+
         for(int i=0; i<tideList.length; i++){
             /*물때 계산*/
             Integer afterDays = null; //알람 요청한 물때가 현재로부터 몇일 후인지.
-            if(seaDirection == SeaDirection.west){
-                Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
-                Integer tide = (lunarDay+6)%15;
-                afterDays = tideList[i] - tide;
-                if(afterDays<0) afterDays += 15;
-            }
-            else if(seaDirection == SeaDirection.east || seaDirection == SeaDirection.south){
+//            if(seaDirection == SeaDirection.west){
+//                Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
+//                Integer tide = (lunarDay+6)%15;
+//                afterDays = tideList[i] - tide;
+//                if(afterDays<0) afterDays += 15;
+//
+//                if(tideList[i]==0){contentTideList[i] = "무시";}
+//                else if(tideList[i]==14){contentTideList[i] = "조금";}
+//                else{contentTideList[i] = tideList[i]+"물";}
+//            }
+//            else if(seaDirection == SeaDirection.east || seaDirection == SeaDirection.south){
                 Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
                 Integer tide = (lunarDay+6)%15 +1;
                 afterDays = tideList[i] - tide;
                 if(afterDays<0) afterDays += 15;
-            }
+
+                if(tideList[i]==15){contentTideList[i] = "조금";}
+                else{contentTideList[i] = tideList[i]+"물";}
+//            }
 
             for(int j=0; j<dayList.length; j++){
 
@@ -524,7 +533,7 @@ public class MyMenuService {
 
                     Alerts alerts = Alerts.builder()
                             .alertType(AlertType.tide)
-                            .content(observer.getName()+" "+tideList[i]+" "+dayList[j]+" "+timeList[l])
+                            .content(observer.getName()+" "+contentTideList[i]+" "+dayList[j]+" "+timeList[l])
                             .isRead(false)
                             .receiver(member)
                             .alertTime(today)

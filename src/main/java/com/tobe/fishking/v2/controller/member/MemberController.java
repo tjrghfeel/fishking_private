@@ -214,7 +214,11 @@ public class MemberController {
     }*/
 
     /*로그인*/
-    @ApiOperation(value = "로그인")
+    @ApiOperation(value = "로그인",notes = "" +
+            "요청 필드 ) \n" +
+            "- memberId : String / 필수 / 회원 아이디\n" +
+            "- password : String / 필수 / 비밀번호\n" +
+            "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
     @PostMapping("/login")
     public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException {
         return memberService.login(loginDTO);
