@@ -40,7 +40,6 @@ export default inject(
             PageStore,
           } = this.props;
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
-          console.log(JSON.stringify(resolve));
           this.setState(resolve);
 
           // # 비디오 표시

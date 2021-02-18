@@ -52,9 +52,7 @@ export default inject()(
                       <p>
                         <strong>{fishingType}</strong>
                         <br />
-                        <span className="grey">
-                          {sigungu} {Intl.NumberFormat().format(distance)}km
-                        </span>
+                        <span className="grey">{sigungu}</span>
                       </p>
                     </div>
                   </div>

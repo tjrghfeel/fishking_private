@@ -9,22 +9,25 @@ const {
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "ModalStore"
 )(
   observer(
     withRouter(
       class extends React.Component {
         constructor(props) {
           super(props);
-          this.state = {
-            title: null,
-            list: [],
-          };
+          this.file = React.createRef(null);
+          this.text = React.createRef(null);
+          this.state = {};
         }
         /********** ********** ********** ********** **********/
         /** function */
         /********** ********** ********** ********** **********/
         async componentDidMount() {
+          this.loadPageData();
+        }
+        loadPageData = async (toScrollEnd = false) => {
           const {
             match: {
               params: { eventId },
@@ -37,13 +40,72 @@ export default inject(
             dependentType: "event",
             linkId: eventId,
           });
-          this.setState({ list: resolve });
-          console.log(JSON.stringify(resolve));
+          this.setState(resolve);
 
-          const qp = PageStore.getQueryParams();
-          this.setState({ title: qp.title || null });
-        }
+          if (toScrollEnd) {
+            setTimeout(() => {
+              window.scrollTo(0, document.scrollingElement.scrollHeight);
+            }, 100);
+          }
+        };
+        onClickReply = async (item) => {};
+        onClickMore = async (item) => {
+          const { ModalStore } = this.props;
+          ModalStore.openModal("Select", {
+            selectOptions: ["수정하기", "삭제하기", "닫기"],
+            onSelect: ({ index }) => this.onCallbackMore(item, index),
+          });
+        };
+        onCallbackMore = async (item, index) => {
+          const { APIStore } = this.props;
+          if (index === 1) {
+            // 삭제하기
+            const resolve = await APIStore._delete("/v2/api/comment", {
+              commentId: item.commentId,
+            });
+            if (resolve) this.loadPageData();
+          }
+        };
+        onClickLike = async (item) => {
+          const { APIStore } = this.props;
+          if (item.isLikeTo) {
+            // >>>>> 좋아요 취소
+            const resolve = await APIStore._delete("/v2/api/loveto", {
+              takeType: "commonComment",
+              linkId: item.commentId,
+            });
+            if (resolve) this.loadPageData();
+          } else {
+            // >>>>> 좋아요
+            const resolve = await APIStore._post("/v2/api/loveto", {
+              takeType: "commonComment",
+              linkId: item.commentId,
+            });
+            if (resolve) this.loadPageData();
+          }
+        };
+        onSubmit = async () => {
+          const text = this.text.current?.value;
+          if (text === "") return;
 
+          const {
+            APIStore,
+            match: {
+              params: { eventId },
+            },
+          } = this.props;
+          const resolve = await APIStore._post(`/v2/api/comment`, {
+            dependentType: "event",
+            linkId: eventId,
+            parentId: 0,
+            content: text,
+            fileId: null,
+          });
+          if (resolve) {
+            this.text.current.value = "";
+            this.loadPageData(true);
+          }
+        };
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
@@ -66,7 +128,9 @@ export default inject(
                     <h5 className="">
                       댓글{" "}
                       <span className="red">
-                        {Intl.NumberFormat().format(this.state.list.length)}
+                        {Intl.NumberFormat().format(
+                          this.state.commentCount || 0
+                        )}
                       </span>
                     </h5>
                   </div>
@@ -75,16 +139,69 @@ export default inject(
               </div>
 
               {/** 리스트 */}
-              {this.state.list &&
-                this.state.list.map((data, index) => (
-                  <React.Fragment>
-                    <CommentListItemView key={index} data={data} />
-                    {data.childList &&
-                      data.childList.map((item, index2) => (
-                        <CommentListItemView key={index2} data={item} />
-                      ))}
-                  </React.Fragment>
-                ))}
+              {this.state.commentList?.map((data, index) => (
+                <React.Fragment>
+                  <CommentListItemView
+                    key={index}
+                    data={data}
+                    onClickReply={this.onClickReply}
+                    onClickMore={this.onClickMore}
+                    onClickLike={this.onClickLike}
+                  />
+                  {data.childList &&
+                    data.childList.map((item, index2) => (
+                      <CommentListItemView
+                        key={index2}
+                        data={item}
+                        onClickReply={this.onClickReply}
+                        onClickMore={this.onClickMore}
+                        onClickLike={this.onClickLike}
+                      />
+                    ))}
+                </React.Fragment>
+              ))}
+
+              {/** Tab Menu */}
+              <div className="tab_barwrap fixed-bottom">
+                <div className="container nopadding">
+                  <form className="form-line" style={{ marginTop: "1px" }}>
+                    <div className="form-group row">
+                      <div className="col-10">
+                        <input
+                          ref={this.file}
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                        />
+                        <a
+                          className="float-photo"
+                          onClick={() => this.file.current?.click()}
+                        >
+                          <img
+                            src="/assets/cust/img/svg/icon-photo.svg"
+                            alt="사진"
+                            className="icon-sm"
+                          />
+                        </a>
+                        <input
+                          ref={this.text}
+                          type="text"
+                          className="form-control no-line ml-4"
+                          placeholder="댓글을 입력해주세요."
+                        />
+                      </div>
+                      <div className="col-2 text-right">
+                        <a
+                          className="btn btn-primary btn-sm-nav-tab"
+                          onClick={this.onSubmit}
+                        >
+                          등록
+                        </a>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </React.Fragment>
           );
         }

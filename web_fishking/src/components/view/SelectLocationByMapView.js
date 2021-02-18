@@ -12,7 +12,7 @@ export default inject("PageStore")(
         this.map = null;
         this.markers = [];
         this.geocoder = new kakao.maps.services.Geocoder();
-        this.state = { address: "" };
+        this.state = { address: "", lat: 0, lng: 0 };
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -43,7 +43,7 @@ export default inject("PageStore")(
           this.geocoder.coord2Address(lng, lat, (result, status) => {
             if (status === kakao.maps.services.Status.OK) {
               const address = result[0]["address"]["address_name"];
-              this.setState({ address });
+              this.setState({ address, lat, lng });
             }
           });
 
@@ -59,7 +59,11 @@ export default inject("PageStore")(
       onSelected = () => {
         const { onSelected } = this.props;
         if (onSelected && this.state.address.length > 0) {
-          onSelected(this.state.address);
+          onSelected({
+            address: this.state.address,
+            lat: this.state.lat,
+            lng: this.state.lng,
+          });
         }
       };
 

@@ -138,9 +138,13 @@ export default inject(
         };
         requestReservation = () => {
           // TODO : 다시 예약하기
-            console.log(JSON.stringify(this.state));
-            const { PageStore } = this.props;
-            PageStore.push(`/company/${this.state.fishingType === '선상'? 'boat' : 'rock'}/detail/${this.state.shipId}`);
+          console.log(JSON.stringify(this.state));
+          const { PageStore } = this.props;
+          PageStore.push(
+            `/company/${
+              this.state.fishingType === "선상" ? "boat" : "rock"
+            }/detail/${this.state.shipId}`
+          );
         };
         /********** ********** ********** ********** **********/
         /** render */
@@ -183,8 +187,7 @@ export default inject(
                     <span className="grey">
                       {" "}
                       <small>|</small>
-                      {this.state.sigungu}{" "}
-                      {Intl.NumberFormat().format(this.state.distance || 0)}km
+                      {this.state.sigungu}
                     </span>
                   </p>
                   <div className="row no-gutters">

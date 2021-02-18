@@ -9,7 +9,7 @@ export default inject("APIStore")(
           <div
             style={{
               zIndex: 9999,
-              backgroundColor: "#00000044",
+              backgroundColor: "#000000AA",
               position: "fixed",
               top: 0,
               bottom: 0,

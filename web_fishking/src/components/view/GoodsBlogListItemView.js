@@ -25,17 +25,6 @@ export default inject()(
                 </div>
                 <div className="cardTextWrap">
                   <div className="card-body">
-                    <a
-                      href="#none"
-                      className="ellipsis"
-                      data-toggle="modal"
-                      data-target="#ellipsisModal"
-                    >
-                      <img
-                        src="/assets/cust/img/svg/icon-ellipsis.svg"
-                        alt="메뉴더보기"
-                      />
-                    </a>
                     <h6>{title}</h6>
                     <p>{content}</p>
                     <div className="media">
