@@ -182,7 +182,8 @@ public class ShipController {
     @ResponseBody
     public List<GoodsResponse> shipGoods(
             @RequestHeader(name = "Authorization") String sessionToken,
-            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
+//            @ApiParam(value = "선택 날짜", required = true, example = "2021-02-19") @PathVariable String date,
+        @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
         return shipService.getShipGoods(ship_id);
     }
 
@@ -250,10 +251,10 @@ public class ShipController {
     public OrderResponse Reserve(
 //            @RequestHeader(name = "Authorization") String sessionToken,
             ReserveDTO reserveDTO,
-            @RequestParam(value = "positions[]") Integer[] positions,
-            @RequestParam(value = "personsName[]") String[] personsName,
-            @RequestParam(value = "personsPhone[]") String[] personsPhone,
-            @RequestParam(value = "personsBirthdate[]") String[] personsBirthdate,
+            @RequestParam(value = "positions") Integer[] positions,
+            @RequestParam(value = "personsName") String[] personsName,
+            @RequestParam(value = "personsPhone") String[] personsPhone,
+            @RequestParam(value = "personsBirthdate") String[] personsBirthdate,
             @RequestParam(value = "token", required = false) String token,
             Model model) {
 //        Member member = memberService.getMemberBySessionToken(sessionToken);
