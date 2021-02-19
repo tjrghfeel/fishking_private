@@ -28,6 +28,14 @@ export default inject("PageStore")(
     // # >>>>> 기본 설정
     PageStore.setHistory(history);
     PageStore.loadAccessToken("cust");
+
+    // # >>>>> 화면 접근 권한 체크 :: 로그인화면으로 리디렉트
+    if (
+      !PageStore.loggedIn &&
+      history.location.pathname.indexOf(`/reservation/goods/`) !== -1
+    ) {
+      window.location.href = "/cust/member/login";
+    }
     return (
       <BrowserRouter>
         <Switch>

@@ -26,6 +26,11 @@ export default inject(
     class extends React.Component {
       constructor(props) {
         super(props);
+        this.selDateModal = React.createRef(null);
+        this.selAreaModal = React.createRef(null);
+        this.selFishModal = React.createRef(null);
+        this.selSortModal = React.createRef(null);
+        this.selOptionModal = React.createRef(null);
         this.state = {
           filterLiveActive: false,
           filterDateText: "날짜",
@@ -50,6 +55,11 @@ export default inject(
             params: { fishingType },
           },
         } = this.props;
+        const qp = PageStore.getQueryParams();
+        let fishingDate = null;
+        if ((qp.fishingDate || null) !== null) {
+          fishingDate = new Date(qp.fishingDate).format("-");
+        }
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
@@ -61,7 +71,7 @@ export default inject(
           page: 0,
           size: 20,
           hasRealTimeVideo: "",
-          fishingDate: null,
+          fishingDate: fishingDate,
           sido: null,
           species: null,
           orderBy: "popular",
@@ -97,8 +107,6 @@ export default inject(
           services: PageStore.state.services,
         });
 
-        console.log(JSON.stringify(content));
-
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {
@@ -128,6 +136,10 @@ export default inject(
         PageStore.storeState();
         if (text === "통합가이드") {
           PageStore.push(`/guide/main`);
+        } else if (text === "지도보기") {
+          PageStore.push(``);
+        } else if (text === "예약검색") {
+          PageStore.push(`/search/reserve`);
         }
       };
       /********** ********** ********** ********** **********/
@@ -143,6 +155,7 @@ export default inject(
         return (
           <React.Fragment>
             <SelectDateModal
+              ref={this.selDateModal}
               id={"selDateModal"}
               onSelected={(selected) => {
                 PageStore.setState({ fishingDate: selected.format() });
@@ -151,6 +164,7 @@ export default inject(
               }}
             />
             <SelectAreaModal
+              ref={this.selAreaModal}
               id={"selAreaModal"}
               onSelected={(selected) => {
                 if (selected == null) {
@@ -164,6 +178,7 @@ export default inject(
               }}
             />
             <SelectFishModal
+              ref={this.selFishModal}
               id={"selFishModal"}
               onSelected={(selected) => {
                 if (selected == null || selected.length == 0) {
@@ -181,6 +196,7 @@ export default inject(
               }}
             />
             <SelectCompanySortModal
+              ref={this.selSortModal}
               id={"selSortModal"}
               onSelected={(selected) => {
                 PageStore.setState({ orderBy: selected.value });
@@ -188,6 +204,7 @@ export default inject(
               }}
             />
             <SelectCompanyOptionModal
+              ref={this.selOptionModal}
               id={"selOptionModal"}
               onSelected={(selectedService, selectedFacility) => {
                 if (
@@ -246,6 +263,7 @@ export default inject(
                   onClickClear: () => {
                     this.setState({ filterDateActive: false });
                     PageStore.setState({ fishingDate: null });
+                    this.selDateModal.current?.onInit();
                     this.loadPageData(0);
                   },
                 },
@@ -256,6 +274,7 @@ export default inject(
                   onClickClear: () => {
                     this.setState({ filterAreaActive: false });
                     PageStore.setState({ sido: null });
+                    this.selAreaModal.current?.onInit();
                     this.loadPageData(0);
                   },
                 },
@@ -266,6 +285,7 @@ export default inject(
                   onClickClear: () => {
                     this.setState({ filterFishActive: false });
                     PageStore.setState({ species: null });
+                    this.selFishModal.current?.onInit();
                     this.loadPageData(0);
                   },
                 },
@@ -275,6 +295,7 @@ export default inject(
                   modalTarget: "selSortModal",
                   onClickClear: () => {
                     PageStore.setState({ orderBy: "popular" });
+                    this.selFishModal.current?.onInit();
                     this.loadPageData(0);
                   },
                 },
@@ -285,6 +306,7 @@ export default inject(
                   onClickClear: () => {
                     this.setState({ filterOptionActive: false });
                     PageStore.setState({ services: null, facilities: null });
+                    this.selOptionModal.current?.onInit();
                     this.loadPageData(0);
                   },
                 },

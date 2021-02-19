@@ -7,7 +7,6 @@ export default inject()(
       id = "",
       data: { fishSpecies = [], minPersonnel = 0, maxPersonnel = 0 },
     }) => {
-      console.log(fishSpecies);
       return (
         <div
           className="modal fade modal-full"

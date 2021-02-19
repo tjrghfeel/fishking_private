@@ -16,6 +16,7 @@ export default inject("PageStore")(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             {/** Navigation */}
@@ -34,7 +35,7 @@ export default inject("PageStore")(
                   aria-label="Search"
                   disabled
                 />
-                <a>
+                <a onClick={() => PageStore.push(`/search/reserve`)}>
                   <img
                     src="/assets/cust/img/svg/navbar-search.svg"
                     alt="Search"

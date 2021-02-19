@@ -1,3 +1,4 @@
+/* global $ */
 import { makeAutoObservable } from "mobx";
 import qs from "qs";
 import * as path from "path";
@@ -28,7 +29,6 @@ const PageStore = new (class {
     )
       service = "";
     else service = "/" + service;
-    console.log(`${service}${pathname}`);
     window.location.href = `${service}${pathname}`;
   };
   reload = () => {
@@ -181,6 +181,36 @@ const PageStore = new (class {
     for (let script of this.arr_injected_scripts) {
       script.remove();
     }
+  };
+  applySwipe = () => {
+    $(".carousel").swipe({
+      swipe: function (
+        event,
+        direction,
+        distance,
+        duration,
+        fingerCount,
+        fingerData
+      ) {
+        if (direction == "left") $(this).carousel("next");
+        if (direction == "right") $(this).carousel("prev");
+      },
+      tap: function (event, target) {
+        // navigateTo(url)
+      },
+
+      allowPageScroll: "vertical",
+      excludedElements: "label, button, input, select, textarea, .noSwipe",
+      threshold: 1,
+    });
+
+    $(document).swipe({
+      swipe: function (event, direction, distance, duration, fingerCount) {},
+      click: function (event, target) {
+        $(target).click();
+      },
+      threshold: 75,
+    });
   };
 })();
 
