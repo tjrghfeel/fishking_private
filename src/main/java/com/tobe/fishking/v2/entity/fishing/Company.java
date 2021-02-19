@@ -124,6 +124,17 @@ public class Company extends BaseTime {  //선상
     @Column(columnDefinition = "bit default 0   comment '등록여부'  ")
     private Boolean isRegistered;
 
+    @Column(columnDefinition = "varchar(20) comment 'ADT캡스 아이디'")
+    private String adtId;
+    @Convert(converter = StringConverter.class)
+    @Column(columnDefinition = "varchar(20) comment 'ADT캡스 비번")
+    private String adtPw;
+
+    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 아이디'")
+    private String nhnId;
+    @Convert(converter = StringConverter.class)
+    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 비번'")
+    private String nhnPw;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', company, 'COLUMN',  created_by
     @ManyToOne

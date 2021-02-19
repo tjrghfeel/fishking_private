@@ -211,7 +211,7 @@ public class MyMenuService {
     @Transactional
     public List<ObserverDtoList> getSearchPointList(String token, AlertType alertType) throws ResourceNotFoundException {
         Long memberId = null;
-        if(token != null) {
+        if(token != null || token.equals("")) {
             Member member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
             memberId = member.getId();
@@ -224,7 +224,7 @@ public class MyMenuService {
     public TodayTideDto getTodayTide(Long observerId, String token) throws IOException, ResourceNotFoundException {
         TodayTideDto result = null;
         Member member = null;
-        if(token !=null) {
+        if(token !=null || token.equals("")) {
             member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
         }
@@ -420,7 +420,7 @@ public class MyMenuService {
     ) throws ResourceNotFoundException, IOException, ParseException {
         TideByDateDto result = null;
         Member member = null;
-        if(token != null) {
+        if(token != null || token.equals("")) {
             member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
         }
@@ -466,7 +466,7 @@ public class MyMenuService {
                 .observerId(observerId)
                 .observerName(observer.getName())
                 .isAlerted(isAlerted)
-                .date(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .date(dateString)
                 .tideList(tideList)
 //                .tideTimeList(tideTimeList)
 //                .tideLevelList(tideLevelList)
@@ -476,10 +476,15 @@ public class MyMenuService {
                 .build();
 
         /*날씨*/
+
+        result.setWeather(getWeather(observer,dateString));
+
+        return result;
+    }
+
+    /*중기예보로 날짜별 날씨 반환.*/
+    public String getWeather(ObserverCode observer, String dateString) throws IOException, ParseException {
         String weather = null;
-        Integer sky = null;
-        Integer pty = null;
-        String todayDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         LocalDateTime currentTime = LocalDateTime.now();
         int time = currentTime.getHour();
@@ -497,7 +502,7 @@ public class MyMenuService {
                 "&pageNo=1" +
                 "&numOfRows=50" +
                 "&dataType=JSON" +
-                "&regId=12D00000" + //observer.getForecastCode() +
+                "&regId=" + observer.getForecastCode() +
                 "&tmFc=" + tmFc;
         String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
         System.out.println("result>>> "+response);
@@ -521,9 +526,7 @@ public class MyMenuService {
         else{
             weather = data.get("wf"+dayDiff) +"";
         }
-        result.setWeather(weather);
-
-        return result;
+        return weather;
     }
 
     /*물때 알림 추가*/
@@ -564,8 +567,8 @@ public class MyMenuService {
                 afterDays = tideList[i] - tide;
                 if(afterDays<0) afterDays += 15;
 
-                if(tideList[i]==15){contentTideList[i] = "조금";}
-                else{contentTideList[i] = tideList[i]+"물";}
+//                if(tideList[i]==15){contentTideList[i] = "조금";}
+//                else{contentTideList[i] = tideList[i]+"물";}
 //            }
 
             for(int j=0; j<dayList.length; j++){
@@ -581,7 +584,7 @@ public class MyMenuService {
 
                     Alerts alerts = Alerts.builder()
                             .alertType(AlertType.tide)
-                            .content(observer.getName()+" "+contentTideList[i]+" "+dayList[j]+" "+timeList[l])
+                            .content(observer.getName()+" "+tideList[i]+" "+dayList[j]+" "+timeList[l])
                             .isRead(false)
                             .receiver(member)
                             .alertTime(today)

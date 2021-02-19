@@ -50,6 +50,10 @@ public class CompanyController {
             "   bizNoFile : 사업자등록증 이미지 파일\n" +
             "   representFile : 대표자 신분증 파일\n" +
             "   accountFile : 정산통장사본 이미지파일\n" +
+            "   adtId : String / adt캡스 아이디\n" +
+            "   adtPw : String / adt캡스 비번\n" +
+            "   nhnId : String / nhn토스트캠 아이디\n" +
+            "   nhnPw : String / nhn토스트캠 비번\n" +
             "- 응답 ) 등록대기중인 업체 id ")
     @PostMapping("/company")
     public Long handleCompanyRegisterReq(

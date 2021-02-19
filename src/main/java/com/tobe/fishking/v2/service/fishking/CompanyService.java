@@ -92,6 +92,10 @@ public class CompanyService {
                 .createdBy(member)
                 .modifiedBy(member)
                 .member(member)
+                .adtId(dto.getAdtId())
+                .adtPw(dto.getAdtPw())
+                .nhnId(dto.getNhnId())
+                .nhnPw(dto.getNhnPw())
                 .build();
         company = companyRepository.save(company);
 

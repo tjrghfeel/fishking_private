@@ -55,6 +55,7 @@ public class AlertService {
                 .content(dto.getContent())
                 .receiver(receiver)
                 .createdBy(createdBy)
+                .isSent(false)
                 .build();
         return alertsRepo.save(alerts).getId();
     }

@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.AddAlertDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
 import com.tobe.fishking.v2.model.common.Location;
+import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
@@ -32,12 +33,13 @@ public class FishkingScheduler {
     AlertsRepository alertsRepository;
     @Autowired
     MemberService memberService;
+    @Autowired
+    MemberRepository memberRepository;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
-    @Scheduled(cron = "0 0 4 * * *")
-    void checkCouponExpire() throws ResourceNotFoundException {
-        System.out.println("coupon expire scheduler start.");
+    @Scheduled(cron = "0 0 12 * * *")
+    void checkCouponExpire() throws ResourceNotFoundException, IOException {
         List<CouponMemberDTO> couponList = couponMemberRepository.checkCouponExpire();
 
         for(int i=0; i<couponList.size(); i++){
@@ -50,7 +52,17 @@ public class FishkingScheduler {
                     .content(dto.getCouponName())
                     .createdBy(16L)
                     .build();
-            alertService.addAlert(addAlertDto);
+            Long alertId = alertService.addAlert(addAlertDto);
+            Alerts alerts = alertsRepository.findById(alertId)
+                    .orElseThrow(()->new ResourceNotFoundException("alerts not found for this id :: "+alertId));
+
+            Member receiver = memberRepository.findById(dto.getMember())
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMember()));
+            String registrationToken = receiver.getRegistrationToken();
+            String alertTitle = "쿠폰 만료 알림";
+            String alertContent = dto.getCouponName()+"의 유효기간이 7일 남았습니다.";
+
+            sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
         }
     }
 
@@ -74,22 +86,12 @@ public class FishkingScheduler {
             String alertContent = null;
 
             /*알림 내용 생성*/
+            if(alertData[1].equals("15")){alertData[1] = "조금";}
+            else{alertData[1] += "물";}
             alertContent = alertData[0] + " " + alertData[1] + " " + alertData[2] + "일 전 " + alertData[3] + "시 알림";
 
             /*푸쉬알림 보내기. */
-            String url = "https://fcm.googleapis.com/fcm/send";
-            Map<String,String> parameter = new HashMap<>();
-            parameter.put("json",
-                    "{ \"notification\": " +
-                            "{" +
-                            "\"title\": \""+alertTitle+"\", " +
-                            "\"body\": \""+alertContent+"\", " +
-                            "\"android_channel_id\": \"notification.native_fishking\"" +
-                            "}," +
-                            "\"to\" : \""+registrationToken+"\"" +
-                    "}");
-            memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
-            alerts.sent();
+            sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
         }
 
     }
@@ -115,31 +117,33 @@ public class FishkingScheduler {
             String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
             Integer time = Integer.parseInt(alertData[2]);
             String timeString = null;
-            if(time<0){timeString = time+"시간 전";}
-            else if(time>0){timeString = time+"시간 후";}
+            if(time<0){timeString = Math.abs(time)+"시간 전";}
+            else if(time>0){timeString = Math.abs(time)+"시간 후";}
             else{timeString="";}
-            time = Math.abs(time);
             String alertContent = alertData[0] + " " + " " + tideHighLow + " " + timeString+" 알림" ;
 
             /*푸쉬알림 보내기. */
-            String url = "https://fcm.googleapis.com/fcm/send";
-            Map<String,String> parameter = new HashMap<>();
-            parameter.put("json",
-                    "{ \"notification\": " +
-                            "{" +
-                            "\"title\": \""+alertTitle+"\", " +
-                            "\"body\": \""+alertContent+"\", " +
-                            "\"android_channel_id\": \"notification.native_fishking\"" +
-                            "}," +
-                            "\"to\" : \""+registrationToken+"\"" +
-                            "}");
-            memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
-//            alerts.sent();
-//            alertsRepository.save(alerts);
+            sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
         }
     }
 
     /*기상 특보? 알림. */
 
-    /**/
+    /*푸쉬알림 보내기*/
+    public void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {
+        String url = "https://fcm.googleapis.com/fcm/send";
+        Map<String,String> parameter = new HashMap<>();
+        parameter.put("json",
+                "{ \"notification\": " +
+                        "{" +
+                        "\"title\": \""+alertTitle+"\", " +
+                        "\"body\": \""+alertContent+"\", " +
+                        "\"android_channel_id\": \"notification.native_fishking\"" +
+                        "}," +
+                        "\"to\" : \""+registrationToken+"\"" +
+                        "}");
+        memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
+        alerts.sent();
+        alertsRepository.save(alerts);
+    }
 }

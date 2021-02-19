@@ -56,4 +56,8 @@ public class CompanyWriteDTO {
     @NotNull
     private Long accountFile;
 
+    private String adtId;
+    private String adtPw;
+    private String nhnId;
+    private String nhnPw;
 }

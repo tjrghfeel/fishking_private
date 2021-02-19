@@ -243,7 +243,7 @@ public class MyMenuController {
             "- observerId : Long / 관측소의 id\n" +
             "- observerName : String / 관측소 명\n" +
             "- observerCode : String / 관측소 코드\n" +
-            "- isAlerted : Boolean / 현재 관측소에 대해 알람이 설정되어 있는지여부\n")
+            "- isAlerted : Boolean / 현재 관측소에 대해 알람이 설정되어 있는지여부(로그인 되어있는경우에만 true일 수 있다)\n")
     @GetMapping("/searchPointList")
     public List<ObserverDtoList> getSearchPointList(
             @RequestHeader(value = "Authorization",required = false) String token
@@ -262,11 +262,10 @@ public class MyMenuController {
             "- isAlerted : Boolean / 현재 관측소에 대해 알림설정이 되어있는지 여부\n" +
             "- date : String / 오늘 날짜\n" +
             "- weather : String / 현재 날씨\n" +
-            "- tideList : \n [{ +\n" +
-            "            \n     dateTime: 날짜 +\n" +
-            "            \n     level: 조위 +\n" +
-            "            \n     peak: 고조/저조 +\n" +
-            "            \n }, ... ]" +
+            "- tideList : 조위 최고, 최저 객체 리스트. 객체의 필드들은 아래와 같다. \n" +
+            "\t\t\t     ㄴ dateTime: 날짜 \n" +
+            "\t\t\t     ㄴ level: 조위 \n" +
+            "\t\t\t     ㄴ peak: 고조/저조 \n" +
             "- highWater : Boolean / 만조 알림 여부\n" +
             "- highWaterBefore1 : Boolean / 만조 1시간 전 알림 여부\n" +
             "- highWaterBefore2 : Boolean / 만조 2시간 전 알림 여부\n" +
@@ -289,7 +288,7 @@ public class MyMenuController {
     /*조위 알림 추가*/
     @ApiOperation(value = "오늘의 물때 알림 추가",notes = "" +
             "요청 필드 ) \n" +
-            "- highTideAlert : Integer[] / 만조 알람 시간이 들어있는 배열. ex) 만조 두시간 전 알림 : -2, 만조 한시간 후 알림 : 1, 만조 알림 : 0\n" +
+            "- highTideAlert : Integer[] / 만조 알람 시간이 들어있는 배열. ex) 만조 두시간 전 알림이면 -2, 만조 한시간 후 알림이면 1, 만조 알림이면 0\n" +
             "- lowTideAlert : Integer[] / 간조 알림 시간이 들어있는 배열. highTideAlert와 동일한 방식.\n" +
             "- observerId : Long / 관측소 id\n" +
             "- 헤더에 세션토큰 필수. \n" +
@@ -313,12 +312,12 @@ public class MyMenuController {
             "- observerName : String / 관측소 명\n" +
             "- isAlerted : Boolean / 현재 관측소에 대해 알림이 설정되어있는지 여부\n" +
             "- date : String / 날짜\n" +
-            "- tideList : \n [{ +\n" +
-            "            \n     dateTime: 날짜 +\n" +
-            "            \n     level: 조위 +\n" +
-            "            \n     peak: 고조/저조 +\n" +
-            "            \n }, ... ]" +
-            "- alertTideList : Boolean형 배열 / 물때 알림 여부. index순서대로 1물,2물,...,13물,14물,조금.\n" +
+            "- weather : String / 날씨. 현재를 기준으로 3일후부터 10일까지의 데이터만존재. 없을시 null. 3~7일까지는 오전,오후날씨. 이후로는 하루평균날씨.\n " +
+            "- tideList : 조위 최고, 최저 객체 리스트. 객체의 필드들은 아래와 같다. \n" +
+            "\t\t\t     ㄴ dateTime: 날짜 \n" +
+            "\t\t\t     ㄴ level: 조위 \n" +
+            "\t\t\t     ㄴ peak: 고조/저조 \n" +
+            "- alertTideList : Boolean형 배열 / 물때 알림 여부. index순서대로 1물,2물,...,13물,14물,15물(조금).\n" +
             "- alertDayList : Boolean형 배열 / 몇일전 알림 여부. index순서대로 1일전,2일전,...,7일전\n" +
             "- alertTimeList : Boolean형 배열 / 몇시 알림 여부. index순서대로 0시,3시,6시,9시,12시\n")
     @GetMapping("/tideByDate")
@@ -335,9 +334,9 @@ public class MyMenuController {
     @ApiOperation(value = "물때 알림 추가",notes = "" +
             "요청 필드  ) \n" +
             "- observerId : Long / 필수 / 위치의 id\n" +
-            "- tide : Integer[] / 필수 / 알림 물때의 리스트 / 1물 : 배열에 1추가, 조금 : 15입력. \n" +
-            "- day : Integer[] / 필수 / 몇일 전에 알림을 받을지 리스트\n" +
-            "- time : Integer[] / 필수 / 몇시에 알림을 받을지 리스트\n" +
+            "- tide : Integer[] / 필수 / 알림 물때의 리스트 / 1물 : 배열에 1추가, 조금 : 15추가. \n" +
+            "- day : Integer[] / 필수 / 몇일 전에 알림을 받을지 리스트. 1일전이면 1추가, 7일전이면 7추가. \n" +
+            "- time : Integer[] / 필수 / 몇시에 알림을 받을지 리스트. 0시,3시,6시,9시,12시만 가능하며, 입력은 3시일경우 3, 12시일경우 12, ...\n" +
             "응답 필드 ) 성공시 true\n")
     @PostMapping("/addTideAlert")
     public Boolean addTideAlert(
