@@ -4,6 +4,7 @@ package com.tobe.fishking.v2.entity.common;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.common.AdType;
 import lombok.*;
 
@@ -32,9 +33,13 @@ public class Ad extends BaseTime {
         private AdType adType;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'상품정보', 'USER', DBO, 'TABLE', ad, 'COLUMN',  order_goods
+//        @ManyToOne
+//        @JoinColumn(name = "order_goods_id", columnDefinition = "bigint not null   comment '상품정보'  ")
+//        private Goods goods;
+
         @ManyToOne
-        @JoinColumn(name = "order_goods_id", columnDefinition = "bigint not null   comment '상품정보'  ")
-        private Goods goods;
+        @JoinColumn(columnDefinition = "bigint not null   comment '선박'  ")
+        private Ship ship;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'노출기간-시작', 'USER', DBO, 'TABLE', ad, 'COLUMN',  exposure_Start_Dt
         @Column(columnDefinition = "varchar(8)   comment '노출기간-시작'  ")
@@ -47,7 +52,6 @@ public class Ad extends BaseTime {
         // EXEC sp_addextendedproperty 'MS_Description', N'비고', 'USER', DBO, 'TABLE', ad, 'COLUMN',  remark
         @Column(columnDefinition = "varchar(500)   comment '비고'  ")
         private String remark;
-
 
         // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', ad, 'COLUMN',  created_by
         @ManyToOne

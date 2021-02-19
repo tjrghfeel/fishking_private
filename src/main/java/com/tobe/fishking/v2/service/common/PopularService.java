@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.Popular;
+import com.tobe.fishking.v2.entity.common.SearchKeyword;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
@@ -13,10 +14,7 @@ import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.PopularDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
-import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
-import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
-import com.tobe.fishking.v2.repository.common.FileRepository;
-import com.tobe.fishking.v2.repository.common.PopularRepository;
+import com.tobe.fishking.v2.repository.common.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +35,7 @@ public class PopularService {
     private final MemberRepository memberRepo;
     private final FileRepository fileRepo;
     private final PopularRepository popularRepo;
+    private final SearchKeywordRepository searchKeywordRepository;
 
 
     //검색 --
@@ -47,5 +47,9 @@ public class PopularService {
 
     }
 
-
+    /* 인기검색어 */
+    @Transactional
+    public List<String> getPopularKeyword() {
+        return searchKeywordRepository.getPopular().stream().map(SearchKeyword::getSearchKeyword).collect(Collectors.toList());
+    }
 }
