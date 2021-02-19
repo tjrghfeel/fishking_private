@@ -81,7 +81,7 @@ export default inject(
         if (index === 0) {
           // 선택안함
           this.setState({
-            couponId: null,
+            couponId: 0,
             discountPrice: 0,
             totalPrice: this.state.goodsPrice * this.state.personCount,
           });
@@ -202,7 +202,7 @@ export default inject(
           const resolve = await APIStore._get(`/v2/api/usableCoupons`);
           this.setState({
             coupons: resolve,
-            couponId: null,
+            couponId: 0,
             discountPrice: 0,
             totalPrice: this.state.goodsPrice * this.state.personCount,
             paymentPrice: this.state.goodsPrice * this.state.personCount,
@@ -247,9 +247,9 @@ export default inject(
             couponId,
             paymentPrice,
             totalPrice,
-            token,
           };
 
+          // console.log(JSON.stringify(params));
           const resolve = await APIStore._post(`/v2/api/ship/reserve`, params);
 
           if (resolve) {
