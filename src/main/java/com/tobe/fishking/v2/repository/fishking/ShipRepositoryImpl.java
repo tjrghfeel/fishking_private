@@ -98,6 +98,34 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
+    @Override
+    public List<ShipListResponse> searchAllForMap(ShipSearchDTO shipSearchDTO) {
+        NumberPath<Integer> aliasPrice = Expressions.numberPath(Integer.class, "price");
+        NumberPath<Integer> aliasSold = Expressions.numberPath(Integer.class, "sold");
+        NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
+
+        QueryResults<ShipListResponse> results = queryFactory
+                .select(Projections.constructor(ShipListResponse.class,
+                        ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
+                        ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
+                        ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
+                        ship
+                ))
+                .from(ship)
+                .where(eqFishingType(shipSearchDTO.getFishingType()),
+                        inSpecies(shipSearchDTO.getSpeciesList()),
+                        inFishingDate(shipSearchDTO.getFishingDate()),
+                        eqSido(shipSearchDTO.getSido()),
+                        eqSigungu(shipSearchDTO.getSigungu()),
+                        inGenres(shipSearchDTO.getGenresList()),
+                        inServices(shipSearchDTO.getServicesList()),
+                        inFacilities(shipSearchDTO.getFacilitiesList()),
+                        hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo())
+                )
+                .fetchResults();
+        return results.getResults();
+    }
+
     private BooleanExpression eqFishingType(String fishingType) {
         return fishingType.isEmpty() ? null : ship.fishingType.eq(FishingType.valueOf(fishingType));
     }

@@ -61,6 +61,67 @@ public class ShipController {
         return shipService.getShips(shipSearchDTO, page);
     }
 
+    @ApiOperation(value = "배 리스트", notes = "지도보기를 위한 배 리스트." +
+            "\n 해당 필터에 걸리는 모든 선박 정보를 보내줍니다." +
+            "\n 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다." +
+            "\n " +
+            "\n [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }]" +
+            "\n fishSpeciesCount: 대상 어종 수" +
+            "\n lowPrice: 상품 중 가장 낮은 가격" +
+            "\n sold: 결제 수 " +
+            "\n }, ... ]" +
+            "\n 상단에 선상/포인트/유저조행기 선택은 뺍니다." +
+            "\n 선상 탭에서 지도보기 누르는 경우는 선상만, 갯바위에서 누르는 경우는 갯바위만 (fishingType=ship|seaRocks) 보여줍니다.")
+    @GetMapping("/ships/map")
+    @ResponseBody
+    public List<ShipListResponse> getShipsForMap(ShipSearchDTO shipSearchDTO,
+                                           @RequestParam(value = "species[]", required = false) String[] species,
+                                           @RequestParam(value = "services[]", required = false) String[] services,
+                                           @RequestParam(value = "facilities[]", required = false) String[] facilities,
+                                           @RequestParam(value = "genres[]", required = false) String[] genres) {
+        if (species != null) {
+            if (species.length != 0 ) {
+                shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
+            }
+        }
+        if (services != null) {
+            if (services.length != 0) {
+                shipSearchDTO.setServicesList(Arrays.asList(services.clone()));
+            }
+        }
+        if (facilities != null) {
+            if (facilities.length != 0) {
+                shipSearchDTO.setFacilitiesList(Arrays.asList(facilities.clone()));
+            }
+        }
+        if (genres != null) {
+            if (genres.length != 0) {
+                shipSearchDTO.setGenresList(Arrays.asList(genres.clone()));
+            }
+        }
+        return shipService.getShipsForMap(shipSearchDTO);
+    }
+
     @ApiOperation(value = "배 정보", notes = "배 정보." +
             "\n id: ship_id" +
             "\n fishingType: fishingType" +

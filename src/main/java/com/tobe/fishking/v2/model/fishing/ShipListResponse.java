@@ -39,7 +39,7 @@ public class ShipListResponse {
         this.shipName = ship.getShipName();
         this.sido = ship.getSido();
         this.sigungu = ship.getSigungu();
-        this.distance = ship.getDistance();
+//        this.distance = ship.getDistance();
         this.location = ship.getLocation();
         this.address = ship.getAddress();
         this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());

@@ -162,6 +162,11 @@ public class ShipService {
         return shipRepo.searchAll(shipSearchDTO, pageable);
     }
 
+    @Transactional
+    public List<ShipListResponse> getShipsForMap(ShipSearchDTO  shipSearchDTO) {
+        return shipRepo.searchAllForMap(shipSearchDTO);
+    }
+
     /* 선상, 갯바위 배 정보 */
     @Transactional
     public ShipResponse getShipDetail(Long ship_id, String sessionToken) {
