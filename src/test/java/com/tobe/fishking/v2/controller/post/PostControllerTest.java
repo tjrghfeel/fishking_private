@@ -162,7 +162,7 @@ public class PostControllerTest {
 
     @Test
     public void noName() throws Exception {
-        Member member = memberRepository.findById(108L)
+        Member member = memberRepository.findById(111L)
                 .orElseThrow(()->new ResourceNotFoundException(""));
         memberRepository.deleteById(member.getId());
 

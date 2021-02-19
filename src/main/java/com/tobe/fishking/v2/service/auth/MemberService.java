@@ -585,7 +585,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.kakao.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
                     .password("tempPassword")//임시값. 수정필요.
                     .email("tempEmail")//임시값. 수정필요.
@@ -614,7 +614,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.kakao.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password("tempPassword")//임시값. 수정필요.
@@ -735,7 +735,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.facebook.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password("tempPassword")//임시값. 수정필요.
@@ -767,7 +767,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.facebook.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password("tempPassword")//임시값. 수정필요.
@@ -891,7 +891,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.naver.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password(usrId)//임시값. 수정필요.
@@ -923,7 +923,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.naver.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password(usrId)//임시값. 수정필요.
