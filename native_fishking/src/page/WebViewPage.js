@@ -16,9 +16,6 @@ export default inject('WebViewStore')(
             WebViewStore.goBack(),
           );
         }
-        setTimeout(() => {
-          this.setState({splashFlex: 0, webviewFlex: 1});
-        }, 1000);
       }
       componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress');
@@ -34,7 +31,16 @@ export default inject('WebViewStore')(
 
         if (process === 'Linking') {
           Linking.openURL(data);
-        } else if (process === 'getToken') {
+        }
+      }
+      onShouldStartLoadWithRequest(request) {
+        const isHTTPS = request.url.search('https://') !== -1;
+
+        if (isHTTPS) {
+          return true;
+        } else {
+          Linking.openURL(request.url);
+          return false;
         }
       }
       render() {
@@ -49,6 +55,7 @@ export default inject('WebViewStore')(
                 this.onNavigationStateChange(state)
               }
               onMessage={(nativeEvent) => this.onMessage(nativeEvent)}
+              onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
             />
           </React.Fragment>
         );

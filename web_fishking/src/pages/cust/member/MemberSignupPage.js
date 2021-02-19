@@ -32,11 +32,18 @@ export default inject(
             password: "",
             rePassword: "",
             nickName: "",
+            memberId: "",
           };
         }
         /********** ********** ********** ********** **********/
         /** function */
         /********** ********** ********** ********** **********/
+        componentDidMount() {
+          const { PageStore } = this.props;
+          const { memberId = null } = PageStore.getQueryParams();
+          if (memberId !== null) this.setState({ memberId });
+        }
+
         toggleCheckbox = () => {
           if (this.active1_check0.current?.checked) {
             this.active1_check1.current.checked = true;

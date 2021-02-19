@@ -154,11 +154,12 @@ export default inject(
                           }
                         >
                           <option>카테고리를 선택하세요</option>
-                          {this.state.options.map((data, index) => (
-                            <option key={index} value={data.key}>
-                              {data.value}
-                            </option>
-                          ))}
+                          {this.state.options &&
+                            this.state.options.map((data, index) => (
+                              <option key={index} value={data.key}>
+                                {data.value}
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>

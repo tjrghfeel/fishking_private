@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/v2/api")
 @Api(tags = {"선상 및 갯바위"})
 @RequiredArgsConstructor
@@ -31,7 +31,6 @@ public class ShipController {
 
     @ApiOperation(value = "배 리스트", notes = "배 리스트. 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다.")
     @GetMapping("/ships/{page}")
-    @ResponseBody
     public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO,
                                            @ApiParam(value = "페이지. 0부터 시작", required = true, defaultValue = "0", example = "0") @PathVariable int page,
                                            @RequestParam(value = "species[]", required = false) String[] species,
@@ -59,6 +58,66 @@ public class ShipController {
             }
         }
         return shipService.getShips(shipSearchDTO, page);
+    }
+
+    @ApiOperation(value = "배 리스트", notes = "지도보기를 위한 배 리스트." +
+            "\n 해당 필터에 걸리는 모든 선박 정보를 보내줍니다." +
+            "\n 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다." +
+            "\n " +
+            "\n [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }]" +
+            "\n fishSpeciesCount: 대상 어종 수" +
+            "\n lowPrice: 상품 중 가장 낮은 가격" +
+            "\n sold: 결제 수 " +
+            "\n }, ... ]" +
+            "\n 상단에 선상/포인트/유저조행기 선택은 뺍니다." +
+            "\n 선상 탭에서 지도보기 누르는 경우는 선상만, 갯바위에서 누르는 경우는 갯바위만 (fishingType=ship|seaRocks) 보여줍니다.")
+    @GetMapping("/ships/map")
+    public List<ShipListResponse> getShipsForMap(ShipSearchDTO shipSearchDTO,
+                                           @RequestParam(value = "species[]", required = false) String[] species,
+                                           @RequestParam(value = "services[]", required = false) String[] services,
+                                           @RequestParam(value = "facilities[]", required = false) String[] facilities,
+                                           @RequestParam(value = "genres[]", required = false) String[] genres) {
+        if (species != null) {
+            if (species.length != 0 ) {
+                shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
+            }
+        }
+        if (services != null) {
+            if (services.length != 0) {
+                shipSearchDTO.setServicesList(Arrays.asList(services.clone()));
+            }
+        }
+        if (facilities != null) {
+            if (facilities.length != 0) {
+                shipSearchDTO.setFacilitiesList(Arrays.asList(facilities.clone()));
+            }
+        }
+        if (genres != null) {
+            if (genres.length != 0) {
+                shipSearchDTO.setGenresList(Arrays.asList(genres.clone()));
+            }
+        }
+        return shipService.getShipsForMap(shipSearchDTO);
     }
 
     @ApiOperation(value = "배 정보", notes = "배 정보." +
@@ -109,7 +168,6 @@ public class ShipController {
             "\n     주변시설 삭제" +
             "\n ")
     @GetMapping("/ship/{ship_id}")
-    @ResponseBody
     public ShipResponse shipDetail(
             @RequestHeader(name = "Authorization") String sessionToken,
             @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
@@ -118,10 +176,10 @@ public class ShipController {
 
     @ApiOperation(value = "배의 상품 리스트", notes = "배의 상품 리스트 ")
     @GetMapping("/ship/{ship_id}/goods")
-    @ResponseBody
     public List<GoodsResponse> shipGoods(
             @RequestHeader(name = "Authorization") String sessionToken,
-            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
+//            @ApiParam(value = "선택 날짜", required = true, example = "2021-02-19") @PathVariable String date,
+        @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
         return shipService.getShipGoods(ship_id);
     }
 
@@ -147,7 +205,6 @@ public class ShipController {
             "\n     날씨, 풍향, 풍속 보여주지 않음. " +
             "\n     물때, 조위만 보여줌.")
     @GetMapping("/goods/{goods_id}")
-    @ResponseBody
     public GoodsResponse getGoodsDetail(@PathVariable Long goods_id) {
         return shipService.getGoodsDetail(goods_id);
     }
@@ -157,7 +214,6 @@ public class ShipController {
             "\n used: 이미 예약된 승선위치 ([1,2] 인 경우 1,2 번 위치는 이미 예약)" +
             "\n type: 배의 타입 3, 5, 9 세 값중 하나가 전달되며 각각 3톤 (8인승), 5톤 (18인승), 9톤 (22인승)")
     @GetMapping("/goods/{goods_id}/position")
-    @ResponseBody
     public Map<String, Object> getGoodsDatePositions(@PathVariable Long goods_id, @RequestParam String date) {
         return shipService.getGoodsDatePositions(goods_id, date);
     }
@@ -184,24 +240,11 @@ public class ShipController {
             "\n payMethod: 결제방식, sndPaymethod 로 ksnet에 넘깁니다. " +
             "\n" +
             "\n /pay_request.html 와 /ajax.html 을 참고해주세요")
-    @PostMapping("/ship/reserve")
-    @ResponseBody
+    @PostMapping(value = "/ship/reserve", produces = "application/json")
     public OrderResponse Reserve(
-//            @RequestHeader(name = "Authorization") String sessionToken,
-            ReserveDTO reserveDTO,
-            @RequestParam(value = "positions[]") Integer[] positions,
-            @RequestParam(value = "personsName[]") String[] personsName,
-            @RequestParam(value = "personsPhone[]") String[] personsPhone,
-            @RequestParam(value = "personsBirthdate[]") String[] personsBirthdate,
-            @RequestParam(value = "token", required = false) String token,
-            Model model) {
-//        Member member = memberService.getMemberBySessionToken(sessionToken);
-        if (positions != null) {
-            if (positions.length != 0) {
-                reserveDTO.setPositionsList(Arrays.asList(positions.clone()));
-            }
-        }
-        OrderResponse response = shipService.reserve(reserveDTO, token, personsName, personsPhone, personsBirthdate);
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody ReserveDTO reserveDTO) {
+        OrderResponse response = shipService.reserve(reserveDTO, token, reserveDTO.getPersonsName(), reserveDTO.getPersonsPhone(), reserveDTO.getPersonsBirthdate());
 //        model.addAttribute("pay", response);
 //        return "pay_request";
         return response;
@@ -242,7 +285,6 @@ public class ShipController {
             "\n" +
             "\n 퍼블상의 우럭(오후) 는 상품명입니다. 풍향 풍속 데이터 안보여주시면 됩니다.")
     @GetMapping("/ship/{ship_id}/review/{page}")
-    @ResponseBody
     public Map<String, Object> getShipReviews(
             @PathVariable Long ship_id,
             @PathVariable Integer page,

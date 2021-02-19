@@ -162,6 +162,11 @@ public class ShipService {
         return shipRepo.searchAll(shipSearchDTO, pageable);
     }
 
+    @Transactional
+    public List<ShipListResponse> getShipsForMap(ShipSearchDTO  shipSearchDTO) {
+        return shipRepo.searchAllForMap(shipSearchDTO);
+    }
+
     /* 선상, 갯바위 배 정보 */
     @Transactional
     public ShipResponse getShipDetail(Long ship_id, String sessionToken) {
@@ -309,7 +314,7 @@ public class ShipService {
                 .personnel(reserveDTO.getPersonCount())
                 .price(reserveDTO.getTotalPrice().intValue() / reserveDTO.getPersonCount())
                 .totalAmount(reserveDTO.getTotalPrice().intValue())
-                .positions(reserveDTO.getPositionsList().stream().map(Object::toString).collect(Collectors.joining(",")))
+                .positions(reserveDTO.getPositions().stream().map(Object::toString).collect(Collectors.joining(",")))
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();

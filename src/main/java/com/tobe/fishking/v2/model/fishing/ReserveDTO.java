@@ -41,11 +41,17 @@ public class ReserveDTO {
     @ApiParam(value = "승선자 수")
     private @Valid Integer personCount;
 
-//    @ApiParam(value = "승선자 리스트")
-//    private @Valid List<Map<String, Object>> persons;
-
     @ApiParam(value = "승선자 승선위치 리스트")
-    private @Valid List<Integer> positionsList;
+    private @Valid List<Integer> positions;
+
+    @ApiParam(value = "승선자 생년월일 리스트")
+    private @Valid String[] personsBirthdate;
+
+    @ApiParam(value = "승선자 전화번호 리스트")
+    private @Valid String[] personsPhone;
+
+    @ApiParam(value = "승선자 이름 리스트")
+    private @Valid String[] personsName;
 
     @ApiParam(value = "결제수단. 신용카드: '1000000000', 가상계좌: '0100000000', 계좌이체: '0010000000', 휴대폰결제: '0000010000'")
     private @Valid String payMethod;
