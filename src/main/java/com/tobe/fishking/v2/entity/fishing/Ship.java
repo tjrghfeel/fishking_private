@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
-
-import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.model.common.Location;
@@ -297,4 +295,5 @@ public class Ship extends BaseTime {  //선상
     public void setDevices(List<CommonCode> devices) {
         this.devices = devices;
     }
+
 }

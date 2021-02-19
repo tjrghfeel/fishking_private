@@ -38,12 +38,14 @@ export default inject()(
               <br />
               <small className="grey">
                 좋아요 {Intl.NumberFormat().format(likeCount)}개 ·{" "}
-                <a
-                  onClick={() => (onClickReply ? onClickReply(data) : null)}
-                  className="grey"
-                >
-                  답글달기
-                </a>
+                {!isChildComment && (
+                  <a
+                    onClick={() => (onClickReply ? onClickReply(data) : null)}
+                    className="grey"
+                  >
+                    답글달기
+                  </a>
+                )}
               </small>
             </div>
             <div className="col">

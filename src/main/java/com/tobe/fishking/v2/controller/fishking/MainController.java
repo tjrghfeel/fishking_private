@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.controller.fishking;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
@@ -73,30 +74,67 @@ public class MainController {
     }
 
 
-    @ApiOperation(value = "통합 검색 ", notes = "통합 검색")
-    @GetMapping("/getGoodsListByAll")
-    public Map<String, Object> getGoodsListByAll(Pageable pageable,
-                                                 @RequestParam(required = false) Map<String, Object> searchRequest,
-                                                 @RequestParam(required = false, name = "total_elements") Integer totalElements) {
+//    @ApiOperation(value = "통합 검색 ", notes = "통합 검색")
+//    @GetMapping("/getGoodsListByAll")
+//    public Map<String, Object> getGoodsListByAll(Pageable pageable,
+//                                                 @RequestParam(required = false) Map<String, Object> searchRequest,
+//                                                 @RequestParam(required = false, name = "total_elements") Integer totalElements) {
+//
+//        Map<String, Object> map = null;
+//
+//        Page<GoodsDTO.GoodsDTOResp> goods = goodsService.getGoodsList(pageable, searchRequest, totalElements);
+//        map.put("goods", goods);
+//
+//
+//        Page<FilesDTO> files = commonService.getFilesList(pageable, searchRequest, totalElements);
+//        map.put("files", files);
+//
+//
+//        List<Object> goosByFishSpeciesCnt = goodsService.getCountTotalGoodsByFishSpecies();
+//
+//        map.put("fishspeciescnt", goosByFishSpeciesCnt);
+//
+//        List<Object> goosByRegionCnt = goodsService.getCountTotalGoodsByRegion();
+//        map.put("regioncnt", goosByRegionCnt);
+//
+//        return map;
+//    }
 
-        Map<String, Object> map = null;
 
-        Page<GoodsDTO.GoodsDTOResp> goods = goodsService.getGoodsList(pageable, searchRequest, totalElements);
-        map.put("goods", goods);
-
-
-        Page<FilesDTO> files = commonService.getFilesList(pageable, searchRequest, totalElements);
-        map.put("files", files);
-
-
-        List<Object> goosByFishSpeciesCnt = goodsService.getCountTotalGoodsByFishSpecies();
-
-        map.put("fishspeciescnt", goosByFishSpeciesCnt);
-
-        List<Object> goosByRegionCnt = goodsService.getCountTotalGoodsByRegion();
-        map.put("regioncnt", goosByRegionCnt);
-
-        return map;
+    @ApiOperation(value = "통합 검색 인기검색어, 어복황제 추천 AD", notes = "인기검색어, 추천AD" +
+            "1\n { " +
+            "\n popularKeyword: [ keyword, keyword, .... , keyword ]  // 인덱스 순서로 1 2 3 .. 순입니다. String 리스트입니다." +
+            "\n ad: [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }]" +
+            "\n fishSpeciesCount: 대상 어종 수" +
+            "\n lowPrice: 상품 중 가장 낮은 가격" +
+            "\n }, ... ] 상품 광고의 하트는 빼주세요" +
+            "")
+    @GetMapping("/search/keywords")
+    public Map<String, Object> getSearchPageData(@RequestHeader("Authorization") String token) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("popularKeyword", popularService.getPopularKeyword());
+        result.put("ad", commonService.getAdList(AdType.SEARCH_AD));
+        return result;
     }
 
     /*  jkkim 수정 지우질 말것 */

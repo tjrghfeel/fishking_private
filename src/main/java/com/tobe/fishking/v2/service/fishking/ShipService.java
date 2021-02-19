@@ -245,8 +245,8 @@ public class ShipService {
 
     /* 선상, 갯바위 배 정보 */
     @Transactional
-    public List<GoodsResponse> getShipGoods(Long ship_id) {
-        return goodsRepository.getShipGoods(ship_id);
+    public List<GoodsResponse> getShipGoods(Long ship_id, String date) {
+        return goodsRepository.getShipGoods(ship_id, DateUtils.getDateFromString(date));
     }
 
     @Transactional

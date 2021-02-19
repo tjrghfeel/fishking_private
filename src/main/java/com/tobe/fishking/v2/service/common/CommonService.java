@@ -2,15 +2,17 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
-import com.tobe.fishking.v2.entity.common.ObserverCode;
-import com.tobe.fishking.v2.entity.common.Popular;
+import com.tobe.fishking.v2.entity.common.*;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.model.common.DeleteFileDto;
 import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
+import com.tobe.fishking.v2.model.fishing.ShipListResponse;
+import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
@@ -24,8 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.CodeGroup;
-import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
@@ -52,6 +52,7 @@ public class CommonService {
     private final ObserverCodeRepository observerCodeRepository;
     private final UploadService uploadService;
     private final Environment env;
+    private final AdRepository adRepository;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -237,5 +238,11 @@ public class CommonService {
     public List<ObserverCodeResponse> getAllObserverCode() {
         List<ObserverCode> list = observerCodeRepository.findAll();
         return list.stream().map(ObserverCodeResponse::new).collect(Collectors.toList());
+    }
+
+    /* 광고리스트 */
+    @Transactional
+    public List<SmallShipResponse> getAdList(AdType type) {
+       return adRepository.getAdByType(type);
     }
 }

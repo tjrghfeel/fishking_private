@@ -178,9 +178,9 @@ public class ShipController {
     @GetMapping("/ship/{ship_id}/goods")
     public List<GoodsResponse> shipGoods(
             @RequestHeader(name = "Authorization") String sessionToken,
-//            @ApiParam(value = "선택 날짜", required = true, example = "2021-02-19") @PathVariable String date,
+            @ApiParam(value = "선택 날짜", required = true, example = "2021-02-19") @RequestParam String date,
         @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
-        return shipService.getShipGoods(ship_id);
+        return shipService.getShipGoods(ship_id, date);
     }
 
     @ApiOperation(value = "해당 상품 정보 ", notes = "해당 상품 정보 " +
