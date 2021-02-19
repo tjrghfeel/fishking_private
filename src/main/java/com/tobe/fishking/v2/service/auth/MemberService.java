@@ -575,7 +575,7 @@ public class MemberService {
         }
         /*회원가입 중간에 나갔었던 경우. */
         else if(member !=null && member.getIsCertified()==false){
-            memberRepository.delete(member);
+            memberRepository.deleteById(member.getId());
 
             resultDto.setResultType("signUp");
 
@@ -585,12 +585,10 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.kakao.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
                     .password("tempPassword")//임시값. 수정필요.
                     .email("tempEmail")//임시값. 수정필요.
-//                    .gender(gender)
                     .roles(Role.member)
                     .profileImage(noProfileImage.getExtraValue1())
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
@@ -598,7 +596,6 @@ public class MemberService {
                     .isCertified(false)
                     .snsType(SNSType.kakao)
                     .snsId(usrId.toString())
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
                     .build();
             newMember = memberRepository.save(newMember);
 
@@ -617,7 +614,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.kakao.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password("tempPassword")//임시값. 수정필요.
@@ -738,7 +735,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.facebook.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password("tempPassword")//임시값. 수정필요.
@@ -770,7 +767,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.facebook.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password("tempPassword")//임시값. 수정필요.
@@ -894,7 +891,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.naver.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password(usrId)//임시값. 수정필요.
@@ -926,7 +923,7 @@ public class MemberService {
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
             Member newMember = Member.builder()
-                    .uid(SNSType.naver.getValue()+usrId)//임시값. 수정필요.
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName(null)//임시값. 수정필요.
 //                    .nickName(usrNickName)
                     .password(usrId)//임시값. 수정필요.

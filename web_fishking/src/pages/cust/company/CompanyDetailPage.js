@@ -135,6 +135,14 @@ export default inject(
             )}`
           );
         };
+        goToStoryDiary = (item) => {
+          const { PageStore } = this.props;
+          PageStore.push(`/story/diary/detail/${item.id}`);
+        };
+        goToStoryUser = (item) => {
+          const { PageStore } = this.props;
+          PageStore.push(`/story/story/detail/${item.id}`);
+        };
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
@@ -323,7 +331,11 @@ export default inject(
                 </h5>
                 {this.state.fishingDiary &&
                   this.state.fishingDiary.map((data, index) => (
-                    <GoodsBlogListItemView key={index} data={data} />
+                    <GoodsBlogListItemView
+                      key={index}
+                      data={data}
+                      onClick={this.goToStoryDiary}
+                    />
                   ))}
                 <div className="mt-5"></div>
               </div>
@@ -346,7 +358,11 @@ export default inject(
                 </h5>
                 {this.state.fishingBlog &&
                   this.state.fishingBlog.map((data, index) => (
-                    <GoodsBlogListItemView key={index} data={data} />
+                    <GoodsBlogListItemView
+                      key={index}
+                      data={data}
+                      onClick={this.goToStoryUser}
+                    />
                   ))}
                 <div className="mt-5"></div>
               </div>

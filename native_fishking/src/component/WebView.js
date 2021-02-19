@@ -4,44 +4,52 @@ import {inject, observer} from 'mobx-react';
 import {token} from '../../messaging';
 
 export default inject('WebViewStore')(
-  observer(({WebViewStore, uri, onNavigationStateChange, onMessage}) => {
-    const webview = useRef(null);
-    useEffect(() => {
-      WebViewStore.setWebView(webview);
-      WebView.isFileUploadSupported().then((res) => {
-        if (res === true) {
-          console.log('file upload supported');
-        } else {
-          console.log('file upload not supported');
-        }
+  observer(
+    ({
+      WebViewStore,
+      uri,
+      onNavigationStateChange,
+      onMessage,
+      onShouldStartLoadWithRequest,
+    }) => {
+      const webview = useRef(null);
+      useEffect(() => {
+        WebViewStore.setWebView(webview);
+        WebView.isFileUploadSupported().then((res) => {
+          if (res === true) {
+            console.log('file upload supported');
+          } else {
+            console.log('file upload not supported');
+          }
+        });
       });
-    });
-    console.log('token -> ' + token);
 
-    return (
-      <WebView
-        ref={webview}
-        source={{uri}}
-        originWhitelist={['*']}
-        allowFileAccess={true}
-        allowFileAccessFromFileURLs={true}
-        allowUniversalAccessFromFileURLs={true}
-        userAgent={WebViewStore.useragent}
-        cacheMode={'LOAD_NO_CACHE'}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        geolocationEnabled={true}
-        allowsBackForwardNavigationGestures={true}
-        onNavigationStateChange={(state) => onNavigationStateChange(state)}
-        onMessage={({nativeEvent}) => onMessage(nativeEvent)}
-        injectedJavaScriptBeforeContentLoaded={`
+      return (
+        <WebView
+          ref={webview}
+          source={{uri}}
+          originWhitelist={['*']}
+          allowFileAccess={true}
+          allowFileAccessFromFileURLs={true}
+          allowUniversalAccessFromFileURLs={true}
+          userAgent={WebViewStore.useragent}
+          cacheMode={'LOAD_NO_CACHE'}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          geolocationEnabled={true}
+          allowsBackForwardNavigationGestures={true}
+          onNavigationStateChange={(state) => onNavigationStateChange(state)}
+          onMessage={({nativeEvent}) => onMessage(nativeEvent)}
+          onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+          injectedJavaScriptBeforeContentLoaded={`
             window.isNative = true;
             window.fcm_token = '${token}'
             true;
             `}
-      />
-    );
-  }),
+        />
+      );
+    },
+  ),
 );

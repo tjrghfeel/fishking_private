@@ -35,7 +35,7 @@ export default inject("PageStore")(
                   aria-label="Search"
                   disabled
                 />
-                <a onClick={() => PageStore.push(`/search/reserve`)}>
+                <a onClick={() => PageStore.push(`/search/all`)}>
                   <img
                     src="/assets/cust/img/svg/navbar-search.svg"
                     alt="Search"

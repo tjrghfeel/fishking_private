@@ -81,11 +81,11 @@ export default inject(
         if (index === 0) {
           // 선택안함
           this.setState({
-            couponId: null,
+            couponId: 0,
             discountPrice: 0,
             totalPrice: this.state.goodsPrice * this.state.personCount,
           });
-        } else {
+        } else if (index > 0) {
           const item = this.state.coupons.coupons[index];
           const price = this.state.goodsPrice * this.state.personCount;
           if (item.couponType === "정액") {
@@ -95,7 +95,7 @@ export default inject(
               couponId: item.id,
               discountPrice,
               paymentPrice: price - discountPrice,
-              totalPrice: price - discountPrice,
+              totalPrice: this.state.goodsPrice * this.state.personCount,
             });
           } else {
             let discountPrice = Math.round(
@@ -106,7 +106,7 @@ export default inject(
               couponId: item.id,
               discountPrice,
               paymentPrice: price - discountPrice,
-              totalPrice: price - discountPrice,
+              totalPrice: this.state.goodsPrice * this.state.personCount,
             });
           }
         }
@@ -200,7 +200,13 @@ export default inject(
           this.setState({ positions, step: 4 });
           // >>>>> Step-4 :: prepare
           const resolve = await APIStore._get(`/v2/api/usableCoupons`);
-          this.setState({ coupons: resolve });
+          this.setState({
+            coupons: resolve,
+            couponId: 0,
+            discountPrice: 0,
+            totalPrice: this.state.goodsPrice * this.state.personCount,
+            paymentPrice: this.state.goodsPrice * this.state.personCount,
+          });
         } else if (this.state.step === 4) {
           // >>>>> Step-4 :: validate
           if (!this.state.payAgree) {
@@ -241,17 +247,40 @@ export default inject(
             couponId,
             paymentPrice,
             totalPrice,
-            token,
           };
-          console.log(JSON.stringify(params));
 
-          // const resolve = await APIStore._post(`/v2/api/ship/reserve`, params);
-          // console.log(JSON.stringify(resolve));
-          $.redirect(
-            `${process.env.REACT_APP_HTTP_BASE_URL}/v2/api/ship/reserve`,
-            params,
-            "POST"
-          );
+          // console.log(JSON.stringify(params));
+          const resolve = await APIStore._post(`/v2/api/ship/reserve`, params);
+
+          if (resolve) {
+            const {
+              orderNumber,
+              goodsName,
+              amount,
+              orderName,
+              email,
+              phoneNumber,
+              showCard,
+              installMentType,
+              interestType,
+              reply,
+              shopNumber,
+              payMethod,
+            } = resolve;
+            const { PageStore } = this.props;
+            PageStore.push(
+              `/pay/kspay?orderNumber=${orderNumber}&goodsName=${goodsName}&amount=${amount}&orderName=${orderName}&email=${email}&phoneNumber=${phoneNumber}&showCard=${showCard}&installMentType=${installMentType}&interestType=${interestType}&reply=${reply}&shopNumber=${shopNumber}&payMethod=${payMethod}`
+            );
+          }
+
+          // PageStore.push(
+          //   `/pay/kspay?sndOrdernumber=${resolve.orderNumber}&sndGoodname=${resolve.goodsName}&sndAmount=${resolve.amount}&sndOrdername=${resolve.orderName}&sndEmail=${}`
+          // );
+          // $.redirect(
+          //   `${process.env.REACT_APP_HTTP_BASE_URL}/v2/api/ship/reserve`,
+          //   params,
+          //   "POST"
+          // );
         }
       };
       /********** ********** ********** ********** **********/

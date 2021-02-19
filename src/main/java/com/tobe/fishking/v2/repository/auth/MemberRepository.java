@@ -45,6 +45,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     /*pass인증번호 중복체크*/
     boolean existsByCertifiedNo(String certifiedNo);
 
+    void deleteById(Long id);
+
     /*@Query(value = "select exists (select * from member m where m.areacode = :areaCode and m.localnumber = :localNumber)",
         nativeQuery = true
     )

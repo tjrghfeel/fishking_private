@@ -1,4 +1,4 @@
-/* global AppleID */
+/* global AppleID, Kakao */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";

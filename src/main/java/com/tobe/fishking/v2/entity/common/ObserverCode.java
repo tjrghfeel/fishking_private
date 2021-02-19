@@ -35,6 +35,9 @@ public class ObserverCode extends BaseTime {
     @Column(columnDefinition = "int comment '해면'")
     private SeaDirection seaDirection;
 
+    @Column(columnDefinition = "varchar(10) comment '날짜별 날씨 조회(기상청 - 중기예보)를 위한 지역코드'")
+    private String forecastCode;
+
     @Builder
     public ObserverCode(String code, Location location) {
         this.code = code;
