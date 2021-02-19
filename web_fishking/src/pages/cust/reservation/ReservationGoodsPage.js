@@ -32,8 +32,9 @@ export default inject(
               params: { shipId },
             },
           } = this.props;
-          const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`);
-          console.log(JSON.stringify(goods));
+          const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`, {
+            date: this.state.selectedDate.format("-"),
+          });
           this.setState({ goods });
 
           this.onChangeDate(new Date());
@@ -42,8 +43,18 @@ export default inject(
         onChangeDate = async (selected) => {
           this.setState({ selectedDate: selected });
 
-          const { APIStore } = this.props;
-
+          const {
+            APIStore,
+            match: {
+              params: { shipId },
+            },
+          } = this.props;
+          // 상품 목록
+          const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`, {
+            date: this.state.selectedDate.format("-"),
+          });
+          this.setState({ goods });
+          // # 물때정보
           const tideTime = await APIStore._get(`/v2/api/tideTime`, {
             date: selected.format("-"),
           });
