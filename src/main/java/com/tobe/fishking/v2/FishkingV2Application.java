@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableScheduling
@@ -22,6 +25,13 @@ public class FishkingV2Application {
     public static void main(String[] args) {
         SpringApplication.run(FishkingV2Application.class, args);
     }
+
+//    @PostConstruct
+//    public void started() {
+//        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+//
+//    }
+
 
 
 
