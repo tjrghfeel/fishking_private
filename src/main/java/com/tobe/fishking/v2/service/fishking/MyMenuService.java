@@ -29,14 +29,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MyMenuService {
@@ -417,7 +417,7 @@ public class MyMenuService {
     @Transactional
     public TideByDateDto getTideByDate(
             Long observerId, String dateString, String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, IOException, ParseException {
         TideByDateDto result = null;
         Member member = null;
         if(token != null) {
@@ -462,7 +462,6 @@ public class MyMenuService {
             }
         }
 
-
         result = TideByDateDto.builder()
                 .observerId(observerId)
                 .observerName(observer.getName())
@@ -475,6 +474,55 @@ public class MyMenuService {
                 .alertDayList(alertDayList)
                 .alertTimeList(alertTimeList)
                 .build();
+
+        /*날씨*/
+        String weather = null;
+        Integer sky = null;
+        Integer pty = null;
+        String todayDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        int time = currentTime.getHour();
+        String tmFc = null;
+        if(time < 6){
+            currentTime.minusDays(1);
+            tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "1800";
+        }
+        else if(time < 18 || time > 6){tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "0600";}
+        else{tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "1800";}
+
+
+        String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidSeaFcst?" +
+                "serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +
+                "&pageNo=1" +
+                "&numOfRows=50" +
+                "&dataType=JSON" +
+                "&regId=12D00000" + //observer.getForecastCode() +
+                "&tmFc=" + tmFc;
+        String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
+        System.out.println("result>>> "+response);
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
+        Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
+        Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
+        Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
+        ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+        Map<String,Object> data = dataList.get(0);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        long today = (sdf.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))).getTime();
+        long inputDay = (sdf.parse(DateUtils.getDateFromString(dateString).format(DateTimeFormatter.ofPattern("yyyyMMdd")))).getTime();
+        long dayDiff = (inputDay - today) / (24*60*60*1000);
+
+        if(dayDiff < 3 || dayDiff > 10){weather = null;}
+        else if(dayDiff <8){
+            weather = "오전 : "+data.get("wf"+dayDiff+"Am") + "/ 오후 : " + data.get("wf"+dayDiff+"Pm");
+        }
+        else{
+            weather = data.get("wf"+dayDiff) +"";
+        }
+        result.setWeather(weather);
+
         return result;
     }
 
