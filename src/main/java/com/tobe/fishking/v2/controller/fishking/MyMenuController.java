@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 /*마이메뉴 안에 있더라도 찜, 쿠폰 등과 같은 다룰 api가 좀있는 것들은 컨트롤러를 따로 빼내었고
@@ -325,7 +326,7 @@ public class MyMenuController {
             @RequestParam("observerId") Long observerId,
             @RequestParam("date") String date,
             @RequestHeader(value = "Authorization",required = false) String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, IOException, ParseException {
         return myMenuService.getTideByDate(observerId,date,token);
     }
 

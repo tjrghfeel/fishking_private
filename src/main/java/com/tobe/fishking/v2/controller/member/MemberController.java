@@ -15,6 +15,8 @@ import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -44,7 +46,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 @Api(tags={"프로필"})
-@RestController
+@Controller
 @RequestMapping("/v2/api")
 public class MemberController {
 
@@ -83,6 +85,7 @@ public class MemberController {
             "   authNum : 인증번호\n" +
             "- 반환 ) 일치할경우 true, 아닐경우 false. ")
     @PostMapping("/checkSmsAuth")
+    @ResponseBody
     public boolean checkSignUpSmsAuth(
             @RequestBody PhoneAuthCheckDto dto
     ) throws ResourceNotFoundException {
@@ -99,6 +102,7 @@ public class MemberController {
             "   1 : 중복 \n" +
             "   2 : 이메일 형식에 맞지 않음")
     @GetMapping("/signUp/checkUidDup")
+    @ResponseBody
     public int checkUidDup(@RequestParam("uid") String uid){
         return memberService.checkUidDup(uid);
     }
@@ -109,6 +113,7 @@ public class MemberController {
             "   nickName : 중복확인할 닉네임"
     )
     @GetMapping("/signUp/checkNickNameDup")
+    @ResponseBody
     public int checkNickNameDup(@RequestParam("nickName") String nickName){
         return memberService.checkNickNameDup(nickName);
     }
@@ -124,6 +129,7 @@ public class MemberController {
             "- nickName : String / 필수 / 닉네임. 4~10자. \n" +
             "" )
     @PostMapping("/signUp/infoAndPassRequest")
+    @ResponseBody
     public void insertMemberInfo(@RequestBody SignUpDto dto, HttpServletResponse response) throws ResourceNotFoundException, IOException {
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
@@ -174,6 +180,7 @@ public class MemberController {
             "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)\n" +
             "- 응답 ) 문자인증건의 id ")
     @PostMapping("/findPw/smsAuthReq")
+    @ResponseBody
     public Long requestSmsAuthForPwSearch(@RequestBody @Valid PhoneAuthDto dto){
         return memberService.sendSmsForPwReset(dto);
     }
@@ -185,6 +192,7 @@ public class MemberController {
             "- memberName : String / 회원실명\n" +
             "- uid : String / 회원 아이디\n")
     @PutMapping("/findPw/uid")
+    @ResponseBody
     public CheckNameAndUidDto getNameAndUid(
             @RequestBody CheckUidDto dto
     ) throws ResourceNotFoundException {
@@ -199,6 +207,7 @@ public class MemberController {
             "   newPw : String / 새 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
             "   phoneAuthId : 문자인증건의 id")
     @PutMapping("/findPw/updatePw")
+    @ResponseBody
     public boolean updatePw(
             @RequestBody @Valid ResetPwDto resetPwDto
     ) throws ResourceNotFoundException {
@@ -220,6 +229,7 @@ public class MemberController {
             "- password : String / 필수 / 비밀번호\n" +
             "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
     @PostMapping("/login")
+    @ResponseBody
     public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException {
         return memberService.login(loginDTO);
     }
@@ -227,6 +237,7 @@ public class MemberController {
     /*로그아웃*/
     @ApiOperation(value = "로그아웃")
     @PostMapping("/logout")
+    @ResponseBody
     public boolean logout(HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         return memberService.logout(sessionToken);
@@ -238,6 +249,7 @@ public class MemberController {
             "실명과 핸드폰번호 데이터를 가지고 회원가입 처리 후, 로그인 처리.  \n" +
             "")
     @RequestMapping("/passAuthCode")
+    @ResponseBody
     public void getPassAuthCode(
             @RequestParam(value = "code",required = false) String code,
             @RequestParam(value = "state",required = false) String state,
@@ -256,10 +268,11 @@ public class MemberController {
     /*kakao 인증코드 받는 메소드. */
     @ApiOperation(value = "kakao 로그인 인증코드 받는 api",notes = "")
     @RequestMapping("/kakaoAuthCode")
-    public void getKakaoAuthCode(
+    public String getKakaoAuthCode(
         @RequestParam(value = "code",required = false) String code,
         @RequestParam(value = "state",required = false) String state,
         @RequestParam(value = "error",required = false) String error,
+        Model model,
         HttpServletResponse response
     ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
@@ -268,9 +281,10 @@ public class MemberController {
             response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
+            model.addAttribute("accessToken",dto.getSessionToken());
             response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
         }
-        return;
+        return "";
     }
     /*페이스북 인증코드 받는 메소드*/
     @ApiOperation(value = "페이스북 인증 코드 받는 api",notes = "" +
@@ -367,6 +381,7 @@ public class MemberController {
             "   isCompany : boolean / 업체의 프로필인지 여부. \n" +
             "   companyId : Long / 업체의 id\n")
     @GetMapping("/profile")
+    @ResponseBody
     public UserProfileDTO getUserProfile(
             @RequestParam("userId") Long userId,
             @RequestHeader(value = "Authorization",required = false) String token
@@ -398,6 +413,7 @@ public class MemberController {
             "- contents : 게시글 내용(일부만 출력)\n" +
             "- fileList : 이미지 파일 download url 리스트")
     @GetMapping("/profile/fishingDiary/{page}")
+    @ResponseBody
     public Page<FishingDiaryDtoForPage> getUserFishingDiary(
             @RequestParam("userId") Long userId,
             @PathVariable("page") int page,
@@ -410,6 +426,7 @@ public class MemberController {
     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환. */
     @ApiOperation(value = "프로필 관리 페이지 조회",notes = "프로필 관리를 위한 자기자신의 프로필 정보를 가져온다. ")
     @GetMapping("/profileManage")
+    @ResponseBody
     public ProfileManageDTO getProfileManage(HttpServletRequest request) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         return memberService.getProfileManage(sessionToken);
@@ -421,6 +438,7 @@ public class MemberController {
      * - 반환값 : 성공,실패여부 */
     @ApiOperation(value = "사용자 프로필사진 변경")
     @PutMapping("/profileManage/profileImage")
+    @ResponseBody
     public boolean updateProfileImage(
             @RequestBody ModifyingProfileImgDto dto,
             HttpServletRequest request
@@ -433,6 +451,7 @@ public class MemberController {
             "- 프로필 사진은 내립니다. \n" +
             "- 반환 ) 성공시 : true / 실패시 : false ")
     @PutMapping("/profileManage/noProfileImage")
+    @ResponseBody
     public boolean deleteProfileImage(@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
         return memberService.deleteProfileImage(token);
     }
@@ -440,6 +459,7 @@ public class MemberController {
     /*프로필 배경 이미지 변경*/
     @ApiOperation(value = "프사 배경이미지 변경", notes = "")
     @PutMapping("/profileManage/profileBackgroundImage")
+    @ResponseBody
     public boolean updateProfileBackgroundImage(
             @RequestBody ModifyingProfileImgDto dto,
             HttpServletRequest request
@@ -452,6 +472,7 @@ public class MemberController {
             "- 프로필 배경사진을 내립니다. \n" +
             "- 반환 ) 성공시 : true / 실패시 : false ")
     @PutMapping("/profileManage/noProfileBackgroundImage")
+    @ResponseBody
     public boolean deleteProfileBackgroundImage(@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
         return memberService.deleteProfileBackgroundImage(token);
     }
@@ -459,6 +480,7 @@ public class MemberController {
     /*닉네임 변경*/
     @ApiOperation(value = "닉네임 변경")
     @PutMapping("/profileManage/nickName")
+    @ResponseBody
     public String modifyProfileNickName(
             @RequestBody ModifyingNickNameDto nickName,
             HttpServletRequest request
@@ -470,6 +492,7 @@ public class MemberController {
     /*상태 메세지 변경*/
     @ApiOperation(value = "상태메세지 변경")
     @PutMapping("/profileManage/statusMessage")
+    @ResponseBody
     public String modifyProfileStatusMessage(
             @RequestBody ModifyingStatusMessageDto statusMessage,
             HttpServletRequest request
@@ -482,6 +505,7 @@ public class MemberController {
     @ApiOperation(value = "이메일 변경",notes = "" +
             "- 이메일만 변경되며, 로그인시 사용하는 uid는 변경되지 않습니다. ")
     @PutMapping("/profileManage/email")
+    @ResponseBody
     public String modifyProfileEmail(
             @RequestBody ModifyingEmailDto email,
             HttpServletRequest request
@@ -494,6 +518,7 @@ public class MemberController {
     * - 현재 비밀번호와 변경할 비번이 들어온다. */
     @ApiOperation(value = "비번 변경")
     @PutMapping("/profileManage/password")
+    @ResponseBody
     public boolean modifyProfilePassword(
             @RequestBody ModifyProfilePwDto dto,
             HttpServletRequest request
@@ -506,6 +531,7 @@ public class MemberController {
     * 삭제처리된 member의 id를 반환. */
     @ApiOperation(value = "탈퇴하기")
     @DeleteMapping("/profileManage/delete")
+    @ResponseBody
     public Long deleteMember(
         HttpServletRequest request
     ) throws ResourceNotFoundException {
@@ -534,12 +560,14 @@ public class MemberController {
     @ApiOperation(value = "휴대폰 번호 변경을 위한 문자인증 요청",notes = "" +
             "")
     @PostMapping("/profileManage/phoneNumber/sendSms")
+    @ResponseBody
     public Long requestSmsAuthForModifyPhoneNum(@RequestBody PhoneAuthDto dto){
         return memberService.sendSmsAuthForModifyPhoneNum(dto);
     }
     /*문자인증 후, 휴대폰 번호 변경*/
     @ApiOperation(value = "문자인증 후, 휴대폰 번호 변경",notes = "")
     @PutMapping("/profileManage/phoneNumber")
+    @ResponseBody
     public boolean modifyPhoneNumber(@RequestBody @Valid ModifyPhoneNumberDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
         return memberService.modifyPhoneNumber(dto,token);
     }
