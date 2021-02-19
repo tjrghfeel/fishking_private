@@ -77,16 +77,17 @@ export default inject(
           const { APIStore } = this.props;
           if (this.state.liked) {
             await APIStore._delete("/v2/api/loveto", {
-              takeType: "goods",
+              takeType: "ship",
               linkId: this.state.id,
             });
+            this.setState({ liked: false });
           } else {
             await APIStore._post("/v2/api/loveto", {
-              takeType: "goods",
+              takeType: "ship",
               linkId: this.state.id,
             });
+            this.setState({ liked: true });
           }
-          this.loadPageData();
         };
         modalSNS = () => {
           const { ModalStore } = this.props;
@@ -117,6 +118,22 @@ export default inject(
               NativeStore.linking(`tel://${this.state.tel}`);
             },
           });
+        };
+        findWay = () => {
+          const { NativeStore } = this.props;
+          NativeStore.linking(
+            `kakaomap://route?sp=&ep=${this.state.latitude},${this.state.longitude}&by=CAR`
+          );
+        };
+        advice = () => {
+          const { PageStore } = this.props;
+          PageStore.push(
+            `/cs/qna/add?q=${encodeURI(
+              JSON.stringify({
+                contents: `선박id:${this.state.id}\n선박명:${this.state.name}\n\n내용:`,
+              })
+            )}`
+          );
         };
         /********** ********** ********** ********** **********/
         /** render */
@@ -180,13 +197,13 @@ export default inject(
                             <div className="play-progress-time-all">02.57</div>
                           </div>
                           <div className="float-btm-right">
-                            <a href="#none">
+                            <a>
                               <img
                                 src="/assets/cust/img/svg/play-sound-on.svg"
                                 alt="사운드켜기"
                               />
                             </a>
-                            <a href="#none">
+                            <a>
                               <img
                                 src="/assets/cust/img/svg/play-expand.svg"
                                 alt="전체보기"
@@ -207,7 +224,7 @@ export default inject(
                       )}
                     {this.state.liveVideo !== "" && (
                       <React.Fragment>
-                        <video id="video" style={{ height: "224px" }}></video>
+                        <video id="video" style={{ width: "100%" }}></video>
                       </React.Fragment>
                     )}
                   </div>
@@ -338,7 +355,9 @@ export default inject(
               <div className="container nopadding">
                 <h5>
                   <a
-                    href="boat-detail-review.html"
+                    onClick={() =>
+                      PageStore.push(`/company/review/${this.state.id}`)
+                    }
                     className="float-right-more"
                   >
                     전체보기
@@ -446,7 +465,7 @@ export default inject(
                 ></div>
                 <div className="row no-gutters align-items-center border-round-btm">
                   <div className="col-4 text-center align-self-center border-right">
-                    <a>
+                    <a onClick={() => this.findWay()}>
                       <div className="padding">
                         <img
                           src="/assets/cust/img/svg/icon-map.svg"
@@ -648,7 +667,7 @@ export default inject(
               <div className="container nopadding">
                 <div className="warningWrap mt-3 text-center">
                   <h5 className="align-items-center">
-                    <a href="my-qna-add.html">
+                    <a onClick={this.advice}>
                       <img
                         src="/assets/cust/img/svg/icon-info.svg"
                         alt=""

@@ -25,9 +25,16 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       async componentDidMount() {
-        const { DataStore } = this.props;
+        const { DataStore, PageStore } = this.props;
         const options = await DataStore.getEnums("questionType");
         this.setState({ options });
+
+        // # Parameter Setting
+        const { q } = PageStore.getQueryParams();
+        if (q) {
+          const { contents } = JSON.parse(q);
+          if (contents) this.setState({ contents });
+        }
       }
       uploadFile = async () => {
         const { APIStore } = this.props;
@@ -168,9 +175,8 @@ export default inject(
                           onChange={(e) =>
                             this.setState({ contents: e.target.value })
                           }
-                        >
-                          {this.state.contents}
-                        </textarea>
+                          value={this.state.contents}
+                        ></textarea>
                       </div>
                     </div>
 

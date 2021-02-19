@@ -1,7 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
-import PageStore from "../../../stores/PageStore";
 const {
   LAYOUT: { MainTab, NavigationLayout, StoryTab },
   MODAL: { SelectAreaModal, SelectFishModal, SelectStorySortModal },
@@ -203,12 +202,14 @@ export default inject(
         this.loadPageData(0);
       };
       onClearArea = () => {
+        const { PageStore } = this.props;
         this.selAreaModal.current?.onInit();
         PageStore.setState({ districtList: null });
         this.setState({ selAreaActive: false, textArea: `지역` });
         this.loadPageData(0);
       };
       onClearFish = () => {
+        const { PageStore } = this.props;
         this.selFishModal.current?.onInit();
         PageStore.setState({ fishSpeciesList: null });
         this.setState({ selFishActive: false, textFish: "어종" });

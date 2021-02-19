@@ -6,7 +6,6 @@ import APIStore from "../../../stores/APIStore";
 const {
   LAYOUT: { NavigationLayout },
   VIEW: { ShipType3PositionView, ShipType5PositionView, ShipType9PositionView },
-  MODAL: { SelectReservationCouponModal },
 } = Components;
 
 export default inject(
@@ -40,7 +39,6 @@ export default inject(
           coupons: [], // 쿠폰 목록
           persons: [],
           payAgree: false,
-          couponName: "쿠폰 선택하기 ",
         };
         this.reservePersonName = React.createRef(null);
         this.reservePersonPhone = React.createRef(null);
@@ -61,6 +59,13 @@ export default inject(
           },
           APIStore,
         } = this.props;
+        // >>>>> 사용자 정보
+        const profile = await APIStore._get(`/v2/api/profileManage`);
+        this.setState({
+          reservePersonName: profile.nickName,
+          reservePersonPhone: profile.areaCode.concat(profile.localNumber),
+        });
+
         // >>>>> 상품정보
         let resolve = await APIStore._get(`/v2/api/goods/${goodsId}`);
         this.setState({
@@ -69,6 +74,42 @@ export default inject(
           goodsId,
           date,
         });
+      };
+
+      onChangeCoupon = (selected) => {
+        const index = selected.value;
+        if (index === 0) {
+          // 선택안함
+          this.setState({
+            couponId: null,
+            discountPrice: 0,
+            totalPrice: this.state.goodsPrice * this.state.personCount,
+          });
+        } else {
+          const item = this.state.coupons.coupons[index];
+          const price = this.state.goodsPrice * this.state.personCount;
+          if (item.couponType === "정액") {
+            let discountPrice = item.saleValues;
+            if (discountPrice > price) discountPrice = price;
+            this.setState({
+              couponId: item.id,
+              discountPrice,
+              paymentPrice: price - discountPrice,
+              totalPrice: price - discountPrice,
+            });
+          } else {
+            let discountPrice = Math.round(
+              price * (item.saleValues / 100) || 0
+            );
+            if (discountPrice > price) discountPrice = price;
+            this.setState({
+              couponId: item.id,
+              discountPrice,
+              paymentPrice: price - discountPrice,
+              totalPrice: price - discountPrice,
+            });
+          }
+        }
       };
 
       onSubmit = async () => {
@@ -145,7 +186,6 @@ export default inject(
             }
           );
           this.setState({ boat: resolve });
-          console.log("boat -> " + JSON.stringify(resolve));
         } else if (this.state.step === 3) {
           // >>>>> Step-3 :: validate
           const selected = this.ship.current?.selected;
@@ -220,33 +260,6 @@ export default inject(
       render() {
         return (
           <React.Fragment>
-            <SelectReservationCouponModal
-              id={"selResevationCouponModal"}
-              data={this.state.coupons}
-              price={this.state.personCount * (this.state.goodsPrice || 0)}
-              onSelect={(selected, discount) => {
-                if (selected !== null) {
-                  this.setState({
-                    couponName: selected.couponName,
-                    couponId: selected.id,
-                    discountPrice: discount,
-                    paymentPrice:
-                      this.state.goodsPrice * this.state.personCount - discount,
-                    totalPrice:
-                      this.state.goodsPrice * this.state.personCount - discount,
-                  });
-                } else {
-                  this.setState({
-                    couponName: "쿠폰 선택하기",
-                    couponId: null,
-                    discountPrice: discount,
-                    totalPrice:
-                      this.state.goodsPrice * this.state.personCount - discount,
-                  });
-                }
-              }}
-            />
-
             <NavigationLayout title={"예약하기"} showBackIcon={true} />
 
             {/** 정보 */}
@@ -327,7 +340,6 @@ export default inject(
                             })
                           }
                         />
-                        <a className="text-link text-primary">변경</a>
                       </div>
                     </form>
                   </div>
@@ -539,13 +551,21 @@ export default inject(
                         </strong>
                       </p>
                       <hr className="pt-1 pb-1" />
-                      <a
-                        className="form-control form-select"
-                        data-toggle="modal"
-                        data-target="#selResevationCouponModal"
+                      <select
+                        className="form-control"
+                        onChange={(e) =>
+                          this.onChangeCoupon(e.target.selectedOptions[0])
+                        }
                       >
-                        {this.state.couponName}
-                      </a>
+                        <option>쿠폰 선택하기</option>
+                        {this.state.coupons?.coupons &&
+                          this.state.coupons?.coupons.length > 0 &&
+                          this.state.coupons?.coupons.map((data, index) => (
+                            <option key={index} value={index}>
+                              {data.couponName}
+                            </option>
+                          ))}
+                      </select>
                     </div>
                   </form>
                 </div>

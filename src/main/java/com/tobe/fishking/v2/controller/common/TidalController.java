@@ -38,12 +38,14 @@ public class TidalController {
 
     @ApiOperation(value = "물때 ", notes = "date: yyyy-MM-dd" +
             "\n date: 날짜" +
-            "\n tideTime: 물때 (ex 11물)")
+            "\n tideTime: 물때 (ex 11물)" +
+            "\n weather: 날씨 (ex 맑음) 빈 문자열인 경우에는 빈 값 보여주세요 가져올 수 있는 데이터가 없는 경우입니다")
     @GetMapping("/tideTime")
     public Map<String, Object> getTideTimeFromDate(
             @RequestParam("date") String date) {
         Map<String, Object> result = commonService.findTideTime(date);
         result.put("date", date);
+        result.put("weather", "");
          return result;
     }
 

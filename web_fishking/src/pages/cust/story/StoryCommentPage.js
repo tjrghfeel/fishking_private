@@ -53,7 +53,6 @@ export default inject(
           fishingDiaryId,
         });
         this.setState({ list: resolve });
-        console.log(JSON.stringify(resolve));
       };
       onClickItem = async (type, data, index) => {
         const { PageStore, ModalStore, APIStore, DataStore } = this.props;

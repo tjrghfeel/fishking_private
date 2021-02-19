@@ -75,6 +75,7 @@ import ShipType5PositionView from "./view/ShipType5PositionView";
 import ShipType9PositionView from "./view/ShipType9PositionView";
 import EventListItemView from "./view/EventListItemView";
 import CommentListItemView from "./view/CommentListItemView";
+import CompanyReviewListItemView from "./view/CompanyReviewListItemView";
 
 export default {
   /********** MODAL **********/
@@ -149,5 +150,6 @@ export default {
     ShipType9PositionView,
     EventListItemView,
     CommentListItemView,
+    CompanyReviewListItemView,
   },
 };

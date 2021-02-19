@@ -42,7 +42,7 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         const resolve = APIStore._post("/v2/api/logout");
         if (resolve) {
-          PageStore.setAccessToken(null);
+          PageStore.setAccessToken(null, "cust");
           PageStore.push(`/member/login`);
         }
       };
