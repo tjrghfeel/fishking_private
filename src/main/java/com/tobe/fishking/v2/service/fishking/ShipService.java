@@ -314,7 +314,7 @@ public class ShipService {
                 .personnel(reserveDTO.getPersonCount())
                 .price(reserveDTO.getTotalPrice().intValue() / reserveDTO.getPersonCount())
                 .totalAmount(reserveDTO.getTotalPrice().intValue())
-                .positions(reserveDTO.getPositionsList().stream().map(Object::toString).collect(Collectors.joining(",")))
+                .positions(reserveDTO.getPositions().stream().map(Object::toString).collect(Collectors.joining(",")))
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();
