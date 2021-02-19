@@ -17,12 +17,18 @@ import PayRoute from "./pay";
 import EventRoute from "./event";
 import GuideRoute from "./guide";
 
+import crypto from "crypto";
+
 export default inject("PageStore")(
   observer(({ PageStore, history, match }) => {
     // # SNS 로그인 콜백 체크
     const { loggedIn = false, accesstoken = null } = PageStore.getQueryParams();
     if (loggedIn && accesstoken !== null) {
-      PageStore.setAccessToken(accesstoken, "cust", "Y");
+      PageStore.setAccessToken(
+        decodeURI(accesstoken).replace(/[ ]/g, "+").decrypt(),
+        "cust",
+        "Y"
+      );
     }
 
     // # >>>>> 기본 설정

@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
+import crypto from "crypto";
 import Routers from "./routes";
 
-//
 Date.prototype.format = function (join = "-") {
   const year = this.getFullYear();
   const month =
@@ -47,6 +47,29 @@ Date.prototype.toString = function () {
   }
 
   return `${year}년 ${month}월 ${date}일 (${week})`;
+};
+// # >>>>> 문자열 암호화
+String.prototype.encrypt = function () {
+  const ciphers = crypto.createCipheriv(
+    "aes-128-cbc",
+    process.env.REACT_APP_ENC_KEY.substr(0, 16),
+    process.env.REACT_APP_ENC_KEY.substr(0, 16)
+  );
+  let result = ciphers.update(this, "utf8", "base64");
+  result += ciphers.final("base64");
+  return result;
+};
+// # >>>>> 문자열 복호화
+String.prototype.decrypt = function () {
+  console.log("before -> " + this);
+  const ciphers = crypto.createDecipheriv(
+    "aes-128-cbc",
+    process.env.REACT_APP_ENC_KEY.substr(0, 16),
+    process.env.REACT_APP_ENC_KEY.substr(0, 16)
+  );
+  let result = ciphers.update(this, "base64", "utf8");
+  result += ciphers.final("utf8");
+  return result;
 };
 // # >>>>> HHmm => 오전|오후 0시 0분
 String.prototype.formatTime01 = function () {

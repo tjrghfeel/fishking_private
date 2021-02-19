@@ -1,36 +1,90 @@
+/* global $ */
 import React from "react";
 import { inject, observer } from "mobx-react";
 
 export default inject("PageStore")(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          sndOrdernumber: "",
+          sndGoodname: "",
+          sndAmount: "",
+          sndOrdername: "",
+          sndEmail: "",
+          sndMobile: "",
+          sndShowcard: "",
+          sndInstallmenttype: "",
+          sndInteresttype: "",
+          sndReply: "",
+          sndStoreid: "",
+          sndPaymethod: "",
+        };
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      componentDidMount() {
-        document.querySelector("body").style.fontSize = "9pt";
-        document.querySelector("body").style.lineHeight = "100%";
-        document.querySelector("body").style.paddingLeft = ".6rem";
-        document.querySelector("body").style.paddingRight = ".6rem";
-        document.querySelector("body").style.paddingTop = "0px !important";
-        for (let ele of document.querySelectorAll("td")) {
-          ele.style.fontSize = "9pt";
-          ele.style.lineHeight = "100%";
-        }
-        for (let ele of document.querySelectorAll("a")) {
-          ele.style.color = "blue";
-          ele.style.lineHeight = "100%";
-          ele.style.backgroundColor = "#E0EFFE";
-        }
-        for (let ele of document.querySelectorAll("input")) {
-          ele.style.fontSize = "9pt";
-        }
-        for (let ele of document.querySelectorAll("select")) {
-          ele.style.fontSize = "9pt";
-        }
+      async componentDidMount() {
+        const { PageStore } = this.props;
+        const qp = PageStore.getQueryParams();
+        const {
+          orderNumber: sndOrdernumber,
+          goodsName: sndGoodname,
+          amount: sndAmount,
+          orderName: sndOrdername,
+          email: sndEmail,
+          phoneNumber: sndMobile,
+          showCard: sndShowcard,
+          installMentType: sndInstallmenttype,
+          interestType: sndInteresttype,
+          reply: sndReply,
+          shopNumber: sndStoreid,
+          payMethod: sndPaymethod,
+        } = qp;
+        await this.setState({
+          sndOrdernumber,
+          sndGoodname,
+          sndAmount,
+          sndOrdername,
+          sndEmail,
+          sndMobile,
+          sndShowcard,
+          sndInstallmenttype,
+          sndInteresttype,
+          sndReply,
+          sndStoreid,
+          sndPaymethod,
+        });
+
+        document.querySelector("body").style.display = "none";
+        setTimeout(() => {
+          this._pay(document.KSPayWeb);
+        }, 800);
+        // document.querySelector("body").style.fontSize = "9pt";
+        // document.querySelector("body").style.lineHeight = "100%";
+        // document.querySelector("body").style.paddingLeft = ".6rem";
+        // document.querySelector("body").style.paddingRight = ".6rem";
+        // document.querySelector("body").style.paddingTop = "0px !important";
+        // for (let ele of document.querySelectorAll("td")) {
+        //   ele.style.fontSize = "9pt";
+        //   ele.style.lineHeight = "100%";
+        // }
+        // for (let ele of document.querySelectorAll("a")) {
+        //   ele.style.color = "blue";
+        //   ele.style.lineHeight = "100%";
+        //   ele.style.backgroundColor = "#E0EFFE";
+        // }
+        // for (let ele of document.querySelectorAll("input")) {
+        //   ele.style.fontSize = "9pt";
+        // }
+        // for (let ele of document.querySelectorAll("select")) {
+        //   ele.style.fontSize = "9pt";
+        // }
       }
 
       _pay = (_frm) => {
+        $('[name="sndPaymethod"]').val(this.state.sndPaymethod);
         _frm.sndReply.value = "http://112.220.72.178:8083/payresult";
         var agent = navigator.userAgent;
         var midx = agent.indexOf("MSIE");
@@ -113,11 +167,17 @@ export default inject("PageStore")(
                                         <tr>
                                           <td>결제수단 : </td>
                                           <td>
-                                            <select name="sndPaymethod">
-                                              <option
-                                                value="1000000000"
-                                                selected
-                                              >
+                                            <select
+                                              name="sndPaymethod"
+                                              onChange={(e) =>
+                                                this.setState({
+                                                  sndPaymethod:
+                                                    e.target.selectedOptions[0]
+                                                      .value,
+                                                })
+                                              }
+                                            >
+                                              <option value="1000000000">
                                                 신용카드
                                               </option>
                                               <option value="0100000000">
@@ -140,7 +200,7 @@ export default inject("PageStore")(
                                               name="sndStoreid"
                                               size="10"
                                               maxlength="10"
-                                              value="2999199900"
+                                              value={this.state.sndStoreid}
                                             />
                                           </td>
                                         </tr>
@@ -164,7 +224,7 @@ export default inject("PageStore")(
                                               name="sndOrdernumber"
                                               size="30"
                                               maxlength="30"
-                                              value="carrot_1234"
+                                              value={this.state.sndOrdernumber}
                                             />
                                           </td>
                                         </tr>
@@ -196,7 +256,9 @@ export default inject("PageStore")(
                                               name="sndInstallmenttype"
                                               size="30"
                                               maxlength="30"
-                                              value="0:2:3:4:5:6:7:8:9:10:11:12"
+                                              value={
+                                                this.state.sndInstallmenttype
+                                              }
                                             />
                                           </td>
                                         </tr>
@@ -208,7 +270,7 @@ export default inject("PageStore")(
                                               name="sndInteresttype"
                                               size="30"
                                               maxlength="30"
-                                              value="NONE"
+                                              value={this.state.sndInteresttype}
                                             />
                                           </td>
                                         </tr>
@@ -220,7 +282,7 @@ export default inject("PageStore")(
                                               name="sndShowcard"
                                               size="30"
                                               maxlength="30"
-                                              value="C"
+                                              value={this.state.sndShowcard}
                                             />
                                           </td>
                                         </tr>
@@ -242,7 +304,7 @@ export default inject("PageStore")(
                                               name="sndGoodname"
                                               size="30"
                                               maxlength="30"
-                                              value="당근10kg"
+                                              value={this.state.sndGoodname}
                                             />
                                           </td>
                                         </tr>
@@ -254,7 +316,7 @@ export default inject("PageStore")(
                                               name="sndAmount"
                                               size="30"
                                               maxlength="9"
-                                              value="1003"
+                                              value={this.state.sndAmount}
                                             />
                                           </td>
                                         </tr>
@@ -266,7 +328,7 @@ export default inject("PageStore")(
                                               name="sndOrdername"
                                               size="30"
                                               maxlength="20"
-                                              value="김토끼"
+                                              value={this.state.sndOrdername}
                                             />
                                           </td>
                                         </tr>
@@ -278,7 +340,7 @@ export default inject("PageStore")(
                                               name="sndEmail"
                                               size="30"
                                               maxlength="50"
-                                              value="kspay@carrot.do.kr"
+                                              value={this.state.sndEmail}
                                             />
                                           </td>
                                         </tr>
@@ -290,7 +352,7 @@ export default inject("PageStore")(
                                               name="sndMobile"
                                               size="30"
                                               maxlength="12"
-                                              value="01609879999"
+                                              value={this.state.sndMobile}
                                             />
                                           </td>
                                         </tr>
