@@ -21,7 +21,7 @@ const ModalStore = new (class {
   /** action */
   /********** ********** ********** ********** **********/
   openModal = (
-    modalType = "Alert" | "Confirm" | "Select" | "Coupon" | "SNS",
+    modalType = "Alert" | "Confirm" | "Select" | "Coupon" | "SNS" | "Input",
     options = {}
   ) => {
     this.title = options.title || "";
@@ -44,6 +44,8 @@ const ModalStore = new (class {
       $("#couponModal").modal("show");
     } else if (modalType === "SNS") {
       $("#snsModal").modal("show");
+    } else if (modalType === "Input") {
+      $("#inputModal").modal("show");
     }
   };
 })();

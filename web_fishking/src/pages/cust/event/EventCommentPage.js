@@ -48,17 +48,42 @@ export default inject(
             }, 100);
           }
         };
-        onClickReply = async (item) => {};
+        onClickReply = async (item) => {
+          console.log(JSON.stringify(item));
+          const { ModalStore } = this.props;
+          ModalStore.openModal("Input", {
+            onOk: async (text) => {
+              if (text !== "") {
+                const {
+                  APIStore,
+                  match: {
+                    params: { eventId },
+                  },
+                } = this.props;
+                const resolve = await APIStore._post(`/v2/api/comment`, {
+                  dependentType: "event",
+                  linkId: eventId,
+                  parentId: item.commentId,
+                  content: text,
+                  fileId: null,
+                });
+                if (resolve) {
+                  this.loadPageData();
+                }
+              }
+            },
+          });
+        };
         onClickMore = async (item) => {
           const { ModalStore } = this.props;
           ModalStore.openModal("Select", {
-            selectOptions: ["수정하기", "삭제하기", "닫기"],
+            selectOptions: ["삭제하기", "닫기"],
             onSelect: ({ index }) => this.onCallbackMore(item, index),
           });
         };
         onCallbackMore = async (item, index) => {
           const { APIStore } = this.props;
-          if (index === 1) {
+          if (index === 0) {
             // 삭제하기
             const resolve = await APIStore._delete("/v2/api/comment", {
               commentId: item.commentId,
@@ -167,22 +192,22 @@ export default inject(
                   <form className="form-line" style={{ marginTop: "1px" }}>
                     <div className="form-group row">
                       <div className="col-10">
-                        <input
-                          ref={this.file}
-                          type="file"
-                          accept="image/*"
-                          style={{ display: "none" }}
-                        />
-                        <a
-                          className="float-photo"
-                          onClick={() => this.file.current?.click()}
-                        >
-                          <img
-                            src="/assets/cust/img/svg/icon-photo.svg"
-                            alt="사진"
-                            className="icon-sm"
-                          />
-                        </a>
+                        {/*<input*/}
+                        {/*  ref={this.file}*/}
+                        {/*  type="file"*/}
+                        {/*  accept="image/*"*/}
+                        {/*  style={{ display: "none" }}*/}
+                        {/*/>*/}
+                        {/*<a*/}
+                        {/*  className="float-photo"*/}
+                        {/*  onClick={() => this.file.current?.click()}*/}
+                        {/*>*/}
+                        {/*  <img*/}
+                        {/*    src="/assets/cust/img/svg/icon-photo.svg"*/}
+                        {/*    alt="사진"*/}
+                        {/*    className="icon-sm"*/}
+                        {/*  />*/}
+                        {/*</a>*/}
                         <input
                           ref={this.text}
                           type="text"

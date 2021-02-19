@@ -10,7 +10,14 @@ import CommonRoute from "./common";
 import BlankPage from "../pages/BlankPage";
 
 const {
-  MODAL: { AlertModal, ConfirmModal, CouponModal, SelectModal, SNSModal },
+  MODAL: {
+    AlertModal,
+    ConfirmModal,
+    CouponModal,
+    SelectModal,
+    SNSModal,
+    InputModal,
+  },
   LAYOUT: { LoadingLayout },
 } = Components;
 
@@ -132,6 +139,7 @@ export default inject("PageStore")(
         <SelectModal />
         <CouponModal />
         <SNSModal />
+        <InputModal />
       </BrowserRouter>
     );
   })
