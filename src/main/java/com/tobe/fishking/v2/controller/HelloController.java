@@ -71,7 +71,7 @@ public class HelloController {
                         "\"android_channel_id\": \"notification.native_fishking\"" +
                         "}," +
                     "\"to\" : " +
-                        "\"ekG8K9jEQ4quutFUNmJgaF:APA91bED4jPVkGkQ07GEQ15TtVylVMcgHjbA0aSHkzSDa0WUr3Xs75x3Yyt8L3scHwJWidtuDw1Hb9vvU2UvNfko67ljuGRxGCca9mJPTUOYxiG0RXO8v5s5haqFfp1rpw8Q8ebx65RM\"" +
+                        "\"fPMt6cgBSEim5ZHm6FNcXs:APA91bFlhoi3YyjpmrnuNBk-iGYhxo9CdugGEsI44GxLs4LLLWW66VXHdfCWZ_TYeeHVo7IAibFwoGuu6dXgWhn5AT845s2rluEWi0SNIiurpYbGbTqPf-2yCYEkcs4vY87ZT0f6Mm6G\"" +
                 "}");
         String response = memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
         return response;

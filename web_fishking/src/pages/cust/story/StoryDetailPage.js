@@ -37,7 +37,6 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
-          console.log(JSON.stringify(resolve));
 
           this.setState({ ...resolve, category });
         };
@@ -80,7 +79,10 @@ export default inject(
         };
         onClickReservation = () => {
           const { PageStore } = this.props;
-          PageStore.push(`/reservation/goods/${this.state.shipId}`);
+          let fishingType = this.state.fishingType;
+          if (fishingType === "선상") fishingType = "boat";
+          else fishingType = "rock";
+          PageStore.push(`/company/${fishingType}/detail/${this.state.shipId}`);
         };
         onSelectFunction = async (selected) => {
           const { APIStore, ModalStore } = this.props;

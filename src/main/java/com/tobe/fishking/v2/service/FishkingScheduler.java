@@ -97,6 +97,7 @@ public class FishkingScheduler {
     /*조위 알림*/
     @Scheduled(cron = "0 0/1 * * * *")
     public void checkTideLevelAlert() throws IOException {
+        System.out.println("checkTideLevelAlert()");
         LocalDateTime dateTime = LocalDateTime.now();
         dateTime = dateTime.withSecond(0).withNano(0);
         List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
@@ -133,7 +134,8 @@ public class FishkingScheduler {
                             "\"to\" : \""+registrationToken+"\"" +
                             "}");
             memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
-            alerts.sent();
+//            alerts.sent();
+//            alertsRepository.save(alerts);
         }
     }
 

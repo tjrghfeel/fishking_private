@@ -33,8 +33,6 @@ const APIStore = new (class {
               }
             }
           }
-          console.log(JSON.stringify(params));
-          console.log(url);
 
           const response = await Http.request(
             url,
