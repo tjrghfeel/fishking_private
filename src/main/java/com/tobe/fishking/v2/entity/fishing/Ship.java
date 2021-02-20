@@ -145,7 +145,7 @@ public class Ship extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'실시간영상', 'USER', DBO, 'TABLE', fishing_ship, 'COLUMN',  fishing_rtvideos
     @OneToMany
-    @JoinColumn(name = "ship_rtvideos_id" , columnDefinition = "bigint  comment '실시간영상'  ")
+    @JoinColumn(name = "rtvideos_ship_id" , columnDefinition = "bigint  comment '실시간영상'  ")
     //  @Builder.Default
     @JsonBackReference
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();

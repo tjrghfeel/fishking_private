@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.service.common;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.*;
+import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
@@ -10,6 +11,7 @@ import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
+import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
@@ -17,13 +19,16 @@ import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
+import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -56,6 +61,7 @@ public class CommonService {
     private final Environment env;
     private final AdRepository adRepository;
     private final FishingDiaryRepository fishingDiaryRepository;
+    private final ShipRepository shipRepository;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -282,6 +288,18 @@ public class CommonService {
         }
         result.put("fishingDiaries", diaries);
 
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchTotal(String keyword) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(0, 4, Sort.by("createdDate"));
+        result.put("keyword", keyword);
+        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
+        result.put("blog", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
+        result.put("ship", shipRepository.searchMain(keyword, "ship", pageable));
+        result.put("live", shipRepository.searchMain(keyword, "live", pageable));
         return result;
     }
 

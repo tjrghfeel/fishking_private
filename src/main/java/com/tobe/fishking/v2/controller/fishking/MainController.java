@@ -102,7 +102,7 @@ public class MainController {
 
 
     @ApiOperation(value = "통합 검색 인기검색어, 어복황제 추천 AD", notes = "인기검색어, 추천AD" +
-            "1\n { " +
+            "\n { " +
             "\n popularKeyword: [ keyword, keyword, .... , keyword ]  // 인덱스 순서로 1 2 3 .. 순입니다. String 리스트입니다." +
             "\n ad: [{ " +
             "\n id: 상품 id" +
@@ -135,6 +135,61 @@ public class MainController {
         result.put("popularKeyword", popularService.getPopularKeyword());
         result.put("ad", commonService.getAdList(AdType.SEARCH_AD));
         return result;
+    }
+
+    @ApiOperation(value = "통합검색 결과", notes = "통합검색 결과 " +
+            "\n {" +
+            "\n ship: 업체 { " +
+            "\n  content: [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }]" +
+            "\n fishSpeciesCount: 대상 어종 수" +
+            "\n lowPrice: 상품 중 가장 낮은 가격" +
+            "\n sold: 결제 수 " +
+            "\n }, ... ] }," +
+            "\n , ... " +
+            "\n , totalElements: 총 개수" +
+            "\n diary: {" +
+            "\n     content: [{" +
+            "\n         id: 조황일지 id" +
+            "\n         title: 제목" +
+            "\n         contents: 내용" +
+            "\n         imageUrl: 이미지 " +
+            "\n         nickName: 작성자 닉네임" +
+            "\n         profileImageUrl: 작성자 프로필사진" +
+            "\n         createdDate: 작성일" +
+            "\n         loves: 좋아요 수 " +
+            "\n         comments: 댓글 수 " +
+            "\n         fishingType: 선박 / 갯바위" +
+            "\n         species: 어종" +
+            "\n     }, ... ]," +
+            "\n     , ..." +
+            "\n     , totalElements: 총 개수" +
+            "\n live: 어복TV, 내용은 ship 과 같음. 왼쪽에 선박 사진, 오른쪽에는 선박명 보여주시면 됩니다. (live 있는 선박리스트입니다) " +
+            "\n blog: 조행기, 내용은 diary 와 같음." +
+            "\n keyword: 검색 키워드 ")
+    @GetMapping("/search/all")
+    public Map<String, Object> getSearchPageData(@RequestHeader("Authorization") String token,
+                                                 @RequestParam String keyword) {
+        return commonService.searchTotal(keyword);
     }
 
     /*  jkkim 수정 지우질 말것 */
