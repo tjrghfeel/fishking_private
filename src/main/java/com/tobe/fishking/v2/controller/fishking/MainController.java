@@ -217,7 +217,7 @@ public class MainController {
     }
 
     @ApiOperation(value = "메인화면 데이터 ", notes = "메인화면 데이터 " +
-            "\n live: [{ " +
+            "\n live: 실시간 조황 [{ " +
             "\n id: 상품 id" +
             "\n shipImageFileUrl: 선박 이미지 주소 " +
             "\n shipName: 선박명" +
@@ -241,14 +241,26 @@ public class MainController {
             "\n fishSpeciesCount: 대상 어종 수" +
             "\n lowPrice: 상품 중 가장 낮은 가격" +
             "\n }, ... ] " +
-            "\n ship: live 와 같음" +
-            "\n ad: live 와 같음" +
-            "\n direction: [{ " +
+            "\n ship: 출조 정보, 내용 live 와 같음" +
+            "\n ad: 추천 업체, 내용 live 와 같음" +
+            "\n direction: 지역별 조황 [{ " +
             "\n     code: 코드 " +
             "\n     codeName: 이름 " +
             "\n     count: 포함 수" +
             "\n }, ... ] " +
-            "\n species: direction 과 같음" +
+            "\n species: 어종별 조황, 내용 direction 과 같음" +
+            "\n fishingDiaries: 조황 일지 [{" +
+            "\n     id: 조황일지 id" +
+            "\n     title: 제목" +
+            "\n     imageUrl: 이미지 주소" +
+            "\n     sido: 시도 " +
+            "\n     sigungu: 시군구 " +
+            "\n     species: 어종 " +
+            "\n }, ... ] " +
+            "\n 조황일지 클릭 시 해당 조황일지 상세로, 더보기 누를 시 어복스토리 > 조황일지로 이동" +
+            "\n 실시간 조황 -> 어복TV로 " +
+            "\n 출조 정보, 추천 업체 -> 해당 선박 상세로, 더보기 시 선상 리스트로 " +
+            "\n 어종별 조황 클릭시 선상 리스트에서 해당 어종 검색 결과로 이동 " +
             "")
     @GetMapping(value = "/main")
     public Map<String, Object> getMainScreenData(@RequestHeader(name = "Authorization") String token){

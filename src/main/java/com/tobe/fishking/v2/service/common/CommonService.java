@@ -5,15 +5,18 @@ import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.*;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
+import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
 import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +55,7 @@ public class CommonService {
     private final UploadService uploadService;
     private final Environment env;
     private final AdRepository adRepository;
+    private final FishingDiaryRepository fishingDiaryRepository;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -247,6 +251,8 @@ public class CommonService {
 
     @Transactional
     public Map<String, Object> getMainScreenData() {
+        String path = env.getProperty("file.downloadUrl");
+
         Map<String, Object> result = new HashMap<>();
         result.put("live", adRepository.getAdByType(AdType.MAIN_LIVE));
         result.put("ship", adRepository.getAdByType(AdType.MAIN_SHIP));
@@ -266,6 +272,16 @@ public class CommonService {
                 .filter(m -> !m.getCode().equals("east"))
                 .collect(Collectors.toList())
         );
+        List<FishingDiaryMainResponse> diaries = fishingDiaryRepository.getMainDiaries();
+        for (FishingDiaryMainResponse diary : diaries) {
+            List<FileEntity> fileEntityList = fileRepo.findByPidAndFilePublishAndFileType(
+                    diary.getId(), FilePublish.fishingDiary, FileType.image);
+            if (fileEntityList.size() > 0) {
+                diary.setImageUrl(path + "/" + fileEntityList.get(0).getFileUrl() + "/" + fileEntityList.get(0).getStoredFile());
+            }
+        }
+        result.put("fishingDiaries", diaries);
+
         return result;
     }
 
