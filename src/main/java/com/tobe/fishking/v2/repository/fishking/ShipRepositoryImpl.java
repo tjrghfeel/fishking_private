@@ -125,6 +125,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo()),
                         ship.isActive.eq(true)
                 )
+                .limit(100)
                 .fetchResults();
         return results.getResults();
     }
@@ -164,7 +165,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ship.fishSpecies.any().codeName.containsIgnoreCase(keyword)
                         .or(ship.shipName.containsIgnoreCase(keyword))
                         .or(ship.sido.concat(" ").concat(ship.sigungu).containsIgnoreCase(keyword))
-                    ).and(hasRealTimeVideos(type.equals("live")))
+                    ).and(searchLive(type.equals("live")))
                 )
                 .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -213,6 +214,18 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 return ship.shiipRealTimeVideos.size().gt(0);
             } else {
                 return ship.shiipRealTimeVideos.size().eq(0);
+            }
+        }
+    }
+
+    private BooleanExpression searchLive(Boolean searchLive) {
+        if (searchLive == null) {
+            return null;
+        } else {
+            if (searchLive) {
+                return ship.shiipRealTimeVideos.size().gt(0);
+            } else {
+                return ship.shiipRealTimeVideos.size().gt(-1);
             }
         }
     }

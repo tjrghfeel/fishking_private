@@ -41,7 +41,7 @@ public class FishingDiarySearchResponse {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.imageUrl = imageUrl;
+        this.imageUrl = imageUrl.split("\\^")[0];
         this.nickName = nickName;
         this.profileImageUrl = profileImageUrl;
         this.createdDate = DateUtils.getDateInFormat(createdDate.toLocalDate());

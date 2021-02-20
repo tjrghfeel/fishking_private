@@ -101,7 +101,7 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
         NumberPath<Long> aliasComments = Expressions.numberPath(Long.class, "comments");
         for (Sort.Order order : pageable.getSort()) {
             switch (order.getProperty()) {
-                case "comment":
+                case "comments":
                     OrderSpecifier<?> orderComment = aliasComments.desc();
                     ORDERS.add(orderComment);
                     break;
@@ -122,12 +122,16 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
                                 .select(Expressions.asString("https://www.fishkingapp.com/resource/")
                                         .concat(fileEntity.fileUrl)
                                         .concat("/")
-                                        .concat(fileEntity.storedFile))
+                                        .concat(fileEntity.storedFile)
+                                        .concat("^")
+                                        .concat(fileEntity.id.max().stringValue()))
                                 .from(fileEntity)
                                 .where(fileEntity.isDelete.eq(false),
                                         fileEntity.fileType.eq(FileType.image),
-                                        typeCheckFile(type))
-                                .limit(1), aliasString
+                                        typeCheckFile(type),
+                                        fileEntity.pid.eq(fishingDiary.id))
+                                .orderBy(fileEntity.isRepresent.desc())
+                                , aliasString
                         ),
                         fishingDiary.createdBy.nickName,
                         fishingDiary.createdBy.profileImage,
@@ -167,9 +171,9 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
         BooleanExpression expression = null;
         if (type != null) {
             if (type.equals("blog")) {
-                expression = fishingDiary.filePublish.eq(FilePublish.fishingBlog);
+                expression = fileEntity.filePublish.eq(FilePublish.fishingBlog);
             } else if (type.equals("diary")) {
-                expression = fishingDiary.filePublish.eq(FilePublish.fishingDiary);
+                expression = fileEntity.filePublish.eq(FilePublish.fishingDiary);
             }
         }
         return expression;

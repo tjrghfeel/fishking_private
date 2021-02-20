@@ -303,4 +303,43 @@ public class CommonService {
         return result;
     }
 
+    @Transactional
+    public Map<String, Object> searchShip(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10,
+                order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
+        result.put("keyword", keyword);
+        result.put("ship", shipRepository.searchMain(keyword, "ship", pageable));
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchLive(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate"));
+        result.put("keyword", keyword);
+        result.put("ship", shipRepository.searchMain(keyword, "live", pageable));
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchDiary(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10,
+                order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
+        result.put("keyword", keyword);
+        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchBlog(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10,
+                order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
+        result.put("keyword", keyword);
+        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
+        return result;
+    }
+
 }

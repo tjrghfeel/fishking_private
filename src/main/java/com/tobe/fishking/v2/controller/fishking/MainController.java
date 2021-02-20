@@ -187,9 +187,169 @@ public class MainController {
             "\n blog: 조행기, 내용은 diary 와 같음." +
             "\n keyword: 검색 키워드 ")
     @GetMapping("/search/all")
-    public Map<String, Object> getSearchPageData(@RequestHeader("Authorization") String token,
+    public Map<String, Object> getSearchResultAll(@RequestHeader("Authorization") String token,
                                                  @RequestParam String keyword) {
         return commonService.searchTotal(keyword);
+    }
+
+    @ApiOperation(value = "전체검색 업체 결과", notes = "통합검색 업체 결과 " +
+            "\n {" +
+            "\n ship: 업체 { " +
+            "\n  content: [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }]" +
+            "\n fishSpeciesCount: 대상 어종 수" +
+            "\n lowPrice: 상품 중 가장 낮은 가격" +
+            "\n sold: 결제 수 " +
+            "\n }, ... ] }," +
+            "\n , ... " +
+            "\n     , totalPages: 총 페이지 수" +
+            "\n     , totalElements: 총 개수" +
+            "\n     , last: 마지막 페이지 여부" +
+            "\n     , first: 첫 페이지 여부" +
+            "\n keyword: 검색 키워드 " +
+            "\n 정렬에 추천순 -> 좋아요순 입니다. " +
+            "\n order 값으로는 " +
+            "\n 거리 순: distance, 명칭 순: name " +
+            "\n 최신순은 order 없는 경우 거리 순 입니다.")
+    @GetMapping("/search/ship/{page}")
+    public Map<String, Object> getSearchResultShip(@RequestHeader("Authorization") String token,
+                                                   @RequestParam String keyword,
+                                                   @RequestParam(defaultValue = "distance") String order,
+                                                   @PathVariable Integer page) {
+        return commonService.searchShip(keyword, page, order);
+    }
+
+    @ApiOperation(value = "전체검색 라이브 결과", notes = "전체검색 라이브 결과 " +
+            "\n {" +
+            "\n live: 업체 { " +
+            "\n  content: [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }]" +
+            "\n fishSpeciesCount: 대상 어종 수" +
+            "\n lowPrice: 상품 중 가장 낮은 가격" +
+            "\n sold: 결제 수 " +
+            "\n }, ... ] }," +
+            "\n , ... " +
+            "\n     , totalPages: 총 페이지 수" +
+            "\n     , totalElements: 총 개수" +
+            "\n     , last: 마지막 페이지 여부" +
+            "\n     , first: 첫 페이지 여부" +
+            "\n keyword: 검색 키워드 " +
+            "\n order 값으로는 " +
+            "\n 인기 순: loves " +
+            "\n 최신순은 order 없는 경우 최신 순 입니다." +
+            "\n 현재 인기순서 정하는 기준이 확실하지 않습니다. 두 경우 모두 최신순으로 전달됩니다.")
+    @GetMapping("/search/live/{page}")
+    public Map<String, Object> getSearchResultLive(@RequestHeader("Authorization") String token,
+                                                   @RequestParam String keyword,
+                                                   @RequestParam(defaultValue = "") String order,
+                                                   @PathVariable Integer page) {
+        return commonService.searchLive(keyword, page, order);
+    }
+
+    @ApiOperation(value = "전체검색 조황일지 결과", notes = "전체검색 조황일지 결과 " +
+            "\n {" +
+            "\n diary: {" +
+            "\n     content: [{" +
+            "\n         id: 조황일지 id" +
+            "\n         title: 제목" +
+            "\n         contents: 내용" +
+            "\n         imageUrl: 이미지 " +
+            "\n         nickName: 작성자 닉네임" +
+            "\n         profileImageUrl: 작성자 프로필사진" +
+            "\n         createdDate: 작성일" +
+            "\n         loves: 좋아요 수 " +
+            "\n         comments: 댓글 수 " +
+            "\n         fishingType: 선박 / 갯바위" +
+            "\n         species: 어종" +
+            "\n     }, ... ]," +
+            "\n     , ..." +
+            "\n     , totalPages: 총 페이지 수" +
+            "\n     , totalElements: 총 개수" +
+            "\n     , last: 마지막 페이지 여부" +
+            "\n     , first: 첫 페이지 여부" +
+            "\n keyword: 검색 키워드 " +
+            "\n 정렬에 추천순 -> 좋아요순 입니다. " +
+            "\n order 값으로는 " +
+            "\n 좋아요 순: loves, 댓글 순: comments " +
+            "\n 최신순은 order 없는 경우 최신 순 입니다.")
+    @GetMapping("/search/diary/{page}")
+    public Map<String, Object> getSearchResultDiary(@RequestHeader("Authorization") String token,
+                                                  @RequestParam String keyword,
+                                                  @RequestParam(defaultValue = "") String order,
+                                                  @PathVariable Integer page) {
+        return commonService.searchDiary(keyword, page, order);
+    }
+
+    @ApiOperation(value = "전체검색 조행기 결과", notes = "전체검색 조행기 결과 " +
+            "\n {" +
+            "\n blog: {" +
+            "\n     content: [{" +
+            "\n         id: 조황일지 id" +
+            "\n         title: 제목" +
+            "\n         contents: 내용" +
+            "\n         imageUrl: 이미지 " +
+            "\n         nickName: 작성자 닉네임" +
+            "\n         profileImageUrl: 작성자 프로필사진" +
+            "\n         createdDate: 작성일" +
+            "\n         loves: 좋아요 수 " +
+            "\n         comments: 댓글 수 " +
+            "\n         fishingType: 선박 / 갯바위" +
+            "\n         species: 어종" +
+            "\n     }, ... ]," +
+            "\n     , ..." +
+            "\n     , totalPages: 총 페이지 수" +
+            "\n     , totalElements: 총 개수" +
+            "\n     , last: 마지막 페이지 여부" +
+            "\n     , first: 첫 페이지 여부" +
+            "\n keyword: 검색 키워드" +
+            "\n 정렬에 추천순 -> 좋아요순 입니다. " +
+            "\n order 값으로는 " +
+            "\n 좋아요 순: loves, 댓글 순: comments " +
+            "\n 최신순은 order 없는 경우 최신 순 입니다.")
+    @GetMapping("/search/blog/{page}")
+    public Map<String, Object> getSearchResultBlog(@RequestHeader("Authorization") String token,
+                                                  @RequestParam String keyword,
+                                                  @RequestParam(defaultValue = "") String order,
+                                                  @PathVariable Integer page) {
+        return commonService.searchBlog(keyword, page, order);
     }
 
     /*  jkkim 수정 지우질 말것 */
