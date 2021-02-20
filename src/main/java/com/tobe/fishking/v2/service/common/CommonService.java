@@ -7,10 +7,8 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
-import com.tobe.fishking.v2.model.common.DeleteFileDto;
-import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
-import com.tobe.fishking.v2.model.common.FilesDTO;
-import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
+import com.tobe.fishking.v2.enums.fishing.SeaDirection;
+import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
@@ -39,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -245,4 +244,29 @@ public class CommonService {
     public List<SmallShipResponse> getAdList(AdType type) {
        return adRepository.getAdByType(type);
     }
+
+    @Transactional
+    public Map<String, Object> getMainScreenData() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("live", adRepository.getAdByType(AdType.MAIN_LIVE));
+        result.put("ship", adRepository.getAdByType(AdType.MAIN_SHIP));
+        result.put("ad", adRepository.getAdByType(AdType.MAIN_AD));
+        result.put("species", commonCodeRepo.getMainSpeciesCount());
+        List<MainSpeciesResponse> directions = commonCodeRepo.getMainDistrictCount();
+        List<String> d = directions.stream().map(MainSpeciesResponse::getCodeName).collect(Collectors.toList());
+        SeaDirection[] seaDirections = SeaDirection.values();
+        for (SeaDirection seaDirection : seaDirections) {
+            if (!d.contains(seaDirection.getValue())) {
+                directions.add(new MainSpeciesResponse(seaDirection, 0L));
+            }
+        }
+        result.put("direction", directions.stream()
+                .filter(m -> !m.getCode().equals("south"))
+                .filter(m -> !m.getCode().equals("west"))
+                .filter(m -> !m.getCode().equals("east"))
+                .collect(Collectors.toList())
+        );
+        return result;
+    }
+
 }

@@ -13,6 +13,7 @@ import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -39,4 +40,5 @@ public class AdRepositoryImpl implements AdRepositoryCustom {
                 .fetchResults();
         return results.getResults();
     }
+
 }

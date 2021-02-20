@@ -216,5 +216,44 @@ public class MainController {
         return responseService.getListResult(ordersService.findAllByBoardingList(goodsId));
     }
 
-
+    @ApiOperation(value = "메인화면 데이터 ", notes = "메인화면 데이터 " +
+            "\n live: [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }]" +
+            "\n fishSpeciesCount: 대상 어종 수" +
+            "\n lowPrice: 상품 중 가장 낮은 가격" +
+            "\n }, ... ] " +
+            "\n ship: live 와 같음" +
+            "\n ad: live 와 같음" +
+            "\n direction: [{ " +
+            "\n     code: 코드 " +
+            "\n     codeName: 이름 " +
+            "\n     count: 포함 수" +
+            "\n }, ... ] " +
+            "\n species: direction 과 같음" +
+            "")
+    @GetMapping(value = "/main")
+    public Map<String, Object> getMainScreenData(@RequestHeader(name = "Authorization") String token){
+        Map<String, Object> result;
+        result = commonService.getMainScreenData();
+        return result;
+    }
 }

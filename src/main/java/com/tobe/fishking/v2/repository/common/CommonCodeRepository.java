@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public interface CommonCodeRepository extends JpaRepository<CommonCode, Long> {
+public interface CommonCodeRepository extends JpaRepository<CommonCode, Long>, CommonCodeRepositoryCustom {
 
     @Query("select a from CommonCode a where a.codeName = :codeName")
     public Optional<CommonCode> findByCodeName(@Param("codeName") String codeName);
@@ -36,4 +36,5 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, Long> {
 
     @Query("select c from CommonCode c where c.code = :code")
     CommonCode getByCode(String code);
+
 }
