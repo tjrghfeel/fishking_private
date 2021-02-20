@@ -52,6 +52,7 @@ export default inject(
         resolve = await APIStore._get("/v2/api/fishingDiaryComment", {
           fishingDiaryId,
         });
+        console.log(JSON.stringify(resolve));
         this.setState({ list: resolve });
       };
       onClickItem = async (type, data, index) => {
