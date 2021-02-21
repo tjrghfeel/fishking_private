@@ -23,6 +23,7 @@ import SelectReservationCouponModal from "./modal/SelectReservationCouponModal";
 import ConfirmReservationCancelModal from "./modal/ConfirmReservationCancelModal";
 import SelectReservationCancelReasonModal from "./modal/SelectReservationCancelReasonModal";
 import InputModal from "./modal/InputModal";
+import MapCompanyInfoModal from "./modal/MapCompanyInfoModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -77,6 +78,11 @@ import ShipType9PositionView from "./view/ShipType9PositionView";
 import EventListItemView from "./view/EventListItemView";
 import CommentListItemView from "./view/CommentListItemView";
 import CompanyReviewListItemView from "./view/CompanyReviewListItemView";
+import MainAdListItemView from "./view/MainAdListItemView";
+import MainFishingDiaryListItemView from "./view/MainFishingDiaryListItemView";
+import MainShipListItemView from "./view/MainShipListItemView";
+import MainLiveListItemView from "./view/MainLiveListItemView";
+import SearchAdListItemView from "./view/SearchAdListItemView";
 
 export default {
   /********** MODAL **********/
@@ -103,6 +109,7 @@ export default {
     ConfirmReservationCancelModal,
     SelectReservationCancelReasonModal,
     InputModal,
+    MapCompanyInfoModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
@@ -153,5 +160,10 @@ export default {
     EventListItemView,
     CommentListItemView,
     CompanyReviewListItemView,
+    MainAdListItemView,
+    MainFishingDiaryListItemView,
+    MainShipListItemView,
+    MainLiveListItemView,
+    SearchAdListItemView,
   },
 };

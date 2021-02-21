@@ -182,8 +182,17 @@ const PageStore = new (class {
       script.remove();
     }
   };
-  applySwipe = () => {
-    $(".carousel").swipe({
+  reloadSwipe = () => {
+    document.querySelector("#js-touch-swipe").remove();
+    document.querySelector("#js-swiper").remove();
+    document.querySelector("#js-default").remove();
+    this.injectScript("/assets/cust/js/jquery.touchSwipe.min.js");
+    this.injectScript("/assets/cust/js/swiper.min.js");
+    this.injectScript("/assets/cust/js/default.js");
+    this.applySwipe();
+  };
+  applySwipe = (id) => {
+    $(`${id || ".carousel"}`).swipe({
       swipe: function (
         event,
         direction,
