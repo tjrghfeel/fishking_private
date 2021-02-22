@@ -35,7 +35,7 @@ const PageStore = new (class {
     window.location.reload();
   };
   goBack = () => {
-    // this.history.goBack();
+    sessionStorage.setItem("@goBack", "Y");
     window.history.back();
   };
   getQueryParams = () => {
@@ -115,7 +115,7 @@ const PageStore = new (class {
         data: JSON.parse(JSON.stringify(data || this.state)),
       },
       "",
-      location.pathname
+      location.pathname + (location.search || "")
     );
     return;
   };
@@ -126,11 +126,11 @@ const PageStore = new (class {
       if (data !== null) {
         this.state = data;
       }
+      // this.clearState();
     } else if (defaultState) this.state = defaultState;
     if (scroll !== null) {
       window.scrollTo(scroll.x || 0, scroll.y || 0);
     }
-    this.clearState();
     return saved;
   };
   clearState = () => {

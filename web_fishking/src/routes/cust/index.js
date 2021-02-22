@@ -34,13 +34,39 @@ export default inject("PageStore")(
     // # >>>>> 기본 설정
     PageStore.setHistory(history);
     PageStore.loadAccessToken("cust");
-
-    // # >>>>> 화면 접근 권한 체크 :: 로그인화면으로 리디렉트
+    // # 리디렉션
+    const redirectUrl = sessionStorage.getItem("@redirect-url");
+    if (
+      redirectUrl !== null &&
+      history.location.pathname.indexOf("/member/login") === -1
+    ) {
+      sessionStorage.removeItem("@redirect-url");
+      window.location.href = redirectUrl;
+    }
+    // # >>>>> 뒤로가기 시 로그인화면 건너뛰기
+    const goBack = sessionStorage.getItem("@goBack") || "N";
+    if (
+      goBack === "Y" &&
+      PageStore.loggedIn &&
+      history.location.pathname.indexOf(`/member/login`) !== -1
+    ) {
+      sessionStorage.removeItem("@goBack");
+      window.history.go(-2);
+      return;
+    } else {
+      sessionStorage.removeItem("@goBack");
+    }
+    // # >>>>> 화면 접근 권한 체크 :: 로그인 화면으로 리디렉트
     if (
       !PageStore.loggedIn &&
-      history.location.pathname.indexOf(`/reservation/goods/`) !== -1
+      (history.location.pathname.indexOf(`/reservation/goods/`) !== -1 ||
+        history.location.pathname.indexOf(`/story/add`) !== -1)
     ) {
-      window.location.href = "/cust/member/login";
+      sessionStorage.setItem(
+        "@redirect-url",
+        history.location.pathname + (history.location.search || "")
+      );
+      window.location.href = `/cust/member/login`;
     }
     return (
       <BrowserRouter>
