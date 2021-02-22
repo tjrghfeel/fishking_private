@@ -462,6 +462,7 @@ public class MainController {
             "\n     code: 코드 " +
             "\n     codeName: 이름 " +
             "\n     count: 포함 수" +
+            "\n     img: 어종 이미지" +
             "\n }, ... ] " +
             "\n species: 어종별 조황, 내용 direction 과 같음" +
             "\n fishingDiaries: 조황 일지 [{" +
