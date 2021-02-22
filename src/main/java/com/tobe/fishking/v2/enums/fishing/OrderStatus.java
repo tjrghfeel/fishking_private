@@ -4,10 +4,6 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 
 public enum OrderStatus   implements IEnumModel   {
 
-    waite(" 접수대기"),
-    receipt("접수"),
-    payment("결제"),
-
     book("예약 대기"),
     bookRunning("예약 진행중"),
     waitBook("대기자 예약"),

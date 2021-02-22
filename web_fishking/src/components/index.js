@@ -23,6 +23,7 @@ import SelectReservationCouponModal from "./modal/SelectReservationCouponModal";
 import ConfirmReservationCancelModal from "./modal/ConfirmReservationCancelModal";
 import SelectReservationCancelReasonModal from "./modal/SelectReservationCancelReasonModal";
 import InputModal from "./modal/InputModal";
+import MapCompanyInfoModal from "./modal/MapCompanyInfoModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -36,6 +37,8 @@ import StoryMyTab from "./layout/StoryMyTab";
 import ZzimTab from "./layout/ZzimTab";
 import StoryTab from "./layout/StoryTab";
 import StoryDetailTab from "./layout/StoryDetailTab";
+import SearchNavigationLayout from "./layout/SearchNavigationLayout";
+import SearchTab from "./layout/SearchTab";
 
 /********** ********** ********** ********** **********/
 /** ITEM */
@@ -77,6 +80,14 @@ import ShipType9PositionView from "./view/ShipType9PositionView";
 import EventListItemView from "./view/EventListItemView";
 import CommentListItemView from "./view/CommentListItemView";
 import CompanyReviewListItemView from "./view/CompanyReviewListItemView";
+import MainAdListItemView from "./view/MainAdListItemView";
+import MainFishingDiaryListItemView from "./view/MainFishingDiaryListItemView";
+import MainShipListItemView from "./view/MainShipListItemView";
+import MainLiveListItemView from "./view/MainLiveListItemView";
+import SearchAdListItemView from "./view/SearchAdListItemView";
+import SearchCompanyListItem01View from "./view/SearchCompanyListItem01View";
+import SearchDiaryListItemView from "./view/SearchDiaryListItemView";
+import SearchStoryListItemView from "./view/SearchStoryListItemView";
 
 export default {
   /********** MODAL **********/
@@ -103,6 +114,7 @@ export default {
     ConfirmReservationCancelModal,
     SelectReservationCancelReasonModal,
     InputModal,
+    MapCompanyInfoModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
@@ -115,6 +127,8 @@ export default {
     ZzimTab,
     StoryTab,
     StoryDetailTab,
+    SearchNavigationLayout,
+    SearchTab,
   },
   /********** ITEM **********/
   ITEM: {},
@@ -153,5 +167,13 @@ export default {
     EventListItemView,
     CommentListItemView,
     CompanyReviewListItemView,
+    MainAdListItemView,
+    MainFishingDiaryListItemView,
+    MainShipListItemView,
+    MainLiveListItemView,
+    SearchAdListItemView,
+    SearchCompanyListItem01View,
+    SearchDiaryListItemView,
+    SearchStoryListItemView,
   },
 };

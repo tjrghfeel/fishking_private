@@ -60,6 +60,10 @@ export default inject(
         if ((qp.fishingDate || null) !== null) {
           fishingDate = new Date(qp.fishingDate).format("-");
         }
+        let species = null;
+        if ((qp.species || null) !== null) {
+          species = [qp.species];
+        }
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
@@ -73,7 +77,7 @@ export default inject(
           hasRealTimeVideo: "",
           fishingDate: fishingDate,
           sido: null,
-          species: null,
+          species,
           orderBy: "popular",
           facilities: null,
           genres: null,
@@ -132,12 +136,17 @@ export default inject(
         PageStore.push(`/company/${fishingType}/detail/${item.id}`);
       };
       onClickFAB = async (text) => {
-        const { PageStore } = this.props;
+        const {
+          PageStore,
+          match: {
+            params: { fishingType },
+          },
+        } = this.props;
         PageStore.storeState();
         if (text === "통합가이드") {
           PageStore.push(`/guide/main`);
         } else if (text === "지도보기") {
-          PageStore.push(``);
+          PageStore.push(`/common/mapsearch?fishingType=${fishingType}`);
         } else if (text === "예약검색") {
           PageStore.push(`/search/reserve`);
         }

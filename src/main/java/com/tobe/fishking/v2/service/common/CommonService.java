@@ -3,26 +3,32 @@ package com.tobe.fishking.v2.service.common;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.*;
+import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
-import com.tobe.fishking.v2.model.common.DeleteFileDto;
-import com.tobe.fishking.v2.model.common.FilePreUploadResponseDto;
-import com.tobe.fishking.v2.model.common.FilesDTO;
-import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
+import com.tobe.fishking.v2.enums.fishing.SeaDirection;
+import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
+import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
+import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
+import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
+import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -39,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +60,8 @@ public class CommonService {
     private final UploadService uploadService;
     private final Environment env;
     private final AdRepository adRepository;
+    private final FishingDiaryRepository fishingDiaryRepository;
+    private final ShipRepository shipRepository;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -245,4 +254,92 @@ public class CommonService {
     public List<SmallShipResponse> getAdList(AdType type) {
        return adRepository.getAdByType(type);
     }
+
+    @Transactional
+    public Map<String, Object> getMainScreenData() {
+        String path = env.getProperty("file.downloadUrl");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("live", adRepository.getAdByType(AdType.MAIN_LIVE));
+        result.put("ship", adRepository.getAdByType(AdType.MAIN_SHIP));
+        result.put("ad", adRepository.getAdByType(AdType.MAIN_AD));
+        result.put("species", commonCodeRepo.getMainSpeciesCount());
+        List<MainSpeciesResponse> directions = commonCodeRepo.getMainDistrictCount();
+        List<String> d = directions.stream().map(MainSpeciesResponse::getCodeName).collect(Collectors.toList());
+        SeaDirection[] seaDirections = SeaDirection.values();
+        for (SeaDirection seaDirection : seaDirections) {
+            if (!d.contains(seaDirection.getValue())) {
+                directions.add(new MainSpeciesResponse(seaDirection, 0L));
+            }
+        }
+        result.put("direction", directions.stream()
+                .filter(m -> !m.getCode().equals("south"))
+                .filter(m -> !m.getCode().equals("west"))
+                .filter(m -> !m.getCode().equals("east"))
+                .collect(Collectors.toList())
+        );
+        List<FishingDiaryMainResponse> diaries = fishingDiaryRepository.getMainDiaries();
+        for (FishingDiaryMainResponse diary : diaries) {
+            List<FileEntity> fileEntityList = fileRepo.findByPidAndFilePublishAndFileType(
+                    diary.getId(), FilePublish.fishingDiary, FileType.image);
+            if (fileEntityList.size() > 0) {
+                diary.setImageUrl(path + "/" + fileEntityList.get(0).getFileUrl() + "/" + fileEntityList.get(0).getStoredFile());
+            }
+        }
+        result.put("fishingDiaries", diaries);
+
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchTotal(String keyword) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(0, 4, Sort.by("createdDate"));
+        result.put("keyword", keyword);
+        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
+        result.put("blog", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
+        result.put("ship", shipRepository.searchMain(keyword, "ship", pageable));
+        result.put("live", shipRepository.searchMain(keyword, "live", pageable));
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchShip(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10,
+                order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
+        result.put("keyword", keyword);
+        result.put("ship", shipRepository.searchMain(keyword, "ship", pageable));
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchLive(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate"));
+        result.put("keyword", keyword);
+        result.put("ship", shipRepository.searchMain(keyword, "live", pageable));
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchDiary(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10,
+                order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
+        result.put("keyword", keyword);
+        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> searchBlog(String keyword, Integer page, String order) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10,
+                order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
+        result.put("keyword", keyword);
+        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
+        return result;
+    }
+
 }

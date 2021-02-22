@@ -35,7 +35,7 @@ const PageStore = new (class {
     window.location.reload();
   };
   goBack = () => {
-    // this.history.goBack();
+    sessionStorage.setItem("@goBack", "Y");
     window.history.back();
   };
   getQueryParams = () => {
@@ -115,7 +115,7 @@ const PageStore = new (class {
         data: JSON.parse(JSON.stringify(data || this.state)),
       },
       "",
-      location.pathname
+      location.pathname + (location.search || "")
     );
     return;
   };
@@ -126,11 +126,11 @@ const PageStore = new (class {
       if (data !== null) {
         this.state = data;
       }
+      // this.clearState();
     } else if (defaultState) this.state = defaultState;
     if (scroll !== null) {
       window.scrollTo(scroll.x || 0, scroll.y || 0);
     }
-    this.clearState();
     return saved;
   };
   clearState = () => {
@@ -182,8 +182,17 @@ const PageStore = new (class {
       script.remove();
     }
   };
-  applySwipe = () => {
-    $(".carousel").swipe({
+  reloadSwipe = () => {
+    document.querySelector("#js-touch-swipe").remove();
+    document.querySelector("#js-swiper").remove();
+    document.querySelector("#js-default").remove();
+    this.injectScript("/assets/cust/js/jquery.touchSwipe.min.js");
+    this.injectScript("/assets/cust/js/swiper.min.js");
+    this.injectScript("/assets/cust/js/default.js");
+    this.applySwipe();
+  };
+  applySwipe = (id) => {
+    $(`${id || ".carousel"}`).swipe({
       swipe: function (
         event,
         direction,

@@ -8,6 +8,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.common.TakeType;
@@ -89,7 +90,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         inGenres(shipSearchDTO.getGenresList()),
                         inServices(shipSearchDTO.getServicesList()),
                         inFacilities(shipSearchDTO.getFacilitiesList()),
-                        hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo())
+                        hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo()),
+                        ship.isActive.eq(true)
                 )
                 .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -120,10 +122,56 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         inGenres(shipSearchDTO.getGenresList()),
                         inServices(shipSearchDTO.getServicesList()),
                         inFacilities(shipSearchDTO.getFacilitiesList()),
-                        hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo())
+                        hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo()),
+                        ship.isActive.eq(true)
                 )
+                .limit(100)
                 .fetchResults();
         return results.getResults();
+    }
+
+    @Override
+    public Page<ShipListResponse> searchMain(String keyword, String type, Pageable pageable) {
+        List<OrderSpecifier> ORDERS = new ArrayList<>();
+        NumberPath<Integer> aliasPrice = Expressions.numberPath(Integer.class, "price");
+        NumberPath<Integer> aliasSold = Expressions.numberPath(Integer.class, "sold");
+        NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
+
+        if (!isEmpty(pageable.getSort())) {
+            for (Sort.Order order: pageable.getSort()) {
+                switch (order.getProperty()) {
+                    case "distance":
+                        OrderSpecifier<?> orderDistance = getSortedColumn(Order.ASC, ship, "distance");
+                        ORDERS.add(orderDistance);
+                        break;
+                    case "name":
+                        OrderSpecifier<?> orderName = getSortedColumn(Order.ASC, ship, "shipName");
+                        ORDERS.add(orderName);
+                        break;
+                }
+            }
+        }
+        ORDERS.add(getSortedColumn(Order.DESC, ship, "createdDate"));
+
+        QueryResults<ShipListResponse> results = queryFactory
+                .select(Projections.constructor(ShipListResponse.class,
+                        ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
+                        ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
+                        ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
+                        ship
+                ))
+                .from(ship)
+                .where(ship.isActive.eq(true).and(
+                        ship.fishSpecies.any().codeName.containsIgnoreCase(keyword)
+                        .or(ship.shipName.containsIgnoreCase(keyword))
+                        .or(ship.sido.concat(" ").concat(ship.sigungu).containsIgnoreCase(keyword))
+                    ).and(searchLive(type.equals("live")))
+                )
+                .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     private BooleanExpression eqFishingType(String fishingType) {
@@ -166,6 +214,18 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 return ship.shiipRealTimeVideos.size().gt(0);
             } else {
                 return ship.shiipRealTimeVideos.size().eq(0);
+            }
+        }
+    }
+
+    private BooleanExpression searchLive(Boolean searchLive) {
+        if (searchLive == null) {
+            return null;
+        } else {
+            if (searchLive) {
+                return ship.shiipRealTimeVideos.size().gt(0);
+            } else {
+                return ship.shiipRealTimeVideos.size().gt(-1);
             }
         }
     }

@@ -5,13 +5,13 @@ export default inject()(
   observer(
     ({
       data: {
+        id,
         shipImageFileUrl,
         shipName,
         fishSpecies = [],
         fishSpeciesCount = 0,
         sido = "",
         sigungu = "",
-        distance = 0,
         lowPrice = 0,
       },
       data,
@@ -25,7 +25,7 @@ export default inject()(
                 <div className="cardimgWrap">
                   <img src={shipImageFileUrl} className="img-fluid" alt="" />
                   {/*<span className="play">*/}
-                  {/*  <img src="/assets/cust/img/svg/live-play.svg" alt="" />*/}
+                  {/*  <img src="/assets/img/svg/live-play.svg" alt="" />*/}
                   {/*</span>*/}
                   {/*<span className="play-time">20:17</span>*/}
                 </div>
@@ -34,21 +34,14 @@ export default inject()(
                     <h6>{shipName}</h6>
                     <p>
                       <strong className="text-primary">
-                        {fishSpecies.slice(0, 2).map((data, index) => {
-                          if (index > 0) {
-                            return (
-                              <React.Fragment key={index}>
-                                {", " + data.codeName}
+                        {fishSpecies.length > 0 &&
+                          fishSpecies
+                            .slice(0, 2)
+                            .map((data, index) => (
+                              <React.Fragment>
+                                {(index > 0 ? ", " : "").concat(data.codeName)}
                               </React.Fragment>
-                            );
-                          } else {
-                            return (
-                              <React.Fragment key={index}>
-                                {data.codeName}
-                              </React.Fragment>
-                            );
-                          }
-                        })}
+                            ))}
                       </strong>{" "}
                       <img
                         src="/assets/cust/img/fish/fish_icon_02.svg"
@@ -57,8 +50,7 @@ export default inject()(
                       />
                       {Intl.NumberFormat().format(fishSpeciesCount)}
                       <br />
-                      {sido.concat(sigungu)}{" "}
-                      {Intl.NumberFormat().format(distance)}km
+                      {sido.concat(" ").concat(sigungu)}
                     </p>
                     <div className="card-price">
                       {/*<small className="orange">실시간예약</small>*/}

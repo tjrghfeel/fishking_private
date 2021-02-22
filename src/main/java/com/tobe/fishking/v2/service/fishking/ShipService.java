@@ -297,7 +297,7 @@ public class ShipService {
                 .discountAmount(reserveDTO.getDiscountPrice().intValue())
                 .paymentAmount(reserveDTO.getPaymentPrice().intValue())
                 .isPay(false)
-                .orderStatus(OrderStatus.receipt)
+                .orderStatus(OrderStatus.book)
                 .goods(goods)
                 .createdBy(member)
                 .modifiedBy(member)

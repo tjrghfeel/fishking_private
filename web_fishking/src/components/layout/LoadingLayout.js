@@ -9,14 +9,24 @@ export default inject("APIStore")(
           <div
             style={{
               zIndex: 9999,
-              backgroundColor: "#000000AA",
+              backgroundColor: "#FFFFFF77",
               position: "fixed",
               top: 0,
               bottom: 0,
               left: 0,
               right: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backdropFilter: "blur(1.5px)",
             }}
-          ></div>
+          >
+            <img
+              src={"/assets/Spin-1s-200px.svg"}
+              width={"80px"}
+              height={"80px"}
+            />
+          </div>
         )}
       </React.Fragment>
     );
