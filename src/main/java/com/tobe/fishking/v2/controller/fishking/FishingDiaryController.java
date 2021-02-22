@@ -191,6 +191,8 @@ public class FishingDiaryController {
             throw new RuntimeException("category값에는 'fishingDiary', 'fishingBlog' 중 하나만 가능합니다.");
         }
 
+        if(token != null){}
+        else if(token.equals("")){token = null;}
         return fishingDiaryService.getFishingDiaryList(
                 page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
     }
