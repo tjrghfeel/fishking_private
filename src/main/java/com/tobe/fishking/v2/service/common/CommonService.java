@@ -318,7 +318,7 @@ public class CommonService {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate"));
         result.put("keyword", keyword);
-        result.put("ship", shipRepository.searchMain(keyword, "live", pageable));
+        result.put("live", shipRepository.searchMain(keyword, "live", pageable));
         return result;
     }
 
@@ -338,7 +338,7 @@ public class CommonService {
         Pageable pageable = PageRequest.of(page, 10,
                 order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
         result.put("keyword", keyword);
-        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
+        result.put("ship", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
         return result;
     }
 
