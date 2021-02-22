@@ -7,21 +7,21 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 public enum FilePublish implements IEnumModel {
 
 
-    ship("선상"),
-    post("게시판"),
-    one2one("1:1문의"),
-    faq("FAQ"),
-    notice("공지사항"),
-    fishingBlog("조행기"),
-    fishingDiary("조행일지"),
-    comment("조항일지,조행기 댓글"),
-    fishkingTv("어복TV"),
-    companyRequest("업체요청"),
-    profile("프로필"),
-    review("리뷰"),
-    seaRocks("갯바위"),
-    event("이벤트"),
-    commonComment("댓글");
+    ship("선상"),//0
+    post("게시판"),//1
+    one2one("1:1문의"),//2
+    faq("FAQ"),//3
+    notice("공지사항"),//4
+    fishingBlog("조행기"),//5
+    fishingDiary("조행일지"),//6
+    comment("조항일지,조행기 댓글"),//7
+    fishkingTv("어복TV"),//8
+    companyRequest("업체요청"),//9
+    profile("프로필"),//10
+    review("리뷰"),//11
+    seaRocks("갯바위"),//12
+    event("이벤트"),//13
+    commonComment("댓글");//14
 
 
     private String value;

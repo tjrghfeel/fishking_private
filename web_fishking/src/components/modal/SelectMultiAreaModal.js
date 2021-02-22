@@ -13,7 +13,7 @@ export default inject("DataStore")(
       const [list, setList] = useState([]);
       const [list2, setList2] = useState([]);
       const [areaList, setAreaList] = useState([]);
-      const [selected, setSelected] = useState(null);
+      const [selected, setSelected] = useState([]);
       useEffect(() => {
         (async () => {
           let resolve = await DataStore.getCodes("152", 2);
@@ -24,8 +24,14 @@ export default inject("DataStore")(
       }, [DataStore, setList, setList2]);
       const onSelectLv1 = useCallback(
         (e, data) => {
-          const elements = document.querySelectorAll(
+          let elements = document.querySelectorAll(
             "#".concat(id).concat(' input[type="checkbox"][data-level="lv1"]')
+          );
+          for (let element of elements) {
+            if (element !== e.target) element.checked = false;
+          }
+          elements = document.querySelectorAll(
+            "#".concat(id).concat(' input[type="checkbox"][data-level="lv2"]')
           );
           for (let element of elements) {
             if (element !== e.target) element.checked = false;
@@ -44,25 +50,33 @@ export default inject("DataStore")(
             setAreaList(areas);
           } else {
             setAreaList([]);
+            setSelected([data]);
           }
-          setSelected(data);
         },
-        [DataStore, list2, setAreaList]
+        [DataStore, list2, setAreaList, setSelected, selected]
       );
       const onSelectLv2 = useCallback(
         (e, data) => {
-          const elements = document.querySelectorAll(
-            "#".concat(id).concat(' input[type="checkbox"][data-level="lv2"]')
-          );
-          for (let element of elements) {
-            if (element !== e.target) element.checked = false;
+          let index = -1;
+          for (let i = 0; i < selected.length; i++) {
+            if (selected[i] === data) {
+              index = i;
+              break;
+            }
           }
-          setSelected(data);
+          if (index === -1) {
+            selected.push(data);
+            setSelected(selected);
+          } else {
+            e.target.checked = false;
+            const arr = DataStore.removeItemOfArrayByItem(selected, data);
+            setSelected(arr);
+          }
         },
-        [setSelected]
+        [setSelected, selected]
       );
       const onInit = useCallback(() => {
-        setSelected(null);
+        setSelected([]);
         const elements = document.querySelectorAll(
           "#".concat(id).concat(' input[type="checkbox"]')
         );
