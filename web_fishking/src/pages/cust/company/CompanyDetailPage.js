@@ -45,13 +45,23 @@ export default inject(
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {
             const video = document.querySelector("#video");
-            if (Hls.isSupported()) {
-              const hls = new Hls();
-              hls.loadSource(resolve.liveVideo);
-              hls.attachMedia(video);
-            } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-              video.src = resolve.liveVideo;
-            }
+            console.log(resolve.liveVideo);
+
+            video.src = resolve.liveVideo;
+            video.addEventListener("loadedmetadata", function () {
+              video.play();
+            });
+            // if (Hls.isSupported()) {
+            //   console.log("A");
+            //   const hls = new Hls();
+            //   hls.loadSource(resolve.liveVideo);
+            //   hls.attachMedia(video);
+            // } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            //   video.src = resolve.liveVideo;
+            //   video.addEventListener("loadedmetadata", function () {
+            //     video.play();
+            //   });
+            // }
           }
 
           // # 별점 스크립트 로드
@@ -232,7 +242,11 @@ export default inject(
                       )}
                     {this.state.liveVideo !== "" && (
                       <React.Fragment>
-                        <video id="video" style={{ width: "100%" }}></video>
+                        <video
+                          id="video"
+                          type={"application/x-mpegURL"}
+                          style={{ width: "100%" }}
+                        ></video>
                       </React.Fragment>
                     )}
                   </div>

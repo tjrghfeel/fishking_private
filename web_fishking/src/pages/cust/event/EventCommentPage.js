@@ -49,7 +49,6 @@ export default inject(
           }
         };
         onClickReply = async (item) => {
-          console.log(JSON.stringify(item));
           const { ModalStore } = this.props;
           ModalStore.openModal("Input", {
             onOk: async (text) => {

@@ -33,12 +33,15 @@ export default inject('WebViewStore')(
           allowFileAccessFromFileURLs={true}
           allowUniversalAccessFromFileURLs={true}
           userAgent={WebViewStore.useragent}
-          cacheMode={'LOAD_NO_CACHE'}
+          // cacheMode={'LOAD_NO_CACHE'}
+          cacheEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           javaScriptEnabled={true}
           domStorageEnabled={true}
           geolocationEnabled={true}
+          allowsFullscreenVideo={true}
+          allowsInlineMediaPlayback={true}
           allowsBackForwardNavigationGestures={true}
           onNavigationStateChange={(state) => onNavigationStateChange(state)}
           onMessage={({nativeEvent}) => onMessage(nativeEvent)}
