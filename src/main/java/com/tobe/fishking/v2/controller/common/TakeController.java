@@ -28,14 +28,13 @@ public class TakeController {
     * 반환 : 추가된 Take 엔터티의 id반환. */
     @ApiOperation(value = "찜 추가",notes = "업체에 대한 찜 추가. \n" +
             "- 요청 필드 )\n" +
-            "   takeType : 찜 대상의 타입 / goods(\"상품\"), ship(\"업체\"), fishkingDaily(\"조황일지\"), fishingBlog(\"조행기\")," +
-            "    comment(\"댓글\"), fishkingTv(\"어복TV\")\n" +
             "   linkId : Integer / 찜 대상의 id \n" +
+            "   헤더에 세션토큰 필요\n" +
             "- 반환값 ) 생성된 찜의 id ")
     @PostMapping(value = "/take")
     public Long addTake(HttpServletRequest request, @RequestBody AddTakeDto dto) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
-        return takeService.addTake(dto.getLinkId(), dto.getTakeType(), sessionToken);
+        return takeService.addTake(dto.getLinkId(), sessionToken);
     }
 
     /*찜 삭제*/

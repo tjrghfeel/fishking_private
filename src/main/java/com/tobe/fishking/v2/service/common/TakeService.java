@@ -31,13 +31,13 @@ public class TakeService {
 
     /*찜 추가 메소드. */
     @Transactional
-    public Long addTake(Long linkId, int takeType, String sessionToken) throws ResourceNotFoundException {
+    public Long addTake(Long linkId, String sessionToken) throws ResourceNotFoundException {
 
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
         Take take = Take.builder()
-                .takeType(TakeType.values()[takeType])
+                .takeType(TakeType.ship)
                 .linkId(linkId)
                 .createdBy(member)
                 .build();

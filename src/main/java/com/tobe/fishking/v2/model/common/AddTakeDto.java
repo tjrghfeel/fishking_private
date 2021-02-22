@@ -9,6 +9,5 @@ import lombok.*;
 @Builder
 public class AddTakeDto {
     private Long linkId;
-    private int takeType;
 
 }

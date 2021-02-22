@@ -217,6 +217,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   (select case when exists (select v.id from realtime_video as v " +
+                    "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
                     "   (select case when exists (select l.id from loveto as l " +
                     "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
                     "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
@@ -299,6 +301,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   (select case when exists (select v.id from realtime_video as v " +
+                    "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
                     "   (select case when exists (select l.id from loveto as l " +
                     "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
                     "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
@@ -376,6 +380,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   (select case when exists (select v.id from realtime_video as v " +
+                    "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
                     "   (select case when exists (select l.id from loveto as l " +
                     "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
                     "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
