@@ -80,7 +80,7 @@ public class ShipResponse {
         this.noticeTitle = ship.getNoticeTitle();
         this.notice = ship.getNotice();
         this.liked = false;
-        this.profileImage = "";
+        this.profileImage = ship.getProfileImage();
         this.liveVideo = "";
         this.fishingDiary = new ArrayList<>();
         this.fishingBlog = new ArrayList<>();
