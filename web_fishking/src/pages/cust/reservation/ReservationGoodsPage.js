@@ -59,7 +59,10 @@ export default inject(
             date: selected.format("-"),
           });
           console.log(JSON.stringify(tideTime));
-          this.setState({ tideTime: tideTime.tideTime });
+          this.setState({
+            tideTime: tideTime.tideTime,
+            weather: tideTime.weather,
+          });
 
           if (this.state.goods && this.state.goods.length > 0) {
             const resolve = await APIStore._get("/v2/api/tidalPeak", {
@@ -142,11 +145,12 @@ export default inject(
                   <div className="col-4 text-center">
                     <div className="text-center">
                       <div className="tide-info pt-2">
-                        <figure>
+                        <figure style={{ textAlign: "center" }}>
                           <img
                             src="/assets/cust/img/svg/weather_sun.svg"
                             alt=""
                           />
+                          {this.state.weather}
                         </figure>
                         <span className="large">
                           물때

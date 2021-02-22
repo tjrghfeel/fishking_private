@@ -49,7 +49,14 @@ export default inject(
         });
         if (response) {
           PageStore.setAccessToken(response, "cust", "Y");
-          PageStore.push(`/main/my`);
+          const url = sessionStorage.getItem("@redirect-url");
+          if (url === null) {
+            PageStore.push(`/main/my`);
+          } else {
+            sessionStorage.removeItem("@redirect-url");
+            window.location.href = url;
+            return;
+          }
         } else {
           this.password.current?.classList.add("is-invalid");
         }

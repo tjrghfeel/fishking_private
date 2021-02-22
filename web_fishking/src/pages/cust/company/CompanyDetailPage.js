@@ -130,7 +130,7 @@ export default inject(
           PageStore.push(
             `/cs/qna/add?q=${encodeURI(
               JSON.stringify({
-                contents: `선박id:${this.state.id}\n선박명:${this.state.name}\n\n내용:`,
+                contents: `선박id:${this.state.id}\n선박명:${this.state.name}\n\n신고/건의 내용:\n`,
               })
             )}`
           );

@@ -85,11 +85,7 @@ export default inject(
 
       goToMenu = (item) => {
         const { PageStore } = this.props;
-        if (item.requiredLoggedIn && !PageStore.loggedIn) {
-          PageStore.push(`/member/login`);
-        } else {
-          PageStore.push(item.pathname);
-        }
+        PageStore.push(item.pathname);
       };
 
       requestCall = () => {

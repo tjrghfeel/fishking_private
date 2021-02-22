@@ -278,6 +278,19 @@ export default inject(
                   onClickScrap={this.onClickScrap}
                 />
               ))}
+
+            {PageStore.loggedIn && (
+              <a
+                onClick={() => PageStore.push(`/story/add`)}
+                className="add-circle"
+              >
+                <img
+                  src="/assets/cust/img/svg/icon-write-white.svg"
+                  alt=""
+                  className="add-icon"
+                />
+              </a>
+            )}
             <MainTab activeIndex={3} />
           </React.Fragment>
         );

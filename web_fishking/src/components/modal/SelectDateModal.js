@@ -12,7 +12,7 @@ import "./SelectDateModal.css";
 
 export default inject("DataStore")(
   observer(
-    forwardRef(({ id, onSelected }, ref) => {
+    forwardRef(({ id, onSelected, until = null }, ref) => {
       const [selected, setSelected] = useState(new Date());
       const [dateString, setDateString] = useState("");
       const formatDateString = (item) => {
@@ -70,7 +70,11 @@ export default inject("DataStore")(
                 </a>
               </div>
               <div className="modal-body" style={{ margin: "auto" }}>
-                <Calendar value={selected} onChange={onChange} />
+                <Calendar
+                  value={selected}
+                  onChange={onChange}
+                  maxDate={until}
+                />
               </div>
               <div className="info-btm">
                 <h5>{dateString}</h5>

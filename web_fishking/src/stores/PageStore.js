@@ -35,7 +35,7 @@ const PageStore = new (class {
     window.location.reload();
   };
   goBack = () => {
-    // this.history.goBack();
+    sessionStorage.setItem("@goBack", "Y");
     window.history.back();
   };
   getQueryParams = () => {

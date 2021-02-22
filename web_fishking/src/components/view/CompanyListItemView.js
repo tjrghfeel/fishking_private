@@ -34,11 +34,11 @@ export default inject()(
                     <h6>{shipName}</h6>
                     <p>
                       <strong className="text-primary">
-                        {fishSpecies.map((data, index) => {
-                          if (index === 0) {
+                        {fishSpecies.slice(0, 2).map((data, index) => {
+                          if (index > 0) {
                             return (
                               <React.Fragment key={index}>
-                                {data.codeName.concat(", ")}
+                                {", " + data.codeName}
                               </React.Fragment>
                             );
                           } else {

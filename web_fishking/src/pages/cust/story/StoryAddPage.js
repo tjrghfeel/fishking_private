@@ -1,3 +1,4 @@
+/* global daum, kakao */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
@@ -26,7 +27,11 @@ export default inject(
         super(props);
         this.file = React.createRef(null);
         this.title = React.createRef(null);
+        this.cardMapContainer = React.createRef(null);
+        this.cardMap = null;
+        this.cardMapMarkers = [];
         this.state = {
+          showCardMap: false,
           uploaded: [],
           category: "fishingBlog",
           title: "",
@@ -53,6 +58,39 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      moveCardMap = () => {
+        for (let m of this.cardMapMarkers) {
+          m.setMap(null);
+        }
+        const { latitude, longitude } = this.state;
+
+        if (this.cardMap === null) {
+          const options = {
+            center: new daum.maps.LatLng(latitude, longitude),
+            level: 7,
+          };
+          this.cardMap = new daum.maps.Map(
+            this.cardMapContainer.current,
+            options
+          );
+        }
+
+        const markerPosition = new kakao.maps.LatLng(latitude, longitude);
+        const marker = new kakao.maps.Marker({
+          position: markerPosition,
+        });
+        marker.setMap(this.cardMap);
+
+        this.cardMapMarkers.push(marker);
+
+        const moveLatLon = new kakao.maps.LatLng(latitude, longitude);
+        this.cardMap.setCenter(moveLatLon);
+
+        setTimeout(() => {
+          this.cardMap.relayout();
+        }, 100);
+      };
+
       onSubmit = async () => {
         const { ModalStore, APIStore, PageStore } = this.props;
         const {
@@ -122,25 +160,25 @@ export default inject(
           longitude,
         });
 
-        console.log(
-          JSON.stringify({
-            category,
-            title,
-            fishingSpecies,
-            fishingDate,
-            tide,
-            fishingTechnicList,
-            fishingLureList,
-            fishingType,
-            shipId,
-            content,
-            fileList,
-            videoId,
-            address,
-            latitude,
-            longitude,
-          })
-        );
+        // console.log(
+        //   JSON.stringify({
+        //     category,
+        //     title,
+        //     fishingSpecies,
+        //     fishingDate,
+        //     tide,
+        //     fishingTechnicList,
+        //     fishingLureList,
+        //     fishingType,
+        //     shipId,
+        //     content,
+        //     fileList,
+        //     videoId,
+        //     address,
+        //     latitude,
+        //     longitude,
+        //   })
+        // );
         if (true) return;
         if (resolve) {
           ModalStore.openModal("Alert", {
@@ -164,7 +202,7 @@ export default inject(
 
           const form = new FormData();
           form.append("file", file);
-          form.append("filePublish", "one2one");
+          form.append("filePublish", "fishingBlog");
 
           const { APIStore } = this.props;
           const upload = await APIStore._post_upload(
@@ -209,6 +247,7 @@ export default inject(
             />
             <SelectDateModal
               id={"selDateModal"}
+              until={new Date()}
               onSelected={(selected) => {
                 if (selected) {
                   const year = selected.getFullYear();
@@ -274,21 +313,23 @@ export default inject(
             />
             <SelectLocationModal
               id={"selLocationModal"}
-              onSelected={(selected) => {
-                console.log(JSON.stringify(selected));
+              onSelected={async (selected) => {
                 if (selected.itemType === "Company") {
-                  this.setState({
+                  await this.setState({
                     shipId: selected.shipId,
                     shipData: selected,
+                    showCardMap: false,
                   });
                 } else if (selected.itemType === "Location") {
-                  this.setState({
+                  await this.setState({
                     shipId: null,
                     shipData: { address: selected.address },
                     address: selected.address,
                     latitude: selected.lat,
                     longitude: selected.lng,
+                    showCardMap: true,
                   });
+                  this.moveCardMap();
                 }
               }}
             />
@@ -418,7 +459,12 @@ export default inject(
               <a data-toggle="modal" data-target="#selLocationModal">
                 <div className="card-round-box pt-0 pb-0 pl-0">
                   <div className="row no-gutters d-flex align-items-center">
-                    <div className="cardimgWrap">
+                    <div
+                      className="cardimgWrap"
+                      style={{
+                        display: this.state.showCardMap ? "none" : "block",
+                      }}
+                    >
                       <img
                         src={
                           this.state.shipData.itemType === "Company"
@@ -429,6 +475,16 @@ export default inject(
                         alt=""
                       />
                     </div>
+                    <div
+                      ref={this.cardMapContainer}
+                      id="card-map"
+                      className="cardimgWrap"
+                      style={{
+                        display: this.state.showCardMap ? "inline" : "none",
+                        borderTopLeftRadius: "4px",
+                        borderBottomLeftRadius: "4px",
+                      }}
+                    ></div>
                     <div className="cardInfoWrap">
                       <div className="card-body">
                         <img
