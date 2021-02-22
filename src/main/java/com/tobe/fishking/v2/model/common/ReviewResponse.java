@@ -39,7 +39,7 @@ public class ReviewResponse {
         this.goodsId = goods.getId();
         this.shipId = shipId;
         this.memberId = member.getId();
-        this.profileImage = member.getProfileImage();
+        this.profileImage = "/resource" + member.getProfileImage();
         this.nickName = member.getNickName();
         this.fishingDate = goods.getFishingDate();
         this.goodsName = goods.getName();
