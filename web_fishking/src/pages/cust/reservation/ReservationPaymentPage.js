@@ -155,13 +155,13 @@ export default inject(
             } else {
               name.classList.remove("is-invalid");
             }
-            if (phone.value === "") {
+            if (phone.value === "" || phone.length < 10 || phone.length > 11) {
               phone.classList.add("is-invalid");
               return;
             } else {
               phone.classList.remove("is-invalid");
             }
-            if (birthdate.value === "") {
+            if (birthdate.value === "" || birthdate.length !== 8) {
               birthdate.classList.add("is-invalid");
               return;
             } else {
