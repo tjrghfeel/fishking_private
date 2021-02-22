@@ -35,6 +35,7 @@ import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.FishingDiarySpecs;
 import com.tobe.fishking.v2.utils.NativeResultProcessUtils;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.Tuple;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,6 +157,11 @@ public class FishingDiaryService {
             longitude = dto.getLongitude();
         }
 
+        /*낚시 일자*/
+        LocalDate fishingDate = dto.getFishingDate();
+        if(fishingDate.isAfter(LocalDate.now())){
+            throw new RuntimeException("잘못된 날짜입니다. 오늘 포함 이전 날짜만 입력할 수 있습니다");
+        }
         /*fishingType변환.*/
         FishingType fishingType=null;
         if(dto.getFishingType()!=null){fishingType = FishingType.valueOf(dto.getFishingType());}
@@ -417,7 +424,7 @@ public class FishingDiaryService {
     * - myPost : 자신의 글만 볼지 아닐지. 필수. */
     @Transactional
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(
-            int page, String category, String[] districtList, String searchKey, String searchTarget, Long shipId,
+            int page, String category, String district1, String[] district2List, String searchKey, String searchTarget, Long shipId,
             String[] fishSpecies, String sort, String token, Boolean myPost) throws ResourceNotFoundException {
         Long memberId = null;
         if(token !=null){
@@ -427,16 +434,25 @@ public class FishingDiaryService {
         }
         /*카테고리*/
         FilePublish filePublish = FilePublish.valueOf(category);
-        /*지역검색*/
-        String districtRegex=null;
-        if(districtList!=null&&districtList.length!=0) {
-            CodeGroup codeGroup = codeGroupRepo.findByCode("districtL2");
-            List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList(districtList.clone()));
-            districtRegex = districtListCommonCodeList.get(0).getCodeName();
-            for (int i = 1; i < districtListCommonCodeList.size(); i++) {
-                districtRegex += "|"+districtListCommonCodeList.get(i).getCodeName() ;
+        /*지역검색 - 행정구역1단계*/
+        String district1CodeName = null;
+        String district2Regex=null;
+        if(district1 !=null){
+            CodeGroup district1CodeGroup = codeGroupRepo.findByCode("districtL1");
+            CommonCode district1Code = commonCodeRepo.findByCodeGroupAndCode(district1CodeGroup, district1);
+            district1CodeName = district1Code.getCodeName();
+
+            /*지역검색 - 행정구역2단계*/
+            if(district2List!=null&&district2List.length!=0) {
+                CodeGroup codeGroup = codeGroupRepo.findByCode("districtL2");
+                List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList( district2List.clone()));
+                district2Regex = districtListCommonCodeList.get(0).getCodeName();
+                for (int i = 1; i < districtListCommonCodeList.size(); i++) {
+                    district2Regex += "|"+districtListCommonCodeList.get(i).getCodeName() ;
+                }
             }
         }
+
         /*어종검색*/
         String fishSpeciesRegex=null;
         if(fishSpecies!=null&&fishSpecies.length!=0) {
@@ -451,13 +467,13 @@ public class FishingDiaryService {
         Pageable pageable = PageRequest.of(page, 30);
         if(sort.equals("createdDate")){
             return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
-                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(),district1CodeName, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
         else if(sort.equals("likeCount")){
             return fishingDiaryRepo.getFishingDiaryListOrderByLikeCount(
-                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(), district1CodeName, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
         else{
             return fishingDiaryRepo.getFishingDiaryListOrderByCommentCount(
-                    filePublish.ordinal(),districtRegex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(), district1CodeName, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
     }
 
     /*어복스토리 상세보기*/

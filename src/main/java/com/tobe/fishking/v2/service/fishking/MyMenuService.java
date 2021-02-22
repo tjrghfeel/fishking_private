@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.TidalLevel;
 import com.tobe.fishking.v2.entity.fishing.*;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
@@ -111,7 +112,11 @@ public class MyMenuService {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page,10);
-        return fishingDiaryRepository.findByMember(member, member,pageable);
+//        return fishingDiaryRepository.findByMember(member, member,pageable);
+        return fishingDiaryRepository.getFishingDiaryListOrderByCreatedDate(
+                FilePublish.fishingBlog.ordinal(), null, null, null, null, null, member.getId(),
+                  true, null, null, pageable
+        );
     }
 
     /*내글관리 - 댓글
@@ -130,7 +135,7 @@ public class MyMenuService {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for thid sessionToken ::"+sessionToken));
         Pageable pageable = PageRequest.of(page,10);
-        return fishingDiaryRepository.findByScrapMembers(member,pageable);
+        return fishingDiaryRepository.getMyScrapList(member.getId(),pageable);
     }
 
     /*내글관리 - 리뷰*/
@@ -211,7 +216,7 @@ public class MyMenuService {
     @Transactional
     public List<ObserverDtoList> getSearchPointList(String token, AlertType alertType) throws ResourceNotFoundException {
         Long memberId = null;
-        if(token != null || token.equals("")) {
+        if(token != null) {
             Member member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
             memberId = member.getId();
@@ -224,7 +229,7 @@ public class MyMenuService {
     public TodayTideDto getTodayTide(Long observerId, String token) throws IOException, ResourceNotFoundException {
         TodayTideDto result = null;
         Member member = null;
-        if(token !=null || token.equals("")) {
+        if(token !=null) {
             member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
         }
@@ -420,7 +425,7 @@ public class MyMenuService {
     ) throws ResourceNotFoundException, IOException, ParseException {
         TideByDateDto result = null;
         Member member = null;
-        if(token != null || token.equals("")) {
+        if(token != null) {
             member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
         }

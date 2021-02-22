@@ -42,6 +42,7 @@ public class EventController {
     @ApiOperation(value = "이벤트 상세보기",notes = "" +
             "요청 필드 ) \n" +
             "- eventId : 상세보기하려는 이벤트의 id\n" +
+            "- 헤더의 세션토큰(선택)" +
             "응답 필드 ) \n" +
             "- eventId : Long / 이벤트의 id\n" +
             "- shipId : Long / 해당 이벤트가 속한 선박 id\n" +
@@ -55,8 +56,11 @@ public class EventController {
     @GetMapping("/event/detail")
     public EventDto getEventDetail(
             @RequestParam("eventId") Long eventId,
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization", required = false) String token
     ) throws ResourceNotFoundException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
+
         return eventService.getEventDetail(eventId, token);
     }
 }

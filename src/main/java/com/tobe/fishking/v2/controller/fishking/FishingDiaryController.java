@@ -145,7 +145,8 @@ public class FishingDiaryController {
             "아무 지역 선택하지 않으면, 모든 지역을 선택한것으로 간주.\n" +
             "요청 필드 ) \n" +
             "- category : String / 필수 / 검색하려는 글이 조항일지인지 유저조행기인지. / fishingDiary(조항일지), fishingBlog(유저조행기) 중 택 1.\n" +
-            "- districtList : String[] / 선택 / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. 행정구역2단계에 해당하는 코드값들임.\n" +
+            "- district1 : String / 선택(district2List입력시 필수) / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. 행정구역1단계(code group id 152)에 해당하는 코드값들임.\n" +
+            "- district2List : String[] / 선택 / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. 행정구역2단계(code group id 156)에 해당하는 코드값들임.\n" +
             "   ex) 팝업창에서 '전라남도'선택시, common code에서 '전라남도'의 code값인 '전남'  \n" +
             "- districtSearchKey : String / 선택 / 팝업창에서 '지역명 검색'부분에 직접입력한 값. \n" +
             "- fishSpecies : String[] / 선택 / 팝업창에서 선택한 어종에 해당하는 common code의 code값들의 배열.\n" +
@@ -175,7 +176,8 @@ public class FishingDiaryController {
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(
             @PathVariable("page") int page,
             @RequestParam("category") String category,
-            @RequestParam(value = "districtList", required = false) String[] districtList,
+            @RequestParam(value = "district1",required = false) String district1,
+            @RequestParam(value = "district2List", required = false) String[] district2List,
             @RequestParam(value = "searchKey", required = false, defaultValue = "") String districtSearchKey,
             @RequestParam(value = "fishSpeciesList", required = false) String[] fishSpecies,
             @RequestParam(value = "shipId",required = false) Long shipId,
@@ -190,7 +192,7 @@ public class FishingDiaryController {
         }
 
         return fishingDiaryService.getFishingDiaryList(
-                page, category, districtList, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
+                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
     }
 
 
@@ -239,7 +241,7 @@ public class FishingDiaryController {
         }
 
         return fishingDiaryService.getFishingDiaryList(
-                page, "fishingDiary", null, districtSearchKey, searchTarget, shipId,
+                page, "fishingDiary", null, null, districtSearchKey, searchTarget, shipId,
                 null, "createdDate", token, true);
     }
 

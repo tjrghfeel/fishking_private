@@ -80,7 +80,7 @@ public class FishingDiaryCommentController {
             "조항일지 또는 유저조행기에 대한 댓글 목록을 가져온다. 댓글에 대한 댓글(대댓글)이 가능하며, 대댓글의 깊이는 2(댓글에 대한 댓글까지만)이다. \n" +
             "요청 필드 ) \n" +
             "- fishingDiaryId : Long / 필수 / 원글id\n" +
-            "- 헤더에 세션토큰 필요\n" +
+            "- 헤더에 세션토큰 (선택)\n" +
             "응답 필드 ) \n" +
             "- commentCount : Integer / 총 댓글 수 \n" +
             "- title : String / 본글 제목\n" +
@@ -104,6 +104,8 @@ public class FishingDiaryCommentController {
         @RequestParam("fishingDiaryId") Long fishingDiaryId,
         @RequestHeader(value = "Authorization", required = false) String token
     ) throws ResourceNotFoundException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
         return commentService.getCommentList(fishingDiaryId,token);
     }
 }

@@ -160,12 +160,6 @@ public class PostService {
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id :: "+postDTO.getBoardId()));
         Member authorOfPost = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("Member not found for this sessionToken ::"+sessionToken));
-        FileEntity[] fileEntityList = new FileEntity[postDTO.getFiles().length];//fileEntity 목록 저장할 변수
-        for(int i=0; i<fileEntityList.length; i++){
-            Long fileEntityId = postDTO.getFiles()[i];
-            fileEntityList[i] = fileRepository.findById(fileEntityId)
-                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+fileEntityId));
-        }
 
         //Post entity의 List<Tag>만듦.
         /*List<Tag> tagList = new LinkedList<Tag>();
@@ -197,8 +191,16 @@ public class PostService {
                 .build();
         post = postRepository.save(post);
 
-        for(int i=0; i<fileEntityList.length; i++){
-            fileEntityList[i].saveTemporaryFile(post.getId());
+        if(postDTO.getFiles() != null) {
+            FileEntity[] fileEntityList = new FileEntity[postDTO.getFiles().length];//fileEntity 목록 저장할 변수
+            for (int i = 0; i < fileEntityList.length; i++) {
+                Long fileEntityId = postDTO.getFiles()[i];
+                fileEntityList[i] = fileRepository.findById(fileEntityId)
+                        .orElseThrow(() -> new ResourceNotFoundException("file not found for this id :: " + fileEntityId));
+            }
+            for (int i = 0; i < fileEntityList.length; i++) {
+                fileEntityList[i].saveTemporaryFile(post.getId());
+            }
         }
 
         /*//파일 저장.

@@ -45,7 +45,7 @@ public class PostController {
             "   role : String / 어떤 유형의 회원에 대한 faq인지 결정을 위한 필드 / member : 일반회원, shipowner : 업주회원" +
             "- 필드 )\n" +
             "   id : faq 글 id\n" +
-            "   questionType : 문의유형 / order(예약결제),canccel(취소)\n" +
+            "   questionType : 문의유형 / order(예약결제),cancel(취소)\n" +
             "   title : faq 제목\n" +
             "   contents : faq 내용\n" +
             "   authorId : 작성자 id\n" +
@@ -60,7 +60,7 @@ public class PostController {
     @ApiOperation(value = "1:1문의내역 리스트 조회", notes = "자신이 문의한 내역을 볼 수 있다. \n" +
             "- 필드 )\n" +
             "   id : 문의글 id\n" +
-            "   questionType : 문의 유형 / order(예약결제),canccel(취소)\n" +
+            "   questionType : 문의 유형 / order(예약결제),cancel(취소)\n" +
             "   date : 문의일자\n" +
             "   replied : 답변 여부 \n")
     @GetMapping("/qna/{page}")
@@ -77,7 +77,7 @@ public class PostController {
             "- 한 1:1문의 건에 대해 상세 내용을 볼 수 있다. \n" +
             "- 필드 )\n" +
             "   id : 문의글 id\n" +
-            "   questionType : 문의유형 / order(예약결제),canccel(취소)\n" +
+            "   questionType : 문의유형 / order(예약결제),cancel(취소)\n" +
             "   replied : 답변여부\n" +
             "   date : 문의일자\n" +
             "   contents : 문의 내용\n" +
@@ -106,7 +106,7 @@ public class PostController {
             "   role : String / 어떤 유형의 회원에 대한 faq인지 결정을 위한 필드 / member : 일반회원, shipowner : 업주회원" +
             "- 필드 ) \n" +
             "   id : 공지사항 글 id\n" +
-            "   channelType : 공지사항 유형 / order(\"예약결제\"), canccel(\"취소\")\n" +
+            "   channelType : 공지사항 유형 / order(\"예약결제\"), cancel(\"취소\")\n" +
             "   title : 공지사항 제목\n" +
             "   date : 공지사항 작성일\n")
     @GetMapping("/notice/{page}")
@@ -119,7 +119,7 @@ public class PostController {
             "- 공지사항 내용 상세보기 api \n" +
             "- 필드 )\n" +
             "   id : 공지사항 글 id\n" +
-            "   channelType : 공지사항 유형 / order(\"예약결제\"), canccel(\"취소\")\n" +
+            "   channelType : 공지사항 유형 / order(\"예약결제\"), cancel(\"취소\")\n" +
             "   title : 공지사항 제목\n" +
             "   contents : 공지사항 내용 \n" +
             "   fileList : 파일 download url 리스트\n")

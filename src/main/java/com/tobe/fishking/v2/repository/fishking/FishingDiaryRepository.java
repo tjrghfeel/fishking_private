@@ -145,6 +145,60 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     )
     Page<FishingDiaryDtoForPage> findByScrapMembers(@Param("member") Member member, Pageable pageable);
 
+    /*내글 관리 - 스크랩*/
+    @Query(
+            value = "select " +
+                    "   d.id id, " +
+                    "   s.id shipId, " +
+                    "   m.id memberId, " +
+                    "   d.created_date as createdDate, " +
+                    "   if(m.is_active = false or d.is_deleted = true, (select c.extra_value1 from common_code c where code_group_id=92 and code='noImg'), m.profile_image ) profileImage, " +
+                    "   (select case " +
+                    "       when d.is_deleted = true then '****' " +
+                    "       when d.file_publish = 5 then if(m.is_active=true, m.nick_name, '탈퇴한 회원입니다') " +
+                    "       when d.file_publish = 6 then s.ship_name " +
+                    "       end " +
+                    "   ) nickName, " +
+                    "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
+                    "   d.fishing_type fishingType, " +
+                    "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   (select case when exists (select l.id from loveto as l " +
+                    "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
+                    "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
+                    "       where dm.scrap_members_id = :memberId and dm.fishing_diary_id = d.id) then 'true' else 'false' end) isScraped, " +
+                    "   d.like_count likeCount, " +
+                    "   d.comment_count commentCount, " +
+                    "   d.share_count scrapCount, " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       group by f2.pid order by f2.file_no)) fileNameList, " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       group by f2.pid order by f2.file_no)) filePathList " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m, fishing_diary_scrap_members as sm  " +
+                    "where sm.scrap_members_id = :memberId " +
+                    "   and sm.fishing_diary_id = d.id " +
+                    "   and d.fishing_diary_member_id = m.id " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
+                    " group by d.id " +
+                    "order by createdDate desc ",
+            countQuery = "select d.id " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "where sm.scrap_members_id = :memberId " +
+                    "   and sm.fishing_diary_id = d.id " +
+                    "   and d.fishing_diary_member_id = m.id " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
+                    " group by d.id ",
+            nativeQuery = true
+    )
+    Page<FishingDiaryDtoForPage> getMyScrapList(
+            @Param("memberId") Long memberId,
+            Pageable pageable
+    );
+
     /*어복스토리 - 조항일지 목록 조회용 메소드 - 최신순정렬*/
     @Query(
             value = "select " +
@@ -178,10 +232,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "       group by f2.pid order by f2.file_no)) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
-                    "   d.file_publish = :category " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and if(:district1 is null, true, s.address like %:district1%)"+
+                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -194,10 +250,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             countQuery = "select d.id " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
-                    "   d.file_publish = :category " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and if(:district1 is null, true, s.address like %:district1%)"+
+                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -209,10 +267,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             nativeQuery = true
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByCreatedDate(
-            @Param("category") int category,
-            @Param("districtRegex") String districtRegex,
+            @Param("category") Integer category,
+            @Param("district1") String district1,
+            @Param("district2Regex") String district2Regex,
             @Param("fishSpeciesRegex") String fishSpeciesRegex,
             @Param("searchKey") String searchKey,
+            @Param("userId") Long userId,
             @Param("memberId") Long memberId,
             @Param("myPost") Boolean myPost,
             @Param("searchTarget") String searchTarget,
@@ -255,7 +315,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
+                    "   and if(:district1 is null, true, s.address like %:district1%)"+
+                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -271,7 +332,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
+                    "   and if(:district1 is null, true, s.address like %:district1%)"+
+                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -284,7 +346,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByLikeCount(
             @Param("category") int category,
-            @Param("districtRegex") String districtRegex,
+            @Param("district1") String district1,
+            @Param("district2Regex") String district2Regex,
             @Param("fishSpeciesRegex") String fishSpeciesRegex,
             @Param("searchKey") String searchKey,
             @Param("memberId") Long memberId,
@@ -329,7 +392,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
+                    "   and if(:district1 is null, true, s.address like %:district1%)"+
+                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -345,7 +409,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.file_publish = :category " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:districtRegex is null, true, s.address regexp :districtRegex) " +
+                    "   and if(:district1 is null, true, s.address like %:district1%)"+
+                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -358,7 +423,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByCommentCount(
             @Param("category") int category,
-            @Param("districtRegex") String districtRegex,
+            @Param("district1") String district1,
+            @Param("district2Regex") String district2Regex,
             @Param("fishSpeciesRegex") String fishSpeciesRegex,
             @Param("searchKey") String searchKey,
             @Param("memberId") Long memberId,
