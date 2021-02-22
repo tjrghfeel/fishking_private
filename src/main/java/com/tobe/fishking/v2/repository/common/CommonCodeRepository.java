@@ -37,4 +37,7 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, Long>, C
     @Query("select c from CommonCode c where c.code = :code")
     CommonCode getByCode(String code);
 
+    @Query("select c from CommonCode c where c.codeGroup.id = :groupId")
+    List<CommonCode> getByGroupId(Long groupId);
+
 }

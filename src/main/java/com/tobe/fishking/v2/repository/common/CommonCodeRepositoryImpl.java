@@ -50,11 +50,13 @@ public class CommonCodeRepositoryImpl implements CommonCodeRepositoryCustom {
     public List<MainSpeciesResponse> getMainDistrictCount() {
         QueryResults<MainSpeciesResponse> results = queryFactory
                 .select(Projections.constructor(MainSpeciesResponse.class,
-                        observerCode.seaDirection,
+                        commonCode.extraValue1,
+                        commonCode.codeName,
+                        commonCode.remark,
                         ship.count()
                 ))
-                .from(ship).join(observerCode).on(ship.observerCode.eq(observerCode.code))
-                .groupBy(observerCode.seaDirection)
+                .from(ship).join(observerCode).on(ship.observerCode.eq(observerCode.code)).join(commonCode).on(observerCode.forecastCode.eq(commonCode.code))
+                .groupBy(observerCode.forecastCode)
                 .fetchResults();
         return results.getResults();
     }
