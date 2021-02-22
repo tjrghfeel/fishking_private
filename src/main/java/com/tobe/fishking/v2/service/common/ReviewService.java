@@ -57,6 +57,7 @@ public class ReviewService {
                 .content(dto.getContent())
                 .createdBy(author)
                 .modifiedBy(author)
+                .isDeleted(false)
                 .build();
         review = reviewRepository.save(review);
 
