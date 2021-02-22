@@ -435,12 +435,12 @@ public class FishingDiaryService {
         /*카테고리*/
         FilePublish filePublish = FilePublish.valueOf(category);
         /*지역검색 - 행정구역1단계*/
-        String district1CodeName = null;
+        String district1Regex = null;
         String district2Regex=null;
         if(district1 !=null){
             CodeGroup district1CodeGroup = codeGroupRepo.findByCode("districtL1");
             CommonCode district1Code = commonCodeRepo.findByCodeGroupAndCode(district1CodeGroup, district1);
-            district1CodeName = district1Code.getCodeName();
+            district1Regex = district1Code.getCodeName() +"|"+district1Code.getExtraValue1();
 
             /*지역검색 - 행정구역2단계*/
             if(district2List!=null&&district2List.length!=0) {
@@ -467,13 +467,13 @@ public class FishingDiaryService {
         Pageable pageable = PageRequest.of(page, 30);
         if(sort.equals("createdDate")){
             return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
-                    filePublish.ordinal(),district1CodeName, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(),district1Regex, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
         else if(sort.equals("likeCount")){
             return fishingDiaryRepo.getFishingDiaryListOrderByLikeCount(
-                    filePublish.ordinal(), district1CodeName, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
         else{
             return fishingDiaryRepo.getFishingDiaryListOrderByCommentCount(
-                    filePublish.ordinal(), district1CodeName, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
     }
 
     /*어복스토리 상세보기*/

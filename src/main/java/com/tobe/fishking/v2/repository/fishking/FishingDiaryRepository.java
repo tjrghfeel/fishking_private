@@ -236,8 +236,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:userId is null, true, m.id = :userId) "+
-                    "   and if(:district1 is null, true, s.address like %:district1%)"+
-                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
