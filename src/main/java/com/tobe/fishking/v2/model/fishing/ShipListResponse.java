@@ -26,6 +26,7 @@ public class ShipListResponse {
     private int fishSpeciesCount;
     private int lowPrice;
     private int sold;
+    private String type;
 
     public ShipListResponse(
             Integer lowPrice,
@@ -46,5 +47,6 @@ public class ShipListResponse {
         this.fishSpeciesCount = species.size();
         this.lowPrice = lowPrice==null?0:lowPrice;
         this.sold = sold==null?0:sold;
+        this.type = ship.getFishingType().getValue();
     }
 }
