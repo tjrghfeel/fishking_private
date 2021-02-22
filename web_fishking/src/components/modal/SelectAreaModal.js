@@ -18,7 +18,7 @@ export default inject("DataStore")(
         (async () => {
           let resolve = await DataStore.getCodes("152", 2);
           setList(resolve);
-          resolve = await DataStore.getCodes("154", 2);
+          resolve = await DataStore.getCodes("156", 2);
           setList2(resolve);
         })();
       }, [DataStore, setList, setList2]);

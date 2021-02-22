@@ -24,6 +24,7 @@ import ConfirmReservationCancelModal from "./modal/ConfirmReservationCancelModal
 import SelectReservationCancelReasonModal from "./modal/SelectReservationCancelReasonModal";
 import InputModal from "./modal/InputModal";
 import MapCompanyInfoModal from "./modal/MapCompanyInfoModal";
+import SelectMultiAreaModal from "./modal/SelectMultiAreaModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -115,6 +116,7 @@ export default {
     SelectReservationCancelReasonModal,
     InputModal,
     MapCompanyInfoModal,
+    SelectMultiAreaModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {

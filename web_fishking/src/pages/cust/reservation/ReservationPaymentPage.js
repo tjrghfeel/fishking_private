@@ -519,6 +519,8 @@ export default inject(
                           <input
                             type="number"
                             className="form-control"
+                            minLength={10}
+                            maxLength={11}
                             id={`person-phone-${index}`}
                             placeholder="휴대폰 번호를 입력해 주세요."
                           />
@@ -529,6 +531,8 @@ export default inject(
                           </label>
                           <input
                             type="number"
+                            minLength={6}
+                            maxLength={6}
                             className="form-control"
                             id={`person-birthdate-${index}`}
                             placeholder="생년 월일을 입력해 주세요."
