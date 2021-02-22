@@ -282,6 +282,8 @@ public class FishingDiaryController {
             @RequestParam("fishingDiaryId") Long fishingDiaryId,
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
         return fishingDiaryService.getFishingDiaryDetail(fishingDiaryId,token);
     }
 
