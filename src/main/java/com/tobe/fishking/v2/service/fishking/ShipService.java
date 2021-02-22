@@ -321,7 +321,23 @@ public class ShipService {
         orderDetailsRepository.save(details);
 
         for (int idx = 0 ; idx < names.length; idx++) {
-            RideShip rideShip =  new RideShip(details, names[idx], birthdates[idx], phones[idx], member);
+            String birthdate;
+            String phone;
+            if (birthdates[idx].contains("-")) {
+                birthdate = birthdates[idx];
+            } else {
+                birthdate = birthdates[idx].substring(0,4) + "-" + birthdates[idx].substring(4,6) + "-" + birthdates[idx].substring(6);
+            }
+            if (phones[idx].contains("-")) {
+                phone = birthdates[idx];
+            } else {
+                if (phones[idx].length() == 11) {
+                    phone = birthdates[idx].substring(0,3) + "-" + birthdates[idx].substring(3,6) + "-" + birthdates[idx].substring(6);
+                } else {
+                    phone = birthdates[idx].substring(0,3) + "-" + birthdates[idx].substring(3,7) + "-" + birthdates[idx].substring(7);
+                }
+            }
+            RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, member);
             rideShipRepository.save(rideShip);
         }
 

@@ -32,7 +32,7 @@ public class SmallShipResponse {
     ) {
         List<CommonCode> species = ship.getFishSpecies();
         this.id = ship.getId();
-        this.shipImageFileUrl = "";
+        this.shipImageFileUrl = ship.getProfileImage();
         this.shipName = ship.getShipName();
         this.sido = ship.getSido();
         this.sigungu = ship.getSigungu();
