@@ -189,6 +189,7 @@ public class MainController {
     @GetMapping("/search/all")
     public Map<String, Object> getSearchResultAll(@RequestHeader("Authorization") String token,
                                                  @RequestParam String keyword) {
+        commonService.addSearchKeys(token, keyword);
         return commonService.searchTotal(keyword);
     }
 
@@ -219,6 +220,7 @@ public class MainController {
             "\n fishSpeciesCount: 대상 어종 수" +
             "\n lowPrice: 상품 중 가장 낮은 가격" +
             "\n sold: 결제 수 " +
+            "\n type: 선상 or 갯바위 " +
             "\n }, ... ] }," +
             "\n , ... " +
             "\n     , totalPages: 총 페이지 수" +
@@ -229,13 +231,26 @@ public class MainController {
             "\n 정렬에 추천순 -> 좋아요순 입니다. " +
             "\n order 값으로는 " +
             "\n 거리 순: distance, 명칭 순: name " +
-            "\n 최신순은 order 없는 경우 거리 순 입니다.")
+            "\n 최신순은 order 없는 경우 거리 순 입니다." +
+            "\n " +
+            "\n 요청의 type 키는 기본의 검색에는 필요없는 값입니다 (현재 그대로 보내주시면 됩니다) " +
+            "\n 메인의 지역별 조황과 어종별 조황의 각 항목을 클릭 하면 " +
+            "\n search-boat.html 페이지로 이동 후 " +
+            "\n 지역별의 경우 type=direction, 어종별의 경우 type=species 로 설정 후 " +
+            "\n keyword 에 해당 code 를 넣어주시고 결과를 리스팅 해주시면 됩니다. " +
+            "\n (ex. 서해남부 : keyword=12A30000&type=direction , 우럭 : keyword=rockcod&type=species )")
     @GetMapping("/search/ship/{page}")
     public Map<String, Object> getSearchResultShip(@RequestHeader("Authorization") String token,
                                                    @RequestParam String keyword,
+                                                   @RequestParam(required = false) String type,
                                                    @RequestParam(defaultValue = "distance") String order,
                                                    @PathVariable Integer page) {
-        return commonService.searchShip(keyword, page, order);
+        if (type == null) {
+            commonService.addSearchKeys(token, keyword);
+            return commonService.searchShip(keyword, page, order);
+        } else {
+            return commonService.searchShipWithType(keyword, page, order, type);
+        }
     }
 
     @ApiOperation(value = "전체검색 라이브 결과", notes = "전체검색 라이브 결과 " +
@@ -281,6 +296,7 @@ public class MainController {
                                                    @RequestParam String keyword,
                                                    @RequestParam(defaultValue = "") String order,
                                                    @PathVariable Integer page) {
+        commonService.addSearchKeys(token, keyword);
         return commonService.searchLive(keyword, page, order);
     }
 
@@ -315,6 +331,7 @@ public class MainController {
                                                   @RequestParam String keyword,
                                                   @RequestParam(defaultValue = "") String order,
                                                   @PathVariable Integer page) {
+        commonService.addSearchKeys(token, keyword);
         return commonService.searchDiary(keyword, page, order);
     }
 
@@ -349,6 +366,7 @@ public class MainController {
                                                   @RequestParam String keyword,
                                                   @RequestParam(defaultValue = "") String order,
                                                   @PathVariable Integer page) {
+        commonService.addSearchKeys(token, keyword);
         return commonService.searchBlog(keyword, page, order);
     }
 

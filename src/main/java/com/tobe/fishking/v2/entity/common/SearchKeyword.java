@@ -32,7 +32,7 @@ public class SearchKeyword extends BaseTime {
     @Builder
     public SearchKeyword(String searchKeyword) {
         this.searchKeyword = searchKeyword;
-        this.count = 0L;
+        this.count = 1L;
         this.popular = false;
         this.newPopular = false;
     }

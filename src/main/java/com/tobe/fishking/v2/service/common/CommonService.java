@@ -40,10 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,6 +59,7 @@ public class CommonService {
     private final AdRepository adRepository;
     private final FishingDiaryRepository fishingDiaryRepository;
     private final ShipRepository shipRepository;
+    private final SearchKeywordRepository searchKeywordRepository;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -309,6 +307,17 @@ public class CommonService {
     }
 
     @Transactional
+    public Map<String, Object> searchShipWithType(String keyword, Integer page, String order, String type) {
+        Map<String, Object> result = new HashMap<>();
+        Pageable pageable = PageRequest.of(page, 10,
+                order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
+        result.put("keyword", keyword);
+        result.put("type", "ship");
+        result.put("ship", shipRepository.searchMainWithType(keyword, type, pageable));
+        return result;
+    }
+
+    @Transactional
     public Map<String, Object> searchLive(String keyword, Integer page, String order) {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate"));
@@ -335,6 +344,24 @@ public class CommonService {
         result.put("keyword", keyword);
         result.put("ship", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
         return result;
+    }
+
+    @Transactional
+    public void addSearchKeys(String token, String keyword) {
+        Optional<Member> optMem = memberRepo.findBySessionToken(token);
+        optMem.ifPresent(member -> popularRepo.save(
+                new Popular(SearchPublish.TOTAL, keyword, member)
+        ));
+        Optional<SearchKeyword> searchKeyword = searchKeywordRepository.getSearchKeywordBySearchKeyword(keyword);
+        if (searchKeyword.isPresent()) {
+            SearchKeyword k = searchKeyword.get();
+            k.updateCount();
+            searchKeywordRepository.save(k);
+        } else {
+            searchKeywordRepository.save(
+                    new SearchKeyword(keyword)
+            );
+        }
     }
 
 }
