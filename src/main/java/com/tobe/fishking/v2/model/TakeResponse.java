@@ -30,7 +30,7 @@ public interface TakeResponse {
      String getShipStartTime();
     //장소명
      String getPlaceName();*/
-
+    Boolean getIsLive();
      //섬네일 파일.
      @Value("#{@mapperUtility.transDownLoadUrl(target.filePath, target.thumbnailFile)}")
      String getDownloadThumbnailUrl();
