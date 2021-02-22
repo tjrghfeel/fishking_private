@@ -250,7 +250,14 @@ export default inject(
               }}
             />
 
-            <NavigationLayout title={"바다낚시"} showSearchIcon={true} />
+            <NavigationLayout
+              title={
+                PageStore.state?.fishingType === "ship"
+                  ? "선상낚시"
+                  : "갯바위낚시"
+              }
+              showSearchIcon={true}
+            />
 
             <FilterListView
               list={[

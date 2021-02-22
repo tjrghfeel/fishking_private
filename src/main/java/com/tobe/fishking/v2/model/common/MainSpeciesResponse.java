@@ -18,7 +18,7 @@ public class MainSpeciesResponse {
         this.code = code;
         this.codeName = codeName;
         this.count = count;
-        this.img = img;
+        this.img = img == null ? "" : img;
     }
 
     public MainSpeciesResponse(SeaDirection direction, Long count) {

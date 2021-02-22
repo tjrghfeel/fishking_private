@@ -1,10 +1,9 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
-import PageStore from "../../../stores/PageStore";
 const {
   LAYOUT: { MainTab, NavigationLayout, StoryTab },
-  MODAL: { SelectAreaModal, SelectFishModal, SelectStorySortModal },
+  MODAL: { SelectMultiAreaModal, SelectFishModal, SelectStorySortModal },
   VIEW: { FilterListView, StoryPostListItemView },
 } = Components;
 
@@ -40,7 +39,8 @@ export default inject(
           list: [],
           category: "fishingDiary",
           page: 0,
-          district: null,
+          district1: null,
+          district2List: null,
           fishSpeciesList: null,
           sort: "createdDate",
           shipId: qp.shipId || null,
@@ -63,7 +63,8 @@ export default inject(
           pageable: { pageSize = 0 },
         } = await APIStore._get("/v2/api/fishingDiary/list/" + page, {
           category: PageStore.state.category,
-          district: PageStore.state.district,
+          district1: PageStore.state.district1,
+          district2List: PageStore.state.district2List,
           fishSpeciesList: PageStore.state.fishSpeciesList,
           sort: PageStore.state.sort,
           shipId: PageStore.state.shipId,
@@ -82,6 +83,8 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
+
+        PageStore.reloadSwipe();
       };
 
       onClick = (item) => {
@@ -162,16 +165,24 @@ export default inject(
         }
       };
       onSelectedArea = (selected) => {
-        if (selected === null) return;
-
-        console.log(JSON.stringify(selected));
         const { PageStore } = this.props;
-        if (selected === null) {
+        if (selected.length === 0) {
           this.setState({ selAreaActive: false });
+          PageStore.setState({ district1: null, district2List: null });
         } else {
           this.setState({ selAreaActive: true });
+          let district1 = null;
+          let district2List = null;
+          if (selected[0]["extraValue1"] !== null) {
+            district1 = selected[0]["extraValue1"];
+            district2List = [];
+            for (let item of selected) {
+              district2List.push(item.code);
+            }
+          } else district1 = selected[0]["code"];
+
+          PageStore.setState({ district1, district2List });
         }
-        PageStore.setState({ district: selected });
         this.loadPageData(0);
       };
       onSelectedFish = (selected) => {
@@ -203,12 +214,14 @@ export default inject(
         this.loadPageData(0);
       };
       onClearArea = () => {
+        const { PageStore } = this.props;
         this.selAreaModal.current?.onInit();
-        PageStore.setState({ districtList: null });
+        PageStore.setState({ district1: null, district2List: null });
         this.setState({ selAreaActive: false, textArea: `지역` });
         this.loadPageData(0);
       };
       onClearFish = () => {
+        const { PageStore } = this.props;
         this.selFishModal.current?.onInit();
         PageStore.setState({ fishSpeciesList: null });
         this.setState({ selFishActive: false, textFish: "어종" });
@@ -221,7 +234,7 @@ export default inject(
         const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <SelectAreaModal
+            <SelectMultiAreaModal
               ref={this.selAreaModal}
               id={"selAreaModal"}
               onSelected={this.onSelectedArea}
@@ -278,18 +291,16 @@ export default inject(
                 />
               ))}
 
-            {PageStore.loggedIn && (
-              <a
-                onClick={() => PageStore.push(`/story/add`)}
-                className="add-circle"
-              >
-                <img
-                  src="/assets/cust/img/svg/icon-write-white.svg"
-                  alt=""
-                  className="add-icon"
-                />
-              </a>
-            )}
+            <a
+              onClick={() => PageStore.push(`/story/add`)}
+              className="add-circle"
+            >
+              <img
+                src="/assets/cust/img/svg/icon-write-white.svg"
+                alt=""
+                className="add-icon"
+              />
+            </a>
 
             <MainTab activeIndex={3} />
           </React.Fragment>

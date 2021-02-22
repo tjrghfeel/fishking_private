@@ -2,6 +2,7 @@ import React from 'react';
 import {Platform, BackHandler, Linking} from 'react-native';
 import {inject, observer} from 'mobx-react';
 import WebView from '../component/WebView';
+import * as SendIntentAndroid from 'react-native-send-intent';
 
 export default inject('WebViewStore')(
   observer(
@@ -34,12 +35,20 @@ export default inject('WebViewStore')(
         }
       }
       onShouldStartLoadWithRequest(request) {
-        const isHTTPS = request.url.search('https://') !== -1;
-
-        if (isHTTPS) {
+        if (request.url.search('https://') !== -1) {
           return true;
         } else {
-          Linking.openURL(request.url);
+          if (Platform.OS === 'android') {
+            SendIntentAndroid.openAppWithUri(request.url)
+              .then((isOpened) => {
+                console.log('Intent -> ' + isOpened);
+              })
+              .catch((err) => {
+                console.log('IntentError -> ' + JSON.stringify(err));
+              });
+          } else {
+            Linking.openURL(request.url);
+          }
           return false;
         }
       }

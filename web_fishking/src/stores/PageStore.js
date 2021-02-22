@@ -126,7 +126,7 @@ const PageStore = new (class {
       if (data !== null) {
         this.state = data;
       }
-      // this.clearState();
+      this.clearState();
     } else if (defaultState) this.state = defaultState;
     if (scroll !== null) {
       window.scrollTo(scroll.x || 0, scroll.y || 0);
@@ -148,7 +148,7 @@ const PageStore = new (class {
         data: null,
       },
       "",
-      location.pathname
+      location.pathname + (location.search || "")
     );
   };
   injectScript = (

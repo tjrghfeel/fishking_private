@@ -265,19 +265,14 @@ public class CommonService {
         result.put("ad", adRepository.getAdByType(AdType.MAIN_AD));
         result.put("species", commonCodeRepo.getMainSpeciesCount());
         List<MainSpeciesResponse> directions = commonCodeRepo.getMainDistrictCount();
-        List<String> d = directions.stream().map(MainSpeciesResponse::getCodeName).collect(Collectors.toList());
-        SeaDirection[] seaDirections = SeaDirection.values();
-        for (SeaDirection seaDirection : seaDirections) {
-            if (!d.contains(seaDirection.getValue())) {
-                directions.add(new MainSpeciesResponse(seaDirection, 0L));
+        List<String> d = directions.stream().map(MainSpeciesResponse::getCode).collect(Collectors.toList());
+        List<CommonCode> codes = commonCodeRepo.getByGroupId(157L);
+        for (CommonCode code : codes) {
+            if (!d.contains(code.getExtraValue1())) {
+                directions.add(new MainSpeciesResponse(code.getExtraValue1(), code.getCodeName(), null, 0L));
             }
         }
-        result.put("direction", directions.stream()
-                .filter(m -> !m.getCode().equals("south"))
-                .filter(m -> !m.getCode().equals("west"))
-                .filter(m -> !m.getCode().equals("east"))
-                .collect(Collectors.toList())
-        );
+        result.put("direction", directions);
         List<FishingDiaryMainResponse> diaries = fishingDiaryRepository.getMainDiaries();
         for (FishingDiaryMainResponse diary : diaries) {
             List<FileEntity> fileEntityList = fileRepo.findByPidAndFilePublishAndFileType(
