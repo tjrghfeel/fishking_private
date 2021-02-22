@@ -1268,16 +1268,22 @@ public class MemberService {
     public Page<FishingDiaryDtoForPage> getUserFishingDiary(Long userId, int page, String token) throws ResourceNotFoundException {
         Member user = memberRepository.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+userId));
-        Member member = null;
+        Long memberId = null;
         if(token != null) {
-            member = memberRepository.findBySessionToken(token)
+            Member member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this sessionToken ::" + token));
+            memberId = member.getId();
         }
         if(user.getIsActive() == false){throw new RuntimeException("해당 회원은 탈퇴한 회원입니다.");}
 
         Pageable pageable = PageRequest.of(page,10);
-        return fishingDiaryRepository.findByMember(user,member,pageable);
+//        return fishingDiaryRepository.findByMember(user,member,pageable);
+        return fishingDiaryRepository.getFishingDiaryListOrderByCreatedDate(
+            null, null,null, null, null, user.getId(), memberId, false,
+                null, null, pageable
+        );
     }
+
 
     /*프로필 관리 페이지 보기
     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환.*/

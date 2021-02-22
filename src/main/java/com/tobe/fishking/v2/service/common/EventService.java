@@ -59,8 +59,12 @@ public class EventService {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+eventId));
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Member member = null;
+        if(token != null ){
+            member = memberRepository.findBySessionToken(token)
+                    .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        }
+
 
         /*이미지 url list 설정*/
         ArrayList<String> imageUrlList = new ArrayList<String>();

@@ -38,9 +38,8 @@ public class MyMenuController {
             "   bookingCount : !!!!!\n" +
             "   couponCount : 현재 다운받은 사용가능한 쿠폰 개수")
     @GetMapping("/myMenuPage")
-    public MyMenuPageDTO getMyMenuPage(HttpServletRequest request) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return myMenuService.getMyMenuPage(sessionToken);
+    public MyMenuPageDTO getMyMenuPage(@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+        return myMenuService.getMyMenuPage(token);
 
     }
 
@@ -248,6 +247,8 @@ public class MyMenuController {
     public List<ObserverDtoList> getSearchPointList(
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
         return myMenuService.getSearchPointList( token, AlertType.tide);
     }
 
@@ -282,6 +283,8 @@ public class MyMenuController {
             @RequestParam("observerId") Long observerId,
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws IOException, ResourceNotFoundException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
         return myMenuService.getTodayTide(observerId,token);
     }
 
@@ -326,6 +329,8 @@ public class MyMenuController {
             @RequestParam("date") String date,
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException, IOException, ParseException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
         return myMenuService.getTideByDate(observerId,date,token);
     }
 

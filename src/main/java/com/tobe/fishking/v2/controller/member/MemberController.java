@@ -97,7 +97,7 @@ public class MemberController {
             "- 입력한 아이디가 이미 존재하는지 확인\n" +
             "- 입력 필드 )\n" +
             "   uid : 중복확인할 아이디\n" +
-            "- 반환 ) " +
+            "- 반환 ) \n" +
             "   0 : 중복 안됨\n" +
             "   1 : 중복 \n" +
             "   2 : 이메일 형식에 맞지 않음")
@@ -369,6 +369,7 @@ public class MemberController {
             "- 클릭한 프로필의 사용자가 자기자신인지, 업주 회원인지, 일단 다른 회원인지에 따라 조금씩 다른 정보를 반환한다. \n" +
             "- 요청 필드 )\n" +
             "   userId : 프로필을 보고자하는 회원의 id \n" +
+            "   헤더에 세션 토큰 (선택)\n" +
             "- 응답 필드 ) \n" +
             "   memberId : Long / 회원id \n" +
             "   nickName : String / 회원 닉네임 \n" +
@@ -386,6 +387,8 @@ public class MemberController {
             @RequestParam("userId") Long userId,
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
         return memberService.getUserProfile(userId, token);
     }
 
@@ -393,7 +396,7 @@ public class MemberController {
     @ApiOperation(value = "상대방 글 보기",notes = "" +
             "요청 필드 ) \n" +
             "- userId : 상대방 id\n" +
-            "응답 필드 ) \n" +
+            "- 헤더에 세션토큰 (선택)\n" +
             "응답 필드 )\n" +
             "- id : 게시글의 id \n" +
             "- profileImage : 작성자 프로필 사진 download url \n" +
@@ -419,6 +422,8 @@ public class MemberController {
             @PathVariable("page") int page,
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
         return memberService.getUserFishingDiary(userId,page,token);
     }
 
