@@ -56,6 +56,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   and o.goods = g.id " +
             "   and g.goods_ship_id = s.id " +
             "   and o.order_status = :orderStatus " +
+            "   and o.is_pay = true " +
             "order by g.fishing_date desc ",
             countQuery = "select o.id " +
                     "from orders o, ship s, goods g " +
@@ -86,13 +87,14 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   s.sigungu sigungu, " +
 //            "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
-            "   g.fishing_date fishingDate, " +
+            "   o.fishing_date fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
-            "   o.orders_num ordersNum " +
+            "   o.order_number ordersNum " +
             "from orders o, ship s, goods g " +
             "where o.created_by = :member " +
             "   and o.goods = g.id " +
             "   and g.goods_ship_id = s.id " +
+            "   and o.is_pay = true " +
             "order by o.order_status asc, g.fishing_date desc ",
             countQuery = "select o.id " +
                     "from orders o, ship s, goods g " +

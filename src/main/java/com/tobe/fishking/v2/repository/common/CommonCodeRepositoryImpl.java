@@ -32,6 +32,7 @@ public class CommonCodeRepositoryImpl implements CommonCodeRepositoryCustom {
                 .select(Projections.constructor(MainSpeciesResponse.class,
                     commonCode.code,
                     commonCode.codeName,
+                    commonCode.remark,
                     ExpressionUtils.as(JPAExpressions
                             .select(ship.count())
                             .from(ship)

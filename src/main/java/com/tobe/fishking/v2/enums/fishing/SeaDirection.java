@@ -16,8 +16,7 @@ public enum SeaDirection   implements IEnumModel {
     southEast("동해남부"),
     west("서해"),
     east("동해"),
-    south("남해"),
-    jeju("제주도");
+    south("남해");
 
     private String value;
 
