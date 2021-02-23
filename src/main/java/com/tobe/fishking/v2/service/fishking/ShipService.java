@@ -271,7 +271,7 @@ public class ShipService {
         Goods goods = goodsRepository.getOne(goods_id);
         return GoodsResponse.builder()
                 .goods(goods)
-                .rideMember(0L)
+                .rideMember(0)
                 .build();
     }
 
