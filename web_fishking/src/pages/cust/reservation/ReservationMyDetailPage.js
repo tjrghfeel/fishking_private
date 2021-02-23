@@ -156,6 +156,7 @@ export default inject(
               <NavigationLayout
                 title={"예약 상세정보"}
                 showBackIcon={true}
+                backPathname={`/reservation/my`}
                 customButton={
                   <React.Fragment>
                     <a

@@ -74,7 +74,11 @@ export default inject(
       onClickReservation = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/company/${item.fishingType === '선상'? 'boat' : 'rock'}/detail/${item.shipId}`);
+        PageStore.push(
+          `/company/${item.fishingType === "선상" ? "boat" : "rock"}/detail/${
+            item.shipId
+          }`
+        );
       };
       onClickReview = (item) => {
         const { PageStore } = this.props;
@@ -92,6 +96,7 @@ export default inject(
             <NavigationLayout
               title={"예약내역"}
               showBackIcon={true}
+              backPathname={`/main/my`}
               showSearchIcon={true}
             />
 
