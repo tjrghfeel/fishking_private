@@ -16,7 +16,7 @@ public interface RealTimeVideoRepository extends BaseRepository<RealTimeVideo, L
     List<RealTimeVideo> getRealTimeVideoByShipsId(Long ship_id);
 
     @Modifying
-    @Query("update RealTimeVideo v set v.token = :newToken where v.token = :beforeToken")
-    void updateToken(String newToken, String beforeToken);
+    @Query("update RealTimeVideo v set v.token = :newToken, v.expireTime = :time where v.token = :beforeToken")
+    void updateToken(String newToken, String time, String beforeToken);
 
 }

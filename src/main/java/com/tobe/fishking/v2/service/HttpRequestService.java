@@ -77,13 +77,14 @@ public class HttpRequestService {
         return result;
     }
 
-    public String refreshToken(String token) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public Map<String, String> refreshToken(String token) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         CloseableHttpClient httpClient = getHttpClient();
         HttpGet httpGet = new HttpGet(CAM_BASE_URL + CAM_AUTH_URL + "token/refresh");
         httpGet.addHeader("x-access-token", token);
 
 //        JsonObject result;
         String newToken;
+        String expireTime;
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
             System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
@@ -94,11 +95,16 @@ public class HttpRequestService {
             httpClient.close();
 
             newToken = ((Map<String, Object>) res.get("result")).get("token").toString();
+            expireTime = ((Map<String, Object>) res.get("result")).get("expirationTime").toString();
         } catch (IOException e) {
             e.printStackTrace();
             newToken = "";
+            expireTime = "";
         }
-        return newToken;
+        Map<String, String> result = new HashMap<>();
+        result.put("token", newToken);
+        result.put("expireTime", expireTime);
+        return result;
     }
 
     public List<Map<String, Object>> getCameraList(String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {

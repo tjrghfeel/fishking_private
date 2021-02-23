@@ -66,6 +66,9 @@ public class RealTimeVideo extends BaseTime {
     @Column(columnDefinition = "varchar(400) comment '토큰' ")
     private String token;
 
+    @Column(columnDefinition = "varchar(400) comment '타임스탬프' ")
+    private String expireTime;
+
     @Column(columnDefinition = "varchar(100) comment '이름' ")
     private String name;
 
