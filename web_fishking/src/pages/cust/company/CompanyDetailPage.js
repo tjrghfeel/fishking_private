@@ -99,6 +99,7 @@ export default inject(
           }
         };
         modalSNS = () => {
+          // >>>>> 업체 공유하기
           const { ModalStore } = this.props;
           ModalStore.openModal("SNS", {
             onSelect: (selected) => {

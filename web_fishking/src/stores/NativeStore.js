@@ -24,6 +24,11 @@ const NativeStore = new (class {
   }
   clipboardCopy(text) {
     if (window.isNative) {
+      const json = {
+        process: "Clipboard",
+        data: text,
+      };
+      window.ReactNativeWebView.postMessage(JSON.stringify(json));
     } else {
       navigator.clipboard.writeText(text).then(() => {
         alert("복사되었습니다.");

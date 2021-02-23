@@ -25,6 +25,11 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        const { PageStore } = this.props;
+        if (PageStore.loggedIn) PageStore.goBack();
+      }
+
       onLogin = async () => {
         const { DataStore, APIStore, PageStore } = this.props;
         const { memberId, password } = this.state;

@@ -59,7 +59,11 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (selected.includes("2") ? " active" : "")
+                          (used.indexOf("2") !== -1
+                            ? " disabled"
+                            : selected.indexOf("2") !== -1
+                            ? " active"
+                            : "")
                         }
                         style={{ top: "235px", left: "50px" }}
                       >
@@ -70,7 +74,11 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (selected.includes("3") ? " active" : "")
+                          (used.indexOf("3") !== -1
+                            ? " disabled"
+                            : selected.indexOf("3") !== -1
+                            ? " active"
+                            : "")
                         }
                         style={{ top: "370px", left: "50px" }}
                       >
@@ -81,7 +89,11 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (selected.includes("4") ? " active" : "")
+                          (used.indexOf("4") !== -1
+                            ? " disabled"
+                            : selected.indexOf("4") !== -1
+                            ? " active"
+                            : "")
                         }
                         style={{ top: "505px", left: "50px" }}
                       >
@@ -92,7 +104,11 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (selected.includes("5") ? " active" : "")
+                          (used.indexOf("5") !== -1
+                            ? " disabled"
+                            : selected.indexOf("5") !== -1
+                            ? " active"
+                            : "")
                         }
                         style={{ top: "100px", left: "180px" }}
                       >
@@ -103,7 +119,11 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (selected.includes("6") ? " active" : "")
+                          (used.indexOf("6") !== -1
+                            ? " disabled"
+                            : selected.indexOf("6") !== -1
+                            ? " active"
+                            : "")
                         }
                         style={{ top: "235px", left: "190px" }}
                       >
@@ -114,7 +134,11 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (selected.includes("7") ? " active" : "")
+                          (used.indexOf("7") !== -1
+                            ? " disabled"
+                            : selected.indexOf("7") !== -1
+                            ? " active"
+                            : "")
                         }
                         style={{ top: "370px", left: "190px" }}
                       >
@@ -125,7 +149,11 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (selected.includes("8") ? " active" : "")
+                          (used.indexOf("8") !== -1
+                            ? " disabled"
+                            : selected.indexOf("8") !== -1
+                            ? " active"
+                            : "")
                         }
                         style={{ top: "505px", left: "190px" }}
                       >
