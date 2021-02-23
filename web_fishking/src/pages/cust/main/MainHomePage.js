@@ -276,7 +276,14 @@ export default inject(
                       else if (data["code"] === "jeju")
                         className = className.concat(" Jeju");
                       return (
-                        <a key={index}>
+                        <a
+                          key={index}
+                          onClick={() =>
+                            PageStore.push(
+                              `/search/keyword/ship?keyword=${data["code"]}&type=direction`
+                            )
+                          }
+                        >
                           <div className={className}>
                             {data["codeName"]}{" "}
                             <strong>
@@ -301,16 +308,13 @@ export default inject(
                           <a
                             onClick={() =>
                               PageStore.push(
-                                `/main/company/boat?species=${data.code}`
+                                `/search/keyword/ship?keyword=${data.codeName}&type=species`
                               )
                             }
                           >
-                            {/*<div className="imgWrap imgFish">*/}
-                            {/*  <img*/}
-                            {/*    src="/assets/cust/img/fish/fish_icon_01w.svg"*/}
-                            {/*    alt=""*/}
-                            {/*  />*/}
-                            {/*</div>*/}
+                            <div className="imgWrap imgFish">
+                              <img src={data.img} alt="" />
+                            </div>
                             <div className="InfoWrap">
                               <h6>
                                 {data.codeName}{" "}

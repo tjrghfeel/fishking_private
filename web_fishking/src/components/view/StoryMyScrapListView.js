@@ -53,6 +53,8 @@ export default inject(
 
       onClick = (item) => {
         console.log(JSON.stringify(item));
+        const { PageStore } = this.props;
+        PageStore.push(`/story/diary/detail/${item.id}`);
       };
       /********** ********** ********** ********** **********/
       /** render */

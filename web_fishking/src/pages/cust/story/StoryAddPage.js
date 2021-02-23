@@ -160,26 +160,6 @@ export default inject(
           longitude,
         });
 
-        // console.log(
-        //   JSON.stringify({
-        //     category,
-        //     title,
-        //     fishingSpecies,
-        //     fishingDate,
-        //     tide,
-        //     fishingTechnicList,
-        //     fishingLureList,
-        //     fishingType,
-        //     shipId,
-        //     content,
-        //     fileList,
-        //     videoId,
-        //     address,
-        //     latitude,
-        //     longitude,
-        //   })
-        // );
-        if (true) return;
         if (resolve) {
           ModalStore.openModal("Alert", {
             body: "등록되었습니다.",
