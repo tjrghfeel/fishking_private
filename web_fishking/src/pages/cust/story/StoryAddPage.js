@@ -509,6 +509,7 @@ export default inject(
               ref={this.file}
               type="file"
               accept="image/*"
+              capture="camera"
               style={{ display: "none" }}
               onChange={this.uploadFile}
             />
