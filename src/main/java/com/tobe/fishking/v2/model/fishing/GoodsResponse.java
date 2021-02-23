@@ -47,7 +47,7 @@ public class GoodsResponse {
         this.endFishingDates = this.fishingDates.get(this.fishingDates.size()-1);
         this.minPersonnel = goods.getMinPersonnel();
         this.maxPersonnel = goods.getMaxPersonnel();
-        this.reservationPersonal = rideMember;
+        this.reservationPersonal = rideMember == null ? 0 : rideMember;
         this.observerCode = goods.getShip().getObserverCode();
         this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
     }
