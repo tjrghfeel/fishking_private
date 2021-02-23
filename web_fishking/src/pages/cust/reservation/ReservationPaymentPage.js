@@ -151,18 +151,25 @@ export default inject(
 
             if (name.value === "") {
               name.classList.add("is-invalid");
+              name.focus();
               return;
             } else {
               name.classList.remove("is-invalid");
             }
-            if (phone.value === "" || phone.length < 10 || phone.length > 11) {
+            if (
+              phone.value === "" ||
+              phone.value.length < 10 ||
+              phone.value.length > 11
+            ) {
               phone.classList.add("is-invalid");
+              phone.focus();
               return;
             } else {
               phone.classList.remove("is-invalid");
             }
-            if (birthdate.value === "" || birthdate.length !== 8) {
+            if (birthdate.value === "" || birthdate.value.length !== 8) {
               birthdate.classList.add("is-invalid");
+              birthdate.focus();
               return;
             } else {
               birthdate.classList.remove("is-invalid");
