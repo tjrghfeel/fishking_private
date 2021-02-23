@@ -85,13 +85,14 @@ export default inject("PageStore")(
 
       _pay = (_frm) => {
         $('[name="sndPaymethod"]').val(this.state.sndPaymethod);
-        _frm.sndReply.value = "http://112.220.72.178:8083/payresult";
+        // _frm.sndReply.value = "http://112.220.72.178:8083/payresult";
+        _frm.sndReply.value = this.state.sndReply;
         var agent = navigator.userAgent;
         var midx = agent.indexOf("MSIE");
         var out_size = midx != -1 && agent.charAt(midx + 5) < "7";
 
-        _frm.action =
-          "https://kspay.ksnet.to/store/KSPayMobileV1.4/KSPayPWeb.jsp";
+        // _frm.action =
+        //   "https://kspay.ksnet.to/store/KSPayMobileV1.4/KSPayPWeb.jsp";
 
         _frm.submit();
       };
@@ -109,7 +110,7 @@ export default inject("PageStore")(
             <form
               name="KSPayWeb"
               method="post"
-              action="http://112.220.72.178:8083/payresult"
+              action="https://kspay.ksnet.to/store/KSPayMobileV1.4/KSPayPWeb.jsp"
             >
               <table border="0" width="100%">
                 <tr>
@@ -400,13 +401,13 @@ export default inject("PageStore")(
                 <input
                   type="hidden"
                   name="sndStoreName"
-                  value="케이에스페이(주)"
+                  value="주식회사 투비"
                 />
-                <input type="hidden" name="sndStoreNameEng" value="kspay" />
+                <input type="hidden" name="sndStoreNameEng" value="tobe" />
                 <input
                   type="hidden"
                   name="sndStoreDomain"
-                  value="http://www.kspay_test.co.kr"
+                  value="http://www.to-be.kr/"
                 />
                 <input type="hidden" name="sndGoodType" value="1" />
                 <input type="hidden" name="sndUseBonusPoint" value="" />
