@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.common.QLoveTo.loveTo;
 import static com.tobe.fishking.v2.entity.common.QObserverCode.observerCode;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
@@ -211,8 +212,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                             .and(ship.observerCode.in(
                                     JPAExpressions
                                             .select(observerCode.code)
-                                            .from(observerCode)
-                                            .where(observerCode.forecastCode.eq(keyword))
+                                            .from(observerCode).join(commonCode).on(observerCode.forecastCode.eq(commonCode.code))
+                                            .where(commonCode.extraValue1.eq(keyword))
                             ))
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
