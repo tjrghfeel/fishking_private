@@ -35,7 +35,7 @@ public class GoodsResponse {
     private String shipMaxPersonnel;
 
     @Builder
-    public GoodsResponse(Goods goods, Long rideMember) {
+    public GoodsResponse(Goods goods, Integer rideMember) {
         this.id = goods.getId();
         this.name = goods.getName();
         this.price = goods.getTotalAmount();
@@ -47,7 +47,7 @@ public class GoodsResponse {
         this.endFishingDates = this.fishingDates.get(this.fishingDates.size()-1);
         this.minPersonnel = goods.getMinPersonnel();
         this.maxPersonnel = goods.getMaxPersonnel();
-        this.reservationPersonal = rideMember.intValue();
+        this.reservationPersonal = rideMember;
         this.observerCode = goods.getShip().getObserverCode();
         this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
     }
