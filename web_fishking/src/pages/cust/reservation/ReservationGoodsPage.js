@@ -41,7 +41,7 @@ export default inject(
         }
 
         onChangeDate = async (selected) => {
-          this.setState({ selectedDate: selected });
+          await this.setState({ selectedDate: selected });
 
           const {
             APIStore,
@@ -58,7 +58,6 @@ export default inject(
           const tideTime = await APIStore._get(`/v2/api/tideTime`, {
             date: selected.format("-"),
           });
-          console.log(JSON.stringify(tideTime));
           this.setState({
             tideTime: tideTime.tideTime,
             weather: tideTime.weather,
@@ -69,7 +68,6 @@ export default inject(
               code: this.state.goods[0]["observerCode"],
               date: selected.format("-"),
             });
-            console.log(JSON.stringify(resolve));
             let startIndex = -1;
             for (let i = 0; i < resolve.length; i++) {
               if (resolve[i]["peak"] === "high") startIndex = i;
@@ -79,7 +77,6 @@ export default inject(
             while (tide.length < 4) {
               tide.push(null);
             }
-            console.log(JSON.stringify(tide));
 
             this.setState({ tide });
           }
