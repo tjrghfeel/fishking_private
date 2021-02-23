@@ -222,6 +222,8 @@ public class ShipService {
                     token = tokenData.get("token");
                     String expireTime = tokenData.get("expireTime");
                     realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
+                } else {
+                    token = video.getToken();
                 }
                 if (!token.equals("")) {
                     List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
