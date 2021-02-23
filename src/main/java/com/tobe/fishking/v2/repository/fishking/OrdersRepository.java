@@ -24,11 +24,8 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query(value = "" +
             "select count(o.id) " +
             "from orders o " +
-            "where o.order_status = 3 " +
-            "or o.order_status = 4 " +
-            "or o.order_status = 5 " +
-            "or o.order_status = 8 " +
-            "and o.created_by = :memberId ",
+            "where o.created_by = :memberId " +
+            "and o.is_pay = true ",
             nativeQuery = true
     )
     int countCurrentMyOrders(@Param("memberId") Long memberId);
@@ -39,7 +36,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   o.id id, " +
             "   g.id goodsId, " +
             "   s.id shipId, " +
-            "   if(s.profile_image is null, '',concat('/resource', s.profile_image)) profileImageUrl , " +
+            "   if(s.profile_image is null, '', concat('/resource', s.profile_image)) shipImageUrl , " +
 //            "   (select f.file_url from files f " +
 //            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
 //            "   (select f.thumbnail_file from files f " +
@@ -49,7 +46,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   s.sigungu sigungu, " +
 //            "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
-            "   o.fishing_date fishingDate, " +
+            "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
             "   o.orders_num order_number " +
             "from orders o, ship s, goods g " +
@@ -79,7 +76,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   o.id id, " +
             "   g.id goodsId, " +
             "   s.id shipId, " +
-            "   if(s.profile_image is null, '',concat('/resource', s.profile_image)) profileImageUrl , " +
+            "   if(s.profile_image is null, '',concat('/resource', s.profile_image)) shipImageUrl , " +
 //            "   (select f.file_url from files f " +
 //            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
 //            "   (select f.thumbnail_file from files f " +
@@ -89,7 +86,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "   s.sigungu sigungu, " +
 //            "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
-            "   o.fishing_date fishingDate, " +
+            "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
             "   o.orders_num order_number " +
             "from orders o, ship s, goods g " +

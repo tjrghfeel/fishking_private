@@ -70,8 +70,8 @@ export default inject()(
                     <small>
                       {fishingDate && (
                         <React.Fragment>
-                          {fishingDate.substr(0, 4)} {fishingDate.substr(4, 2)}
-                          월 {fishingDate.substr(6, 2)}일(화){" "}
+                          {fishingDate.substr(0, 4)}년 {fishingDate.substr(4, 2)}
+                          월 {fishingDate.substr(6, 2)}일{" "}
                           {fishingDate.substr(9, 2)}:{fishingDate.substr(11, 2)}{" "}
                           ~<br />
                         </React.Fragment>
