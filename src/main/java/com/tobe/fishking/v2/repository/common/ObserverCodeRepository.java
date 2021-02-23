@@ -28,4 +28,6 @@ public interface ObserverCodeRepository extends BaseRepository<ObserverCode, Lon
     )
     List<ObserverDtoList> getObserverList(@Param("memberId") Long memberId, @Param("alertType") AlertType alertType);
 
+    @Query("select oc from ObserverCode oc where oc.code = :code")
+    ObserverCode getObserverCodeByCode(String code);
 }

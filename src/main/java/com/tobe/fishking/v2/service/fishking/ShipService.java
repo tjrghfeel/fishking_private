@@ -466,4 +466,9 @@ public class ShipService {
         result.put("clean", ship.getCleanByReview());
         return result;
     }
+
+    @Transactional
+    public ObserverCode getObserverCodeFromShip(Long shipId) {
+        return observerCodeRepository.getObserverCodeByCode(shipRepo.getOne(shipId).getObserverCode());
+    }
 }
