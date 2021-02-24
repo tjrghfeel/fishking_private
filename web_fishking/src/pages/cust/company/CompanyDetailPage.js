@@ -249,6 +249,12 @@ export default inject(
                           controls
                           style={{ width: "100%" }}
                         ></video>
+                        <span
+                          className="play-live"
+                          style={{ marginBottom: "8px", marginRight: "8px" }}
+                        >
+                          LIVE
+                        </span>
                       </React.Fragment>
                     )}
                   </div>

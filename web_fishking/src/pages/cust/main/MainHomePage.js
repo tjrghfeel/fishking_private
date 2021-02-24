@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
+import "./MainHomePage.css";
 const {
   LAYOUT: { MainTab },
   VIEW: {
@@ -152,7 +153,7 @@ export default inject(
                       <li className="item more">
                         <a
                           className="moreLink"
-                          onClick={() => PageStore.push(`/main/story/tv`)}
+                          onClick={() => PageStore.push(`/main/company/boat`)}
                         >
                           <div className="inner">
                             <span>더보기</span>
