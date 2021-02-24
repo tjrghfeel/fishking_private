@@ -131,9 +131,10 @@ export default inject(
         };
         findWay = () => {
           const { NativeStore } = this.props;
-          NativeStore.linking(
-            `kakaomap://route?sp=&ep=${this.state.latitude},${this.state.longitude}&by=CAR`
-          );
+          NativeStore.openMap({
+            lat: this.state.latitude,
+            lng: this.state.longitude,
+          });
         };
         advice = () => {
           const { PageStore } = this.props;

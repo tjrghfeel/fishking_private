@@ -54,7 +54,11 @@ export default inject(
         return (
           <React.Fragment>
             {/** Navigation */}
-            <NavigationLayout title={"설정"} showBackIcon={true} />
+            <NavigationLayout
+              title={"설정"}
+              showBackIcon={true}
+              backPathname={`/main/my`}
+            />
 
             {/** 입력 */}
             <div className="container nopadding mt-0">
