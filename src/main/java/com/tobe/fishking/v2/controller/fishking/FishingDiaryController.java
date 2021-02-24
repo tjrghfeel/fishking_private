@@ -171,6 +171,7 @@ public class FishingDiaryController {
             "- scrapCount : Integer / 스크랩 수 \n" +
             "- title : String / 글 제목\n" +
             "- contents : String / 게시글 내용(일부만 출력)\n" +
+            "- hasLiveCam : Boolean / 실시간캠 여부\n" +
             "- fileList : String[] / 이미지 파일 download url 리스트")
     @GetMapping("/fishingDiary/list/{page}")
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(

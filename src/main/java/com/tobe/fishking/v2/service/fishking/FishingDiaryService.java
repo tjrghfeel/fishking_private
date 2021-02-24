@@ -11,6 +11,7 @@ import com.tobe.fishking.v2.entity.common.LoveTo;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
+import com.tobe.fishking.v2.entity.fishing.RealTimeVideo;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -31,6 +32,7 @@ import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
+import com.tobe.fishking.v2.repository.fishking.RealTimeVideoRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.FishingDiarySpecs;
 import com.tobe.fishking.v2.utils.NativeResultProcessUtils;
@@ -66,6 +68,7 @@ public class FishingDiaryService {
     private final BoardRepository boardRepo;
     private final UploadService uploadService;
     private final LoveToRepository loveToRepository;
+    private final RealTimeVideoRepository realTimeVideoRepo;
     private final Environment env;
 
     private static int searchSize = 0;
@@ -506,6 +509,12 @@ public class FishingDiaryService {
         if(fishingDiary.getFishingType()!=null){
             fishingType = fishingDiary.getFishingType().getValue();
         }
+        /*isLive 설정*/
+        Boolean isLive = false;
+        if(shipId != null) {
+            List<RealTimeVideo> realTimeVideoList = realTimeVideoRepo.getRealTimeVideoByShipsId(shipId);
+            if(realTimeVideoList.size()>0){ isLive = true; }
+        }
         /*isLikeTo 설정*/
         Boolean isLikeTo = null;
         TakeType takeType = TakeType.valueOf(fishingDiary.getFilePublish().getKey());
@@ -546,7 +555,7 @@ public class FishingDiaryService {
                 .shipId(shipId)
                 .nickName(nickName)
                 .profileImage(path + fishingDiary.getMember().getProfileImage())
-                .isLive(true)
+                .isLive(isLive)
                 .fishingType(fishingType)
                 .title(fishingDiary.getTitle())
                 .createdDate(fishingDiary.getCreatedDate())

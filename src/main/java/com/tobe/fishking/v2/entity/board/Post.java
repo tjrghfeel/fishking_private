@@ -109,6 +109,9 @@ public class Post extends BaseTime {
     @Column(columnDefinition = "bit not null comment '회원에 대한 글이면 true, 업주에 대한 글이면 false.' ")
     private Boolean targetRole;
 
+    @Column(columnDefinition = "bit comment '1:1문의의 경우 답변여부'")
+    private Boolean isReplied;
+
     public Post(){
 
     }

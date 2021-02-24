@@ -61,7 +61,8 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
 
     List<Alerts> findAllByReceiverAndAlertTypeAndPidAndIsSent(Member receiver, AlertType alertType, Long pid, Boolean isSent);
 
-    Boolean existsByReceiverAndPidAndEntityTypeAndAlertType(Member receiver, Long pid, EntityType entityType, AlertType alertType);
+    Boolean existsByReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
+            Member receiver, Long pid, EntityType entityType, AlertType alertType, Boolean isSent);
 
     List<Alerts> findAllByAlertTypeAndIsSentAndAlertTime(AlertType alertType, Boolean isSent, LocalDateTime alertTime);
 }

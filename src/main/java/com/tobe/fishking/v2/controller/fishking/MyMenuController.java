@@ -237,6 +237,7 @@ public class MyMenuController {
     @ApiOperation(value = "관측 지점 목록 반환",notes = "" +
             "" +
             "요청 필드 ) \n" +
+            "- type : String / 필수 / '오늘의 물때'페이지에서의 관측소 목록이면 'today'. '날짜별 물때'페이지에서의 관측소 목록이면 'daily'.\n" +
             "- 헤더에 세션토큰 (선택)\n" +
             "응답 필드 ) \n" +
             "- observerId : Long / 관측소의 id\n" +
@@ -245,11 +246,17 @@ public class MyMenuController {
             "- isAlerted : Boolean / 현재 관측소에 대해 알람이 설정되어 있는지여부(로그인 되어있는경우에만 true일 수 있다)\n")
     @GetMapping("/searchPointList")
     public List<ObserverDtoList> getSearchPointList(
+            @RequestParam("type") String type,
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
         if(token == null){}
         else if(token.equals("")){token = null;}
-        return myMenuService.getSearchPointList( token, AlertType.tide);
+
+        AlertType alertType = null;
+        if(!(type.equals("today") || type.equals("daily"))){throw new RuntimeException("type값으로는 'today'또는 'daily'만 가능합니다.");}
+        else if(type.equals("today")){ alertType = AlertType.tideLevel; }
+        else if(type.equals("daily")){ alertType = AlertType.tide; }
+        return myMenuService.getSearchPointList( token, alertType);
     }
 
     /*오늘의 물때정보 반환*/

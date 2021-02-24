@@ -290,6 +290,11 @@ public class UploadService {
             int width = Integer.parseInt(Constants.thumbnailWidth);
             int height = Integer.parseInt(Constants.thumbnailHeight);
 
+            /*Image inImage = ImageIO.read(originalFile);
+            double scale = (double) width / (double) inImage.getWidth(null);
+            int scaledW = (int) (scale * inImage.getWidth(null));
+            int scaledH = (int) (scale * inImage.getHeight(null));*/
+
             Image inImage = new ImageIcon(tFileName).getImage();
             double scale = (double) width / (double) inImage.getHeight(null);
             if (inImage.getWidth(null) > inImage.getHeight(null)) {

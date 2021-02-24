@@ -161,35 +161,20 @@ public class PostControllerTest {
     }
 
     @Test
+    @Transactional
     public void noName() throws Exception {
-        Member member = memberRepository.findById(111L)
-                .orElseThrow(()->new ResourceNotFoundException(""));
-        memberRepository.deleteById(member.getId());
-
-        Member newMember = Member.builder()
-                .uid("카카오톡1596898830")//임시값. 수정필요.
-                .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                .password("tempPassword")//임시값. 수정필요.
-                .email("tempEmail")//임시값. 수정필요.
-//                    .gender(gender)
-                .roles(Role.member)
-                .profileImage("")
-                .profileBackgroundImage("")
-                .isActive(false)
-                .isCertified(false)
-                .snsType(SNSType.kakao)
-                .snsId("")
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
-                .build();
-        newMember = memberRepository.save(newMember);
+        updateMember();
         return;
 
     }
 
     @Transactional
     public void updateMember() throws ResourceNotFoundException {
-
+        Member member = memberRepository.findById(20L)
+                .orElseThrow(()->new ResourceNotFoundException(""));
+        System.out.println("result >>> "+member.getMemberName());
+        member.setMemberName("전세호");
+        memberRepository.save(member);
 
         return;
     }

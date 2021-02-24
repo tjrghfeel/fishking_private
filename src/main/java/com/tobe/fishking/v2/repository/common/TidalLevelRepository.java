@@ -22,7 +22,7 @@ public interface TidalLevelRepository extends BaseRepository<TidalLevel, Long>, 
     /*@Query("select t from TidalLevel t " +
             "where t.dateTime > :now and t.peak=:peak and t.observerCode = :observer order by t.dateTime asc limit 2")
     List<TidalLevel> getPeak(@Param("now")LocalDateTime now, @Param("peak") String peak, @Param("observer") ObserverCode observer);*/
-    List<TidalLevel> findTop2ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
+    List<TidalLevel> findTop6ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
             LocalDateTime dateTime, String peak, ObserverCode observerCode
     );
 }

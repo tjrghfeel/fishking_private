@@ -43,6 +43,7 @@ public class PostSearchConditionDto {
     private LocalDate modifiedDateStart;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate modifiedDateEnd;
+    private Boolean targetRole;
 
     private String sort;
 }

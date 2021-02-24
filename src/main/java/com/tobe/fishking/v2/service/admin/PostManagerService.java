@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.service.admin;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
@@ -58,11 +59,19 @@ public class PostManagerService {
     @Autowired
     AlertService alertService;
 
+    public void checkAdminAuthor(String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        if(member.getRoles() != Role.admin){throw new RuntimeException("관리자 권한이 아닙니다.");}
+    }
     /*공지사항, FAQ, 1:1문의 조건 검색*/
     @Transactional
-    public Page<PostManageDtoForPage> getPostList(PostSearchConditionDto dto, int page)
+    public Page<PostManageDtoForPage> getPostList(PostSearchConditionDto dto, int page, String token)
             throws NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException,
-            BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+            BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, ResourceNotFoundException {
+        /*관리자 권한 확인*/
+        checkAdminAuthor(token);
+
         /*findAllByConditions()에 넘겨줄 인자들 변환해주는 부분*/
         Integer channelType = (dto.getChannelType()==null)? null : (ChannelType.valueOf(dto.getChannelType()).ordinal());
         Integer questionType = (dto.getQuestionType()==null)? null : (QuestionType.valueOf(dto.getQuestionType()).ordinal());
@@ -70,9 +79,9 @@ public class PostManagerService {
 
         Pageable pageable=null;
         if(dto.getSort()!=null) {
-            pageable = PageRequest.of(page, 50, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));//JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")")
+            pageable = PageRequest.of(page, 30, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));//JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")")
         }
-        else pageable = PageRequest.of(page,50);
+        else pageable = PageRequest.of(page,30);
 
         return postRepository.findAllByConditions(
                 dto.getId(),
@@ -92,9 +101,60 @@ public class PostManagerService {
                 dto.getCreateDateEnd(),
                 dto.getModifiedDateStart(),
                 dto.getModifiedDateEnd(),
+                dto.getTargetRole(),
+                dto.getCreatedBy(),
+                dto.getModifiedBy(),
                 pageable
         );
     }
+
+    /*공지사항, FAQ, 1:1문의 상세보기*/
+    @Transactional
+    public PostManageDetailDto getPostDetail(Long postId, String token) throws ResourceNotFoundException {
+        PostManageDetailDto result = null;
+
+        /*현재회원 권한 확인*/
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        if(member.getRoles() != Role.admin){ throw new RuntimeException("관리자 권한이 아닙니다.");}
+
+        /*post가져와 필요한 데이터 dto에 저장. */
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postId));
+        String channelType = null;
+        if(post.getChannelType()!=null){ channelType = post.getChannelType().getValue(); }
+        String questionType = null;
+        if(post.getQuestionType()!=null){ questionType = post.getQuestionType().getValue(); }
+        String returnType = null;
+        if(post.getReturnType()!=null){ returnType = post.getReturnType().getValue(); }
+        String targetRole = (post.getTargetRole())? "일반회원" : "업주";
+
+        result = PostManageDetailDto.builder()
+                .postId(post.getId())
+                .boardId(post.getBoard().getId())
+                .boardName(post.getBoard().getName())
+                .parentId(post.getParent_id())
+                .channelType(channelType)
+                .questionType(questionType)
+                .title(post.getTitle())
+                .content(post.getContents())
+                .authorId(post.getAuthor().getId())
+                .authorNickName(post.getAuthor().getNickName())
+                .returnType(returnType)
+                .returnNoAddress(post.getReturnNoAddress())
+                .createdAt(post.getCreatedAt())
+                .isSecret(post.getIsSecret())
+                .createdById(post.getCreatedBy().getId())
+                .createdByNickName(post.getCreatedBy().getNickName())
+                .modifiedById(post.getModifiedBy().getId())
+                .modifiedByNickName(post.getModifiedBy().getNickName())
+                .targetRole(targetRole)
+                .isReplied(post.getIsReplied())
+                .build();
+
+        return result;
+    }
+
 
     @Transactional
     public Long makeOne2oneAnswer(WriteOne2oneAnswerDto dto,String token) throws ResourceNotFoundException, IOException {
@@ -120,6 +180,7 @@ public class PostManagerService {
 
 
         postService.writePost(writePostDTO,token);
+        parentPost.setIsReplied(true);
 
         /*1:1답변완료알림 추가*/
         AddAlertDto addAlertDto = AddAlertDto.builder()

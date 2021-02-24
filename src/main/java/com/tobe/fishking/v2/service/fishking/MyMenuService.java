@@ -221,7 +221,7 @@ public class MyMenuService {
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
             memberId = member.getId();
         }
-        return observerCodeRepository.getObserverList(memberId, alertType);
+        return observerCodeRepository.getObserverList(memberId, alertType.ordinal());
     }
 
     /*오늘의 물때정보 반환*/
@@ -235,8 +235,8 @@ public class MyMenuService {
         }
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
-        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertType(
-                member, observerId, EntityType.observerCode, AlertType.tide);
+        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
+                member, observerId, EntityType.observerCode, AlertType.tideLevel, false);
         /*tideTimeList*/
 //        ArrayList<String> tideTimeList = new ArrayList<>();
 //        ArrayList<String> tideLevelList = new ArrayList<>();
@@ -364,16 +364,21 @@ public class MyMenuService {
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
 
-        for(int i=0; i<highTideAlert.length; i++){
-            List<TidalLevel> list = tidalLevelRepository.findTop2ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
-                    LocalDateTime.now(), "high", observer
-            );
+        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member,AlertType.tideLevel,observerId,false);
+        alertsRepository.deleteAll(preAlertList);
 
+        List<TidalLevel> list = tidalLevelRepository.findTop6ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
+                LocalDateTime.now().minusDays(1), "high", observer
+        );
+        if(list.size() < 0){throw new RuntimeException("조위데이터가 없습니다.");}
+
+        for(int i=0; i<highTideAlert.length; i++){
             LocalDateTime alertTime = list.get(0).getDateTime();
-            alertTime = alertTime.minusHours(highTideAlert[i]);
-            if(alertTime.compareTo(LocalDateTime.now())<0){
-                alertTime = list.get(1).getDateTime();
-                alertTime = alertTime.minusHours(highTideAlert[i]);
+            alertTime = alertTime.plusHours(highTideAlert[i]);
+            for(int j=1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++){
+                if(list.size() < j){ throw new RuntimeException("알림을 설정할 수 없습니다.");}
+                alertTime = list.get(j).getDateTime();
+                alertTime = alertTime.plusHours(highTideAlert[i]);
             }
 
             Alerts alerts = Alerts.builder()
@@ -389,16 +394,19 @@ public class MyMenuService {
                     .build();
             alerts = alertsRepository.save(alerts);
         }
-        for(int i=0; i<lowTideAlert.length;  i++){
-            List<TidalLevel> list = tidalLevelRepository.findTop2ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
-                    LocalDateTime.now(), "low", observer
-            );
 
+        list = tidalLevelRepository.findTop6ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
+                LocalDateTime.now().minusDays(1), "low", observer
+        );
+        if(list.size() < 0){throw new RuntimeException("조위데이터가 없습니다.");}
+
+        for(int i=0; i<lowTideAlert.length;  i++){
             LocalDateTime alertTime = list.get(0).getDateTime();
-            alertTime = alertTime.minusHours(lowTideAlert[i]);
-            if(alertTime.compareTo(LocalDateTime.now())<0){
-                alertTime = list.get(1).getDateTime();
-                alertTime = alertTime.minusHours(lowTideAlert[i]);
+            alertTime = alertTime.plusHours(lowTideAlert[i]);
+            for(int j=1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++){
+                if(list.size() < j){ throw new RuntimeException("알림을 설정할 수 없습니다.");}
+                alertTime = list.get(j).getDateTime();
+                alertTime = alertTime.plusHours(lowTideAlert[i]);
             }
 
             Alerts alerts = Alerts.builder()
@@ -431,8 +439,8 @@ public class MyMenuService {
         }
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
-        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertType(
-                member, observerId, EntityType.observerCode, AlertType.tide);
+        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
+                member, observerId, EntityType.observerCode, AlertType.tide,false);
 //        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
         /*tideTimeList*/
 //        ArrayList<String> tideTimeList = new ArrayList<>();
@@ -555,7 +563,7 @@ public class MyMenuService {
 
         for(int i=0; i<tideList.length; i++){
             /*물때 계산*/
-            Integer afterDays = null; //알람 요청한 물때가 현재로부터 몇일 후인지.
+            Integer tideDayDiff = null; //알람 요청한 물때가 현재로부터 몇일 후인지.
 //            if(seaDirection == SeaDirection.west){
 //                Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
 //                Integer tide = (lunarDay+6)%15;
@@ -569,8 +577,8 @@ public class MyMenuService {
 //            else if(seaDirection == SeaDirection.east || seaDirection == SeaDirection.south){
                 Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
                 Integer tide = (lunarDay+6)%15 +1;
-                afterDays = tideList[i] - tide;
-                if(afterDays<0) afterDays += 15;
+                tideDayDiff = tideList[i] - tide;
+                if(tideDayDiff<0) tideDayDiff += 15;
 
 //                if(tideList[i]==15){contentTideList[i] = "조금";}
 //                else{contentTideList[i] = tideList[i]+"물";}
@@ -578,21 +586,24 @@ public class MyMenuService {
 
             for(int j=0; j<dayList.length; j++){
 
-                afterDays = afterDays - dayList[j];
+                Integer afterDays = tideDayDiff - dayList[j];
                 if(afterDays < 0) afterDays += 15;//알림 시점이 지났으면 다음 물때에 대해 알림을 설정해준다.
 
                 LocalDateTime today = LocalDateTime.now();
-                today = today.plusDays(afterDays);
 
                 for(int l=0; l<timeList.length; l++){
-                    today = today.withHour(timeList[l]).withMinute(0).withSecond(0);
+                    LocalDateTime alertTime = today.plusDays(afterDays);
+                    alertTime = alertTime.withHour(timeList[l]).withMinute(0).withSecond(0);
+                    if(today.compareTo(alertTime)>0){ alertTime = alertTime.plusDays(15); }/*today.plusDays()하기때문에 보통의 경우 today가 alertTime보다 이후가 될일은 없다.
+                                                            근데, 오늘당일이어서 plusDays로 더한날짜가 0이고 설정된시간이 이미지난시간일경우 today가
+                                                            이후가 되고, 이경우 다음 물때주기에 대해 알림을 설정하는게 아닌 그냥 무시하겠다는의미. 너무복잡해져서. */
 
                     Alerts alerts = Alerts.builder()
                             .alertType(AlertType.tide)
                             .content(observer.getName()+" "+tideList[i]+" "+dayList[j]+" "+timeList[l])
                             .isRead(false)
                             .receiver(member)
-                            .alertTime(today)
+                            .alertTime(alertTime)
                             .entityType(EntityType.observerCode)
                             .pid(observerId)
                             .isSent(false)

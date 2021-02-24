@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.controller.admin;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.admin.post.*;
+import com.tobe.fishking.v2.model.board.WritePostDTO;
 import com.tobe.fishking.v2.service.admin.PostManagerService;
 import com.tobe.fishking.v2.service.board.PostService;
 import io.swagger.annotations.Api;
@@ -35,11 +36,36 @@ public class PostManageController {
             "- 관리자용api\n" +
             "- ")
     @GetMapping("/manage/post/{page}")
-    public Page<PostManageDtoForPage> getPostList(PostSearchConditionDto dto, @PathVariable("page") int page)
+    public Page<PostManageDtoForPage> getPostList(
+            PostSearchConditionDto dto,
+            @PathVariable("page") int page,
+            @RequestHeader("Authorization") String token
+    )
             throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException,
-            IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-        return postManagerService.getPostList(dto,page);
+            IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, ResourceNotFoundException {
+        return postManagerService.getPostList(dto,page,token);
     }
+
+    /*게시글 상세보기*/
+    @ApiOperation(value = "공지사항, FAQ, 1:1문의 상세보기",notes = "")
+    @GetMapping("/manage/post/detail/{postId}")
+    public PostManageDetailDto getPostDetail(
+            @PathVariable("postId") Long postId,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return postManagerService.getPostDetail(postId,token);
+    }
+
+    /*게시글 작성*/
+    /*@ApiOperation(value = "공지사항, FAQ, 1:1문의 작성",notes = "")
+    @PostMapping("/manage/post")
+    public Long writePost(
+            @RequestBody WritePostDTO
+            )*/
+
+    /*게시글 수정*/
+    /*@ApiOperation(value = "공지사항, FAQ, 1:1문의 수정",notes = "")
+    @PutMapping("/")*/
 
     /*1:1문의 답변*/
     @ApiOperation(value = "1:1문의 답변하기",notes = "" +

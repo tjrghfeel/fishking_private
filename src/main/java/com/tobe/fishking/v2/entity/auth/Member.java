@@ -135,4 +135,5 @@ public class Member {
         isActive = false;
     }
     public void setRegistrationToken(String token){this.registrationToken = token;}
+    public void setMemberName(String name){this.memberName = name;}
 }

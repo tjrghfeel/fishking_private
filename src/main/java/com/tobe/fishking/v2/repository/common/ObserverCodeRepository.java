@@ -26,6 +26,6 @@ public interface ObserverCodeRepository extends BaseRepository<ObserverCode, Lon
             countQuery = "select o.id from observer_code o ",
             nativeQuery = true
     )
-    List<ObserverDtoList> getObserverList(@Param("memberId") Long memberId, @Param("alertType") AlertType alertType);
+    List<ObserverDtoList> getObserverList(@Param("memberId") Long memberId, @Param("alertType") Integer alertType);
 
 }
