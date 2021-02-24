@@ -154,7 +154,11 @@ public class ShipController {
             "\n ownerWording: 사장님 한마디 내용" +
             "\n noticeTitle: 공지사항 제목" +
             "\n notice: 공지사항 내용" +
-            "\n events: 이벤트 리스트" +
+            "\n events: 이벤트 리스트 , 삭제예정" +
+            "\n eventsList: 이벤트 리스트 [{ " +
+            "\n         id: 이벤트 id" +
+            "\n         title: 제목 " +
+            "\n }, ... ]" +
             "\n " +
             "\n 상단 이미지관련" +
             "\n     liveVideo가 빈 문자열이 아닌 경우: 해당 주소를 video 태그로 보여준다. " +
