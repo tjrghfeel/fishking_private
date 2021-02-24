@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
+import "./MainHomePage.css";
 const {
   LAYOUT: { MainTab },
   VIEW: {
@@ -152,7 +153,7 @@ export default inject(
                       <li className="item more">
                         <a
                           className="moreLink"
-                          onClick={() => PageStore.push(`/main/story/tv`)}
+                          onClick={() => PageStore.push(`/main/company/boat`)}
                         >
                           <div className="inner">
                             <span>더보기</span>
@@ -276,7 +277,14 @@ export default inject(
                       else if (data["code"] === "jeju")
                         className = className.concat(" Jeju");
                       return (
-                        <a key={index}>
+                        <a
+                          key={index}
+                          onClick={() =>
+                            PageStore.push(
+                              `/search/keyword/ship?keyword=${data["code"]}&type=direction`
+                            )
+                          }
+                        >
                           <div className={className}>
                             {data["codeName"]}{" "}
                             <strong>
@@ -301,16 +309,13 @@ export default inject(
                           <a
                             onClick={() =>
                               PageStore.push(
-                                `/main/company/boat?species=${data.code}`
+                                `/search/keyword/ship?keyword=${data.codeName}&type=species`
                               )
                             }
                           >
-                            {/*<div className="imgWrap imgFish">*/}
-                            {/*  <img*/}
-                            {/*    src="/assets/cust/img/fish/fish_icon_01w.svg"*/}
-                            {/*    alt=""*/}
-                            {/*  />*/}
-                            {/*</div>*/}
+                            <div className="imgWrap imgFish">
+                              <img src={data.img} alt="" />
+                            </div>
                             <div className="InfoWrap">
                               <h6>
                                 {data.codeName}{" "}

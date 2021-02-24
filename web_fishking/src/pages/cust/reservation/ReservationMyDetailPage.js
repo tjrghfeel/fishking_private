@@ -11,7 +11,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "ModalStore"
+  "ModalStore",
+  "NativeStore"
 )(
   observer(
     withRouter(
@@ -39,6 +40,12 @@ export default inject(
           });
           console.log(JSON.stringify(resolve));
           this.setState(resolve);
+
+          const shipData = await APIStore._get(
+            `/v2/api/ship/${resolve.shipId}`
+          );
+          console.log(JSON.stringify(shipData));
+          this.setState({ shipData });
 
           // 예약상태
           let ordersStatusClassName = "status";
@@ -82,13 +89,22 @@ export default inject(
           console.log(type);
         };
         onClickCompanyInfo = () => {
-          // TODO : 업체정보
+          const { PageStore } = this.props;
+          PageStore.push(`/company/boat/detail/${this.state.shipId}`);
         };
         onClickFindWay = () => {
-          // TODO : 길찾기
+          const { NativeStore } = this.props;
+          const {
+            shipData: { latitude: lat, longitude: lng },
+          } = this.state;
+          NativeStore.openMap({ lat, lng });
         };
         onClickCopyAddress = () => {
-          // TODO : 주소복사
+          const { NativeStore } = this.props;
+          const {
+            shipData: { address },
+          } = this.state;
+          NativeStore.clipboardCopy(address);
         };
         onClickCancelInfo = () => {
           // # 취소/환불규정 모달
@@ -156,6 +172,7 @@ export default inject(
               <NavigationLayout
                 title={"예약 상세정보"}
                 showBackIcon={true}
+                backPathname={`/reservation/my`}
                 customButton={
                   <React.Fragment>
                     <a

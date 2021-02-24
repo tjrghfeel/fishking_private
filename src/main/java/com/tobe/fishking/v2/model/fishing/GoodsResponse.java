@@ -35,6 +35,23 @@ public class GoodsResponse {
     private String shipMaxPersonnel;
 
     @Builder
+    public GoodsResponse(Goods goods, Integer rideMember) {
+        this.id = goods.getId();
+        this.name = goods.getName();
+        this.price = goods.getTotalAmount();
+        this.startTime = goods.getFishingStartTime();
+        this.endTime = goods.getFishingEndTime();
+        this.fishSpecies = goods.getFishSpecies().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
+        this.fishingDates = goods.getFishingDates().stream().sorted(Comparator.comparing(GoodsFishingDate::getFishingDate)).map(GoodsFishingDate::getFishingDateString).collect(Collectors.toList());
+        this.startFishingDates = this.fishingDates.get(0);
+        this.endFishingDates = this.fishingDates.get(this.fishingDates.size()-1);
+        this.minPersonnel = goods.getMinPersonnel();
+        this.maxPersonnel = goods.getMaxPersonnel();
+        this.reservationPersonal = rideMember == null ? 0 : rideMember;
+        this.observerCode = goods.getShip().getObserverCode();
+        this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
+    }
+
     public GoodsResponse(Goods goods) {
         this.id = goods.getId();
         this.name = goods.getName();
@@ -47,7 +64,7 @@ public class GoodsResponse {
         this.endFishingDates = this.fishingDates.get(this.fishingDates.size()-1);
         this.minPersonnel = goods.getMinPersonnel();
         this.maxPersonnel = goods.getMaxPersonnel();
-        this.reservationPersonal = goods.getReservationPersonnel() == null ? 0 : goods.getReservationPersonnel().intValue();
+        this.reservationPersonal = 0;
         this.observerCode = goods.getShip().getObserverCode();
         this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
     }

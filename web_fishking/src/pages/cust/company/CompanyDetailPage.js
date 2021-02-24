@@ -1,4 +1,4 @@
-/* global daum, kakao, $, Hls */
+/* global daum, kakao, $, Hls, videojs */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
@@ -45,23 +45,22 @@ export default inject(
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {
             const video = document.querySelector("#video");
-            console.log(resolve.liveVideo);
+            const url =
+              resolve.liveVideo ||
+              "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
-            video.src = resolve.liveVideo;
-            video.addEventListener("loadedmetadata", function () {
-              video.play();
-            });
-            // if (Hls.isSupported()) {
-            //   console.log("A");
-            //   const hls = new Hls();
-            //   hls.loadSource(resolve.liveVideo);
-            //   hls.attachMedia(video);
-            // } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-            //   video.src = resolve.liveVideo;
-            //   video.addEventListener("loadedmetadata", function () {
-            //     video.play();
-            //   });
-            // }
+            if (Hls.isSupported()) {
+              const hls = new Hls();
+              hls.attachMedia(video);
+              hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+                hls.loadSource(url);
+                hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
+                  setTimeout(() => {
+                    video.play();
+                  }, 800);
+                });
+              });
+            }
           }
 
           // # 별점 스크립트 로드
@@ -86,20 +85,21 @@ export default inject(
         requestLike = async () => {
           const { APIStore } = this.props;
           if (this.state.liked) {
-            await APIStore._delete("/v2/api/loveto", {
-              takeType: "ship",
+            await APIStore._delete("/v2/api/take", {
+              // takeType: "ship",
               linkId: this.state.id,
             });
             this.setState({ liked: false });
           } else {
-            await APIStore._post("/v2/api/loveto", {
-              takeType: "ship",
+            await APIStore._post("/v2/api/take", {
+              // takeType: "ship",
               linkId: this.state.id,
             });
             this.setState({ liked: true });
           }
         };
         modalSNS = () => {
+          // >>>>> 업체 공유하기
           const { ModalStore } = this.props;
           ModalStore.openModal("SNS", {
             onSelect: (selected) => {
@@ -131,9 +131,10 @@ export default inject(
         };
         findWay = () => {
           const { NativeStore } = this.props;
-          NativeStore.linking(
-            `kakaomap://route?sp=&ep=${this.state.latitude},${this.state.longitude}&by=CAR`
-          );
+          NativeStore.openMap({
+            lat: this.state.latitude,
+            lng: this.state.longitude,
+          });
         };
         advice = () => {
           const { PageStore } = this.props;
@@ -244,9 +245,16 @@ export default inject(
                       <React.Fragment>
                         <video
                           id="video"
-                          type={"application/x-mpegURL"}
+                          muted
+                          controls
                           style={{ width: "100%" }}
                         ></video>
+                        <span
+                          className="play-live"
+                          style={{ marginBottom: "8px", marginRight: "8px" }}
+                        >
+                          LIVE
+                        </span>
                       </React.Fragment>
                     )}
                   </div>

@@ -11,8 +11,9 @@ export default inject()(
         writeTime,
         content,
         likeCount = 0,
-        isLikeTo,
         isChildComment = false,
+        isLikeTo = false,
+        isMine = false,
       },
       data,
       onClick,
@@ -54,16 +55,18 @@ export default inject()(
                 </small>
               </div>
               <div className="col">
-                <a
-                  onClick={() =>
-                    onClick ? onClick("more", data, index) : null
-                  }
-                >
-                  <img
-                    src="/assets/cust/img/svg/icon-ellipsis.svg"
-                    alt="메뉴더보기"
-                  />
-                </a>
+                {isMine && (
+                  <a
+                    onClick={() =>
+                      onClick ? onClick("more", data, index) : null
+                    }
+                  >
+                    <img
+                      src="/assets/cust/img/svg/icon-ellipsis.svg"
+                      alt="메뉴더보기"
+                    />
+                  </a>
+                )}
                 <br />
                 <a
                   className={isLikeTo ? "active" : ""}

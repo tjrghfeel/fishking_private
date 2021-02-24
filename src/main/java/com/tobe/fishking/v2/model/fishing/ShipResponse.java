@@ -51,6 +51,7 @@ public class ShipResponse {
     private String noticeTitle;
     private String notice;
     private List<String> events;
+    private List<ShipEventResponse> eventsList;
     private Boolean liked;
 
     @QueryProjection
@@ -80,9 +81,10 @@ public class ShipResponse {
         this.noticeTitle = ship.getNoticeTitle();
         this.notice = ship.getNotice();
         this.liked = false;
-        this.profileImage = ship.getProfileImage();
+        this.profileImage = "/resource" + ship.getProfileImage();
         this.liveVideo = "";
         this.fishingDiary = new ArrayList<>();
         this.fishingBlog = new ArrayList<>();
+        this.eventsList = null;
     }
 }

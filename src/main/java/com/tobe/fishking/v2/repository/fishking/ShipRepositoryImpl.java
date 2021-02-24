@@ -8,12 +8,14 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.fishing.*;
+import com.tobe.fishking.v2.model.fishing.QShipResponse;
+import com.tobe.fishking.v2.model.fishing.ShipListResponse;
+import com.tobe.fishking.v2.model.fishing.ShipResponse;
+import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,10 +24,10 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import static com.tobe.fishking.v2.entity.common.QLoveTo.loveTo;
+import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.common.QObserverCode.observerCode;
+import static com.tobe.fishking.v2.entity.common.QTake.take;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
 import static com.tobe.fishking.v2.utils.QueryDslUtil.getSortedColumn;
@@ -79,7 +81,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .select(Projections.constructor(ShipListResponse.class,
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
-                        ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
+                        ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
                         ship
                 ))
                 .from(ship)
@@ -111,7 +113,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .select(Projections.constructor(ShipListResponse.class,
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
-                        ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
+                        ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
                         ship
                 ))
                 .from(ship)
@@ -158,7 +160,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .select(Projections.constructor(ShipListResponse.class,
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
-                        ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
+                        ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
                         ship
                 ))
                 .from(ship)
@@ -203,7 +205,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     .select(Projections.constructor(ShipListResponse.class,
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
-                            ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
+                            ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
                             ship
                     ))
                     .from(ship)
@@ -211,8 +213,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                             .and(ship.observerCode.in(
                                     JPAExpressions
                                             .select(observerCode.code)
-                                            .from(observerCode)
-                                            .where(observerCode.forecastCode.eq(keyword))
+                                            .from(observerCode).join(commonCode).on(observerCode.forecastCode.eq(commonCode.code))
+                                            .where(commonCode.extraValue1.eq(keyword))
                             ))
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
@@ -225,7 +227,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     .select(Projections.constructor(ShipListResponse.class,
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
-                            ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(ship.id), loveTo.takeType.eq(TakeType.ship)), aliasLiked),
+                            ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
                             ship
                     ))
                     .from(ship)

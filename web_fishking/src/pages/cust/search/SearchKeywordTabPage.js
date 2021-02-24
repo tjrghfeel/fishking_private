@@ -42,6 +42,7 @@ export default inject(
         let order = "";
         if (tab === "ship" || tab === "live") order = "distance";
         else order = "createDate";
+        let type = qp.type || null;
         const restored = PageStore.restoreState({
           isPending: false,
           isEnd: false,
@@ -50,6 +51,7 @@ export default inject(
           keyword,
           page: 0,
           order,
+          type,
         });
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
@@ -69,6 +71,7 @@ export default inject(
           {
             keyword: PageStore.state.keyword,
             order: PageStore.state.order,
+            type: PageStore.state.type,
           }
         );
 

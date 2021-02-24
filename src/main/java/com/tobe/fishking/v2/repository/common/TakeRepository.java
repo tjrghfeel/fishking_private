@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.repository.common;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Take;
+import com.tobe.fishking.v2.enums.common.TakeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,7 @@ public interface TakeRepository extends JpaRepository<Take, Long> {
             nativeQuery = true
     )
     int countForCompanyProfile(@Param("companyId") Long companyId);
+
+    @Query("select count(l) from Take l where l.linkId = :linkId and l.createdBy = :createBy and l.takeType = :type")
+    Integer findByLinkIdAndMemberAndType(Long linkId, Member createBy, TakeType type);
 }

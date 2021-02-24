@@ -10,13 +10,13 @@ import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.AddShipDTO;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.FilesDTO;
-import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.common.ReviewResponse;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -32,11 +32,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,6 +59,7 @@ public class ShipService {
     private final EventRepository eventRepository;
     private final ObserverCodeRepository observerCodeRepository;
     private final LoveToRepository loveToRepository;
+    private final TakeRepository takeRepository;
     private final OrdersRepository ordersRepository;
     private final OrderDetailsRepository orderDetailsRepository;
     private final RideShipRepository rideShipRepository;
@@ -198,18 +200,32 @@ public class ShipService {
         }
         response.setFishingBlogCount(blogs.size());
         response.setEvents(eventRepository.getEventTitleByShip(ship_id));
+        response.setEventsList(eventRepository.getEventByShip(ship_id));
 
+        response.setLiked(false);
         if (!sessionToken.equals("")) {
             Optional<Member> member = memberRepo.findBySessionToken(sessionToken);
-            member.ifPresent(value -> response.setLiked(loveToRepository.findByLinkIdAndMember(response.getId(), value) > 0));
+            member.ifPresent(value -> response.setLiked(takeRepository.findByLinkIdAndMemberAndType(response.getId(), value, TakeType.ship) > 0));
         }
 
         List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(ship_id);
         if (videos.size() > 0) {
             RealTimeVideo video = videos.get(0);
             try {
-                String token = httpRequestService.refreshToken(video.getToken());
-                realTimeVideoRepository.updateToken(token, video.getToken());
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime expTime = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                        TimeZone.getDefault().toZoneId()
+                );
+                String token = "";
+                if (now.isAfter(expTime)) {
+                    Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                    token = tokenData.get("token");
+                    String expireTime = tokenData.get("expireTime");
+                    realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
+                } else {
+                    token = video.getToken();
+                }
                 if (!token.equals("")) {
                     List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
                     for (Map<String, Object> camera : cameras) {
@@ -271,6 +287,7 @@ public class ShipService {
         Goods goods = goodsRepository.getOne(goods_id);
         return GoodsResponse.builder()
                 .goods(goods)
+                .rideMember(0)
                 .build();
     }
 
@@ -449,5 +466,10 @@ public class ShipService {
         result.put("service", ship.getServiceByReview());
         result.put("clean", ship.getCleanByReview());
         return result;
+    }
+
+    @Transactional
+    public ObserverCode getObserverCodeFromShip(Long shipId) {
+        return observerCodeRepository.getObserverCodeByCode(shipRepo.getOne(shipId).getObserverCode());
     }
 }

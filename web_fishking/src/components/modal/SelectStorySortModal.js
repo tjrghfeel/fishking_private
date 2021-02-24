@@ -12,7 +12,7 @@ export default inject()(
       const list = [
         {
           text: "최신순",
-          value: "createDate",
+          value: "createdDate",
           imgSrc: "/assets/cust/img/svg/sort-latest.svg",
         },
         {

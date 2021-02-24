@@ -16,7 +16,7 @@ export default inject("PageStore")(
     }) => {
       return (
         <li className="item">
-          <a onClick={() => PageStore.push(`/story/tv/detail/${id}`)}>
+          <a onClick={() => PageStore.push(`/company/boat/detail/${id}`)}>
             <div className="imgWrap">
               <img src={shipImageFileUrl} className="img-fluid" alt="" />
               <span className="play">

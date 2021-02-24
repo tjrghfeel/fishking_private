@@ -4,6 +4,8 @@ import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.service.common.CommonService;
+import com.tobe.fishking.v2.service.fishking.MyMenuService;
+import com.tobe.fishking.v2.service.fishking.ShipService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,8 @@ import java.util.stream.Collectors;
 public class TidalController {
 
     private final CommonService commonService;
+    private final MyMenuService myMenuService;
+    private final ShipService shipService;
 
     @ApiOperation(value = "날짜, 관측소 코드로 조위 데이터 ", notes = "date: yyyy-MM-dd" +
             "\n [{" +
@@ -42,10 +48,16 @@ public class TidalController {
             "\n weather: 날씨 (ex 맑음) 빈 문자열인 경우에는 빈 값 보여주세요 가져올 수 있는 데이터가 없는 경우입니다")
     @GetMapping("/tideTime")
     public Map<String, Object> getTideTimeFromDate(
-            @RequestParam("date") String date) {
+            @RequestParam(value = "shipId", required = false) Long shipId,
+            @RequestParam("date") String date) throws IOException, ParseException {
         Map<String, Object> result = commonService.findTideTime(date);
         result.put("date", date);
-        result.put("weather", "");
+        if (shipId == null) {
+            result.put("weather", "");
+        } else {
+            String weather = myMenuService.getWeather(shipService.getObserverCodeFromShip(shipId), date);
+            result.put("weather",  weather == null ? "" : weather );
+        }
          return result;
     }
 

@@ -38,4 +38,5 @@ public interface OrderDetailsRepository extends BaseRepository<OrderDetails, Lon
 */
     @Query("select o from OrderDetails o where o.goods = :goods and o.orders.fishingDate = :date and o.orders.isPay = true")
     List<OrderDetails> getByGoodsAndDate(Goods goods, String date);
+
 }

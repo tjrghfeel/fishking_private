@@ -32,6 +32,9 @@ export default inject(
         // # Parameter Setting
         const { q } = PageStore.getQueryParams();
         if (q) {
+          document.querySelector(
+            '#selCategory option[value="accuse"]'
+          ).selected = true;
           const { contents } = JSON.parse(q);
           if (contents) this.setState({ contents });
         }

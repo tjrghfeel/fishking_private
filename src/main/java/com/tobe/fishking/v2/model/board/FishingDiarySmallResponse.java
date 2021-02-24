@@ -25,7 +25,7 @@ public class FishingDiarySmallResponse {
     public FishingDiarySmallResponse(FishingDiary diary, List<String> images, Integer imgCount) {
         this.id = diary.getId();
         this.nickName = diary.createdBy.getNickName();
-        this.profileImage = diary.createdBy.getProfileImage();
+        this.profileImage = "/resource" + diary.createdBy.getProfileImage();
         this.title = diary.getTitle();
         this.imageUrlList = images;
         this.imageCount = imgCount;

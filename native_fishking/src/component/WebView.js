@@ -33,8 +33,8 @@ export default inject('WebViewStore')(
           allowFileAccessFromFileURLs={true}
           allowUniversalAccessFromFileURLs={true}
           userAgent={WebViewStore.useragent}
-          // cacheMode={'LOAD_NO_CACHE'}
-          cacheEnabled={true}
+          cacheMode={'LOAD_NO_CACHE'}
+          // cacheEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           javaScriptEnabled={true}

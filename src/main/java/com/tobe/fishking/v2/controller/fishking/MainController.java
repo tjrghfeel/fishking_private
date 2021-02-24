@@ -238,7 +238,7 @@ public class MainController {
             "\n search-boat.html 페이지로 이동 후 " +
             "\n 지역별의 경우 type=direction, 어종별의 경우 type=species 로 설정 후 " +
             "\n keyword 에 해당 code 를 넣어주시고 결과를 리스팅 해주시면 됩니다. " +
-            "\n (ex. 서해남부 : keyword=12A30000&type=direction , 우럭 : keyword=rockcod&type=species )")
+            "\n (ex. 서해남부 : keyword=northWest&type=direction , 우럭 : keyword=rockcod&type=species )")
     @GetMapping("/search/ship/{page}")
     public Map<String, Object> getSearchResultShip(@RequestHeader("Authorization") String token,
                                                    @RequestParam String keyword,

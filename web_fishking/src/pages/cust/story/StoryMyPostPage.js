@@ -12,7 +12,10 @@ export default inject("PageStore")(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      onClick = (item) => {};
+      onClick = (item) => {
+        const { PageStore } = this.props;
+        PageStore.push(`/story/diary/detail/${item.id}`);
+      };
       onClickProfile = (item) => {
         const { PageStore } = this.props;
         PageStore.push(`/member/profile/${item.memberId}`);
