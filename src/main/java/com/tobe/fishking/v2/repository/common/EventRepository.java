@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.common.Event;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.model.common.EventDtoForPage;
+import com.tobe.fishking.v2.model.fishing.ShipEventResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("select e.title from Event e where e.ship.id = :ship_id")
     List<String> getEventTitleByShip(Long ship_id);
+
+    @Query("select e from Event e where e.ship.id = :ship_id")
+    List<ShipEventResponse> getEventByShip(Long ship_id);
 
     /*이벤트 목록 가져오기*/
     @Query(value = "" +

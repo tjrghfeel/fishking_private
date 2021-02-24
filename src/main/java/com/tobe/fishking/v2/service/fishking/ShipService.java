@@ -200,6 +200,7 @@ public class ShipService {
         }
         response.setFishingBlogCount(blogs.size());
         response.setEvents(eventRepository.getEventTitleByShip(ship_id));
+        response.setEventsList(eventRepository.getEventByShip(ship_id));
 
         response.setLiked(false);
         if (!sessionToken.equals("")) {
