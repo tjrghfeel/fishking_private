@@ -22,6 +22,7 @@ export default inject(
           this.container = React.createRef(null);
           this.video = React.createRef(null);
           this.map = null;
+          this.mediaError = false;
           this.state = {};
         }
         /********** ********** ********** ********** **********/
@@ -50,15 +51,41 @@ export default inject(
               "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
             if (Hls.isSupported()) {
-              const hls = new Hls();
+              const hls = new Hls({
+                capLevelToPlayerSize: true,
+                capLevelOnFPSDrop: true,
+              });
               hls.attachMedia(video);
               hls.on(Hls.Events.MEDIA_ATTACHED, () => {
                 hls.loadSource(url);
                 hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
-                  setTimeout(() => {
-                    video.play();
-                  }, 800);
+                  this.mediaError = false;
+                  // setTimeout(() => {
+                  //   video.play();
+                  // }, 800);
                 });
+                hls.on(Hls.Events.ERROR, (e, data) => {
+                  const { type, details, fatal } = data;
+
+                  if (type === Hls.ErrorTypes.NETWORK_ERROR) {
+                    hls.startLoad();
+                  } else if (type === Hls.ErrorTypes.MEDIA_ERROR) {
+                    hls.detachMedia();
+                    setTimeout(() => {
+                      video.src = url;
+                    }, 800);
+                    this.mediaError = true;
+                  } else {
+                    console.error("MEDIA DESTROY");
+                    hls.destroy();
+                  }
+                });
+              });
+            } else {
+              video.src = url;
+              video.addEventListener("loadedmetadata", () => {
+                // alert("video meta loaded");
+                // video.play();
               });
             }
           }
@@ -246,7 +273,9 @@ export default inject(
                         <video
                           id="video"
                           muted
+                          playsInline
                           controls
+                          autoPlay
                           style={{ width: "100%" }}
                         ></video>
                         <span
@@ -564,7 +593,7 @@ export default inject(
               )}
 
               {/** 이벤트 */}
-              {this.state.events && (
+              {this.state.eventsList && (
                 <div className="container nopadding">
                   <h5>
                     <a
@@ -576,9 +605,15 @@ export default inject(
                     이벤트
                   </h5>
                   <ul className="notice">
-                    {this.state.events.map((data, index) => (
-                      <li className="icon-event" key={index}>
-                        {data}
+                    {this.state.eventsList.map((data, index) => (
+                      <li
+                        className="icon-event"
+                        key={index}
+                        onClick={() =>
+                          PageStore.push(`/event/detail/${data.id}`)
+                        }
+                      >
+                        {data.title}
                       </li>
                     ))}
                   </ul>

@@ -57,6 +57,7 @@ export default inject(
           // # 물때정보
           const tideTime = await APIStore._get(`/v2/api/tideTime`, {
             date: selected.format("-"),
+            shipId,
           });
           this.setState({
             tideTime: tideTime.tideTime,
