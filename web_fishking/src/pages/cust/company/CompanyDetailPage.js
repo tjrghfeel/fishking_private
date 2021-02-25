@@ -597,7 +597,7 @@ export default inject(
                 <div className="container nopadding">
                   <h5>
                     <a
-                      onClick={() => PageStore.push(`/event/list`)}
+                      // onClick={() => PageStore.push(`/event/list`)}
                       className="float-right-more"
                     >
                       내용보기
