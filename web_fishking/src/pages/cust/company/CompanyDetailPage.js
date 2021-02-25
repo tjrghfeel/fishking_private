@@ -600,7 +600,7 @@ export default inject(
                       onClick={() => PageStore.push(`/event/list`)}
                       className="float-right-more"
                     >
-                      전체보기
+                      내용보기
                     </a>
                     이벤트
                   </h5>
