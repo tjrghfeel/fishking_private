@@ -44,7 +44,7 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
     @Query(
             value = "select " +
                     "(select t2.id from take t2 where t2.take_type=1 and t2.link_id=s.id and t2.created_by=:member) takeId, " +
-//                    "g.id goodsId, " +
+                    "s.id shipId, " +
                     "s.ship_name name, " +
 //                    "(select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
 //                    "   where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) fishSpicesInfo, " +

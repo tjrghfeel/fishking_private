@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public interface TakeResponse {
     Long getTakeId();
+    Long getShipId();
 //    Long getGoodsId();
     String getName();
 //    String getFishSpicesInfo();
