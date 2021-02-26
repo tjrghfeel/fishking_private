@@ -73,7 +73,7 @@ public class TakeService {
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         int fishingTypeOrdinal = FishingType.valueOf(fishingType).ordinal();
         Pageable pageable = PageRequest.of(page, 10);
-        return goodsRepository.findTakeListAboutFishType(member, fishingTypeOrdinal,pageable);
+        return goodsRepository.findTakeListAboutFishType(member, fishingTypeOrdinal, pageable);
     }
 
     /*선상, 갯바위 찜 개수 조회

@@ -76,7 +76,7 @@ public class PlacesDTO {
         public static PlacesDTO.PlacesDTOResp of(Places place){
             return PlacesDTOResp.builder()
                     .id(place.getId())
-                    .sido(place.getPalceName())
+                    .sido(place.getSido())
                     .sigungu(place.getSigungu())
                     //.distance(place.getDistance())
                     .location(place.getLocation())

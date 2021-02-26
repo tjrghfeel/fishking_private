@@ -22,7 +22,7 @@ public interface TakeResponse {
     String getFishingType();
     String getAddress();
     Double getDistance();
-//    Integer getPrice();
+    Float getPrice();
 
      /*String getFishingDate();
      boolean getIsClose();
@@ -32,7 +32,7 @@ public interface TakeResponse {
      String getPlaceName();*/
     Boolean getIsLive();
      //섬네일 파일.
-     @Value("#{@mapperUtility.transDownLoadUrl(target.filePath, target.thumbnailFile)}")
+//     @Value("#{@mapperUtility.transDownLoadUrl(target.filePath, target.thumbnailFile)}")
      String getDownloadThumbnailUrl();
 
 }

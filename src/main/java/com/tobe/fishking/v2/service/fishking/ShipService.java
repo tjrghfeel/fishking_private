@@ -389,18 +389,18 @@ public class ShipService {
 //        List<String> positions = Arrays.stream(ship.getPositions().split(",")).collect(Collectors.toList());
 //    }
 
-//    public void calcDistance() {
-//        List<Ship> ships = shipRepo.findAll();
-//        for (Ship ship : ships) {
-//            List<ObserverCode> codes = observerCodeRepository.findAll();
-//            ObserverCode code = codes.stream()
-//                    .sorted(Comparator.comparing(e -> e.distanceFrom(ship.getLocation())))
-//                    .collect(Collectors.toList())
-//                    .get(0);
-//            ship.setObserverCode(code.getCode());
-//            shipRepo.save(ship);
-//        }
-//    }
+    public void calcDistance() {
+        List<Ship> ships = shipRepo.findAll();
+        for (Ship ship : ships) {
+            List<ObserverCode> codes = observerCodeRepository.findAll();
+            ObserverCode code = codes.stream()
+                    .sorted(Comparator.comparing(e -> e.distanceFrom(ship.getLocation())))
+                    .collect(Collectors.toList())
+                    .get(0);
+            ship.setObserverCode(code.getCode());
+            shipRepo.save(ship);
+        }
+    }
 
 
     public Long findAllShipCount() {

@@ -295,10 +295,10 @@ public class ShipController {
         return shipService.getReviewByShip(ship_id, page, size);
     }
 
-//    @ApiOperation(value = "거리계산")
-//    @GetMapping("/calc")
-//    public String calcDistance() {
-//        shipService.calcDistance();
-//        return "true";
-//    }
+    @ApiOperation(value = "거리계산")
+    @GetMapping("/calc")
+    public String calcDistance() {
+        shipService.calcDistance();
+        return "true";
+    }
 }
