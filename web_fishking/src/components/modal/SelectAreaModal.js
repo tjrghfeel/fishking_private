@@ -13,7 +13,8 @@ export default inject("DataStore")(
       const [list, setList] = useState([]);
       const [list2, setList2] = useState([]);
       const [areaList, setAreaList] = useState([]);
-      const [selected, setSelected] = useState(null);
+      const [selectedLv1, setSelectedLv1] = useState(null);
+      const [selectedLv2, setSelectedLv2] = useState(null);
       useEffect(() => {
         (async () => {
           let resolve = await DataStore.getCodes("152", 2);
@@ -24,12 +25,20 @@ export default inject("DataStore")(
       }, [DataStore, setList, setList2]);
       const onSelectLv1 = useCallback(
         (e, data) => {
-          const elements = document.querySelectorAll(
+          // >>>>> 다른 옵션 체크 해제
+          let elements = document.querySelectorAll(
             "#".concat(id).concat(' input[type="checkbox"][data-level="lv1"]')
           );
           for (let element of elements) {
             if (element !== e.target) element.checked = false;
           }
+          elements = document.querySelectorAll(
+            "#".concat(id).concat(' input[type="checkbox"][data-level="lv2"]')
+          );
+          for (let element of elements) {
+            element.checked = false;
+          }
+          // >>>>> 행정구역 있으면 보여줌
           let resolve = [];
           for (let inner of list2) {
             for (let item of inner) {
@@ -38,16 +47,16 @@ export default inject("DataStore")(
               }
             }
           }
-
           if (resolve.length > 0) {
             const areas = DataStore.makeArrayToColumns(resolve, 2);
             setAreaList(areas);
           } else {
             setAreaList([]);
           }
-          setSelected(data);
+          setSelectedLv1(data);
+          setSelectedLv2(null);
         },
-        [DataStore, list2, setAreaList]
+        [DataStore, list2, setAreaList, setSelectedLv1, setSelectedLv2]
       );
       const onSelectLv2 = useCallback(
         (e, data) => {
@@ -57,19 +66,20 @@ export default inject("DataStore")(
           for (let element of elements) {
             if (element !== e.target) element.checked = false;
           }
-          setSelected(data);
+          setSelectedLv2(data);
         },
-        [setSelected]
+        [setSelectedLv2]
       );
       const onInit = useCallback(() => {
-        setSelected(null);
+        setSelectedLv1(null);
+        setSelectedLv2(null);
         const elements = document.querySelectorAll(
           "#".concat(id).concat(' input[type="checkbox"]')
         );
         for (let element of elements) {
           element.checked = false;
         }
-      }, [setSelected]);
+      }, [setSelectedLv1, setSelectedLv2]);
       useImperativeHandle(ref, () => ({ onInit }));
       return (
         <div
@@ -157,7 +167,9 @@ export default inject("DataStore")(
                 </div>
               </div>
               <a
-                onClick={() => (onSelected ? onSelected(selected) : null)}
+                onClick={() =>
+                  onSelected ? onSelected({ selectedLv1, selectedLv2 }) : null
+                }
                 className="btn btn-primary btn-lg btn-block btn-btm"
                 data-dismiss="modal"
               >

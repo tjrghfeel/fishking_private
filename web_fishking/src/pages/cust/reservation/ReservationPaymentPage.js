@@ -62,7 +62,7 @@ export default inject(
         // >>>>> 사용자 정보
         const profile = await APIStore._get(`/v2/api/profileManage`);
         this.setState({
-          reservePersonName: profile.nickName,
+          reservePersonName: profile.memberName || profile.nickName,
           reservePersonPhone: profile.areaCode.concat(profile.localNumber),
         });
 
