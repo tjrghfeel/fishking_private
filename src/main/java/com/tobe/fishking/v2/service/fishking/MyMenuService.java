@@ -186,7 +186,7 @@ public class MyMenuService {
                 .fishingDate(orders.getFishingDate().replace("-", ""))
                 //.fishSpecies()
                 .meridiem(goods.getMeridiem().getValue())
-                .shipStartTime(goods.getShipStartTime())
+                .shipStartTime(goods.getFishingStartTime())
                 .goodsPrice(goods.getTotalAmount())
                 .personnel(orderDetails.getPersonnel())
                 .ordersNum(orders.getOrderNumber())

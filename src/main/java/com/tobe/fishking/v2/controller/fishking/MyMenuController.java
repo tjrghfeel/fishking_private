@@ -368,6 +368,7 @@ public class MyMenuController {
             "   address : 선상 주소\n" +
             "   distance : 거리\n" +
             "   isLive : 실시간영상 진행 여부\n" +
+            "   price : 가격\n" +
             "   downloadThumbnailUrl : 선박 이미지 url\n" +
             "   ")
     @GetMapping(value = "/liveShipList/{page}")

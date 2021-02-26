@@ -53,7 +53,7 @@ public class Alerts extends BaseTime {
     @Column(columnDefinition = "varchar(30) comment '알람 데이터'")
     private String content;
 
-    @Column(columnDefinition = "varchar(50) comment '알람 문구'")
+    @Column(columnDefinition = "varchar(255) comment '알람 문구'")
     private String sentence;
 
     @Column(columnDefinition = "bit default 0 not null  comment '읽음확인' ") //0 안읽음 1:읽음

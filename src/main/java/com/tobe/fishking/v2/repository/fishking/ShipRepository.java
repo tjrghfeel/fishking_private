@@ -101,6 +101,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "s.fishing_type fishingType, " +
                     "s.address address, " +
                     "s.distance distance, " +
+                    "(select min(total_amount) from goods where goods_ship_id = s.id) price, " +
                     "f.thumbnail_file thumbnailFile, " +
                     "f.file_url filePath, " +
                     "(select case when exists (select v.id from realtime_video as v " +

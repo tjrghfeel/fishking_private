@@ -12,6 +12,7 @@ public interface LiveShipDtoForPage {
     String getAddress();
     Double getDistance();
     Boolean getIsLive();
+    Float getPrice();
     //섬네일 파일.
     @Value("#{@mapperUtility.transDownLoadUrl(target.filePath, target.thumbnailFile)}")
     String getDownloadThumbnailUrl();

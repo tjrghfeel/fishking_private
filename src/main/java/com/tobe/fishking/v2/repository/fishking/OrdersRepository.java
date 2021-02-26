@@ -43,12 +43,12 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 //            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileName, " +
             "   s.ship_name shipName, " +
             "   s.fishing_type fishingType, " +
-            "   s.sigungu sigungu, " +
+            "   s.address sigungu, " +
 //            "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
             "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
-            "   o.orders_num order_number " +
+            "   o.orders_num ordersNum " +
             "from orders o, ship s, goods g " +
             "where o.created_by = :member " +
             "   and o.goods = g.id " +
@@ -83,12 +83,12 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 //            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileName, " +
             "   s.ship_name shipName, " +
             "   s.fishing_type fishingType, " +
-            "   s.sigungu sigungu, " +
+            "   s.address sigungu, " +
 //            "   s.distance distance, " +
             "   o.order_status ordersStatus, " +
             "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
-            "   o.orders_num order_number " +
+            "   o.orders_num ordersNum " +
             "from orders o, ship s, goods g " +
             "where o.created_by = :member " +
             "   and o.goods = g.id " +

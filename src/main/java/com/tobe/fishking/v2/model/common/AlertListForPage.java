@@ -12,7 +12,7 @@ public interface AlertListForPage {
     //    private String EntityType;
 //    private Long pid;
     LocalDateTime getCreatedDate();
-    @Value("#{@mapperUtility.makeAlertMessage(target.alertType,target.content)}")
+//    @Value("#{@mapperUtility.makeAlertMessage(target.alertType,target.content)}")
     String getContent();
     @Value("#{@mapperUtility.transDownloadUrl(target.iconDownloadUrl)}")
     String getIconDownloadUrl();
