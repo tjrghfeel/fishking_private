@@ -199,7 +199,6 @@ public class ShipService {
             response.setFishingBlog(blogResponse);
         }
         response.setFishingBlogCount(blogs.size());
-        response.setEvents(eventRepository.getEventTitleByShip(ship_id));
         response.setEventsList(eventRepository.getEventByShip(ship_id));
 
         response.setLiked(false);
