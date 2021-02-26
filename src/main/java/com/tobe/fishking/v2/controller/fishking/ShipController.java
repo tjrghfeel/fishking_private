@@ -154,7 +154,6 @@ public class ShipController {
             "\n ownerWording: 사장님 한마디 내용" +
             "\n noticeTitle: 공지사항 제목" +
             "\n notice: 공지사항 내용" +
-            "\n events: 이벤트 리스트 , 삭제예정" +
             "\n eventsList: 이벤트 리스트 [{ " +
             "\n         id: 이벤트 id" +
             "\n         title: 제목 " +

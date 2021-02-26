@@ -50,7 +50,6 @@ public class ShipResponse {
     private String ownerWording;
     private String noticeTitle;
     private String notice;
-    private List<String> events;
     private List<ShipEventResponse> eventsList;
     private Boolean liked;
 
