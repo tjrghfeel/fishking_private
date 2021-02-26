@@ -9,11 +9,11 @@ public interface AlertListForPage {
     Long getAlertId();
     @Value("#{@mapperUtility.transEnumAlertType(target.alertType)}")
     String getAlertType();
-//    private String EntityType;
+    //    private String EntityType;
 //    private Long pid;
-     LocalDateTime getCreatedDate();
+    LocalDateTime getCreatedDate();
     @Value("#{@mapperUtility.makeAlertMessage(target.alertType,target.content)}")
-     String getContent();
+    String getContent();
     @Value("#{@mapperUtility.transDownloadUrl(target.iconDownloadUrl)}")
-     String getIconDownloadUrl();
+    String getIconDownloadUrl();
 }

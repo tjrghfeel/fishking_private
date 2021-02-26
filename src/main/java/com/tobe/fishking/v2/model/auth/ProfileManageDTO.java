@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 public class ProfileManageDTO {
     public Long id;
     public String uid;
-    //public String memberName;
+    public String memberName;
     public String nickName;
     //public String password;
     public String email;

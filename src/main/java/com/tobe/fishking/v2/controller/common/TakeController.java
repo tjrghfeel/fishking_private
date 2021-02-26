@@ -25,7 +25,7 @@ public class TakeController {
     TakeService takeService;
 
     /*찜 추가
-    * 반환 : 추가된 Take 엔터티의 id반환. */
+     * 반환 : 추가된 Take 엔터티의 id반환. */
     @ApiOperation(value = "찜 추가",notes = "업체에 대한 찜 추가. \n" +
             "- 요청 필드 )\n" +
             "   linkId : Integer / 찜 대상의 id \n" +
@@ -50,23 +50,19 @@ public class TakeController {
             "   fishingType : String / 필수 / 선상 또는 갯바위 / ship(\"선상\"), seaRocks(\"갯바위\")\n" +
             "- 응답 필드 ) \n" +
             "   takeId : 찜id \n" +
-            "   goodsId : 찜한 상품의 id\n" +
             "   name : 찜한 상품의 이름\n" +
-            "   fishSpicesInfo : 어종 종류\n" +
-            "   fishSpicesImgUrl : 어종 아이콘\n" +
-            "   fishSpicesCount : 어종 수\n" +
             "   fishingType : 선상/갯바위인지\n" +
             "   address : 선상 주소\n" +
             "   distance : 거리\n" +
-            "   price : 상품 가격\n" +
             "   isLive : 실시간영상 진행 여부\n" +
+            "   downloadThumbnailUrl : 선박 이미지 url\n" +
             "   ")
     @GetMapping(value = "/take/{fishingType}/{page}")
     public Page<TakeResponse> getFishingTypeFishTakeList(
             @PathVariable("fishingType") String fishingType,
             @PathVariable("page") int page,
             HttpServletRequest request
-        ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         if(!(fishingType.equals("ship") || fishingType.equals("seaRocks")) ){
             throw new RuntimeException("fishingType 값에는 'ship' 또는 'seaRocks'만 가능합니다.");
@@ -75,7 +71,7 @@ public class TakeController {
     }
 
     /*선상, 갯바위 찜 개수 넘겨주는 컨트롤러.
-    * 반환 : int형 배열로 0번에 선상 찜개수, 1번에 갯바위 찜 개수를 저장하여 반환.*/
+     * 반환 : int형 배열로 0번에 선상 찜개수, 1번에 갯바위 찜 개수를 저장하여 반환.*/
     @ApiOperation(value = "선상/갯바위 상품 찜 개수 조회")
     @GetMapping(value = "/take/count")
     public int[] getTakeCount(HttpServletRequest request) throws ResourceNotFoundException {

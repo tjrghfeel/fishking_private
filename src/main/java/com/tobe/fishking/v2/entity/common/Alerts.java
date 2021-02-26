@@ -50,8 +50,11 @@ public class Alerts extends BaseTime {
     @Column(columnDefinition = "bigint  comment '알림과 관련있는 entity의 id' ")
     private Long pid;
 
-    @Column(columnDefinition = "varchar(30) comment '알람 상세 내용'")
+    @Column(columnDefinition = "varchar(30) comment '알람 데이터'")
     private String content;
+
+    @Column(columnDefinition = "varchar(50) comment '알람 문구'")
+    private String sentence;
 
     @Column(columnDefinition = "bit default 0 not null  comment '읽음확인' ") //0 안읽음 1:읽음
     private boolean isRead;
@@ -62,7 +65,7 @@ public class Alerts extends BaseTime {
     @LastModifiedDate  //isRead 가 업데이트되면 자동으로 저장
     @Column(columnDefinition = "datetime  comment '확인일시'  ")
     private LocalDateTime readDateTime;
-    
+
     @ManyToOne
     @JoinColumn(columnDefinition = " bigint not null comment '알림받는이' ")
     public Member receiver;
@@ -77,4 +80,5 @@ public class Alerts extends BaseTime {
     private Member createdBy;
 
     public void sent(){this.isSent=true;}
+    public void setSentence(String sentence){this.sentence = sentence;}
 }

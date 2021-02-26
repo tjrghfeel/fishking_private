@@ -57,7 +57,7 @@ public class PostService {
     private UploadService uploadService;
 
     /*PostResponse를 Page형태로 반환해주는 메소드.
-    * 반환하는 PostResponse에는 contents필드가 포함되어있지 않다. */
+     * 반환하는 PostResponse에는 contents필드가 포함되어있지 않다. */
     @Transactional(readOnly = true)
     public Page<PostListDTO> getPostListInPageForm(Long board_id, int page) throws ResourceNotFoundException {
         Board board = boardRepository.findById(board_id)
@@ -92,7 +92,7 @@ public class PostService {
     public QnADetailDto getQnADetail(Long postId){
         return postRepository.findQnADetailByPostId(postId);
     }
-    
+
     /*공지사항 리스트 조회*/
     @Transactional(readOnly = true)
     public Page<NoticeDtoForPage> getNoticeList(int page, String role){
@@ -318,11 +318,11 @@ public class PostService {
     }
 
     /*Post 수정 및 해당Post의 기존 File들 삭제, 넘어온 파일 다시올리기, FileEntity 저장.
-    * */
+     * */
     @Transactional
     public Long updatePost(UpdatePostDTO postDTO,
                            String sessionToken
-                            ) throws ResourceNotFoundException, IOException {
+    ) throws ResourceNotFoundException, IOException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()-> new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
         FileEntity[] fileEntityList = new FileEntity[postDTO.getFiles().length];//fileEntity 목록 저장할 변수
@@ -344,7 +344,7 @@ public class PostService {
         post.updatePost(postDTO);
 
         /*Post에 올려놓은 File들 삭제하고 다시 올림. */
-            /*파일들 모두 삭제.*/
+        /*파일들 모두 삭제.*/
         List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), post.getBoard().getFilePublish());
         for(int i=0; i<fileList.size(); i++){
             uploadService.removeFileEntity(fileList.get(i).getId());

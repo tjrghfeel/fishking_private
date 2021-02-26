@@ -40,7 +40,7 @@ public class CouponService {
     }
 
     /*쿠폰 다운받기
-    * - couponId로 CouponMember를 생성한다. */
+     * - couponId로 CouponMember를 생성한다. */
     @Transactional
     public Long downloadCoupon(String sessionToken, CouponDownloadDto couponId) throws ResourceNotFoundException {
         Coupon coupon = couponRepository.findById(couponId.getCouponId())
@@ -66,7 +66,7 @@ public class CouponService {
 
 
     /*coupon_member 리스트 조회
-    * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트를 정렬기준에 맞게 반환.*/
+     * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트를 정렬기준에 맞게 반환.*/
     @Transactional
     public Page<CouponMemberDTO> getCouponMemberList(String sessionToken, int page, String sort) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)
@@ -92,7 +92,7 @@ public class CouponService {
     }
 
     /*모든 쿠폰 다운로드
-    * - */
+     * - */
     @Transactional
     public Boolean downloadAllCoupon(String sessionToken) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)

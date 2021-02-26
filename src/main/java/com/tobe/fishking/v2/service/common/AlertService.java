@@ -34,7 +34,7 @@ public class AlertService {
     AlertsRepository alertsRepo;
 
     /*알람 추가.
-    * 해당 회원의 기존의 Alerts를 삭제하고 다시 생성. */
+     * 해당 회원의 기존의 Alerts를 삭제하고 다시 생성. */
     @Transactional
     public Long addAlert(AddAlertDto dto) throws ResourceNotFoundException {
         Member receiver = memberRepo.findById(dto.getMemberId())
@@ -71,13 +71,15 @@ public class AlertService {
     }
 
     /*회원의 알람 리스트 반환
-    * - 세션토큰에 해당하는 회원의 현재 알림 리스트 Page형태로 반환
-    * - AlertType의 메세지에다가 Alert entity의 content필드의 내용을 붙여서 완전한 알림메세지로 만들어 반환
-    * - AlertType에 맞는 알람이미지url을 반환.
-    * - */
+     * - 세션토큰에 해당하는 회원의 현재 알림 리스트 Page형태로 반환
+     * - AlertType의 메세지에다가 Alert entity의 content필드의 내용을 붙여서 완전한 알림메세지로 만들어 반환
+     * - AlertType에 맞는 알람이미지url을 반환.
+     * - */
     @Transactional
     public Page<AlertListForPage> getAlertList(String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         Pageable pageable = PageRequest.of(0,50);
-        return alertsRepo.findAllByMember(token,pageable);
+        return alertsRepo.findAllByMember(member.getId(),pageable);
     }
 }

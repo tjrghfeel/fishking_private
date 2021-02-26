@@ -123,7 +123,7 @@ public class CommonService {
 
 
     /*CommonCode를 하나 추가해주는 메소드.
-    * 새로 만든 CommonCode Entity의 id를 반환. */
+     * 새로 만든 CommonCode Entity의 id를 반환. */
     @Transactional
     public String writeCommonCode(CommonCodeWriteDTO commonCodeWriteDTO,String sessionToken) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(sessionToken)
@@ -252,7 +252,7 @@ public class CommonService {
     /* 광고리스트 */
     @Transactional
     public List<SmallShipResponse> getAdList(AdType type) {
-       return adRepository.getAdByType(type);
+        return adRepository.getAdByType(type);
     }
 
     @Transactional

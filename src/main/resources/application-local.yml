@@ -27,7 +27,7 @@ server:
   port: 8083
 
 file :
-  location : C:\Users\kai\Desktop\fishkingV2\src\main\resources\static\files
+  location : C:\Users\kai\IdeaProjects\fishkingV231\src\main\resources\static\files
   downloadUrl : localhost:8083/files
 #  location: /mnt/nfs/files/
 #  downloadUrl: fishkingapp.com/resource

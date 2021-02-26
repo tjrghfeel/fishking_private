@@ -29,7 +29,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // Optional<Member> findByEmail(String email);
 
-  //  Optional<Member> findByUidAndProvider(String uid, String provider);
+    //  Optional<Member> findByUidAndProvider(String uid, String provider);
 
     /*이메일 중복체크*/
     /*@Query("select exists (select m from Member m where m.email = :email)")

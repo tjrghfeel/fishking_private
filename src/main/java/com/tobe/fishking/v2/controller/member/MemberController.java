@@ -54,9 +54,9 @@ public class MemberController {
     MemberService memberService;
 
     /*회원가입 - 휴대폰인증
-    * - 이미 가입된 번호인지 확인
-    * - 실제로 전송가능한 번호인지 확인
-    * - 인증 문자 전송. */
+     * - 이미 가입된 번호인지 확인
+     * - 실제로 전송가능한 번호인지 확인
+     * - 인증 문자 전송. */
     /*@ApiOperation(value = "휴대폰 인증")
     @PostMapping("/smsAuthReq")
     public boolean requestSmsAuth(@ModelAttribute("phoneInfo") PhoneAuthDto phoneAuthDto){
@@ -64,7 +64,7 @@ public class MemberController {
     }*/
 
     /*회원가입시 문자인증 api
-    * */
+     * */
     /*@ApiOperation(value = "회원가입 문자인증 문자 보내기",notes = "" +
             "- 회원가입시, 문자 인증 문자를 보내고 해당 문자인증 건에 대한 id를 반환한다. 인증번호를 보낼때 이 id값을 같이 보내야 한다. " +
             "- 요청 필드 )\n" +
@@ -77,7 +77,7 @@ public class MemberController {
     }*/
 
     /*문자인증 확인
-    * - 인증번호 보내면 일치하는지 확인. */
+     * - 인증번호 보내면 일치하는지 확인. */
     @ApiOperation(value = "문자인증확인",notes = "" +
             "- 인증번호가 일치하는지 확인.\n" +
             "- 요청 필드 )\n" +
@@ -147,8 +147,8 @@ public class MemberController {
     }
 
     /*회원가입 - 회원정보입력
-    * - 이메일이 중복되지 않으면 true, 세션에 회원가입정보 저장.
-    * - 중복되면 false반환.  */
+     * - 이메일이 중복되지 않으면 true, 세션에 회원가입정보 저장.
+     * - 중복되면 false반환.  */
     /*@ApiOperation(value = "회원가입 - 회원정보입력", notes = "" +
             "- 회원정보와 함께 보낼경우 회원가입 처리해주는 api \n" +
             "- 요청 필드 ) \n" +
@@ -172,7 +172,7 @@ public class MemberController {
     }*/
 
     /*비밀번호 찾기(재설정) 인증.
-    * - 번호누르고 발송버튼 누르면 들어오는 요청. */
+     * - 번호누르고 발송버튼 누르면 들어오는 요청. */
     @ApiOperation(value = "비밀번호 찾기(재설정) 또는 아이디찾기를 위한 문자인증",notes = "" +
             "- 비밀번호 재설정시 또는 아이디 찾기를 위해 문자인증요청하는 api. \n" +
             "- 요청필드 )\n" +
@@ -199,8 +199,8 @@ public class MemberController {
         return memberService.getNameAndUid(dto);
     }
     /*비밀번호 찾기 이후, 재설정.
-    * - 핸드폰인증 후 뜨는 비번변경창에서 새 비밀번호입력후 변경클릭하면 들어오는 요청.
-    * - 세션토큰에 해당하는 member의 비번을 새 비밀번호로 변경*/
+     * - 핸드폰인증 후 뜨는 비번변경창에서 새 비밀번호입력후 변경클릭하면 들어오는 요청.
+     * - 세션토큰에 해당하는 member의 비번을 새 비밀번호로 변경*/
     @ApiOperation(value = "비밀번호 변경",notes = "" +
             "- 비밀번호 재설정에서 문자인증 통과후, 비번을 재설정하는 api.\n" +
             "- 요청 필드 )\n" +
@@ -269,11 +269,11 @@ public class MemberController {
     @ApiOperation(value = "kakao 로그인 인증코드 받는 api",notes = "")
     @RequestMapping("/kakaoAuthCode")
     public String getKakaoAuthCode(
-        @RequestParam(value = "code",required = false) String code,
-        @RequestParam(value = "state",required = false) String state,
-        @RequestParam(value = "error",required = false) String error,
-        Model model,
-        HttpServletResponse response
+            @RequestParam(value = "code",required = false) String code,
+            @RequestParam(value = "state",required = false) String state,
+            @RequestParam(value = "error",required = false) String error,
+            Model model,
+            HttpServletResponse response
     ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
 
@@ -328,7 +328,7 @@ public class MemberController {
     }*/
 
     /*naver 인증코드받는 메소드
-    * - 인증코드를 받고 접근코드 요청을 보냄. */
+     * - 인증코드를 받고 접근코드 요청을 보냄. */
     @ApiOperation(value = "naver 로그인 인증코드 받는 api",notes = "" +
             "처음 로그인하는 sns계정일 경우 ) \n" +
             "- 회원가입페이지로 리다이렉트.\n" +
@@ -363,8 +363,8 @@ public class MemberController {
     }
 
     /*사용자 프로필 정보 페이지 조회
-    * - 프로필 조회 요청이 들어오면, 보고자하는 프로필의 member가 자기자신인지, 다른 일반 사용자인지, 업체인지에 따라 조금씩
-    *   다른 정보가 들어있는 DTO를 반환해준다. */
+     * - 프로필 조회 요청이 들어오면, 보고자하는 프로필의 member가 자기자신인지, 다른 일반 사용자인지, 업체인지에 따라 조금씩
+     *   다른 정보가 들어있는 DTO를 반환해준다. */
     @ApiOperation(value = "사용자 프로필 정보 조회",notes = "상대방 프로필을 클릭할시 해당 사용자의프로필 정보를 가져오는 api. \n" +
             "- 클릭한 프로필의 사용자가 자기자신인지, 업주 회원인지, 일단 다른 회원인지에 따라 조금씩 다른 정보를 반환한다. \n" +
             "- 요청 필드 )\n" +
@@ -428,13 +428,23 @@ public class MemberController {
     }
 
     /*프로필 관리 페이지 조회.
-    * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환. */
-    @ApiOperation(value = "프로필 관리 페이지 조회",notes = "프로필 관리를 위한 자기자신의 프로필 정보를 가져온다. ")
+     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환. */
+    @ApiOperation(value = "프로필 관리 페이지 조회",notes = "프로필 관리를 위한 자기자신의 프로필 정보를 가져온다. " +
+            "요청 필드 ) \n" +
+            "- 헤더에 세션토큰\n" +
+            "응답 필드 ) \n" +
+            "- id : Long / 회원의 id\n" +
+            "- uid : String / 회원의 uid. 로그인할때 입력하는 id.\n" +
+            "- memberName : String / 회원 실명\n" +
+            "- email : String / 회원 email.\n" +
+            "- profileImage : String / 프로필사진 url\n" +
+            "- statusMessage : String / 상태메시지\n" +
+            "- areaCode : String / 전화번호 앞부분(ex 010 ) \n" +
+            "- localNumber : String / 전화번호 뒷부분 ( ex 12345678 )\n")
     @GetMapping("/profileManage")
     @ResponseBody
-    public ProfileManageDTO getProfileManage(HttpServletRequest request) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return memberService.getProfileManage(sessionToken);
+    public ProfileManageDTO getProfileManage(@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+        return memberService.getProfileManage(token);
     }
 
     /*프사변경
@@ -520,7 +530,7 @@ public class MemberController {
     }
 
     /*비번 변경
-    * - 현재 비밀번호와 변경할 비번이 들어온다. */
+     * - 현재 비밀번호와 변경할 비번이 들어온다. */
     @ApiOperation(value = "비번 변경")
     @PutMapping("/profileManage/password")
     @ResponseBody
@@ -533,12 +543,12 @@ public class MemberController {
     }
 
     /*탈퇴하기
-    * 삭제처리된 member의 id를 반환. */
+     * 삭제처리된 member의 id를 반환. */
     @ApiOperation(value = "탈퇴하기")
     @DeleteMapping("/profileManage/delete")
     @ResponseBody
     public Long deleteMember(
-        HttpServletRequest request
+            HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
         return memberService.inactivateMember(sessionToken);

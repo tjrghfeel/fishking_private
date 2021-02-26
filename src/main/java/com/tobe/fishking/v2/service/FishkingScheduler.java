@@ -63,6 +63,7 @@ public class FishkingScheduler {
             String alertContent = dto.getCouponName()+"의 유효기간이 7일 남았습니다.";
 
             sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
+            alerts.setSentence("보유하고 계신 쿠폰 "+alertContent+" 7일 이후에는 자동 소멸됩니다.");
         }
     }
 
@@ -92,6 +93,7 @@ public class FishkingScheduler {
 
             /*푸쉬알림 보내기. */
             sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
+            alerts.setSentence(alertContent);
         }
 
     }
@@ -124,6 +126,7 @@ public class FishkingScheduler {
 
             /*푸쉬알림 보내기. */
             sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
+            alerts.setSentence(alertContent);
         }
     }
 

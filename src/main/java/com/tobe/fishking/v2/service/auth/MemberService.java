@@ -96,10 +96,10 @@ public class MemberService {
     }
 
     /*회원가입 - 휴대폰 인증
-    * - 폰번호 중복 확인
-    * - 실제 있는폰번호인지 확인
-    * - 인증문자 전송
-    * - 반환 ) 이미 가입된 번호이면 예외. 문자송신 성공하면 true, 실패하면 false. */
+     * - 폰번호 중복 확인
+     * - 실제 있는폰번호인지 확인
+     * - 인증문자 전송
+     * - 반환 ) 이미 가입된 번호이면 예외. 문자송신 성공하면 true, 실패하면 false. */
   /*  @Transactional
     public boolean smsAuthForSignUp(String areaCode, String localNumber){
         if(checkExistByPhoneNum(areaCode,localNumber)){//이미 가입된 휴대폰번호이면
@@ -277,19 +277,19 @@ public class MemberService {
     }
 
     /*회원가입
-    * - 이메일 중복 확인
-    * - 비번 '자바 암호화' (그 외 개인정보 암호화는 db저장시 jpa converter에서 수행)
-    * - Member생성하여 db에 저장.
-    * - 회원정보와 문자인증 정보가 함께 넘어옴. */
+     * - 이메일 중복 확인
+     * - 비번 '자바 암호화' (그 외 개인정보 암호화는 db저장시 jpa converter에서 수행)
+     * - Member생성하여 db에 저장.
+     * - 회원정보와 문자인증 정보가 함께 넘어옴. */
     /*public Long signUp(SignUpDto signUpDto) throws ResourceNotFoundException {
 
-        *//*이미 가입한 사용자인지 확인*//*
+     *//*이미 가입한 사용자인지 확인*//*
         Member tempMember = memberRepository.findByAreaCodeAndLocalNumberAndMemberName(
                 signUpDto.getAreaCode(),signUpDto.getLocalNumber(),signUpDto.getMemberName());
         if(tempMember!=null){throw new RuntimeException("이미 가입한 사용자 입니다");}
 
         *//*회원 정보 저장*//*
-        *//*비밀번호 자바 암호화*//*
+     *//*비밀번호 자바 암호화*//*
         String encodedPw = encoder.encode(signUpDto.getPw());
 
         *//*기본 프로필 이미지url들 가져옴*//*
@@ -360,7 +360,7 @@ public class MemberService {
         return resultDto;
     }
     /*비번변경 메소드
-    * - 비번암호화하여 번호에 해당하는 멤버의 비번필드에 update. */
+     * - 비번암호화하여 번호에 해당하는 멤버의 비번필드에 update. */
     @Transactional
     public boolean updatePw(ResetPwDto resetPwDto) throws ResourceNotFoundException {
         PhoneAuth phoneAuth = phoneAuthRepository.findById(resetPwDto.getPhoneAuthId())
@@ -790,8 +790,8 @@ public class MemberService {
     }
 
     /*sns로그인. naver
-    * - OAuth방식으로 인증코드를 받아 접근코드받기, 회원정보가져오기를 수행하고 처음 접속하는 회원이면 회원가입처리, 아니면 로그인 처리를 해준다.
-    * - */
+     * - OAuth방식으로 인증코드를 받아 접근코드받기, 회원정보가져오기를 수행하고 처음 접속하는 회원이면 회원가입처리, 아니면 로그인 처리를 해준다.
+     * - */
     @Transactional
     public SnsLoginResponseDto snsLoginForNaver(String code, String state, String error, String errorDescription) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
@@ -912,8 +912,8 @@ public class MemberService {
             return resultDto;
         }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
-        * - 회원가입페이지로 라다이렉트.
-        * - sns api에서 넘겨준 sns연동id를 반환. */
+         * - 회원가입페이지로 라다이렉트.
+         * - sns api에서 넘겨준 sns연동id를 반환. */
         else{
             resultDto.setResultType("signUp");
 
@@ -948,12 +948,12 @@ public class MemberService {
             }
 
             *//*저장할 회원정보 변환*//*
-            *//*Gender gender=null;
+             *//*Gender gender=null;
             if(usrGender.equals("F")){gender=Gender.girl;}
             else if(usrGender.equals("M")){gender=Gender.boy;}
             else if(usrGender.equals("U")){gender=null;}*//*
 
-            *//*기본 프로필 이미지url들 가져옴*//*
+             *//*기본 프로필 이미지url들 가져옴*//*
             CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
@@ -1170,7 +1170,7 @@ public class MemberService {
     }
 
     /*로그아웃
-    * - 세션토큰에 해당하는 멤버 찾아서 세션토큰필드 비워줌. */
+     * - 세션토큰에 해당하는 멤버 찾아서 세션토큰필드 비워줌. */
     @Transactional
     public boolean logout(String sessionToken) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)
@@ -1181,84 +1181,84 @@ public class MemberService {
     }
 
     /*사용자 프로필 보기
-    * - 해당 사용자가 본인인지, 일반 다른사용자인지, 업체인지에 따라 DTO에 필요한 정보를 추가해주는식으로.  */
+     * - 해당 사용자가 본인인지, 일반 다른사용자인지, 업체인지에 따라 DTO에 필요한 정보를 추가해주는식으로.  */
     @Transactional
     public UserProfileDTO getUserProfile(Long profileUserId, String sessionToken) throws ResourceNotFoundException {
         /*repository로부터 필요한 정보 가져오기*/
-            /*userId로부터 Member를 가져온다. */
-            Member profileMember = memberRepository.findById(profileUserId)
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+profileUserId));
-            Long meId = null;
-            if(sessionToken !=null) {
-                Member me = memberRepository.findBySessionToken(sessionToken)
-                        .orElseThrow(() -> new ResourceNotFoundException("member not found for this sessionToken :: " + sessionToken));
-                meId = me.getId();
-            }
-            Company profileCompany = companyRepository.findByMember(profileMember);
+        /*userId로부터 Member를 가져온다. */
+        Member profileMember = memberRepository.findById(profileUserId)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+profileUserId));
+        Long meId = null;
+        if(sessionToken !=null) {
+            Member me = memberRepository.findBySessionToken(sessionToken)
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this sessionToken :: " + sessionToken));
+            meId = me.getId();
+        }
+        Company profileCompany = companyRepository.findByMember(profileMember);
 
         /*가져온 데이터들을 UserProfileDTO에 저장. (본인이 아닌 경우, '업체찜수'를 추가해준다)  */
-            UserProfileDTO userProfileDTO=null;
-            if(profileMember.getIsActive()) {
-                /*공통적으로 필요한 프로필정보 dto에 추가. */
-                userProfileDTO = UserProfileDTO.builder()
-                        .memberId(profileMember.getId())
-                        .nickName((profileMember.getNickName() == null) ? ("이름없음") : (profileMember.getNickName()))
-                        .profileImage(env.getProperty("file.downloadUrl") + profileMember.getProfileImage())
-                        .backgroundImage(env.getProperty("file.downloadUrl") + profileMember.getProfileBackgroundImage())
-                        .isMe(false)
-                        .isCompany(false)
-                        .build();
+        UserProfileDTO userProfileDTO=null;
+        if(profileMember.getIsActive()) {
+            /*공통적으로 필요한 프로필정보 dto에 추가. */
+            userProfileDTO = UserProfileDTO.builder()
+                    .memberId(profileMember.getId())
+                    .nickName((profileMember.getNickName() == null) ? ("이름없음") : (profileMember.getNickName()))
+                    .profileImage(env.getProperty("file.downloadUrl") + profileMember.getProfileImage())
+                    .backgroundImage(env.getProperty("file.downloadUrl") + profileMember.getProfileBackgroundImage())
+                    .isMe(false)
+                    .isCompany(false)
+                    .build();
 
-                /*본인인 경우를 표시. */
-                if (profileUserId.equals(meId)) {
-                    int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);
-                    ;//회원이 작성한 조행기 개수.
-                    int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
-                    int likeCount = loveToRepository.countByCreatedBy(profileMember);//회원이 좋아요한 개수.
-                    userProfileDTO.setIsMe(true);
-                    userProfileDTO.setPostCount(fishingDiaryCount + reviewCount);
-                    userProfileDTO.setLikeCount(likeCount);
-                }
-                /*본인이 아닌 다른 일반회원의 프로필일 경우*/
-                else if ((profileUserId != meId) && profileCompany == null) {
-                    int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//회원이 작성한 조행기 개수.
-                    int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
-                    int likeCount = loveToRepository.countByCreatedBy(profileMember);//회원이 좋아요한 개수.
-                    int takeCount = takeRepository.countByCreatedBy(profileMember);//회원이 찜한 개수.
-                    userProfileDTO.setPostCount(fishingDiaryCount + reviewCount);
-                    userProfileDTO.setLikeCount(likeCount);
-                    userProfileDTO.setTakeCount(takeCount);
-                }
-                /*업체회원인 경우*/
-                else if ((profileUserId != meId) && profileCompany != null) {
-                    int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//업체가 작성한 조항일지 개수.
-                    int likeCount = loveToRepository.countLikeCountForCompanyProfile(profileMember.getId());//조항일지 등에서 받은 좋아요수.
-                    int takeCount = takeRepository.countForCompanyProfile(profileCompany.getId());//업체가 받은 총 찜수.
-                    userProfileDTO.setPostCount(fishingDiaryCount);
-                    userProfileDTO.setTakeCount(takeCount);
-                    userProfileDTO.setLikeCount(likeCount);
-                    userProfileDTO.setIsCompany(true);
-                    userProfileDTO.setCompanyId(profileCompany.getId());
-                }
+            /*본인인 경우를 표시. */
+            if (profileUserId.equals(meId)) {
+                int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);
+                ;//회원이 작성한 조행기 개수.
+                int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
+                int likeCount = loveToRepository.countByCreatedBy(profileMember);//회원이 좋아요한 개수.
+                userProfileDTO.setIsMe(true);
+                userProfileDTO.setPostCount(fishingDiaryCount + reviewCount);
+                userProfileDTO.setLikeCount(likeCount);
             }
-            /*회원이 탈퇴한 경우*/
-            else{
-                /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
-                CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-                CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-                CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+            /*본인이 아닌 다른 일반회원의 프로필일 경우*/
+            else if ((profileUserId != meId) && profileCompany == null) {
+                int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//회원이 작성한 조행기 개수.
+                int reviewCount = reviewRepository.countByMember(profileMember);//회원이 작성한 리뷰 개수
+                int likeCount = loveToRepository.countByCreatedBy(profileMember);//회원이 좋아요한 개수.
+                int takeCount = takeRepository.countByCreatedBy(profileMember);//회원이 찜한 개수.
+                userProfileDTO.setPostCount(fishingDiaryCount + reviewCount);
+                userProfileDTO.setLikeCount(likeCount);
+                userProfileDTO.setTakeCount(takeCount);
+            }
+            /*업체회원인 경우*/
+            else if ((profileUserId != meId) && profileCompany != null) {
+                int fishingDiaryCount = fishingDiaryRepository.countByMember(profileMember);//업체가 작성한 조항일지 개수.
+                int likeCount = loveToRepository.countLikeCountForCompanyProfile(profileMember.getId());//조항일지 등에서 받은 좋아요수.
+                int takeCount = takeRepository.countForCompanyProfile(profileCompany.getId());//업체가 받은 총 찜수.
+                userProfileDTO.setPostCount(fishingDiaryCount);
+                userProfileDTO.setTakeCount(takeCount);
+                userProfileDTO.setLikeCount(likeCount);
+                userProfileDTO.setIsCompany(true);
+                userProfileDTO.setCompanyId(profileCompany.getId());
+            }
+        }
+        /*회원이 탈퇴한 경우*/
+        else{
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
-                userProfileDTO = UserProfileDTO.builder()
-                        .nickName("탈퇴한 회원입니다.")
-                        .profileImage(noProfileImage.getExtraValue1())
-                        .backgroundImage(noBackgroundImage.getExtraValue1())
-                        .postCount(0)
-                        .likeCount(0)
-                        .isMe(false)
-                        .takeCount(0)
-                        .isCompany(false)
-                        .build();
-            }
+            userProfileDTO = UserProfileDTO.builder()
+                    .nickName("탈퇴한 회원입니다.")
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .backgroundImage(noBackgroundImage.getExtraValue1())
+                    .postCount(0)
+                    .likeCount(0)
+                    .isMe(false)
+                    .takeCount(0)
+                    .isCompany(false)
+                    .build();
+        }
 
         return userProfileDTO;
     }
@@ -1279,14 +1279,14 @@ public class MemberService {
         Pageable pageable = PageRequest.of(page,10);
 //        return fishingDiaryRepository.findByMember(user,member,pageable);
         return fishingDiaryRepository.getFishingDiaryListOrderByCreatedDate(
-            null, null,null, null, null, user.getId(), memberId, false,
+                null, null,null, null, null, user.getId(), memberId, false,
                 null, null, pageable
         );
     }
 
 
     /*프로필 관리 페이지 보기
-    * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환.*/
+     * - member의 프로필이미지, uid, nickName, 상태메세지, 휴대폰번호, 이메일 정보가 든 dto반환.*/
     @Transactional
     public ProfileManageDTO getProfileManage(String sessionToken) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)
@@ -1295,6 +1295,7 @@ public class MemberService {
         ProfileManageDTO profileManageDTO = ProfileManageDTO.builder()
                 .id(member.getId())
                 .uid(member.getUid())
+                .memberName(member.getMemberName())
                 .nickName((member.getNickName()==null)?("없음"):(member.getNickName()))
                 .email(member.getEmail())
                 .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
@@ -1484,9 +1485,9 @@ public class MemberService {
     }
 
     /*탈퇴하기
-    * - 해당 회원의 예약건 취소
-    * - 글들을 비활성화 처리한다. 좋아요,찜,스크랩,쿠폰 삭제 및 리뷰,post,fishingDiary,fishingDiaryComment 비활성화.
-    * - !!!!!탈퇴회원이 업주일 경우 어떻게 처리할지는 업주쪽 기획이 나온뒤 결정. */
+     * - 해당 회원의 예약건 취소
+     * - 글들을 비활성화 처리한다. 좋아요,찜,스크랩,쿠폰 삭제 및 리뷰,post,fishingDiary,fishingDiaryComment 비활성화.
+     * - !!!!!탈퇴회원이 업주일 경우 어떻게 처리할지는 업주쪽 기획이 나온뒤 결정. */
     @Transactional
     public Long inactivateMember(String sessionToken) throws ResourceNotFoundException {
         /*Member의 isActive를 false로 변경*/
@@ -1499,7 +1500,7 @@ public class MemberService {
         /*예약 취소처리 !!!!!orders엔터티 완성되면 구현. */
 
         /*게시글들 비활성화 처리. */
-            /*좋아요,찜,스크랩,쿠폰 삭제 */
+        /*좋아요,찜,스크랩,쿠폰 삭제 */
             /* 탈퇴하는 회원의 모든 글 등에 대해서 isActive 필드를 부여하고 false값을 주는 방식으로 처리하게되면 처리량이 너무
                 많아진다고 하심. 그냥 member에다가만 isActive필드를 부여하고 글 조회하는쪽 로직에서 member의 isActive로 처리하는게
                 낫다고 하심. 좋아요,찜,스크랩,쿠폰도 그냥 지우지말자.
@@ -1535,7 +1536,7 @@ public class MemberService {
     }
 
     /*휴대폰 번호 변경
-    * - dto에 들은 phoneAuth가 인증이된건지 확인 후, token에 해당하는 멤버의 번호를 변경해준다.*/
+     * - dto에 들은 phoneAuth가 인증이된건지 확인 후, token에 해당하는 멤버의 번호를 변경해준다.*/
     @Transactional
     public boolean modifyPhoneNumber(ModifyPhoneNumberDto dto, String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)

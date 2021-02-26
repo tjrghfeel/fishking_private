@@ -27,37 +27,37 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "   a.id alertId, " +
                     "   a.alert_type alertType, " +
                     "   a.created_date createdDate, " +
-                    "   a.content content, " +
+                    "   a.sentence content, " +
                     "   cc.extra_value1 iconDownloadUrl " +
-                    "from alerts a, common_code cc, member m " +
+                    "from alerts a, common_code cc " +
                     "where " +
-                    "   cc.code_group_id = 93 " +
+                    "   (a.is_sent = true or a.alert_time < NOW()) " +
+                    "   and cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
-                    "   and m.session_token = :token " +
-                    "   and a.receiver_id = m.id " +
-                    "order by a.created_date desc",
+                    "   and a.receiver_id = :memberId " +
+                    "order by a.alert_time desc",
             countQuery = "select a.id " +
-                    "from alerts a, common_code cc, member m " +
+                    "from alerts a, common_code cc " +
                     "where " +
-                    "   cc.code_group_id = 93 " +
+                    "   (a.is_sent = true or a.alert_time < NOW()) " +
+                    "   and cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
-                    "   and m.session_token = :token " +
-                    "   and a.receiver_id = m.id " +
-                    "order by a.created_date desc",
+                    "   and a.receiver_id = :memberId " +
+                    "order by a.alert_time desc",
             nativeQuery = true
     )
-    Page<AlertListForPage> findAllByMember(@Param("token") String token, Pageable pageable);
+    Page<AlertListForPage> findAllByMember(@Param("memberId") Long memberId, Pageable pageable);
 
     /*세션토큰에 해당하는 회원의 알림 개수 카운트*/
     @Query(
-        value = "select count(a.id) " +
-                "from alerts a, member m " +
-                "where " +
-                "   m.session_token = :token " +
-                "   and a.receiver_id = m.id ",
-        nativeQuery = true
+            value = "select count(a.id) " +
+                    "from alerts a " +
+                    "where " +
+                    "   (a.is_sent = true or a.alert_time < NOW()) " +
+                    "   and a.receiver_id = :memberId ",
+            nativeQuery = true
     )
-    int countBySessionToken(@Param("token") String token);
+    int countByMember(@Param("memberId") Long memberId);
 
     List<Alerts> findAllByReceiverAndAlertTypeAndPidAndIsSent(Member receiver, AlertType alertType, Long pid, Boolean isSent);
 

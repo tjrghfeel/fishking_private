@@ -121,7 +121,7 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
     List<CouponMember> findByMember(Member member);
 
     /*쿠폰만료체크용 메소드
-    * - coupon이 사용가능하면서, coupon_member가 아직 사용되지 않았으면서, 남은 사용기간이 7일인 쿠폰목록을 모두 검색해반환. */
+     * - coupon이 사용가능하면서, coupon_member가 아직 사용되지 않았으면서, 남은 사용기간이 7일인 쿠폰목록을 모두 검색해반환. */
     @Query(value = "select " +
             "   cm.id id, " +
             "   c.coupon_name couponName, " +

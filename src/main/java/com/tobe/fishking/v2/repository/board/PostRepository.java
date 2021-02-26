@@ -24,7 +24,7 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     List<Post> findByBoard(Board board);
-  //  List<  Goods> findByBoardOrderBy  GoodsIdDesc(Board board);
+    //  List<  Goods> findByBoardOrderBy  GoodsIdDesc(Board board);
 
     /*FAQ 리스트 조회*/
     @Query(value = "" +

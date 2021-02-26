@@ -32,7 +32,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.*;
@@ -41,6 +45,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -61,8 +66,8 @@ public class UploadService {
     private MemberRepository memberRepository;
 
     /*파일 업로드 미리보기를 위한 파일 저장 메소드.
-    * - FileEntity의 isDelete필드를 true로 둔상태로 생성.
-    * - 생성한 FileEntity를 반환. */
+     * - FileEntity의 isDelete필드를 true로 둔상태로 생성.
+     * - 생성한 FileEntity를 반환. */
     public FileEntity filePreUpload(MultipartFile file, FilePublish filePublish, String sessionToken) throws IOException, ResourceNotFoundException, JCodecException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
@@ -100,10 +105,10 @@ public class UploadService {
     }
 
     /*파일 저장 메소드
-    * 인자 enum filePublish의 이름과 똑같은 폴더가 파일저장위치에 존재하며 이곳에 파일을 저장한다.
-    * 가령, FilePublish.one2one일경우, application.yml에 설정된 파일저장위치 'file.location'에 나와있는위치에
-    *  enum FilePublish이름인 one2one이라는 폴더가 존재한다. 여기에 저장하도록 메소드가 동작한다.
-    * 반환 ) 섬네일파일명, 원본파일의 풀url, 원본파일의 저장명을 반환한다. */
+     * 인자 enum filePublish의 이름과 똑같은 폴더가 파일저장위치에 존재하며 이곳에 파일을 저장한다.
+     * 가령, FilePublish.one2one일경우, application.yml에 설정된 파일저장위치 'file.location'에 나와있는위치에
+     *  enum FilePublish이름인 one2one이라는 폴더가 존재한다. 여기에 저장하도록 메소드가 동작한다.
+     * 반환 ) 섬네일파일명, 원본파일의 풀url, 원본파일의 저장명을 반환한다. */
     @Transactional
     public Map<String, Object> initialFile(MultipartFile file, /*FileType fileType,*/
                                            FilePublish filePublish, String sessionToken)
@@ -114,18 +119,18 @@ public class UploadService {
             Member member = memberService.getMemberBySessionToken(sessionToken);
             String memberId = member.getUid();*/
 
-            /*!!!!!임의 Member 사용. by 석호. 나중에 지워야함. */
-            Member member = memberRepository.findById(8L)
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+8L));
+        /*!!!!!임의 Member 사용. by 석호. 나중에 지워야함. */
+        Member member = memberRepository.findById(8L)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+8L));
 
             /*String fileLocation = this.getFileLocation(desireFileLocation);
             String filePath = this.getFilePath(desireFileLocation);
             */
 
-             Board board  = boardRepo.findBoardByFilePublish(filePublish);
+        Board board  = boardRepo.findBoardByFilePublish(filePublish);
 
-             String fileLocation = env.getProperty("file.location") + File.separator + board.getUploadPath();/*filePublish.toString();*/
-             String filePath = board.getUploadPath();
+        String fileLocation = env.getProperty("file.location") + File.separator + board.getUploadPath();/*filePublish.toString();*/
+        String filePath = board.getUploadPath();
 
             /* 파일 타입에 대해 체크해주는 부분인듯하다. 처음부터있었던 로직인데 당장필요없을듯하여 일단 주석처리. by석호
             FileType currentFileType = FileType.image;
@@ -136,33 +141,33 @@ public class UploadService {
                 throw new FileImageOnlyException(fileType.toString());
             }*/
 
-            List<String> fileResult = new ArrayList<>();
-            fileResult = this.saveUploadFile(file, /*memberId*/"seok ho", fileLocation, filePath, true);
-            /*위에 memberId인자 주석풀어줘야함. by 석호. */
-            if (fileResult.isEmpty()) {
-                throw new FileUploadFailException();
-            }
-            String fileName = fileResult.get(0);//새로만든 저장파일명.
-            String fileUrl = fileResult.get(1);//uploadFilePath
-            String fileUploadUrl = "/"+board.getUploadPath()+"/"+fileName;
-            String thumbnailName = fileResult.get(2);//thumbnailFileName
-            String thumbnailPath = fileResult.get(3);//섬네일 path
+        List<String> fileResult = new ArrayList<>();
+        fileResult = this.saveUploadFile(file, /*memberId*/"seok ho", fileLocation, filePath, true);
+        /*위에 memberId인자 주석풀어줘야함. by 석호. */
+        if (fileResult.isEmpty()) {
+            throw new FileUploadFailException();
+        }
+        String fileName = fileResult.get(0);//새로만든 저장파일명.
+        String fileUrl = fileResult.get(1);//uploadFilePath
+        String fileUploadUrl = "/"+board.getUploadPath()+"/"+fileName;
+        String thumbnailName = fileResult.get(2);//thumbnailFileName
+        String thumbnailPath = fileResult.get(3);//섬네일 path
 //            String thumbnailUploadUrl = "/"+
-            String fileDownloadUrl = "/"+board.getDownloadPath()+"/"+fileName;
-            String thumbDownloadUrl = "/"+board.getDownloadPath()+"/"+thumbnailName;
+        String fileDownloadUrl = "/"+board.getDownloadPath()+"/"+fileName;
+        String thumbDownloadUrl = "/"+board.getDownloadPath()+"/"+thumbnailName;
 
-            result.clear();
-            result.put("fileName", fileName);//파일명.
-            result.put("thumbnailName",thumbnailName);//섬네일파일명.
-            result.put("path",board.getDownloadPath());//경로.
+        result.clear();
+        result.put("fileName", fileName);//파일명.
+        result.put("thumbnailName",thumbnailName);//섬네일파일명.
+        result.put("path",board.getDownloadPath());//경로.
 
-            result.put("thumbUploadPath", thumbnailPath);
-            result.put("fileUrl", fileUploadUrl);
-            result.put("fileDownloadUrl", fileDownloadUrl);
-            result.put("thumbDownloadUrl", thumbDownloadUrl);
+        result.put("thumbUploadPath", thumbnailPath);
+        result.put("fileUrl", fileUploadUrl);
+        result.put("fileDownloadUrl", fileDownloadUrl);
+        result.put("thumbDownloadUrl", thumbDownloadUrl);
 
 
-            //result.put("tempFileSeq", fileId);
+        //result.put("tempFileSeq", fileId);
         return result;
     }
 
@@ -230,10 +235,13 @@ public class UploadService {
         //프로퍼티에 저장된 파일저장위치를 붙여 업로드할 하드상의 위치 저장.
         String uploadFilePath = fileLocation + File.separator + fileName;
 
-      //  String bucket = env.getProperty("cloud.aws.s3.bucket");
+        //  String bucket = env.getProperty("cloud.aws.s3.bucket");
 
 
         File uploadFile = convert(file, fileLocation, fileName).orElseThrow(FileUploadFailException::new);
+
+        /*파일 크기가 4MB이상일 경우 용량줄이기. */
+        uploadFile = resize(uploadFile);
 
     /*    amazonS3Client.putObject(new PutObjectRequest(
                 bucket, uploadFilePath, uploadFile
@@ -280,11 +288,44 @@ public class UploadService {
         return fileNames;
     }
 
+    /*파일 리사이징
+     * 4MB이하가 될때까지 반복문으로 이미지 퀄리티를 떨어뜨려 용량을 줄인다. */
+    public File resize(File originalFile) throws IOException {
+        long fileSize = originalFile.length();
+        for(; fileSize > 4*1024*1024; ){
+            BufferedImage image = ImageIO.read(originalFile);
+
+            File output = originalFile;
+            OutputStream out = new FileOutputStream(output);
+
+            ImageWriter writer =  ImageIO.getImageWritersByFormatName("jpg").next();
+            ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+            writer.setOutput(ios);
+
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            if (param.canWriteCompressed()){
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality(0.5f);
+            }
+
+            writer.write(null, new IIOImage(image, null, null), param);
+
+            out.close();
+            ios.close();
+            writer.dispose();
+
+            fileSize = output.length();
+        }
+
+        return originalFile;
+    }
+
 
     private Optional<File> makeThumbnail(File originalFile, String fileLocation, String fileName) {
         String tFileName = "";
 
         try {
+
             tFileName = fileLocation + File.separator + "thumb_" + fileName;
 
             int width = Integer.parseInt(Constants.thumbnailWidth);
@@ -363,6 +404,7 @@ public class UploadService {
 
     private Optional<File> convert(MultipartFile file, String fileLocation, String fileName) throws IOException {
         File convertFile = new File(fileLocation + File.separator + fileName);
+
         if(convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());

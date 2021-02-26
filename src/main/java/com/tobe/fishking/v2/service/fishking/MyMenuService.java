@@ -75,24 +75,24 @@ public class MyMenuService {
     HolidayUtil holidayUtil;
 
     /*마이메뉴 페이지 조회 처리 메소드
-    * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
+     * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
     @Transactional
     public MyMenuPageDTO getMyMenuPage(String sessionToken) throws ResourceNotFoundException {
         MyMenuPageDTO myMenuPageDTO = null;
 
         /*repository로부터 값 가져옴. */
-            //프사가져옴.
-            Member member = memberRepository.findBySessionToken(sessionToken)
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
-            String profileImage = env.getProperty("file.downloadUrl")+member.getProfileImage();
-            //nickName 가져옴
-            String nickName = member.getNickName();
-            //예약건수 가져옴.
-            Integer bookingCount = ordersRepository.countCurrentMyOrders( member.getId());
-            //쿠폰 수 가져옴.
-            Integer couponCount = couponMemberRepository.countByMemberAndIsUseAndDays(member,false, LocalDateTime.now());
-            //알림 개수 가져옴.
-            Integer alertCount = alertsRepository.countBySessionToken(sessionToken);
+        //프사가져옴.
+        Member member = memberRepository.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
+        String profileImage = env.getProperty("file.downloadUrl")+member.getProfileImage();
+        //nickName 가져옴
+        String nickName = member.getNickName();
+        //예약건수 가져옴.
+        Integer bookingCount = ordersRepository.countCurrentMyOrders( member.getId());
+        //쿠폰 수 가져옴.
+        Integer couponCount = couponMemberRepository.countByMemberAndIsUseAndDays(member,false, LocalDateTime.now());
+        //알림 개수 가져옴.
+        Integer alertCount = alertsRepository.countByMember(member.getId());
 
         /*dto에 값 넣어줌. */
         myMenuPageDTO = MyMenuPageDTO.builder()
@@ -115,7 +115,7 @@ public class MyMenuService {
 //        return fishingDiaryRepository.findByMember(member, member,pageable);
         return fishingDiaryRepository.getFishingDiaryListOrderByCreatedDate(
                 FilePublish.fishingBlog.ordinal(), null, null, null, null, null, member.getId(),
-                  true, null, null, pageable
+                true, null, null, pageable
         );
     }
 
@@ -575,10 +575,10 @@ public class MyMenuService {
 //                else{contentTideList[i] = tideList[i]+"물";}
 //            }
 //            else if(seaDirection == SeaDirection.east || seaDirection == SeaDirection.south){
-                Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
-                Integer tide = (lunarDay+6)%15 +1;
-                tideDayDiff = tideList[i] - tide;
-                if(tideDayDiff<0) tideDayDiff += 15;
+            Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
+            Integer tide = (lunarDay+6)%15 +1;
+            tideDayDiff = tideList[i] - tide;
+            if(tideDayDiff<0) tideDayDiff += 15;
 
 //                if(tideList[i]==15){contentTideList[i] = "조금";}
 //                else{contentTideList[i] = tideList[i]+"물";}
@@ -619,5 +619,13 @@ public class MyMenuService {
         return true;
 
     }
+
+    /*실시간 조항 리스트 가져오기*/
+    @Transactional
+    public Page<LiveShipDtoForPage> getLiveShipList(int page){
+        Pageable pageable = PageRequest.of(page, 20);
+        return shipRepository.getLiveShipList(pageable);
+    }
+
 
 }
