@@ -77,6 +77,7 @@ export default inject(
           hasRealTimeVideo: "",
           fishingDate: fishingDate,
           sido: null,
+          sigungu: null,
           species,
           orderBy: "popular",
           facilities: null,
@@ -104,6 +105,7 @@ export default inject(
           hasRealTimeVideo: PageStore.state.hasRealTimeVideo,
           fishingDate: PageStore.state.fishingDate,
           sido: PageStore.state.sido,
+          sigungu: PageStore.state.sigungu,
           species: PageStore.state.species,
           orderBy: PageStore.state.orderBy,
           facilities: PageStore.state.facilities,
@@ -175,12 +177,15 @@ export default inject(
             <SelectAreaModal
               ref={this.selAreaModal}
               id={"selAreaModal"}
-              onSelected={(selected) => {
-                if (selected == null) {
-                  PageStore.setState({ sido: null });
+              onSelected={({ selectedLv1, selectedLv2 }) => {
+                if (selectedLv1 == null) {
+                  PageStore.setState({ sido: null, sigungu: null });
                   this.setState({ filterAreaActive: false });
                 } else {
-                  PageStore.setState({ sido: selected.code });
+                  PageStore.setState({
+                    sido: selectedLv1?.code || null,
+                    sigungu: selectedLv2?.code || null,
+                  });
                   this.setState({ filterAreaActive: true });
                 }
                 this.loadPageData(0);
@@ -289,7 +294,7 @@ export default inject(
                   modalTarget: "selAreaModal",
                   onClickClear: () => {
                     this.setState({ filterAreaActive: false });
-                    PageStore.setState({ sido: null });
+                    PageStore.setState({ sido: null, sigungu: null });
                     this.selAreaModal.current?.onInit();
                     this.loadPageData(0);
                   },
