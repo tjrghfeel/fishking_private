@@ -67,6 +67,11 @@ export default inject(
           PageStore.setState({ list });
         }
       };
+
+      onClick = (item) => {
+        const { PageStore, fishingType } = this.props;
+        PageStore.push(`/company/${fishingType}/detail/${item.shipId}`);
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -81,6 +86,7 @@ export default inject(
                     key={index}
                     data={data}
                     onDelete={this.onDelete}
+                    onClick={this.onClick}
                   />
                 ))}
             </div>

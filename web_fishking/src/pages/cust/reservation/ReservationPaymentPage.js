@@ -78,14 +78,14 @@ export default inject(
 
       onChangeCoupon = (selected) => {
         const index = selected.value;
-        if (index === 0) {
+        if (index == -1) {
           // 선택안함
           this.setState({
             couponId: 0,
             discountPrice: 0,
             totalPrice: this.state.goodsPrice * this.state.personCount,
           });
-        } else if (index > 0) {
+        } else if (index != -1) {
           const item = this.state.coupons.coupons[index];
           const price = this.state.goodsPrice * this.state.personCount;
           if (item.couponType === "정액") {
@@ -597,7 +597,7 @@ export default inject(
                           this.onChangeCoupon(e.target.selectedOptions[0])
                         }
                       >
-                        <option>쿠폰 선택하기</option>
+                        <option value="-1">쿠폰 선택하기</option>
                         {this.state.coupons?.coupons &&
                           this.state.coupons?.coupons.length > 0 &&
                           this.state.coupons?.coupons.map((data, index) => (
