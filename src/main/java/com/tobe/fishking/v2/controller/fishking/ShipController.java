@@ -158,6 +158,16 @@ public class ShipController {
             "\n         id: 이벤트 id" +
             "\n         title: 제목 " +
             "\n }, ... ]" +
+            "\n rockData: 갯바위 데이터. 선상일경우 null [{" +
+            "\n     name: 갯바위 명" +
+            "\n     averageDepth: 평균 수심" +
+            "\n     floorMaterial: 저질" +
+            "\n     tideTime: 적정 물때" +
+            "\n     introduce: 소개" +
+            "\n     address: 주소" +
+            "\n     latitude: 위도 " +
+            "\n     longitude: 경도" +
+            "\n }, ... ]" +
             "\n " +
             "\n 상단 이미지관련" +
             "\n     liveVideo가 빈 문자열이 아닌 경우: 해당 주소를 video 태그로 보여준다. " +
@@ -169,6 +179,9 @@ public class ShipController {
             "\n     선박 명 아래의 점수는 전체 평점 평균, 오른쪽의 숫자는 리뷰 수" +
             "\n     유료서비스, 무료서비스를 서비스 하나로 통합" +
             "\n     주변시설 삭제" +
+            "\n 갯바위데이터 추가" +
+            "\n     갯바위의 계절별 주요 대상어종 및 평균수온은 소개로 대체" +
+            "\n     기준위치와의 거리 제거" +
             "\n ")
     @GetMapping("/ship/{ship_id}")
     public ShipResponse shipDetail(
@@ -219,6 +232,24 @@ public class ShipController {
     @GetMapping("/goods/{goods_id}/position")
     public Map<String, Object> getGoodsDatePositions(@PathVariable Long goods_id, @RequestParam String date) {
         return shipService.getGoodsDatePositions(goods_id, date);
+    }
+
+    @ApiOperation(value = "해당 상품 날짜 갯바위 포인트 ", notes = "해당 상품의 날짜 승선위치. date: yyyy-MM-dd" +
+            "\n total: 갯바위 포인트 [{" +
+            "\n     name: 갯바위 명" +
+            "\n     address: 갯바위의 주소" +
+            "\n     latitude: 갯바위의 위도" +
+            "\n     longitude: 갯바위의 경도" +
+            "\n     points: 해당 갯바위의 포인트 리스트 [{ " +
+            "\n         latitude: 포인트의 위도" +
+            "\n         longitude: 포인트의 경도" +
+            "\n         id: 포인트 id " +
+            "\n     }, ... ]" +
+            "\n }, ... ] " +
+            "\n used: 이미 예약된 포인트 id ([1,2] 인 경우 1,2 는 이미 예약)")
+    @GetMapping("/goods/{goods_id}/position/seaRock")
+    public Map<String, Object> getGoodsDatePositionsSeaRock(@PathVariable Long goods_id, @RequestParam String date) {
+        return shipService.getGoodsDatePositionsSeaRock(goods_id, date);
     }
 
 //    @ApiOperation(value = "배 정보", notes = "배 정보. ")

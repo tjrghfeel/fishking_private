@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class ShipResponse {
     private String notice;
     private List<ShipEventResponse> eventsList;
     private Boolean liked;
+    private List<Map<String, Object>> rockData;
 
     @QueryProjection
     public ShipResponse(Ship ship) {
@@ -85,5 +87,6 @@ public class ShipResponse {
         this.fishingDiary = new ArrayList<>();
         this.fishingBlog = new ArrayList<>();
         this.eventsList = null;
+        this.rockData = null;
     }
 }
