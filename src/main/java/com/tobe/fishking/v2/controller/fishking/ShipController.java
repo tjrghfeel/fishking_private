@@ -226,16 +226,10 @@ public class ShipController {
     }
 
     @ApiOperation(value = "해당 상품 날짜 승선위치 ", notes = "해당 상품의 날짜 승선위치. date: yyyy-MM-dd" +
-            "\n total: 배의 승선위치 ([1,2,3,4,5,6] 인 경우 1~6번 위치만 사용한다고 등록) " +
-            "\n used: 이미 예약된 승선위치 ([1,2] 인 경우 1,2 번 위치는 이미 예약)" +
-            "\n type: 배의 타입 3, 5, 9 세 값중 하나가 전달되며 각각 3톤 (8인승), 5톤 (18인승), 9톤 (22인승)")
-    @GetMapping("/goods/{goods_id}/position")
-    public Map<String, Object> getGoodsDatePositions(@PathVariable Long goods_id, @RequestParam String date) {
-        return shipService.getGoodsDatePositions(goods_id, date);
-    }
-
-    @ApiOperation(value = "해당 상품 날짜 갯바위 포인트 ", notes = "해당 상품의 날짜 승선위치. date: yyyy-MM-dd" +
-            "\n total: 갯바위 포인트 [{" +
+            "\n total: 배의 승선위치 ([1,2,3,4,5,6] 인 경우 1~6번 위치만 사용한다고 등록) 갯바위 상품의 경우 null" +
+            "\n used: 이미 예약된 승선위치 ([1,2] 인 경우 1,2 번 위치는 이미 예약) 갯바위 상품의 경우 포인트의 id " +
+            "\n type: 배의 타입 3, 5, 9 세 값중 하나가 전달되며 각각 3톤 (8인승), 5톤 (18인승), 9톤 (22인승). 갯바위 상품의 경우 null" +
+            "\n rockData: 갯바위 포인트, 선상 상품의 경우 null [{" +
             "\n     name: 갯바위 명" +
             "\n     address: 갯바위의 주소" +
             "\n     latitude: 갯바위의 위도" +
@@ -245,12 +239,29 @@ public class ShipController {
             "\n         longitude: 포인트의 경도" +
             "\n         id: 포인트 id " +
             "\n     }, ... ]" +
-            "\n }, ... ] " +
-            "\n used: 이미 예약된 포인트 id ([1,2] 인 경우 1,2 는 이미 예약)")
-    @GetMapping("/goods/{goods_id}/position/seaRock")
-    public Map<String, Object> getGoodsDatePositionsSeaRock(@PathVariable Long goods_id, @RequestParam String date) {
-        return shipService.getGoodsDatePositionsSeaRock(goods_id, date);
+            "\n }, ... ] ")
+    @GetMapping("/goods/{goods_id}/position")
+    public Map<String, Object> getGoodsDatePositions(@PathVariable Long goods_id, @RequestParam String date) {
+        return shipService.getGoodsDatePositions(goods_id, date);
     }
+
+//    @ApiOperation(value = "해당 상품 날짜 갯바위 포인트 ", notes = "해당 상품의 날짜 승선위치. date: yyyy-MM-dd" +
+//            "\n rockData: 갯바위 포인트 [{" +
+//            "\n     name: 갯바위 명" +
+//            "\n     address: 갯바위의 주소" +
+//            "\n     latitude: 갯바위의 위도" +
+//            "\n     longitude: 갯바위의 경도" +
+//            "\n     points: 해당 갯바위의 포인트 리스트 [{ " +
+//            "\n         latitude: 포인트의 위도" +
+//            "\n         longitude: 포인트의 경도" +
+//            "\n         id: 포인트 id " +
+//            "\n     }, ... ]" +
+//            "\n }, ... ] " +
+//            "\n used: 이미 예약된 포인트 id ([1,2] 인 경우 1,2 는 이미 예약)")
+//    @GetMapping("/goods/{goods_id}/position/seaRock")
+//    public Map<String, Object> getGoodsDatePositionsSeaRock(@PathVariable Long goods_id, @RequestParam String date) {
+//        return shipService.getGoodsDatePositionsSeaRock(goods_id, date);
+//    }
 
 //    @ApiOperation(value = "배 정보", notes = "배 정보. ")
 //    @GetMapping("/ship/{ship_id}")

@@ -287,18 +287,23 @@ public class ShipService {
     @Transactional
     public Map<String, Object> getGoodsDatePositions(Long goods_id, String date) {
         Goods goods = goodsRepository.getOne(goods_id);
-        List<OrderDetails> orders = orderDetailsRepository.getByGoodsAndDate(goods, date);
-        List<String> availablePositions = new ArrayList<>();
-        List<String> usedPositions = new ArrayList<>();
-        availablePositions = Arrays.asList(goods.getShip().getPositions().split(",").clone());
-        for (OrderDetails details : orders) {
-            usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
+        if (goods.getShip().getFishingType().getKey().equals("seaRocks")) {
+            return getGoodsDatePositionsSeaRock(goods_id, date);
+        } else {
+            List<OrderDetails> orders = orderDetailsRepository.getByGoodsAndDate(goods, date);
+            List<String> availablePositions = new ArrayList<>();
+            List<String> usedPositions = new ArrayList<>();
+            availablePositions = Arrays.asList(goods.getShip().getPositions().split(",").clone());
+            for (OrderDetails details : orders) {
+                usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
+            }
+            Map<String, Object> result = new HashMap<>();
+            result.put("used", usedPositions);
+            result.put("total", availablePositions);
+            result.put("type", goods.getShip().getWeight());
+            result.put("rockData", null);
+            return result;
         }
-        Map<String, Object> result = new HashMap<>();
-        result.put("used", usedPositions);
-        result.put("total", availablePositions);
-        result.put("type", goods.getShip().getWeight());
-        return result;
     }
 
     @Transactional
@@ -333,7 +338,9 @@ public class ShipService {
             usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
         }
         result.put("used", usedPositions);
-        result.put("total", rockData);
+        result.put("rockData", rockData);
+        result.put("total", null);
+        result.put("type", null);
         return result;
     }
 
