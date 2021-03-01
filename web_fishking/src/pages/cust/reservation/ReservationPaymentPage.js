@@ -192,6 +192,7 @@ export default inject(
               date: this.state.date,
             }
           );
+          console.log(JSON.stringify(resolve));
           this.setState({ boat: resolve });
         } else if (this.state.step === 3) {
           // >>>>> Step-3 :: validate
