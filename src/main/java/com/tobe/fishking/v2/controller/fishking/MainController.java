@@ -98,7 +98,8 @@ public class MainController {
 
     @ApiOperation(value = "통합 검색 인기검색어, 어복황제 추천 AD", notes = "인기검색어, 추천AD" +
             "\n { " +
-            "\n popularKeyword: [ {keyword: 키워드 1, isNew: 신규여부}, ... , {keyword: 키워드 10, isNew: 신규여부} ]  // 인덱스 순서로 1 2 3 .. 순입니다." +
+            "\n popularKeyword: [ keyword1, keyword2, ... , keyword10 ]  // 인덱스 순서로 1 2 3 .. 순입니다." +
+            "\n keywords: [ {keyword: 키워드 1, isNew: 신규여부}, ... , {keyword: 키워드 10, isNew: 신규여부} ]  // 인덱스 순서로 1 2 3 .. 순입니다." +
             "\n ad: [{ " +
             "\n id: 상품 id" +
             "\n shipImageFileUrl: 선박 이미지 주소 " +
@@ -123,12 +124,14 @@ public class MainController {
             "\n fishSpeciesCount: 대상 어종 수" +
             "\n lowPrice: 상품 중 가장 낮은 가격" +
             "\n }, ... ] 상품 광고의 하트는 빼주세요" +
-            "\n 키워드 리스트가 변경되었습니다. new 표시를 위해 String list 에서 Object list 로 변경되었습니다." +
+            "\n 키워드 리스트가 추가되었습니다. new 표시를 위해 String list 에서 Object list 로 리턴됩니다." +
+            "\n 해당 작업이 끝나면 기존의 popularKeyword 키값은 삭제됩니다. " +
             "")
     @GetMapping("/search/keywords")
     public Map<String, Object> getSearchPageData(@RequestHeader("Authorization") String token) {
         Map<String, Object> result = new HashMap<>();
-        result.put("popularKeyword", popularService.getPopularKeyword());
+        result.put("popularKeyword", popularService.getPopularKeywordString());
+        result.put("keywords", popularService.getPopularKeyword());
         result.put("ad", commonService.getAdList(AdType.SEARCH_AD));
         return result;
     }

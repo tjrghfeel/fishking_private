@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,12 @@ public class PopularService {
     public List<PopKeywordResponse> getPopularKeyword() {
 //        return searchKeywordRepository.getPopular().stream().map(SearchKeyword::getSearchKeyword).collect(Collectors.toList());
         return searchKeywordRepository.getPopularKeywordResponses();
+    }
+
+    /* 인기검색어 */
+    @Transactional
+    public List<String> getPopularKeywordString() {
+        return searchKeywordRepository.getPopular().stream().map(SearchKeyword::getSearchKeyword).collect(Collectors.toList());
     }
 
     @Transactional
