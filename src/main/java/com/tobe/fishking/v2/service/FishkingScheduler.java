@@ -149,4 +149,9 @@ public class FishkingScheduler {
         alerts.sent();
         alertsRepository.save(alerts);
     }
+
+    @Scheduled(cron = " 0 0 0/1 * * *")
+    public void updatePopularKeyword() {
+
+    }
 }

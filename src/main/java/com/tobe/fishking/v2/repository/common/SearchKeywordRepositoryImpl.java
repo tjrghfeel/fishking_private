@@ -29,4 +29,13 @@ public class SearchKeywordRepositoryImpl implements SearchKeywordRepositoryCusto
                 .fetchResults();
         return results.getResults();
     }
+
+    @Override
+    public SearchKeyword getKeywordByString(String keyword) {
+        SearchKeyword results = queryFactory
+                .selectFrom(searchKeyword1)
+                .where(searchKeyword1.searchKeyword.eq(keyword))
+                .fetchOne();
+        return results;
+    }
 }

@@ -290,6 +290,7 @@ public class CommonService {
     public Map<String, Object> searchTotal(String keyword) {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(0, 4, Sort.by("createdDate"));
+
         result.put("keyword", keyword);
         result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
         result.put("blog", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
