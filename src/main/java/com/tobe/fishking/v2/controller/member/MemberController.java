@@ -414,6 +414,7 @@ public class MemberController {
             "- scrapCount : 스크랩 수 \n" +
             "- title : 글 제목\n" +
             "- contents : 게시글 내용(일부만 출력)\n" +
+            "- fishingDiaryType : String / 글이 조항일지인지, 유저조행기인지\n" +
             "- fileList : 이미지 파일 download url 리스트")
     @GetMapping("/profile/fishingDiary/{page}")
     @ResponseBody
@@ -438,6 +439,7 @@ public class MemberController {
             "- memberName : String / 회원 실명\n" +
             "- email : String / 회원 email.\n" +
             "- profileImage : String / 프로필사진 url\n" +
+            "- profileBackgroundImage : String / 프로필 배경 사진 url\n" +
             "- statusMessage : String / 상태메시지\n" +
             "- areaCode : String / 전화번호 앞부분(ex 010 ) \n" +
             "- localNumber : String / 전화번호 뒷부분 ( ex 12345678 )\n")

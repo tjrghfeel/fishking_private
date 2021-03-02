@@ -1299,6 +1299,7 @@ public class MemberService {
                 .nickName((member.getNickName()==null)?("없음"):(member.getNickName()))
                 .email(member.getEmail())
                 .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
+                .profileBackgroundImage(env.getProperty("file.downloadUrl") + member.getProfileBackgroundImage())
                 .statusMessage((member.getStatusMessage()==null)?("없음"):(member.getStatusMessage()))
                 //!!!!!아래 전화번호는 nullable필드이지만 회원가입시 휴대폰인증을 하므로 무조건 있다고 판단.
                 .areaCode(member.getPhoneNumber().getAreaCode())

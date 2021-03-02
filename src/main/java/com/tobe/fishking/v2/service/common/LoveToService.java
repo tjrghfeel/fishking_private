@@ -49,6 +49,7 @@ public class LoveToService {
             if(dto.getTakeType().equals("fishingDiary") || dto.getTakeType().equals("fishingBlog")){
                 FishingDiary fishingDiary = fishingDiaryRepository.findById(dto.getLinkId())
                         .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+dto.getLinkId()));
+                if(!dto.getTakeType().equals(fishingDiary.getFilePublish().getKey())){ throw new RuntimeException("글 유형이 일치하지 않습니다."); }
                 fishingDiary.getStatus().plusLikeCount();
             }
             else if(dto.getTakeType().equals("comment")){

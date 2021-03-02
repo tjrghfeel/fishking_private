@@ -100,7 +100,8 @@ public class MapperUtility {
         String todayLunar = holidayUtil.convertSolarToLunar(date);
         Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
         Integer tide = (lunarDay+6)%15+1;
-        return tide.toString();
+        if(tide == 15) return "조금";
+        else{return tide.toString()+"물";}
     }
 
 

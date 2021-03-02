@@ -29,6 +29,7 @@ public class ProfileManageDTO {
     //private Role roles;
     //private String sessionToken;
     private String profileImage; //프로파일 사진 경로+이름
+    private String profileBackgroundImage;
     //private String confirmPassword;
     //private Boolean isActive;
     //private String certifiedNo;
