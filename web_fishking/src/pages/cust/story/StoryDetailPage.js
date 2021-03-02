@@ -37,6 +37,7 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
+          console.log(JSON.stringify(resolve));
 
           this.setState({ ...resolve, category });
         };
@@ -79,10 +80,19 @@ export default inject(
         };
         onClickReservation = () => {
           const { PageStore } = this.props;
-          let fishingType = this.state.fishingType;
-          if (fishingType === "선상") fishingType = "boat";
-          else fishingType = "rock";
-          PageStore.push(`/company/${fishingType}/detail/${this.state.shipId}`);
+          if (this.state.shipId == null) {
+            const fishingSpeciesCodeList = this.state.fishingSpeciesCodeList;
+            PageStore.push(
+              `/main/company/boat?species=${fishingSpeciesCodeList.join("__")}`
+            );
+          } else {
+            let fishingType = this.state.fishingType;
+            if (fishingType === "선상") fishingType = "boat";
+            else fishingType = "rock";
+            PageStore.push(
+              `/company/${fishingType}/detail/${this.state.shipId}`
+            );
+          }
         };
         onSelectFunction = async (selected) => {
           const { APIStore, ModalStore } = this.props;

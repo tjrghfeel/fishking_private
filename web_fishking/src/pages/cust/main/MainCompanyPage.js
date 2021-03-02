@@ -62,7 +62,9 @@ export default inject(
         }
         let species = null;
         if ((qp.species || null) !== null) {
-          species = [qp.species];
+          species = qp.species.split("__");
+          this.setState({ filterFishActive: true });
+          this.selFishModal.current.onInit(species);
         }
         let hasRealTimeVideo = "";
         if ((qp.hasRealTimeVideo || null) !== null) {

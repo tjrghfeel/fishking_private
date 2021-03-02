@@ -4,7 +4,8 @@ import StoryScrapListItemView from "./StoryScrapListItemView";
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "DataStore"
 )(
   observer(
     class extends React.Component {
@@ -35,7 +36,7 @@ export default inject(
           pageable: { pageSize = 0 },
         } = await APIStore._get("/v2/api/myFishingDiaryScrap/" + page);
 
-        console.log(JSON.stringify(content));
+        // console.log(JSON.stringify(content));
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {
@@ -58,18 +59,36 @@ export default inject(
       };
 
       onClickLike = async (item) => {
-        const { APIStore } = this.props;
-        const resolve = await APIStore._post(`/v2/api/loveto`, {
-          takeType: "fishingDiary",
-          linkId: item.id,
-        });
-        console.log(
-          JSON.stringify({
-            takeType: "fishingDiary",
+        console.log(JSON.stringify(item));
+        const { APIStore, DataStore, PageStore } = this.props;
+        const takeType =
+          item.fishingDiaryType === "조행일지" ? "fishingDiary" : "fishingBlog";
+        let resolve = false;
+        if (item.isLikeTo) {
+          resolve = await APIStore._delete(`/v2/api/loveto`, {
+            takeType,
             linkId: item.id,
-          })
-        );
-        console.log(JSON.stringify(resolve));
+          });
+        } else {
+          resolve = await APIStore._post(`/v2/api/loveto`, {
+            takeType,
+            linkId: item.id,
+          });
+        }
+        if (resolve) {
+          const list = DataStore.updateItemOfArrayByKey(
+            PageStore.state.list,
+            "id",
+            item.id,
+            {
+              isLikeTo: !item.isLikeTo,
+              likeCount: item.isLikeTo
+                ? item.likeCount - 1
+                : item.likeCount + 1,
+            }
+          );
+          PageStore.setState({ list });
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -88,6 +107,9 @@ export default inject(
                   onClickProfile={(item) =>
                     PageStore.push(`/member/profile/${item.memberId}`)
                   }
+                  onClickComment={(item) => {
+                    PageStore.push(`/story/diary/comment/${item.id}`);
+                  }}
                 />
               ))}
             {(!PageStore.state.list || PageStore.state.list.length === 0) && (
