@@ -1,15 +1,10 @@
 package com.tobe.fishking.v2.controller.fishking;
 
-import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
-import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.common.FilesDTO;
-import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
 import com.tobe.fishking.v2.model.fishing.RiderShipDTO;
@@ -19,7 +14,6 @@ import com.tobe.fishking.v2.service.ResponseService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.common.PopularService;
 import com.tobe.fishking.v2.service.fishking.*;
-import com.tobe.fishking.v2.utils.DateUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Api(tags = {"메인"})
