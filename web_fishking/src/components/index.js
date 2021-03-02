@@ -89,6 +89,7 @@ import SearchAdListItemView from "./view/SearchAdListItemView";
 import SearchCompanyListItem01View from "./view/SearchCompanyListItem01View";
 import SearchDiaryListItemView from "./view/SearchDiaryListItemView";
 import SearchStoryListItemView from "./view/SearchStoryListItemView";
+import SelectRockPointView from "./view/SelectRockPointView";
 
 export default {
   /********** MODAL **********/
@@ -177,5 +178,6 @@ export default {
     SearchCompanyListItem01View,
     SearchDiaryListItemView,
     SearchStoryListItemView,
+    SelectRockPointView,
   },
 };

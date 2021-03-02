@@ -5,12 +5,18 @@ import Components from "../../../components";
 import APIStore from "../../../stores/APIStore";
 const {
   LAYOUT: { NavigationLayout },
-  VIEW: { ShipType3PositionView, ShipType5PositionView, ShipType9PositionView },
+  VIEW: {
+    ShipType3PositionView,
+    ShipType5PositionView,
+    ShipType9PositionView,
+    SelectRockPointView,
+  },
 } = Components;
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "DataStore"
 )(
   observer(
     class extends React.Component {
@@ -179,12 +185,6 @@ export default inject(
             personsPhone.push(phone.value);
             personsBirthdate.push(birthdate.value);
           }
-          this.setState({
-            personsName,
-            personsPhone,
-            personsBirthdate,
-            step: 3,
-          });
           // >>>>> Step-3 :: prepare
           const resolve = await APIStore._get(
             `/v2/api/goods/${this.state.goodsId}/position`,
@@ -192,22 +192,36 @@ export default inject(
               date: this.state.date,
             }
           );
-          this.setState({ boat: resolve });
+          console.log(JSON.stringify(resolve));
+          this.setState({
+            boat: resolve,
+            personsName,
+            personsPhone,
+            personsBirthdate,
+            step: 3,
+          });
         } else if (this.state.step === 3) {
           // >>>>> Step-3 :: validate
-          const selected = this.ship.current?.selected;
-          if (selected.length === 0) {
+          const positions = this.state.positions || [];
+          // # 선상 위치 선택인 경우
+          if (this.state.boat?.type !== null) {
+            const selected = this.ship.current?.selected;
+            if (selected.length === 0) {
+              alert("위치를 선택해주세요.");
+              return;
+            }
+            for (let s of selected) {
+              positions.push(new Number(s));
+            }
+          } else if (this.state.positions.length === 0) {
             alert("위치를 선택해주세요.");
             return;
           }
-          const positions = [];
-          for (let s of selected) {
-            positions.push(new Number(s));
-          }
-          this.setState({ positions, step: 4 });
           // >>>>> Step-4 :: prepare
           const resolve = await APIStore._get(`/v2/api/usableCoupons`);
-          this.setState({
+          await this.setState({
+            positions,
+            step: 4,
             coupons: resolve,
             couponId: 0,
             discountPrice: 0,
@@ -256,7 +270,7 @@ export default inject(
             totalPrice,
           };
 
-          // console.log(JSON.stringify(params));
+          console.log(JSON.stringify(params));
           const resolve = await APIStore._post(`/v2/api/ship/reserve`, params);
 
           if (resolve) {
@@ -294,6 +308,7 @@ export default inject(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { DataStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout title={"예약하기"} showBackIcon={true} />
@@ -554,26 +569,56 @@ export default inject(
             {/** # >>>>> Step . 2 >>>>> END */}
 
             {/** # >>>>> Step . 3 >>>>> START */}
-            {this.state.step === 3 && this.state.boat?.type === 3 && (
-              <ShipType3PositionView
-                ref={this.ship}
-                data={this.state.boat}
-                count={this.state.personCount}
-              />
-            )}
-            {this.state.step === 3 && this.state.boat?.type === 5 && (
-              <ShipType5PositionView
-                ref={this.ship}
-                data={this.state.boat}
-                count={this.state.personCount}
-              />
-            )}
-            {this.state.step === 3 && this.state.boat?.type === 9 && (
-              <ShipType9PositionView
-                ref={this.ship}
-                data={this.state.boat}
-                count={this.state.personCount}
-              />
+            {this.state.step === 3 && (
+              <div className="container nopadding bg-grey bg-grey-sm">
+                <h5 className="bullet">위치선정</h5>
+                <p>
+                  <small>원하시는 위치를 선택하세요.</small>
+                </p>
+                <br />
+                {this.state.boat?.type === 3 && (
+                  <ShipType3PositionView
+                    ref={this.ship}
+                    data={this.state.boat}
+                    count={this.state.personCount}
+                  />
+                )}
+                {this.state.boat?.type === 5 && (
+                  <ShipType5PositionView
+                    ref={this.ship}
+                    data={this.state.boat}
+                    count={this.state.personCount}
+                  />
+                )}
+                {this.state.boat?.type === 9 && (
+                  <ShipType9PositionView
+                    ref={this.ship}
+                    data={this.state.boat}
+                    count={this.state.personCount}
+                  />
+                )}
+                {(this.state.boat?.rockData || []).length > 0 &&
+                  this.state.boat?.rockData.map((data, index) => (
+                    <SelectRockPointView
+                      key={index}
+                      data={data}
+                      used={this.state.boat.used || []}
+                      onClick={(what, id) => {
+                        if (what === "add") {
+                          this.setState({
+                            positions: this.state.positions.concat(id),
+                          });
+                        } else {
+                          const positions = DataStore.removeItemOfArrayByItem(
+                            this.state.positions,
+                            id
+                          );
+                          this.setState({ positions });
+                        }
+                      }}
+                    />
+                  ))}
+              </div>
             )}
             {/** # >>>>> Step . 3 >>>>> END */}
 

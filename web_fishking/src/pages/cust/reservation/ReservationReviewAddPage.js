@@ -1,3 +1,4 @@
+/* global $ */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
@@ -9,7 +10,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+  "ModalStore"
 )(
   observer(
     withRouter(
@@ -17,8 +19,12 @@ export default inject(
         constructor(props) {
           super(props);
           this.file = React.createRef(null);
+          this.tasteScore = React.createRef(null);
+          this.serviceScore = React.createRef(null);
+          this.cleanScore = React.createRef(null);
           this.state = {
-            uploaded: [],
+            content: "",
+            fileList: [],
           };
         }
         /********** ********** ********** ********** **********/
@@ -40,7 +46,6 @@ export default inject(
             ordersId,
           });
           this.setState({ ...resolve });
-          console.log(JSON.stringify(resolve));
 
           // # 별점 스크립트 로드
           PageStore.injectScript("/assets/cust/js/jquery.rateit.min.js", {
@@ -50,7 +55,7 @@ export default inject(
 
         uploadFile = async () => {
           const { ModalStore } = this.props;
-          if (this.state.uploaded.length >= 20) {
+          if (this.state.fileList.length >= 20) {
             ModalStore.openModal("Alert", {
               body: "최대 20장까지 가능합니다.",
             });
@@ -72,7 +77,7 @@ export default inject(
             );
 
             if (upload) {
-              this.setState({ uploaded: this.state.uploaded.concat(upload) });
+              this.setState({ fileList: this.state.fileList.concat(upload) });
             }
             this.file.current.value = null;
           }
@@ -80,12 +85,42 @@ export default inject(
 
         removeUploadFile = (fileId) => {
           const { DataStore } = this.props;
-          const uploaded = DataStore.removeItemOfArrayByKey(
-            this.state.uploaded,
+          const fileList = DataStore.removeItemOfArrayByKey(
+            this.state.fileList,
             "fileId",
             fileId
           );
-          this.setState({ uploaded });
+          this.setState({ fileList });
+        };
+
+        submit = async () => {
+          const tasteScore = $(this.tasteScore.current).rateit("value");
+          const serviceScore = $(this.serviceScore.current).rateit("value");
+          const cleanScore = $(this.cleanScore.current).rateit("value");
+          const { goodsId, content, fileList } = this.state;
+          const pFileList = [];
+          for (let file of fileList) {
+            pFileList.push(file["fileId"]);
+          }
+
+          const params = {
+            tasteScore,
+            serviceScore,
+            cleanScore,
+            goodsId,
+            content,
+            fileList: pFileList,
+          };
+          const { APIStore, ModalStore, PageStore } = this.props;
+          const resolve = await APIStore._post(`/v2/api/review`, params);
+          if (resolve) {
+            ModalStore.openModal("Alert", {
+              body: "등록되었습니다.",
+              onOk: () => {
+                PageStore.goBack();
+              },
+            });
+          }
         };
         /********** ********** ********** ********** **********/
         /** render */
@@ -117,6 +152,7 @@ export default inject(
                   <div className="col-12 text-center">
                     <h6 className="mb-2">낚시의 매력인 손맛 어떠셨나요? </h6>
                     <div
+                      ref={this.tasteScore}
                       className="rateit"
                       data-rateit-value="5"
                       data-rateit-ispreset="true"
@@ -126,13 +162,19 @@ export default inject(
                     ></div>
                     <h6 className="mt-3 mb-2">친절한 서비스를 받으셨나요?</h6>
                     <div
-                      className="rateit mt-1"
+                      ref={this.serviceScore}
+                      className="rateit"
+                      data-rateit-value="5"
+                      data-rateit-ispreset="true"
                       data-rateit-resetable="false"
+                      data-rateit-starwidth="16"
+                      data-rateit-starheight="16"
                     ></div>
                     <h6 className="mt-3 mb-2">
                       선실 내부와 화장실은 청결했나요?
                     </h6>
                     <div
+                      ref={this.cleanScore}
                       className="rateit"
                       data-rateit-value="5"
                       data-rateit-ispreset="true"
@@ -164,7 +206,10 @@ export default inject(
                         placeholder="업체명, 상품명, 어종, 이용일, 날씨 정보는 자동으로 입력됩니다.
 사진은 최대 50장까지 등록 가능합니다. (GIF, 동영상 불가)
 이용약관을 위반한 리뷰는 통보 없이 삭제 될 수 있습니다."
-                        id="inputMemo"
+                        value={this.state.content}
+                        onChange={(e) =>
+                          this.setState({ content: e.target.value })
+                        }
                       ></textarea>
                     </div>
                   </div>
@@ -192,7 +237,7 @@ export default inject(
                       </div>
                     </a>
                   </div>
-                  {this.state.uploaded.map((data, index) => (
+                  {this.state.fileList.map((data, index) => (
                     <div className="col-3" key={index}>
                       <div className="box-round-grey">
                         <a
@@ -249,7 +294,7 @@ export default inject(
                 <div className="row no-gutters">
                   <div className="col-12">
                     <a
-                      href="#none"
+                      onClick={this.submit}
                       className="btn btn-primary btn-lg btn-block"
                     >
                       리뷰 등록

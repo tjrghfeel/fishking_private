@@ -31,11 +31,6 @@ export default inject()(
         return (
           <React.Fragment>
             <div className="container nopadding bg-grey bg-grey-sm">
-              <h5 className="bullet">위치선정</h5>
-              <p>
-                <small>원하시는 선상의 위치를 선택하세요.</small>
-              </p>
-              <br />
               <div className="card-round-box-grey bg-blue">
                 <div className="text-center">
                   <div className="boatWap">

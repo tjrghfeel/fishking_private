@@ -37,7 +37,7 @@ export default inject(
         },
         {
           text: "실시간조황",
-          pathname: "",
+          pathname: "/main/company/boat?hasRealTimeVideo=true",
           img: "/assets/cust/img/svg/mymenu-live.svg",
           requiredLoggedIn: false,
         },

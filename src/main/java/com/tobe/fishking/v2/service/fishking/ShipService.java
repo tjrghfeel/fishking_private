@@ -71,6 +71,8 @@ public class ShipService {
     private final RealTimeVideoRepository realTimeVideoRepository;
     private final CompanyRepository companyRepository;
     private final CommonCodeRepository codeRepository;
+    private final PlacesRepository placesRepository;
+    private final PlacePointRepository placePointRepository;
 
 
     /*
@@ -207,6 +209,24 @@ public class ShipService {
             member.ifPresent(value -> response.setLiked(takeRepository.findByLinkIdAndMemberAndType(response.getId(), value, TakeType.ship) > 0));
         }
 
+        if (response.getFishingType().equals("seaRocks")) {
+            List<Map<String, Object>> rockData = new ArrayList<>();
+            List<Places> places = placesRepository.getPlacesByShipId(response.getId());
+            for (Places place : places) {
+                Map<String, Object> p = new HashMap<>();
+                p.put("name", place.getPlaceName());
+                p.put("averageDepth", place.getAverageDepth());
+                p.put("floorMaterial", place.getFloorMaterial());
+                p.put("tideTime", place.getTideTime());
+                p.put("introduce", place.getIntroduce());
+                p.put("address", place.getAddress());
+                p.put("latitude", place.getLocation().getLatitude());
+                p.put("longitude", place.getLocation().getLatitude());
+                rockData.add(p);
+            }
+            response.setRockData(rockData);
+        }
+
         List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(ship_id);
         if (videos.size() > 0) {
             RealTimeVideo video = videos.get(0);
@@ -267,17 +287,60 @@ public class ShipService {
     @Transactional
     public Map<String, Object> getGoodsDatePositions(Long goods_id, String date) {
         Goods goods = goodsRepository.getOne(goods_id);
+        if (goods.getShip().getFishingType().getKey().equals("seaRocks")) {
+            return getGoodsDatePositionsSeaRock(goods_id, date);
+        } else {
+            List<OrderDetails> orders = orderDetailsRepository.getByGoodsAndDate(goods, date);
+            List<String> availablePositions = new ArrayList<>();
+            List<String> usedPositions = new ArrayList<>();
+            availablePositions = Arrays.asList(goods.getShip().getPositions().split(",").clone());
+            for (OrderDetails details : orders) {
+                usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
+            }
+            Map<String, Object> result = new HashMap<>();
+            result.put("used", usedPositions);
+            result.put("total", availablePositions);
+            result.put("type", goods.getShip().getWeight());
+            result.put("rockData", null);
+            return result;
+        }
+    }
+
+    @Transactional
+    public Map<String, Object> getGoodsDatePositionsSeaRock(Long goods_id, String date) {
+        Map<String, Object> result = new HashMap<>();
+        Goods goods = goodsRepository.getOne(goods_id);
         List<OrderDetails> orders = orderDetailsRepository.getByGoodsAndDate(goods, date);
-        List<String> availablePositions = new ArrayList<>();
         List<String> usedPositions = new ArrayList<>();
-        availablePositions = Arrays.asList(goods.getShip().getPositions().split(",").clone());
+        List<Places> places = placesRepository.getPlacesByShip(goods.getShip());
+
+        List<Map<String, Object>> rockData = new ArrayList<>();
+        for (Places place : places) {
+            Map<String, Object> placeData = new HashMap<>();
+            placeData.put("name", place.getPlaceName());
+            placeData.put("address", place.getAddress());
+            placeData.put("latitude", place.getLocation().getLatitude());
+            placeData.put("longitude", place.getLocation().getLatitude());
+            List<PlacePoint> points = placePointRepository.getPlacePointByPlace(place);
+            List<Map<String, Object>> pointList = new ArrayList<>();
+            for (PlacePoint point : points) {
+                Map<String, Object> pointData = new HashMap<>();
+                pointData.put("latitude", point.getLocation().getLatitude());
+                pointData.put("longitude", point.getLocation().getLongitude());
+                pointData.put("id", point.getId());
+                pointList.add(pointData);
+            }
+            placeData.put("points", pointList);
+            rockData.add(placeData);
+        }
+
         for (OrderDetails details : orders) {
             usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
         }
-        Map<String, Object> result = new HashMap<>();
         result.put("used", usedPositions);
-        result.put("total", availablePositions);
-        result.put("type", goods.getShip().getWeight());
+        result.put("rockData", rockData);
+        result.put("total", null);
+        result.put("type", null);
         return result;
     }
 

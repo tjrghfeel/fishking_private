@@ -42,6 +42,7 @@ export default inject(
           } = this.props;
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           this.setState(resolve);
+          console.log(JSON.stringify(resolve));
 
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {
@@ -108,6 +109,14 @@ export default inject(
             ),
           });
           marker.setMap(this.map);
+          if ((resolve.rockData || []).length > 0) {
+            for (let rock of resolve.rockData) {
+              const m = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(rock.latitude, rock.longitude),
+              });
+              m.setMap(this.map);
+            }
+          }
         };
         requestLike = async () => {
           const { APIStore } = this.props;
