@@ -56,6 +56,21 @@ export default inject(
         const { PageStore } = this.props;
         PageStore.push(`/story/diary/detail/${item.id}`);
       };
+
+      onClickLike = async (item) => {
+        const { APIStore } = this.props;
+        const resolve = await APIStore._post(`/v2/api/loveto`, {
+          takeType: "fishingDiary",
+          linkId: item.id,
+        });
+        console.log(
+          JSON.stringify({
+            takeType: "fishingDiary",
+            linkId: item.id,
+          })
+        );
+        console.log(JSON.stringify(resolve));
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -69,6 +84,10 @@ export default inject(
                   key={index}
                   data={data}
                   onClick={this.onClick}
+                  onClickLike={this.onClickLike}
+                  onClickProfile={(item) =>
+                    PageStore.push(`/member/profile/${item.memberId}`)
+                  }
                 />
               ))}
             {(!PageStore.state.list || PageStore.state.list.length === 0) && (

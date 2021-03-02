@@ -545,6 +545,13 @@ public class FishingDiaryService {
         Boolean isMine = null;
         if(member==fishingDiary.getMember()){isMine=true;}
         else{isMine=false;}
+        /*fish species의 common code 추가*/
+        String codeNameString = fishingDiary.getFishingSpeciesName();
+        String[] codeNameArray = codeNameString.split(", ");
+        CodeGroup codeGroup = codeGroupRepo.findById(80L)
+                .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+80L));
+        ArrayList<String> codeList = commonCodeRepo.findCodeByCodeNameAndCodeGroup(codeNameArray, codeGroup);
+
 
         /*글의 조회수 증가*/
         fishingDiary.getStatus().plusViewCount();
@@ -560,6 +567,7 @@ public class FishingDiaryService {
                 .title(fishingDiary.getTitle())
                 .createdDate(fishingDiary.getCreatedDate())
                 .fishingSpecies(fishingDiary.getFishingSpeciesName())
+                .fishingSpeciesCodeList(codeList)
                 .fishingDate(fishingDiary.getFishingDate())
                 .tide(fishingDiary.getFishingTideTime())
                 .fishingLure(fishingDiary.getFishingLure())

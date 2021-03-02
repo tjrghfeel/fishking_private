@@ -57,6 +57,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "   if(m.is_active=true, d.title, '탈퇴한 회원의 글입니다.') title, " +
             "   s.fishing_type fishingType, " +
             "   if(m.is_active=true, LEFT(d.contents,50), '탈퇴한 회원의 글입니다.') contents, " +
+            "   d.file_publish fishingDiaryType, " +
             "   (select case when exists (select l.id from loveto as l " +
             "       where l.created_by=:member and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
             "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
@@ -115,6 +116,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             "   d.like_count likeCount, " +
             "   d.comment_count commentCount, " +
             "   d.share_count scrapCount, " +
+            "   d.file_publish fishingDiaryType, " +
 //            "   (select count(l.id) from loveto l where (l.take_type = 2 or l.take_type = 3) and l.link_id = d.id) likeCount, " +
 //            "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
 //            "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
@@ -170,6 +172,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.like_count likeCount, " +
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
+                    "   d.file_publish fishingDiaryType, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
                     "       group by f2.pid order by f2.file_no)) fileNameList, " +
@@ -185,7 +188,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     " group by d.id " +
                     "order by createdDate desc ",
             countQuery = "select d.id " +
-                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m, fishing_diary_scrap_members as sm  " +
                     "where sm.scrap_members_id = :memberId " +
                     "   and sm.fishing_diary_id = d.id " +
                     "   and d.fishing_diary_member_id = m.id " +
@@ -217,6 +220,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   d.file_publish fishingDiaryType, " +
                     "   (select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
                     "   (select case when exists (select l.id from loveto as l " +
@@ -301,6 +305,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   d.file_publish fishingDiaryType, " +
                     "   (select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
                     "   (select case when exists (select l.id from loveto as l " +
@@ -380,6 +385,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',d.title), '탈퇴한 회원의 글입니다.') title, " +
                     "   d.fishing_type fishingType, " +
                     "   if(m.is_active=true, if(d.is_deleted=true,'삭제된 게시글입니다',LEFT(d.contents,50)), '탈퇴한 회원의 글입니다.') contents, " +
+                    "   d.file_publish fishingDiaryType, " +
                     "   (select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
                     "   (select case when exists (select l.id from loveto as l " +

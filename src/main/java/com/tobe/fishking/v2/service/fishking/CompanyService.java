@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.fishing.Company;
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;

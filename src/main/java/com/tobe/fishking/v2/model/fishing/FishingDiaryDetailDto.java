@@ -21,6 +21,7 @@ public class FishingDiaryDetailDto {
     private String title;
     private LocalDateTime createdDate;//!!!!!데이터 타입 확인.
     private String fishingSpecies;
+    private ArrayList<String> fishingSpeciesCodeList;
     private String fishingDate;
     private String tide;
     private String fishingLure;

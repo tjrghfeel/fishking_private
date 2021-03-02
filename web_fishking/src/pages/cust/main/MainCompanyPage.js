@@ -64,6 +64,12 @@ export default inject(
         if ((qp.species || null) !== null) {
           species = [qp.species];
         }
+        let hasRealTimeVideo = "";
+        if ((qp.hasRealTimeVideo || null) !== null) {
+          hasRealTimeVideo = qp.hasRealTimeVideo;
+          if (qp.hasRealTimeVideo === "true")
+            this.setState({ filterLiveActive: true });
+        }
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
@@ -74,7 +80,7 @@ export default inject(
           fishingType: type,
           page: 0,
           size: 20,
-          hasRealTimeVideo: "",
+          hasRealTimeVideo,
           fishingDate: fishingDate,
           sido: null,
           sigungu: null,
@@ -272,7 +278,7 @@ export default inject(
                   onClick: (selected) => {
                     this.setState({ filterLiveActive: !selected });
                     PageStore.setState({
-                      hasRealTimeVideo: selected ? "" : "1",
+                      hasRealTimeVideo: selected ? "" : "true",
                     });
                     this.loadPageData(0);
                   },

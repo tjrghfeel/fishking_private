@@ -171,6 +171,7 @@ public class FishingDiaryController {
             "- scrapCount : Integer / 스크랩 수 \n" +
             "- title : String / 글 제목\n" +
             "- contents : String / 게시글 내용(일부만 출력)\n" +
+            "- fishingDiaryType : String / 글이 조항일지인지, 유저조행기인지\n" +
             "- hasLiveCam : Boolean / 실시간캠 여부\n" +
             "- fileList : String[] / 이미지 파일 download url 리스트")
     @GetMapping("/fishingDiary/list/{page}")
@@ -264,6 +265,7 @@ public class FishingDiaryController {
             "- title : String / 제목\n" +
             "- createdDate : LocalDateTime / 작성일\n" +
             "- fishingSpecies : String / 어종 목록\n" +
+            "- fishingSpeciesCodeList : ArrayList<String> / 어종 코드 배열\n" +
             "- fishingDate : String / 낚시일\n" +
             "- tide : String / 물때\n" +
             "- fishingLure : String / 미끼 목록 \n" +

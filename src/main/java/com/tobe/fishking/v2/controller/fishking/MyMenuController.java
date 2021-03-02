@@ -69,6 +69,7 @@ public class MyMenuController {
             "   scrapCount : 스크랩 수 \n" +
             "   title : 글 제목\n" +
             "   contents : 게시글 내용(일부만 출력)\n" +
+            "   fishingDiaryType : String / 글이 조항일지인지, 유저조행기인지\n" +
             "   fileList : 이미지 파일 download url 리스트")
     @GetMapping("/myFishingPostList/{page}")
     public Page<FishingDiaryDtoForPage> getMyFishingDiary(
@@ -119,6 +120,7 @@ public class MyMenuController {
             "   scrapCount : 스크랩 수 \n" +
             "   title : 글 제목\n" +
             "   contents : 게시글 내용(일부만 출력)\n" +
+            "   fishingDiaryType : String / 글이 조항일지인지, 유저조행기인지\n" +
             "   fileList : 이미지 파일 download url 리스트")
     @GetMapping("/myFishingDiaryScrap/{page}")
     public Page<FishingDiaryDtoForPage> getMyFishingDiaryScrap(

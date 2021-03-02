@@ -47,6 +47,8 @@ public interface FishingDiaryDtoForPage {
     //public Member createdBy;
     //public Member modifiedBy;
     LocalDateTime getCreatedDate();
+    @Value("#{@mapperUtility.transEnumFilePublish(target.fishingDiaryType)}")
+    String getFishingDiaryType();
 
     Integer getLikeCount();
     Integer getCommentCount();
