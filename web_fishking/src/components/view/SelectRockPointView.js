@@ -50,7 +50,7 @@ export default inject()(
           });
           marker.setMap(this.map);
           const infoWindow = new kakao.maps.InfoWindow({
-            content: `<span>선택됨</span>`,
+            content: `선택됨`,
             removable: false,
           });
           const { onClick } = this.props;
