@@ -12,15 +12,29 @@ export default inject("DataStore")(
     forwardRef(({ DataStore: { getCodes }, id, onSelected }, ref) => {
       const [list, setList] = useState([]); // 어종 목록
       const [selected, setSelected] = useState([]); // 선택 목록
-      const onInit = useCallback(() => {
-        setSelected([]);
-        const elements = document.querySelectorAll(
-          "#".concat(id).concat(' input[type="checkbox"]')
-        );
-        for (let element of elements) {
-          element.checked = false;
-        }
-      }, [setSelected]);
+      const onInit = useCallback(
+        async (defaultSelected = []) => {
+          if (list.length == 0) {
+            await load();
+          }
+          setSelected(defaultSelected);
+          const elements = document.querySelectorAll(
+            "#".concat(id).concat(' input[type="checkbox"]')
+          );
+          for (let element of elements) {
+            if (
+              defaultSelected.includes(
+                element.getAttribute("data-code") || null
+              )
+            ) {
+              element.checked = true;
+            } else {
+              element.checked = false;
+            }
+          }
+        },
+        [setSelected]
+      );
       const onChange = useCallback(
         (checked, item) => {
           if (checked) {
@@ -48,12 +62,15 @@ export default inject("DataStore")(
         [setSelected, selected]
       );
       useImperativeHandle(ref, () => ({ onInit }));
+      const load = useCallback(async () => {
+        const codes = await getCodes("80", 3);
+        setList(codes);
+      }, [setList, getCodes]);
       useEffect(() => {
         (async () => {
-          const codes = await getCodes("80", 3);
-          setList(codes);
+          await load();
         })();
-      }, [getCodes, setList]);
+      }, [load]);
       return (
         <div
           className="modal fade modal-full"
@@ -98,6 +115,7 @@ export default inject("DataStore")(
                                     type="checkbox"
                                     className="add-contrast"
                                     data-role="collar"
+                                    data-code={item.code}
                                     onChange={(e) =>
                                       onChange(e.target.checked, item)
                                     }

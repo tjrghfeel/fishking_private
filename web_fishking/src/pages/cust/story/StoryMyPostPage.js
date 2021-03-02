@@ -12,6 +12,10 @@ export default inject("PageStore")(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        const { PageStore } = this.props;
+      }
+
       onClick = (item) => {
         const { PageStore } = this.props;
         PageStore.push(`/story/diary/detail/${item.id}`);
@@ -20,7 +24,10 @@ export default inject("PageStore")(
         const { PageStore } = this.props;
         PageStore.push(`/member/profile/${item.memberId}`);
       };
-      onClickComment = (item) => {};
+      onClickComment = (item) => {
+        const { PageStore } = this.props;
+        PageStore.push(`/story/diary/comment/${item.id}`);
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/

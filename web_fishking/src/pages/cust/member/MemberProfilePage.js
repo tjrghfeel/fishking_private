@@ -164,91 +164,95 @@ export default inject(
               <nav className="nav nav-pills nav-sel nav-circle nav-justified mt-5">
                 {this.state.isMe && (
                   <React.Fragment>
-                    <a
-                      className="nav-link"
-                      onClick={() => PageStore.push(`/set/profile`)}
-                    >
-                      <figure>
-                        <img
-                          src="/assets/cust/img/svg/icon-profile.svg"
-                          alt=""
-                        />
-                      </figure>
-                      <span>프로필 관리</span>
-                    </a>
-                    <a
-                      className="nav-link"
-                      onClick={() => PageStore.push(`/story/add`)}
-                    >
-                      <figure>
-                        <img
-                          src="/assets/cust/img/svg/mymenu-write.svg"
-                          alt=""
-                        />
-                      </figure>
-                      <span>글쓰기</span>
-                    </a>
-                    <a
-                      className="nav-link"
-                      onClick={() => PageStore.push(`/story/my/post`)}
-                    >
-                      <figure>
-                        <img src="/assets/cust/img/svg/icon-post.svg" alt="" />
-                      </figure>
-                      <span>내 글 관리</span>
-                    </a>
-                    <a
-                      className="nav-link"
-                      onClick={() => PageStore.push(`/zzim/boat`)}
-                    >
-                      <figure>
-                        <img src="/assets/cust/img/svg/icon-heart.svg" alt="" />
-                      </figure>
-                      <span>찜 목록</span>
-                    </a>
+                    {/*<a*/}
+                    {/*  className="nav-link"*/}
+                    {/*  onClick={() => PageStore.push(`/set/profile`)}*/}
+                    {/*>*/}
+                    {/*  <figure>*/}
+                    {/*    <img*/}
+                    {/*      src="/assets/cust/img/svg/icon-profile.svg"*/}
+                    {/*      alt=""*/}
+                    {/*    />*/}
+                    {/*  </figure>*/}
+                    {/*  <span>프로필 관리</span>*/}
+                    {/*</a>*/}
+                    {/*<a*/}
+                    {/*  className="nav-link"*/}
+                    {/*  onClick={() => PageStore.push(`/story/add`)}*/}
+                    {/*>*/}
+                    {/*  <figure>*/}
+                    {/*    <img*/}
+                    {/*      src="/assets/cust/img/svg/mymenu-write.svg"*/}
+                    {/*      alt=""*/}
+                    {/*    />*/}
+                    {/*  </figure>*/}
+                    {/*  <span>글쓰기</span>*/}
+                    {/*</a>*/}
+                    {/*<a*/}
+                    {/*  className="nav-link"*/}
+                    {/*  onClick={() => PageStore.push(`/story/my/post`)}*/}
+                    {/*>*/}
+                    {/*  <figure>*/}
+                    {/*    <img src="/assets/cust/img/svg/icon-post.svg" alt="" />*/}
+                    {/*  </figure>*/}
+                    {/*  <span>내 글 관리</span>*/}
+                    {/*</a>*/}
+                    {/*<a*/}
+                    {/*  className="nav-link"*/}
+                    {/*  onClick={() => PageStore.push(`/zzim/boat`)}*/}
+                    {/*>*/}
+                    {/*  <figure>*/}
+                    {/*    <img src="/assets/cust/img/svg/icon-heart.svg" alt="" />*/}
+                    {/*  </figure>*/}
+                    {/*  <span>찜 목록</span>*/}
+                    {/*</a>*/}
                   </React.Fragment>
                 )}
                 {!this.state.isMe && (
                   <React.Fragment>
                     {this.state.isCompany && (
-                      <a className="nav-link">
-                        <figure>
-                          <img
-                            src="/assets/cust/img/svg/icon-home.svg"
-                            alt=""
-                          />
-                        </figure>
-                        <span>업체 바로가기</span>
-                      </a>
+                      <React.Fragment>
+                        {/*<a className="nav-link">*/}
+                        {/*    <figure>*/}
+                        {/*        <img*/}
+                        {/*            src="/assets/cust/img/svg/icon-home.svg"*/}
+                        {/*            alt=""*/}
+                        {/*        />*/}
+                        {/*    </figure>*/}
+                        {/*    <span>업체 바로가기</span>*/}
+                        {/*</a>*/}
+                      </React.Fragment>
                     )}
-                    <a
-                      className="nav-link"
-                      onClick={() => PageStore.push(`/search/all`)}
-                    >
-                      <figure>
-                        <img
-                          src="/assets/cust/img/svg/icon-search-b.svg"
-                          alt=""
-                        />
-                      </figure>
-                      <span>검색하기</span>
-                    </a>
-                    <a className="nav-link">
-                      <figure>
-                        <img src="/assets/cust/img/svg/icon-post.svg" alt="" />
-                      </figure>
-                      <span>작성 글 보기</span>
-                    </a>
+                    {/*<a*/}
+                    {/*  className="nav-link"*/}
+                    {/*  onClick={() => PageStore.push(`/search/all`)}*/}
+                    {/*>*/}
+                    {/*  <figure>*/}
+                    {/*    <img*/}
+                    {/*      src="/assets/cust/img/svg/icon-search-b.svg"*/}
+                    {/*      alt=""*/}
+                    {/*    />*/}
+                    {/*  </figure>*/}
+                    {/*  <span>검색하기</span>*/}
+                    {/*</a>*/}
+                    {/*<a className="nav-link">*/}
+                    {/*  <figure>*/}
+                    {/*    <img src="/assets/cust/img/svg/icon-post.svg" alt="" />*/}
+                    {/*  </figure>*/}
+                    {/*  <span>작성 글 보기</span>*/}
+                    {/*</a>*/}
                     {this.state.isCompany && (
-                      <a className="nav-link">
-                        <figure>
-                          <img
-                            src="/assets/cust/img/svg/icon-reserv.svg"
-                            alt=""
-                          />
-                        </figure>
-                        <span>예약하기</span>
-                      </a>
+                      <React.Fragment>
+                        {/*<a className="nav-link">*/}
+                        {/*    <figure>*/}
+                        {/*        <img*/}
+                        {/*            src="/assets/cust/img/svg/icon-reserv.svg"*/}
+                        {/*            alt=""*/}
+                        {/*        />*/}
+                        {/*    </figure>*/}
+                        {/*    <span>예약하기</span>*/}
+                        {/*</a>*/}
+                      </React.Fragment>
                     )}
                   </React.Fragment>
                 )}
