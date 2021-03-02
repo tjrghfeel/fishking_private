@@ -12,6 +12,8 @@ import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.AlertService;
+import com.tobe.fishking.v2.service.common.PopularService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,17 +26,15 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class FishkingScheduler {
-    @Autowired
-    CouponMemberRepository couponMemberRepository;
-    @Autowired
-    AlertService alertService;
-    @Autowired
-    AlertsRepository alertsRepository;
-    @Autowired
-    MemberService memberService;
-    @Autowired
-    MemberRepository memberRepository;
+
+    private final CouponMemberRepository couponMemberRepository;
+    private final AlertService alertService;
+    private final AlertsRepository alertsRepository;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final PopularService popularService;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
@@ -150,8 +150,8 @@ public class FishkingScheduler {
         alertsRepository.save(alerts);
     }
 
-    @Scheduled(cron = " 0 0 0/1 * * *")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void updatePopularKeyword() {
-
+        popularService.updatePopularKeyword();
     }
 }

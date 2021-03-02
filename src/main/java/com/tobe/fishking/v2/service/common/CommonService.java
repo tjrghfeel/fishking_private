@@ -290,7 +290,6 @@ public class CommonService {
     public Map<String, Object> searchTotal(String keyword) {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(0, 4, Sort.by("createdDate"));
-
         result.put("keyword", keyword);
         result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
         result.put("blog", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
@@ -350,10 +349,10 @@ public class CommonService {
     }
 
     @Transactional
-    public void addSearchKeys(String token, String keyword) {
+    public void addSearchKeys(String token, String keyword, SearchPublish publish) {
         Optional<Member> optMem = memberRepo.findBySessionToken(token);
         optMem.ifPresent(member -> popularRepo.save(
-                new Popular(SearchPublish.TOTAL, keyword, member)
+                new Popular(publish, keyword, member)
         ));
         Optional<SearchKeyword> searchKeyword = searchKeywordRepository.getSearchKeywordBySearchKeyword(keyword);
         if (searchKeyword.isPresent()) {
@@ -366,5 +365,4 @@ public class CommonService {
             );
         }
     }
-
 }

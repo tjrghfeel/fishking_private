@@ -12,6 +12,7 @@ import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.model.common.FilesDTO;
+import com.tobe.fishking.v2.model.common.PopKeywordResponse;
 import com.tobe.fishking.v2.model.common.PopularDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
@@ -49,7 +50,29 @@ public class PopularService {
 
     /* 인기검색어 */
     @Transactional
-    public List<String> getPopularKeyword() {
-        return searchKeywordRepository.getPopular().stream().map(SearchKeyword::getSearchKeyword).collect(Collectors.toList());
+    public List<PopKeywordResponse> getPopularKeyword() {
+//        return searchKeywordRepository.getPopular().stream().map(SearchKeyword::getSearchKeyword).collect(Collectors.toList());
+        return searchKeywordRepository.getPopularKeywordResponses();
+    }
+
+    @Transactional
+    public void updatePopularKeyword() {
+        List<SearchKeyword> populars = searchKeywordRepository.getPopular();
+        List<SearchKeyword> before = searchKeywordRepository.getPopularKeywords();
+        for (SearchKeyword keyword : populars) {
+            if (keyword.getPopular()) {
+                keyword.isNotNew();
+            } else {
+                keyword.isNew();
+            }
+        }
+        for (SearchKeyword keyword : before) {
+            keyword.isNotPopular();
+        }
+        for (SearchKeyword keyword : populars) {
+            keyword.isPopular();
+        }
+        searchKeywordRepository.saveAll(populars);
+        searchKeywordRepository.saveAll(before);
     }
 }

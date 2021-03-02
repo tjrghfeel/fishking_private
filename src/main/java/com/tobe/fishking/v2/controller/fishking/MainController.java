@@ -103,7 +103,7 @@ public class MainController {
 
     @ApiOperation(value = "통합 검색 인기검색어, 어복황제 추천 AD", notes = "인기검색어, 추천AD" +
             "\n { " +
-            "\n popularKeyword: [ keyword, keyword, .... , keyword ]  // 인덱스 순서로 1 2 3 .. 순입니다. String 리스트입니다." +
+            "\n popularKeyword: [ {keyword: 키워드 1, isNew: 신규여부}, ... , {keyword: 키워드 10, isNew: 신규여부} ]  // 인덱스 순서로 1 2 3 .. 순입니다." +
             "\n ad: [{ " +
             "\n id: 상품 id" +
             "\n shipImageFileUrl: 선박 이미지 주소 " +
@@ -128,6 +128,7 @@ public class MainController {
             "\n fishSpeciesCount: 대상 어종 수" +
             "\n lowPrice: 상품 중 가장 낮은 가격" +
             "\n }, ... ] 상품 광고의 하트는 빼주세요" +
+            "\n 키워드 리스트가 변경되었습니다. new 표시를 위해 String list 에서 Object list 로 변경되었습니다." +
             "")
     @GetMapping("/search/keywords")
     public Map<String, Object> getSearchPageData(@RequestHeader("Authorization") String token) {
@@ -189,7 +190,7 @@ public class MainController {
     @GetMapping("/search/all")
     public Map<String, Object> getSearchResultAll(@RequestHeader("Authorization") String token,
                                                  @RequestParam String keyword) {
-        commonService.addSearchKeys(token, keyword);
+        commonService.addSearchKeys(token, keyword, SearchPublish.TOTAL);
         return commonService.searchTotal(keyword);
     }
 
@@ -246,7 +247,7 @@ public class MainController {
                                                    @RequestParam(defaultValue = "distance") String order,
                                                    @PathVariable Integer page) {
         if (type == null) {
-            commonService.addSearchKeys(token, keyword);
+            commonService.addSearchKeys(token, keyword, SearchPublish.COMPANY);
             return commonService.searchShip(keyword, page, order);
         } else {
             return commonService.searchShipWithType(keyword, page, order, type);
@@ -296,7 +297,7 @@ public class MainController {
                                                    @RequestParam String keyword,
                                                    @RequestParam(defaultValue = "") String order,
                                                    @PathVariable Integer page) {
-        commonService.addSearchKeys(token, keyword);
+        commonService.addSearchKeys(token, keyword, SearchPublish.TV);
         return commonService.searchLive(keyword, page, order);
     }
 
@@ -331,7 +332,7 @@ public class MainController {
                                                   @RequestParam String keyword,
                                                   @RequestParam(defaultValue = "") String order,
                                                   @PathVariable Integer page) {
-        commonService.addSearchKeys(token, keyword);
+        commonService.addSearchKeys(token, keyword, SearchPublish.FISHINGDIARY);
         return commonService.searchDiary(keyword, page, order);
     }
 
@@ -366,7 +367,7 @@ public class MainController {
                                                   @RequestParam String keyword,
                                                   @RequestParam(defaultValue = "") String order,
                                                   @PathVariable Integer page) {
-        commonService.addSearchKeys(token, keyword);
+        commonService.addSearchKeys(token, keyword, SearchPublish.FISHINGDIARY2);
         return commonService.searchBlog(keyword, page, order);
     }
 
@@ -502,4 +503,5 @@ public class MainController {
         result = commonService.getMainScreenData();
         return result;
     }
+
 }
