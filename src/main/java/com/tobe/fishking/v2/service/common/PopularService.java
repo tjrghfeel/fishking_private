@@ -43,7 +43,7 @@ public class PopularService {
     /* 인기검색어 */
     @Transactional
     public List<String> getPopularKeywordString() {
-        return searchKeywordRepository.getPopular().stream().map(SearchKeyword::getSearchKeyword).collect(Collectors.toList());
+        return searchKeywordRepository.getPopularKeywordResponses().stream().map(PopKeywordResponse::getKeyword).collect(Collectors.toList());
     }
 
     @Transactional

@@ -24,7 +24,7 @@ public interface SearchKeywordRepository extends BaseRepository<SearchKeyword, L
     @Query("select k from SearchKeyword k where k.searchKeyword = :keyword")
     Optional<SearchKeyword> getSearchKeywordBySearchKeyword(String keyword);
 
-    @Query("select k.searchKeyword as keyword, k.newPopular as isNew from SearchKeyword k where k.popular = true")
+    @Query("select k.searchKeyword as keyword, k.newPopular as isNew from SearchKeyword k where k.popular = true order by k.count desc")
     List<PopKeywordResponse> getPopularKeywordResponses();
 
     @Query("select k from SearchKeyword k where k.popular = true")
