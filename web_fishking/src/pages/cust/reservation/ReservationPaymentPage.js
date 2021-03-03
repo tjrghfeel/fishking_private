@@ -16,7 +16,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+  "ModalStore"
 )(
   observer(
     class extends React.Component {
@@ -202,19 +203,20 @@ export default inject(
           });
         } else if (this.state.step === 3) {
           // >>>>> Step-3 :: validate
+          const { ModalStore } = this.props;
           const positions = this.state.positions || [];
           // # 선상 위치 선택인 경우
           if (this.state.boat?.type !== null) {
             const selected = this.ship.current?.selected;
             if (selected.length === 0) {
-              alert("위치를 선택해주세요.");
+              ModalStore.openModal("Alert", { body: "위치를 선택해주세요." });
               return;
             }
             for (let s of selected) {
               positions.push(new Number(s));
             }
           } else if (this.state.positions.length === 0) {
-            alert("위치를 선택해주세요.");
+            ModalStore.openModal("Alert", { body: "위치를 선택해주세요." });
             return;
           }
           // >>>>> Step-4 :: prepare

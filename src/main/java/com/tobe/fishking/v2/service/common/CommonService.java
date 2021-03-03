@@ -2,18 +2,19 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.*;
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
-import com.tobe.fishking.v2.enums.fishing.SeaDirection;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
+import com.tobe.fishking.v2.model.CommonCodeDTO;
+import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
-import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.*;
-import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -30,21 +31,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
-import com.tobe.fishking.v2.model.CommonCodeDTO;
-import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -349,10 +342,10 @@ public class CommonService {
     }
 
     @Transactional
-    public void addSearchKeys(String token, String keyword) {
+    public void addSearchKeys(String token, String keyword, SearchPublish publish) {
         Optional<Member> optMem = memberRepo.findBySessionToken(token);
         optMem.ifPresent(member -> popularRepo.save(
-                new Popular(SearchPublish.TOTAL, keyword, member)
+                new Popular(publish, keyword, member)
         ));
         Optional<SearchKeyword> searchKeyword = searchKeywordRepository.getSearchKeywordBySearchKeyword(keyword);
         if (searchKeyword.isPresent()) {
@@ -365,5 +358,4 @@ public class CommonService {
             );
         }
     }
-
 }

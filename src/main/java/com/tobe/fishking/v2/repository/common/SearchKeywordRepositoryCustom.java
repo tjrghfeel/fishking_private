@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface SearchKeywordRepositoryCustom {
     List<SearchKeyword> getPopular();
+    SearchKeyword getKeywordByString(String keyword);
 }

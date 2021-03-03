@@ -16,7 +16,7 @@ export default inject("DataStore")(
         likeCount = 0,
         commentCount = 0,
         scrapCount = 0,
-        isLikeTo = false,
+        isLikeTo,
         fishingType = 0,
       },
       data,

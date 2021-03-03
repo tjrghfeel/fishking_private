@@ -420,8 +420,8 @@ public class ShipService {
             rideShipRepository.save(rideShip);
         }
 
-        GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(reserveDTO.getGoodsId(), reserveDTO.getDate());
-        goodsFishingDateRepository.save(goodsFishingDate);
+//        GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(reserveDTO.getGoodsId(), reserveDTO.getDate());
+//        goodsFishingDateRepository.save(goodsFishingDate);
 
         return new OrderResponse(order.getId(),
                 orderNumber,

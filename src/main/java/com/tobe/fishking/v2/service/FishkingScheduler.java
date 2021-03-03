@@ -6,35 +6,32 @@ import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.AddAlertDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
-import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.AlertService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tobe.fishking.v2.service.common.PopularService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class FishkingScheduler {
-    @Autowired
-    CouponMemberRepository couponMemberRepository;
-    @Autowired
-    AlertService alertService;
-    @Autowired
-    AlertsRepository alertsRepository;
-    @Autowired
-    MemberService memberService;
-    @Autowired
-    MemberRepository memberRepository;
+
+    private final CouponMemberRepository couponMemberRepository;
+    private final AlertService alertService;
+    private final AlertsRepository alertsRepository;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final PopularService popularService;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
@@ -148,5 +145,10 @@ public class FishkingScheduler {
         memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
         alerts.sent();
         alertsRepository.save(alerts);
+    }
+
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void updatePopularKeyword() {
+        popularService.updatePopularKeyword();
     }
 }

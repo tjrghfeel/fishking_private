@@ -64,8 +64,9 @@ export default inject(
         }
       };
       onClickComment = (item) => {
-        const { onClickComment } = this.props;
+        const { onClickComment, PageStore } = this.props;
         if (onClickComment) {
+          PageStore.storeState();
           onClickComment(item);
         }
       };
