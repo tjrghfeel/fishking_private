@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrdersRepository extends JpaRepository<Orders, Long> {
+public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRepositoryCustom {
 
     /*member가 한 예약 건수를 주문진행상태에 따라 검색*/
     int countByOrderStatusAndCreatedBy(OrderStatus orderStatus, Member member);
