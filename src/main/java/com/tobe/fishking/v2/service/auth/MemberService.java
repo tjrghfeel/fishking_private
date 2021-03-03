@@ -1,7 +1,10 @@
 package com.tobe.fishking.v2.service.auth;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -41,10 +44,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -53,6 +53,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -982,6 +983,110 @@ public class MemberService {
             return sessionToken;*/
         }
 
+    }
+
+    /*apple 로그인*/
+    @Transactional
+    public SnsLoginResponseDto snsLoginForApple(String idToken) throws ParseException, JsonProcessingException, NoSuchPaddingException,
+            InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException {
+        System.out.println("idToken : "+idToken);
+        SnsLoginResponseDto resultDto = new SnsLoginResponseDto();
+        resultDto.setSnsType("apple");
+
+        SignedJWT signedJWT = SignedJWT.parse(idToken);
+        ReadOnlyJWTClaimsSet getPayload = signedJWT.getJWTClaimsSet();
+        ObjectMapper objectMapper = new ObjectMapper();
+        AppleLoginPayLoadDto payload = objectMapper.readValue(getPayload.toJSONObject().toJSONString(), AppleLoginPayLoadDto.class);
+        System.out.println("payload : "+payload.toString());
+        String usrId = payload.getSub();
+        System.out.println("sub : "+usrId);
+
+        /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
+        Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.apple);
+        /*이미 가입된 회원일 경우, 로그인 처리. */
+        if(member !=null && member.getIsCertified() == true){
+            resultDto.setResultType("login");
+
+            /*세션토큰이 이미 존재하면 해당세션토큰반환*/
+            if(member.getSessionToken()!=null){
+                String encodingToken = AES.aesEncode(member.getSessionToken(),env.getProperty("encrypKey.key"));
+                resultDto.setSessionToken(encodingToken);
+            }
+            /*세션토큰이 존재하지 않으면 새로생성한 세션토큰반환.*/
+            else{
+                String rawToken = member.getUid() + LocalDateTime.now();
+                String sessionToken = encoder.encode(rawToken);
+
+                String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+                member.setSessionToken(sessionToken);
+                resultDto.setSessionToken(encodingToken);
+            }
+            return resultDto;
+        }
+        else if(member != null && member.getIsCertified() == false){
+            memberRepository.delete(member);
+
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                    .password(usrId)//임시값. 수정필요.
+                    .email(usrId)//임시값. 수정필요.
+//                    .gender(gender)
+                    .roles(Role.member)
+                    .profileImage(noProfileImage.getExtraValue1())
+                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                    .isActive(false)
+                    .isCertified(false)
+                    .snsType(SNSType.apple)
+                    .snsId(usrId)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
+            return resultDto;
+        }
+        /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
+         * - 회원가입페이지로 라다이렉트.
+         * - sns api에서 넘겨준 sns연동id를 반환. */
+        else{
+            resultDto.setResultType("signUp");
+
+            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+
+            Member newMember = Member.builder()
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+                    .memberName(null)//임시값. 수정필요.
+//                    .nickName(usrNickName)
+                .password(usrId)//임시값. 수정필요.
+                .email(usrId)//임시값. 수정필요.
+//                    .gender(gender)
+                .roles(Role.member)
+                .profileImage(noProfileImage.getExtraValue1())
+                .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                .isActive(false)
+                .isCertified(false)
+                .snsType(SNSType.apple)
+                .snsId(usrId)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                .build();
+            newMember = memberRepository.save(newMember);
+
+            resultDto.setMemberId(newMember.getId());
+            return resultDto;
+        }
     }
 
     /*000-0000-0000형식의 전화번호를 앞세자리와 나머지번호부분으로 나누어 반환하는 메소드. */

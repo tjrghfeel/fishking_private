@@ -7,7 +7,8 @@ public enum SNSType   implements IEnumModel {
 
     kakao("카카오톡"),
     naver("네이버"),
-    facebook("페이스북");
+    facebook("페이스북"),
+    apple("애플");
 
 
     private String value;

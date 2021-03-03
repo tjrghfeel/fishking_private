@@ -11,6 +11,7 @@ import org.jcodec.api.JCodecException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -142,6 +143,16 @@ public class HelloController {
                 "");
 
         return "";
+    }
+
+    @GetMapping("/apple")
+    public String apple(ModelMap model){
+        System.out.println("in apple()");
+        model.addAttribute("client_id", "com.fishkingapp.nativeFishkingService");
+        model.addAttribute("redirect_uri", "https://fishkingapp.com/v2/api/appleAuthCode");
+        model.addAttribute("nonce", "20B20D-0S8-1K8");
+
+        return "noName2";
     }
 
 }

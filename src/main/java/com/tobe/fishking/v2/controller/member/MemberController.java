@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.member;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.BufferRecycler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
@@ -31,16 +32,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.*;
 import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -360,6 +359,37 @@ public class MemberController {
             response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
+    }
+
+    /*애플 로그인 받는 메소드*/
+    @ApiOperation(value = "애플 로그인 리다이렉트 메소드",notes = "")
+    @PostMapping("/appleAuthCode")
+    public void getAppleAuthCode(
+            AppleAuthCodeDto request,
+            HttpServletResponse response
+    ) throws NoSuchAlgorithmException, InvalidKeyException, IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, ParseException, IllegalBlockSizeException {
+        System.out.println("in /v2/api/appleAuthCode");
+        SnsLoginResponseDto dto = memberService.snsLoginForApple(request.getId_token());
+
+        if(dto.getResultType().equals("signUp")){
+            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+        }
+        else{
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
+        }
+        return;
+
+
+//        String code = dto.getCode();
+//        String client_secret = appleService.getAppleClientSecret(dto.getId_token());
+//
+//        logger.debug("================================");
+//        logger.debug("id_token ‣ " + dto.getId_token());
+//        logger.debug("payload ‣ " + appleService.getPayload(dto.getId_token()));
+//        logger.debug("client_secret ‣ " + client_secret);
+//        logger.debug("================================");
+//
+//        return appleService.requestCodeValidations(client_secret, code, null);
     }
 
     /*사용자 프로필 정보 페이지 조회

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class FishingDiaryDetailDto {
     private Long authorId;
     private Long fishingDiaryId;
+    private String fishingDiaryType;
     private Long shipId;
     private String nickName;
     private String profileImage;

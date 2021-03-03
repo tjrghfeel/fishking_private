@@ -500,10 +500,17 @@ public class FishingDiaryService {
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
         else if(fishingDiary.getIsDeleted() == true){ throw new RuntimeException("삭제된 게시물입니다.");}
 
-        /*닉네임부분 설정.*/
+        /*닉네임, 글 종류 설정.*/
         String nickName = null;
-        if(fishingDiary.getFilePublish()==FilePublish.fishingDiary){nickName = fishingDiary.getShip().getShipName();}
-        else if(fishingDiary.getFilePublish()==FilePublish.fishingBlog){ nickName = fishingDiary.getMember().getNickName();}
+        String fishingDiaryType = null;
+        if(fishingDiary.getFilePublish()==FilePublish.fishingDiary){
+            nickName = fishingDiary.getShip().getShipName();
+            fishingDiaryType = FilePublish.fishingDiary.getValue();
+        }
+        else if(fishingDiary.getFilePublish()==FilePublish.fishingBlog){
+            nickName = fishingDiary.getMember().getNickName();
+            fishingDiaryType = FilePublish.fishingBlog.getValue();
+        }
         /*fishingType 설정*/
         String fishingType = null;
         if(fishingDiary.getFishingType()!=null){
@@ -559,6 +566,7 @@ public class FishingDiaryService {
         result = FishingDiaryDetailDto.builder()
                 .authorId(fishingDiary.getMember().getId())
                 .fishingDiaryId(fishingDiary.getId())
+                .fishingDiaryType(fishingDiaryType)
                 .shipId(shipId)
                 .nickName(nickName)
                 .profileImage(path + fishingDiary.getMember().getProfileImage())
