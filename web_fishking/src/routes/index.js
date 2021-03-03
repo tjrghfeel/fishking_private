@@ -5,6 +5,8 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Components from "../components";
 
 import CustRoute from "./cust";
+import SmartSailRoute from "./smartsail";
+import SmartFishingRoute from "./smartfishing";
 import PoliceRoute from "./police";
 import CommonRoute from "./common";
 import BlankPage from "../pages/BlankPage";
@@ -126,6 +128,12 @@ export default inject("PageStore")(
 
           {/** 어복황제 */}
           <Route path={`/cust`} component={CustRoute} />
+
+          {/** 승선 */}
+          <Route path={`/smartsail`} component={SmartSailRoute} />
+
+          {/** 출조 */}
+          <Route path={`/smartfishing`} component={SmartFishingRoute} />
 
           {/** 해경 */}
           <Route path={`/police`} component={PoliceRoute} />
