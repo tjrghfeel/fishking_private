@@ -130,7 +130,7 @@ public class MainController {
     @GetMapping("/search/keywords")
     public Map<String, Object> getSearchPageData(@RequestHeader("Authorization") String token) {
         Map<String, Object> result = new HashMap<>();
-        result.put("popularKeyword", popularService.getPopularKeywordString());
+//        result.put("popularKeyword", popularService.getPopularKeywordString());
         result.put("keywords", popularService.getPopularKeyword());
         result.put("ad", commonService.getAdList(AdType.SEARCH_AD));
         return result;
