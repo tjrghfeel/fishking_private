@@ -40,6 +40,9 @@ import StoryTab from "./layout/StoryTab";
 import StoryDetailTab from "./layout/StoryDetailTab";
 import SearchNavigationLayout from "./layout/SearchNavigationLayout";
 import SearchTab from "./layout/SearchTab";
+import PoliceMainTab from "./layout/PoliceMainTab";
+import SmartSailMainTab from "./layout/SmartSailMainTab";
+import SmartFishingMainTab from "./layout/SmartFishingMainTab";
 
 /********** ********** ********** ********** **********/
 /** ITEM */
@@ -132,6 +135,9 @@ export default {
     StoryDetailTab,
     SearchNavigationLayout,
     SearchTab,
+    PoliceMainTab,
+    SmartSailMainTab,
+    SmartFishingMainTab,
   },
   /********** ITEM **********/
   ITEM: {},

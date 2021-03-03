@@ -95,53 +95,58 @@ export default inject(
                 </small>
               </h5>
               <ul className="list-search">
-                {this.state.popularKeyword &&
-                  this.state.popularKeyword.length > 0 &&
-                  this.state.popularKeyword.slice(0, 5).map((data, index) => (
+                {this.state.keywords &&
+                  this.state.keywords.length > 0 &&
+                  this.state.keywords.slice(0, 5).map((data, index) => (
                     <li key={index + 1}>
                       <a
                         onClick={() => {
-                          PageStore.push(`/search/keyword/all?keyword=${data}`);
+                          PageStore.push(
+                            `/search/keyword/all?keyword=${data["keyword"]}`
+                          );
                         }}
                       >
                         <strong>{Intl.NumberFormat().format(index + 1)}</strong>{" "}
-                        {data}
+                        {data["keyword"]}
+                        {data["isNew"] && (
+                          <span className="new float-right">NEW</span>
+                        )}
                       </a>
                     </li>
                   ))}
               </ul>
-              {this.state.popularKeyword &&
-                this.state.popularKeyword.length > 5 && (
-                  <React.Fragment>
-                    <div className="toggle-content">
-                      <ul className="list-search">
-                        {this.state.popularKeyword
-                          .splice(5, 10)
-                          .map((data, index) => (
-                            <li key={index}>
-                              <a>
-                                <strong>
-                                  {Intl.NumberFormat().format(index + 6)}
-                                </strong>{" "}
-                                {data}
-                              </a>
-                            </li>
-                          ))}
-                      </ul>
-                    </div>
-                    <div className="togglewrap">
-                      <a
-                        className="toggle-btn"
-                        onClick={() => {
-                          $(".toggle-content").slideToggle("slow");
-                          $(".toggle-btn").toggleClass("active");
-                          return false;
-                          $(".toggle-content").toggleClass("expanded");
-                        }}
-                      ></a>
-                    </div>
-                  </React.Fragment>
-                )}
+              {this.state.keywords && this.state.keywords.length > 5 && (
+                <React.Fragment>
+                  <div className="toggle-content">
+                    <ul className="list-search">
+                      {this.state.keywords.splice(5, 10).map((data, index) => (
+                        <li key={index}>
+                          <a>
+                            <strong>
+                              {Intl.NumberFormat().format(index + 6)}
+                            </strong>{" "}
+                            {data["keyword"]}
+                            {data["isNew"] && (
+                              <span className="new float-right">NEW</span>
+                            )}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="togglewrap">
+                    <a
+                      className="toggle-btn"
+                      onClick={() => {
+                        $(".toggle-content").slideToggle("slow");
+                        $(".toggle-btn").toggleClass("active");
+                        return false;
+                        $(".toggle-content").toggleClass("expanded");
+                      }}
+                    ></a>
+                  </div>
+                </React.Fragment>
+              )}
             </div>
 
             {/** 어복황제 추천 */}
