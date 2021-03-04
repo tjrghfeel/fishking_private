@@ -225,7 +225,8 @@ public class CommonController {
             "   notice : 공지사항에 파일업로드\n" +
             "   fishingBlog : 조행기에 파일업로드\n" +
             "   fishingDiary : 조행일지에 파일업로드\n" +
-            "   comment : 댓글에 파일업로드\n" +
+            "   comment : 조항일지, 유저조행기 댓글에 파일업로드\n" +
+            "   commonComment : 공통댓글(이벤트 등에 대한 댓글)에 파일업로드\n" +
             "   fishkingTv : 어복TV에 파일업로드\n" +
             "   companyRequest : 업체요청에 파일업로드\n" +
             "   profile : 프로필에 파일업로드\n" +

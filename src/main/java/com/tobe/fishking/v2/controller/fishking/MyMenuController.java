@@ -272,7 +272,8 @@ public class MyMenuController {
             "- observerName : String / 관측소명\n" +
             "- isAlerted : Boolean / 현재 관측소에 대해 알림설정이 되어있는지 여부\n" +
             "- date : String / 오늘 날짜\n" +
-            "- weather : String / 현재 날씨\n" +
+            "- weather : ArrayList<String> / 현재 날씨. 문자열배열형태로서, 날씨를 나타내는 문자열과 날씨 이미지url이 순서대로 나온다. 데이터가없을시 null." +
+            "ex) [구름많음, localhost:8083/files/common/weather_clouds.svg]\n " +
             "- tideList : 조위 최고, 최저 객체 리스트. 객체의 필드들은 아래와 같다. \n" +
             "\t\t\t     ㄴ dateTime: 날짜 \n" +
             "\t\t\t     ㄴ level: 조위 \n" +
@@ -299,7 +300,7 @@ public class MyMenuController {
     }
 
     /*조위 알림 추가*/
-    @ApiOperation(value = "오늘의 물때 알림 추가",notes = "" +
+    @ApiOperation(value = "조위 알림 추가",notes = "" +
             "요청 필드 ) \n" +
             "- highTideAlert : Integer[] / 만조 알람 시간이 들어있는 배열. ex) 만조 두시간 전 알림이면 -2, 만조 한시간 후 알림이면 1, 만조 알림이면 0\n" +
             "- lowTideAlert : Integer[] / 간조 알림 시간이 들어있는 배열. highTideAlert와 동일한 방식.\n" +
@@ -325,7 +326,10 @@ public class MyMenuController {
             "- observerName : String / 관측소 명\n" +
             "- isAlerted : Boolean / 현재 관측소에 대해 알림이 설정되어있는지 여부\n" +
             "- date : String / 날짜\n" +
-            "- weather : String / 날씨. 현재를 기준으로 3일후부터 10일까지의 데이터만존재. 없을시 null. 3~7일까지는 오전,오후날씨. 이후로는 하루평균날씨.\n " +
+            "- weather : ArrayList<String> / 날씨. 문자열배열형태로서, 날씨를 나타내는 문자열과 날씨 이미지url이 순서대로 나온다. " +
+            "현재를 기준으로 3일후부터 10일까지의 데이터만존재. 없을시 null. 3~7일까지는 오전,오후날씨. 이후로는 하루평균날씨.\n" +
+            "ex) 오전/오후 둘다 오는 경우 : [구름많음, localhost:8083/files/common/weather_clouds.svg, 구름많음, localhost:8083/files/common/weather_clouds.svg]\n" +
+            "   하루평균만 오는 경우 : [구름많음, localhost:8083/files/common/weather_clouds.svg]\n " +
             "- tideList : 조위 최고, 최저 객체 리스트. 객체의 필드들은 아래와 같다. \n" +
             "\t\t\t     ㄴ dateTime: 날짜 \n" +
             "\t\t\t     ㄴ level: 조위 \n" +
@@ -361,22 +365,22 @@ public class MyMenuController {
         return myMenuService.addTideAlert(dto.getObserverId(),dto.getTide(),dto.getDay(),dto.getTime(),token);
     }
 
-    /*실시간 조항*/
-    @ApiOperation(value = "실시간 조항",notes = "" +
-            "- 응답 필드 ) \n" +
-            "   takeId : 찜id \n" +
-            "   name : 찜한 상품의 이름\n" +
-            "   fishingType : 선상/갯바위인지\n" +
-            "   address : 선상 주소\n" +
-            "   distance : 거리\n" +
-            "   isLive : 실시간영상 진행 여부\n" +
-            "   price : 가격\n" +
-            "   downloadThumbnailUrl : 선박 이미지 url\n" +
-            "   ")
-    @GetMapping(value = "/liveShipList/{page}")
-    public Page<LiveShipDtoForPage> getFishingTypeFishTakeList(
-            @PathVariable("page") int page
-    ) throws ResourceNotFoundException {
-        return myMenuService.getLiveShipList(page);
-    }
+//    /*실시간 조항*/
+//    @ApiOperation(value = "실시간 조항",notes = "" +
+//            "- 응답 필드 ) \n" +
+//            "   takeId : 찜id \n" +
+//            "   name : 찜한 상품의 이름\n" +
+//            "   fishingType : 선상/갯바위인지\n" +
+//            "   address : 선상 주소\n" +
+//            "   distance : 거리\n" +
+//            "   isLive : 실시간영상 진행 여부\n" +
+//            "   price : 가격\n" +
+//            "   downloadThumbnailUrl : 선박 이미지 url\n" +
+//            "   ")
+//    @GetMapping(value = "/liveShipList/{page}")
+//    public Page<LiveShipDtoForPage> getFishingTypeFishTakeList(
+//            @PathVariable("page") int page
+//    ) throws ResourceNotFoundException {
+//        return myMenuService.getLiveShipList(page);
+//    }
 }

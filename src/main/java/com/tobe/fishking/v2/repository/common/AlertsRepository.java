@@ -59,10 +59,11 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
     )
     int countByMember(@Param("memberId") Long memberId);
 
-    List<Alerts> findAllByReceiverAndAlertTypeAndPidAndIsSent(Member receiver, AlertType alertType, Long pid, Boolean isSent);
+    List<Alerts> findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
+            LocalDateTime alertTime, Member receiver, AlertType alertType, Long pid, Boolean isSent);
 
-    Boolean existsByReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
-            Member receiver, Long pid, EntityType entityType, AlertType alertType, Boolean isSent);
+    Boolean existsByAlertTimeGreaterThanAndReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
+            LocalDateTime alertTime, Member receiver, Long pid, EntityType entityType, AlertType alertType, Boolean isSent);
 
     List<Alerts> findAllByAlertTypeAndIsSentAndAlertTime(AlertType alertType, Boolean isSent, LocalDateTime alertTime);
 }

@@ -13,11 +13,16 @@ public interface PostManageDtoForPage {
     @Value("#{@mapperUtility.transEnumQuestionType(target.questionType)}")
     String getQuestionType();
     String getTitle();
+//    String getContent();
     @Value("#{@mapperUtility.decodeString(target.authorName)}")
     String getAuthorName();
     Long getAuthorId();
+//    String getReturnType();
+//    String getReturnNoAddress();
+//    String getCreatedAt();
     Boolean getIsSecret();
     String getCreatedDate();
     String getModifiedDate();
-
+//    Boolean getTargetRole();
+    Boolean getIsReplied();
 }

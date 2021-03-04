@@ -18,6 +18,7 @@ public class CommentDtoForPage {
     private String nickName;
     private LocalDateTime writeTime;
     private String content;
+    private Long fileId;
     private String fileUrl;
     private Integer likeCount;
     private Boolean isLikeTo;
@@ -28,11 +29,11 @@ public class CommentDtoForPage {
 
     public CommentDtoForPage(
             Long authorId, Long commentId, String profileImage, String nickName, LocalDateTime writeTime,
-            String content, String fileUrl, Integer likeCount, Boolean isLikeTo, Boolean isChildComment, Long parentId,
+            String content, String fileUrl, Long fileId, Integer likeCount, Boolean isLikeTo, Boolean isChildComment, Long parentId,
             Boolean isMine
     ){
         this.authorId=authorId; this.commentId=commentId; this.profileImage= profileImage; this.nickName=nickName;
-        this.writeTime=writeTime; this.content=content; this.fileUrl=fileUrl; this.likeCount=likeCount;
+        this.writeTime=writeTime; this.content=content; this.fileUrl=fileUrl; this.fileId=fileId; this.likeCount=likeCount;
         this.isLikeTo=isLikeTo; this.isChildComment=isChildComment; this.parentId=parentId; this.isMine=isMine;
     }
 }

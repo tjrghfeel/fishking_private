@@ -156,8 +156,12 @@ public class CommentService {
         CommentPageDto result = null;
         Integer commentCount =0;
         String title = null;
-        Member member = memberRepository.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Long memberId = null;
+        if(token !=null) {
+            Member member = memberRepository.findBySessionToken(token)
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
+            memberId = member.getId();
+        }
         if(dependentType==DependentType.event){
             Event event = eventRepository.findById(linkId)
                     .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+linkId));
@@ -166,13 +170,13 @@ public class CommentService {
         String path = env.getProperty("file.downloadUrl");
 
         //댓글목록 가져옴.
-        List<CommentDtoForPage> parentCommentList = commentRepository.getCommentList(linkId, dependentType,0L,member.getId(),path);
+        List<CommentDtoForPage> parentCommentList = commentRepository.getCommentList(linkId, dependentType,0L,memberId,path);
         commentCount += parentCommentList.size();
         //각 댓글들에 대해, 대댓글 목록 가져와 저장.
         for(int i=0; i<parentCommentList.size(); i++){
             CommentDtoForPage parentComment = parentCommentList.get(i);
             List<CommentDtoForPage> childCommentList = commentRepository.getCommentList(
-                    linkId,dependentType,parentComment.getCommentId(),member.getId(),path);
+                    linkId,dependentType,parentComment.getCommentId(),memberId,path);
             commentCount += childCommentList.size();
             parentComment.setChildList(childCommentList);
         }
