@@ -8,6 +8,7 @@ export default inject()(
         profileImage,
         nickName,
         writeTime,
+        fileUrl,
         content,
         likeCount = 0,
         isChildComment = false,
@@ -24,7 +25,7 @@ export default inject()(
           <div className={"row-story-col top" + (isChildComment ? " re" : "")}>
             <div className="col">
               {isChildComment && <span className="icon-re"></span>}
-              <a href="profile-user.html">
+              <a>
                 <figure>
                   <img src={profileImage} alt="" />
                 </figure>
@@ -36,6 +37,13 @@ export default inject()(
               <br />
               {content}
               <br />
+              {fileUrl && (
+                <img
+                  src={fileUrl}
+                  className="d-block w-100 photo-img mt-2 mb-2"
+                  alt=""
+                />
+              )}
               <small className="grey">
                 좋아요 {Intl.NumberFormat().format(likeCount)}개 ·{" "}
                 {!isChildComment && (
