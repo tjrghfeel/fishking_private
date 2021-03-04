@@ -50,6 +50,13 @@ export default inject(
         const { NativeStore } = this.props;
         NativeStore.clipboardCopy(this.state.address);
       };
+      findWay = () => {
+        const { NativeStore } = this.props;
+        NativeStore.openMap({
+          lat: this.state.lat,
+          lng: this.state.lon,
+        });
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -62,20 +69,17 @@ export default inject(
               <div className="mapwrap">
                 <div ref={this.container} id="map"></div>
               </div>
-
-              <div className="modal show modal-full-btm sm" id="infoModal">
-                <div className="modal-dialog">
-                  <div className="modal-content">
-                    <div className="modal-body">
-                      <div className="row no-gutters d-flex align-items-center">
-                        <div className="col-8" />
-                        <span className="text-info">주소</span>
-                        <br />
-                        {this.state.address}
-                      </div>
-                      <div className="col-4 text-right" />
+              <div className="map-infowrap">
+                <div className="container nopadding">
+                  <div className="row no-gutters d-flex align-items-center">
+                    <div className="col-8 text-left">
+                      <span className="text-info">주소</span>
+                      <br />
+                      {this.state.address}
+                    </div>
+                    <div className="col-4 text-right">
                       <nav className="nav nav-pills nav-icon float-right">
-                        <a className="nav-link">
+                        <a className="nav-link" onClick={this.findWay}>
                           <figure>
                             <img
                               src="/assets/cust/img/svg/icon-map.svg"

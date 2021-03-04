@@ -32,7 +32,6 @@ export default inject(
       loadPageData = async () => {
         const { APIStore, PageStore } = this.props;
         const resolve = await APIStore._get("/v2/api/main");
-        console.log(JSON.stringify(resolve));
         this.setState(resolve);
 
         PageStore.reloadSwipe();
@@ -298,7 +297,7 @@ export default inject(
                 </div>
               )}
 
-              {/** 지역별 조황*/}
+              {/** 어종별 조황*/}
               {this.state.species && (
                 <React.Fragment>
                   <h5>어종별 조황</h5>

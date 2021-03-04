@@ -19,7 +19,11 @@ export default inject(
           super(props);
           this.file = React.createRef(null);
           this.text = React.createRef(null);
-          this.state = {};
+          this.state = {
+            file: null,
+            parent: null,
+            isEdit: false,
+          };
         }
         /********** ********** ********** ********** **********/
         /** function */
@@ -40,7 +44,7 @@ export default inject(
             dependentType: "event",
             linkId: eventId,
           });
-          this.setState(resolve);
+          this.setState({ ...resolve });
 
           if (toScrollEnd) {
             setTimeout(() => {
@@ -49,40 +53,34 @@ export default inject(
           }
         };
         onClickReply = async (item) => {
-          const { ModalStore } = this.props;
-          ModalStore.openModal("Input", {
-            onOk: async (text) => {
-              if (text !== "") {
-                const {
-                  APIStore,
-                  match: {
-                    params: { eventId },
-                  },
-                } = this.props;
-                const resolve = await APIStore._post(`/v2/api/comment`, {
-                  dependentType: "event",
-                  linkId: eventId,
-                  parentId: item.commentId,
-                  content: text,
-                  fileId: null,
-                });
-                if (resolve) {
-                  this.loadPageData();
-                }
-              }
-            },
-          });
+          this.setState({ parent: item });
         };
         onClickMore = async (item) => {
           const { ModalStore } = this.props;
           ModalStore.openModal("Select", {
-            selectOptions: ["삭제하기", "닫기"],
+            selectOptions: ["수정하기", "삭제하기", "닫기"],
             onSelect: ({ index }) => this.onCallbackMore(item, index),
           });
         };
         onCallbackMore = async (item, index) => {
           const { APIStore } = this.props;
           if (index === 0) {
+            // 수정하기
+            console.log(JSON.stringify(item));
+            this.text.current.value = item.content;
+            this.setState({
+              isEdit: true,
+              parent: { authorId: item.parentId },
+            });
+            if (item.fileUrl !== null) {
+              this.setState({
+                file: {
+                  downloadUrl: item.fileUrl,
+                  fileId: item.fileId,
+                },
+              });
+            }
+          } else if (index === 1) {
             // 삭제하기
             const resolve = await APIStore._delete("/v2/api/comment", {
               commentId: item.commentId,
@@ -108,6 +106,29 @@ export default inject(
             if (resolve) this.loadPageData();
           }
         };
+        uploadImage = async () => {
+          if (this.file.current?.files.length === 0) return;
+
+          const file = this.file.current?.files[0];
+
+          const form = new FormData();
+          form.append("file", file);
+          form.append("filePublish", "comment");
+
+          const { APIStore, ModalStore } = this.props;
+          const upload = await APIStore._post_upload(
+            `/v2/api/filePreUpload`,
+            form
+          );
+          if (upload) {
+            this.setState({ file: upload });
+          } else {
+            ModalStore.openModal("Alert", {
+              body: "업로드 중 에러가 발생하였습니다.",
+            });
+          }
+          this.file.current.value = null;
+        };
         onSubmit = async () => {
           const text = this.text.current?.value;
           if (text === "") return;
@@ -118,15 +139,39 @@ export default inject(
               params: { eventId },
             },
           } = this.props;
-          const resolve = await APIStore._post(`/v2/api/comment`, {
-            dependentType: "event",
-            linkId: eventId,
-            parentId: 0,
-            content: text,
-            fileId: null,
-          });
+          console.log(
+            JSON.stringify({
+              dependentType: "event",
+              linkId: eventId,
+              parentId: this.state.parent?.authorId || 0,
+              content: text,
+              fileId: this.state.file?.fileId || null,
+            })
+          );
+
+          let resolve = false;
+          if (this.state.isEdit) {
+            // 수정
+            resolve = await APIStore._put(`/v2/api/comment`, {
+              dependentType: "event",
+              linkId: eventId,
+              parentId: this.state.parent?.authorId || 0,
+              content: text,
+              fileId: this.state.file?.fileId || null,
+            });
+          } else {
+            // 등록
+            resolve = await APIStore._post(`/v2/api/comment`, {
+              dependentType: "event",
+              linkId: eventId,
+              parentId: this.state.parent?.authorId || 0,
+              content: text,
+              fileId: this.state.file?.fileId || null,
+            });
+          }
           if (resolve) {
             this.text.current.value = "";
+            this.setState({ file: null, isEdit: false, parent: null });
             this.loadPageData(true);
           }
         };
@@ -186,27 +231,65 @@ export default inject(
               ))}
 
               {/** Tab Menu */}
+              {this.state.file !== null && (
+                <div className="tab_barwrap_photo">
+                  <span className="photo-wrap">
+                    <a
+                      onClick={() => this.setState({ file: null })}
+                      className="del"
+                    >
+                      <img src="/assets/cust/img/svg/icon_close_white.svg" />
+                    </a>
+                    <img
+                      src={this.state.file.downloadUrl}
+                      className="photo-img"
+                      alt=""
+                    />
+                  </span>
+                </div>
+              )}
               <div className="tab_barwrap fixed-bottom">
+                {this.state.parent !== null && (
+                  <h6>
+                    <div className="container nopadding">
+                      {this.state.isEdit && "댓글 수정중 ..."}
+                      {!this.state.isEdit && (
+                        <React.Fragment>
+                          {this.state.parent.nickName}님께 답글 남기는 중...{" "}
+                        </React.Fragment>
+                      )}
+                      <a
+                        onClick={() =>
+                          this.setState({ parent: null, isEdit: false })
+                        }
+                        className="del"
+                      >
+                        <img src="/assets/cust/img/svg/icon_close_grey.svg" />
+                      </a>
+                    </div>
+                  </h6>
+                )}
                 <div className="container nopadding">
                   <form className="form-line" style={{ marginTop: "1px" }}>
                     <div className="form-group row">
                       <div className="col-10">
-                        {/*<input*/}
-                        {/*  ref={this.file}*/}
-                        {/*  type="file"*/}
-                        {/*  accept="image/*"*/}
-                        {/*  style={{ display: "none" }}*/}
-                        {/*/>*/}
-                        {/*<a*/}
-                        {/*  className="float-photo"*/}
-                        {/*  onClick={() => this.file.current?.click()}*/}
-                        {/*>*/}
-                        {/*  <img*/}
-                        {/*    src="/assets/cust/img/svg/icon-photo.svg"*/}
-                        {/*    alt="사진"*/}
-                        {/*    className="icon-sm"*/}
-                        {/*  />*/}
-                        {/*</a>*/}
+                        <input
+                          ref={this.file}
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          onChange={this.uploadImage}
+                        />
+                        <a
+                          className="float-photo"
+                          onClick={() => this.file.current?.click()}
+                        >
+                          <img
+                            src="/assets/cust/img/svg/icon-photo.svg"
+                            alt="사진"
+                            className="icon-sm"
+                          />
+                        </a>
                         <input
                           ref={this.text}
                           type="text"

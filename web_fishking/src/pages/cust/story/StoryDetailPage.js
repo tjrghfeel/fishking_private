@@ -32,12 +32,11 @@ export default inject(
             },
             APIStore,
           } = this.props;
-          if (category === "diary") category = "fishingDiary";
-          else if (category === "user") category = "fishingBlog";
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
-          console.log(JSON.stringify(resolve));
+          if (resolve.fishingDiaryType === '조행기') category = "fishingBlog";
+          else category = "fishingDiary";
 
           this.setState({ ...resolve, category });
         };
