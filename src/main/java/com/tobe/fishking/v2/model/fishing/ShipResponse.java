@@ -74,9 +74,9 @@ public class ShipResponse {
         this.cleanByReview = ship.getCleanByReview();
         this.reviewCount = ship.getReviewCount();
         this.goods = ship.getGoods().stream().filter(Goods::getIsUse).map(GoodsResponse::new).collect(Collectors.toSet());
-        this.services = ship.getServices().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
-        this.facilities = ship.getFacilities().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
-        this.devices = ship.getDevices().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
+        this.services = ship.getServices().stream().filter(CommonCode::getIsActive).map(CommonCode::getCodeName).collect(Collectors.toList());
+        this.facilities = ship.getFacilities().stream().filter(CommonCode::getIsActive).map(CommonCode::getCodeName).collect(Collectors.toList());
+        this.devices = ship.getDevices().stream().filter(CommonCode::getIsActive).map(CommonCode::getCodeName).collect(Collectors.toList());
         this.ownerWordingTitle = ship.getOwnerWordingTitle();
         this.ownerWording = ship.getOwnerWording();
         this.noticeTitle = ship.getNoticeTitle();

@@ -41,7 +41,8 @@ public class CommonCodeRepositoryImpl implements CommonCodeRepositoryCustom {
                             ), aliasCount)
                 ))
                 .from(commonCode)
-                .where(commonCode.codeGroup.id.eq(80L))
+                .where(commonCode.codeGroup.id.eq(80L), commonCode.isActive.eq(true))
+                .orderBy(commonCode.orderBy.asc())
                 .fetchResults();
         return results.getResults();
     }
