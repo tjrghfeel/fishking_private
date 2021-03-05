@@ -266,7 +266,7 @@ public class MemberController {
 //    }
 
     /*nice 본인인증 성공시*/
-    @PostMapping("/niceSuccess")
+    @RequestMapping("/niceSuccess")
     @ResponseBody
     public void getNiceSuccess(
             HttpServletRequest request
@@ -357,7 +357,7 @@ public class MemberController {
 
     }
     /*nice 인증 실패시*/
-    @PostMapping("/niceFail")
+    @RequestMapping("/niceFail")
     public void getNiceFail(
             HttpServletRequest request
     ){
