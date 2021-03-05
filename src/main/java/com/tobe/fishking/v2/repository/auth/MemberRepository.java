@@ -37,7 +37,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     /*이메일 중복체크*/
     boolean existsByEmail(String email);
-    boolean existsByUidAndIsActive(String uid, Boolean isActive);
+    boolean existsByUid(String uid);
     /*닉네임 중복체크*/
     boolean existsByNickName(String nickName);
     /*휴대폰 번호 중복체크*/

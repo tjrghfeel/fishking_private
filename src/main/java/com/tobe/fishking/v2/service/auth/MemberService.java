@@ -206,7 +206,7 @@ public class MemberService {
             return 2;
         }
         else{
-            if(memberRepository.existsByUidAndIsActive(uid,true)){return 1;}
+            if(memberRepository.existsByUid(uid)){return 1;}
             else return 0;
         }
     }
@@ -226,13 +226,13 @@ public class MemberService {
         Member member = null;
         System.out.println("================\n test >>> in insertMemberInfo()  \n================");
         /*uid 중복 확인*/
-        if(checkUidDup(signUpDto.getEmail())==1){
-            throw new EmailDupException("이메일이 중복됩니다");
-        }
+        int checkUid = checkUidDup(signUpDto.getEmail());
+        if(checkUid==1){throw new EmailDupException("이메일이 중복됩니다");      }
+        else if(checkUid==2){throw new RuntimeException("이메일 형식이 맞지 않습니다.");}
         /*닉네임 중복 확인*/
-        if(checkNickNameDup(signUpDto.getNickName())==1){
-            throw new RuntimeException("닉네임이 중복됩니다");
-        }
+        int checkNickName = checkNickNameDup(signUpDto.getNickName());
+        if(checkNickName==1){ throw new RuntimeException("닉네임이 중복됩니다"); }
+        else if(checkNickName==2){throw new RuntimeException("닉네임은 4자 이상 10자 이하이어야 합니다.");}
 
         /*회원 정보 저장*/
         /*비밀번호 자바 암호화*/
@@ -292,6 +292,9 @@ public class MemberService {
 
         String areaCode = phnum.substring(0,3);
         String localNumber = phnum.substring(3);
+        int checkPhnumDup = memberRepository.existsByAreaCodeAndLocalNumber(areaCode,localNumber);
+        if(checkPhnumDup>0){throw new RuntimeException("해당 번호로 이미 가입한 회원이 존재합니다.");}
+
         Integer genderInt = Integer.parseInt(inputGender);
         Gender gender = (genderInt == 0)? Gender.girl : Gender.boy;
 
