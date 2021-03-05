@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,7 @@ public class ShipController {
 
     private final ShipService shipService;
     private final MemberService memberService;
+    private final CommonService commonService;
 
     @ApiOperation(value = "배 리스트", notes = "배 리스트. 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다.")
     @GetMapping("/ships/{page}")
@@ -329,6 +331,13 @@ public class ShipController {
             @PathVariable Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
         return shipService.getReviewByShip(ship_id, page, size);
+    }
+
+    @GetMapping("/ship/ad")
+    public List<Map<String, Object>> getShipAd(@RequestParam String fishingType,
+                                               @RequestParam(required = false) Double latitude,
+                                               @RequestParam(required = false) Double longitude) {
+        return commonService.shipAdList(fishingType);
     }
 
     @ApiOperation(value = "거리계산")

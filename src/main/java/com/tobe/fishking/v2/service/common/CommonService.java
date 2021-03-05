@@ -15,6 +15,7 @@ import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
 import com.tobe.fishking.v2.model.common.*;
+import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -357,5 +358,17 @@ public class CommonService {
                     new SearchKeyword(keyword)
             );
         }
+    }
+
+    @Transactional
+    public Map<String, Object> shipAdList(String fishingType) {
+        Map<String, Object> result = new HashMap<>();
+        List<SmallShipResponse> smallShipResponses = new ArrayList<>();
+        if (fishingType.equals("ship")) {
+
+        } else {
+
+        }
+        return result;
     }
 }
