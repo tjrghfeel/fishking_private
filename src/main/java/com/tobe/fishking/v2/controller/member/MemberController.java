@@ -19,6 +19,7 @@ import org.springframework.boot.json.JsonParser;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -128,48 +129,205 @@ public class MemberController {
             "- pw : String / 필수 / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
             "- nickName : String / 필수 / 닉네임. 4~10자. \n" +
             "" )
-    @PostMapping("/signUp/infoAndPassRequest")
-    @ResponseBody
-    public void insertMemberInfo(@RequestBody SignUpDto dto, HttpServletResponse response) throws ResourceNotFoundException, IOException {
+    @GetMapping("/signUp/infoAndPassRequest")
+    public String insertMemberInfo(
+//            @RequestBody SignUpDto dto,
+            @RequestParam(value = "memberId",required = false) Long Id,
+            @RequestParam("email") String email,
+            @RequestParam("pw") String pw,
+            @RequestParam("nickName") String nickName,
+            ModelMap model,
+            HttpSession session
+    ) throws ResourceNotFoundException, IOException {
+        SignUpDto dto = SignUpDto.builder()
+                .memberId(Id)
+                .email(email)
+                .pw(pw)
+                .nickName(nickName)
+                .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
-        /*pass인증 요청.*/
-        String url = "https://id.passlogin.com/oauth2/authorize?" +
-                "response_type=code" +
-                "&client_id=uWHHuitm5at159jXPlc5" +
-                "&redirect_uri=https://www.fishkingapp.com/v2/api/passAuthCode" +
-                "&state="+memberId;
-        String method = "POST";
-        Map<String,String> parameter = new HashMap<String, String>();
+        /*nice 본인인증 호출. */
+        NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
 
-        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"");
+        String sSiteCode = "BT950";			// NICE로부터 부여받은 사이트 코드
+        String sSitePassword = "bG72MjEPkvjy";		// NICE로부터 부여받은 사이트 패스워드
+
+        String sRequestNumber = memberId.toString();        	// 요청 번호, 이는 성공/실패후에 같은 값으로 되돌려주게 되므로
+        System.out.println("================\n test >>> sRequestNumber : "+sRequestNumber+"\n================");
+        // 업체에서 적절하게 변경하여 쓰거나, 아래와 같이 생성한다.
+//        sRequestNumber = niceCheck.getRequestNO(sSiteCode);
+        session.setAttribute("REQ_SEQ" , sRequestNumber);	// 해킹등의 방지를 위하여 세션을 쓴다면, 세션에 요청번호를 넣는다.
+
+        String sAuthType = "M";      	// 없으면 기본 선택화면, M: 핸드폰, C: 신용카드, X: 공인인증서
+
+        String popgubun 	= "N";		//Y : 취소버튼 있음 / N : 취소버튼 없음
+        String customize 	= "";		//없으면 기본 웹페이지 / Mobile : 모바일페이지
+
+        String sGender = ""; 			//없으면 기본 선택 값, 0 : 여자, 1 : 남자
+
+        // CheckPlus(본인인증) 처리 후, 결과 데이타를 리턴 받기위해 다음예제와 같이 http부터 입력합니다.
+        //리턴url은 인증 전 인증페이지를 호출하기 전 url과 동일해야 합니다. ex) 인증 전 url : http://www.~ 리턴 url : http://www.~
+        String sReturnUrl = "https://www.fishkingapp.com/v2/api/niceSuccess";      // 성공시 이동될 URL
+        String sErrorUrl = "https://www.fishkingapp.com/v2/api/niceFail";          // 실패시 이동될 URL
+
+        // 입력될 plain 데이타를 만든다.
+        String sPlainData = "7:REQ_SEQ" + sRequestNumber.getBytes().length + ":" + sRequestNumber +
+                "8:SITECODE" + sSiteCode.getBytes().length + ":" + sSiteCode +
+                "9:AUTH_TYPE" + sAuthType.getBytes().length + ":" + sAuthType +
+                "7:RTN_URL" + sReturnUrl.getBytes().length + ":" + sReturnUrl +
+                "7:ERR_URL" + sErrorUrl.getBytes().length + ":" + sErrorUrl +
+                "11:POPUP_GUBUN" + popgubun.getBytes().length + ":" + popgubun +
+                "9:CUSTOMIZE" + customize.getBytes().length + ":" + customize +
+                "6:GENDER" + sGender.getBytes().length + ":" + sGender;
+
+        String sMessage = "";
+        String sEncData = "";
+
+        int iReturn = niceCheck.fnEncode(sSiteCode, sSitePassword, sPlainData);//보낼 데이터 암호화.
+        //암호화 결과 코드 확인.
+        if( iReturn == 0 )        {            sEncData = niceCheck.getCipherData();        }
+        else if( iReturn == -1)        {            sMessage = "암호화 시스템 에러입니다.";        }
+        else if( iReturn == -2)        {            sMessage = "암호화 처리오류입니다.";        }
+        else if( iReturn == -3)        {            sMessage = "암호화 데이터 오류입니다.";        }
+        else if( iReturn == -9)        {            sMessage = "입력 데이터 오류입니다.";        }
+        else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
+
+        model.addAttribute("sMessage",sMessage);
+        model.addAttribute("sEncData",sEncData);
+
+        return "niceRequest";
     }
 
-    /*회원가입 - 회원정보입력
-     * - 이메일이 중복되지 않으면 true, 세션에 회원가입정보 저장.
-     * - 중복되면 false반환.  */
-    /*@ApiOperation(value = "회원가입 - 회원정보입력", notes = "" +
-            "- 회원정보와 함께 보낼경우 회원가입 처리해주는 api \n" +
-            "- 요청 필드 ) \n" +
-            "   email : String / 이메일. 이메일 형식에 맞아야한다\n" +
-            "   pw : String / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
-            "   nickName : String / 닉네임. 4~10자. \n" +
-            *//*"   phoneAuthId : Long / 문자인증건의 id.\n" +*//*
-            "   snsId : String / 연동된sns id\n" +
-            "   snsType : String / 연동된 sns의 종류(아래 값들 중 하나를 입력)\n" +
-            "       ㄴ kakao : 카카오\n" +
-            "       ㄴ naver : 네이버 \n" +
-            "       ㄴ facebook : 페이스북\n" +
-            "   memberName : String / 실명\n"+
-            "   areaCode : String / 지역번호 및 휴대폰 앞번호\n" +
-            "   localNumber : String / 나머지 번호(공백,'-'없이 숫자만입력)\n" +
-            "   passLoginId : String / pass로그인 연동 식별자. \n" +
-            "- 반환 ) 회원가입된 회원의 id  ")
-    @PostMapping("/signUp/info")
-    public Long checkEmailDup(@RequestBody @Valid SignUpDto signUpDto) throws ResourceNotFoundException {
-        return memberService.signUp(signUpDto);
-    }*/
+    /*nice 본인인증 성공시*/
+    @RequestMapping("/niceSuccess")
+    @ResponseBody
+    public void getNiceSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            HttpSession session
+    ) throws ResourceNotFoundException, IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        CPClient niceCheck = new  CPClient();
+        System.out.println("================\n test >>> nice success \n================");
+        String sEncodeData = memberService.requestReplace(request.getParameter("EncodeData"), "encodeData");
+        System.out.println("nice response ) sEncodeData : "+sEncodeData);
+        String sSiteCode = "BT950";				// NICE로부터 부여받은 사이트 코드
+        String sSitePassword = "bG72MjEPkvjy";			// NICE로부터 부여받은 사이트 패스워드
+
+        String sCipherTime = "";			// 복호화한 시간
+        String sRequestNumber = "";			// 요청 번호
+        String sResponseNumber = "";		// 인증 고유번호
+        String sAuthType = "";				// 인증 수단
+        String sName = "";					// 성명
+        String sDupInfo = "";				// 중복가입 확인값 (DI_64 byte)
+        String sConnInfo = "";				// 연계정보 확인값 (CI_88 byte)
+        String sBirthDate = "";				// 생년월일(YYYYMMDD)
+        String sGender = "";				// 성별
+        String sNationalInfo = "";			// 내/외국인정보 (개발가이드 참조)
+        String sMobileNo = "";				// 휴대폰번호
+        String sMobileCo = "";				// 통신사
+        String sMessage = "";
+        String sPlainData = "";
+
+        int iReturn = niceCheck.fnDecode(sSiteCode, sSitePassword, sEncodeData);
+        String session_sRequestNumber = null;
+        System.out.println("nice response ) iReturn : "+iReturn);
+        if( iReturn == 0 )
+        {
+            sPlainData = niceCheck.getPlainData();
+            sCipherTime = niceCheck.getCipherDateTime();
+            System.out.println("nice response ) sPlainData : "+sPlainData);
+            System.out.println("nice response ) sCipherTime : "+sCipherTime);
+            // 데이타를 추출합니다.
+            java.util.HashMap mapresult = niceCheck.fnParse(sPlainData);
+            System.out.println("nice response ) mapresult : "+mapresult);
+
+            sRequestNumber  = (String)mapresult.get("REQ_SEQ");
+            sResponseNumber = (String)mapresult.get("RES_SEQ");
+            sAuthType		= (String)mapresult.get("AUTH_TYPE");
+            sName			= (String)mapresult.get("NAME");
+            //sName			= (String)mapresult.get("UTF8_NAME"); //charset utf8 사용시 주석 해제 후 사용
+            sBirthDate		= (String)mapresult.get("BIRTHDATE");
+            sGender			= (String)mapresult.get("GENDER");
+            sNationalInfo  	= (String)mapresult.get("NATIONALINFO");
+            sDupInfo		= (String)mapresult.get("DI");
+            sConnInfo		= (String)mapresult.get("CI");
+            sMobileNo		= (String)mapresult.get("MOBILE_NO");
+            sMobileCo		= (String)mapresult.get("MOBILE_CO");
+
+            session_sRequestNumber = sRequestNumber;
+            System.out.println("================\n test >>> sRequestNumber : "+sRequestNumber+"\n================");
+            if(!sRequestNumber.equals(session_sRequestNumber))
+            {
+                sMessage = "세션값 불일치 오류입니다.";
+                sResponseNumber = "";
+                sAuthType = "";
+            }
+        }
+        else if( iReturn == -1){sMessage = "복호화 시스템 오류입니다.";}
+        else if( iReturn == -4)        {            sMessage = "복호화 처리 오류입니다.";        }
+        else if( iReturn == -5)        {            sMessage = "복호화 해쉬 오류입니다.";        }
+        else if( iReturn == -6)        {            sMessage = "복호화 데이터 오류입니다.";        }
+        else if( iReturn == -9)        {            sMessage = "입력 데이터 오류입니다.";        }
+        else if( iReturn == -12)        {            sMessage = "사이트 패스워드 오류입니다.";        }
+        else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
+
+        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup"); return;}
+        /*데이터 저장*/
+        String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
+        System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
+        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
+    }
+    /*nice 인증 실패시*/
+    @RequestMapping("/niceFail")
+    public void getNiceFail(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ResourceNotFoundException, IOException {
+        NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
+        System.out.println("================\n test >>> nice fail \n================");
+        String sEncodeData = memberService.requestReplace(request.getParameter("EncodeData"), "encodeData");
+        System.out.println("nice response ) sEncodeData : "+sEncodeData);
+        String sSiteCode = "BT950";				// NICE로부터 부여받은 사이트 코드
+        String sSitePassword = "bG72MjEPkvjy";			// NICE로부터 부여받은 사이트 패스워드
+
+        String sCipherTime = "";			// 복호화한 시간
+        String sRequestNumber = "";			// 요청 번호
+        String sErrorCode = "";				// 인증 결과코드
+        String sAuthType = "";				// 인증 수단
+        String sMessage = "";
+        String sPlainData = "";
+
+        int iReturn = niceCheck.fnDecode(sSiteCode, sSitePassword, sEncodeData);//데이터 복호화.
+        System.out.println("nice response ) iReturn : "+iReturn);
+        //복호화 결과 코드 확인.
+        if( iReturn == 0 )
+        {
+            sPlainData = niceCheck.getPlainData();
+            sCipherTime = niceCheck.getCipherDateTime();
+            System.out.println("nice response ) sPlainData : "+sPlainData);
+            System.out.println("nice response ) sCipherTime : "+sCipherTime);
+            // 데이타를 추출합니다.
+            java.util.HashMap mapresult = niceCheck.fnParse(sPlainData);
+            System.out.println("nice response ) mapresult : "+mapresult);
+            sRequestNumber 	= (String)mapresult.get("REQ_SEQ");
+            sErrorCode 		= (String)mapresult.get("ERR_CODE");
+            sAuthType 		= (String)mapresult.get("AUTH_TYPE");
+        }
+        else if( iReturn == -1)        {            sMessage = "복호화 시스템 에러입니다.";        }
+        else if( iReturn == -4)        {            sMessage = "복호화 처리오류입니다.";        }
+        else if( iReturn == -5)        {            sMessage = "복호화 해쉬 오류입니다.";        }
+        else if( iReturn == -6)        {            sMessage = "복호화 데이터 오류입니다.";        }
+        else if( iReturn == -9)        {            sMessage = "입력 데이터 오류입니다.";        }
+        else if( iReturn == -12)        {            sMessage = "사이트 패스워드 오류입니다.";        }
+        else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
+
+        /*인증 실패시 데이터 삭제*/
+        memberService.niceFail(Long.parseLong(sRequestNumber));
+
+        response.sendRedirect("/cust/member/signup");
+    }
 
     /*비밀번호 찾기(재설정) 인증.
      * - 번호누르고 발송버튼 누르면 들어오는 요청. */
@@ -264,161 +422,6 @@ public class MemberController {
 //
 //        return ;
 //    }
-
-    /*nice 본인인증 성공시*/
-    @RequestMapping("/niceSuccess")
-    @ResponseBody
-    public void getNiceSuccess(
-            HttpServletRequest request
-    ){
-        CPClient niceCheck = new  CPClient();
-
-        String sEncodeData = memberService.requestReplace(request.getParameter("EncodeData"), "encodeData");
-        System.out.println("nice response ) sEncodeData : "+sEncodeData);
-        String sSiteCode = "BT950";				// NICE로부터 부여받은 사이트 코드
-        String sSitePassword = "bG72MjEPkvjy";			// NICE로부터 부여받은 사이트 패스워드
-
-        String sCipherTime = "";			// 복호화한 시간
-        String sRequestNumber = "";			// 요청 번호
-        String sResponseNumber = "";		// 인증 고유번호
-        String sAuthType = "";				// 인증 수단
-        String sName = "";					// 성명
-        String sDupInfo = "";				// 중복가입 확인값 (DI_64 byte)
-        String sConnInfo = "";				// 연계정보 확인값 (CI_88 byte)
-        String sBirthDate = "";				// 생년월일(YYYYMMDD)
-        String sGender = "";				// 성별
-        String sNationalInfo = "";			// 내/외국인정보 (개발가이드 참조)
-        String sMobileNo = "";				// 휴대폰번호
-        String sMobileCo = "";				// 통신사
-        String sMessage = "";
-        String sPlainData = "";
-
-        int iReturn = niceCheck.fnDecode(sSiteCode, sSitePassword, sEncodeData);
-        System.out.println("nice response ) iReturn : "+iReturn);
-        if( iReturn == 0 )
-        {
-            sPlainData = niceCheck.getPlainData();
-            sCipherTime = niceCheck.getCipherDateTime();
-            System.out.println("nice response ) sPlainData : "+sPlainData);
-            System.out.println("nice response ) sCipherTime : "+sCipherTime);
-            // 데이타를 추출합니다.
-            java.util.HashMap mapresult = niceCheck.fnParse(sPlainData);
-            System.out.println("nice response ) mapresult : "+mapresult);
-
-            sRequestNumber  = (String)mapresult.get("REQ_SEQ");
-            sResponseNumber = (String)mapresult.get("RES_SEQ");
-            sAuthType		= (String)mapresult.get("AUTH_TYPE");
-            sName			= (String)mapresult.get("NAME");
-            //sName			= (String)mapresult.get("UTF8_NAME"); //charset utf8 사용시 주석 해제 후 사용
-            sBirthDate		= (String)mapresult.get("BIRTHDATE");
-            sGender			= (String)mapresult.get("GENDER");
-            sNationalInfo  	= (String)mapresult.get("NATIONALINFO");
-            sDupInfo		= (String)mapresult.get("DI");
-            sConnInfo		= (String)mapresult.get("CI");
-            sMobileNo		= (String)mapresult.get("MOBILE_NO");
-            sMobileCo		= (String)mapresult.get("MOBILE_CO");
-
-//            String session_sRequestNumber = (String)session.getAttribute("REQ_SEQ");
-//            if(!sRequestNumber.equals(session_sRequestNumber))
-//            {
-//                sMessage = "세션값 불일치 오류입니다.";
-//                sResponseNumber = "";
-//                sAuthType = "";
-//            }
-        }
-        else if( iReturn == -1)
-        {
-            sMessage = "복호화 시스템 오류입니다.";
-        }
-        else if( iReturn == -4)
-        {
-            sMessage = "복호화 처리 오류입니다.";
-        }
-        else if( iReturn == -5)
-        {
-            sMessage = "복호화 해쉬 오류입니다.";
-        }
-        else if( iReturn == -6)
-        {
-            sMessage = "복호화 데이터 오류입니다.";
-        }
-        else if( iReturn == -9)
-        {
-            sMessage = "입력 데이터 오류입니다.";
-        }
-        else if( iReturn == -12)
-        {
-            sMessage = "사이트 패스워드 오류입니다.";
-        }
-        else
-        {
-            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;
-        }
-
-    }
-    /*nice 인증 실패시*/
-    @RequestMapping("/niceFail")
-    public void getNiceFail(
-            HttpServletRequest request
-    ){
-        NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
-
-        String sEncodeData = memberService.requestReplace(request.getParameter("EncodeData"), "encodeData");
-        System.out.println("nice response ) sEncodeData : "+sEncodeData);
-        String sSiteCode = "BT950";				// NICE로부터 부여받은 사이트 코드
-        String sSitePassword = "bG72MjEPkvjy";			// NICE로부터 부여받은 사이트 패스워드
-
-        String sCipherTime = "";			// 복호화한 시간
-        String sRequestNumber = "";			// 요청 번호
-        String sErrorCode = "";				// 인증 결과코드
-        String sAuthType = "";				// 인증 수단
-        String sMessage = "";
-        String sPlainData = "";
-
-        int iReturn = niceCheck.fnDecode(sSiteCode, sSitePassword, sEncodeData);
-        System.out.println("nice response ) iReturn : "+iReturn);
-        if( iReturn == 0 )
-        {
-            sPlainData = niceCheck.getPlainData();
-            sCipherTime = niceCheck.getCipherDateTime();
-            System.out.println("nice response ) sPlainData : "+sPlainData);
-            System.out.println("nice response ) sCipherTime : "+sCipherTime);
-            // 데이타를 추출합니다.
-            java.util.HashMap mapresult = niceCheck.fnParse(sPlainData);
-            System.out.println("nice response ) mapresult : "+mapresult);
-            sRequestNumber 	= (String)mapresult.get("REQ_SEQ");
-            sErrorCode 		= (String)mapresult.get("ERR_CODE");
-            sAuthType 		= (String)mapresult.get("AUTH_TYPE");
-        }
-        else if( iReturn == -1)
-        {
-            sMessage = "복호화 시스템 에러입니다.";
-        }
-        else if( iReturn == -4)
-        {
-            sMessage = "복호화 처리오류입니다.";
-        }
-        else if( iReturn == -5)
-        {
-            sMessage = "복호화 해쉬 오류입니다.";
-        }
-        else if( iReturn == -6)
-        {
-            sMessage = "복호화 데이터 오류입니다.";
-        }
-        else if( iReturn == -9)
-        {
-            sMessage = "입력 데이터 오류입니다.";
-        }
-        else if( iReturn == -12)
-        {
-            sMessage = "사이트 패스워드 오류입니다.";
-        }
-        else
-        {
-            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;
-        }
-    }
 
     /*kakao 인증코드 받는 메소드. */
     @ApiOperation(value = "kakao 로그인 인증코드 받는 api",notes = "")

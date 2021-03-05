@@ -51,33 +51,8 @@ public class HelloController {
     }
 
     @GetMapping("/noName")
-    @ResponseBody
     public String noName() throws ResourceNotFoundException, IOException, JCodecException {
-//        helloService.noName();
-
-//        String url = "https://kapi.kakao.com/v1/api/story/post/link";
-//
-//        String method = "POST";
-//        Map<String,String> parameter = new HashMap<String, String>();
-//        parameter.put("permission","A");
-//        parameter.put("link_info","{   \"url\": \"https://www.naver.com/\",   \"requested_url\": \"http://www.naver.com\",   \"host\": \"www.naver.com\",   \"title\": \"네이버\",   \"image\": [     \"https://scrap.kakaocdn.net/dn/bnkNcK/hyJjXLh5Pb/UqZAdKMcRvgAFch8jqxU81/img.png?width=270&height=270&face=0_0_270_270\",     \"https://scrap.kakaocdn.net/dn/mdLqG/hyJjXEwPFZ/80nmPIkINCrgc834c9AML1/img.png?width=270&height=270&face=0_0_270_270\"   ],   \"description\": \"네이버 메인에서 다양한 정보와 유용한 컨텐츠를 만나 보세요\",   \"type\": \"website\",   \"section\": \"\" }");
-//        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"Bearer 6vK1LmfsKp40E5tU1Wj_2rhfwU-2i2uYP1xO4wopyV8AAAF3sw3Edw");
-        String url = "https://fcm.googleapis.com/fcm/send";
-        Map<String,String> parameter = new HashMap<>();
-        parameter.put("json",
-                "{ \"notification\": " +
-                        "{" +
-                        "\"title\": \"sampleTitle\", " +
-                        "\"body\": \"sample message body\", " +
-                        "\"android_channel_id\": \"notification.native_fishking\"" +
-                        "}," +
-                    "\"to\" : " +
-                        "\"fPMt6cgBSEim5ZHm6FNcXs:APA91bFlhoi3YyjpmrnuNBk-iGYhxo9CdugGEsI44GxLs4LLLWW66VXHdfCWZ_TYeeHVo7IAibFwoGuu6dXgWhn5AT845s2rluEWi0SNIiurpYbGbTqPf-2yCYEkcs4vY87ZT0f6Mm6G\"" +
-                "}");
-        String response = memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
-        return response;
-//        model.addAttribute("hello","hello2");
-//        return "kakaoStoryShare";
+        return "noName";
 
     }
 
@@ -145,19 +120,20 @@ public class HelloController {
         return "noName2";
     }
 
-    @GetMapping("/nice")
-    public String nice(ModelMap model){
+    @GetMapping("/nice/{id}")
+    @ResponseBody
+    public String nice(@PathVariable("id") Long id, ModelMap model, HttpSession session) throws IOException {
         NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
 
         String sSiteCode = "BT950";			// NICE로부터 부여받은 사이트 코드
         String sSitePassword = "bG72MjEPkvjy";		// NICE로부터 부여받은 사이트 패스워드
 
-        String sRequestNumber = "REQ0000000001";        	// 요청 번호, 이는 성공/실패후에 같은 값으로 되돌려주게 되므로
+        String sRequestNumber = id.toString();        	// 요청 번호, 이는 성공/실패후에 같은 값으로 되돌려주게 되므로
         // 업체에서 적절하게 변경하여 쓰거나, 아래와 같이 생성한다.
-        sRequestNumber = niceCheck.getRequestNO(sSiteCode);
-//        session.setAttribute("REQ_SEQ" , sRequestNumber);	// 해킹등의 방지를 위하여 세션을 쓴다면, 세션에 요청번호를 넣는다.
+//        sRequestNumber = niceCheck.getRequestNO(sSiteCode);
+        session.setAttribute("REQ_SEQ" , sRequestNumber);	// 해킹등의 방지를 위하여 세션을 쓴다면, 세션에 요청번호를 넣는다.
 
-        String sAuthType = "";      	// 없으면 기본 선택화면, M: 핸드폰, C: 신용카드, X: 공인인증서
+        String sAuthType = "M";      	// 없으면 기본 선택화면, M: 핸드폰, C: 신용카드, X: 공인인증서
 
         String popgubun 	= "N";		//Y : 취소버튼 있음 / N : 취소버튼 없음
         String customize 	= "";		//없으면 기본 웹페이지 / Mobile : 모바일페이지
@@ -182,7 +158,8 @@ public class HelloController {
         String sMessage = "";
         String sEncData = "";
 
-        int iReturn = niceCheck.fnEncode(sSiteCode, sSitePassword, sPlainData);
+        int iReturn = niceCheck.fnEncode(sSiteCode, sSitePassword, sPlainData);//보낼 데이터 암호화.
+        //암호화 결과 코드 확인.
         if( iReturn == 0 )
         {
             sEncData = niceCheck.getCipherData();
@@ -211,7 +188,14 @@ public class HelloController {
         model.addAttribute("sMessage",sMessage);
         model.addAttribute("sEncData",sEncData);
 
-        return "niceRequest";
+        String url = "https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb";
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+        parameter.put("EncodeData",sEncData);
+        parameter.put("m","checkplusService");
+
+        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"");
+        return responseForAccessCode;
     }
 
 }
