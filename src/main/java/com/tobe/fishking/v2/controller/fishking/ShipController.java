@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,7 @@ public class ShipController {
 
     private final ShipService shipService;
     private final MemberService memberService;
+    private final CommonService commonService;
 
     @ApiOperation(value = "배 리스트", notes = "배 리스트. 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다.")
     @GetMapping("/ships/{page}")
@@ -331,10 +333,65 @@ public class ShipController {
         return shipService.getReviewByShip(ship_id, page, size);
     }
 
-    @ApiOperation(value = "거리계산")
-    @GetMapping("/calc")
-    public String calcDistance() {
-        shipService.calcDistance();
-        return "true";
+    @ApiOperation(value = "선상 & 갯바위 광고 리스트", notes = "선상 & 갯바위 광고 리스" +
+            "\n premium: 인기 프리미엄 광고 [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }, ... ]" +
+            "\n normal: 프리미엄 광고 [{ " +
+            "\n id: 상품 id" +
+            "\n shipImageFileUrl: 선박 이미지 주소 " +
+            "\n shipName: 선박명" +
+            "\n sido: 시도" +
+            "\n sigungu: 시군구" +
+            "\n distance: 거리" +
+            "\n location: {" +
+            "\n     latitude: 위도" +
+            "\n     longitude: 경도" +
+            "\n } " +
+            "\n address: 주소" +
+            "\n fishSpecies: [{" +
+            "\n     id: id" +
+            "\n     codeGroup: " +
+            "\n     codeGroupName: 코드 그룹 명" +
+            "\n     code: 코드" +
+            "\n     codeName: 코드명" +
+            "\n     extraValue1: 대체값" +
+            "\n     remark: 주석" +
+            "\n }, ... ]" +
+            "\n" +
+            "\n 선상: fishingType=ship" +
+            "\n 갯바위: fishingType=seaRocks" +
+            "\n 로 요청해주세요" +
+            "\n 퍼블상의 이벤트제목, 공지제목은 빼주세요")
+    @GetMapping("/ship/ad")
+    public Map<String, Object> getShipAd(@RequestParam String fishingType,
+                                               @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
+                                               @RequestParam(required = false, defaultValue = "127.0016985") Double longitude) {
+        return commonService.shipAdList(fishingType, latitude, longitude);
     }
+
+//    @ApiOperation(value = "거리계산")
+//    @GetMapping("/calc")
+//    public String calcDisance() {
+//        shipService.calcDistance();
+//        return "true";
+//    }
 }

@@ -1,9 +1,11 @@
 package com.tobe.fishking.v2.service.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.*;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
@@ -15,6 +17,7 @@ import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
 import com.tobe.fishking.v2.model.common.*;
+import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -280,44 +283,44 @@ public class CommonService {
     }
 
     @Transactional
-    public Map<String, Object> searchTotal(String keyword) {
+    public Map<String, Object> searchTotal(String keyword, Double lat, Double lng) {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(0, 4, Sort.by("createdDate"));
         result.put("keyword", keyword);
         result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
         result.put("blog", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
-        result.put("ship", shipRepository.searchMain(keyword, "ship", pageable));
-        result.put("live", shipRepository.searchMain(keyword, "live", pageable));
+        result.put("ship", shipRepository.searchMain(keyword, "ship", lat, lng, pageable));
+        result.put("live", shipRepository.searchMain(keyword, "live", lat, lng, pageable));
         return result;
     }
 
     @Transactional
-    public Map<String, Object> searchShip(String keyword, Integer page, String order) {
+    public Map<String, Object> searchShip(String keyword, Integer page, String order, Double lat, Double lng) {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10,
                 order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
         result.put("keyword", keyword);
-        result.put("ship", shipRepository.searchMain(keyword, "ship", pageable));
+        result.put("ship", shipRepository.searchMain(keyword, "ship", lat, lng, pageable));
         return result;
     }
 
     @Transactional
-    public Map<String, Object> searchShipWithType(String keyword, Integer page, String order, String type) {
+    public Map<String, Object> searchShipWithType(String keyword, Integer page, String order, String type, Double lat, Double lng) {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10,
                 order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
         result.put("keyword", keyword);
         result.put("type", "ship");
-        result.put("ship", shipRepository.searchMainWithType(keyword, type, pageable));
+        result.put("ship", shipRepository.searchMainWithType(keyword, type, lat, lng, pageable));
         return result;
     }
 
     @Transactional
-    public Map<String, Object> searchLive(String keyword, Integer page, String order) {
+    public Map<String, Object> searchLive(String keyword, Integer page, String order, Double lat, Double lng) {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate"));
         result.put("keyword", keyword);
-        result.put("live", shipRepository.searchMain(keyword, "live", pageable));
+        result.put("live", shipRepository.searchMain(keyword, "live", lat, lng, pageable));
         return result;
     }
 
@@ -357,5 +360,32 @@ public class CommonService {
                     new SearchKeyword(keyword)
             );
         }
+    }
+
+    @Transactional
+    public Map<String, Object> shipAdList(String fishingType, Double lat, Double lon) {
+        Map<String, Object> result = new HashMap<>();
+        List<SmallShipResponse> premium;
+        List<SmallShipResponse> normal;
+        if (fishingType.equals("ship")) {
+            premium = adRepository.getAdByType(AdType.SHIP_PREMIUM_AD);
+            normal = adRepository.getAdByType(AdType.SHIP_AD);
+        } else {
+            premium = adRepository.getAdByType(AdType.ROCK_PREMIUM_AD);
+            normal = adRepository.getAdByType(AdType.ROCK_AD);
+        }
+        for (SmallShipResponse p : premium) {
+            if (lat != 0) {
+                p.setDistance(p.getLocation().getDistance(lat, lon));
+            }
+        }
+        for (SmallShipResponse p : normal) {
+            if (lat != 0) {
+                p.setDistance(p.getLocation().getDistance(lat, lon));
+            }
+        }
+        result.put("premium", premium);
+        result.put("normal", normal);
+        return result;
     }
 }

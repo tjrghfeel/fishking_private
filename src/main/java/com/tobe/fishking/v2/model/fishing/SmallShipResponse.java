@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -30,7 +31,7 @@ public class SmallShipResponse {
             Integer lowPrice,
             Ship ship
     ) {
-        List<CommonCode> species = ship.getFishSpecies();
+        Stream<CommonCode> species = ship.getFishSpecies().stream().filter(CommonCode::getIsActive);
         this.id = ship.getId();
         this.shipImageFileUrl = "/resource" + ship.getProfileImage();
         this.shipName = ship.getShipName();
@@ -38,8 +39,8 @@ public class SmallShipResponse {
         this.sigungu = ship.getSigungu();
         this.location = ship.getLocation();
         this.address = ship.getAddress();
-        this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
-        this.fishSpeciesCount = species.size();
+        this.fishSpecies = species.map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
+        this.fishSpeciesCount = this.fishSpecies.size();
         this.lowPrice = lowPrice==null?0:lowPrice;
     }
 

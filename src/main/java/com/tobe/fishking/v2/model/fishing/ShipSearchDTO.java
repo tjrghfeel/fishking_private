@@ -50,4 +50,9 @@ public class ShipSearchDTO {
     @ApiParam(value = "실시간영상 유무 빈값의 경우 전부", example = "false")
     private @Valid Boolean hasRealTimeVideo = null;
 
+    @ApiParam(value = "현재위치 위도", example = "36.1058")
+    private @Valid Double latitude = 0d;
+
+    @ApiParam(value = "현재위치 경도", example = "129.435")
+    private @Valid Double longitude = 0d;
 }

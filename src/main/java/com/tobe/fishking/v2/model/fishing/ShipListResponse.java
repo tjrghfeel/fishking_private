@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.common.Location;
+import com.tobe.fishking.v2.utils.CalcUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,6 +33,7 @@ public class ShipListResponse {
             Integer lowPrice,
             Integer sold,
             Long liked,
+            Double distance,
             Ship ship
     ) {
         List<CommonCode> species = ship.getFishSpecies();
@@ -48,5 +50,6 @@ public class ShipListResponse {
         this.lowPrice = lowPrice==null?0:lowPrice;
         this.sold = sold==null?0:sold;
         this.type = ship.getFishingType().getValue();
+        this.distance = CalcUtils.round(distance, 3);
     }
 }

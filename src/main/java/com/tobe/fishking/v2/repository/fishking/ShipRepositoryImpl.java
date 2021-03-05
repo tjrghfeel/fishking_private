@@ -7,6 +7,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.querydsl.core.types.dsl.MathExpressions.*;
 import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.common.QObserverCode.observerCode;
 import static com.tobe.fishking.v2.entity.common.QTake.take;
@@ -44,6 +46,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
         NumberPath<Integer> aliasPrice = Expressions.numberPath(Integer.class, "price");
         NumberPath<Integer> aliasSold = Expressions.numberPath(Integer.class, "sold");
         NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
+        NumberPath<Double> aliasDistance = Expressions.numberPath(Double.class, "distance");
 
         if (!isEmpty(pageable.getSort())) {
             for (Sort.Order order: pageable.getSort()) {
@@ -53,7 +56,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ORDERS.add(orderPopular);
                         break;
                     case "distance":
-                        OrderSpecifier<?> orderDistance = getSortedColumn(Order.ASC, ship, "distance");
+//                        OrderSpecifier<?> orderDistance = getSortedColumn(Order.ASC, ship, "distance");
+                        OrderSpecifier<?> orderDistance = aliasDistance.asc();
                         ORDERS.add(orderDistance);
                         break;
                     case "lowPrice":
@@ -82,6 +86,13 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
                         ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
+                        ExpressionUtils.as(
+                                acos(
+                                    cos(radians(Expressions.constant(shipSearchDTO.getLatitude())))
+                                    .multiply(cos(radians(ship.location.latitude)))
+                                    .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(shipSearchDTO.getLongitude())))))
+                                    .add(sin(radians(Expressions.constant(shipSearchDTO.getLatitude()))).multiply(sin(radians(ship.location.latitude))))
+                                ).multiply(Expressions.constant(6371)), aliasDistance),
                         ship
                 ))
                 .from(ship)
@@ -134,17 +145,18 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
     }
 
     @Override
-    public Page<ShipListResponse> searchMain(String keyword, String type, Pageable pageable) {
+    public Page<ShipListResponse> searchMain(String keyword, String type, Double lat, Double lng, Pageable pageable) {
         List<OrderSpecifier> ORDERS = new ArrayList<>();
         NumberPath<Integer> aliasPrice = Expressions.numberPath(Integer.class, "price");
         NumberPath<Integer> aliasSold = Expressions.numberPath(Integer.class, "sold");
         NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
+        NumberPath<Double> aliasDistance = Expressions.numberPath(Double.class, "distance");
 
         if (!isEmpty(pageable.getSort())) {
             for (Sort.Order order: pageable.getSort()) {
                 switch (order.getProperty()) {
                     case "distance":
-                        OrderSpecifier<?> orderDistance = getSortedColumn(Order.ASC, ship, "distance");
+                        OrderSpecifier<?> orderDistance = aliasDistance.asc();
                         ORDERS.add(orderDistance);
                         break;
                     case "name":
@@ -161,6 +173,13 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                         ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
                         ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
+                        ExpressionUtils.as(
+                                acos(
+                                        cos(radians(Expressions.constant(lat)))
+                                                .multiply(cos(radians(ship.location.latitude)))
+                                                .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(lng)))))
+                                                .add(sin(radians(Expressions.constant(lat))).multiply(sin(radians(ship.location.latitude))))
+                                ).multiply(Expressions.constant(6371)), aliasDistance),
                         ship
                 ))
                 .from(ship)
@@ -178,17 +197,18 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
     }
 
     @Override
-    public Page<ShipListResponse> searchMainWithType(String keyword, String type, Pageable pageable) {
+    public Page<ShipListResponse> searchMainWithType(String keyword, String type, Double lat, Double lng, Pageable pageable) {
         List<OrderSpecifier> ORDERS = new ArrayList<>();
         NumberPath<Integer> aliasPrice = Expressions.numberPath(Integer.class, "price");
         NumberPath<Integer> aliasSold = Expressions.numberPath(Integer.class, "sold");
         NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
+        NumberPath<Double> aliasDistance = Expressions.numberPath(Double.class, "distance");
 
         if (!isEmpty(pageable.getSort())) {
             for (Sort.Order order: pageable.getSort()) {
                 switch (order.getProperty()) {
                     case "distance":
-                        OrderSpecifier<?> orderDistance = getSortedColumn(Order.ASC, ship, "distance");
+                        OrderSpecifier<?> orderDistance = aliasDistance.asc();
                         ORDERS.add(orderDistance);
                         break;
                     case "name":
@@ -206,6 +226,13 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
                             ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
+                            ExpressionUtils.as(
+                                    acos(
+                                            cos(radians(Expressions.constant(lat)))
+                                                    .multiply(cos(radians(ship.location.latitude)))
+                                                    .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(lng)))))
+                                                    .add(sin(radians(Expressions.constant(lat))).multiply(sin(radians(ship.location.latitude))))
+                                    ).multiply(Expressions.constant(6371)), aliasDistance),
                             ship
                     ))
                     .from(ship)
@@ -228,6 +255,13 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
                             ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
                             ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
+                            ExpressionUtils.as(
+                                    acos(
+                                            cos(radians(Expressions.constant(lat)))
+                                                    .multiply(cos(radians(ship.location.latitude)))
+                                                    .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(lng)))))
+                                                    .add(sin(radians(Expressions.constant(lat))).multiply(sin(radians(ship.location.latitude))))
+                                    ).multiply(Expressions.constant(6371)), aliasDistance),
                             ship
                     ))
                     .from(ship)
