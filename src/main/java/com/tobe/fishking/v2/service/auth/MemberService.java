@@ -239,8 +239,10 @@ public class MemberService {
         String encodedPw = encoder.encode(signUpDto.getPw());
         System.out.println("================\n test >>> encodedPw : "+encodedPw+"\n================");
 
-        member = memberRepository.findById(signUpDto.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+signUpDto.getMemberId()));
+        if(signUpDto.getMemberId()!=null) {
+            member = memberRepository.findById(signUpDto.getMemberId())
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this id :: " + signUpDto.getMemberId()));
+        }
         /*sns를 통해 가입하는경우.*/
         if(member!=null && member.getIsCertified()==false){
             member.setUid(signUpDto.getEmail());

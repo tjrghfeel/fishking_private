@@ -155,6 +155,7 @@ public class MemberController {
         String sSitePassword = "bG72MjEPkvjy";		// NICE로부터 부여받은 사이트 패스워드
 
         String sRequestNumber = memberId.toString();        	// 요청 번호, 이는 성공/실패후에 같은 값으로 되돌려주게 되므로
+        System.out.println("================\n test >>> sRequestNumber : "+sRequestNumber+"\n================");
         // 업체에서 적절하게 변경하여 쓰거나, 아래와 같이 생성한다.
 //        sRequestNumber = niceCheck.getRequestNO(sSiteCode);
         session.setAttribute("REQ_SEQ" , sRequestNumber);	// 해킹등의 방지를 위하여 세션을 쓴다면, 세션에 요청번호를 넣는다.
@@ -208,7 +209,7 @@ public class MemberController {
             HttpSession session
     ) throws ResourceNotFoundException, IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         CPClient niceCheck = new  CPClient();
-
+        System.out.println("================\n test >>> nice success \n================");
         String sEncodeData = memberService.requestReplace(request.getParameter("EncodeData"), "encodeData");
         System.out.println("nice response ) sEncodeData : "+sEncodeData);
         String sSiteCode = "BT950";				// NICE로부터 부여받은 사이트 코드
@@ -255,7 +256,8 @@ public class MemberController {
             sMobileNo		= (String)mapresult.get("MOBILE_NO");
             sMobileCo		= (String)mapresult.get("MOBILE_CO");
 
-            session_sRequestNumber = (String)session.getAttribute("REQ_SEQ");
+            session_sRequestNumber = sRequestNumber;
+            System.out.println("================\n test >>> sRequestNumber : "+sRequestNumber+"\n================");
             if(!sRequestNumber.equals(session_sRequestNumber))
             {
                 sMessage = "세션값 불일치 오류입니다.";
@@ -271,10 +273,10 @@ public class MemberController {
         else if( iReturn == -12)        {            sMessage = "사이트 패스워드 오류입니다.";        }
         else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
 
-        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup");}
+        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup"); return;}
         /*데이터 저장*/
         String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
-
+        System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
         response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
     }
     /*nice 인증 실패시*/
@@ -284,7 +286,7 @@ public class MemberController {
             HttpServletResponse response
     ) throws ResourceNotFoundException, IOException {
         NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
-
+        System.out.println("================\n test >>> nice fail \n================");
         String sEncodeData = memberService.requestReplace(request.getParameter("EncodeData"), "encodeData");
         System.out.println("nice response ) sEncodeData : "+sEncodeData);
         String sSiteCode = "BT950";				// NICE로부터 부여받은 사이트 코드

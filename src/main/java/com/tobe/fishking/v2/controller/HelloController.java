@@ -121,7 +121,8 @@ public class HelloController {
     }
 
     @GetMapping("/nice/{id}")
-    public String nice(@PathVariable("id") Long id, ModelMap model, HttpSession session){
+    @ResponseBody
+    public String nice(@PathVariable("id") Long id, ModelMap model, HttpSession session) throws IOException {
         NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
 
         String sSiteCode = "BT950";			// NICE로부터 부여받은 사이트 코드
@@ -187,7 +188,14 @@ public class HelloController {
         model.addAttribute("sMessage",sMessage);
         model.addAttribute("sEncData",sEncData);
 
-        return "niceRequest";
+        String url = "https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb";
+        String method = "POST";
+        Map<String,String> parameter = new HashMap<String, String>();
+        parameter.put("EncodeData",sEncData);
+        parameter.put("m","checkplusService");
+
+        String responseForAccessCode = memberService.sendRequest(url,method,parameter,"");
+        return responseForAccessCode;
     }
 
 }
