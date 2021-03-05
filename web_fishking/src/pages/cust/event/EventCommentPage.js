@@ -23,6 +23,7 @@ export default inject(
             file: null,
             parent: null,
             isEdit: false,
+            edit: null,
           };
         }
         /********** ********** ********** ********** **********/
@@ -70,7 +71,7 @@ export default inject(
             this.text.current.value = item.content;
             this.setState({
               isEdit: true,
-              parent: { authorId: item.parentId },
+              edit: item,
             });
             if (item.fileUrl !== null) {
               this.setState({
@@ -113,7 +114,7 @@ export default inject(
 
           const form = new FormData();
           form.append("file", file);
-          form.append("filePublish", "comment");
+          form.append("filePublish", "commonComment");
 
           const { APIStore, ModalStore } = this.props;
           const upload = await APIStore._post_upload(
@@ -139,23 +140,12 @@ export default inject(
               params: { eventId },
             },
           } = this.props;
-          console.log(
-            JSON.stringify({
-              dependentType: "event",
-              linkId: eventId,
-              parentId: this.state.parent?.authorId || 0,
-              content: text,
-              fileId: this.state.file?.fileId || null,
-            })
-          );
 
           let resolve = false;
           if (this.state.isEdit) {
             // 수정
             resolve = await APIStore._put(`/v2/api/comment`, {
-              dependentType: "event",
-              linkId: eventId,
-              parentId: this.state.parent?.authorId || 0,
+              commentId: this.state.edit.commentId,
               content: text,
               fileId: this.state.file?.fileId || null,
             });
@@ -164,14 +154,19 @@ export default inject(
             resolve = await APIStore._post(`/v2/api/comment`, {
               dependentType: "event",
               linkId: eventId,
-              parentId: this.state.parent?.authorId || 0,
+              parentId: this.state.parent?.commentId || 0,
               content: text,
               fileId: this.state.file?.fileId || null,
             });
           }
           if (resolve) {
             this.text.current.value = "";
-            this.setState({ file: null, isEdit: false, parent: null });
+            this.setState({
+              file: null,
+              isEdit: false,
+              edit: null,
+              parent: null,
+            });
             this.loadPageData(true);
           }
         };
@@ -249,7 +244,7 @@ export default inject(
                 </div>
               )}
               <div className="tab_barwrap fixed-bottom">
-                {this.state.parent !== null && (
+                {(this.state.parent !== null || this.state.isEdit) && (
                   <h6>
                     <div className="container nopadding">
                       {this.state.isEdit && "댓글 수정중 ..."}

@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 //import com.tobe.fishking.v2.enums.fishing.PaymentGroup;
+import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import lombok.*;
 
 import javax.persistence.*;
@@ -59,6 +60,9 @@ public class Orders extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'결제여부', 'USER', DBO, 'TABLE', orders, 'COLUMN',  is_pay
     @Column(columnDefinition = "bit  comment '결제여부'  ")
     private Boolean isPay;
+
+    @Column(columnDefinition = "int  comment '결제수단'  ")
+    private PayMethod payMethod;
 
     //OrderStatus
     // EXEC sp_addextendedproperty 'MS_Description', N'결제여부', 'USER', DBO, 'TABLE', orders, 'COLUMN',  is_pay
@@ -116,8 +120,9 @@ public class Orders extends BaseTime {
         this.orderStatus = status;
     }
 
-    public void paid(Member member) {
+    public void paid(Member member, String tradeNumber) {
         this.isPay = true;
+        this.tradeNumber = tradeNumber;
         this.modifiedBy = member;
     }
 

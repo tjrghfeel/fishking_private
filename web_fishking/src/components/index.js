@@ -25,6 +25,7 @@ import SelectReservationCancelReasonModal from "./modal/SelectReservationCancelR
 import InputModal from "./modal/InputModal";
 import MapCompanyInfoModal from "./modal/MapCompanyInfoModal";
 import SelectMultiAreaModal from "./modal/SelectMultiAreaModal";
+import SelectTideAreaModal from "./modal/SelectTideAreaModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -43,6 +44,7 @@ import SearchTab from "./layout/SearchTab";
 import PoliceMainTab from "./layout/PoliceMainTab";
 import SmartSailMainTab from "./layout/SmartSailMainTab";
 import SmartFishingMainTab from "./layout/SmartFishingMainTab";
+import TideTab from "./layout/TideTab";
 
 /********** ********** ********** ********** **********/
 /** ITEM */
@@ -121,6 +123,7 @@ export default {
     InputModal,
     MapCompanyInfoModal,
     SelectMultiAreaModal,
+    SelectTideAreaModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {
@@ -138,6 +141,7 @@ export default {
     PoliceMainTab,
     SmartSailMainTab,
     SmartFishingMainTab,
+    TideTab,
   },
   /********** ITEM **********/
   ITEM: {},

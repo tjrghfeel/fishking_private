@@ -4,9 +4,10 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 
 public enum PayMethod  implements IEnumModel {
 
-    cash("현금"),
-    card("카드"),
-    simple("간편결제");
+    CARD("신용카드"),
+    VIRTUAL_ACCOUNT("가상계좌"),
+    ACCOUNT("계좌이체"),
+    PHONE("핸드폰결제");
 
     private String value;
 

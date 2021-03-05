@@ -13,6 +13,7 @@ import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.AddShipDTO;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
@@ -368,6 +369,22 @@ public class ShipService {
 //        for (OrderDetails details : orders) {
 //            usedPositions.addAll(Arrays.asList(details.getPositions().split(",").clone()));
 //        }
+        PayMethod payMethod;
+
+        switch (reserveDTO.getPayMethod()) {
+            case "1000000000":
+                payMethod = PayMethod.CARD;
+                break;
+            case "0100000000":
+                payMethod = PayMethod.VIRTUAL_ACCOUNT;
+                break;
+            case "0010000000":
+                payMethod = PayMethod.ACCOUNT;
+                break;
+            default:
+                payMethod = PayMethod.PHONE;
+                break;
+        }
 
         Orders order = Orders.builder()
                 .orderDate(DateUtils.getDateInFormat(LocalDate.now()))
@@ -376,6 +393,7 @@ public class ShipService {
                 .discountAmount(reserveDTO.getDiscountPrice().intValue())
                 .paymentAmount(reserveDTO.getPaymentPrice().intValue())
                 .isPay(false)
+                .payMethod(payMethod)
                 .orderStatus(OrderStatus.book)
                 .goods(goods)
                 .createdBy(member)

@@ -20,7 +20,7 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, Long>, C
     @Query("select a from CommonCode a where a.codeName = :codeName and a.codeGroup = :codeGroup")
     public Optional<CommonCode> findByCodeNameAndDiv(@Param("codeName") String codeName, @Param("codeGroup") CodeGroup codeGroup);
 
-    @Query("select a from CommonCode a where a.codeGroup = :codeGroup")
+    @Query("select a from CommonCode a where a.codeGroup = :codeGroup and a.isActive = true")
     public List<CommonCode> findAllByCodeGroup(@Param("codeGroup") CodeGroup codeGroup);
 
     //public CommonCode findByCode(String code);

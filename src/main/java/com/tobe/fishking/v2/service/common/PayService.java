@@ -66,7 +66,7 @@ public class PayService {
                         Member member = order.getCreatedBy();
                         Goods goods = orderDetails.getGoods();
                         GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
-                        order.paid(member);
+                        order.paid(member, trno);
                         if (goods.getReserveType() == ReserveType.auto) {
                             if (orderDetails.getPersonnel() <= (goods.getMaxPersonnel() - goodsFishingDate.getReservedNumber())) {
                                 order.changeStatus(OrderStatus.bookConfirm);
