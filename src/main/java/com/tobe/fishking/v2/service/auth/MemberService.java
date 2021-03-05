@@ -402,83 +402,124 @@ public class MemberService {
 
 
     /*pass인증*/
-    @Transactional
-    public String passAuth(String code, String state, String error, String message) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, ResourceNotFoundException {
-        PassAuthResponseDto resultDto=new PassAuthResponseDto();
-        String passClientId = "uWHHuitm5at159jXPlc5";
-        String passClientPw = "c30dbcd9c06a9b0211e12327549537fd6169876092f9f693bce172664690a909";
+//    @Transactional
+//    public String passAuth(String code, String state, String error, String message) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, ResourceNotFoundException {
+//        PassAuthResponseDto resultDto=new PassAuthResponseDto();
+//        String passClientId = "uWHHuitm5at159jXPlc5";
+//        String passClientPw = "c30dbcd9c06a9b0211e12327549537fd6169876092f9f693bce172664690a909";
+//
+//        Member member = memberRepository.findById(Long.parseLong(state))
+//                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+state));
+//
+//        /*받은 응답이 에러가있을경우 예외처리.*/
+//        if(error!=null){
+//            throw new RuntimeException(error + ", "+message);
+//        }
+//
+//        /*접근코드 받아오기. */
+//        String url = "https://id.passlogin.com/oauth2/token";
+//        String method = "POST";
+//        Map<String,String> parameter = new HashMap<String, String>();
+//        parameter.put("grant_type","authorization_code");
+//        parameter.put("client_id",passClientId);
+//        parameter.put("client_secret",passClientPw);
+//        parameter.put("code",code);
+//        parameter.put("state","sample");
+////        parameter.put("refresh_token",""); 갱신때 필수.
+////        parameter.put("access_token","");     삭제때 필수.
+////        parameter.put("service_provider",""); 삭제때 필수.
+//
+//        String responseForAccessCode = sendRequest(url,method,parameter,"");
+//        ObjectMapper mapper = new ObjectMapper();
+//        Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
+//
+//        String accessToken = (String)mapForAccessCode.get("access_token");
+////        String tokenType = (String)mapForAccessCode.get("token_type");
+////        Integer expiresIn = (Integer)mapForAccessCode.get("expires_in");
+////        String stateForAccessToken = (String)mapForAccessCode.get("state");
+//        String errorForAccessToken = (String)mapForAccessCode.get("error");
+//        String messageForAccessToken = (String)mapForAccessCode.get("message");
+//
+//        if(errorForAccessToken!=null){
+//            throw new RuntimeException("pass 접근코드 받기 에러\nerror : "+errorForAccessToken+"\nmessage : "+messageForAccessToken);
+//        }
+//
+//        /*회원정보 받아오기. */
+//        url = "https://id.passlogin.com/v1/user/me";
+//        method = "GET";
+//
+//        String responseForUsrInfo = sendRequest(url,method,new HashMap<String,String>(),"Bearer "+accessToken);
+//        Map<String,Object> mapForUsrInfo = mapper.readValue(responseForUsrInfo, Map.class);
+//
+//        Map<String,Object> userInfo = (Map<String,Object>)mapForUsrInfo.get("user");
+//
+//        String plid = (String)userInfo.get("plid");
+//        String phoneNo = (String)userInfo.get("phoneNo");
+//        String name = (String)userInfo.get("name");
+//
+//        if(memberRepository.existsByCertifiedNo(plid)){
+//            throw new RuntimeException("이미 가입된 회원입니다.");
+//        }
+//
+//        phoneNo = AES.aesDecode(phoneNo, passClientPw.substring(0,16));
+//        name = AES.aesDecode(name, passClientPw.substring(0,16));
+//
+//        /*state로 받은 member의 정보에 pass에서 가져온값 저장*/
+//        member.setMemberName(name);
+//        member.setCertifiedNo(plid);
+//        member.setIsCertified(true);
+//        member.setPhoneNumber(new PhoneNumber(phoneNo.substring(0,3),phoneNo.substring(3)));
+//        memberRepository.save(member);
+//
+//        String sessionToken=null;
+//        /*세션토큰 생성 및 저장. */
+//        String rawToken = member.getUid() + LocalDateTime.now();
+//        sessionToken = encoder.encode(rawToken);
+//
+//        String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+//        member.setSessionToken(sessionToken);
+//        return encodingToken;
+//    }
 
-        Member member = memberRepository.findById(Long.parseLong(state))
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+state));
+    /*nice 성공*/
 
-        /*받은 응답이 에러가있을경우 예외처리.*/
-        if(error!=null){
-            throw new RuntimeException(error + ", "+message);
+    public String requestReplace (String paramValue, String gubun) {
+
+        String result = "";
+
+        if (paramValue != null) {
+
+            paramValue = paramValue.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
+            paramValue = paramValue.replaceAll("\\*", "");
+            paramValue = paramValue.replaceAll("\\?", "");
+            paramValue = paramValue.replaceAll("\\[", "");
+            paramValue = paramValue.replaceAll("\\{", "");
+            paramValue = paramValue.replaceAll("\\(", "");
+            paramValue = paramValue.replaceAll("\\)", "");
+            paramValue = paramValue.replaceAll("\\^", "");
+            paramValue = paramValue.replaceAll("\\$", "");
+            paramValue = paramValue.replaceAll("'", "");
+            paramValue = paramValue.replaceAll("@", "");
+            paramValue = paramValue.replaceAll("%", "");
+            paramValue = paramValue.replaceAll(";", "");
+            paramValue = paramValue.replaceAll(":", "");
+            paramValue = paramValue.replaceAll("-", "");
+            paramValue = paramValue.replaceAll("#", "");
+            paramValue = paramValue.replaceAll("--", "");
+            paramValue = paramValue.replaceAll("-", "");
+            paramValue = paramValue.replaceAll(",", "");
+
+            if(gubun != "encodeData"){
+                paramValue = paramValue.replaceAll("\\+", "");
+                paramValue = paramValue.replaceAll("/", "");
+                paramValue = paramValue.replaceAll("=", "");
+            }
+
+            result = paramValue;
+
         }
-
-        /*접근코드 받아오기. */
-        String url = "https://id.passlogin.com/oauth2/token";
-        String method = "POST";
-        Map<String,String> parameter = new HashMap<String, String>();
-        parameter.put("grant_type","authorization_code");
-        parameter.put("client_id",passClientId);
-        parameter.put("client_secret",passClientPw);
-        parameter.put("code",code);
-        parameter.put("state","sample");
-//        parameter.put("refresh_token",""); 갱신때 필수.
-//        parameter.put("access_token","");     삭제때 필수.
-//        parameter.put("service_provider",""); 삭제때 필수.
-
-        String responseForAccessCode = sendRequest(url,method,parameter,"");
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
-
-        String accessToken = (String)mapForAccessCode.get("access_token");
-//        String tokenType = (String)mapForAccessCode.get("token_type");
-//        Integer expiresIn = (Integer)mapForAccessCode.get("expires_in");
-//        String stateForAccessToken = (String)mapForAccessCode.get("state");
-        String errorForAccessToken = (String)mapForAccessCode.get("error");
-        String messageForAccessToken = (String)mapForAccessCode.get("message");
-
-        if(errorForAccessToken!=null){
-            throw new RuntimeException("pass 접근코드 받기 에러\nerror : "+errorForAccessToken+"\nmessage : "+messageForAccessToken);
-        }
-
-        /*회원정보 받아오기. */
-        url = "https://id.passlogin.com/v1/user/me";
-        method = "GET";
-
-        String responseForUsrInfo = sendRequest(url,method,new HashMap<String,String>(),"Bearer "+accessToken);
-        Map<String,Object> mapForUsrInfo = mapper.readValue(responseForUsrInfo, Map.class);
-
-        Map<String,Object> userInfo = (Map<String,Object>)mapForUsrInfo.get("user");
-
-        String plid = (String)userInfo.get("plid");
-        String phoneNo = (String)userInfo.get("phoneNo");
-        String name = (String)userInfo.get("name");
-
-        if(memberRepository.existsByCertifiedNo(plid)){
-            throw new RuntimeException("이미 가입된 회원입니다.");
-        }
-
-        phoneNo = AES.aesDecode(phoneNo, passClientPw.substring(0,16));
-        name = AES.aesDecode(name, passClientPw.substring(0,16));
-
-        /*state로 받은 member의 정보에 pass에서 가져온값 저장*/
-        member.setMemberName(name);
-        member.setCertifiedNo(plid);
-        member.setIsCertified(true);
-        member.setPhoneNumber(new PhoneNumber(phoneNo.substring(0,3),phoneNo.substring(3)));
-        memberRepository.save(member);
-
-        String sessionToken=null;
-        /*세션토큰 생성 및 저장. */
-        String rawToken = member.getUid() + LocalDateTime.now();
-        sessionToken = encoder.encode(rawToken);
-
-        String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
-        member.setSessionToken(sessionToken);
-        return encodingToken;
+        return result;
     }
 
     /*sns로그인. kakao*/

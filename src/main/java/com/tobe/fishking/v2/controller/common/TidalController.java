@@ -61,7 +61,7 @@ public class TidalController {
             result.put("weather", "");
         } else {
             ArrayList<String> weather = myMenuService.getWeather(shipService.getObserverCodeFromShip(shipId), date);
-            result.put("weather",  weather == null ? "" : weather );
+            result.put("weather",  weather == null ? null : weather );
         }
          return result;
     }

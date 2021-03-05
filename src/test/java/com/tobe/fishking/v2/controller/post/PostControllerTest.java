@@ -163,7 +163,11 @@ public class PostControllerTest {
     @Test
     @Transactional
     public void noName() throws Exception {
-        updateMember();
+        Member member = memberRepository.findById(147L)
+                .orElseThrow(()->new RuntimeException(""));
+
+        member.setMemberName("apple man");
+
         return;
 
     }

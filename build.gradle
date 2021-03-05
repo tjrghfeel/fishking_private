@@ -62,6 +62,16 @@ dependencies {
 
     compile group: 'com.ibm.icu', name: 'icu4j', version: '68.1'
 
+    //nice 모듈
+    compile files('libs/NiceID.jar')
+//    compile files('libs/NiceID_ibm')
+
+    //jsp설정
+//    compile('javax.servlet:jstl:1.2')
+//    compile("org.apache.tomcat.embed:tomcat-embed-jasper")
+
+
+
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
