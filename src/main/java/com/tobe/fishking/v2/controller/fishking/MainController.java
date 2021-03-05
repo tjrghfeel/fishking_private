@@ -187,9 +187,11 @@ public class MainController {
             "\n keyword: 검색 키워드 ")
     @GetMapping("/search/all")
     public Map<String, Object> getSearchResultAll(@RequestHeader("Authorization") String token,
-                                                 @RequestParam String keyword) {
+                                                  @RequestParam String keyword,
+                                                  @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
+                                                  @RequestParam(required = false, defaultValue = "127.0016985") Double longitude) {
         commonService.addSearchKeys(token, keyword, SearchPublish.TOTAL);
-        return commonService.searchTotal(keyword);
+        return commonService.searchTotal(keyword, latitude, longitude);
     }
 
     @ApiOperation(value = "전체검색 업체 결과", notes = "통합검색 업체 결과 " +
@@ -243,12 +245,14 @@ public class MainController {
                                                    @RequestParam String keyword,
                                                    @RequestParam(required = false) String type,
                                                    @RequestParam(defaultValue = "distance") String order,
+                                                   @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
+                                                   @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
                                                    @PathVariable Integer page) {
         if (type == null) {
             commonService.addSearchKeys(token, keyword, SearchPublish.COMPANY);
-            return commonService.searchShip(keyword, page, order);
+            return commonService.searchShip(keyword, page, order, latitude, longitude);
         } else {
-            return commonService.searchShipWithType(keyword, page, order, type);
+            return commonService.searchShipWithType(keyword, page, order, type, latitude, longitude);
         }
     }
 
@@ -294,9 +298,11 @@ public class MainController {
     public Map<String, Object> getSearchResultLive(@RequestHeader("Authorization") String token,
                                                    @RequestParam String keyword,
                                                    @RequestParam(defaultValue = "") String order,
+                                                   @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
+                                                   @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
                                                    @PathVariable Integer page) {
         commonService.addSearchKeys(token, keyword, SearchPublish.TV);
-        return commonService.searchLive(keyword, page, order);
+        return commonService.searchLive(keyword, page, order, latitude, longitude);
     }
 
     @ApiOperation(value = "전체검색 조황일지 결과", notes = "전체검색 조황일지 결과 " +
@@ -327,9 +333,11 @@ public class MainController {
             "\n 최신순은 order 없는 경우 최신 순 입니다.")
     @GetMapping("/search/diary/{page}")
     public Map<String, Object> getSearchResultDiary(@RequestHeader("Authorization") String token,
-                                                  @RequestParam String keyword,
-                                                  @RequestParam(defaultValue = "") String order,
-                                                  @PathVariable Integer page) {
+                                                    @RequestParam String keyword,
+                                                    @RequestParam(defaultValue = "") String order,
+                                                    @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
+                                                    @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
+                                                    @PathVariable Integer page) {
         commonService.addSearchKeys(token, keyword, SearchPublish.FISHINGDIARY);
         return commonService.searchDiary(keyword, page, order);
     }
@@ -362,9 +370,11 @@ public class MainController {
             "\n 최신순은 order 없는 경우 최신 순 입니다.")
     @GetMapping("/search/blog/{page}")
     public Map<String, Object> getSearchResultBlog(@RequestHeader("Authorization") String token,
-                                                  @RequestParam String keyword,
-                                                  @RequestParam(defaultValue = "") String order,
-                                                  @PathVariable Integer page) {
+                                                   @RequestParam String keyword,
+                                                   @RequestParam(defaultValue = "") String order,
+                                                   @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
+                                                   @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
+                                                   @PathVariable Integer page) {
         commonService.addSearchKeys(token, keyword, SearchPublish.FISHINGDIARY2);
         return commonService.searchBlog(keyword, page, order);
     }

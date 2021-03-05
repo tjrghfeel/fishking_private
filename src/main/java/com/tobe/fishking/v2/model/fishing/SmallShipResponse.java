@@ -40,7 +40,7 @@ public class SmallShipResponse {
         this.location = ship.getLocation();
         this.address = ship.getAddress();
         this.fishSpecies = species.map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
-        this.fishSpeciesCount = Math.toIntExact(species.count());
+        this.fishSpeciesCount = this.fishSpecies.size();
         this.lowPrice = lowPrice==null?0:lowPrice;
     }
 
