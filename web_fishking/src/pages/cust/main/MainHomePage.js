@@ -33,7 +33,7 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         const resolve = await APIStore._get("/v2/api/main");
         this.setState(resolve);
-
+        console.log(JSON.stringify(resolve));
         PageStore.reloadSwipe();
       };
       /********** ********** ********** ********** **********/
@@ -265,14 +265,14 @@ export default inject(
                         className = className.concat(" WestSouthSea");
                       else if (data["code"] === "centralSouth")
                         className = className.concat(" CentralSouthSea");
-                      else if (data["code"] === "eastSouth")
-                        className = className.concat(" EastSouthSea");
-                      else if (data["code"] === "northEast")
-                        className = className.concat(" NorthEastSea");
-                      else if (data["code"] === "centralEast")
-                        className = className.concat(" CentralEastSea");
                       else if (data["code"] === "southEast")
                         className = className.concat(" SouthEastSea");
+                      else if (data["code"] === "centralEast")
+                        className = className.concat(" CentralEastSea");
+                      else if (data["code"] === "northEast")
+                        className = className.concat(" NorthEastSea");
+                      else if (data["code"] === "eastSouth")
+                        className = className.concat(" EastSouthSea");
                       else if (data["code"] === "jeju")
                         className = className.concat(" Jeju");
                       return (
