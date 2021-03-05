@@ -5,8 +5,10 @@ export default new (class {
   constructor() {
     makeAutoObservable(this);
   }
-  // applicationUrl = 'http://3.34.51.244:40080/';
   applicationUrl = 'https://fishkingapp.com/cust/main/home';
+  setApplicationUrl(url) {
+    this.applicationUrl = url;
+  }
   /** observable :: webview 객체 */
   webview = null;
   /** observable :: 최근 히스토리 도메인 */
@@ -45,7 +47,10 @@ export default new (class {
   }
   /** action :: goBack */
   goBack() {
-    if (this.canGoBack) {
+    if ((this.recentUrl || '').indexOf('/cust/main/home') !== -1) {
+      BackHandler.exitApp();
+      return true;
+    } else if (this.canGoBack) {
       this.webview.current.goBack();
       return true;
     } else {

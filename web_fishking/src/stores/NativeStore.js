@@ -14,6 +14,9 @@ const NativeStore = new (class {
   /********** ********** ********** ********** **********/
   /** action */
   /********** ********** ********** ********** **********/
+  postMessage(process, data) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ process, data }));
+  }
   linking(url) {
     if (window.isNative) {
       const json = {

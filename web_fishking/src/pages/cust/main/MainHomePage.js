@@ -33,7 +33,6 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         const resolve = await APIStore._get("/v2/api/main");
         this.setState(resolve);
-        console.log(JSON.stringify(resolve));
         PageStore.reloadSwipe();
       };
       /********** ********** ********** ********** **********/

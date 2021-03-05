@@ -1,7 +1,14 @@
 import {makeAutoObservable} from 'mobx';
 import DialogStore from './DialogStore';
 import {Platform} from 'react-native';
-import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {
+  check,
+  request,
+  checkMultiple,
+  requestMultiple,
+  PERMISSIONS,
+  RESULTS,
+} from 'react-native-permissions';
 
 export default new (class {
   constructor() {
@@ -56,12 +63,34 @@ export default new (class {
       });
     });
   };
+  checkMultiplePermission = async (permissions) => {
+    return new Promise((resolve) => {
+      checkMultiple(permissions).then((results) => {
+        let granted = true;
+        for (let permission of permissions) {
+          if (results[permission] !== RESULTS.GRANTED) granted = false;
+        }
+        resolve(granted);
+      });
+    });
+  };
   /** action : 퍼미션 요청 */
   requestPermission = async (permission) => {
     return new Promise((resolve) => {
       request(permission).then((result) => {
         if (result === RESULTS.GRANTED) resolve(true);
         else resolve(false);
+      });
+    });
+  };
+  requestMultiplePermission = async (permissions) => {
+    return new Promise((resolve) => {
+      requestMultiple(permissions).then((results) => {
+        let granted = true;
+        for (let permission of permissions) {
+          if (results[permission] !== RESULTS.GRANTED) granted = false;
+        }
+        resolve(granted);
       });
     });
   };
