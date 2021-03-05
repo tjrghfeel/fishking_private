@@ -93,6 +93,7 @@ public class CommentController {
             "\t\t\t- nickName : String / 댓글 작성자 닉네임\n" +
             "\t\t\t- writeTime : LocalDateTime / 댓글 작성 시각\n" +
             "\t\t\t- content : String / 댓글 내용\n" +
+            "\t\t\t- fileId : Long / 댓글에 첨부된file의 id\n" +
             "\t\t\t- fileUrl : String / 댓글 내용 - 이미지 파일 url\n" +
             "\t\t\t- likeCount : Integer / 댓글에 대한 좋아요수\n" +
             "\t\t\t- isLikeTo : Boolean / 현재 회원의 댓글에 대한 좋야요 여부\n" +
@@ -105,11 +106,14 @@ public class CommentController {
     public CommentPageDto getCommentList(
             @RequestParam("linkId") Long linkId,
             @RequestParam("dependentType") String dependentType,
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException {
         if(!(dependentType.equals("event") )){
             throw new RuntimeException("dependentType의 값에는 'event' 중 하나만 가능합니다.");
         }
+
+        if(token==null){}
+        else if(token.equals("")){token = null;}
 
         return commentService.getCommentList(linkId,DependentType.valueOf(dependentType),token);
     }

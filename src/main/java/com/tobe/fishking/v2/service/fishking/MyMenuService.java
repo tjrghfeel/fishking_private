@@ -2,10 +2,7 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.Alerts;
-import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.common.ObserverCode;
-import com.tobe.fishking.v2.entity.common.TidalLevel;
+import com.tobe.fishking.v2.entity.common.*;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AlertType;
@@ -71,6 +68,10 @@ public class MyMenuService {
     MemberService memberService;
     @Autowired
     TidalLevelRepository tidalLevelRepository;
+    @Autowired
+    CodeGroupRepository codeGroupRepository;
+    @Autowired
+    CommonCodeRepository commonCodeRepository;
 
     HolidayUtil holidayUtil;
 
@@ -235,8 +236,8 @@ public class MyMenuService {
         }
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
-        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
-                member, observerId, EntityType.observerCode, AlertType.tideLevel, false);
+        Boolean isAlerted = alertsRepository.existsByAlertTimeGreaterThanAndReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
+                LocalDateTime.now(), member, observerId, EntityType.observerCode, AlertType.tideLevel, false);
         /*tideTimeList*/
 //        ArrayList<String> tideTimeList = new ArrayList<>();
 //        ArrayList<String> tideLevelList = new ArrayList<>();
@@ -263,7 +264,8 @@ public class MyMenuService {
         /*알림 리스트*/
         Boolean[] alertList = new Boolean[10];
 
-        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member, AlertType.tideLevel, observerId,false);
+        List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
+                LocalDateTime.now(), member, AlertType.tideLevel, observerId,false);
         for(int i=0; i<preAlertList.size(); i++){
             String content = preAlertList.get(i).getContent();
             String[] contentToken = content.split(" ");
@@ -291,7 +293,6 @@ public class MyMenuService {
         }
 
         /*오늘의 날씨 */
-        String weather = null;
         Integer sky = null;
         Integer pty = null;
         String todayDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -333,24 +334,53 @@ public class MyMenuService {
             else{break;}
         }
 
-        if(pty == 0) {
-            switch (sky){
-                case 1: result.setWeather("맑음");break;
-                case 3: result.setWeather("구름많음");break;
-                case 4: result.setWeather("흐림");break;
+        CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
+        ArrayList<String> weather = new ArrayList<>();
+        String imgUrl=null;
+
+        if(sky ==1){//맑음
+            weather.add("맑음");
+        }
+        else if(sky == 3){//구름많음
+            switch (pty){
+                case 0:
+                    weather.add("구름많음");break;
+                case 1: case 5:
+                    weather.add("구름많고 비");break;
+                case 2: case 6:
+                    weather.add("구름많고 비/눈");break;
+                case 3: case 7:
+                    weather.add("구름많고 눈");break;
+                case 4:
+                    weather.add("구름많고 소나기");break;
+                default: weather = null;
             }
         }
-        else if(pty !=0){
-            switch(pty){
-                case 1: result.setWeather("비");break;
-                case 2: result.setWeather("비/눈");break;
-                case 3: result.setWeather("눈");break;
-                case 4: result.setWeather("소나기");break;
-                case 5: result.setWeather("빗방울");break;
-                case 6: result.setWeather("빗방울/눈날림");break;
-                case 7: result.setWeather("눈날림");break;
+        else if(sky == 4){//흐림
+            switch (pty){
+                case 0:
+                    weather.add("흐림");break;
+                case 1: case 5:
+                    weather.add("흐리고 비");break;
+                case 2: case 6:
+                    weather.add("흐리고 비/눈");break;
+                case 3: case 7:
+                    weather.add("흐리고 눈");break;
+                case 4:
+                    weather.add("흐리고 소나기");break;
+                default: weather = null;
             }
         }
+        else{
+            weather = null;
+        }
+        if(weather != null) {
+            imgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, weather.get(0)).getExtraValue1();
+            imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
+            weather.add(imgUrl);
+        }
+        result.setWeather(weather);
+
         return result;
     }
 
@@ -364,7 +394,8 @@ public class MyMenuService {
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
 
-        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member,AlertType.tideLevel,observerId,false);
+        List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
+                LocalDateTime.now(), member,AlertType.tideLevel,observerId,false);
         alertsRepository.deleteAll(preAlertList);
 
         List<TidalLevel> list = tidalLevelRepository.findTop6ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
@@ -439,8 +470,8 @@ public class MyMenuService {
         }
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
-        Boolean isAlerted = alertsRepository.existsByReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
-                member, observerId, EntityType.observerCode, AlertType.tide,false);
+        Boolean isAlerted = alertsRepository.existsByAlertTimeGreaterThanAndReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
+                LocalDateTime.now(), member, observerId, EntityType.observerCode, AlertType.tide,false);
 //        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
         /*tideTimeList*/
 //        ArrayList<String> tideTimeList = new ArrayList<>();
@@ -459,7 +490,8 @@ public class MyMenuService {
         Boolean[] alertDayList = new Boolean[7];
         Boolean[] alertTimeList = new Boolean[5];
 
-        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member, AlertType.tide, observerId,false);
+        List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
+                LocalDateTime.now(), member, AlertType.tide, observerId,false);
         for(int i=0; i<preAlertList.size(); i++){
             String content = preAlertList.get(i).getContent();
             String[] contentToken = content.split(" ");
@@ -496,8 +528,8 @@ public class MyMenuService {
     }
 
     /*중기예보로 날짜별 날씨 반환.*/
-    public String getWeather(ObserverCode observer, String dateString) throws IOException, ParseException {
-        String weather = null;
+    public ArrayList<String> getWeather(ObserverCode observer, String dateString) throws IOException, ParseException {
+        ArrayList<String> result = new ArrayList<>();
 
         LocalDateTime currentTime = LocalDateTime.now();
         int time = currentTime.getHour();
@@ -532,14 +564,30 @@ public class MyMenuService {
         long inputDay = (sdf.parse(DateUtils.getDateFromString(dateString).format(DateTimeFormatter.ofPattern("yyyyMMdd")))).getTime();
         long dayDiff = (inputDay - today) / (24*60*60*1000);
 
-        if(dayDiff < 3 || dayDiff > 10){weather = null;}
+        CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
+
+        if(dayDiff < 3 || dayDiff > 10){result=null;}
         else if(dayDiff <8){
-            weather = "오전 : "+data.get("wf"+dayDiff+"Am") + "/ 오후 : " + data.get("wf"+dayDiff+"Pm");
+            String morningWeather = (String)data.get("wf"+dayDiff+"Am");
+            String afternoonWeather = (String)data.get("wf"+dayDiff+"Pm");
+            result.add(morningWeather);
+            String morningWeatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, morningWeather).getExtraValue1();
+            morningWeatherImgUrl = env.getProperty("file.downloadUrl") + morningWeatherImgUrl;
+            result.add(morningWeatherImgUrl);
+
+            result.add(afternoonWeather);
+            String afternoonWeatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, afternoonWeather).getExtraValue1();
+            afternoonWeatherImgUrl = env.getProperty("file.downloadUrl") + afternoonWeatherImgUrl;
+            result.add(afternoonWeatherImgUrl);
         }
         else{
-            weather = data.get("wf"+dayDiff) +"";
+            String weather = data.get("wf"+dayDiff) +"";
+            result.add(weather);
+            String weatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, weather).getExtraValue1();
+            weatherImgUrl = env.getProperty("file.downloadUrl") + weatherImgUrl;
+            result.add(weatherImgUrl);
         }
-        return weather;
+        return result;
     }
 
     /*물때 알림 추가*/
@@ -552,7 +600,8 @@ public class MyMenuService {
         SeaDirection seaDirection = observer.getSeaDirection();
 
         /*기존 알림들 삭제*/
-        List<Alerts> preAlertList = alertsRepository.findAllByReceiverAndAlertTypeAndPidAndIsSent(member, AlertType.tide, observerId,false);
+        List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
+                LocalDateTime.now(), member, AlertType.tide, observerId,false);
         alertsRepository.deleteAll(preAlertList);
 
         /*알림 추가*/

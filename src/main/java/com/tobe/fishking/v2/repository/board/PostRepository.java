@@ -226,7 +226,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   p.is_secret isSecret, " +
                     "   p.created_date createdDate, " +
                     "   p.modified_date modifiedDate, " +
-                    "   p.is_replied isReplied,   " +
+                    "   p.is_replied isReplied   " +
                     "from post p join board b on (p.board_id = b.id) " +
                     "where " +
                     "   (:postId is null or (:postId is not null and p.id = :postId))" +

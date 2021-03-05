@@ -150,9 +150,18 @@ public class HelloController {
         System.out.println("in apple()");
         model.addAttribute("client_id", "com.fishkingapp.nativeFishkingService");
         model.addAttribute("redirect_uri", "https://fishkingapp.com/v2/api/appleAuthCode");
-        model.addAttribute("nonce", "20B20D-0S8-1K8");
+        model.addAttribute("nonce", "aaa");
 
         return "noName2";
+//        System.out.println("hehe");
+//        model.addAttribute("client_id", "com.fishkingapp.nativeFishkingService");
+//        model.addAttribute("redirect_uri", "https://fishkingapp.com/v2/api/appleAuthCode");
+//        model.addAttribute("nonce", "20B20D-0S8-1K8");
+//        model.addAttribute("response_type", "code id_token");
+//        model.addAttribute("scope", "name email");
+//        model.addAttribute("response_mode", "form_post");
+//
+//        return "redirect:https://appleid.apple.com/auth/authorize";
     }
 
 }

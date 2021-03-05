@@ -139,3 +139,23 @@
   });
 })();
 
+/* Modal */
+var pop = document.getElementById('mainPop');
+var span = document.getElementById("menuPop");
+var btn1 = document.getElementsByClassName("btn-today")[0];
+var btn2 = document.getElementsByClassName("btn-close")[0];
+
+	span.onclick = function() {
+	pop.style.display = "block";
+	}
+	btn1.onclick = function() {
+	pop.style.display = "none";
+	}
+	btn2.onclick = function() {
+	pop.style.display = "none";
+	}
+window.onclick = function(event) {
+	if (event.target == pop) {
+	pop.style.display = "none";
+	}
+}

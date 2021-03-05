@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,11 @@ public class TidalController {
     @ApiOperation(value = "물때 ", notes = "date: yyyy-MM-dd" +
             "\n date: 날짜" +
             "\n tideTime: 물때 (ex 11물)" +
-            "\n weather: 날씨 (ex 맑음) 빈 문자열인 경우에는 빈 값 보여주세요 가져올 수 있는 데이터가 없는 경우입니다")
+            "- weather : ArrayList<String> / 날씨. 문자열배열형태로서, 날씨를 나타내는 문자열과 날씨 이미지url이 순서대로 나온다. " +
+            "현재를 기준으로 3일후부터 10일까지의 데이터만존재. 없을시 null. 3~7일까지는 오전,오후날씨. 이후로는 하루평균날씨.\n" +
+            "ex) 오전/오후 둘다 오는 경우 : [구름많음, localhost:8083/files/common/weather_clouds.svg, 구름많음, localhost:8083/files/common/weather_clouds.svg]\n" +
+            "   하루평균만 오는 경우 : [구름많음, localhost:8083/files/common/weather_clouds.svg]\n " +
+            "   빈 문자열인 경우에는 빈 값 보여주세요 가져올 수 있는 데이터가 없는 경우입니다")
     @GetMapping("/tideTime")
     public Map<String, Object> getTideTimeFromDate(
             @RequestParam(value = "shipId", required = false) Long shipId,
@@ -55,7 +60,7 @@ public class TidalController {
         if (shipId == null) {
             result.put("weather", "");
         } else {
-            String weather = myMenuService.getWeather(shipService.getObserverCodeFromShip(shipId), date);
+            ArrayList<String> weather = myMenuService.getWeather(shipService.getObserverCodeFromShip(shipId), date);
             result.put("weather",  weather == null ? "" : weather );
         }
          return result;
