@@ -224,7 +224,7 @@ public class MemberService {
     @Transactional
     public Long insertMemberInfo(SignUpDto signUpDto) throws ResourceNotFoundException {
         Member member = null;
-
+        System.out.println("================\n test >>> in insertMemberInfo()  \n================");
         /*uid 중복 확인*/
         if(checkUidDup(signUpDto.getEmail())==1){
             throw new EmailDupException("이메일이 중복됩니다");
@@ -237,12 +237,12 @@ public class MemberService {
         /*회원 정보 저장*/
         /*비밀번호 자바 암호화*/
         String encodedPw = encoder.encode(signUpDto.getPw());
+        System.out.println("================\n test >>> encodedPw : "+encodedPw+"\n================");
 
+        member = memberRepository.findById(signUpDto.getMemberId())
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+signUpDto.getMemberId()));
         /*sns를 통해 가입하는경우.*/
-        if(signUpDto.getMemberId()!=null){
-            member = memberRepository.findById(signUpDto.getMemberId())
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+signUpDto.getMemberId()));
-
+        if(member!=null && member.getIsCertified()==false){
             member.setUid(signUpDto.getEmail());
             member.setNickName(signUpDto.getNickName());
             member.setPassword(encodedPw);
@@ -274,58 +274,87 @@ public class MemberService {
                     .build();
             member = memberRepository.save(member);
         }
+        System.out.println("================\n test >>> memberId : "+member.getId()+"\n================");
         return member.getId();
     }
 
-    /*회원가입
-     * - 이메일 중복 확인
-     * - 비번 '자바 암호화' (그 외 개인정보 암호화는 db저장시 jpa converter에서 수행)
-     * - Member생성하여 db에 저장.
-     * - 회원정보와 문자인증 정보가 함께 넘어옴. */
-    /*public Long signUp(SignUpDto signUpDto) throws ResourceNotFoundException {
+    /*nice 성공*/
+    @Transactional
+    public String niceSuccess(String inputMemberId, String certifiedNo, String name, String phnum, String inputGender) throws ResourceNotFoundException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        System.out.println("================\n test >>> in niceSuccess() \n================");
+        System.out.println("================\n test >>> memberId : "+inputMemberId+"\n================");
+        String encodedSessionToken=null;
+        Long memberId =  Long.parseLong(inputMemberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+memberId));
 
-     *//*이미 가입한 사용자인지 확인*//*
-        Member tempMember = memberRepository.findByAreaCodeAndLocalNumberAndMemberName(
-                signUpDto.getAreaCode(),signUpDto.getLocalNumber(),signUpDto.getMemberName());
-        if(tempMember!=null){throw new RuntimeException("이미 가입한 사용자 입니다");}
+        String areaCode = phnum.substring(0,3);
+        String localNumber = phnum.substring(3);
+        Integer genderInt = Integer.parseInt(inputGender);
+        Gender gender = (genderInt == 0)? Gender.girl : Gender.boy;
 
-        *//*회원 정보 저장*//*
-     *//*비밀번호 자바 암호화*//*
-        String encodedPw = encoder.encode(signUpDto.getPw());
+        member.setMemberName(name);
+        member.setPhoneNumber(new PhoneNumber(areaCode,localNumber));
+        member.setGender(gender);
+        member.setIsCertified(true);
+        member.setCertifiedNo(certifiedNo);
+        member.setIsActive(true);
+        memberRepository.save(member);
 
-        *//*기본 프로필 이미지url들 가져옴*//*
-        CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-        CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-        CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+        /*세션토큰생성.*/
+        String rawToken = member.getUid() + LocalDateTime.now();
+        String sessionToken = encoder.encode(rawToken);
 
-        *//*Member 저장*//*
-        Member member = Member.builder()
-                .uid(signUpDto.getEmail())
-                //                .memberName()
-                .nickName(signUpDto.getNickName())
-                .password(encodedPw)
-                .email(signUpDto.getEmail())//일단 이렇게.
-//                .gender(Gender.boy)
-                .roles(Role.member)
-                //                .profileImage()
-                .isActive(true)
-                .certifiedNo(signUpDto.getPassLoginId())
-                .isCertified(true)
-                //                .joinDt()
-                //                .statusMessage()
-                //                .address()
-                .phoneNumber(new PhoneNumber(signUpDto.getAreaCode(),signUpDto.getLocalNumber()))
-                .memberName(signUpDto.getMemberName())
-                .profileImage(noProfileImage.getExtraValue1())
-                .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                .snsId(signUpDto.getSnsId())
-                .snsType((signUpDto.getSnsType()==null)?null:(SNSType.valueOf(signUpDto.getSnsType())))
-                .build();
+        encodedSessionToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+        member.setSessionToken(sessionToken);
+        return encodedSessionToken;
+    }
+    /*nice 실패*/
+    @Transactional
+    public void niceFail(Long memberId) throws ResourceNotFoundException {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+memberId));
+        memberRepository.delete(member);
+    }
 
-        member = memberRepository.save(member);
+    public String requestReplace (String paramValue, String gubun) {
 
-        return member.getId();
-    }*/
+        String result = "";
+
+        if (paramValue != null) {
+
+            paramValue = paramValue.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
+            paramValue = paramValue.replaceAll("\\*", "");
+            paramValue = paramValue.replaceAll("\\?", "");
+            paramValue = paramValue.replaceAll("\\[", "");
+            paramValue = paramValue.replaceAll("\\{", "");
+            paramValue = paramValue.replaceAll("\\(", "");
+            paramValue = paramValue.replaceAll("\\)", "");
+            paramValue = paramValue.replaceAll("\\^", "");
+            paramValue = paramValue.replaceAll("\\$", "");
+            paramValue = paramValue.replaceAll("'", "");
+            paramValue = paramValue.replaceAll("@", "");
+            paramValue = paramValue.replaceAll("%", "");
+            paramValue = paramValue.replaceAll(";", "");
+            paramValue = paramValue.replaceAll(":", "");
+            paramValue = paramValue.replaceAll("-", "");
+            paramValue = paramValue.replaceAll("#", "");
+            paramValue = paramValue.replaceAll("--", "");
+            paramValue = paramValue.replaceAll("-", "");
+            paramValue = paramValue.replaceAll(",", "");
+
+            if(gubun != "encodeData"){
+                paramValue = paramValue.replaceAll("\\+", "");
+                paramValue = paramValue.replaceAll("/", "");
+                paramValue = paramValue.replaceAll("=", "");
+            }
+
+            result = paramValue;
+
+        }
+        return result;
+    }
 
     /*비번 변경을 위한 문자인증 요청 메소드*/
     @Transactional
@@ -480,47 +509,6 @@ public class MemberService {
 //        member.setSessionToken(sessionToken);
 //        return encodingToken;
 //    }
-
-    /*nice 성공*/
-
-    public String requestReplace (String paramValue, String gubun) {
-
-        String result = "";
-
-        if (paramValue != null) {
-
-            paramValue = paramValue.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-
-            paramValue = paramValue.replaceAll("\\*", "");
-            paramValue = paramValue.replaceAll("\\?", "");
-            paramValue = paramValue.replaceAll("\\[", "");
-            paramValue = paramValue.replaceAll("\\{", "");
-            paramValue = paramValue.replaceAll("\\(", "");
-            paramValue = paramValue.replaceAll("\\)", "");
-            paramValue = paramValue.replaceAll("\\^", "");
-            paramValue = paramValue.replaceAll("\\$", "");
-            paramValue = paramValue.replaceAll("'", "");
-            paramValue = paramValue.replaceAll("@", "");
-            paramValue = paramValue.replaceAll("%", "");
-            paramValue = paramValue.replaceAll(";", "");
-            paramValue = paramValue.replaceAll(":", "");
-            paramValue = paramValue.replaceAll("-", "");
-            paramValue = paramValue.replaceAll("#", "");
-            paramValue = paramValue.replaceAll("--", "");
-            paramValue = paramValue.replaceAll("-", "");
-            paramValue = paramValue.replaceAll(",", "");
-
-            if(gubun != "encodeData"){
-                paramValue = paramValue.replaceAll("\\+", "");
-                paramValue = paramValue.replaceAll("/", "");
-                paramValue = paramValue.replaceAll("=", "");
-            }
-
-            result = paramValue;
-
-        }
-        return result;
-    }
 
     /*sns로그인. kakao*/
     @Transactional
