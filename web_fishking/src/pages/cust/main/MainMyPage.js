@@ -43,7 +43,7 @@ export default inject(
         },
         {
           text: "물때",
-          pathname: "",
+          pathname: "/tide/today",
           img: "/assets/cust/img/svg/mymenu-tide.svg",
           requiredLoggedIn: false,
         },

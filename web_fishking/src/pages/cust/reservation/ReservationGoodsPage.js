@@ -59,6 +59,7 @@ export default inject(
             date: selected.format("-"),
             shipId,
           });
+          console.log("tideTime");
           console.log(JSON.stringify(tideTime));
           this.setState({
             tideTime: tideTime.tideTime,
@@ -145,11 +146,12 @@ export default inject(
                     <div className="text-center">
                       <div className="tide-info pt-2">
                         <figure style={{ textAlign: "center" }}>
-                          <img
-                            src="/assets/cust/img/svg/weather_sun.svg"
-                            alt=""
-                          />
-                          {this.state.weather}
+                          {this.state.weather && (
+                            <React.Fragment>
+                              <img src={this.state.weather[1]} alt="" />
+                              {this.state.weather[0]}
+                            </React.Fragment>
+                          )}
                         </figure>
                         <span className="large">
                           물때

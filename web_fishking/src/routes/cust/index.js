@@ -16,6 +16,7 @@ import ReservationRoute from "./reservation";
 import PayRoute from "./pay";
 import EventRoute from "./event";
 import GuideRoute from "./guide";
+import TideRoute from "./tide";
 
 import crypto from "crypto";
 
@@ -115,6 +116,9 @@ export default inject("PageStore")(
 
           {/** 가이드 */}
           <Route path={`${match.url}/guide`} component={GuideRoute} />
+
+          {/** 물때 */}
+          <Route path={`${match.url}/tide`} component={TideRoute} />
 
           {/** 기본 리디렉션 */}
           <Redirect from={`*`} to={`${match.url}/main/home`} />
