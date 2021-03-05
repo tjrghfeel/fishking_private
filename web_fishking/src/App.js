@@ -48,6 +48,36 @@ Date.prototype.toString = function () {
 
   return `${year}년 ${month}월 ${date}일 (${week})`;
 };
+// # >>>>> 초성 추출
+String.prototype.initChar = function () {
+  const cho = [
+    "ㄱ",
+    "ㄲ",
+    "ㄴ",
+    "ㄷ",
+    "ㄸ",
+    "ㄹ",
+    "ㅁ",
+    "ㅂ",
+    "ㅃ",
+    "ㅅ",
+    "ㅆ",
+    "ㅇ",
+    "ㅈ",
+    "ㅉ",
+    "ㅊ",
+    "ㅋ",
+    "ㅌ",
+    "ㅍ",
+    "ㅎ",
+  ];
+  let result = "";
+  for (let i = 0; i < this.length; i++) {
+    const code = this.charCodeAt(i) - 44032;
+    if (code > -1 && code < 11172) result += cho[Math.floor(code / 588)];
+  }
+  return result;
+};
 // # >>>>> 문자열 암호화
 String.prototype.encrypt = function () {
   const ciphers = crypto.createCipheriv(
