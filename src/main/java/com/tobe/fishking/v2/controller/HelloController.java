@@ -211,7 +211,7 @@ public class HelloController {
         model.addAttribute("sMessage",sMessage);
         model.addAttribute("sEncData",sEncData);
 
-        return "niceREquest";
+        return "niceRequest";
     }
 
 }
