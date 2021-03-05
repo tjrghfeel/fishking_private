@@ -41,7 +41,7 @@ export default inject(
                   <li data-target="#carousel-about" data-slide-to="1"></li>
                   <li data-target="#carousel-about" data-slide-to="2"></li>
                   <li data-target="#carousel-about" data-slide-to="3"></li>
-                  <li data-target="#carousel-about" data-slide-to="4"></li>
+                  {/*<li data-target="#carousel-about" data-slide-to="4"></li>*/}
                 </ol>
                 <div className="carousel-inner">
                   <div className="carousel-item active">
@@ -71,13 +71,6 @@ export default inject(
                       alt="갯바위 포인트"
                       className="d-block w-100"
                     />
-                  </div>
-                  <div className="carousel-item">
-                    <img
-                      src="/assets/cust/img/about/fishking_about5.jpg"
-                      alt="물때와 날씨"
-                      className="d-block w-100"
-                    />
                     <div className="fixed-bottom">
                       <div className="row no-gutters">
                         <div className="col-12">
@@ -91,6 +84,25 @@ export default inject(
                       </div>
                     </div>
                   </div>
+                  {/*<div className="carousel-item">*/}
+                  {/*  <img*/}
+                  {/*    src="/assets/cust/img/about/fishking_about5.jpg"*/}
+                  {/*    alt="물때와 날씨"*/}
+                  {/*    className="d-block w-100"*/}
+                  {/*  />*/}
+                  {/*  <div className="fixed-bottom">*/}
+                  {/*    <div className="row no-gutters">*/}
+                  {/*      <div className="col-12">*/}
+                  {/*        <a*/}
+                  {/*          onClick={this.onInitiate}*/}
+                  {/*          className="btn btn-primary btn-lg btn-block"*/}
+                  {/*        >*/}
+                  {/*          시작하기*/}
+                  {/*        </a>*/}
+                  {/*      </div>*/}
+                  {/*    </div>*/}
+                  {/*  </div>*/}
+                  {/*</div>*/}
                 </div>
               </div>
             </div>

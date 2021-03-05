@@ -15,8 +15,7 @@ export default inject('WebViewStore')(
         const {WebViewStore} = this.props;
         if (initiated === null) {
           WebViewStore.setApplicationUrl(
-            // 'https://fishkingapp.com/cust/init/intro',
-            'https://www.naver.com',
+            'https://fishkingapp.com/cust/init/intro',
           );
         } else {
           WebViewStore.setApplicationUrl(
