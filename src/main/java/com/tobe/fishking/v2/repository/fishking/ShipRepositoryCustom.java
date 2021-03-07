@@ -1,9 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
-import com.tobe.fishking.v2.model.fishing.GoodsResponse;
-import com.tobe.fishking.v2.model.fishing.ShipListResponse;
-import com.tobe.fishking.v2.model.fishing.ShipResponse;
-import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
+import com.tobe.fishking.v2.model.fishing.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,5 +11,6 @@ public interface ShipRepositoryCustom {
     Page<ShipListResponse> searchMain(String keyword, String type, Double lat, Double lng, Pageable pageable);
     Page<ShipListResponse> searchMainWithType(String keyword, String type, Double lat, Double lng, Pageable pageable);
     List<ShipListResponse> searchAllForMap(ShipSearchDTO shipSearchDTO);
+    Page<TvListResponse> searchTvList(ShipSearchDTO shipSearchDTO, Pageable pageable);
     ShipResponse getDetail(Long ship_id);
 }
