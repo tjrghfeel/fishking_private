@@ -35,6 +35,7 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "   and cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
                     "   and a.receiver_id = :memberId " +
+                    "   and a.is_read = false " +
                     "order by a.alert_time desc",
             countQuery = "select a.id " +
                     "from alerts a, common_code cc " +
@@ -43,6 +44,7 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "   and cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
                     "   and a.receiver_id = :memberId " +
+                    "   and a.is_read = false " +
                     "order by a.alert_time desc",
             nativeQuery = true
     )

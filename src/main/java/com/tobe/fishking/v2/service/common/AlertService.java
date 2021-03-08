@@ -60,13 +60,13 @@ public class AlertService {
         return alertsRepo.save(alerts).getId();
     }
 
-    /*알람 삭제*/
+    /*알람 읽음처리 삭제*/
     @Transactional
     public boolean deleteAlert(DeleteAlertDto dto) throws ResourceNotFoundException {
         Alerts alerts = alertsRepo.findById(dto.getAlertId())
                 .orElseThrow(()->new ResourceNotFoundException("alerts not found for this id :: "+dto.getAlertId()));
 
-        alertsRepo.delete(alerts);
+        alerts.readAlert();
         return true;
     }
 

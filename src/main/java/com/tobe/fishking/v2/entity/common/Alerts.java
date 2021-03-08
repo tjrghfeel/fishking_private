@@ -81,4 +81,5 @@ public class Alerts extends BaseTime {
 
     public void sent(){this.isSent=true;}
     public void setSentence(String sentence){this.sentence = sentence;}
+    public void readAlert(){this.isRead = true;}
 }

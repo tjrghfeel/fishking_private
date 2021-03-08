@@ -130,22 +130,22 @@ public class MemberController {
             "- pw : String / 필수 / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
             "- nickName : String / 필수 / 닉네임. 4~10자. \n" +
             "" )
-    @GetMapping("/signUp/infoAndPassRequest")
+    @PostMapping("/signUp/infoAndPassRequest")
     public String insertMemberInfo(
-//            @RequestBody SignUpDto dto,
-            @RequestParam(value = "memberId",required = false) Long Id,
-            @RequestParam("email") String email,
-            @RequestParam("pw") String pw,
-            @RequestParam("nickName") String nickName,
+            @RequestBody SignUpDto dto,
+//            @RequestParam(value = "memberId",required = false) Long Id,
+//            @RequestParam("email") String email,
+//            @RequestParam("pw") String pw,
+//            @RequestParam("nickName") String nickName,
             ModelMap model,
             HttpSession session
     ) throws ResourceNotFoundException, IOException {
-        SignUpDto dto = SignUpDto.builder()
-                .memberId(Id)
-                .email(email)
-                .pw(pw)
-                .nickName(nickName)
-                .build();
+//        SignUpDto dto = SignUpDto.builder()
+//                .memberId(Id)
+//                .email(email)
+//                .pw(pw)
+//                .nickName(nickName)
+//                .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 

@@ -9,4 +9,5 @@ import lombok.*;
 @Builder
 public class DeletingTakeDto {
     private Long takeId;
+    private Long linkId;
 }
