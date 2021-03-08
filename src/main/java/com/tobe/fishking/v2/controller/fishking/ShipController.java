@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.model.fishing.*;
+import com.tobe.fishking.v2.service.YoutubeService;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
@@ -11,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +27,6 @@ import java.util.Map;
 public class ShipController {
 
     private final ShipService shipService;
-    private final MemberService memberService;
     private final CommonService commonService;
 
     @ApiOperation(value = "배 리스트", notes = "배 리스트. 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다.")
@@ -34,7 +38,7 @@ public class ShipController {
                                            @RequestParam(value = "facilities[]", required = false) String[] facilities,
                                            @RequestParam(value = "genres[]", required = false) String[] genres) {
         if (species != null) {
-            if (species.length != 0 ) {
+            if (species.length != 0) {
                 shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
             }
         }
@@ -89,12 +93,12 @@ public class ShipController {
             "\n 선상 탭에서 지도보기 누르는 경우는 선상만, 갯바위에서 누르는 경우는 갯바위만 (fishingType=ship|seaRocks) 보여줍니다.")
     @GetMapping("/ships/map")
     public List<ShipListResponse> getShipsForMap(ShipSearchDTO shipSearchDTO,
-                                           @RequestParam(value = "species[]", required = false) String[] species,
-                                           @RequestParam(value = "services[]", required = false) String[] services,
-                                           @RequestParam(value = "facilities[]", required = false) String[] facilities,
-                                           @RequestParam(value = "genres[]", required = false) String[] genres) {
+                                                 @RequestParam(value = "species[]", required = false) String[] species,
+                                                 @RequestParam(value = "services[]", required = false) String[] services,
+                                                 @RequestParam(value = "facilities[]", required = false) String[] facilities,
+                                                 @RequestParam(value = "genres[]", required = false) String[] genres) {
         if (species != null) {
-            if (species.length != 0 ) {
+            if (species.length != 0) {
                 shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
             }
         }
@@ -191,7 +195,7 @@ public class ShipController {
     public List<GoodsResponse> shipGoods(
             @RequestHeader(name = "Authorization") String sessionToken,
             @ApiParam(value = "선택 날짜", required = true, example = "2021-02-19") @RequestParam String date,
-        @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
+            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
         return shipService.getShipGoods(ship_id, date);
     }
 
@@ -383,15 +387,16 @@ public class ShipController {
             "\n 퍼블상의 이벤트제목, 공지제목은 빼주세요")
     @GetMapping("/ship/ad")
     public Map<String, Object> getShipAd(@RequestParam String fishingType,
-                                               @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
-                                               @RequestParam(required = false, defaultValue = "127.0016985") Double longitude) {
+                                         @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
+                                         @RequestParam(required = false, defaultValue = "127.0016985") Double longitude) {
         return commonService.shipAdList(fishingType, latitude, longitude);
     }
 
 //    @ApiOperation(value = "거리계산")
 //    @GetMapping("/calc")
-//    public String calcDisance() {
-//        shipService.calcDistance();
-//        return "true";
+//    public Map<String, Object> calcDisance() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
+////        return youtubeService.getYoutube("CAEQAA");
+//        return youtubeService.getYoutube(null);
+////        return "true";
 //    }
 }

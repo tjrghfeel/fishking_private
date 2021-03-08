@@ -13,10 +13,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.model.fishing.QShipResponse;
-import com.tobe.fishking.v2.model.fishing.ShipListResponse;
-import com.tobe.fishking.v2.model.fishing.ShipResponse;
-import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
+import com.tobe.fishking.v2.model.fishing.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -241,7 +238,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                     JPAExpressions
                                             .select(observerCode.code)
                                             .from(observerCode).join(commonCode).on(observerCode.forecastCode.eq(commonCode.code))
-                                            .where(commonCode.extraValue1.eq(keyword))
+                                            .where(commonCode.codeName.eq(keyword))
                             ))
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
@@ -266,7 +263,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     ))
                     .from(ship)
                     .where(ship.isActive.eq(true)
-                            .and(ship.fishSpecies.any().code.eq(keyword))
+                            .and(ship.fishSpecies.any().codeName.eq(keyword))
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                     .offset(pageable.getOffset())
@@ -274,6 +271,80 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     .fetchResults();
             return new PageImpl<>(results.getResults(), pageable, results.getTotal());
         }
+    }
+
+    @Override
+    public Page<TvListResponse> searchTvList(ShipSearchDTO shipSearchDTO, Pageable pageable) {
+        List<OrderSpecifier> ORDERS = new ArrayList<>();
+        NumberPath<Integer> aliasPrice = Expressions.numberPath(Integer.class, "price");
+        NumberPath<Integer> aliasSold = Expressions.numberPath(Integer.class, "sold");
+        NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
+        NumberPath<Double> aliasDistance = Expressions.numberPath(Double.class, "distance");
+
+        if (!isEmpty(pageable.getSort())) {
+            for (Sort.Order order: pageable.getSort()) {
+                switch (order.getProperty()) {
+                    case "popular":
+                        OrderSpecifier<?> orderPopular = aliasLiked.desc();
+                        ORDERS.add(orderPopular);
+                        break;
+                    case "distance":
+//                        OrderSpecifier<?> orderDistance = getSortedColumn(Order.ASC, ship, "distance");
+                        OrderSpecifier<?> orderDistance = aliasDistance.asc();
+                        ORDERS.add(orderDistance);
+                        break;
+                    case "lowPrice":
+                        OrderSpecifier<?> orderLowPrice = aliasPrice.asc();
+                        ORDERS.add(orderLowPrice);
+                        break;
+                    case "highPrice":
+                        OrderSpecifier<?> orderHighPrice = aliasPrice.desc();
+                        ORDERS.add(orderHighPrice);
+                        break;
+                    case "review":
+                        OrderSpecifier<?> orderReview = getSortedColumn(Order.DESC, ship, "reviewCount");
+                        ORDERS.add(orderReview);
+                        break;
+                    case "sold":
+                        OrderSpecifier<?> orderSold = aliasSold.desc();
+//                        ORDERS.add(orderSold);
+                        break;
+                }
+            }
+        }
+        ORDERS.add(getSortedColumn(Order.DESC, ship, "createdDate"));
+
+        QueryResults<TvListResponse> results = queryFactory
+                .select(new QTvListResponse(
+                        ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasPrice),
+                        ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ship.id)), aliasSold),
+                        ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked),
+                        ExpressionUtils.as(
+                                acos(
+                                        cos(radians(Expressions.constant(shipSearchDTO.getLatitude())))
+                                                .multiply(cos(radians(ship.location.latitude)))
+                                                .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(shipSearchDTO.getLongitude())))))
+                                                .add(sin(radians(Expressions.constant(shipSearchDTO.getLatitude()))).multiply(sin(radians(ship.location.latitude))))
+                                ).multiply(Expressions.constant(6371)), aliasDistance),
+                        ship
+                ))
+                .from(ship)
+                .where(inSpecies(shipSearchDTO.getSpeciesList()),
+                        inFishingDate(shipSearchDTO.getFishingDate()),
+                        eqSido(shipSearchDTO.getSido()),
+                        eqSigungu(shipSearchDTO.getSigungu()),
+                        inGenres(shipSearchDTO.getGenresList()),
+                        inServices(shipSearchDTO.getServicesList()),
+                        inFacilities(shipSearchDTO.getFacilitiesList()),
+                        hasRealTimeVideos(true),
+                        ship.isActive.eq(true)
+                )
+                .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+//        return null;
     }
 
     private BooleanExpression eqFishingType(String fishingType) {

@@ -326,7 +326,10 @@ export default inject(
                     &nbsp;&nbsp;
                   </div>
                   <div className="float-top-right">
-                    <a onClick={this.requestLike}>
+                    <a
+                      onClick={this.requestLike}
+                      style={{ marginRight: "8px" }}
+                    >
                       <span
                         className={
                           "icon-heart" +
@@ -605,12 +608,12 @@ export default inject(
               {this.state.eventsList && (
                 <div className="container nopadding">
                   <h5>
-                    <a
-                      // onClick={() => PageStore.push(`/event/list`)}
-                      className="float-right-more"
-                    >
-                      내용보기
-                    </a>
+                    {/*<a*/}
+                    {/*  // onClick={() => PageStore.push(`/event/list`)}*/}
+                    {/*  className="float-right-more"*/}
+                    {/*>*/}
+                    {/*  내용보기*/}
+                    {/*</a>*/}
                     이벤트
                   </h5>
                   <ul className="notice">

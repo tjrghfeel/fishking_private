@@ -24,7 +24,7 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      componentDidMount() {
+      async componentDidMount() {
         const {
           PageStore,
           match: {
@@ -43,20 +43,32 @@ export default inject(
         if (tab === "ship" || tab === "live") order = "distance";
         else order = "createDate";
         let type = qp.type || null;
-        const restored = PageStore.restoreState({
-          isPending: false,
-          isEnd: false,
-          totalElements: 0,
-          list: [],
-          keyword,
-          page: 0,
-          order,
-          type,
+        window.navigator.geolocation.getCurrentPosition((position) => {
+          let latitude = null;
+          let longitude = null;
+          try {
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+          } catch (err) {
+          } finally {
+            const restored = PageStore.restoreState({
+              isPending: false,
+              isEnd: false,
+              totalElements: 0,
+              list: [],
+              keyword,
+              page: 0,
+              order,
+              type,
+              latitude,
+              longitude,
+            });
+            PageStore.setScrollEvent(() => {
+              this.loadPageData(PageStore.state.page + 1);
+            });
+            if (!restored) this.loadPageData();
+          }
         });
-        PageStore.setScrollEvent(() => {
-          this.loadPageData(PageStore.state.page + 1);
-        });
-        if (!restored) this.loadPageData();
       }
 
       loadPageData = async (page = 0) => {
@@ -72,6 +84,8 @@ export default inject(
             keyword: PageStore.state.keyword,
             order: PageStore.state.order,
             type: PageStore.state.type,
+            latitude: PageStore.state.latitude,
+            longitude: PageStore.state.longitude,
           }
         );
 

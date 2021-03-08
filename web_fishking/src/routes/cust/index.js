@@ -2,6 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
+import InitRoute from "./init";
 import MainRoute from "./main";
 import CompanyRoute from "./company";
 import MemberRoute from "./member";
@@ -72,6 +73,9 @@ export default inject("PageStore")(
     return (
       <BrowserRouter>
         <Switch>
+          {/** 초기화면 */}
+          <Route path={`${match.url}/init`} component={InitRoute} />
+
           {/** 메인 */}
           <Route path={`${match.url}/main`} component={MainRoute} />
 

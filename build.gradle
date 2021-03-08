@@ -63,10 +63,10 @@ dependencies {
 
     compile group: 'com.ibm.icu', name: 'icu4j', version: '68.1'
 
-    // google auth
-    compile 'com.google.api-client:google-api-client:1.31.3'
-    // youtube data api
-    compile 'com.google.apis:google-api-services-youtube:v3-rev20210210-1.31.0'
+//    // google auth
+//    compile 'com.google.api-client:google-api-client:1.31.3'
+//    // youtube data api
+//    compile 'com.google.apis:google-api-services-youtube:v3-rev20210210-1.31.0'
 
     //nice 모듈
     compile files('libs/NiceID.jar')

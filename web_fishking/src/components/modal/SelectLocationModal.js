@@ -25,7 +25,7 @@ export default inject("DataStore")(
                 />
               </a>
               <h5 className="modal-title" id={id.concat("Label")}>
-                업체&위치 등록
+                선박, 위치 선택
               </h5>
             </div>
             <div className="modal-body">
@@ -34,13 +34,13 @@ export default inject("DataStore")(
                   className={"nav-link" + (active === 0 ? " active" : "")}
                   onClick={() => setActive(0)}
                 >
-                  업체
+                  선박 선택
                 </a>
                 <a
                   className={"nav-link" + (active === 1 ? " active" : "")}
                   onClick={() => setActive(1)}
                 >
-                  내 위치 선택
+                  위치 선택
                 </a>
               </nav>
               {active === 0 && (

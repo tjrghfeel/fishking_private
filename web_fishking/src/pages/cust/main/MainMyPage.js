@@ -1,3 +1,4 @@
+/* global Kakao */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
@@ -86,6 +87,12 @@ export default inject(
       goToMenu = (item) => {
         const { PageStore } = this.props;
         PageStore.push(item.pathname);
+      };
+
+      requestTalk = () => {
+        Kakao.Channel.chat({
+          channelPublicId: "_NzxabK",
+        });
       };
 
       requestCall = () => {
@@ -282,7 +289,10 @@ export default inject(
               </p>
               <div className="row no-gutters no-gutters-cs d-flex align-items-center mt-4">
                 <div className="col-6">
-                  <a className="btn btn-yellow btn-round btn-lg btn-block cs-padding">
+                  <a
+                    onClick={this.requestTalk}
+                    className="btn btn-yellow btn-round btn-lg btn-block cs-padding"
+                  >
                     <img
                       src="/assets/cust/img/svg/icon-talk.svg"
                       alt="Set"

@@ -51,7 +51,7 @@ export default inject()(
                         })}
                       </strong>{" "}
                       <img
-                        src="/assets/cust/img/fish/fish_icon_02.svg"
+                        src="/assets/cust/img/fish/fish_icon_18.svg"
                         alt=""
                         className="fish-cate"
                       />

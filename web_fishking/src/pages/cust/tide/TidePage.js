@@ -107,7 +107,13 @@ export default inject(
         "6일전",
         "7일전",
       ];
-      dailyTimeArray = ["00시", "03시", "06시", "09시", "12시"];
+      dailyTimeArray = [
+        { text: "00시", key: "0" },
+        { text: "03시", key: "3" },
+        { text: "06시", key: "6" },
+        { text: "09시", key: "9" },
+        { text: "12시", key: "12" },
+      ];
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
@@ -138,17 +144,33 @@ export default inject(
             date: this.state.date.format("-"),
           });
           this.setState({ tide: resolve });
+          console.log(JSON.stringify(resolve));
         }
       };
       setAlertTide = async () => {
         const { APIStore } = this.props;
         if (this.state.tabActive === 0) {
+          console.log(
+            JSON.stringify({
+              highTideAlert: this.state.highTideAlert,
+              lowTideAlert: this.state.lowTideAlert,
+              observerId: this.state.tide.observerId,
+            })
+          );
           const resolve = await APIStore._post(`/v2/api/addTideLevelAlert`, {
             highTideAlert: this.state.highTideAlert,
             lowTideAlert: this.state.lowTideAlert,
             observerId: this.state.tide.observerId,
           });
         } else {
+          console.log(
+            JSON.stringify({
+              tide: this.state.addTide,
+              day: this.state.addDay,
+              time: this.state.addTime,
+              observerId: this.state.tide.observerId,
+            })
+          );
           const resolve = await APIStore._post(`/v2/api/addTideAlert`, {
             tide: this.state.addTide,
             day: this.state.addDay,
@@ -409,14 +431,14 @@ export default inject(
                                     if (e.target.checked) {
                                       this.setState({
                                         addTide: this.state.addTide.concat(
-                                          index
+                                          index + 1
                                         ),
                                       });
                                     } else {
                                       this.setState({
                                         addTide: DataStore.removeItemOfArrayByItem(
                                           this.state.addTide,
-                                          index
+                                          index + 1
                                         ),
                                       });
                                     }
@@ -443,13 +465,15 @@ export default inject(
                                   onChange={(e) => {
                                     if (e.target.checked) {
                                       this.setState({
-                                        addDay: this.state.addDay.concat(index),
+                                        addDay: this.state.addDay.concat(
+                                          index + 1
+                                        ),
                                       });
                                     } else {
                                       this.setState({
                                         addDay: DataStore.removeItemOfArrayByItem(
                                           this.state.addDay,
-                                          index
+                                          index + 1
                                         ),
                                       });
                                     }
@@ -471,27 +495,29 @@ export default inject(
                                   className="add-contrast"
                                   data-role="collar"
                                   defaultChecked={
-                                    this.state.tide.alertTimeList[index]
+                                    this.state.tide.alertTimeList[data["key"]]
                                   }
                                   onChange={(e) => {
                                     if (e.target.checked) {
                                       this.setState({
                                         addTime: this.state.addTime.concat(
-                                          index
+                                          data["key"]
                                         ),
                                       });
                                     } else {
                                       this.setState({
                                         addTime: DataStore.removeItemOfArrayByItem(
                                           this.state.addTime,
-                                          index
+                                          data["key"]
                                         ),
                                       });
                                     }
                                   }}
                                 />
                                 <span className="control-indicator"></span>
-                                <span className="control-text">{data}</span>
+                                <span className="control-text">
+                                  {data["text"]}
+                                </span>
                               </label>
                               <br />
                             </React.Fragment>

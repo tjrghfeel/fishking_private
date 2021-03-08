@@ -33,7 +33,6 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         const resolve = await APIStore._get("/v2/api/main");
         this.setState(resolve);
-        console.log(JSON.stringify(resolve));
         PageStore.reloadSwipe();
       };
       /********** ********** ********** ********** **********/
@@ -280,7 +279,7 @@ export default inject(
                           key={index}
                           onClick={() =>
                             PageStore.push(
-                              `/search/keyword/ship?keyword=${data["code"]}&type=direction`
+                              `/search/keyword/ship?keyword=${data["codeName"]}&type=direction`
                             )
                           }
                         >

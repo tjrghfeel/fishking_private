@@ -102,7 +102,6 @@ export default inject("DataStore")(
               <div className="modal-body">
                 <div className="padding">
                   <p className="mt-3"></p>
-
                   {list &&
                     list.map((data, index) => (
                       <div key={index} className="row">
