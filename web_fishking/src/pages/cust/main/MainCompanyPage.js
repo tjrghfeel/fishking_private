@@ -86,6 +86,8 @@ export default inject(
             const restored = PageStore.restoreState({
               isPending: false,
               isEnd: false,
+              premium: [],
+              normal: [],
               list: [],
               fishingType: type,
               page: 0,
@@ -116,6 +118,17 @@ export default inject(
         if ((page > 0 && PageStore.state.isEnd) || APIStore.isLoading) return;
 
         PageStore.setState({ page, isPending: true });
+
+        const { premium = [], normal = [] } = await APIStore._get(
+          `/v2/api/ship/ad`,
+          {
+            fishingType: PageStore.state.fishingType,
+            latitude: PageStore.state.latitude,
+            longitude: PageStore.state.longitude,
+          }
+        );
+        PageStore.setState({ premium, normal });
+
         console.log(
           JSON.stringify({
             fishingType: PageStore.state.fishingType,
@@ -374,17 +387,51 @@ export default inject(
 
             {/** Content */}
             <div className="container nopadding">
-              {/*<CompanyPremiumListItemView />*/}
-              <p className="clearfix"></p>
-              {/*<h6 className="text-secondary mb-3">일반</h6>*/}
-              {PageStore.state.list &&
-                PageStore.state.list.map((data, index) => (
-                  <CompanyListItemView
-                    key={index}
-                    data={data}
-                    onClick={this.onClick}
-                  />
-                ))}
+              {PageStore.state.premium && PageStore.state.premium.length > 0 && (
+                <React.Fragment>
+                  <p className="clearfix"></p>
+                  <h6 className="text-secondary">인기 프리미엄 AD</h6>
+                  {/** 인기 프리미엄 AD */}
+                  {PageStore.state.premium &&
+                    PageStore.state.premium.map((data, index) => (
+                      <CompanyPremiumListItemView
+                        key={index}
+                        data={data}
+                        onClick={this.onClick}
+                      />
+                    ))}
+                </React.Fragment>
+              )}
+              {PageStore.state.normal && PageStore.state.normal.length > 0 && (
+                <React.Fragment>
+                  <p className="clearfix"></p>
+                  <h6 className="text-secondary">프리미엄 AD</h6>
+                  {/** 프리미엄 AD */}
+                  {PageStore.state.normal &&
+                    PageStore.state.normal.map((data, index) => (
+                      <CompanyPremiumListItemView
+                        key={index}
+                        data={data}
+                        onClick={this.onClick}
+                      />
+                    ))}
+                </React.Fragment>
+              )}
+
+              {PageStore.state.list && PageStore.state.list.length > 0 && (
+                <React.Fragment>
+                  <p className="clearfix"></p>
+                  <h6 className="text-secondary mb-3">일반</h6>
+                  {PageStore.state.list &&
+                    PageStore.state.list.map((data, index) => (
+                      <CompanyListItemView
+                        key={index}
+                        data={data}
+                        onClick={this.onClick}
+                      />
+                    ))}
+                </React.Fragment>
+              )}
             </div>
 
             {/** Toggle Menu */}

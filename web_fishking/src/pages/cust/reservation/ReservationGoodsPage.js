@@ -10,7 +10,8 @@ const {
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "ModalStore"
 )(
   observer(
     withRouter(
@@ -20,23 +21,13 @@ export default inject(
           this.state = {
             selectedDate: new Date(),
             selected: null,
+            goods: null,
           };
         }
         /********** ********** ********** ********** **********/
         /** function */
         /********** ********** ********** ********** **********/
         async componentDidMount() {
-          const {
-            APIStore,
-            match: {
-              params: { shipId },
-            },
-          } = this.props;
-          const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`, {
-            date: this.state.selectedDate.format("-"),
-          });
-          this.setState({ goods });
-
           this.onChangeDate(new Date());
         }
 
@@ -53,7 +44,8 @@ export default inject(
           const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`, {
             date: this.state.selectedDate.format("-"),
           });
-          this.setState({ goods });
+          this.setState({ goods, selected: null });
+          console.log(JSON.stringify(goods));
           // # 물때정보
           const tideTime = await APIStore._get(`/v2/api/tideTime`, {
             date: selected.format("-"),
@@ -84,18 +76,18 @@ export default inject(
         };
 
         onChange = (checked, item) => {
-          console.log(item);
           if (checked) {
             this.setState({ selected: item });
           }
         };
 
         onSubmit = () => {
+          const { ModalStore } = this.props;
           if (
             this.state.selected === null ||
             this.state.selected.length === 0
           ) {
-            alert("상품을 선택해주세요.");
+            ModalStore.openModal("Alert", { body: "상품을 선택해주세요." });
             return;
           }
 
@@ -137,74 +129,91 @@ export default inject(
                 </div>
               </div>
 
-              {/** 물때 */}
-              <div className="container nopadding mt-0 mb-0">
-                <div className="row">
-                  <div className="col-4 text-center">
-                    <div className="text-center">
-                      <div className="tide-info pt-2">
-                        <figure style={{ textAlign: "center" }}>
-                          {this.state.weather && (
-                            <React.Fragment>
-                              <img src={this.state.weather[1]} alt="" />
-                              {this.state.weather[0]}
-                            </React.Fragment>
-                          )}
-                        </figure>
-                        <span className="large">
-                          물때
-                          <br />
-                          <strong className="point">
-                            {this.state.tideTime}
-                          </strong>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-8 text-center border-left">
-                    <div className="text-center pt-2 pb-1">
-                      <div className="tide-graph">
-                        <figure>
-                          <img
-                            src="/assets/cust/img/svg/tine-line1.svg"
-                            alt=""
-                          />
-                        </figure>
-                        <div className="tide-graph-time-col">
-                          {this.state.tide &&
-                            this.state.tide.map((data, index) => (
-                              <div key={index} className="col">
-                                {data == null && ""}
-                                {data !== null && data.dateTime.substr(11, 5)}
-                              </div>
-                            ))}
-                        </div>
-                        <div className="tide-graph-data-col">
-                          {this.state.tide &&
-                            this.state.tide.map((data, index) => {
-                              if (index % 2 === 0) {
-                                return (
-                                  <div className="col up">
-                                    {data === null && ""}
-                                    {data !== null && data["level"]}
-                                  </div>
-                                );
-                              } else {
-                                return (
-                                  <div className="col down">
-                                    {data === null && ""}
-                                    {data !== null && data["level"]}
-                                  </div>
-                                );
-                              }
-                            })}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              {(this.state.goods === null || this.state.goods.length === 0) && (
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "1rem",
+                    fontWeight: "bold",
+                  }}
+                >
+                  해당일 예약 가능한 상품이 없습니다.
                 </div>
-                <p className="space mt-0 mb-1"></p>
-              </div>
+              )}
+
+              {this.state.goods !== null && this.state.goods.length > 0 && (
+                <React.Fragment>
+                  {/** 물때 */}
+                  <div className="container nopadding mt-0 mb-0">
+                    <div className="row">
+                      <div className="col-4 text-center">
+                        <div className="text-center">
+                          <div className="tide-info pt-2">
+                            <figure style={{ textAlign: "center" }}>
+                              {this.state.weather && (
+                                <React.Fragment>
+                                  <img src={this.state.weather[1]} alt="" />
+                                  {this.state.weather[0]}
+                                </React.Fragment>
+                              )}
+                            </figure>
+                            <span className="large">
+                              물때
+                              <br />
+                              <strong className="point">
+                                {this.state.tideTime}
+                              </strong>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-8 text-center border-left">
+                        <div className="text-center pt-2 pb-1">
+                          <div className="tide-graph">
+                            <figure>
+                              <img
+                                src="/assets/cust/img/svg/tine-line1.svg"
+                                alt=""
+                              />
+                            </figure>
+                            <div className="tide-graph-time-col">
+                              {this.state.tide &&
+                                this.state.tide.map((data, index) => (
+                                  <div key={index} className="col">
+                                    {data == null && ""}
+                                    {data !== null &&
+                                      data.dateTime.substr(11, 5)}
+                                  </div>
+                                ))}
+                            </div>
+                            <div className="tide-graph-data-col">
+                              {this.state.tide &&
+                                this.state.tide.map((data, index) => {
+                                  if (index % 2 === 0) {
+                                    return (
+                                      <div className="col up">
+                                        {data === null && ""}
+                                        {data !== null && data["level"]}
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <div className="col down">
+                                        {data === null && ""}
+                                        {data !== null && data["level"]}
+                                      </div>
+                                    );
+                                  }
+                                })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="space mt-0 mb-1"></p>
+                  </div>
+                </React.Fragment>
+              )}
 
               {/** 리스트 */}
               {this.state.goods &&

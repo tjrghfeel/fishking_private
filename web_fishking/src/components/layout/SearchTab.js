@@ -21,7 +21,7 @@ export default inject("PageStore")(
               PageStore.push(`/search/keyword/ship?keyword=${keyword}`)
             }
           >
-            업체
+            선박
           </a>
           <a
             className={"nav-link" + (activeIndex === 2 ? " active" : "")}

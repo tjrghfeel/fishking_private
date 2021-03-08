@@ -39,8 +39,9 @@ export default inject('WebViewStore')(
               paddingRight: 22,
             }}>
             <Image
-              style={{width: 100, height: 100}}
-              source={require('../images/splash.svg')}
+              source={require('../images/splash.png')}
+              width={102}
+              height={120}
             />
             <ActivityIndicator style={{position: 'absolute', bottom: 100}} />
           </View>

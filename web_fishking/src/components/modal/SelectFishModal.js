@@ -64,7 +64,6 @@ export default inject("DataStore")(
       useImperativeHandle(ref, () => ({ onInit }));
       const load = useCallback(async () => {
         const codes = await getCodes("80", 3);
-        console.log(JSON.stringify(codes));
         setList(codes);
       }, [setList, getCodes]);
       useEffect(() => {

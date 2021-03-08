@@ -279,7 +279,7 @@ export default inject(
                           key={index}
                           onClick={() =>
                             PageStore.push(
-                              `/search/keyword/ship?keyword=${data["code"]}&type=direction`
+                              `/search/keyword/ship?keyword=${data["codeName"]}&type=direction`
                             )
                           }
                         >
