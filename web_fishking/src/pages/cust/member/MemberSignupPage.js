@@ -42,8 +42,19 @@ export default inject(
         /********** ********** ********** ********** **********/
         componentDidMount() {
           const { PageStore } = this.props;
-          const { memberId = null } = PageStore.getQueryParams();
+          const { memberId = null, restore } = PageStore.getQueryParams();
+          const saved = localStorage.getItem("@signup-save") || null;
           if (memberId !== null) this.setState({ memberId });
+
+          if (restore === "Y" && saved !== null) {
+            const state = JSON.parse(saved);
+            this.setState({
+              ...state,
+              password: state.pw,
+              rePassword: state.pw,
+              active: 3,
+            });
+          }
         }
 
         toggleCheckbox = () => {
@@ -116,22 +127,18 @@ export default inject(
         };
 
         requestPass = () => {
-          this.form.current.submit();
-          return;
-
           const { PageStore } = this.props;
           const { memberId = null } = PageStore.getQueryParams();
-
-          $.redirect(
-            `${process.env.REACT_APP_PASS_REDIRECT_URI}`,
-            {
+          localStorage.setItem(
+            "@signup-save",
+            JSON.stringify({
               memberId,
               email: this.state.email,
               pw: this.state.password,
               nickName: this.state.nickName,
-            },
-            "POST"
+            })
           );
+          this.form.current.submit();
         };
         /********** ********** ********** ********** **********/
         /** render */

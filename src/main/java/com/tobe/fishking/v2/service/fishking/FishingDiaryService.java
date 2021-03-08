@@ -171,7 +171,7 @@ public class FishingDiaryService {
         /*fishingSpecies 문자열로 만들기*/
         String fishSpecies =null;
         if(dto.getFishingSpecies()!=null) {
-            CodeGroup fishSpeciesCodeGroup = codeGroupRepo.findByCode("fishspecies");
+            CodeGroup fishSpeciesCodeGroup = codeGroupRepo.findByCode("mainfishspecies");
             String[] fishSpeciesCommonCodeList = commonCodeRepo.findCodeNameByCodeList(dto.getFishingSpecies(), fishSpeciesCodeGroup);
             fishSpecies = fishSpeciesCommonCodeList[0];
             for (int i = 1; i < fishSpeciesCommonCodeList.length; i++) {
@@ -351,7 +351,7 @@ public class FishingDiaryService {
         /*fishingSpecies 문자열로 만들기*/
         String fishSpecies =null;
         if(dto.getFishingSpecies()!=null) {
-            CodeGroup fishSpeciesCodeGroup = codeGroupRepo.findByCode("fishspecies");
+            CodeGroup fishSpeciesCodeGroup = codeGroupRepo.findByCode("mainfishspecies");
             String[] fishSpeciesCommonCodeList = commonCodeRepo.findCodeNameByCodeList(dto.getFishingSpecies(), fishSpeciesCodeGroup);
             fishSpecies = fishSpeciesCommonCodeList[0];
             for (int i = 1; i < fishSpeciesCommonCodeList.length; i++) {
@@ -459,7 +459,7 @@ public class FishingDiaryService {
         /*어종검색*/
         String fishSpeciesRegex=null;
         if(fishSpecies!=null&&fishSpecies.length!=0) {
-            CodeGroup codeGroup = codeGroupRepo.findByCode("fishspecies");
+            CodeGroup codeGroup = codeGroupRepo.findByCode("mainfishspecies");
             List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList(fishSpecies.clone()));
             fishSpeciesRegex = districtListCommonCodeList.get(0).getCodeName();
             for (int i = 1; i < districtListCommonCodeList.size(); i++) {
