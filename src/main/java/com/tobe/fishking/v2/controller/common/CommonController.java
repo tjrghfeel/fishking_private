@@ -119,7 +119,9 @@ public class CommonController {
     /*Code Group에 맞는 CommonCode목록을 반환해주는 api. */
     /*!!!!!common code들에 대한 설명 써두기, api검색을 db의 id가 아닌 스트링으로 하도록 변경 고려. */
     @ApiOperation(value = "Common Code 목록 출력", notes = "Common Group에 해당하는 CommonCode목록 출력. 다음은 code group id 목록이다. \n" +
-            "80     : 어종 \n" +
+            "80     : 대표어종 \n" +
+            "161    : 두족류 \n" +
+            "162    : 기타어종 \n" +
             "83     : 지역 \n" +
             "84     : 장르 \n" +
             "85     : 서비스 \n" +

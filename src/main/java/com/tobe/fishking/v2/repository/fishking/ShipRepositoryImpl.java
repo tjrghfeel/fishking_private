@@ -238,7 +238,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                     JPAExpressions
                                             .select(observerCode.code)
                                             .from(observerCode).join(commonCode).on(observerCode.forecastCode.eq(commonCode.code))
-                                            .where(commonCode.extraValue1.eq(keyword))
+                                            .where(commonCode.codeName.eq(keyword))
                             ))
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
@@ -263,7 +263,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     ))
                     .from(ship)
                     .where(ship.isActive.eq(true)
-                            .and(ship.fishSpecies.any().code.eq(keyword))
+                            .and(ship.fishSpecies.any().codeName.eq(keyword))
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                     .offset(pageable.getOffset())

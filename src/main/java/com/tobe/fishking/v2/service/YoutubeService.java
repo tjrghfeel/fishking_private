@@ -37,12 +37,17 @@ public class YoutubeService {
     private String apiUrl = "https://www.googleapis.com/youtube/v3/playlistItems?key="+ apiKey
             + "&playlistId="+ UPplaylistid
             + "&part=snippet"
-            + "&type=video&fields=nextPageToken,pageInfo,items(id,snippet(resourceId(videoId)))&order=date&maxResults=10";
+            + "&type=video"
+            + "&fields=nextPageToken,pageInfo,items(id,snippet(resourceId(videoId)))"
+            + "&order=date"
+            + "&maxResults=10";
 //            + "&type=video&fields=nextPageToken,pageInfo,items(id,snippet(publishedAt,title,description,thumbnails(high(url)),resourceId(videoId)))&order=date&maxResults=10";
 
     private String videoApiUrl = "https://www.googleapis.com/youtube/v3/videos?key="+ apiKey
             + "&part=snippet,statistics"
-            + "&type=video&fields=items(id,snippet(publishedAt,title,description,thumbnails(high(url))),statistics(viewCount))&maxResults=10";
+            + "&type=video"
+            + "&fields=items(id,snippet(publishedAt,title,description,thumbnails(high(url))),statistics(viewCount))"
+            + "&maxResults=10";
 
     private final String USER_AGENT = "Mozilla/5.0";
     private final String playUrl = "https://www.youtube.com/watch?v=";
