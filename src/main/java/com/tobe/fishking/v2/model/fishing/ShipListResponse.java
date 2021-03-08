@@ -20,7 +20,7 @@ public class ShipListResponse {
     private String shipName;
     private String sido;
     private String sigungu;
-    private double distance;
+    private int distance;
     private Location location;
     private String address;
     private List<CommonCodeDTO> fishSpecies;
@@ -50,6 +50,7 @@ public class ShipListResponse {
         this.lowPrice = lowPrice==null?0:lowPrice;
         this.sold = sold==null?0:sold;
         this.type = ship.getFishingType().getValue();
-        this.distance = CalcUtils.round(distance, 3);
+//        this.distance = CalcUtils.round(distance, 3);
+        this.distance = (int) Math.round(distance);
     }
 }
