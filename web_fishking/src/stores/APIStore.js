@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import imageCompression from 'browser-image-compression';
+import imageCompression from "browser-image-compression";
 import Http from "../Http";
 import PageStore from "./PageStore";
 
@@ -14,6 +14,9 @@ const APIStore = new (class {
   /********** ********** ********** ********** **********/
   /** action */
   /********** ********** ********** ********** **********/
+  setLoading = (isLoading) => {
+    this.isLoading = isLoading;
+  };
   _get = (url, params, headers) => {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
@@ -110,9 +113,9 @@ const APIStore = new (class {
   _put_upload = (url, form, headers) => {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
-        const file = form.get('file');
-        const compressedFile = await imageCompression(file, {maxSizeMB:4});
-        form.set('file', compressedFile)
+        const file = form.get("file");
+        const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
+        form.set("file", compressedFile);
         this.isLoading = true;
         try {
           const response = await Http.upload(url, "PUT", headers, form);
@@ -129,9 +132,9 @@ const APIStore = new (class {
   _post_upload = (url, form, headers) => {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
-        const file = form.get('file');
-        const compressedFile = await imageCompression(file, {maxSizeMB:4});
-        form.set('file', compressedFile)
+        const file = form.get("file");
+        const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
+        form.set("file", compressedFile);
         this.isLoading = true;
         try {
           const response = await Http.upload(url, "POST", headers, form);

@@ -51,6 +51,7 @@ export default inject(
       componentDidMount() {
         const {
           PageStore,
+          APIStore,
           match: {
             params: { fishingType },
           },
@@ -75,6 +76,7 @@ export default inject(
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
+        APIStore.setLoading(true);
         window.navigator.geolocation.getCurrentPosition(async (position) => {
           let latitude = null;
           let longitude = null;
@@ -83,6 +85,7 @@ export default inject(
             longitude = position.coords.longitude;
           } catch (err) {
           } finally {
+            APIStore.setLoading(false);
             const restored = PageStore.restoreState({
               isPending: false,
               isEnd: false,
@@ -310,7 +313,9 @@ export default inject(
               title={
                 PageStore.state?.fishingType === "ship"
                   ? "선상낚시"
-                  : "갯바위낚시"
+                  : PageStore.state?.fishingType === "seaRocks"
+                  ? "갯바위낚시"
+                  : ""
               }
               showSearchIcon={true}
             />

@@ -32,6 +32,10 @@ export default inject(
         }
 
         onChangeDate = async (selected) => {
+          const radios = document.querySelectorAll('input[type="radio"]');
+          for (let radio of radios) {
+            radio.checked = false;
+          }
           await this.setState({ selectedDate: selected });
 
           const {
