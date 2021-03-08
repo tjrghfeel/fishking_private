@@ -278,16 +278,7 @@ public class MyMenuController {
             "\t\t\t     ㄴ dateTime: 날짜 \n" +
             "\t\t\t     ㄴ level: 조위 \n" +
             "\t\t\t     ㄴ peak: 고조/저조 \n" +
-            "- highWater : Boolean / 만조 알림 여부\n" +
-            "- highWaterBefore1 : Boolean / 만조 1시간 전 알림 여부\n" +
-            "- highWaterBefore2 : Boolean / 만조 2시간 전 알림 여부\n" +
-            "- highWaterAfter1 : Boolean / 만조 1시간 후 알림 여부\n" +
-            "- highWaterAfter2 : Boolean / 만조 2시간 후 알림 여부\n" +
-            "- lowWater : Boolean / 간조 알림 여부\n" +
-            "- lowWaterBefore1 : Boolean / 간조 1시간 전 알림 여부\n" +
-            "- lowWaterBefore2 : Boolean / 간조 2시간 전 알림 여부\n" +
-            "- lowWaterAfter1 : Boolean / 간조 1시간 후 알림 여부\n" +
-            "- lowWaterAfter2 : Boolean / 간조 2시간 후 알림 여부\n" +
+            "- tidalAlertTimeList : ArrayList<String> / 조위 알림 여부 배열. code group 150에 해당하는 code들의 code값. \n"+
             "")
     @GetMapping("/todayTide")
     public TodayTideDto getTodayTide(
@@ -302,8 +293,8 @@ public class MyMenuController {
     /*조위 알림 추가*/
     @ApiOperation(value = "조위 알림 추가",notes = "" +
             "요청 필드 ) \n" +
-            "- highTideAlert : Integer[] / 만조 알람 시간이 들어있는 배열. -2~ 2까지만 가능. ex) 만조 두시간 전 알림이면 -2, 만조 한시간 후 알림이면 1, 만조 알림이면 0\n" +
-            "- lowTideAlert : Integer[] / 간조 알림 시간이 들어있는 배열. -2~ 2까지만 가능. highTideAlert와 동일한 방식.\n" +
+            "- highTideAlert : ArrayList<String> / 만조 알람 시간이 들어있는 배열. code group 150에 해당하는 code들의 code값. \n" +
+            "- lowTideAlert : ArrayList<String> / 간조 알림 시간이 들어있는 배열. code group 150에 해당하는 code들의 code값. \n" +
             "- observerId : Long / 관측소 id\n" +
             "- 헤더에 세션토큰 필수. \n" +
             "응답필드 ) 성공시 true\n")
@@ -312,14 +303,6 @@ public class MyMenuController {
             @RequestHeader("Authorization") String token,
             @RequestBody AddTideLevelAlertDto dto
     ) throws ResourceNotFoundException {
-        for(int i=0; i<dto.getHighTideAlert().length; i++){
-            Integer high = dto.getHighTideAlert()[i];
-            if(high < -2 || high > 2){return false;}
-        }
-        for(int i=0; i<dto.getLowTideAlert().length; i++){
-            Integer low = dto.getLowTideAlert()[i];
-            if(low < -2 || low > 2){return false;}
-        }
         return myMenuService.addTideLevelAlert(dto.getHighTideAlert(), dto.getLowTideAlert(), dto.getObserverId(), token);
     }
 
@@ -342,9 +325,9 @@ public class MyMenuController {
             "\t\t\t     ㄴ dateTime: 날짜 \n" +
             "\t\t\t     ㄴ level: 조위 \n" +
             "\t\t\t     ㄴ peak: 고조/저조 \n" +
-            "- alertTideList : Boolean형 배열 / 물때 알림 여부. index순서대로 1물,2물,...,13물,14물,15물(조금).\n" +
-            "- alertDayList : Boolean형 배열 / 몇일전 알림 여부. index순서대로 1일전,2일전,...,7일전\n" +
-            "- alertTimeList : Boolean형 배열 / 몇시 알림 여부. index순서대로 0시,3시,6시,9시,12시\n")
+            "- alertTideList : ArrayList<String> / 물때 알림 여부. code group 158번에 해당하는 code들의 code값. \n" +
+            "- alertDayList : ArrayList<String>  / 몇일전 알림 여부. code group 159번에 해당하는 code들의 code값. \n" +
+            "- alertTimeList : ArrayList<String>  / 몇시 알림 여부. code group 160번에 해당하는 code들의 code값. \n")
     @GetMapping("/tideByDate")
     public TideByDateDto getTideByDate(
             @RequestParam("observerId") Long observerId,
@@ -361,25 +344,25 @@ public class MyMenuController {
     @ApiOperation(value = "물때 알림 추가",notes = "" +
             "요청 필드  ) \n" +
             "- observerId : Long / 필수 / 위치의 id\n" +
-            "- tide : Integer[] / 필수 / 알림 물때의 리스트. 1~15까지의 값만 입력 가능.  / ex) 1물 : 배열에 1추가, 조금 : 15추가. \n" +
-            "- day : Integer[] / 필수 / 몇일 전에 알림을 받을지 리스트. 1~7까지의 값만 입력 가능 / ex) 1일전이면 1추가, 7일전이면 7추가. \n" +
-            "- time : Integer[] / 필수 / 몇시에 알림을 받을지 리스트. 0시,3시,6시,9시,12시만 가능하며, 입력은 3시일경우 3, 12시일경우 12, ...\n" +
+            "- tide : ArrayList<String> / 필수 / code group 158번에 해당하는 code들의 code값.  \n" +
+            "- day : ArrayList<String>/ 필수 / code group 159번에 해당하는 code들의 code값. \n" +
+            "- time : ArrayList<String>/ 필수 / code group 160번에 해당하는 code들의 code값.\n" +
             "응답 필드 ) 성공시 true\n")
     @PostMapping("/addTideAlert")
     public Boolean addTideAlert(
             @RequestBody AddTideAlertDto dto,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
-        for(int i=0; i<dto.getTide().length; i++){
-            Integer tide = dto.getTide()[i];
+        for(int i=0; i<dto.getTide().size(); i++){
+            Integer tide = Integer.parseInt(dto.getTide().get(i));
             if(tide < 1 || tide > 15){ return false; }
         }
-        for(int i=0; i<dto.getDay().length; i++){
-            Integer day = dto.getDay()[i];
+        for(int i=0; i<dto.getDay().size(); i++){
+            Integer day = Integer.parseInt(dto.getDay().get(i));
             if(day < 1 || day > 7){return  false;}
         }
-        for(int i=0; i<dto.getTime().length; i++){
-            Integer time =dto.getTime()[i];
+        for(int i=0; i<dto.getTime().size(); i++){
+            Integer time =Integer.parseInt(dto.getTime().get(i));
             if(time !=0 && time!=3 && time!=6 && time!=9 && time!=12){return false;}
         }
         return myMenuService.addTideAlert(dto.getObserverId(),dto.getTide(),dto.getDay(),dto.getTime(),token);

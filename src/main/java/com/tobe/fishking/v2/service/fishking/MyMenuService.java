@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -262,35 +263,40 @@ public class MyMenuService {
                 .build();
 
         /*알림 리스트*/
-        Boolean[] alertList = new Boolean[10];
+        ArrayList<String> tidalAlertTimeList = new ArrayList<>();
 
         List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
                 LocalDateTime.now(), member, AlertType.tideLevel, observerId,false);
         for(int i=0; i<preAlertList.size(); i++){
-            String content = preAlertList.get(i).getContent();
-            String[] contentToken = content.split(" ");
-            String highLow = contentToken[1];
-            Integer time = Integer.parseInt(contentToken[2]);
+            Alerts alert = preAlertList.get(i);
+            List<CommonCode> alertSet = alert.getAlert_sets();
+            tidalAlertTimeList.add(alertSet.get(0).getCode());
 
-            if(highLow.equals("high")){
-                switch (time){
-                    case -2: result.setHighWaterBefore2(true);break;
-                    case -1: result.setHighWaterBefore1(true);break;
-                    case 0: result.setHighWater(true);break;
-                    case 1: result.setHighWaterAfter1(true);break;
-                    case 2: result.setHighWaterAfter2(true);break;
-                }
-            }
-            else if(highLow.equals("low")){
-                switch (time){
-                    case -2: result.setLowWaterBefore2(true);break;
-                    case -1: result.setLowWaterBefore1(true);break;
-                    case 0: result.setLowWater(true);break;
-                    case 1: result.setLowWaterAfter1(true);break;
-                    case 2: result.setLowWaterAfter2(true);break;
-                }
-            }
+//            String content = preAlertList.get(i).getContent();
+//            String[] contentToken = content.split(" ");
+//            String highLow = contentToken[1];
+//            Integer time = Integer.parseInt(contentToken[2]);
+//
+//            if(highLow.equals("high")){
+//                switch (time){
+//                    case -2: result.setHighWaterBefore2(true);break;
+//                    case -1: result.setHighWaterBefore1(true);break;
+//                    case 0: result.setHighWater(true);break;
+//                    case 1: result.setHighWaterAfter1(true);break;
+//                    case 2: result.setHighWaterAfter2(true);break;
+//                }
+//            }
+//            else if(highLow.equals("low")){
+//                switch (time){
+//                    case -2: result.setLowWaterBefore2(true);break;
+//                    case -1: result.setLowWaterBefore1(true);break;
+//                    case 0: result.setLowWater(true);break;
+//                    case 1: result.setLowWaterAfter1(true);break;
+//                    case 2: result.setLowWaterAfter2(true);break;
+//                }
+//            }
         }
+        result.setTidalAlertTimeList(tidalAlertTimeList);
 
         /*오늘의 날씨 */
         Integer sky = null;
@@ -387,12 +393,16 @@ public class MyMenuService {
     /*오늘의 물때정보 알람 설정(조위알람) */
     @Transactional
     public Boolean addTideLevelAlert(
-            Integer[] highTideAlert, Integer[] lowTideAlert, Long observerId, String token
+            ArrayList<String> highTideAlert, ArrayList<String> lowTideAlert, Long observerId, String token
     ) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
+
+        CodeGroup codeGroup = codeGroupRepository.findByCode("tidalLevelAlert");
+        List<CommonCode> highTideAlertCodeList = commonCodeRepository.findCommonCodesByCodeGroupAndCodes(codeGroup,highTideAlert);
+        List<CommonCode> lowTideAlertCodeList = commonCodeRepository.findCommonCodesByCodeGroupAndCodes(codeGroup,lowTideAlert);
 
         List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
                 LocalDateTime.now(), member,AlertType.tideLevel,observerId,false);
@@ -403,20 +413,25 @@ public class MyMenuService {
         );
         if(list.size() < 0){throw new RuntimeException("조위데이터가 없습니다.");}
 
-        for(int i=0; i<highTideAlert.length; i++){
+        for(int i=0; i<highTideAlertCodeList.size(); i++){
+            CommonCode commonCode = highTideAlertCodeList.get(i);
+            Integer time = Integer.parseInt(commonCode.getExtraValue1());
             LocalDateTime alertTime = list.get(0).getDateTime();
-            alertTime = alertTime.plusHours(highTideAlert[i]);
+            alertTime = alertTime.plusHours(time);
             for(int j=1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++){
                 if(list.size() < j){ throw new RuntimeException("알림을 설정할 수 없습니다.");}
                 alertTime = list.get(j).getDateTime();
-                alertTime = alertTime.plusHours(highTideAlert[i]);
+                alertTime = alertTime.plusHours(time);
             }
+            List<CommonCode> alertSet = new ArrayList<>();
+            alertSet.add(commonCode);
 
             Alerts alerts = Alerts.builder()
+                    .alert_sets(alertSet)
                     .alertType(AlertType.tideLevel)
                     .entityType(EntityType.observerCode)
                     .pid(observerId)
-                    .content(observer.getName()+" high "+highTideAlert[i])
+                    .content(observer.getName()+" high "+time)
                     .isRead(false)
                     .isSent(false)
                     .receiver(member)
@@ -431,20 +446,25 @@ public class MyMenuService {
         );
         if(list.size() < 0){throw new RuntimeException("조위데이터가 없습니다.");}
 
-        for(int i=0; i<lowTideAlert.length;  i++){
+        for(int i=0; i<lowTideAlertCodeList.size();  i++){
+            CommonCode commonCode = lowTideAlertCodeList.get(i);
+            Integer time = Integer.parseInt(commonCode.getExtraValue1());
             LocalDateTime alertTime = list.get(0).getDateTime();
-            alertTime = alertTime.plusHours(lowTideAlert[i]);
+            alertTime = alertTime.plusHours(time);
             for(int j=1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++){
                 if(list.size() < j){ throw new RuntimeException("알림을 설정할 수 없습니다.");}
                 alertTime = list.get(j).getDateTime();
-                alertTime = alertTime.plusHours(lowTideAlert[i]);
+                alertTime = alertTime.plusHours(time);
             }
+            List<CommonCode> alertSet = new ArrayList<>();
+            alertSet.add(commonCode);
 
             Alerts alerts = Alerts.builder()
+                    .alert_sets(alertSet)
                     .alertType(AlertType.tideLevel)
                     .entityType(EntityType.observerCode)
                     .pid(observerId)
-                    .content(observer.getName()+" low "+lowTideAlert[i])
+                    .content(observer.getName()+" low "+time)
                     .isRead(false)
                     .isSent(false)
                     .receiver(member)
@@ -486,25 +506,52 @@ public class MyMenuService {
         List<TidalLevelResponse> tideList = tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(dateString), observer.getCode());
 
         /*알림 리스트*/
-        Boolean[] alertTideList = new Boolean[15];
-        Boolean[] alertDayList = new Boolean[7];
-        Boolean[] alertTimeList = new Boolean[5];
+        ArrayList<String> alertTideList = new ArrayList<String>();
+        ArrayList<String> alertDayList = new ArrayList<String>();
+        ArrayList<String> alertTimeList = new ArrayList<String>();
 
         List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
                 LocalDateTime.now(), member, AlertType.tide, observerId,false);
         for(int i=0; i<preAlertList.size(); i++){
-            String content = preAlertList.get(i).getContent();
-            String[] contentToken = content.split(" ");
-            Integer[] data = new Integer[]{Integer.parseInt(contentToken[1]), Integer.parseInt(contentToken[2]),Integer.parseInt(contentToken[3])};
-            alertTideList[data[0]-1] = true;
-            alertDayList[data[1]-1] = true;
-            switch (data[2]){
-                case 0: alertTimeList[0] = true; break;
-                case 3: alertTimeList[1] = true; break;
-                case 6: alertTimeList[2] = true;break;
-                case 9: alertTimeList[3] = true; break;
-                case 12: alertTimeList[4] = true; break;
+            Alerts alert = preAlertList.get(i);
+            List<CommonCode> commonCodeList = alert.getAlert_sets();
+            for(int j=0; j<commonCodeList.size(); j++){
+                CommonCode commonCode = commonCodeList.get(j);
+                if(commonCode.getCodeGroup().getCode().equals("tideAlertTide8")) {
+                    boolean exist = false;
+                    for(int l=0; l<alertTideList.size(); l++){
+                        if(alertTideList.get(l).equals(commonCode.getCode())){ exist = true; }
+                    }
+                    if(exist ==false){alertTideList.add(commonCode.getCode());}
+                }
+                else if(commonCode.getCodeGroup().getCode().equals("tideAlertDay")) {
+                    boolean exist = false;
+                    for(int l=0; l<alertDayList.size(); l++){
+                        if(alertDayList.get(l).equals(commonCode.getCode())){ exist = true; }
+                    }
+                    if(exist ==false){alertDayList.add(commonCode.getCode());}
+                }
+                else if(commonCode.getCodeGroup().getCode().equals("tideAlertTime")){
+                    boolean exist = false;
+                    for(int l=0; l<alertTimeList.size(); l++){
+                        if(alertTimeList.get(l).equals(commonCode.getCode())){ exist = true; }
+                    }
+                    if(exist ==false){alertTimeList.add(commonCode.getCode());}
+                }
             }
+
+//            String content = preAlertList.get(i).getContent();
+//            String[] contentToken = content.split(" ");
+//            Integer[] data = new Integer[]{Integer.parseInt(contentToken[1]), Integer.parseInt(contentToken[2]),Integer.parseInt(contentToken[3])};
+//            alertTideList[data[0]-1] = true;
+//            alertDayList[data[1]-1] = true;
+//            switch (data[2]){
+//                case 0: alertTimeList[0] = true; break;
+//                case 3: alertTimeList[1] = true; break;
+//                case 6: alertTimeList[2] = true;break;
+//                case 9: alertTimeList[3] = true; break;
+//                case 12: alertTimeList[4] = true; break;
+//            }
         }
 
         result = TideByDateDto.builder()
@@ -592,12 +639,21 @@ public class MyMenuService {
 
     /*물때 알림 추가*/
     @Transactional
-    public Boolean addTideAlert(Long observerId, Integer[] tideList, Integer[] dayList, Integer[] timeList, String token ) throws ResourceNotFoundException {
+    public Boolean addTideAlert(Long observerId, ArrayList<String> tideList, ArrayList<String> dayList, ArrayList<String> timeList, String token )
+            throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer code not found for this id :: "+observerId));
         SeaDirection seaDirection = observer.getSeaDirection();
+
+        /*알림 common code들 가져옴*/
+        CodeGroup codeGroup = codeGroupRepository.findByCode("tideAlertTide8");
+        List<CommonCode> tideCodeList = commonCodeRepository.findCommonCodesByCodeGroupAndCodes(codeGroup, tideList);
+        codeGroup = codeGroupRepository.findByCode("tideAlertDay");
+        List<CommonCode> dayCodeList = commonCodeRepository.findCommonCodesByCodeGroupAndCodes(codeGroup, dayList);
+        codeGroup = codeGroupRepository.findByCode("tideAlertTime");
+        List<CommonCode> timeCodeList = commonCodeRepository.findCommonCodesByCodeGroupAndCodes(codeGroup, timeList);
 
         /*기존 알림들 삭제*/
         List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
@@ -608,48 +664,41 @@ public class MyMenuService {
         String todaySolar = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String todayLunar = holidayUtil.convertSolarToLunar(todaySolar);
 
-        String[] contentTideList = new String[tideList.length];
-
-        for(int i=0; i<tideList.length; i++){
+        for(int i=0; i<tideCodeList.size(); i++){
             /*물때 계산*/
+            CommonCode tideCode = tideCodeList.get(i);
+            Integer tide = Integer.parseInt(tideCode.getExtraValue1());
             Integer tideDayDiff = null; //알람 요청한 물때가 현재로부터 몇일 후인지.
-//            if(seaDirection == SeaDirection.west){
-//                Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
-//                Integer tide = (lunarDay+6)%15;
-//                afterDays = tideList[i] - tide;
-//                if(afterDays<0) afterDays += 15;
-//
-//                if(tideList[i]==0){contentTideList[i] = "무시";}
-//                else if(tideList[i]==14){contentTideList[i] = "조금";}
-//                else{contentTideList[i] = tideList[i]+"물";}
-//            }
-//            else if(seaDirection == SeaDirection.east || seaDirection == SeaDirection.south){
             Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
-            Integer tide = (lunarDay+6)%15 +1;
-            tideDayDiff = tideList[i] - tide;
+            Integer todayTide = (lunarDay+6)%15 +1;
+            tideDayDiff = tide - todayTide;
             if(tideDayDiff<0) tideDayDiff += 15;
 
-//                if(tideList[i]==15){contentTideList[i] = "조금";}
-//                else{contentTideList[i] = tideList[i]+"물";}
-//            }
-
-            for(int j=0; j<dayList.length; j++){
-
-                Integer afterDays = tideDayDiff - dayList[j];
+            for(int j=0; j<dayCodeList.size(); j++){
+                CommonCode dayCode = dayCodeList.get(j);
+                Integer day = Integer.parseInt(dayCode.getExtraValue1());
+                Integer afterDays = tideDayDiff - day;
                 if(afterDays < 0) afterDays += 15;//알림 시점이 지났으면 다음 물때에 대해 알림을 설정해준다.
 
                 LocalDateTime today = LocalDateTime.now();
 
-                for(int l=0; l<timeList.length; l++){
+                for(int l=0; l<timeCodeList.size(); l++){
+                    CommonCode timeCode = timeCodeList.get(l);
+                    Integer time = Integer.parseInt(timeCode.getExtraValue1());
                     LocalDateTime alertTime = today.plusDays(afterDays);
-                    alertTime = alertTime.withHour(timeList[l]).withMinute(0).withSecond(0);
+                    alertTime = alertTime.withHour(time).withMinute(0).withSecond(0);
                     if(today.compareTo(alertTime)>0){ alertTime = alertTime.plusDays(15); }/*today.plusDays()하기때문에 보통의 경우 today가 alertTime보다 이후가 될일은 없다.
                                                             근데, 오늘당일이어서 plusDays로 더한날짜가 0이고 설정된시간이 이미지난시간일경우 today가
                                                             이후가 되고, 이경우 다음 물때주기에 대해 알림을 설정하는게 아닌 그냥 무시하겠다는의미. 너무복잡해져서. */
+                    List<CommonCode> alertSet = new ArrayList<>();
+                    alertSet.add(tideCode);
+                    alertSet.add(dayCode);
+                    alertSet.add(timeCode);
 
                     Alerts alerts = Alerts.builder()
+                            .alert_sets(alertSet)
                             .alertType(AlertType.tide)
-                            .content(observer.getName()+" "+tideList[i]+" "+dayList[j]+" "+timeList[l])
+                            .content(observer.getName()+" "+tide+" "+day+" "+time)
                             .isRead(false)
                             .receiver(member)
                             .alertTime(alertTime)

@@ -21,8 +21,8 @@ public class TideByDateDto {
     private List<TidalLevelResponse> tideList;
 //    private ArrayList<String> tideTimeList;
 //    private ArrayList<String> tideLevelList;
-    private Boolean[] alertTideList;
-    private Boolean[] alertDayList;
-    private Boolean[] alertTimeList;
+    private ArrayList<String> alertTideList;
+    private ArrayList<String> alertDayList;
+    private ArrayList<String> alertTimeList;
 
 }
