@@ -186,7 +186,7 @@ public class MyMenuService {
 //                .distance(ship.getDistance())
                 .fishingDate(orders.getFishingDate().replace("-", ""))
                 //.fishSpecies()
-                .meridiem(goods.getMeridiem().getValue())
+//                .meridiem(goods.getMeridiem().getValue())
                 .shipStartTime(goods.getFishingStartTime())
                 .goodsPrice(goods.getTotalAmount())
                 .personnel(orderDetails.getPersonnel())
@@ -199,6 +199,7 @@ public class MyMenuService {
                 .totalAmount(orderDetails.getTotalAmount())
                 .discountAmount(orders.getDiscountAmount())
                 .paymentAmount(orders.getPaymentAmount())
+                .goodsName(goods.getName())
                 .build();
 
         List<CommonCode> list = goods.getFishSpecies();

@@ -12,10 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -394,9 +395,9 @@ public class ShipController {
 
 //    @ApiOperation(value = "거리계산")
 //    @GetMapping("/calc")
-//    public Map<String, Object> calcDisance() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
+//    public String calcDisance() {
 ////        return youtubeService.getYoutube("CAEQAA");
-//        return youtubeService.getYoutube(null);
-////        return "true";
+////        return youtubeService.getYoutube(null);
+//        return "true";
 //    }
 }

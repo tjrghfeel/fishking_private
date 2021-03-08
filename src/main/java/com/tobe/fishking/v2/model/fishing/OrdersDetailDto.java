@@ -45,6 +45,7 @@ public class OrdersDetailDto {
     private Integer totalAmount;
     private Integer discountAmount;
     private Integer paymentAmount;
+    private String goodsName;
 
 
 }
