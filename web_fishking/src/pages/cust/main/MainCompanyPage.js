@@ -77,7 +77,9 @@ export default inject(
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
         APIStore.setLoading(true);
+        let isGetCurrentPosition = false;
         window.navigator.geolocation.getCurrentPosition(async (position) => {
+          isGetCurrentPosition = true;
           let latitude = null;
           let longitude = null;
           try {
@@ -113,6 +115,36 @@ export default inject(
             if (!restored) this.loadPageData();
           }
         });
+        setTimeout(() => {
+          if (!isGetCurrentPosition) {
+            APIStore.setLoading(false);
+            const restored = PageStore.restoreState({
+              isPending: false,
+              isEnd: false,
+              premium: [],
+              normal: [],
+              list: [],
+              fishingType: type,
+              page: 0,
+              size: 20,
+              hasRealTimeVideo,
+              fishingDate: fishingDate,
+              sido: null,
+              sigungu: null,
+              species,
+              orderBy: "popular",
+              facilities: null,
+              genres: null,
+              services: null,
+              latitude: null,
+              longitude: null,
+            });
+            PageStore.setScrollEvent(() => {
+              this.loadPageData(PageStore.state.page + 1);
+            });
+            if (!restored) this.loadPageData();
+          }
+        }, 5000);
       }
 
       loadPageData = async (page = 0) => {
