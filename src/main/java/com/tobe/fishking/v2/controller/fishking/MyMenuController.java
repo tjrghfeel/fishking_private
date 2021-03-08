@@ -215,7 +215,7 @@ public class MyMenuController {
 //            "   distance : 거리\n" +
             "   fishingDate : 낚시일\n" +
             "   fishSpecies : 어종\n" +
-            "   meridiem : 낚시 시간대 오전/오후\n" +
+            "   meridiem : 낚시 시간대 오전/오후 사용하지 않는 데이터\n" +
             "   shipStartTime : 출항시간\n" +
             "   goodPrice : 상품가격\n" +
             "   personnel : 상품 수량\n" +
@@ -227,7 +227,8 @@ public class MyMenuController {
             "   paymentGroup : 결재수단 \n" +
             "   totalAmount : 총 주문금액\n" +
             "   discountAmount : 할인금액\n" +
-            "   paymentAmount : 결재금액\n")
+            "   paymentAmount : 결재금액\n" +
+            "   goodsName : 상품명\n")
     @GetMapping("/OrdersDetail")
     public OrdersDetailDto getOrdersDetail(
             @RequestParam("ordersId") Long ordersId

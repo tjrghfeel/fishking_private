@@ -29,22 +29,28 @@ export default inject(
         const qp = PageStore.getQueryParams();
         this.keyword = qp.keyword || "";
 
-        window.navigator.geolocation.getCurrentPosition(async (position) => {
-          let latitude = null;
-          let longitude = null;
-          try {
-            latitude = position.coords.latitude;
-            longitude = position.coords.longitude;
-          } catch (err) {
-          } finally {
-            const resolve = await APIStore._get(`/v2/api/search/all`, {
-              keyword: this.keyword,
-              latitude,
-              longitude,
-            });
-            await this.setState(resolve);
-          }
+        // window.navigator.geolocation.getCurrentPosition(async (position) => {
+        //   let latitude = null;
+        //   let longitude = null;
+        //   try {
+        //     latitude = position.coords.latitude;
+        //     longitude = position.coords.longitude;
+        //   } catch (err) {
+        //   } finally {
+        //     const resolve = await APIStore._get(`/v2/api/search/all`, {
+        //       keyword: this.keyword,
+        //       latitude,
+        //       longitude,
+        //     });
+        //     await this.setState(resolve);
+        //   }
+        // });
+        const resolve = await APIStore._get(`/v2/api/search/all`, {
+          keyword: this.keyword,
+          latitude: null,
+          longitude: null,
         });
+        await this.setState(resolve);
       };
       /********** ********** ********** ********** **********/
       /** render */

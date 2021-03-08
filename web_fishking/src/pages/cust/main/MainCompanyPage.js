@@ -76,43 +76,69 @@ export default inject(
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
-        APIStore.setLoading(true);
-        window.navigator.geolocation.getCurrentPosition(async (position) => {
-          let latitude = null;
-          let longitude = null;
-          try {
-            latitude = position.coords.latitude;
-            longitude = position.coords.longitude;
-          } catch (err) {
-          } finally {
-            APIStore.setLoading(false);
-            const restored = PageStore.restoreState({
-              isPending: false,
-              isEnd: false,
-              premium: [],
-              normal: [],
-              list: [],
-              fishingType: type,
-              page: 0,
-              size: 20,
-              hasRealTimeVideo,
-              fishingDate: fishingDate,
-              sido: null,
-              sigungu: null,
-              species,
-              orderBy: "popular",
-              facilities: null,
-              genres: null,
-              services: null,
-              latitude,
-              longitude,
-            });
-            PageStore.setScrollEvent(() => {
-              this.loadPageData(PageStore.state.page + 1);
-            });
-            if (!restored) this.loadPageData();
-          }
+
+        // APIStore.setLoading(true);
+        // window.navigator.geolocation.getCurrentPosition(async (position) => {
+        //   let latitude = null;
+        //   let longitude = null;
+        //   try {
+        //     latitude = position.coords.latitude;
+        //     longitude = position.coords.longitude;
+        //   } catch (err) {
+        //   } finally {
+        //     APIStore.setLoading(false);
+        //     const restored = PageStore.restoreState({
+        //       isPending: false,
+        //       isEnd: false,
+        //       premium: [],
+        //       normal: [],
+        //       list: [],
+        //       fishingType: type,
+        //       page: 0,
+        //       size: 20,
+        //       hasRealTimeVideo,
+        //       fishingDate: fishingDate,
+        //       sido: null,
+        //       sigungu: null,
+        //       species,
+        //       orderBy: "popular",
+        //       facilities: null,
+        //       genres: null,
+        //       services: null,
+        //       latitude,
+        //       longitude,
+        //     });
+        //     PageStore.setScrollEvent(() => {
+        //       this.loadPageData(PageStore.state.page + 1);
+        //     });
+        //     if (!restored) this.loadPageData();
+        //   }
+        // });
+        const restored = PageStore.restoreState({
+          isPending: false,
+          isEnd: false,
+          premium: [],
+          normal: [],
+          list: [],
+          fishingType: type,
+          page: 0,
+          size: 20,
+          hasRealTimeVideo,
+          fishingDate: fishingDate,
+          sido: null,
+          sigungu: null,
+          species,
+          orderBy: "popular",
+          facilities: null,
+          genres: null,
+          services: null,
+          latitude: null,
+          longitude: null,
         });
+        PageStore.setScrollEvent(() => {
+          this.loadPageData(PageStore.state.page + 1);
+        });
+        if (!restored) this.loadPageData();
       }
 
       loadPageData = async (page = 0) => {
