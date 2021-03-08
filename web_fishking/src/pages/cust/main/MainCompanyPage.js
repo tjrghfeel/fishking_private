@@ -158,23 +158,6 @@ export default inject(
         );
         PageStore.setState({ premium, normal });
 
-        console.log(
-          JSON.stringify({
-            fishingType: PageStore.state.fishingType,
-            hasRealTimeVideo: PageStore.state.hasRealTimeVideo,
-            fishingDate: PageStore.state.fishingDate,
-            sido: PageStore.state.sido,
-            sigungu: PageStore.state.sigungu,
-            species: PageStore.state.species,
-            orderBy: PageStore.state.orderBy,
-            facilities: PageStore.state.facilities,
-            genres: PageStore.state.genres,
-            services: PageStore.state.services,
-            latitude: PageStore.state.latitude,
-            longitude: PageStore.state.longitude,
-          })
-        );
-
         const {
           content,
           pageable: { pageSize = 0 },

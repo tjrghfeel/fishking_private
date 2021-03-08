@@ -1,3 +1,4 @@
+/* global $ */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
@@ -18,6 +19,7 @@ export default inject(
       class extends React.Component {
         constructor(props) {
           super(props);
+          this.form = React.createRef(null);
           this.active1_check0 = React.createRef(null);
           this.active1_check1 = React.createRef(null);
           this.active1_check2 = React.createRef(null);
@@ -114,25 +116,58 @@ export default inject(
         };
 
         requestPass = () => {
+          this.form.current.submit();
+          return;
+
           const { PageStore } = this.props;
           const { memberId = null } = PageStore.getQueryParams();
 
-          if (memberId === null) {
-            PageStore.push(`${process.env.REACT_APP_PASS_REDIRECT_URI}`);
-          } else {
-            PageStore.push(
-              `${
-                process.env.REACT_APP_PASS_REDIRECT_URI
-              }?state=${memberId.substr(0, memberId.indexOf("#"))}`
-            );
-          }
+          $.redirect(
+            `${process.env.REACT_APP_PASS_REDIRECT_URI}`,
+            {
+              memberId,
+              email: this.state.email,
+              pw: this.state.password,
+              nickName: this.state.nickName,
+            },
+            "POST"
+          );
         };
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
         render() {
+          const { PageStore } = this.props;
+          const { memberId = null } = PageStore.getQueryParams();
           return (
             <React.Fragment>
+              <form
+                method={"POST"}
+                ref={this.form}
+                action={process.env.REACT_APP_PASS_REDIRECT_URI}
+              >
+                <input
+                  type={"hidden"}
+                  name={"email"}
+                  value={this.state.email}
+                />
+                <input
+                  type={"hidden"}
+                  name={"pw"}
+                  value={this.state.password}
+                />
+                <input
+                  type={"hidden"}
+                  name={"nickName"}
+                  value={this.state.nickName}
+                />
+                <input
+                  type={"hidden"}
+                  name={"memberId"}
+                  value={memberId || ""}
+                />
+              </form>
+
               {/** Navigation */}
               <NavigationLayout title={"회원가입"} showBackIcon={true} />
 
