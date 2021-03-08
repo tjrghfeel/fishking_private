@@ -22,7 +22,7 @@ public class Location {
         this.longitude = longitude;
     }
 
-    public Double getDistance(Double lat, Double lon) {
+    public int getDistance(Double lat, Double lon) {
         final int R = 6371; // Radius of the earth
 
         double latDistance = Math.toRadians(lat - this.latitude);
@@ -39,6 +39,7 @@ public class Location {
 
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
-        return CalcUtils.round((Math.sqrt(distance) / 1000), 3);
+//        return CalcUtils.round((Math.sqrt(distance) / 1000), 3);
+        return (int) Math.round((Math.sqrt(distance) / 1000));
     }
 }
