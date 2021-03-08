@@ -35,6 +35,7 @@ export default inject(
       }
       async onMessage(nativeEvent) {
         const {process, data} = JSON.parse(nativeEvent.data);
+        console.log(`[onMessage] ${process} -> ${JSON.stringify(data)}`);
 
         if (process === 'Clipboard') {
           // # Clipboard 복사
