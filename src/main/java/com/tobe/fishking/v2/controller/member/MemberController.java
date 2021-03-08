@@ -133,7 +133,7 @@ public class MemberController {
     @PostMapping("/signUp/infoAndPassRequest")
     public String insertMemberInfo(
 //            @RequestBody SignUpDto dto,
-            @RequestParam(value = "memberId",required = false,defaultValue = "") Long Id,
+            @RequestParam(value = "memberId",required = false) Long Id,
             @RequestParam("email") String email,
             @RequestParam("pw") String pw,
             @RequestParam("nickName") String nickName,
