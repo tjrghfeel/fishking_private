@@ -26,6 +26,7 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       componentDidMount() {
+        localStorage.removeItem("@signup-save");
         this.loadPageData();
       }
 
