@@ -21,15 +21,5 @@ public class TodayTideDto {
     private List<TidalLevelResponse> tideList;
 //    private ArrayList<String> tideTimeList;
 //    private ArrayList<String> tideLevelList;
-    private Boolean highWater;
-    private Boolean highWaterBefore1;
-    private Boolean highWaterBefore2;
-    private Boolean highWaterAfter1;
-    private Boolean highWaterAfter2;
-    private Boolean lowWater;
-    private Boolean lowWaterBefore1;
-    private Boolean lowWaterBefore2;
-    private Boolean lowWaterAfter1;
-    private Boolean lowWaterAfter2;
-
+    private ArrayList<String> tidalAlertTimeList;
 }

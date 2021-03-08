@@ -124,7 +124,8 @@ public class MemberController {
             "회원가입 단계중, 회원정보 입력후 pass인증 요청 api. pass인증버튼 클릭시 호출, 이전단계에서 입력한 회원정보를 함께 보내주어야한다. \n" +
             "회원정보 임시저장 및 pass인증을 호출해 준다. \n" +
             "요청 필드 ) \n" +
-            "- memberId : Long / 선택 / sns를 통해 회원가입진행중일 경우 입력. \n\tㄴ sns로그인 후 리다이렉트 url에 있는 파라미터 'memberId'를 입력해주면된다.\n" +
+            "- memberId : Long / 선택 / sns를 통해 회원가입진행중이거나 본인인증 재시도하는 경우 입력. \n" +
+            "\tㄴ sns로그인 후 리다이렉트 url에 있는 파라미터 또는 본인인증 실패로 redirect된 url의 url파라미터 'memberId'를 입력해주면된다.\n" +
             "- email : String / 필수 / 이메일. 이메일 형식에 맞아야한다\n" +
             "- pw : String / 필수 / 비밀번호. 8~14자, 영문,숫자,특수문자포함 \n" +
             "- nickName : String / 필수 / 닉네임. 4~10자. \n" +
@@ -273,9 +274,12 @@ public class MemberController {
         else if( iReturn == -12)        {            sMessage = "사이트 패스워드 오류입니다.";        }
         else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
 
-        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup"); return;}
+        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;}
         /*데이터 저장*/
         String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
+        if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
+            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
+        }
         System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
         response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
     }
@@ -324,9 +328,9 @@ public class MemberController {
         else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
 
         /*인증 실패시 데이터 삭제*/
-        memberService.niceFail(Long.parseLong(sRequestNumber));
+//        memberService.niceFail(Long.parseLong(sRequestNumber));
 
-        response.sendRedirect("/cust/member/signup");
+        response.sendRedirect("/cust/member/signup?restore=Y&memberId="+sRequestNumber);
     }
 
     /*비밀번호 찾기(재설정) 인증.
