@@ -17,8 +17,11 @@ export default inject(
         PageStore.reloadSwipe();
       }
       onInitiate = async () => {
-        const { NativeStore } = this.props;
-        NativeStore.postMessage("Initiate", null);
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ process: "Initiate", data: null })
+        );
+        // const { NativeStore } = this.props;
+        // NativeStore.postMessage("Initiate", null);
       };
       /********** ********** ********** ********** **********/
       /** render */
