@@ -17,11 +17,13 @@ export default inject(
         PageStore.reloadSwipe();
       }
       onInitiate = async () => {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({ process: "Initiate", data: null })
-        );
-        // const { NativeStore } = this.props;
-        // NativeStore.postMessage("Initiate", null);
+        try {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({ process: "Initiate", data: null })
+          );
+        } catch (err) {
+          console.error(err);
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -74,38 +76,19 @@ export default inject(
                       alt="갯바위 포인트"
                       className="d-block w-100"
                     />
-                    <div className="fixed-bottom">
-                      <div className="row no-gutters">
-                        <div className="col-12">
-                          <a
-                            onClick={this.onInitiate}
-                            className="btn btn-primary btn-lg btn-block"
-                          >
-                            시작하기
-                          </a>
-                        </div>
-                      </div>
-                    </div>
                   </div>
-                  {/*<div className="carousel-item">*/}
-                  {/*  <img*/}
-                  {/*    src="/assets/cust/img/about/fishking_about5.jpg"*/}
-                  {/*    alt="물때와 날씨"*/}
-                  {/*    className="d-block w-100"*/}
-                  {/*  />*/}
-                  {/*  <div className="fixed-bottom">*/}
-                  {/*    <div className="row no-gutters">*/}
-                  {/*      <div className="col-12">*/}
-                  {/*        <a*/}
-                  {/*          onClick={this.onInitiate}*/}
-                  {/*          className="btn btn-primary btn-lg btn-block"*/}
-                  {/*        >*/}
-                  {/*          시작하기*/}
-                  {/*        </a>*/}
-                  {/*      </div>*/}
-                  {/*    </div>*/}
-                  {/*  </div>*/}
-                  {/*</div>*/}
+                </div>
+              </div>
+            </div>
+            <div className="fixed-bottom">
+              <div className="row no-gutters">
+                <div className="col-12">
+                  <a
+                    className="btn btn-primary btn-lg btn-block"
+                    onClick={this.onInitiate}
+                  >
+                    시작하기
+                  </a>
                 </div>
               </div>
             </div>
