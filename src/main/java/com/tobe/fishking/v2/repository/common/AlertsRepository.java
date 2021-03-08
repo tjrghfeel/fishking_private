@@ -56,7 +56,8 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "from alerts a " +
                     "where " +
                     "   (a.is_sent = true or a.alert_time < NOW()) " +
-                    "   and a.receiver_id = :memberId ",
+                    "   and a.receiver_id = :memberId " +
+                    "   and a.is_read = false ",
             nativeQuery = true
     )
     int countByMember(@Param("memberId") Long memberId);

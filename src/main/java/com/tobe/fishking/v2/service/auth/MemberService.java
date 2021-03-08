@@ -226,7 +226,7 @@ public class MemberService {
         Member member = null;
         System.out.println("================\n test >>> in insertMemberInfo()  \n================");
 
-        if(signUpDto.getMemberId()!=null) {
+        if(!signUpDto.getMemberId().equals("")) {
             member = memberRepository.findById(signUpDto.getMemberId())
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this id :: " + signUpDto.getMemberId()));
         }

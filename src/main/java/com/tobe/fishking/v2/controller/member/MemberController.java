@@ -132,20 +132,18 @@ public class MemberController {
             "" )
     @PostMapping("/signUp/infoAndPassRequest")
     public String insertMemberInfo(
-            @RequestBody SignUpDto dto,
-//            @RequestParam(value = "memberId",required = false) Long Id,
-//            @RequestParam("email") String email,
-//            @RequestParam("pw") String pw,
-//            @RequestParam("nickName") String nickName,
-            ModelMap model,
-            HttpSession session
+//            @RequestBody SignUpDto dto,
+            @RequestParam(value = "memberId",required = false,defaultValue = "") Long Id,
+            @RequestParam("email") String email,
+            @RequestParam("pw") String pw,
+            @RequestParam("nickName") String nickName
     ) throws ResourceNotFoundException, IOException {
-//        SignUpDto dto = SignUpDto.builder()
-//                .memberId(Id)
-//                .email(email)
-//                .pw(pw)
-//                .nickName(nickName)
-//                .build();
+        SignUpDto dto = SignUpDto.builder()
+                .memberId(Id)
+                .email(email)
+                .pw(pw)
+                .nickName(nickName)
+                .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
@@ -159,7 +157,7 @@ public class MemberController {
         System.out.println("================\n test >>> sRequestNumber : "+sRequestNumber+"\n================");
         // 업체에서 적절하게 변경하여 쓰거나, 아래와 같이 생성한다.
 //        sRequestNumber = niceCheck.getRequestNO(sSiteCode);
-        session.setAttribute("REQ_SEQ" , sRequestNumber);	// 해킹등의 방지를 위하여 세션을 쓴다면, 세션에 요청번호를 넣는다.
+//        session.setAttribute("REQ_SEQ" , sRequestNumber);	// 해킹등의 방지를 위하여 세션을 쓴다면, 세션에 요청번호를 넣는다.
 
         String sAuthType = "M";      	// 없으면 기본 선택화면, M: 핸드폰, C: 신용카드, X: 공인인증서
 
@@ -195,8 +193,8 @@ public class MemberController {
         else if( iReturn == -9)        {            sMessage = "입력 데이터 오류입니다.";        }
         else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
 
-        model.addAttribute("sMessage",sMessage);
-        model.addAttribute("sEncData",sEncData);
+//        model.addAttribute("sMessage",sMessage);
+//        model.addAttribute("sEncData",sEncData);
 
         return "niceRequest";
     }
