@@ -42,13 +42,14 @@ public class HttpRequestService {
     private final String vendorId = "tobe";
     private final String vendorPw = "toastcam1!";
 
-    public String getToken() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
+    public String getToken(String bizId) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(CAM_BASE_URL + CAM_AUTH_URL + "token");
         httpPost.addHeader("User-Agent", USER_AGENT);
 
         JsonObject data = new JsonObject();
-        data.addProperty("bizUserId", "dev@to-be.kr");
+//        data.addProperty("bizUserId", "dev@to-be.kr");
+        data.addProperty("bizUserId", bizId);
         data.addProperty("bizUserPassword", vendorPw);
         data.addProperty("vendorId", vendorId);
         data.addProperty("country", "KR");

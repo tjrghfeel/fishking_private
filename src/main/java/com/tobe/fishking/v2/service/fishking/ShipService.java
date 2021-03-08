@@ -552,4 +552,83 @@ public class ShipService {
     public ObserverCode getObserverCodeFromShip(Long shipId) {
         return observerCodeRepository.getObserverCodeByCode(shipRepo.getOne(shipId).getObserverCode());
     }
+
+    @Transactional
+    public Page<TvListResponse> getTvList(ShipSearchDTO shipSearchDTO, int page) {
+        Pageable pageable;
+        if (shipSearchDTO.getOrderBy().equals("")) {
+            pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+        } else {
+            pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+        }
+        return shipRepo.searchTvList(shipSearchDTO, pageable);
+    }
+
+    @Transactional
+    public Map<String, Object> getLiveDetail(Long shipId, Long cameraId) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(shipId);
+        Map<String, Object> response = new HashMap<>();
+        List<Map<String, Object>> cameraList = new ArrayList<>();
+        if (videos.size() > 0) {
+            for (RealTimeVideo video : videos) {
+                Map<String, Object> c = new HashMap<>();
+                if (video.getId().equals(cameraId)) {
+                    Ship ship = video.getShips();
+                    c.put("id", video.getId());
+                    c.put("name", video.getName());
+                    c.put("thumbnailUrl", "/resource" + ship.getProfileImage());
+                    c.put("liveVideo", "");
+                    c.put("species", ship.getFishSpecies().stream().map(CommonCode::getCodeName).collect(Collectors.joining(",")));
+                    c.put("address", ship.getAddress());
+
+                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime expTime = LocalDateTime.ofInstant(
+                            Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                            TimeZone.getDefault().toZoneId()
+                    );
+                    String token = "";
+                    if (now.isAfter(expTime)) {
+                        Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                        token = tokenData.get("token");
+                        String expireTime = tokenData.get("expireTime");
+                        realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
+                    } else {
+                        token = video.getToken();
+                    }
+                    if (!token.equals("")) {
+                        List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
+                        for (Map<String, Object> camera : cameras) {
+                            String serial = camera.get("serialNo").toString();
+                            if (serial.equals(video.getSerial())) {
+                                String type = camera.get("recordType").toString();
+                                String streamStatus = camera.get("streamStatus").toString();
+                                String controlStatus = camera.get("controlStatus").toString();
+                                String liveUrl = "";
+                                if (type.equals("24h")) {
+                                    if (streamStatus.equals("on")) {
+                                        liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                    }
+                                } else {
+                                    if (controlStatus.equals("on")) {
+                                        liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                    }
+                                }
+                                c.put("liveVideo", liveUrl);
+                            }
+                        }
+                    }
+                    response.put("cameraData", c);
+                } else {
+                    c.put("id", video.getId());
+                    c.put("name", video.getName());
+                    c.put("thumbnailUrl", "/resource" + video.getShips().getProfileImage());
+                    c.put("liveVideo", "");
+                }
+                cameraList.add(c);
+            }
+            response.put("cameraList", cameraList);
+        }
+        response.putIfAbsent("cameraData", null);
+        return response;
+    }
 }
