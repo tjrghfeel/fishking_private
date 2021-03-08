@@ -676,51 +676,14 @@ export default inject(
                 </ul>
                 <div className="clearfix-sm"></div>
                 <hr />
+                <h5>편의시설</h5>
+                <ul className="service">
+                  {this.state.facilities &&
+                    this.state.facilities.map((data, index) => (
+                      <li key={index}>{data}</li>
+                    ))}
+                </ul>
                 <ul className="notice">
-                  <li>
-                    <strong>서비스</strong>
-                    <br />
-                    <small className="text-secondary">
-                      {this.state.services && (
-                        <React.Fragment>
-                          {"· "}
-                          {this.state.services.map((data, index) => {
-                            if (index === 0) {
-                              return <React.Fragment>{data}</React.Fragment>;
-                            } else {
-                              return (
-                                <React.Fragment>
-                                  {", ".concat(data)}
-                                </React.Fragment>
-                              );
-                            }
-                          })}
-                        </React.Fragment>
-                      )}
-                    </small>
-                  </li>
-                  <li>
-                    <strong>편의시설</strong>
-                    <br />
-                    <small className="text-secondary">
-                      {this.state.facilities &&
-                        this.state.facilities.map((data, index) => {
-                          if (index === 0) {
-                            return (
-                              <React.Fragment>
-                                {"· ".concat(data)}
-                              </React.Fragment>
-                            );
-                          } else {
-                            return (
-                              <React.Fragment>
-                                {", ".concat(data)}
-                              </React.Fragment>
-                            );
-                          }
-                        })}
-                    </small>
-                  </li>
                   {this.state.devices && this.state.devices.length > 0 && (
                     <li>
                       <strong>보유장비</strong>
