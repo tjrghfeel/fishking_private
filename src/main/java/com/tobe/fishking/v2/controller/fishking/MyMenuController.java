@@ -326,8 +326,8 @@ public class MyMenuController {
             "\t\t\t     ㄴ level: 조위 \n" +
             "\t\t\t     ㄴ peak: 고조/저조 \n" +
             "- alertTideList : ArrayList<String> / 물때 알림 여부. code group 158번에 해당하는 code들의 code값. \n" +
-            "- alertDayList : ArrayList<String>  / 몇일전 알림 여부. code group 158번에 해당하는 code들의 code값. \n" +
-            "- alertTimeList : ArrayList<String>  / 몇시 알림 여부. code group 158번에 해당하는 code들의 code값. \n")
+            "- alertDayList : ArrayList<String>  / 몇일전 알림 여부. code group 159번에 해당하는 code들의 code값. \n" +
+            "- alertTimeList : ArrayList<String>  / 몇시 알림 여부. code group 160번에 해당하는 code들의 code값. \n")
     @GetMapping("/tideByDate")
     public TideByDateDto getTideByDate(
             @RequestParam("observerId") Long observerId,
