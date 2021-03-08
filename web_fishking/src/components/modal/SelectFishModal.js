@@ -64,6 +64,7 @@ export default inject("DataStore")(
       useImperativeHandle(ref, () => ({ onInit }));
       const load = useCallback(async () => {
         const codes = await getCodes("80", 3);
+        console.log(JSON.stringify(codes));
         setList(codes);
       }, [setList, getCodes]);
       useEffect(() => {
@@ -102,7 +103,6 @@ export default inject("DataStore")(
               <div className="modal-body">
                 <div className="padding">
                   <p className="mt-3"></p>
-
                   {list &&
                     list.map((data, index) => (
                       <div key={index} className="row">

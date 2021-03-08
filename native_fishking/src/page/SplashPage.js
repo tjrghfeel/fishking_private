@@ -40,7 +40,7 @@ export default inject('WebViewStore')(
             }}>
             <Image
               style={{width: 100, height: 100}}
-              source={require('../images/ic_launcher.png')}
+              source={require('../images/splash.svg')}
             />
             <ActivityIndicator style={{position: 'absolute', bottom: 100}} />
           </View>

@@ -75,27 +75,39 @@ export default inject(
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
-        const restored = PageStore.restoreState({
-          isPending: false,
-          isEnd: false,
-          list: [],
-          fishingType: type,
-          page: 0,
-          size: 20,
-          hasRealTimeVideo,
-          fishingDate: fishingDate,
-          sido: null,
-          sigungu: null,
-          species,
-          orderBy: "popular",
-          facilities: null,
-          genres: null,
-          services: null,
+        window.navigator.geolocation.getCurrentPosition(async (position) => {
+          let latitude = null;
+          let longitude = null;
+          try {
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+          } catch (err) {
+          } finally {
+            const restored = PageStore.restoreState({
+              isPending: false,
+              isEnd: false,
+              list: [],
+              fishingType: type,
+              page: 0,
+              size: 20,
+              hasRealTimeVideo,
+              fishingDate: fishingDate,
+              sido: null,
+              sigungu: null,
+              species,
+              orderBy: "popular",
+              facilities: null,
+              genres: null,
+              services: null,
+              latitude,
+              longitude,
+            });
+            PageStore.setScrollEvent(() => {
+              this.loadPageData(PageStore.state.page + 1);
+            });
+            if (!restored) this.loadPageData();
+          }
         });
-        PageStore.setScrollEvent(() => {
-          this.loadPageData(PageStore.state.page + 1);
-        });
-        if (!restored) this.loadPageData();
       }
 
       loadPageData = async (page = 0) => {
@@ -104,6 +116,22 @@ export default inject(
         if ((page > 0 && PageStore.state.isEnd) || APIStore.isLoading) return;
 
         PageStore.setState({ page, isPending: true });
+        console.log(
+          JSON.stringify({
+            fishingType: PageStore.state.fishingType,
+            hasRealTimeVideo: PageStore.state.hasRealTimeVideo,
+            fishingDate: PageStore.state.fishingDate,
+            sido: PageStore.state.sido,
+            sigungu: PageStore.state.sigungu,
+            species: PageStore.state.species,
+            orderBy: PageStore.state.orderBy,
+            facilities: PageStore.state.facilities,
+            genres: PageStore.state.genres,
+            services: PageStore.state.services,
+            latitude: PageStore.state.latitude,
+            longitude: PageStore.state.longitude,
+          })
+        );
 
         const {
           content,
@@ -119,6 +147,8 @@ export default inject(
           facilities: PageStore.state.facilities,
           genres: PageStore.state.genres,
           services: PageStore.state.services,
+          latitude: PageStore.state.latitude,
+          longitude: PageStore.state.longitude,
         });
 
         if (page === 0) {

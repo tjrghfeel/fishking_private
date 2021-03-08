@@ -37,7 +37,8 @@ export default inject(
         const {process, data} = JSON.parse(nativeEvent.data);
         console.log(`[onMessage] ${process} -> ${JSON.stringify(data)}`);
 
-        if (process === 'Clipboard') {
+        if (process === 'Location') {
+        } else if (process === 'Clipboard') {
           // # Clipboard 복사
           Clipboard.setString(data);
         } else if (process === 'Linking') {

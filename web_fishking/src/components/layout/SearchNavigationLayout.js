@@ -22,11 +22,16 @@ export default inject("PageStore")(
         <form className="form-inline ml-5 float-right" style={{ width: "80%" }}>
           <input
             className="form-control mr-sm-2"
-            type="search"
+            type="text"
             placeholder=""
             aria-label="Search"
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.keyCode === 13) {
+                e.preventDefault();
+              }
+            }}
           />
           <a
             onClick={() => PageStore.push(`${pathname}?keyword=${value}`)}

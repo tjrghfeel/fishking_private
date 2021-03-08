@@ -59,8 +59,6 @@ export default inject(
             date: selected.format("-"),
             shipId,
           });
-          console.log("tideTime");
-          console.log(JSON.stringify(tideTime));
           this.setState({
             tideTime: tideTime.tideTime,
             weather: tideTime.weather,
