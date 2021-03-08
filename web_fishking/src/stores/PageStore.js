@@ -35,8 +35,11 @@ const PageStore = new (class {
     window.location.reload();
   };
   goBack = () => {
+    const redirectUrl = sessionStorage.getItem("@redirect-url");
+    sessionStorage.removeItem("@redirect-url");
     sessionStorage.setItem("@goBack", "Y");
-    window.history.back();
+    if (redirectUrl === null) window.history.back();
+    else window.history.go(-2);
   };
   getQueryParams = () => {
     const params = qs.parse(window.location.search, {
