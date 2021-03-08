@@ -34,9 +34,11 @@ public class CouponService {
 
     /*다운 가능한 쿠폰 리스트 조회.*/
     @Transactional
-    public Page<CouponDTO> getDownloadableCouponList(String sessionToken, int page){
+    public Page<CouponDTO> getDownloadableCouponList(String token, int page) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         Pageable pageable = PageRequest.of(page, 10);
-        return couponRepository.findCouponList(sessionToken, LocalDateTime.now(), pageable);
+        return couponRepository.findCouponList(member.getId(), LocalDateTime.now(), pageable);
     }
 
     /*쿠폰 다운받기
@@ -47,6 +49,11 @@ public class CouponService {
                 .orElseThrow(()->new ResourceNotFoundException("coupon not found for this id ::"+couponId));
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
+
+        /*이미 다운받았는지 확인*/
+        boolean isDownloaded = couponMemberRepository.existsByMemberAndCoupon(member, coupon);
+        if(isDownloaded == true){ return -1L;}
+
         //!!!!!!!!!!!!쿠폰 번호 생성. (일단은 랜덤숫자 넣음. 번호어떻게만들지 정해지고 수정필요.
         String couponCodeOfCouponMember = coupon.getCouponCode() + String.format("%03d",(int)(Math.random()*1000));
 

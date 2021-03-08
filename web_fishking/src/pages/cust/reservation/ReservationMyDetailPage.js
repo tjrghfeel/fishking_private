@@ -198,7 +198,11 @@ export default inject(
                   <span className={this.state.ordersStatusClassName}>
                     {this.state.orderStatus}
                   </span>
-                  <h5>{this.state.shipName}</h5>
+                  <h5>
+                    {this.state.shipName}
+                    {"-"}
+                    {this.state.goodsName}
+                  </h5>
                   <p>
                     <strong>{this.state.fishingType}</strong>
                     <span className="grey">
@@ -303,9 +307,7 @@ export default inject(
                   <hr className="full mt-1 mb-2" />
                   <div className="row no-gutters">
                     <div className="col-6">
-                      <strong>
-                        {this.state.fishSpecies}({this.state.meridiem})
-                      </strong>
+                      <strong>{this.state.fishSpecies}</strong>
                       <br />
                       <small className="grey">
                         출항시간

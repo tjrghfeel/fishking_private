@@ -48,7 +48,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
                     "   or s.sigungu like %:keyword% " +
-                    "order by name ",
+                    "order by s.ship_name ",
             countQuery = "select s.id " +
                     "from ship s join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true) " +
                     "where " +
@@ -57,7 +57,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
                     "   or s.sigungu like %:keyword% " +
-                    "order by name ",
+                    "order by s.ship_name  ",
             nativeQuery = true
     )
     Page<ShipListForWriteFishingDiary> findBySearchKeyword(@Param("keyword") String keyword, Pageable pageable);

@@ -32,4 +32,6 @@ public interface TakeRepository extends JpaRepository<Take, Long> {
 
     @Query("select count(l) from Take l where l.linkId = :linkId and l.createdBy = :createBy and l.takeType = :type")
     Integer findByLinkIdAndMemberAndType(Long linkId, Member createBy, TakeType type);
+
+    Take findByCreatedByAndLinkIdAndTakeType(Member createdBy, Long linkId, TakeType takeType);
 }

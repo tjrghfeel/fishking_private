@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.repository.common;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.fishing.CouponMember;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
 import com.tobe.fishking.v2.repository.BaseRepository;
@@ -178,5 +179,7 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
     )
     List<CouponMemberDTO> findAllCouponMemberListOrderByPopular(
             @Param("member") Member member, @Param("isUse") boolean isUse, @Param("today") LocalDateTime today);
+
+    Boolean existsByMemberAndCoupon(Member member, Coupon coupon);
 
 }

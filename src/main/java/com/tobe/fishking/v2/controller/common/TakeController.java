@@ -32,16 +32,19 @@ public class TakeController {
             "   헤더에 세션토큰 필요\n" +
             "- 반환값 ) 생성된 찜의 id ")
     @PostMapping(value = "/take")
-    public Long addTake(HttpServletRequest request, @RequestBody AddTakeDto dto) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return takeService.addTake(dto.getLinkId(), sessionToken);
+    public Long addTake(@RequestHeader("Authorization") String token, @RequestBody AddTakeDto dto) throws ResourceNotFoundException {
+        return takeService.addTake(dto.getLinkId(), token);
     }
 
     /*찜 삭제*/
-    @ApiOperation(value = "찜 삭제",notes = "현재 로그인한 회원의 찜목록에서 해당 찜을 삭제. ")
+    @ApiOperation(value = "찜 삭제",notes = "현재 로그인한 회원의 찜목록에서 해당 찜을 삭제. \n" +
+            "요청 필드 )\n" +
+            "- linkId : Long / linkId, takeId 둘중 하나 필수 / 찜 대상의 id\n" +
+            "- takeId : Long / linkId, takeId 둘중 하나 필수 / 찜의 id\n" +
+            "- 헤더에 세션토클 필요\n")
     @DeleteMapping(value = "/take")
     public Long deleteTake(@RequestBody DeletingTakeDto dto,@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
-        return takeService.deleteTake(dto,token);
+        return takeService.deleteTake(dto.getTakeId(),dto.getLinkId(), token);
     }
 
     /*선상 낚시 찜 목록 조회*/

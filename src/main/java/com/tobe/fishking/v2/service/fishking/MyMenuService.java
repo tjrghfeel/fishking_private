@@ -427,12 +427,15 @@ public class MyMenuService {
             List<CommonCode> alertSet = new ArrayList<>();
             alertSet.add(commonCode);
 
+            String sentence = "\'"+observer.getName() + "\' \'" + commonCode.getCodeName() + "\'입니다.";
+
             Alerts alerts = Alerts.builder()
                     .alert_sets(alertSet)
                     .alertType(AlertType.tideLevel)
                     .entityType(EntityType.observerCode)
                     .pid(observerId)
                     .content(observer.getName()+" high "+time)
+                    .sentence(sentence)
                     .isRead(false)
                     .isSent(false)
                     .receiver(member)
@@ -460,12 +463,15 @@ public class MyMenuService {
             List<CommonCode> alertSet = new ArrayList<>();
             alertSet.add(commonCode);
 
+            String sentence = "\'"+observer.getName() + "\' \'" + commonCode.getCodeName() + "\'입니다.";
+
             Alerts alerts = Alerts.builder()
                     .alert_sets(alertSet)
                     .alertType(AlertType.tideLevel)
                     .entityType(EntityType.observerCode)
                     .pid(observerId)
                     .content(observer.getName()+" low "+time)
+                    .sentence(sentence)
                     .isRead(false)
                     .isSent(false)
                     .receiver(member)
@@ -540,19 +546,6 @@ public class MyMenuService {
                     if(exist ==false){alertTimeList.add(commonCode.getCode());}
                 }
             }
-
-//            String content = preAlertList.get(i).getContent();
-//            String[] contentToken = content.split(" ");
-//            Integer[] data = new Integer[]{Integer.parseInt(contentToken[1]), Integer.parseInt(contentToken[2]),Integer.parseInt(contentToken[3])};
-//            alertTideList[data[0]-1] = true;
-//            alertDayList[data[1]-1] = true;
-//            switch (data[2]){
-//                case 0: alertTimeList[0] = true; break;
-//                case 3: alertTimeList[1] = true; break;
-//                case 6: alertTimeList[2] = true;break;
-//                case 9: alertTimeList[3] = true; break;
-//                case 12: alertTimeList[4] = true; break;
-//            }
         }
 
         result = TideByDateDto.builder()
@@ -696,10 +689,14 @@ public class MyMenuService {
                     alertSet.add(dayCode);
                     alertSet.add(timeCode);
 
+                    String alertSentence = "\'"+observer.getName() + "\' \'" + tideCode.getCodeName() + "\' \'" + dayCode.getCodeName() +
+                            "\' \'" + timeCode.getCodeName() + "\' 알람입니다.";
+
                     Alerts alerts = Alerts.builder()
                             .alert_sets(alertSet)
                             .alertType(AlertType.tide)
                             .content(observer.getName()+" "+tide+" "+day+" "+time)
+                            .sentence(alertSentence)
                             .isRead(false)
                             .receiver(member)
                             .alertTime(alertTime)
@@ -713,10 +710,7 @@ public class MyMenuService {
                 }
             }
         }
-
-
         return true;
-
     }
 
     /*실시간 조항 리스트 가져오기*/

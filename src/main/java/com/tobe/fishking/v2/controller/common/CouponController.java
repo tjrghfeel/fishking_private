@@ -44,11 +44,10 @@ public class CouponController {
             "   couponImage : 쿠폰 이미지 download url")
     @GetMapping("/downloadableCouponList/{page}")
     public Page<CouponDTO> getDownloadableCouponList(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
-    ){
-        String sessionToken = request.getHeader("Authorization");
-        return couponService.getDownloadableCouponList(sessionToken, page);
+    ) throws ResourceNotFoundException {
+        return couponService.getDownloadableCouponList(token, page);
     }
 
     /*쿠폰 다운 받기.
@@ -60,11 +59,10 @@ public class CouponController {
             "   couponId : 다운받을 쿠폰id ")
     @PostMapping("/downloadCoupon")
     public Long downloadCoupon(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @RequestBody CouponDownloadDto couponId
     ) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return couponService.downloadCoupon(sessionToken, couponId);
+        return couponService.downloadCoupon(token, couponId);
     }
 
     /*사용 가능한 coupon_member 리스트 조회.
@@ -92,11 +90,10 @@ public class CouponController {
             "   couponDescription : 쿠폰 설명\n")
     @GetMapping("/usableCouponList/{page}")
     public Page<CouponMemberDTO> getCouponMemberList(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String token,
             @PathVariable("page") int page,
             @RequestParam(value = "sort", required = false, defaultValue = "basic") String sort) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return  couponService.getCouponMemberList(sessionToken, page, sort);
+        return  couponService.getCouponMemberList(token, page, sort);
     }
 
     @ApiOperation(value = "사용 가능한 쿠폰 리스트 조회",notes = "현재 로그인한 회원이 다운받은 쿠폰들 중에서 사용가능한 전체 쿠폰목록 반환. \n" +
@@ -125,10 +122,9 @@ public class CouponController {
             "size: 쿠폰 갯수")
     @GetMapping("/usableCoupons")
     public Map<String, Object> getAllCouponMemberList(
-            HttpServletRequest request) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
+            @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
-        List<CouponMemberDTO> coupons = couponService.getAllCouponMemberList(sessionToken);
+        List<CouponMemberDTO> coupons = couponService.getAllCouponMemberList(token);
         result.put("coupons", coupons);
         result.put("size", coupons.size());
         return result;

@@ -47,12 +47,20 @@ public class TakeService {
     /*찜 삭제 메소드.
     * 반환 : 삭제한 Take 엔터티의 id를 반환.  */
     @Transactional
-    public Long deleteTake(DeletingTakeDto takeId,String token) throws ResourceNotFoundException {
+    public Long deleteTake(Long takeId, Long linkId, String token) throws ResourceNotFoundException {
         /*삭제하려는 찜의 생성자인지 확인*/
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        Take take = takeRepository.findById(takeId.getTakeId())
-                .orElseThrow(()->new ResourceNotFoundException("take not found for this id ::"+takeId));
+        Take take = null;
+        if(takeId !=null) {
+            take = takeRepository.findById(takeId)
+                    .orElseThrow(() -> new ResourceNotFoundException("take not found for this id ::" + takeId));
+        }
+        else if(linkId!=null){
+            take = takeRepository.findByCreatedByAndLinkIdAndTakeType(member, linkId, TakeType.ship);
+        }
+        else{ throw new RuntimeException("takeId와 linkId 둘 중 하나는 반드시 존재해야만 합니다."); }
+
         if(take.getCreatedBy()!=member){
             throw new RuntimeException("해당 찜의 삭제 권한이 없습니다.");
         }

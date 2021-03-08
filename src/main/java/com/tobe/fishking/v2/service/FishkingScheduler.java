@@ -79,18 +79,15 @@ public class FishkingScheduler {
 
             Member receiver = alerts.getReceiver();
             String registrationToken = receiver.getRegistrationToken();
-            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
-            String alertTitle = "물때 알림";
-            String alertContent = null;
+//            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
+            String alertTitle = "["+alerts.getAlertType().getValue()+"]";
 
             /*알림 내용 생성*/
-            if(alertData[1].equals("15")){alertData[1] = "조금";}
-            else{alertData[1] += "물";}
-            alertContent = alertData[0] + " " + alertData[1] + " " + alertData[2] + "일 전 " + alertData[3] + "시 알림";
+//            if(alertData[1].equals("15")){alertData[1] = "조금";}
+//            else{alertData[1] += "물";}
 
             /*푸쉬알림 보내기. */
-            sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
-            alerts.setSentence(alertContent);
+            sendPushAlert(alertTitle,alerts.getSentence(),alerts, registrationToken);
         }
 
     }
@@ -111,19 +108,17 @@ public class FishkingScheduler {
 
             Member receiver = alerts.getReceiver();
             String registrationToken = receiver.getRegistrationToken();
-            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
-            String alertTitle = "조위 알림";
-            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
-            Integer time = Integer.parseInt(alertData[2]);
-            String timeString = null;
-            if(time<0){timeString = Math.abs(time)+"시간 전";}
-            else if(time>0){timeString = Math.abs(time)+"시간 후";}
-            else{timeString="";}
-            String alertContent = alertData[0] + " " + " " + tideHighLow + " " + timeString+" 알림" ;
+//            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
+            String alertTitle = "["+alerts.getAlertType().getValue()+"]";
+//            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
+//            Integer time = Integer.parseInt(alertData[2]);
+//            String timeString = null;
+//            if(time<0){timeString = Math.abs(time)+"시간 전";}
+//            else if(time>0){timeString = Math.abs(time)+"시간 후";}
+//            else{timeString="";}
 
             /*푸쉬알림 보내기. */
-            sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
-            alerts.setSentence(alertContent);
+            sendPushAlert(alertTitle,alerts.getSentence(),alerts,registrationToken);
         }
     }
 
