@@ -363,7 +363,7 @@ public class CommonService {
     }
 
     @Transactional
-    public Map<String, Object> shipAdList(String fishingType, Double lat, Double lon) {
+    public Map<String, Object> shipAdList(String fishingType, Double lat, Double lng) {
         Map<String, Object> result = new HashMap<>();
         List<SmallShipResponse> premium;
         List<SmallShipResponse> normal;
@@ -376,12 +376,12 @@ public class CommonService {
         }
         for (SmallShipResponse p : premium) {
             if (lat != 0) {
-                p.setDistance(p.getLocation().getDistance(lat, lon));
+                p.setDistance(p.getLocation().getDistance(lat, lng));
             }
         }
         for (SmallShipResponse p : normal) {
             if (lat != 0) {
-                p.setDistance(p.getLocation().getDistance(lat, lon));
+                p.setDistance(p.getLocation().getDistance(lat, lng));
             }
         }
         result.put("premium", premium);
