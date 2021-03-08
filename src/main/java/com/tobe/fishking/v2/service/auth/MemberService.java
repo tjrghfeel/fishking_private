@@ -225,9 +225,20 @@ public class MemberService {
     public Long insertMemberInfo(SignUpDto signUpDto) throws ResourceNotFoundException {
         Member member = null;
         System.out.println("================\n test >>> in insertMemberInfo()  \n================");
+
+        if(signUpDto.getMemberId()!=null) {
+            member = memberRepository.findById(signUpDto.getMemberId())
+                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this id :: " + signUpDto.getMemberId()));
+        }
+
+        /*회원가입 단계 재시도 회원인지 판별. isCertified가 false이고, memberId에 해당하는 member와 입력받은 uid가 일치하면 재시도 회원*/
+        if(member!=null && member.getIsCertified()==false && member.getUid().equals(signUpDto.getEmail())) {
+            return member.getId();
+        }
+
         /*uid 중복 확인*/
         int checkUid = checkUidDup(signUpDto.getEmail());
-        if(checkUid==1){throw new EmailDupException("이메일이 중복됩니다");      }
+        if(checkUid==1){            throw new EmailDupException("이메일이 중복됩니다");        }
         else if(checkUid==2){throw new RuntimeException("이메일 형식이 맞지 않습니다.");}
         /*닉네임 중복 확인*/
         int checkNickName = checkNickNameDup(signUpDto.getNickName());
@@ -239,12 +250,8 @@ public class MemberService {
         String encodedPw = encoder.encode(signUpDto.getPw());
         System.out.println("================\n test >>> encodedPw : "+encodedPw+"\n================");
 
-        if(signUpDto.getMemberId()!=null) {
-            member = memberRepository.findById(signUpDto.getMemberId())
-                    .orElseThrow(() -> new ResourceNotFoundException("member not found for this id :: " + signUpDto.getMemberId()));
-        }
         /*sns를 통해 가입하는경우.*/
-        if(member!=null && member.getIsCertified()==false){
+        if(member!=null && member.getIsCertified()==false && member.getSnsId()!=null){
             member.setUid(signUpDto.getEmail());
             member.setNickName(signUpDto.getNickName());
             member.setPassword(encodedPw);
@@ -293,7 +300,7 @@ public class MemberService {
         String areaCode = phnum.substring(0,3);
         String localNumber = phnum.substring(3);
         int checkPhnumDup = memberRepository.existsByAreaCodeAndLocalNumber(areaCode,localNumber);
-        if(checkPhnumDup>0){throw new RuntimeException("해당 번호로 이미 가입한 회원이 존재합니다.");}
+        if(checkPhnumDup>0){return null;}
 
         Integer genderInt = Integer.parseInt(inputGender);
         Gender gender = (genderInt == 0)? Gender.girl : Gender.boy;
