@@ -10,7 +10,8 @@ Date.prototype.format = function (join = "-") {
       ? "0".concat(this.getMonth() + 1)
       : this.getMonth() + 1;
   const date =
-    this.getDate() + 1 < 10 ? "0".concat(this.getDate()) : this.getDate();
+    this.getDate() < 10 ? "0".concat(this.getDate()) : this.getDate();
+
   return year + join + month + join + date;
 };
 Date.prototype.toString = function () {

@@ -54,45 +54,6 @@ export default new (class {
       }
     });
   };
-  /** action : 기능별 접근권한 여부 */
-  isGrantedPermissions = async () => {
-    const location = await this.checkMultiplePermission(
-      Platform.select({
-        ios: [
-          PERMISSIONS.IOS.LOCATION_ALWAYS,
-          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-        ],
-        android: [
-          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-          PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-        ],
-      }),
-    );
-    const storage = await this.checkMultiplePermission(
-      Platform.select({
-        ios: [
-          PERMISSIONS.IOS.CAMERA,
-          PERMISSIONS.IOS.PHOTO_LIBRARY,
-          PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
-        ],
-        android: [
-          PERMISSIONS.ANDROID.CAMERA,
-          PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-          PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-        ],
-      }),
-    );
-    const contact = await this.checkMultiplePermission(
-      Platform.select({
-        ios: [PERMISSIONS.IOS.CONTACTS],
-        android: [
-          PERMISSIONS.ANDROID.CALL_PHONE,
-          PERMISSIONS.ANDROID.READ_CONTACTS,
-        ],
-      }),
-    );
-    return {location, storage, contact};
-  };
   /** action : 퍼미션 체크 */
   checkPermission = async (permission) => {
     return new Promise((resolve) => {
@@ -133,5 +94,12 @@ export default new (class {
       });
     });
   };
-  /** action :  */
+  /** action : 위치 권한 요청 */
+  grantPermissions = async (permission) => {
+    let granted = await this.checkMultiplePermission(permission);
+    if (!granted) {
+      granted = await this.requestMultiplePermission(permission);
+    }
+    return granted;
+  };
 })();

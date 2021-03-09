@@ -29,6 +29,7 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         const resolve = await APIStore._get("/v2/api/profileManage");
         PageStore.setState(resolve);
+        console.log(JSON.stringify(resolve));
       };
 
       openChangeProfile = () => {
@@ -172,7 +173,10 @@ export default inject(
                 </a>
                 <div className="imgWrap">
                   <img
-                    src="/assets/cust/img/bg-profile04.jpg"
+                    src={
+                      state.profileBackgroundImage ||
+                      "/assets/cust/img/bg-profile04.jpg"
+                    }
                     className="d-block w-100"
                     alt=""
                   />
