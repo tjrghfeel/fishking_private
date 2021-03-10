@@ -108,6 +108,7 @@ public class MapperUtility {
     }*/
 
     public String getTide(String date){
+        if(date == null) return null;
         date = date.replace("-","");
         String todayLunar = holidayUtil.convertSolarToLunar(date);
         Integer lunarDay = Integer.parseInt(todayLunar.substring(8));

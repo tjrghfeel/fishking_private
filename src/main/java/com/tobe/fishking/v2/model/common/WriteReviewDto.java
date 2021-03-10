@@ -13,7 +13,7 @@ public class WriteReviewDto {
     @NotNull
     private Long goodsId;
     @NotNull
-    @Pattern(regexp = "^[0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]$",message = "날짜 형식이 맞지 않습니다.")
+    @Pattern(regexp = "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$",message = "날짜 형식이 맞지 않습니다.")
     private String fishingDate;
     @NotNull(message = "청결도 점수를 입력해야 합니다. ")
     @Min(0)
