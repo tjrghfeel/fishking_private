@@ -45,20 +45,30 @@ export default inject(
             },
           } = this.props;
           // 상품 목록
-          const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`, {
-            date: this.state.selectedDate.format("-"),
-          });
-          this.setState({ goods, selected: null });
-          console.log(JSON.stringify(goods));
+          try {
+            const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`, {
+              date: this.state.selectedDate.format("-"),
+            });
+            this.setState({ goods, selected: null });
+          } catch (err) {
+            this.setState({ goods: [], selected: null });
+          }
           // # 물때정보
-          const tideTime = await APIStore._get(`/v2/api/tideTime`, {
-            date: selected.format("-"),
-            shipId,
-          });
-          this.setState({
-            tideTime: tideTime.tideTime,
-            weather: tideTime.weather,
-          });
+          try {
+            const tideTime = await APIStore._get(`/v2/api/tideTime`, {
+              date: selected.format("-"),
+              shipId,
+            });
+            this.setState({
+              tideTime: tideTime.tideTime,
+              weather: tideTime.weather,
+            });
+          } catch (err) {
+            this.setState({
+              tideTime: null,
+              weather: null,
+            });
+          }
 
           if (this.state.goods && this.state.goods.length > 0) {
             const resolve = await APIStore._get("/v2/api/tidalPeak", {

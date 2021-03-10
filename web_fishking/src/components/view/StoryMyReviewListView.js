@@ -34,8 +34,8 @@ export default inject(
           content,
           pageable: { pageSize = 0 },
         } = await APIStore._get("/v2/api/myReviewList/" + page);
-
         console.log(JSON.stringify(content));
+
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {
@@ -49,10 +49,6 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
-      };
-
-      onClick = (item) => {
-        console.log(JSON.stringify(item));
       };
       /********** ********** ********** ********** **********/
       /** render */

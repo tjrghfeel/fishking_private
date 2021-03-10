@@ -22,14 +22,14 @@ export default inject()(
         <div className="container nopadding">
           <div className="row-story-col">
             <div className="col">
-              <a href="profile-user.html">
+              <a>
                 <figure>
                   <img src={profileImage} alt="" />
                 </figure>
               </a>
             </div>
             <div className="col">
-              <a href="profile-user.html">
+              <a>
                 <h5>{nickName}</h5>
                 <p>
                   <small className="grey">

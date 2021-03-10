@@ -35,6 +35,9 @@ export default new (class {
       true;`,
     );
   }
+  runWebViewJavaScript(script) {
+    this.webview.current.injectJavaScript(`${script}true;`);
+  }
   /** observable :: canGoBack */
   canGoBack = false;
   /** action :: canGoBack 설정 */

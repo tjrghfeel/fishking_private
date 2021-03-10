@@ -172,6 +172,7 @@ export default inject(
         }
       };
       onSelectedArea = (selected) => {
+        console.log(JSON.stringify(selected));
         const { PageStore } = this.props;
         if (selected.length === 0) {
           this.setState({ selAreaActive: false });

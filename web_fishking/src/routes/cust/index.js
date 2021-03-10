@@ -19,8 +19,6 @@ import EventRoute from "./event";
 import GuideRoute from "./guide";
 import TideRoute from "./tide";
 
-import crypto from "crypto";
-
 export default inject("PageStore")(
   observer(({ PageStore, history, match }) => {
     // # SNS 로그인 콜백 체크
@@ -36,39 +34,31 @@ export default inject("PageStore")(
     // # >>>>> 기본 설정
     PageStore.setHistory(history);
     PageStore.loadAccessToken("cust");
-    // # 리디렉션
-    const redirectUrl = sessionStorage.getItem("@redirect-url");
-    if (
-      redirectUrl !== null &&
-      history.location.pathname.indexOf("/member/login") === -1
-    ) {
-      sessionStorage.removeItem("@redirect-url");
-      window.location.href = redirectUrl;
-    }
-    // # >>>>> 뒤로가기 시 로그인화면 건너뛰기
+    // # >>>>> 접근 제한 및 리디렉션
     const goBack = sessionStorage.getItem("@goBack") || "N";
-    if (
-      goBack === "Y" &&
-      PageStore.loggedIn &&
-      history.location.pathname.indexOf(`/member/login`) !== -1
-    ) {
-      sessionStorage.removeItem("@goBack");
-      window.history.go(-2);
-      return;
-    } else {
-      sessionStorage.removeItem("@goBack");
+    const redirectUrl = sessionStorage.getItem("@redirect-url");
+    const isLoginPage =
+      history.location.pathname.indexOf(`/member/login`) !== -1;
+    const blockPages = [`/reservation/goods/`, `/story/add`];
+    let isBlock = false;
+    for (let page of blockPages) {
+      if (history.location.pathname.indexOf(page) !== -1) {
+        isBlock = true;
+        break;
+      }
     }
-    // # >>>>> 화면 접근 권한 체크 :: 로그인 화면으로 리디렉트
-    if (
-      !PageStore.loggedIn &&
-      (history.location.pathname.indexOf(`/reservation/goods/`) !== -1 ||
-        history.location.pathname.indexOf(`/story/add`) !== -1)
-    ) {
+    if (goBack === "N" && isBlock && !PageStore.loggedIn && !isLoginPage) {
       sessionStorage.setItem(
         "@redirect-url",
         history.location.pathname + (history.location.search || "")
       );
       window.location.href = `/cust/member/login`;
+    } else if (goBack === "N" && redirectUrl !== null && !isLoginPage) {
+      sessionStorage.removeItem("@redirect-url");
+      window.location.href = redirectUrl;
+    } else if (goBack === "Y") {
+      sessionStorage.removeItem("@goBack");
+      if (PageStore.loggedIn && isLoginPage) window.history.go(-2);
     }
     return (
       <BrowserRouter>

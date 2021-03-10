@@ -51,8 +51,8 @@ public class ShipSearchDTO {
     private @Valid Boolean hasRealTimeVideo = null;
 
     @ApiParam(value = "현재위치 위도", example = "37.5642135")
-    private @Valid Double latitude = 0d;
+    private @Valid Double latitude = Double.valueOf("37.5642135");
 
     @ApiParam(value = "현재위치 경도", example = "127.0016985")
-    private @Valid Double longitude = 0d;
+    private @Valid Double longitude = Double.valueOf("127.0016985");
 }

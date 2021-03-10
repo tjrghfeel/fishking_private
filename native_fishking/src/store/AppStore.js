@@ -94,4 +94,12 @@ export default new (class {
       });
     });
   };
+  /** action : 위치 권한 요청 */
+  grantPermissions = async (permission) => {
+    let granted = await this.checkMultiplePermission(permission);
+    if (!granted) {
+      granted = await this.requestMultiplePermission(permission);
+    }
+    return granted;
+  };
 })();
