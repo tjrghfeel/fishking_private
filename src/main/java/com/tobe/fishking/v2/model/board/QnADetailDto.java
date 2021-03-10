@@ -20,7 +20,7 @@ public interface QnADetailDto {
     String getReturnAddress();
     Long getCreatedBy();
     Long getModifiedBy();
-    @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
+    @Value("#{@mapperUtility.transFileUrlArray(target.fileUrlList)}")
     String[] getFileList();
 
     String getReplyContents();
@@ -28,7 +28,7 @@ public interface QnADetailDto {
     Long getReplyAuthorId();
     Long getReplyCreatedBy();
     Long getReplyModifiedBy();
-    @Value("#{@mapperUtility.transFileUrlArray(target.replyFileNameList, target.replyFilePathList)}")
+    @Value("#{@mapperUtility.transFileUrlArray(target.replyFileUrlList)}")
     String[] getReplyFileList();
 
 }

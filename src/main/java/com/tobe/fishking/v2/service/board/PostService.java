@@ -345,7 +345,7 @@ public class PostService {
 
         /*Post에 올려놓은 File들 삭제하고 다시 올림. */
         /*파일들 모두 삭제.*/
-        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(post.getId(), post.getBoard().getFilePublish());
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublishAndIsDelete(post.getId(), post.getBoard().getFilePublish(),false);
         for(int i=0; i<fileList.size(); i++){
             uploadService.removeFileEntity(fileList.get(i).getId());
         }

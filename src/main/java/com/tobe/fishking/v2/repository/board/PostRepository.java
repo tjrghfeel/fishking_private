@@ -83,19 +83,25 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   p.return_no_address returnNoAddress, " +
             "   p.created_by createdBy, " +
             "   p.modified_by modifiedBy, " +
-            "   (select group_concat(f.stored_file separator ',') from files f " +
-            "       where f.file_publish = 2 and f.pid = p.id group by f.pid) fileNameList, " +
-            "   (select group_concat(f.file_url separator ',') from files f " +
-            "       where f.file_publish = 2 and f.pid = p.id group by f.pid) filePathList, " +
+            "   (select GROUP_CONCAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
+            "       from files f where f.pid = p.id and f.file_publish = 2 and f.is_delete = false " +
+            "       group by f.pid) fileUrlList, " +
+//            "   (select group_concat(f.stored_file separator ',') from files f " +
+//            "       where f.file_publish = 2 and f.pid = p.id and f.is_delete = false group by f.pid) fileNameList, " +
+//            "   (select group_concat(f.file_url separator ',') from files f " +
+//            "       where f.file_publish = 2 and f.pid = p.id and f.is_delete = false group by f.pid) filePathList, " +
             "   rp.contents replyContents, " +
             "   rp.created_date replyDate, " +
             "   rp.author_id replyAuthorId, " +
             "   rp.created_by replyCreatedBy, " +
             "   rp.modified_by replyModifiedBy, " +
-            "   (select group_concat(f2.thumbnail_file separator ',') from files f2 " +
-            "       where f2.file_publish = 2 and f2.pid = rp.id group by f2.pid) replyFileNameList, " +
-            "   (select group_concat(f2.file_url separator ',') from files f2 " +
-            "       where f2.file_publish = 2 and f2.pid = rp.id group by f2.pid) replyFilePathList " +
+            "   (select GROUP_CONCAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
+            "       from files f where f.pid = rp.id and f.file_publish = 2 and f.is_delete = false " +
+            "       group by f.pid) replyFileUrlList " +
+//            "   (select group_concat(f2.thumbnail_file separator ',') from files f2 " +
+//            "       where f2.file_publish = 2 and f2.pid = rp.id and f2.is_delete = false group by f2.pid) replyFileNameList, " +
+//            "   (select group_concat(f2.file_url separator ',') from files f2 " +
+//            "       where f2.file_publish = 2 and f2.pid = rp.id and f2.is_delete = false group by f2.pid) replyFilePathList " +
             "from post p left outer join post rp on rp.parent_id = p.id " +
             "where p.id = :postId ",
             countQuery = "select p.id " +
@@ -115,8 +121,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "from post p " +
             "where p.board_id = 74 " +
             "   and p.target_role = :role " +
-            "order by p.created_date, p.channel_type ",
-            countQuery = "select p.id from post p where p.board_id = 74 and p.target_role = :role order by p.created_date, p.channel_type ",
+            "order by p.created_date desc, p.channel_type ",
+            countQuery = "select p.id from post p where p.board_id = 74 and p.target_role = :role order by p.created_date desc, p.channel_type ",
             nativeQuery = true
     )
     Page<NoticeDtoForPage> findNoticeList(@Param("role") Boolean role, Pageable pageable);
@@ -129,10 +135,13 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   p.created_date date, " +
             "   p.title title, " +
             "   p.contents contents, " +
-            "   (select group_concat(f.stored_file separator ',') from files f " +
-            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) fileNameList, " +
-            "   (select group_concat(f.file_url separator ',') from files f " +
-            "       where f.file_publish = 4 and f.pid = p.id group by f.pid) filePathList, " +
+            "   (select GROUP_CONCAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
+            "       from files f where f.pid = p.id and f.file_publish = 4 and f.is_delete = false " +
+            "       group by f.pid) fileUrlList, " +
+//            "   (select group_concat(f.stored_file separator ',') from files f " +
+//            "       where f.file_publish = 4 and f.pid = p.id and f.is_delete = false group by f.pid) fileNameList, " +
+//            "   (select group_concat(f.file_url separator ',') from files f " +
+//            "       where f.file_publish = 4 and f.pid = p.id and f.is_delete = false group by f.pid) filePathList, " +
             "   p.author_id authorId, " +
             "   p.created_by createdBy, " +
             "   p.modified_by modifiedBy " +

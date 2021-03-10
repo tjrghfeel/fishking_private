@@ -11,6 +11,7 @@ public interface ReviewDto {
     Long getId();
     Long getGoodsId();
     Long getShipId();
+    Long getMemberId();
     @Value("#{@mapperUtility.transDownloadUrl(target.profileImage)}")
     String getProfileImage();
     String getNickName();
@@ -27,7 +28,7 @@ public interface ReviewDto {
     Double getCleanByReview();
     String getContent();
 
-    @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
+    @Value("#{@mapperUtility.transFileUrlArray(target.fileUrlList)}")
     ArrayList<String> getFileList();
 
 }

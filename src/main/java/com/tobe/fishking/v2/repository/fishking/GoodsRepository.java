@@ -65,12 +65,12 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
 //                    "f.file_url filePath, " +
                     "(select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) isLive " +
-                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1)  " +
+                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1 and f.is_delete = false)  " +
                     "where s.fishing_type = :fishingType " +
                     "   and s.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 1) " +
                     "order by s.ship_name desc ",
             countQuery ="select s.id " +
-                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1)  " +
+                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1 and f.is_delete = false)  " +
                     "where s.fishing_type = :fishingType " +
                     "   and s.id in (select t.link_id from take as t where t.created_by = :member and t.take_type = 1) " +
                     "order by s.ship_name desc ",
