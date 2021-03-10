@@ -17,14 +17,18 @@ export default inject(
         PageStore.reloadSwipe();
       }
       onInitiate = async () => {
-        // const { PageStore } = this.props;
-        // PageStore.push(`/init/permissions`);
-        try {
-          window.ReactNativeWebView.postMessage(
-            JSON.stringify({ process: "Initiate", data: null })
-          );
-        } catch (err) {
-          console.error(err);
+        if (window.wversion === 2) {
+          const { PageStore } = this.props;
+          PageStore.push(`/init/permissions`);
+        } else {
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({ process: "Initiate", data: null })
+            );
+          } else {
+            const { PageStore } = this.props;
+            PageStore.push(`/main/home`);
+          }
         }
       };
       /********** ********** ********** ********** **********/
