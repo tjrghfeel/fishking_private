@@ -68,7 +68,7 @@ public class EventService {
 
         /*이미지 url list 설정*/
         ArrayList<String> imageUrlList = new ArrayList<String>();
-        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(eventId, FilePublish.event);
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublishAndIsDelete(eventId, FilePublish.event,false);
         for(int i=0; i<fileList.size(); i++){
             FileEntity file = fileList.get(i);
             imageUrlList.add(env.getProperty("file.downloadUrl")+"/"+file.getFileUrl()+"/"+file.getStoredFile());

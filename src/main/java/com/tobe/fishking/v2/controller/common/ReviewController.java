@@ -24,6 +24,7 @@ public class ReviewController {
     @ApiOperation(value = "리뷰 작성",notes = "" +
             "요청 필드 ) \n" +
             "- goodsId : Long / 필수 / 상품 id\n" +
+            "- fishingDate : String / 필수 / 예약건에 들어있는 낚시일자. 'yyyy-MM-dd' 형식으로 입력. \n" +
             "- cleanScore : Double / 필수 / 청결도 점수 / 0~5점\n" +
             "- serviceScore : Double / 필수 / 서비스 점수 / 0~5점\n" +
             "- tasteScore : Double / 필수 / 손맛 점수 / 0~5점\n" +

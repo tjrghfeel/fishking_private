@@ -390,8 +390,8 @@ public class FishingDiaryService {
 
         /*일단 기존의 파일들을 모두 is_delete로 삭제처리해준뒤, 입력받은 id들에 해당하는 fileEntity들을 saveTemporary로 저장 */
         /*이미지 파일 수정.*/
-        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublishAndFileType(
-                fishingDiary.getId(),fishingDiary.getFilePublish(), FileType.image);
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                fishingDiary.getId(),fishingDiary.getFilePublish(), FileType.image, false);
         for(int i=0; i<preFileList.size(); i++){
             preFileList.get(i).setIsDelete(true);
         }
@@ -400,8 +400,8 @@ public class FishingDiaryService {
             fileList.get(i).saveTemporaryFile(fishingDiary.getId());
         }
         /*동영상 파일 수정.*/
-        List<FileEntity> preVideo = fileRepository.findByPidAndFilePublishAndFileType(
-                fishingDiary.getId(), fishingDiary.getFilePublish(), FileType.video);
+        List<FileEntity> preVideo = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                fishingDiary.getId(), fishingDiary.getFilePublish(), FileType.video, false);
         for(int i=0; i<preVideo.size(); i++){
             preVideo.get(i).setIsDelete(true);
         }
@@ -446,12 +446,14 @@ public class FishingDiaryService {
             district1Regex = district1Code.getCodeName() +"|"+district1Code.getExtraValue1();
 
             /*지역검색 - 행정구역2단계*/
-            if(district2List!=null&&district2List.length!=0) {
-                CodeGroup codeGroup = codeGroupRepo.findByCode("districtL2");
-                List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList( district2List.clone()));
-                district2Regex = districtListCommonCodeList.get(0).getCodeName();
-                for (int i = 1; i < districtListCommonCodeList.size(); i++) {
-                    district2Regex += "|"+districtListCommonCodeList.get(i).getCodeName() ;
+            if(!district1Code.getCode().equals("제주특별자치도") && !district1Code.getCode().equals("세종특별자치시")) {
+                if (district2List != null && district2List.length != 0) {
+                    CodeGroup codeGroup = codeGroupRepo.findByCode("districtL2");
+                    List<CommonCode> districtListCommonCodeList = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(codeGroup, Arrays.asList(district2List.clone()));
+                    district2Regex = districtListCommonCodeList.get(0).getCodeName();
+                    for (int i = 1; i < districtListCommonCodeList.size(); i++) {
+                        district2Regex += "|" + districtListCommonCodeList.get(i).getCodeName();
+                    }
                 }
             }
         }
@@ -473,10 +475,10 @@ public class FishingDiaryService {
                     filePublish.ordinal(),district1Regex, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
         else if(sort.equals("likeCount")){
             return fishingDiaryRepo.getFishingDiaryListOrderByLikeCount(
-                    filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
         else{
             return fishingDiaryRepo.getFishingDiaryListOrderByCommentCount(
-                    filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, memberId,myPost,searchTarget,shipId,pageable);}
+                    filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
     }
 
     /*어복스토리 상세보기*/
@@ -537,16 +539,16 @@ public class FishingDiaryService {
         /*imageUrlList 설정*/
         ArrayList<String> imageUrlList = new ArrayList<>();
         String path = env.getProperty("file.downloadUrl");
-        List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileType(
-                fishingDiaryId, fishingDiary.getFilePublish(), FileType.image);
+        List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                fishingDiaryId, fishingDiary.getFilePublish(), FileType.image, false);
         for(int i=0; i<fileEntityList.size(); i++){
             FileEntity fileEntity = fileEntityList.get(i);
             imageUrlList.add(path + "/" +fileEntity.getFileUrl() + "/" + fileEntity.getStoredFile());
         }
         /*비디오 url 설정*/
         String videoUrl = null;
-        List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileType(
-                fishingDiaryId, fishingDiary.getFilePublish(), FileType.video);
+        List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                fishingDiaryId, fishingDiary.getFilePublish(), FileType.video, false);
         if(video.size()!=0){videoUrl = path + "/" + video.get(0).getFileUrl() + "/" + video.get(0).getStoredFile();}
         /*자신글여부 설정*/
         Boolean isMine = null;
@@ -608,7 +610,7 @@ public class FishingDiaryService {
         }
 
         fishingDiary.delete();
-        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(fishingDiary.getId(), fishingDiary.getFilePublish());
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublishAndIsDelete(fishingDiary.getId(), fishingDiary.getFilePublish(), false);
         for(int i=0; i<fileList.size(); i++){
             fileList.get(i).setIsDelete(true);
         }

@@ -55,6 +55,7 @@ public class ReviewService {
                 .serviceByReview(dto.getServiceScore())
                 .cleanByReview(dto.getCleanScore())
                 .content(dto.getContent())
+                .fishingDate(dto.getFishingDate())
                 .createdBy(author)
                 .modifiedBy(author)
                 .isDeleted(false)
@@ -101,7 +102,7 @@ public class ReviewService {
         ship.applyReviewGrade(dto.getTasteScore(),dto.getCleanScore(),dto.getServiceScore());
 
         /*이미지 파일들 수정*/
-        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(review.getId(), FilePublish.review);
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublishAndIsDelete(review.getId(), FilePublish.review, false);
         for(int i=0; i<preFileList.size(); i++){
             preFileList.get(i).setIsDelete(true);
         }
@@ -132,7 +133,7 @@ public class ReviewService {
         }
 
         /*삭제*/
-        List<FileEntity> fileList = fileRepository.findByPidAndFilePublish(review.getId(), FilePublish.review);
+        List<FileEntity> fileList = fileRepository.findByPidAndFilePublishAndIsDelete(review.getId(), FilePublish.review, false);
         for(int i=0; i<fileList.size(); i++){
             fileList.get(i).setIsDelete(true);
         }

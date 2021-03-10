@@ -43,13 +43,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "   s.ship_name shipName, " +
             "   e.start_day startDay, " +
             "   e.end_day endDay " +
-            "from event e join ship s on e.ship_id = s.id left join files f on f.pid=e.id and f.file_publish=13 " +
+            "from event e join ship s on e.ship_id = s.id left join files f on f.pid=e.id and f.file_publish=13 and f.is_delete = false " +
             "where e.end_day > :today " +
             "group by f.pid " +
             "order by e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
             "",
             countQuery = "select e.id " +
-                    "from event e join ship s on e.ship_id = s.id left join files f on f.pid=e.id and f.file_publish=13  " +
+                    "from event e join ship s on e.ship_id = s.id left join files f on f.pid=e.id and f.file_publish=13 and f.is_delete = false  " +
                     "where e.end_day > :today " +
                     "group by f.pid " +
                     "order by e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +

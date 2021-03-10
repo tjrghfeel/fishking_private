@@ -271,8 +271,8 @@ public class CommonService {
         result.put("direction", directions);
         List<FishingDiaryMainResponse> diaries = fishingDiaryRepository.getMainDiaries();
         for (FishingDiaryMainResponse diary : diaries) {
-            List<FileEntity> fileEntityList = fileRepo.findByPidAndFilePublishAndFileType(
-                    diary.getId(), FilePublish.fishingDiary, FileType.image);
+            List<FileEntity> fileEntityList = fileRepo.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                    diary.getId(), FilePublish.fishingDiary, FileType.image, false);
             if (fileEntityList.size() > 0) {
                 diary.setImageUrl(path + "/" + fileEntityList.get(0).getFileUrl() + "/" + fileEntityList.get(0).getStoredFile());
             }

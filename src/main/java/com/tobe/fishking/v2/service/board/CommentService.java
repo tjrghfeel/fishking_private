@@ -109,7 +109,7 @@ public class CommentService {
         comment.modify(content);
         commentRepository.save(comment);
 
-        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(commentId, FilePublish.commonComment);
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublishAndIsDelete(commentId, FilePublish.commonComment,false);
         for(int i=0; i<preFileList.size(); i++){
             preFileList.get(i).setIsDelete(true);
         }
@@ -135,7 +135,7 @@ public class CommentService {
 
         comment.delete();
 
-        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(dto.getCommentId(), FilePublish.commonComment);
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublishAndIsDelete(dto.getCommentId(), FilePublish.commonComment,false);
         for(int i=0; i<preFileList.size(); i++){
             preFileList.get(i).setIsDelete(true);
         }

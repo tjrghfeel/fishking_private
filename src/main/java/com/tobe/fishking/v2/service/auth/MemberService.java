@@ -1396,8 +1396,8 @@ public class MemberService {
 
             userProfileDTO = UserProfileDTO.builder()
                     .nickName("탈퇴한 회원입니다.")
-                    .profileImage(noProfileImage.getExtraValue1())
-                    .backgroundImage(noBackgroundImage.getExtraValue1())
+                    .profileImage(env.getProperty("file.downloadUrl") + noProfileImage.getExtraValue1())
+                    .backgroundImage(env.getProperty("file.downloadUrl") + noBackgroundImage.getExtraValue1())
                     .postCount(0)
                     .likeCount(0)
                     .isMe(false)
@@ -1464,7 +1464,8 @@ public class MemberService {
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getProfileImgFileId()));
 
         /*기존 프사 fileEntity 삭제*/
-        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(), FilePublish.profile,true);
+        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresentAndIsDelete(
+                member.getId(), FilePublish.profile,true,false);
         if(preFileEntity!=null){  uploadService.removeFileEntity(preFileEntity.getId());}
 
         /*업로드 미리보기요으로 미리 저장된 파일 엔터티를 수정.*/
@@ -1507,7 +1508,7 @@ public class MemberService {
     public boolean deleteProfileImage(String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        FileEntity file = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(),FilePublish.profile,true);
+        FileEntity file = fileRepository.findTop1ByPidAndFilePublishAndIsRepresentAndIsDelete(member.getId(),FilePublish.profile,true,false);
         CodeGroup codeGroup = codeGroupRepository.findById(92L)
                 .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+92));
         CommonCode commonCode = commonCodeRepository.findByCodeGroupAndCode(codeGroup, "noImg");
@@ -1525,7 +1526,8 @@ public class MemberService {
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getProfileImgFileId()));
 
         /*기존 프사 fileEntity 삭제*/
-        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(), FilePublish.profile,false);
+        FileEntity preFileEntity = fileRepository.findTop1ByPidAndFilePublishAndIsRepresentAndIsDelete(
+                member.getId(), FilePublish.profile,false,false);
         if(preFileEntity!=null){  uploadService.removeFileEntity(preFileEntity.getId());}
 
         /*업로드 미리보기요으로 미리 저장된 파일 엔터티를 수정.*/
@@ -1568,7 +1570,7 @@ public class MemberService {
     public boolean deleteProfileBackgroundImage(String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
-        FileEntity file = fileRepository.findTop1ByPidAndFilePublishAndIsRepresent(member.getId(),FilePublish.profile,false);
+        FileEntity file = fileRepository.findTop1ByPidAndFilePublishAndIsRepresentAndIsDelete(member.getId(),FilePublish.profile,false,false);
         CodeGroup codeGroup = codeGroupRepository.findById(92L)
                 .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+92));
         CommonCode commonCode = commonCodeRepository.findByCodeGroupAndCode(codeGroup, "noBackImg");
