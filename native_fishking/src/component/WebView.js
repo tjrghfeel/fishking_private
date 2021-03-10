@@ -48,7 +48,8 @@ export default inject('WebViewStore')(
           onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
           injectedJavaScriptBeforeContentLoaded={`
             window.isNative = true;
-            window.fcm_token = '${token}'
+            window.fcm_token = '${token}';
+            window.wversion = 2;
             true;
             `}
         />
