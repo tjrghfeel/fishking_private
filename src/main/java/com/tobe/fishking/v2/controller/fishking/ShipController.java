@@ -6,8 +6,6 @@ import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.AddShipDTO;
 import com.tobe.fishking.v2.model.fishing.*;
-import com.tobe.fishking.v2.service.YoutubeService;
-import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.fishking.PlacesService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
@@ -18,11 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.security.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -471,7 +464,7 @@ public class ShipController {
             "\n         id: 포인트 id " +
             "\n     }, ... ]" +
             "\n }, ... ]" +
-            "")
+            "seaRockId%5B%5D=5&seaRockId%5B%5D=3 와 같이 urlencoding 해서 보내주세요")
     @GetMapping("/searocks/id")
     public Map<String, Object> getSeaRocks(
             @RequestParam(value = "seaRockId[]", required = false) Long[] seaRockId) throws EmptyListException {
