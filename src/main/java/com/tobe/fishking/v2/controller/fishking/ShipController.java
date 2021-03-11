@@ -437,7 +437,7 @@ public class ShipController {
         }
     }
 
-    @ApiOperation(value = "갯바위 리스트 ", notes = "주소로 갯바위를 검색합니다"  +
+    @ApiOperation(value = "갯바위 검 ", notes = "주소로 갯바위를 검색합니다"  +
             "\n data: 갯바위 포인트, 선상 상품의 경우 null [{" +
             "\n     id: 갯바위 id" +
             "\n     name: 갯바위 명" +
@@ -458,7 +458,7 @@ public class ShipController {
         return response;
     }
 
-    @ApiOperation(value = "갯바위 리스트 ", notes = "주소로 갯바위를 검색합니다"  +
+    @ApiOperation(value = "갯바위 리스트 ", notes = "id로 갯바위 정보를 얻습니다"  +
             "\n data: 갯바위 포인트, 선상 상품의 경우 null [{" +
             "\n     id: 갯바위 id" +
             "\n     name: 갯바위 명" +
