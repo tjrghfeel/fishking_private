@@ -33,10 +33,11 @@ public interface CommentRepository extends BaseRepository<Comment, Long> {
                     "   case when c.isDeleted=true then '삭제된 댓글입니다' else c.contents end, " +
                     "   case when c.isDeleted=true " +
                     "       then null " +
-                    "       else (select concat(:path,'/',f.fileUrl,'/',f.storedFile) from FileEntity f where f.pid = c.id and f.filePublish=14) end, " +
+                    "       else (select concat(:path,'/',f.fileUrl,'/',f.storedFile) from FileEntity f " +
+                    "                   where f.pid = c.id and f.filePublish=14 and f.isDelete = false) end, " +
                     "   case when c.isDeleted=true " +
                     "       then null " +
-                    "       else (select f.id from FileEntity f where f.pid = c.id and f.filePublish=14) end, " +
+                    "       else (select f.id from FileEntity f where f.pid = c.id and f.filePublish=14 and f.isDelete=false) end, " +
                     "   c.likeCount, " +
                     "   (exists (select l.id from LoveTo l where l.createdBy.id=:memberId and l.takeType=7 and l.linkId=c.id)), " +
                     "   case when c.parentId = 0 then false else true end, " +

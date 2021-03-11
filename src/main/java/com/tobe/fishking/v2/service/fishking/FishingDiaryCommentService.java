@@ -100,7 +100,7 @@ public class FishingDiaryCommentService {
         comment.modify(content);
         commentRepository.save(comment);
 
-        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(commentId, FilePublish.comment);
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublishAndIsDelete(commentId, FilePublish.comment,false);
         for(int i=0; i<preFileList.size(); i++){
             preFileList.get(i).setIsDelete(true);
         }
@@ -126,7 +126,7 @@ public class FishingDiaryCommentService {
 
         comment.delete();
 
-        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublish(dto.getCommentId(), FilePublish.comment);
+        List<FileEntity> preFileList = fileRepository.findByPidAndFilePublishAndIsDelete(dto.getCommentId(), FilePublish.comment,false);
         for(int i=0; i<preFileList.size(); i++){
             preFileList.get(i).setIsDelete(true);
         }

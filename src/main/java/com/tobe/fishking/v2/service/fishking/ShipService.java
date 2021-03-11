@@ -453,8 +453,8 @@ public class ShipService {
     private FishingDiarySmallResponse getDiarySmallResponse(FishingDiary diary) {
         ArrayList<String> imageUrlList = new ArrayList<>();
         String path = env.getProperty("file.downloadUrl");
-        List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileType(
-                diary.getId(), diary.getFilePublish(), FileType.image);
+        List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                diary.getId(), diary.getFilePublish(), FileType.image,false);
         for(int i=0; i<fileEntityList.size(); i++){
             if (i > 3) break;
             FileEntity fileEntity = fileEntityList.get(i);
@@ -498,7 +498,7 @@ public class ShipService {
         Page<ReviewResponse> responses = reviewRepository.getShipReviews(shipId, pageable);
         List<ReviewResponse> contents = responses.getContent();
         for (ReviewResponse review : contents) {
-            review.setImages(fileRepo.findByPidAndFilePublish(review.getId(), FilePublish.review).stream().map(FilesDTO::of).collect(Collectors.toList()));
+            review.setImages(fileRepo.findByPidAndFilePublishAndIsDelete(review.getId(), FilePublish.review, false).stream().map(FilesDTO::of).collect(Collectors.toList()));
         }
         Map<String, Object> result = new HashMap<>();
         Ship ship = shipRepo.getOne(shipId);

@@ -48,7 +48,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
             "   o.order_status ordersStatus, " +
             "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
-            "   o.orders_num ordersNum " +
+            "   o.order_number ordersNum " +
             "from orders o, ship s, goods g " +
             "where o.created_by = :member " +
             "   and o.goods = g.id " +
@@ -88,7 +88,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
             "   o.order_status ordersStatus, " +
             "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
-            "   o.orders_num ordersNum " +
+            "   o.order_number ordersNum " +
             "from orders o, ship s, goods g " +
             "where o.created_by = :member " +
             "   and o.goods = g.id " +

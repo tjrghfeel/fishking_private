@@ -20,13 +20,11 @@ public interface FileRepository extends BaseRepository<FileEntity, Long> {
     @Query("select a from FileEntity a where a.fileUrl = :fileUrl")
     public Optional<FileEntity> findByFileUrl(@Param("fileUrl") String fileUrl);
 
-    public List<FileEntity> findByPidAndFilePublish(Long pid, FilePublish filePublish);
-    public List<FileEntity> findByPidAndFilePublishAndFileType(Long pid, FilePublish filePublish, FileType fileType);
-
-    @Query("select a from FileEntity a where a.filePublish = :filePublish and  a.isRepresent = :isRepresent")
-    public Optional<FileEntity> findFileEntityByAndFilePublish(FilePublish filePublish, Boolean isRepresent );
+    public List<FileEntity> findByPidAndFilePublishAndIsDelete(Long pid, FilePublish filePublish, Boolean isDelete);
+    public List<FileEntity> findByPidAndFilePublishAndFileTypeAndIsDelete(Long pid, FilePublish filePublish, FileType fileType, Boolean isDelete);
 
     public FileEntity findTop1ByPidAndFilePublishAndIsRepresent(Long pid, FilePublish filePublish, Boolean represent);
+    public FileEntity findTop1ByPidAndFilePublishAndIsRepresentAndIsDelete(Long pid, FilePublish filePublish, Boolean represent, Boolean isDelete);
 
     @Query("select f from FileEntity f where f.id in :idList")
     List<FileEntity> findAllById(@Param("idList") Long[] id);

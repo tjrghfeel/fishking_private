@@ -18,7 +18,7 @@ public interface NoticeDetailDto {
     String getTitle();
     LocalDateTime getDate();
     String getContents();
-    @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
+    @Value("#{@mapperUtility.transFileUrlArray(target.fileUrlList)}")
     ArrayList<String> getFileList();
 
     Long getAuthorId();

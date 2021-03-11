@@ -46,7 +46,7 @@ public class MapperUtility {
 
     /*mysql의 group_concat()으로 콤마(,)기준으로 파일이름과 파일path를 받았을때, 이들을 합쳐 해당파일에대한 downloadUrl 배열형태로 반환. 
     * - 파일이름이나 path중 하나라도 null이면, 파일이 없다고 판단하고 null반환. */
-    public ArrayList<String> transFileUrlArray(String fileNameListString, String filePathListString){
+    public ArrayList<String>  transFileUrlArray(String fileNameListString, String filePathListString){
         ArrayList<String> result = new ArrayList<String>();
         if(fileNameListString!=null && filePathListString!=null) {
             String[] fileNameListArray = fileNameListString.split(",");
@@ -54,6 +54,17 @@ public class MapperUtility {
 
             for(int i=0; i<fileNameListArray.length; i++){
                 result.add(env.getProperty("file.downloadUrl") + "/" + filePathListArray[i] + "/" + fileNameListArray[i]);
+            }
+        }
+        return result;
+    }
+    public ArrayList<String>  transFileUrlArray(String fileUrlListString){
+        ArrayList<String> result = new ArrayList<String>();
+        if(fileUrlListString!=null) {
+            String[] fileUrlListArray = fileUrlListString.split(",");
+
+            for(int i=0; i<fileUrlListArray.length; i++){
+                result.add(env.getProperty("file.downloadUrl") + "/" + fileUrlListArray[i] );
             }
         }
         return result;
@@ -97,6 +108,8 @@ public class MapperUtility {
     }*/
 
     public String getTide(String date){
+        if(date == null) return null;
+        date = date.replace("-","");
         String todayLunar = holidayUtil.convertSolarToLunar(date);
         Integer lunarDay = Integer.parseInt(todayLunar.substring(8));
         Integer tide = (lunarDay+6)%15+1;

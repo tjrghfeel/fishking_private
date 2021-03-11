@@ -142,6 +142,7 @@ public class MyMenuController {
             "   id : 리뷰id\n" +
             "   goodsId : 리뷰 대상 상품의 id\n" +
             "   shipId : 리뷰 대상 상품의 선상id\n" +
+            "   memberId : 작성자id\n" +
             "   profileImage : 작성자 프로필사진 download url\n" +
             "   nickName : 작성자 닉네임\n" +
             "   fishingDate : 낚시일\n" +

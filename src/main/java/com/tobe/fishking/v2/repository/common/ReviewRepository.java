@@ -22,9 +22,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "   r.id id, " +
             "   g.id goodsId, " +
             "   s.id shipId, " +
+            "   m.id memberId, " +
             "   m.profile_image profileImage, " +
             "   m.nick_name nickName, " +
-            "   g.fishing_date fishingDate, " +
+            "   r.fishing_date fishingDate, " +
             "   (select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
             "       where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) goodsFishSpecies, " +
 //            "   g.meridiem meridiem, " +
@@ -34,13 +35,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "   r.service_by_review serviceByReview, " +
             "   r.clean_by_review cleanByReview, " +
             "   r.content content, " +
-            "   (select GROUP_CONCAT(f.stored_file separator ',') " +
-            "       from files f where f.pid = r.id and f.file_publish = 11 " +
-            "       group by f.pid) fileNameList, " +
-            "   (select GROUP_CONCAT(f.file_url separator ',') " +
-            "       from files f where f.pid = r.id and f.file_publish = 11 " +
-            "       group by f.pid) filePathList " +
-            "from review r, member m, goods g, ship s " +
+            "   (select GROUP_CONCAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
+            "       from files f where f.pid = r.id and f.file_publish = 11 and f.is_delete = false " +
+            "       group by f.pid) fileUrlList " +
+//            "   (select GROUP_CONCAT(f.stored_file separator ',') " +
+//            "       from files f where f.pid = r.id and f.file_publish = 11 and f.is_delete = false " +
+//            "       group by f.pid) fileNameList, " +
+//            "   (select GROUP_CONCAT(f.file_url separator ',') " +
+//            "       from files f where f.pid = r.id and f.file_publish = 11 and f.is_delete = false " +
+//            "       group by f.pid) filePathList " +
+            "from review r, member m , goods g, ship s  " +
             "where r.member_id = :member " +
             "   and r.review_good_id = g.id" +
             "   and r.member_id = m.id " +

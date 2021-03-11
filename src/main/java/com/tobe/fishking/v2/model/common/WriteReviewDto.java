@@ -2,10 +2,7 @@ package com.tobe.fishking.v2.model.common;
 
 import lombok.*;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Getter
 @Setter
@@ -15,6 +12,9 @@ import javax.validation.constraints.Size;
 public class WriteReviewDto {
     @NotNull
     private Long goodsId;
+    @NotNull
+    @Pattern(regexp = "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$",message = "날짜 형식이 맞지 않습니다.")
+    private String fishingDate;
     @NotNull(message = "청결도 점수를 입력해야 합니다. ")
     @Min(0)
     @Max(5)

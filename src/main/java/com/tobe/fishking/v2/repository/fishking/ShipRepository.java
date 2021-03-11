@@ -41,7 +41,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   f.file_url fileUrl, " +
                     "   f.thumbnail_file fileName," +
                     "   if(f.file_type=3, true, false) isVideo " +
-                    "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true) " +
+                    "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
                     "where " +
                     "   s.ship_name like %:keyword% " +
                     "   or s.address like %:keyword% " +
@@ -50,7 +50,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.sigungu like %:keyword% " +
                     "order by s.ship_name ",
             countQuery = "select s.id " +
-                    "from ship s join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true) " +
+                    "from ship s join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
                     "where " +
                     "   s.ship_name like %:keyword% " +
                     "   or s.address like %:keyword% " +
@@ -106,12 +106,12 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "f.file_url filePath, " +
                     "(select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) isLive " +
-                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1)  " +
+                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1 and f.is_delete = false)  " +
                     "where " +
                     "   exists (select v.id from realtime_video v where v.rtvideos_ship_id = s.id) " +
                     "order by s.ship_name desc ",
             countQuery ="select s.id " +
-                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1)  " +
+                    "from ship as s left join files as f on (s.id = f.pid and f.file_publish=0 and f.is_represent=1 and f.is_delete = false)  " +
                     "where " +
                     "   exists (select v.id from realtime_video v where v.rtvideos_ship_id = s.id) " +
                     "order by s.ship_name desc ",

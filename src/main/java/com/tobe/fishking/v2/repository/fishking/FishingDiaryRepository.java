@@ -69,10 +69,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
 //            "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
 //            "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
             "       group by f2.pid order by f2.file_no), null) fileNameList, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
             "       group by f2.pid order by f2.file_no), null) filePathList " +
             "from fishing_diary as d, ship as s, Member as m  " +
             "where d.fishing_diary_member_id = :user " +
@@ -121,10 +121,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
 //            "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
 //            "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
             "       group by f2.pid order by f2.file_no), null) fileNameList, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
             "       group by f2.pid order by f2.file_no), null) filePathList " +
             "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm  " +
             "where sm.scrap_members_id = :member " +
@@ -174,10 +174,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.share_count scrapCount, " +
                     "   d.file_publish fishingDiaryType, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) fileNameList, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m, fishing_diary_scrap_members as sm  " +
                     "where sm.scrap_members_id = :memberId " +
@@ -231,10 +231,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) fileNameList, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
@@ -262,8 +262,10 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
                     "   and if(:userId is null, true, m.id = :userId) "+
-                    "   and if(:district1 is null, true, s.address like %:district1%)"+
-                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -316,18 +318,21 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) fileNameList, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
-                    "   d.file_publish = :category " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:district1 is null, true, s.address like %:district1%)"+
-                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -340,11 +345,14 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             countQuery = "select d.id " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
-                    "   d.file_publish = :category " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:district1 is null, true, s.address like %:district1%)"+
-                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -356,11 +364,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             nativeQuery = true
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByLikeCount(
-            @Param("category") int category,
+            @Param("category") Integer category,
             @Param("district1") String district1,
             @Param("district2Regex") String district2Regex,
             @Param("fishSpeciesRegex") String fishSpeciesRegex,
             @Param("searchKey") String searchKey,
+            @Param("userId") Long userId,
             @Param("memberId") Long memberId,
             @Param("myPost") Boolean myPost,
             @Param("searchTarget") String searchTarget,
@@ -396,18 +405,21 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) fileNameList, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
-                    "   d.file_publish = :category " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:district1 is null, true, s.address like %:district1%)"+
-                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -420,11 +432,14 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             countQuery = "select d.id " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
-                    "   d.file_publish = :category " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
                     "   and d.fishing_diary_member_id = m.id " +
                     "   and if(:myPost, m.id = :memberId, true) " +
-                    "   and if(:district1 is null, true, s.address like %:district1%)"+
-                    "   and if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
                     "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
                     "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
                     "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
@@ -436,11 +451,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             nativeQuery = true
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByCommentCount(
-            @Param("category") int category,
+            @Param("category") Integer category,
             @Param("district1") String district1,
             @Param("district2Regex") String district2Regex,
             @Param("fishSpeciesRegex") String fishSpeciesRegex,
             @Param("searchKey") String searchKey,
+            @Param("userId") Long userId,
             @Param("memberId") Long memberId,
             @Param("myPost") Boolean myPost,
             @Param("searchTarget") String searchTarget,

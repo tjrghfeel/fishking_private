@@ -183,7 +183,7 @@ public class MyMenuService {
                 .orderStatus(orders.getOrderStatus().getValue())
 //                .fishingType(goods.getFishingType().getValue())
                 .fishingType(ship.getFishingType().getValue())
-                .sigungu(ship.getSigungu())
+                .sigungu(ship.getAddress())
 //                .distance(ship.getDistance())
                 .fishingDate(orders.getFishingDate().replace("-", ""))
                 //.fishSpecies()

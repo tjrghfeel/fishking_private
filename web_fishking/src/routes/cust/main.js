@@ -6,6 +6,7 @@ import MainHomePage from "../../pages/cust/main/MainHomePage";
 import MainCompanyPage from "../../pages/cust/main/MainCompanyPage";
 import MainRockPage from "../../pages/cust/main/MainRockPage";
 import MainStoryDiaryPage from "../../pages/cust/main/MainStoryDiaryPage";
+import MainStoryTvPage from "../../pages/cust/main/MainStoryTvPage";
 import MainStoryUserPage from "../../pages/cust/main/MainStoryUserPage";
 import MainMyPage from "../../pages/cust/main/MainMyPage";
 
@@ -32,7 +33,7 @@ export default inject()(
           <Route
             exact
             path={`${match.url}/story/tv`}
-            component={MainStoryDiaryPage}
+            component={MainStoryTvPage}
           />
           {/** 메인 > 스토리 > 유저조행기 */}
           <Route

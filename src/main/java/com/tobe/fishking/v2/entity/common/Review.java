@@ -56,6 +56,9 @@ public class Review extends BaseTime {
     @Column(nullable = false, columnDefinition = "varchar(2000) comment '내용'")
     private String content;
 
+    @Column(nullable = false, columnDefinition = "varchar(10) comment '낚시 일자'")
+    private String fishingDate;
+
     @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
     private Boolean isDeleted;
 
