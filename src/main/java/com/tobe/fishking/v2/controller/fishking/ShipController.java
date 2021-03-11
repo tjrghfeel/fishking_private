@@ -1,5 +1,9 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.enums.ErrorCodes;
+import com.tobe.fishking.v2.exception.ApiException;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.AddShipDTO;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.YoutubeService;
 import com.tobe.fishking.v2.service.auth.MemberService;
@@ -18,6 +22,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.security.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -392,6 +397,45 @@ public class ShipController {
                                          @RequestParam(required = false, defaultValue = "127.0016985") Double longitude) {
         return commonService.shipAdList(fishingType, latitude, longitude);
     }
+
+    @ApiOperation(value = "상품등록", notes = "상품등록")
+    @PutMapping("/goods/add")
+    public Map<String, Object> addGoods(
+            @RequestHeader(name = "Authorization") String token,
+            AddGoods addGoods) throws ResourceNotFoundException {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Long goodsId = shipService.addGood(addGoods, token);
+            result.put("result", "success");
+            result.put("id", goodsId);
+            return result;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "상품 등록에 실패했습니다.");
+        }
+    }
+
+    @ApiOperation(value = "선박등록", notes = "선박등록")
+    @PutMapping("/ship/add")
+    public Map<String, Object> addShip(
+            @RequestHeader(name = "Authorization") String token,
+            AddShipDTO addShipDTO) throws ResourceNotFoundException {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Long shipId = shipService.addShip(addShipDTO, token);
+            result.put("result", "success");
+            result.put("id", shipId);
+            return result;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "상품 등록에 실패했습니다.");
+        }
+    }
+
+
+
 
 //    @ApiOperation(value = "거리계산")
 //    @GetMapping("/calc")

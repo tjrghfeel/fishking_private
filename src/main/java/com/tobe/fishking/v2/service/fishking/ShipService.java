@@ -51,7 +51,6 @@ import static org.springframework.data.jpa.domain.Specification.where;
 public class ShipService {
 
     private final Environment env;
-    private final UploadService uploadService;
     private final MemberRepository memberRepo;
     private final FileRepository fileRepo;
     private final ShipRepository shipRepo;
@@ -59,7 +58,6 @@ public class ShipService {
     private final FishingDiaryRepository fishingDiaryRepository;
     private final EventRepository eventRepository;
     private final ObserverCodeRepository observerCodeRepository;
-    private final LoveToRepository loveToRepository;
     private final TakeRepository takeRepository;
     private final OrdersRepository ordersRepository;
     private final OrderDetailsRepository orderDetailsRepository;
@@ -74,6 +72,7 @@ public class ShipService {
     private final CommonCodeRepository codeRepository;
     private final PlacesRepository placesRepository;
     private final PlacePointRepository placePointRepository;
+    private final ShipSeaRocksRepository shipSeaRocksRepository;
 
 
     /*
@@ -492,43 +491,6 @@ public class ShipService {
 //    public Page<ReviewDto> getShipReviews(Integer page, Long shipId) {
 //
 //    }
-    
-    @Transactional
-    public Long addShip(AddShipDTO addShipDTO, String token) throws ResourceNotFoundException {
-        Member member = memberRepo.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
-        Company company = companyRepository.findByMember(member);
-        List<ObserverCode> codes = observerCodeRepository.findAll();
-        Ship ship = addShipDTO.toEntity(member, company, codes);
-
-        List<CommonCode> speciesList = new ArrayList<>();
-        for (String species : addShipDTO.getFishSpecies()) {
-            speciesList.add(codeRepository.getByCode(species));
-        }
-        ship.setFishSpecies(speciesList);
-
-        List<CommonCode> serviceList = new ArrayList<>();
-        for (String service : addShipDTO.getServices()) {
-            serviceList.add(codeRepository.getByCode(service));
-        }
-        ship.setServices(serviceList);
-
-        List<CommonCode> facilityList = new ArrayList<>();
-        for (String facility : addShipDTO.getFacilities()) {
-            facilityList.add(codeRepository.getByCode(facility));
-        }
-        ship.setFacilities(facilityList);
-
-        List<CommonCode> deviceList = new ArrayList<>();
-        for (String device : addShipDTO.getDevices()) {
-            deviceList.add(codeRepository.getByCode(device));
-        }
-        ship.setDevices(deviceList);
-
-        shipRepo.save(ship);
-
-        return -1L;
-    }
 
     @Transactional
     public Map<String, Object> getReviewByShip(Long shipId, Integer page, Integer size) {
@@ -557,7 +519,7 @@ public class ShipService {
     public Page<TvListResponse> getTvList(ShipSearchDTO shipSearchDTO, int page) {
         Pageable pageable;
         if (shipSearchDTO.getOrderBy().equals("")) {
-            pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+            pageable = PageRequest.of(page, shipSearchDTO.getSize());
         } else {
             pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
         }
@@ -630,5 +592,85 @@ public class ShipService {
         }
         response.putIfAbsent("cameraData", null);
         return response;
+    }
+
+    @Transactional
+    public Long addGood(AddGoods addGoods, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: " + token));
+        Ship ship = shipRepo.getOne(addGoods.getShipId());
+
+        List<CommonCode> species = new ArrayList<>();
+        for (Long species_id : addGoods.getSpecies()) {
+            CommonCode commonCode = codeRepository.getOne(species_id);
+            species.add(commonCode);
+        }
+
+        Goods goods = Goods.builder()
+                .ship(ship)
+                .member(member)
+                .addGoods(addGoods)
+                .fishSpecies(species)
+                .build();
+        goodsRepository.save(goods);
+
+        for (String fishingDate : addGoods.getFishingDates()) {
+            GoodsFishingDate goodsFishingDate = GoodsFishingDate.builder()
+                    .goods(goods)
+                    .fishingDateString(fishingDate)
+                    .member(member)
+                    .build();
+            goodsFishingDateRepository.save(goodsFishingDate);
+        }
+        return goods.getId();
+    }
+
+    @Transactional
+    public Long addShip(AddShipDTO addShipDTO, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+        Company company = companyRepository.findByMember(member);
+        List<ObserverCode> codes = observerCodeRepository.findAll();
+        Ship ship = addShipDTO.toEntity(member, company, codes);
+
+        List<CommonCode> speciesList = new ArrayList<>();
+        for (String species : addShipDTO.getFishSpecies()) {
+            speciesList.add(codeRepository.getByCode(species));
+        }
+        ship.setFishSpecies(speciesList);
+
+        List<CommonCode> serviceList = new ArrayList<>();
+        for (String service : addShipDTO.getServices()) {
+            serviceList.add(codeRepository.getByCode(service));
+        }
+        ship.setServices(serviceList);
+
+        List<CommonCode> facilityList = new ArrayList<>();
+        for (String facility : addShipDTO.getFacilities()) {
+            facilityList.add(codeRepository.getByCode(facility));
+        }
+        ship.setFacilities(facilityList);
+
+        List<CommonCode> deviceList = new ArrayList<>();
+        for (String device : addShipDTO.getDevices()) {
+            deviceList.add(codeRepository.getByCode(device));
+        }
+        ship.setDevices(deviceList);
+
+        shipRepo.save(ship);
+
+        if (ship.getFishingType().equals(FishingType.seaRocks)) {
+            for (String position : addShipDTO.getPositions()) {
+                Places places = placesRepository.getOne(Long.parseLong(position));
+                shipSeaRocksRepository.save(
+                        ShipSeaRocks.builder()
+                                .ship(ship)
+                                .places(places)
+                                .build()
+                );
+            }
+        }
+
+        return ship.getId();
     }
 }
