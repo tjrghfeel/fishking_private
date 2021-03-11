@@ -25,6 +25,10 @@ export default inject(
           arr_158: [], // 날짜별 물때정보 > 알림 목록
           arr_159: [], // 날짜별 물때정보 > 알림 목록
           arr_160: [], // 날짜별 물때정보 > 알림 목록
+          sav_150: [],
+          sav_158: [],
+          sav_159: [],
+          sav_160: [],
           selected: [],
           tide: [],
           day: [],
@@ -44,15 +48,27 @@ export default inject(
         this.selTideModal.current.load(dayType);
         if (dayType === "today") {
           const arr_150 = await DataStore.getCodes("150", 2);
-          this.setState({ tabActive: 0, arr_150 });
+          await this.setState({ tabActive: 0, sav_150: arr_150 });
         } else {
           const arr_158 = await DataStore.getCodes("158");
           const arr_159 = await DataStore.getCodes("159");
           const arr_160 = await DataStore.getCodes("160");
-          this.setState({ tabActive: 1, arr_158, arr_159, arr_160 });
+          await this.setState({
+            tabActive: 1,
+            sav_158: arr_158,
+            sav_159: arr_159,
+            sav_160: arr_160,
+          });
         }
       }
       onSelectedTideArea = async (item) => {
+        await this.setState({
+          arr_150: [],
+          arr_158: [],
+          arr_159: [],
+          arr_160: [],
+        });
+
         let observerId = null;
         if (item) observerId = item.observerId;
         else observerId = this.state.location?.observerId;
@@ -78,6 +94,12 @@ export default inject(
           });
           console.log(JSON.stringify(resolve));
         }
+        await this.setState({
+          arr_150: this.state.sav_150,
+          arr_158: this.state.sav_158,
+          arr_159: this.state.sav_159,
+          arr_160: this.state.sav_160,
+        });
       };
       onChangeAlarm = async (checked, type, item) => {
         const { DataStore } = this.props;
@@ -134,6 +156,11 @@ export default inject(
         const { APIStore } = this.props;
         if (this.state.tabActive === 0) {
           // > 오늘의 -
+          const resolve = await APIStore._post(`/v2/api/addTideLevelAlert`, {
+            observerId: this.state.location.observerId,
+            alertTime: this.state.selected,
+          });
+          if (resolve) this.onSelectedTideArea();
         } else {
           // > 날짜별 -
           console.log(
@@ -150,7 +177,7 @@ export default inject(
             day: this.state.day,
             time: this.state.time,
           });
-          console.log(resolve);
+          if (resolve) this.onSelectedTideArea();
         }
       };
       /********** ********** ********** ********** **********/
