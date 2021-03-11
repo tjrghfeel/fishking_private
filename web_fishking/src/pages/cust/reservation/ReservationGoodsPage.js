@@ -129,7 +129,7 @@ export default inject(
                   alignItems: "center",
                 }}
               >
-                <Calendar onChange={this.onChangeDate} />
+                <Calendar onChange={this.onChangeDate} minDate={new Date()} />
               </div>
 
               {/** 날짜 */}

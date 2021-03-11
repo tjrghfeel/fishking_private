@@ -6,7 +6,6 @@ export default new (class {
     makeAutoObservable(this);
   }
 
-  wversion = '0.2';
   applicationUrl = 'https://fishkingapp.com/cust/main/home';
   setApplicationUrl(url) {
     this.applicationUrl = url;
