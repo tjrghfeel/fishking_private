@@ -156,11 +156,12 @@ const PageStore = new (class {
   };
   injectScript = (
     src,
-    options = { defer: false, crossOrigin: false, global: false }
+    options = { defer: false, crossOrigin: false, global: false, id: null }
   ) => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = src;
+      if (options["id"] !== null) script.id = options["id"];
       script.addEventListener("load", () => {
         resolve(true);
       });
@@ -189,9 +190,11 @@ const PageStore = new (class {
     document.querySelector("#js-touch-swipe").remove();
     document.querySelector("#js-swiper").remove();
     document.querySelector("#js-default").remove();
-    this.injectScript("/assets/cust/js/jquery.touchSwipe.min.js");
-    this.injectScript("/assets/cust/js/swiper.min.js");
-    this.injectScript("/assets/cust/js/default.js");
+    this.injectScript("/assets/cust/js/jquery.touchSwipe.min.js", {
+      id: "js-touch-swipe",
+    });
+    this.injectScript("/assets/cust/js/swiper.min.js", { id: "js-swiper" });
+    this.injectScript("/assets/cust/js/default.js", { id: "js-default" });
     this.applySwipe();
   };
   applySwipe = (id) => {

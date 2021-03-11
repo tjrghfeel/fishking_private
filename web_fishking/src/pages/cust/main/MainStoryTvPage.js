@@ -9,7 +9,7 @@ const {
     SelectFishModal,
     SelectCompanySortModal,
   },
-  VIEW: { FilterListItemView },
+  VIEW: { FilterListItemView, StoryTvLiveListItemView },
 } = Components;
 
 export default inject(
@@ -30,15 +30,17 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      componentDidMount() {
-        const { PageStore } = this.props;
+      async componentDidMount() {
+        const { PageStore, APIStore } = this.props;
         const restored = PageStore.restoreState({
+          playUrl: "https://www.youtube.com/watch?v=",
+          nextPageToken: null,
           isPending: false,
           isEnd: false,
           page: 0,
           size: 10,
           live_list: [], // 어복 Live
-          tude_list: [], // 어복 Tube
+          tube_list: [], // 어복 Tube
           fishingDate: null,
           sido: null,
           sigungu: null,
@@ -47,14 +49,58 @@ export default inject(
           latitude: null,
           longitude: null,
         });
-        this.loadPageData();
+        PageStore.setScrollEvent(() => {
+          this.loadPageData(PageStore.state.page + 1);
+        });
+        if (!restored) this.loadPageData();
       }
 
-      loadPageData = async () => {};
+      loadPageData = async (page = 0) => {
+        const { APIStore, PageStore } = this.props;
+
+        if ((page > 0 && PageStore.state.isEnd) || APIStore.isLoading) return;
+
+        PageStore.setState({ page, isPending: true });
+
+        let district2List = null;
+        if (
+          PageStore.state.district2List &&
+          PageStore.state.district2List.length > 0
+        ) {
+          district2List = PageStore.state.district2List.join(",");
+        }
+        const { nextPageToken, playUrl, items: content } = await APIStore._get(
+          "/v2/api/tv/list"
+        );
+
+        PageStore.setState({ nextPageToken, playUrl });
+
+        if (page === 0) {
+          PageStore.setState({ tube_list: content });
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 100);
+
+          // 어복 Live 추가 조회
+          const live = await APIStore._get(`/v2/api/tv/lives/0`);
+          console.log("live");
+          console.log(JSON.stringify(live));
+        } else {
+          PageStore.setState({
+            tube_list: PageStore.state.tube_list.concat(content),
+          });
+        }
+        if (nextPageToken === null) {
+          PageStore.setState({ isEnd: true });
+        } else {
+          PageStore.setState({ isEnd: false });
+        }
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             <SelectDateModal
@@ -118,6 +164,17 @@ export default inject(
               </div>
             </div>
 
+            {/** 인기영상 */}
+            <div className="container nopadding mt-4">
+              <div className="slideList slideTv card-md">
+                <ul className="listWrap">
+                  {(PageStore.state.tube_list || []).length > 0 &&
+                    PageStore.state.tube_list.map((data, index) => (
+                      <StoryTvLiveListItemView key={index} data={data} />
+                    ))}
+                </ul>
+              </div>
+            </div>
             <MainTab activeIndex={3} />
           </React.Fragment>
         );

@@ -14,7 +14,6 @@ public class AddTideLevelAlertDto {
 //    @NotNull
 //    private Integer tideHighLow;
 //    private Integer time;
-    private ArrayList<String> highTideAlert;
-    private ArrayList<String> lowTideAlert;
+    private ArrayList<String> alertTime;
     private Long observerId;
 }

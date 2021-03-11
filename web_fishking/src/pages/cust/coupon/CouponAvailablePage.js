@@ -41,7 +41,7 @@ export default inject(
           content,
           totalElements,
           pageable: { pageSize = 0 },
-        } = await APIStore._get("/v2/api/usableCouponList/" + page, { sort });
+        } = await APIStore._get("/v2/api/downloadableCouponList/" + page);
 
         console.log(JSON.stringify(content));
         PageStore.setState({ totalElements });
@@ -63,7 +63,7 @@ export default inject(
       downloadCoupon = async (item) => {
         const { APIStore, PageStore, DataStore } = this.props;
         const resolve = await APIStore._post("/v2/api/downloadCoupon", {
-          couponId: item.coupon,
+          couponId: item.id,
         });
 
         if (resolve) {

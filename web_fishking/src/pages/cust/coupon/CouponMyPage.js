@@ -58,7 +58,7 @@ export default inject(
       onClick = async (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        console.log(JSON.stringify(item));
+        PageStore.push(`/main/company/boat`);
       };
 
       /********** ********** ********** ********** **********/

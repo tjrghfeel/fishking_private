@@ -38,7 +38,7 @@ public class CouponService {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         Pageable pageable = PageRequest.of(page, 10);
-        return couponRepository.findCouponList(member.getId(), LocalDateTime.now(), pageable);
+        return couponRepository.findCouponList(member.getId(), /*LocalDateTime.now(),*/ pageable);
     }
 
     /*쿠폰 다운받기
