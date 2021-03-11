@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.enums.ErrorCodes;
 import com.tobe.fishking.v2.exception.ApiException;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.AddShipDTO;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -432,6 +433,34 @@ public class ShipController {
         } catch (Exception e) {
             throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "상품 등록에 실패했습니다.");
         }
+    }
+
+    @ApiOperation(value = "갯바위 리스트 ", notes = "주소로 갯바위를 검색합니다"  +
+            "\n data: 갯바위 포인트, 선상 상품의 경우 null [{" +
+            "\n     name: 갯바위 명" +
+            "\n     address: 갯바위의 주소" +
+            "\n     latitude: 갯바위의 위도" +
+            "\n     longitude: 갯바위의 경도" +
+            "\n     points: 해당 갯바위의 포인트 리스트 [{ " +
+            "\n         latitude: 포인트의 위도" +
+            "\n         longitude: 포인트의 경도" +
+            "\n         id: 포인트 id " +
+            "\n     }, ... ]" +
+            "\n }, ... ]" +
+            "\n 결과값이 없는 경우 body 가 비어있고 status 가 204인 응답이 전달됩니다. ")
+    @GetMapping("/searocks")
+    public Map<String, Object> getSeaRocks(
+            @RequestParam(required = false, defaultValue = "") String sido,
+            @RequestParam(required = false, defaultValue = "") String sigungu,
+            @RequestParam(required = false, defaultValue = "") String dong) throws EmptyListException {
+        Map<String, Object> response = new HashMap<>();
+        List<Map<String, Object>> rocks = shipService.getSeaRocks(sido, sigungu, dong);
+        if (rocks.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            response.put("data", rocks);
+        }
+        return response;
     }
 
 

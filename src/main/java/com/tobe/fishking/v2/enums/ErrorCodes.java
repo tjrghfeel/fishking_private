@@ -14,7 +14,10 @@ public enum ErrorCodes {
     DB_INSERT_ERROR(20001, "DB Insert 오류가 발생하였습니다."),
     DB_ERROR(20002, "데이터 베이스 오류가 발생했습니다."),
     NOT_FOUND_ERROR(20004, "찾는 값이 없습니다."),
-    DB_DUPLICATION_ERROR(20005, "중복된 값이 존재합니다.");
+    DB_DUPLICATION_ERROR(20005, "중복된 값이 존재합니다."),
+
+    EMPTY_DATA_LIST(20006, "결과리스트가 비어있습니다.")
+    ;
 
     private final int errorCode;
     private final String message;

@@ -23,5 +23,8 @@ public interface PlacesRepository extends BaseRepository<Places, Long> {
     @Query("select r.places from ShipSeaRocks r where r.ship.id = :shipId")
     List<Places> getPlacesByShipId(Long shipId);
 
+    @Query("select p from Places p where p.sido like concat('%', :sido, '%') and p.sigungu like concat('%', :sigungu, '%') and p.address like concat('%', :dong, '%') ")
+    List<Places> getPlacesByAddress(String sido, String sigungu, String dong);
+
 }
 
