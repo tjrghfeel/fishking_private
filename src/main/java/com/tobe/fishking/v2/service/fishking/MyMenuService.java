@@ -394,12 +394,21 @@ public class MyMenuService {
     /*오늘의 물때정보 알람 설정(조위알람) */
     @Transactional
     public Boolean addTideLevelAlert(
-            ArrayList<String> highTideAlert, ArrayList<String> lowTideAlert, Long observerId, String token
+            ArrayList<String> alertTimeList, Long observerId, String token
     ) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         ObserverCode observer = observerCodeRepository.findById(observerId)
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
+
+        /*간조,만조 알람 구분*/
+        ArrayList<String> highTideAlert = new ArrayList<>();
+        ArrayList<String> lowTideAlert = new ArrayList<>();
+        for(int i=0; i<alertTimeList.size(); i++){
+            String time = alertTimeList.get(i);
+            if(time.contains("high")){  highTideAlert.add(time); }
+            else if(time.contains("low")){lowTideAlert.add(time);}
+        }
 
         CodeGroup codeGroup = codeGroupRepository.findByCode("tidalLevelAlert");
         List<CommonCode> highTideAlertCodeList = commonCodeRepository.findCommonCodesByCodeGroupAndCodes(codeGroup,highTideAlert);

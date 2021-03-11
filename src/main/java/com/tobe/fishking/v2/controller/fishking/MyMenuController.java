@@ -295,8 +295,7 @@ public class MyMenuController {
     /*조위 알림 추가*/
     @ApiOperation(value = "조위 알림 추가",notes = "" +
             "요청 필드 ) \n" +
-            "- highTideAlert : ArrayList<String> / 만조 알람 시간이 들어있는 배열. code group 150에 해당하는 code들의 code값. \n" +
-            "- lowTideAlert : ArrayList<String> / 간조 알림 시간이 들어있는 배열. code group 150에 해당하는 code들의 code값. \n" +
+            "- alertTime : ArrayList<String> / 만조 알람 시간이 들어있는 배열. code group 150에 해당하는 code들의 code값. \n" +
             "- observerId : Long / 관측소 id\n" +
             "- 헤더에 세션토큰 필수. \n" +
             "응답필드 ) 성공시 true\n")
@@ -305,7 +304,7 @@ public class MyMenuController {
             @RequestHeader("Authorization") String token,
             @RequestBody AddTideLevelAlertDto dto
     ) throws ResourceNotFoundException {
-        return myMenuService.addTideLevelAlert(dto.getHighTideAlert(), dto.getLowTideAlert(), dto.getObserverId(), token);
+        return myMenuService.addTideLevelAlert(dto.getAlertTime(), dto.getObserverId(), token);
     }
 
     /*날짜별 물때정보*/
