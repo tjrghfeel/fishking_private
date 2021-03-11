@@ -437,8 +437,8 @@ public class ShipController {
         }
     }
 
-    @ApiOperation(value = "갯바위 검 ", notes = "주소로 갯바위를 검색합니다"  +
-            "\n data: 갯바위 포인트, 선상 상품의 경우 null [{" +
+    @ApiOperation(value = "갯바위 검색 ", notes = "주소로 갯바위를 검색합니다"  +
+            "\n data: 갯바위 포인트 [{" +
             "\n     id: 갯바위 id" +
             "\n     name: 갯바위 명" +
             "\n }, ... ]" +
@@ -459,7 +459,7 @@ public class ShipController {
     }
 
     @ApiOperation(value = "갯바위 리스트 ", notes = "id로 갯바위 정보를 얻습니다"  +
-            "\n data: 갯바위 포인트, 선상 상품의 경우 null [{" +
+            "\n data: 갯바위 포인트 [{" +
             "\n     id: 갯바위 id" +
             "\n     name: 갯바위 명" +
             "\n     address: 갯바위의 주소" +
@@ -474,7 +474,7 @@ public class ShipController {
             "")
     @GetMapping("/searocks/id")
     public Map<String, Object> getSeaRocks(
-            @RequestParam Long[] seaRockId) throws EmptyListException {
+            @RequestParam(value = "seaRockId[]", required = false) Long[] seaRockId) throws EmptyListException {
         Map<String, Object> response = new HashMap<>();
         List<Map<String, Object>> rocks = placesService.getSeaRocks(seaRockId);
         if (rocks.size() == 0) {
