@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
 //import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import com.tobe.fishking.v2.enums.fishing.ReserveType;
+import com.tobe.fishking.v2.model.fishing.AddGoods;
 import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,6 @@ import java.util.Set;
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Builder
 @AllArgsConstructor
 @Table(name = "goods") //상품정보
 public class Goods extends BaseTime {
@@ -187,6 +187,39 @@ public class Goods extends BaseTime {
     @Column(columnDefinition = "int comment '예약타입' ")
     @Enumerated(EnumType.ORDINAL)
     private ReserveType reserveType;
+
+    @Column(columnDefinition = "bit default 1 comment '예약자 위치선정' ")
+    private Boolean positionSelect;
+
+    @Column(columnDefinition = "bit default 1 comment '추가운행여부' ")
+    private Boolean extraRun;
+
+    @Column(columnDefinition = "int comment '추가 운항 최소 인원 수 ' ")
+    private Integer extraPersonnel;
+
+    @Column(columnDefinition = "int comment '최대 선박 수 ' ")
+    private Integer extraShipNumber;
+
+
+    @Builder
+    public Goods(Ship ship, Member member, AddGoods addGoods, List<CommonCode> fishSpecies) {
+        this.ship = ship;
+        this.name = addGoods.getName();
+        this.fishingStartTime = addGoods.getFishingStartTime();
+        this.fishingEndTime = addGoods.getFishingEndTime();
+        this.totalAmount = addGoods.getAmount();
+        this.minPersonnel = addGoods.getMinPersonnel();
+        this.maxPersonnel = addGoods.getMaxPersonnel();
+        this.isUse = addGoods.getIsUse();
+        this.fishSpecies = fishSpecies;
+        this.reserveType = addGoods.getReserveType().equals("auto") ? ReserveType.auto : ReserveType.approval;
+        this.positionSelect = addGoods.getPositionSelect();
+        this.extraRun = addGoods.getExtraRun();
+        this.extraPersonnel = addGoods.getExtraPersonnel();
+        this.extraShipNumber = addGoods.getExtraShipNumber();
+        this.createdBy = member;
+        this.modifiedBy = member;
+    }
 
     // 생성자
     public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {

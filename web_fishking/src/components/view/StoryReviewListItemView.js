@@ -1,10 +1,11 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 
-export default inject()(
+export default inject("PageStore")(
   observer(
     ({
       data: {
+        memberId,
         profileImage,
         nickName,
         fishingDate,
@@ -17,12 +18,13 @@ export default inject()(
         content,
         fileList = [],
       },
+      PageStore,
     }) => {
       return (
         <div className="container nopadding">
           <div className="row-story-col">
             <div className="col">
-              <a>
+              <a onClick={() => PageStore.push(`/member/profile/${memberId}`)}>
                 <figure>
                   <img src={profileImage} alt="" />
                 </figure>

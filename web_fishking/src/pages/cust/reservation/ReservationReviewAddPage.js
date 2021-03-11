@@ -104,6 +104,7 @@ export default inject(
           }
 
           const params = {
+            fishingDate: this.state.fishingDate,
             tasteScore,
             serviceScore,
             cleanScore,
@@ -111,6 +112,7 @@ export default inject(
             content,
             fileList: pFileList,
           };
+
           const { APIStore, ModalStore, PageStore } = this.props;
           const resolve = await APIStore._post(`/v2/api/review`, params);
           if (resolve) {

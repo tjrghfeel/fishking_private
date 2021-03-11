@@ -44,8 +44,8 @@ export default inject(
           const shipData = await APIStore._get(
             `/v2/api/ship/${resolve.shipId}`
           );
-          console.log(JSON.stringify(shipData));
-          this.setState({ shipData });
+          // console.log(JSON.stringify(shipData));
+          // this.setState({ shipData });
 
           // 예약상태
           let ordersStatusClassName = "status";
@@ -307,7 +307,7 @@ export default inject(
                   <hr className="full mt-1 mb-2" />
                   <div className="row no-gutters">
                     <div className="col-6">
-                      <strong>{this.state.fishSpecies}</strong>
+                      <strong>{this.state.goodsName}</strong>
                       <br />
                       <small className="grey">
                         출항시간

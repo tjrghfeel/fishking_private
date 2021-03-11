@@ -5,6 +5,7 @@ export default new (class {
   constructor() {
     makeAutoObservable(this);
   }
+
   applicationUrl = 'https://fishkingapp.com/cust/main/home';
   setApplicationUrl(url) {
     this.applicationUrl = url;

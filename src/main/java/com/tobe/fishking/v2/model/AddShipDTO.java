@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.model;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.fishing.Company;
 import com.tobe.fishking.v2.entity.fishing.Ship;
@@ -67,7 +68,7 @@ public class AddShipDTO {
                 .profileImage(profileImage)
                 .company(company)
                 .createdBy(member)
-                .positions(positions.stream().reduce(",", String::concat))
+                .positions(String.join(",", positions))
                 .code(code.getCode())
                 .build();
     }

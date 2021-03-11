@@ -10,13 +10,13 @@ import { inject, observer } from "mobx-react";
 export default inject("DataStore")(
   observer(
     forwardRef(({ DataStore: { getCodes }, id, onSelected }, ref) => {
-      const [list, setList] = useState([]); // 어종 목록
+      const [list80, setList80] = useState([]); // 대표어종
+      const [list161, setList161] = useState([]); // 두족류
+      const [list162, setList162] = useState([]); // 기타어종
+
       const [selected, setSelected] = useState([]); // 선택 목록
       const onInit = useCallback(
         async (defaultSelected = []) => {
-          if (list.length == 0) {
-            await load();
-          }
           setSelected(defaultSelected);
           const elements = document.querySelectorAll(
             "#".concat(id).concat(' input[type="checkbox"]')
@@ -63,9 +63,13 @@ export default inject("DataStore")(
       );
       useImperativeHandle(ref, () => ({ onInit }));
       const load = useCallback(async () => {
-        const codes = await getCodes("80", 3);
-        setList(codes);
-      }, [setList, getCodes]);
+        const arr80 = await getCodes("80", 3);
+        const arr161 = await getCodes("161", 3);
+        const arr162 = await getCodes("162", 3);
+        setList80(arr80);
+        setList161(arr161);
+        setList162(arr162);
+      }, [getCodes, setList80, setList161, setList162]);
       useEffect(() => {
         (async () => {
           await load();
@@ -91,7 +95,7 @@ export default inject("DataStore")(
                 <h5 className="modal-title" id={id.concat("Label")}>
                   어종선택
                 </h5>
-                <a onClick={onInit} className="nav-right">
+                <a onClick={() => onInit([])} className="nav-right">
                   <img
                     src="/assets/cust/img/svg/navbar-refresh.svg"
                     alt="Refresh"
@@ -101,9 +105,65 @@ export default inject("DataStore")(
               </div>
               <div className="modal-body">
                 <div className="padding">
-                  <p className="mt-3"></p>
-                  {list &&
-                    list.map((data, index) => (
+                  <h6 className="modal-title-sub">대표어종</h6>
+                  {list80 &&
+                    list80.map((data, index) => (
+                      <div key={index} className="row">
+                        {data &&
+                          data.map((item, index2) => (
+                            <div key={index2} className="col">
+                              {item.id !== null && (
+                                <label className="control checkbox">
+                                  <input
+                                    type="checkbox"
+                                    className="add-contrast"
+                                    data-role="collar"
+                                    data-code={item.code}
+                                    onChange={(e) =>
+                                      onChange(e.target.checked, item)
+                                    }
+                                  />
+                                  <span className="control-indicator"></span>
+                                  <span className="control-text">
+                                    {item.codeName}
+                                  </span>
+                                </label>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    ))}
+                  <h6 className="modal-title-sub">두족류</h6>
+                  {list161 &&
+                    list161.map((data, index) => (
+                      <div key={index} className="row">
+                        {data &&
+                          data.map((item, index2) => (
+                            <div key={index2} className="col">
+                              {item.id !== null && (
+                                <label className="control checkbox">
+                                  <input
+                                    type="checkbox"
+                                    className="add-contrast"
+                                    data-role="collar"
+                                    data-code={item.code}
+                                    onChange={(e) =>
+                                      onChange(e.target.checked, item)
+                                    }
+                                  />
+                                  <span className="control-indicator"></span>
+                                  <span className="control-text">
+                                    {item.codeName}
+                                  </span>
+                                </label>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    ))}
+                  <h6 className="modal-title-sub">기타어종</h6>
+                  {list162 &&
+                    list162.map((data, index) => (
                       <div key={index} className="row">
                         {data &&
                           data.map((item, index2) => (
