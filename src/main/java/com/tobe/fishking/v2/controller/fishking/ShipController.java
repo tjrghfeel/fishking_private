@@ -438,11 +438,12 @@ public class ShipController {
             "\n 결과값이 없는 경우 body 가 비어있고 status 가 204인 응답이 전달됩니다. ")
     @GetMapping("/searocks")
     public Map<String, Object> searchSeaRock(
+            @RequestHeader(name = "Authorization") String token,
             @RequestParam(required = false, defaultValue = "") String sido,
             @RequestParam(required = false, defaultValue = "") String sigungu,
             @RequestParam(required = false, defaultValue = "") String dong) throws EmptyListException {
         Map<String, Object> response = new HashMap<>();
-        List<Map<String, Object>> rocks = placesService.searchSeaRock(sido, sigungu, dong);
+        List<Map<String, Object>> rocks = placesService.searchSeaRock(sido, sigungu, dong, token);
         if (rocks.size() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {

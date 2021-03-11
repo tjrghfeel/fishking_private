@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.PlacePoint;
 import com.tobe.fishking.v2.entity.fishing.Places;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -17,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,9 +70,12 @@ public class PlacesService {
     }
 
     @Transactional
-    public List<Map<String, Object>> searchSeaRock(String sido, String sigungu, String dong) {
+    public List<Map<String, Object>> searchSeaRock(String sido, String sigungu, String dong, String token) {
+        Member member = memberRepo.findBySessionToken(token).orElseThrow(
+                EntityNotFoundException::new
+        );
         List<Map<String, Object>> rockData = new ArrayList<>();
-        List<Places> places = placesRepo.getPlacesByAddress(sido, sigungu, dong);
+        List<Places> places = placesRepo.getPlacesByAddress(sido, sigungu, dong, member);
         for (Places place : places) {
             Map<String, Object> placeData = new HashMap<>();
             placeData.put("id", place.getId());
