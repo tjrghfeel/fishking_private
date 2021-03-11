@@ -674,28 +674,4 @@ public class ShipService {
         return ship.getId();
     }
 
-    @Transactional
-    public List<Map<String, Object>> getSeaRocks(String sido, String sigungu, String dong) {
-        List<Map<String, Object>> rockData = new ArrayList<>();
-        List<Places> places = placesRepository.getPlacesByAddress(sido, sigungu, dong);
-        for (Places place : places) {
-            Map<String, Object> placeData = new HashMap<>();
-            placeData.put("name", place.getPlaceName());
-            placeData.put("address", place.getAddress());
-            placeData.put("latitude", place.getLocation().getLatitude());
-            placeData.put("longitude", place.getLocation().getLatitude());
-            List<PlacePoint> points = placePointRepository.getPlacePointByPlace(place);
-            List<Map<String, Object>> pointList = new ArrayList<>();
-            for (PlacePoint point : points) {
-                Map<String, Object> pointData = new HashMap<>();
-                pointData.put("latitude", point.getLocation().getLatitude());
-                pointData.put("longitude", point.getLocation().getLongitude());
-                pointData.put("id", point.getId());
-                pointList.add(pointData);
-            }
-            placeData.put("points", pointList);
-            rockData.add(placeData);
-        }
-        return rockData;
-    }
 }

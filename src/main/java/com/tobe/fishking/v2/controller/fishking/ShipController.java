@@ -9,6 +9,7 @@ import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.YoutubeService;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.CommonService;
+import com.tobe.fishking.v2.service.fishking.PlacesService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +36,7 @@ public class ShipController {
 
     private final ShipService shipService;
     private final CommonService commonService;
+    private final PlacesService placesService;
 
     @ApiOperation(value = "배 리스트", notes = "배 리스트. 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다.")
     @GetMapping("/ships/{page}")
@@ -437,6 +439,28 @@ public class ShipController {
 
     @ApiOperation(value = "갯바위 리스트 ", notes = "주소로 갯바위를 검색합니다"  +
             "\n data: 갯바위 포인트, 선상 상품의 경우 null [{" +
+            "\n     id: 갯바위 id" +
+            "\n     name: 갯바위 명" +
+            "\n }, ... ]" +
+            "\n 결과값이 없는 경우 body 가 비어있고 status 가 204인 응답이 전달됩니다. ")
+    @GetMapping("/searocks")
+    public Map<String, Object> searchSeaRock(
+            @RequestParam(required = false, defaultValue = "") String sido,
+            @RequestParam(required = false, defaultValue = "") String sigungu,
+            @RequestParam(required = false, defaultValue = "") String dong) throws EmptyListException {
+        Map<String, Object> response = new HashMap<>();
+        List<Map<String, Object>> rocks = placesService.searchSeaRock(sido, sigungu, dong);
+        if (rocks.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            response.put("data", rocks);
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "갯바위 리스트 ", notes = "주소로 갯바위를 검색합니다"  +
+            "\n data: 갯바위 포인트, 선상 상품의 경우 null [{" +
+            "\n     id: 갯바위 id" +
             "\n     name: 갯바위 명" +
             "\n     address: 갯바위의 주소" +
             "\n     latitude: 갯바위의 위도" +
@@ -447,14 +471,12 @@ public class ShipController {
             "\n         id: 포인트 id " +
             "\n     }, ... ]" +
             "\n }, ... ]" +
-            "\n 결과값이 없는 경우 body 가 비어있고 status 가 204인 응답이 전달됩니다. ")
-    @GetMapping("/searocks")
+            "")
+    @GetMapping("/searocks/id")
     public Map<String, Object> getSeaRocks(
-            @RequestParam(required = false, defaultValue = "") String sido,
-            @RequestParam(required = false, defaultValue = "") String sigungu,
-            @RequestParam(required = false, defaultValue = "") String dong) throws EmptyListException {
+            @RequestParam Long[] seaRockId) throws EmptyListException {
         Map<String, Object> response = new HashMap<>();
-        List<Map<String, Object>> rocks = shipService.getSeaRocks(sido, sigungu, dong);
+        List<Map<String, Object>> rocks = placesService.getSeaRocks(seaRockId);
         if (rocks.size() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
@@ -462,7 +484,6 @@ public class ShipController {
         }
         return response;
     }
-
 
 
 
