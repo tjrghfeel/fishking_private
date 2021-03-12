@@ -34,25 +34,26 @@ public class YoutubeService {
     private final String apiKey = "AIzaSyCCIfMaRDWX-7fGtQZHGvMi2E5fnR1eIHc";
     private final String channelId = "UCB643Ee7lPtNWJem92gb03g";
     private final String UPplaylistid ="UUB643Ee7lPtNWJem92gb03g";
-    private String apiUrl = "https://www.googleapis.com/youtube/v3/playlistItems?key="+ apiKey
-            + "&playlistId="+ UPplaylistid
-            + "&part=snippet"
-            + "&type=video"
-            + "&fields=nextPageToken,pageInfo,items(id,snippet(resourceId(videoId)))"
-            + "&order=date"
-            + "&maxResults=10";
 //            + "&type=video&fields=nextPageToken,pageInfo,items(id,snippet(publishedAt,title,description,thumbnails(high(url)),resourceId(videoId)))&order=date&maxResults=10";
-
-    private String videoApiUrl = "https://www.googleapis.com/youtube/v3/videos?key="+ apiKey
-            + "&part=snippet,statistics"
-            + "&type=video"
-            + "&fields=items(id,snippet(publishedAt,title,description,thumbnails(high(url))),statistics(viewCount))"
-            + "&maxResults=10";
 
     private final String USER_AGENT = "Mozilla/5.0";
     private final String playUrl = "https://www.youtube.com/watch?v=";
 
     public Map<String, Object> getYoutube(String nextToken) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        String apiUrl = "https://www.googleapis.com/youtube/v3/playlistItems?key="+ apiKey
+                + "&playlistId="+ UPplaylistid
+                + "&part=snippet"
+                + "&type=video"
+                + "&fields=nextPageToken,pageInfo,items(id,snippet(resourceId(videoId)))"
+                + "&order=date"
+                + "&maxResults=10";
+
+        String videoApiUrl = "https://www.googleapis.com/youtube/v3/videos?key="+ apiKey
+                + "&part=snippet,statistics"
+                + "&type=video"
+                + "&fields=items(id,snippet(publishedAt,title,description,thumbnails(high(url))),statistics(viewCount))"
+                + "&maxResults=10";
+
         //2번째 부터 다음 토큰값 있으면 파리미터 추가한다.
         if (!nextToken.equals("")) {
             apiUrl+= "&pageToken=" + nextToken ;
