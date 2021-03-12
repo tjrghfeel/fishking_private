@@ -92,7 +92,6 @@ String.prototype.encrypt = function () {
 };
 // # >>>>> 문자열 복호화
 String.prototype.decrypt = function () {
-  console.log("before -> " + this);
   const ciphers = crypto.createDecipheriv(
     "aes-128-cbc",
     process.env.REACT_APP_ENC_KEY.substr(0, 16),

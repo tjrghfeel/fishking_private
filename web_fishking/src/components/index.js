@@ -97,6 +97,8 @@ import SearchStoryListItemView from "./view/SearchStoryListItemView";
 import SelectRockPointView from "./view/SelectRockPointView";
 import FilterListItemView from "./view/FilterListItemView";
 import StoryTvLiveListItemView from "./view/StoryTvLiveListItemView";
+import StoryTvTubeListItemView from "./view/StoryTvTubeListItemView";
+import StoryTvLiveOtherListItemView from "./view/StoryTvLiveOtherListItemView";
 
 export default {
   /********** MODAL **********/
@@ -193,5 +195,7 @@ export default {
     SelectRockPointView,
     FilterListItemView,
     StoryTvLiveListItemView,
+    StoryTvTubeListItemView,
+    StoryTvLiveOtherListItemView,
   },
 };

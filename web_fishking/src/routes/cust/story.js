@@ -9,6 +9,8 @@ import StoryMyScrapPage from "../../pages/cust/story/StoryMyScrapPage";
 import StoryMyReviewPage from "../../pages/cust/story/StoryMyReviewPage";
 import StoryDetailPage from "../../pages/cust/story/StoryDetailPage";
 import StoryCommentPage from "../../pages/cust/story/StoryCommentPage";
+import StoryTvLiveDetailPage from "../../pages/cust/story/StoryTvLiveDetailPage";
+import StoryTvTubeDetailPage from "../../pages/cust/story/StoryTvTubeDetailPage";
 
 export default inject()(
   observer(({ match }) => {
@@ -53,6 +55,18 @@ export default inject()(
             exact
             path={`${match.url}/:category/comment/:id`}
             component={StoryCommentPage}
+          />
+          {/** 스토리 > 어복TV > 라이브 */}
+          <Route
+            exact
+            path={`${match.url}/tv/:shipId/:cameraId`}
+            component={StoryTvLiveDetailPage}
+          />
+          {/** 스토리 > 어복TV > 유튜브 */}
+          <Route
+            exact
+            path={`${match.url}/tv/:id`}
+            component={StoryTvTubeDetailPage}
           />
         </Switch>
       </BrowserRouter>
