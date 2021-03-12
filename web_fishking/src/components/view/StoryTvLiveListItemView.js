@@ -2,13 +2,13 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 
 export default inject()(
-  observer(({ data: {}, data, onClick }) => {
+  observer(({ data: {thumbnailUrl, shipName}, data, onClick }) => {
     return (
       <li className="item">
-        <a href="story-tv-live.html">
+        <a onClick={() => onClick? onClick(data) : null}>
           <div className="imgWrap">
             <img
-              src="/assets/cust/img/sample/live4.jpg"
+              src={thumbnailUrl}
               className="img-fluid"
               alt=""
             />
@@ -18,7 +18,7 @@ export default inject()(
             <span className="play-live">LIVE</span>
           </div>
           <div className="InfoWrap">
-            <h6>어복황제 1호</h6>
+            <h6>{shipName}</h6>
           </div>
         </a>
       </li>

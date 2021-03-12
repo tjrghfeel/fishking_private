@@ -33,7 +33,14 @@ export default (() => {
             data,
           })
           .then((response, xhr) => {
-            resolve(response.data);
+            if (response && response['status'] == '204') {
+              ModalStore.openModal("Alert", {
+                body: "요청하신 검색 결과가 없습니다.",
+              });
+              resolve(null);
+            }else{
+              resolve(response.data);
+            }
           })
           .catch((err) => {
             ModalStore.openModal("Alert", {
