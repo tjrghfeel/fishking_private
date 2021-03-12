@@ -601,8 +601,8 @@ public class ShipService {
         Ship ship = shipRepo.getOne(addGoods.getShipId());
 
         List<CommonCode> species = new ArrayList<>();
-        for (Long species_id : addGoods.getSpecies()) {
-            CommonCode commonCode = codeRepository.getOne(species_id);
+        for (String species_code : addGoods.getSpecies()) {
+            CommonCode commonCode = codeRepository.getByCode(species_code);
             species.add(commonCode);
         }
 
