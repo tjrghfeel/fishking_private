@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.model;
+package com.tobe.fishking.v2.model.fishing;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
@@ -34,17 +34,17 @@ public class AddShipDTO {
     private @Valid String sido;
     @ApiParam(value = "시군구")
     private @Valid String sigungu;
-    @ApiParam(value = "전화번")
+    @ApiParam(value = "전화번호")
     private @Valid String tel;
-    @ApiParam(value = "선박 id")
+    @ApiParam(value = "무게")
     private @Valid Double weight;
-    @ApiParam(value = "선박 id")
+    @ApiParam(value = "탑승인원")
     private @Valid Integer boardingPerson;
-    @ApiParam(value = "선박 id")
+    @ApiParam(value = "위도")
     private @Valid Double latitude;
-    @ApiParam(value = "선박 id")
+    @ApiParam(value = "경도")
     private @Valid Double longitude;
-    @ApiParam(value = "선박 id")
+    @ApiParam(value = "선박 사진")
     private @Valid String profileImage;
     @ApiParam(value = "어종 리스트")
     private @Valid List<String> fishSpecies;
@@ -54,8 +54,8 @@ public class AddShipDTO {
     private @Valid List<String> facilities;
     @ApiParam(value = "장비 리스트")
     private @Valid List<String> devices;
-    @ApiParam(value = "")
-    private @Valid List<String> events;
+    @ApiParam(value = "이벤트 리스트")
+    private @Valid List<AddEvent> events;
     @ApiParam(value = "사용할 위치 리스트 (예: [1,2,3,4])")
     private @Valid List<String> positions;
     @ApiParam(value = "한마디 제목")

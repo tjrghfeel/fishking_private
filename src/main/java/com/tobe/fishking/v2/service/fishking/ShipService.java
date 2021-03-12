@@ -1,9 +1,9 @@
 package com.tobe.fishking.v2.service.fishking;
 
-import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.Event;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.*;
@@ -15,7 +15,8 @@ import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.AddShipDTO;
+import com.tobe.fishking.v2.model.common.ShareStatus;
+import com.tobe.fishking.v2.model.fishing.AddShipDTO;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.ReviewResponse;
@@ -658,6 +659,27 @@ public class ShipService {
         ship.setDevices(deviceList);
 
         shipRepo.save(ship);
+
+        for (AddEvent event : addShipDTO.getEvents()) {
+            ShareStatus status = ShareStatus.builder()
+                    .viewCount(0)
+                    .likeCount(0)
+                    .commentCount(0)
+                    .shareCount(0)
+                    .build();
+            Event e = Event.builder()
+                    .addEvent(event)
+                    .member(member)
+                    .ship(ship)
+                    .status(status)
+                    .build();
+            eventRepository.save(e);
+            if (event.getImage_id() != null) {
+                FileEntity file = fileRepo.getOne(event.getImage_id());
+                file.saveTemporaryFile(e.getId());
+                fileRepo.save(file);
+            }
+        }
 
         if (ship.getFishingType().equals(FishingType.seaRocks)) {
             for (String position : addShipDTO.getPositions()) {

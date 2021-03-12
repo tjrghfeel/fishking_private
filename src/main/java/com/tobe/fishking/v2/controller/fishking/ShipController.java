@@ -4,7 +4,7 @@ import com.tobe.fishking.v2.enums.ErrorCodes;
 import com.tobe.fishking.v2.exception.ApiException;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.AddShipDTO;
+import com.tobe.fishking.v2.model.fishing.AddShipDTO;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.fishking.PlacesService;
