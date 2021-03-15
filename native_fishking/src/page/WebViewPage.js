@@ -1,5 +1,5 @@
 import React from 'react';
-import {Platform, BackHandler, Linking} from 'react-native';
+import {Platform, BackHandler, Linking, Alert} from 'react-native';
 import {inject, observer} from 'mobx-react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SendIntentAndroid from 'react-native-send-intent';
@@ -34,7 +34,8 @@ export default inject(
         WebViewStore.setRecentUrl(state.url);
       }
       onShouldStartLoadWithRequest(request) {
-        if (
+        if (request.url === 'about:blank') return false;
+        else if (
           request.url.search('https://') !== -1 ||
           request.url.search('http://') !== -1
         ) {
@@ -80,6 +81,10 @@ export default inject(
               if (data.startsWith('kakaomap://')) {
                 if (Platform.OS === 'android') {
                   Linking.openURL('market://details?id=net.daum.android.map');
+                } else {
+                  Linking.openURL(
+                    'https://itunes.apple.com/us/app/id304608425?mt=8',
+                  );
                 }
               } else {
                 console.log(`Linking Error -> ${data}`);
@@ -90,6 +95,9 @@ export default inject(
           case 'Clipboard': {
             // >>>>> 클립보드 복사
             Clipboard.setString(data);
+            if (Platform.OS !== 'android') {
+              Alert.alert(null, '복사되었습니다.');
+            }
             break;
           }
           case 'Initiate': {
