@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>638059917366-4kjhv3e43529gt12sqphh2k8pv7bndng.apps.googleusercontent.com</string>
+	<string>638059917366-62apjjvkh2jpggvamcpjn6fb8kv2ae35.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.638059917366-4kjhv3e43529gt12sqphh2k8pv7bndng</string>
+	<string>com.googleusercontent.apps.638059917366-62apjjvkh2jpggvamcpjn6fb8kv2ae35</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAnDXx5-GFNJmF00pj5au3qJUuD7PqT_50</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.fishkingapp.nativeFishkingService</string>
+	<string>com.fishkingapp.nativeFishking</string>
 	<key>PROJECT_ID</key>
 	<string>fishking-c1753</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:638059917366:ios:802fd6f7b06ea87e082897</string>
+	<string>1:638059917366:ios:822150c9dd2c6ddc082897</string>
 </dict>
 </plist>
