@@ -69,5 +69,10 @@ public class CouponMember extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    public void use(Orders order) {
+        this.isUse = true;
+        this.useDate = LocalDateTime.now();
+        this.orders = order;
+    }
 
 }

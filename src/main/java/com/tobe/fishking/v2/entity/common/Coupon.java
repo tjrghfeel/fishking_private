@@ -111,4 +111,7 @@ public class Coupon extends BaseTime {
     @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null comment '수정자' ")
     private Member modifiedBy;
 
+    public void useCoupon() {
+        this.useQty += 1;
+    }
 }
