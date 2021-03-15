@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.fishing.ShipSearchDTO;
 import com.tobe.fishking.v2.model.fishing.TvListResponse;
 import com.tobe.fishking.v2.service.YoutubeService;
@@ -74,7 +75,7 @@ public class TvController {
                                           @RequestParam(value = "species[]", required = false) String[] species,
                                           @RequestParam(value = "services[]", required = false) String[] services,
                                           @RequestParam(value = "facilities[]", required = false) String[] facilities,
-                                          @RequestParam(value = "genres[]", required = false) String[] genres) {
+                                          @RequestParam(value = "genres[]", required = false) String[] genres) throws EmptyListException {
         if (species != null) {
             if (species.length != 0) {
                 shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
@@ -95,7 +96,12 @@ public class TvController {
                 shipSearchDTO.setGenresList(Arrays.asList(genres.clone()));
             }
         }
-        return shipService.getTvList(shipSearchDTO, page);
+        Page<TvListResponse> tv = shipService.getTvList(shipSearchDTO, page);
+        if (tv.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return tv;
+        }
     }
 
     @ApiOperation(value = "어복TV 라이브 상세", notes = "어복TV 라이브 상세. " +

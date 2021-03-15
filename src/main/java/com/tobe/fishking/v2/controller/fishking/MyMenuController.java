@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.TakeResponse;
 import com.tobe.fishking.v2.model.common.ReviewDto;
@@ -11,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,8 +77,14 @@ public class MyMenuController {
     public Page<FishingDiaryDtoForPage> getMyFishingDiary(
             @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
-    ) throws ResourceNotFoundException {
-        return myMenuService.getMyFishingDiary(token, page);
+    ) throws ResourceNotFoundException, EmptyListException {
+//        return myMenuService.getMyFishingDiary(token, page);
+        Page<FishingDiaryDtoForPage> diaries = myMenuService.getMyFishingDiary(token, page);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return diaries;
+        }
     }
 
     /*내글관리 - 댓글
@@ -95,8 +103,14 @@ public class MyMenuController {
     public Page<MyFishingDiaryCommentDtoForPage> getMyFishingDiaryComment(
             @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
-    ) throws ResourceNotFoundException {
-        return myMenuService.getMyFishingDiaryComment(token,page);
+    ) throws ResourceNotFoundException, EmptyListException {
+//        return myMenuService.getMyFishingDiaryComment(token,page);
+        Page<MyFishingDiaryCommentDtoForPage> comments = myMenuService.getMyFishingDiaryComment(token,page);
+        if (comments.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return comments;
+        }
     }
 
     /*내글관리 - 스크랩
@@ -126,8 +140,14 @@ public class MyMenuController {
     public Page<FishingDiaryDtoForPage> getMyFishingDiaryScrap(
             @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
-    ) throws ResourceNotFoundException {
-        return myMenuService.getMyFishingDiaryScrap(token, page);
+    ) throws ResourceNotFoundException, EmptyListException {
+//        return myMenuService.getMyFishingDiaryScrap(token, page);
+        Page<FishingDiaryDtoForPage> diaries = myMenuService.getMyFishingDiaryScrap(token, page);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return diaries;
+        }
     }
 
     /*내글관리 - 리뷰
@@ -162,8 +182,14 @@ public class MyMenuController {
     public Page<ReviewDto> getReviewList(
             @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
-    ) throws ResourceNotFoundException {
-        return myMenuService.getMyReview(token, page);
+    ) throws ResourceNotFoundException, EmptyListException {
+//        return myMenuService.getMyReview(token, page);
+        Page<ReviewDto> reviews = myMenuService.getMyReview(token, page);
+        if (reviews.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return reviews;
+        }
     }
 
     /*예약 내역 리스트 보기
@@ -195,8 +221,14 @@ public class MyMenuController {
             @PathVariable("page") int page,
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "sort", required = false, defaultValue = "none") String sort
-    ) throws ResourceNotFoundException {
-        return myMenuService.getMyOrdersList(token, page, sort);
+    ) throws ResourceNotFoundException, EmptyListException {
+//        return myMenuService.getMyOrdersList(token, page, sort);
+        Page<OrdersDtoForPage> orders = myMenuService.getMyOrdersList(token, page, sort);
+        if (orders.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return orders;
+        }
     }
 
     /*예약 상세보기
@@ -253,7 +285,7 @@ public class MyMenuController {
     public List<ObserverDtoList> getSearchPointList(
             @RequestParam("type") String type,
             @RequestHeader(value = "Authorization",required = false) String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, EmptyListException {
         if(token == null){}
         else if(token.equals("")){token = null;}
 
@@ -261,7 +293,13 @@ public class MyMenuController {
         if(!(type.equals("today") || type.equals("daily"))){throw new RuntimeException("type값으로는 'today'또는 'daily'만 가능합니다.");}
         else if(type.equals("today")){ alertType = AlertType.tideLevel; }
         else if(type.equals("daily")){ alertType = AlertType.tide; }
-        return myMenuService.getSearchPointList( token, alertType);
+//        return myMenuService.getSearchPointList( token, alertType);
+        List<ObserverDtoList> observerDtoLists = myMenuService.getSearchPointList( token, alertType);
+        if (observerDtoLists.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return observerDtoLists;
+        }
     }
 
     /*오늘의 물때정보 반환*/

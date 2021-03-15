@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.common;
 
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.EventDto;
 import com.tobe.fishking.v2.model.common.EventDtoForPage;
@@ -34,8 +35,14 @@ public class EventController {
     @GetMapping("/event/list/{page}")
     public Page<EventDtoForPage> getEventList(
             @PathVariable("page") int page
-    ) throws ResourceNotFoundException {
-        return eventService.getEventList(page);
+    ) throws EmptyListException {
+//        return eventService.getEventList(page);
+        Page<EventDtoForPage> events = eventService.getEventList(page);
+        if (events.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return events;
+        }
     }
 
     /*이벤트 상세보기*/

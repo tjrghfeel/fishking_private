@@ -46,7 +46,7 @@ public class EventService {
 
     /*이벤트 목록 출력*/
     @Transactional
-    public Page<EventDtoForPage> getEventList(int page) throws ResourceNotFoundException {
+    public Page<EventDtoForPage> getEventList(int page) {
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         Pageable pageable = PageRequest.of(page,10);
         return eventRepository.findEventList(today, pageable);

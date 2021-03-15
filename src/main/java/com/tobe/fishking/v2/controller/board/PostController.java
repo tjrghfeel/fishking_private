@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.board;
 
 import com.tobe.fishking.v2.addon.UploadService;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.board.*;
 import com.tobe.fishking.v2.service.board.PostService;
@@ -52,8 +53,14 @@ public class PostController {
             "   createdBy : 글 생성자 id\n" +
             "   modifiedBy : 글 수정자 id\n")
     @GetMapping("/faq/{page}")
-    public Page<FAQDto> getFAQList(@PathVariable("page") int page,@RequestParam("role") String role) {
-        return postService.getFAQList(page,role);
+    public Page<FAQDto> getFAQList(@PathVariable("page") int page,@RequestParam("role") String role) throws EmptyListException {
+//        return postService.getFAQList(page,role);
+        Page<FAQDto> faq = postService.getFAQList(page,role);
+        if (faq.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return faq;
+        }
     }
 
     /*1:1문의내역 리스트 조회*/
@@ -67,9 +74,15 @@ public class PostController {
     public Page<QnADtoForPage> getQnAList(
             @PathVariable("page") int page,
             HttpServletRequest request
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, EmptyListException {
         String sessionToken = request.getHeader("Authorization");
-        return postService.getQnAList(page, sessionToken);
+//        return postService.getQnAList(page, sessionToken);
+        Page<QnADtoForPage> qna = postService.getQnAList(page, sessionToken);
+        if (qna.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return qna;
+        }
     }
 
     /*1:1문의내역 상세보기*/
@@ -110,8 +123,14 @@ public class PostController {
             "   title : 공지사항 제목\n" +
             "   date : 공지사항 작성일\n")
     @GetMapping("/notice/{page}")
-    public Page<NoticeDtoForPage> getNoticeList(@PathVariable("page") int page, @RequestParam("role") String role) {
-        return postService.getNoticeList(page,role);
+    public Page<NoticeDtoForPage> getNoticeList(@PathVariable("page") int page, @RequestParam("role") String role) throws EmptyListException {
+//        return postService.getNoticeList(page,role);
+        Page<NoticeDtoForPage> notices = postService.getNoticeList(page,role);
+        if (notices.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return notices;
+        }
     }
 
     /*공지사항 상세보기*/
