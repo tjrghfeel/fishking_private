@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>638059917366-62apjjvkh2jpggvamcpjn6fb8kv2ae35.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.638059917366-62apjjvkh2jpggvamcpjn6fb8kv2ae35</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAnDXx5-GFNJmF00pj5au3qJUuD7PqT_50</string>
+	<key>GCM_SENDER_ID</key>
+	<string>638059917366</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.fishkingapp.nativeFishking</string>
+	<key>PROJECT_ID</key>
+	<string>fishking-c1753</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fishking-c1753.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:638059917366:ios:822150c9dd2c6ddc082897</string>
+</dict>
+</plist>

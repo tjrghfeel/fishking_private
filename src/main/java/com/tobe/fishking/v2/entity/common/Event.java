@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.model.common.ShareStatus;
+import com.tobe.fishking.v2.model.fishing.AddEvent;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Builder
 @AllArgsConstructor
 @Table(name = "event") //event
 
@@ -59,4 +59,16 @@ public class Event extends BaseTime {
     @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null  comment '수정자'")
     private Member modifiedBy;
 
+    @Builder
+    public Event(Member member, AddEvent addEvent, Ship ship, ShareStatus status) {
+        this.title = addEvent.getTitle();
+        this.contents = addEvent.getTitle();
+        this.ship = ship;
+        this.isDeleted = false;
+        this.startDay = "2020-01-01";
+        this.endDay = "2100-12-31";
+        this.status = status;
+        this.createdBy = member;
+        this.modifiedBy = member;
+    }
 }

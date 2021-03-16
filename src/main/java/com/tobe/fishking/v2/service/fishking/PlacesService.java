@@ -2,6 +2,8 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
+import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.fishing.PlacePoint;
 import com.tobe.fishking.v2.entity.fishing.Places;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
@@ -9,12 +11,18 @@ import com.tobe.fishking.v2.model.fishing.PlacesDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
+import com.tobe.fishking.v2.repository.fishking.PlacePointRepository;
 import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +34,7 @@ public class PlacesService {
     private final FileRepository fileRepo;
     private final PlacesRepository placesRepo;
     private final PopularRepository popularRepo;
+    private final PlacePointRepository placePointRepository;
 
 
     private static ModelMapper modelMapper = new ModelMapper();
@@ -58,6 +67,53 @@ public class PlacesService {
         return placesDTORespList;
 
 
+    }
+
+    @Transactional
+    public List<Map<String, Object>> searchSeaRock(String sido, String sigungu, String dong, String token) {
+        Member member = memberRepo.findBySessionToken(token).orElseThrow(
+                EntityNotFoundException::new
+        );
+        List<Map<String, Object>> rockData = new ArrayList<>();
+        List<Places> places = placesRepo.getPlacesByAddress(sido, sigungu, dong, member);
+        for (Places place : places) {
+            Map<String, Object> placeData = new HashMap<>();
+            placeData.put("id", place.getId());
+            placeData.put("name", place.getPlaceName());
+            rockData.add(placeData);
+        }
+        return rockData;
+    }
+
+    @Transactional
+    public List<Map<String, Object>> getSeaRocks(Long[] seaRockId) {
+        List<Map<String, Object>> rockData = new ArrayList<>();
+        List<Places> places = placesRepo.getPlacesInId(seaRockId);
+        for (Places place : places) {
+            Map<String, Object> placeData = new HashMap<>();
+            placeData.put("id", place.getId());
+            placeData.put("name", place.getPlaceName());
+            placeData.put("address", place.getAddress());
+            placeData.put("latitude", place.getLocation().getLatitude());
+            placeData.put("longitude", place.getLocation().getLatitude());
+            List<PlacePoint> points = placePointRepository.getPlacePointByPlace(place);
+            List<Map<String, Object>> pointList = new ArrayList<>();
+            for (PlacePoint point : points) {
+                Map<String, Object> pointData = new HashMap<>();
+                pointData.put("latitude", point.getLocation().getLatitude());
+                pointData.put("longitude", point.getLocation().getLongitude());
+                pointData.put("id", point.getId());
+                pointList.add(pointData);
+            }
+            placeData.put("points", pointList);
+            rockData.add(placeData);
+        }
+        return rockData;
+    }
+
+    @Transactional
+    public Long addSeaRocks() {
+        return -1L;
     }
 
 

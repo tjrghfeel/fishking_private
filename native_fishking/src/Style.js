@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 
 export const Style = StyleSheet.create({
   safeAreaView: {
@@ -10,7 +10,10 @@ export const Style = StyleSheet.create({
 
 export const Const = {
   statusBar: {
-    barStyle: 'light-content',
+    barStyle: Platform.select({
+      ios: 'dark-content',
+      android: 'light-content',
+    }),
     backgroundColor: '#3683d5',
   },
 };

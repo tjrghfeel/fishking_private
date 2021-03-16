@@ -53,6 +53,9 @@ public class Places extends BaseTime {
     @Column(columnDefinition = "varchar(1000) comment  '소개'  ")
     private String introduce;
 
+    @Column(columnDefinition = "bit comment '공개여부'  ")
+    private Boolean open;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,   updatable= false , columnDefinition  = " bigint not null comment '생성자'")
