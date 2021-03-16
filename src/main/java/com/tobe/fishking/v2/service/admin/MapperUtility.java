@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.admin;
 
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.QuestionType;
+import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.enums.common.CouponType;
@@ -23,6 +24,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -102,6 +104,7 @@ public class MapperUtility {
     public String transEnumAlertType(Integer ordinal){if(ordinal!=null){return AlertType.values()[ordinal].getValue();}else return null;}
     public String transEnumFilePublish(Integer ordinal){if(ordinal!=null){return FilePublish.values()[ordinal].getValue();}else return null;}
     public String transEnumMeridiem(Integer ordinal){if(ordinal!=null){return Meridiem.values()[ordinal].getValue();}else return null;}
+    public String transEnumReturnType(Integer ordinal){ if(ordinal!=null){ return ReturnType.values()[ordinal].getValue();} else return null; }
 
     /*public String transEnum(int ordinal){
         return .values()[ordinal].getValue();
@@ -117,6 +120,7 @@ public class MapperUtility {
         else{return tide.toString()+"물";}
     }
 
+    public String transDateString(LocalDateTime date){return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
 
 
 

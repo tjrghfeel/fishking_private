@@ -16,7 +16,10 @@ public interface CouponDTO {
     String getExposureEndDate();
     Double getSaleValues();//할인률
     //private int maxIssueCount;//최대발행수량.
-    Integer getEffectiveDays();//유효일수
+    @Value("#{@mapperUtility.transDateString(target.effectiveStartDate)}")
+    String getEffectiveStartDate();
+    @Value("#{@mapperUtility.transDateString(target.effectiveEndDate)}")
+    String getEffectiveEndDate();
     //private double issueQty;//발행수량
     //private double useQty;//사용수량
     //boolean getIsIssue();//발행/발행중지

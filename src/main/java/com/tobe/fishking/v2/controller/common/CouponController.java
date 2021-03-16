@@ -1,9 +1,7 @@
 package com.tobe.fishking.v2.controller.common;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.common.CouponDTO;
-import com.tobe.fishking.v2.model.common.CouponDownloadDto;
-import com.tobe.fishking.v2.model.common.CouponMemberDTO;
+import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.service.common.CouponService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,8 @@ public class CouponController {
             "   couponName : 쿠폰 이름\n" +
             "   exposureEndDate : 노출 종료일\n" +
             "   saleValues : 할인률\n" +
-            "   effectiveDays : 유효기간 \n" +
+            "   effectiveStartDate : 유효기간 시작일 \n" +
+            "   effectiveEndDate : 유효기간 종료일\n" +
             "   isUsable : 쿠폰이 현재 사용가능상태인지 불가한상태인지\n" +
             "   brfIntroduction : 쿠폰 간략 소개\n" +
             "   couponDescription : 쿠폰 설명\n" +
@@ -83,7 +83,8 @@ public class CouponController {
             "   modifiedBy : '내 쿠폰' 수정한 사람\n" +
             "   couponName : 쿠폰 이름\n" +
             "   saleValues : 할인률\n" +
-            "   effectiveDays : 유효기간 \n" +
+            "   effectiveStartDate : 유효기간 시작일 \n" +
+            "   effectiveEndDate : 유효기간 종료일\n" +
             "   isIssue : 쿠폰이 현재 발행 중/ 발행 중지 인지\n" +
             "   isUsable : 쿠폰이 현재 사용가능상태인지 불가한상태인지\n" +
             "   brfIntroduction : 쿠폰 간략 소개\n" +
@@ -113,7 +114,8 @@ public class CouponController {
             "   modifiedBy : '내 쿠폰' 수정한 사람\n" +
             "   couponName : 쿠폰 이름\n" +
             "   saleValues : 할인률\n" +
-            "   effectiveDays : 유효기간 \n" +
+            "   effectiveStartDate : 유효기간 시작일\n" +
+            "   effectiveEndDate : 유효기간 종료일\n" +
             "   isIssue : 쿠폰이 현재 발행 중/ 발행 중지 인지\n" +
             "   isUsable : 쿠폰이 현재 사용가능상태인지 불가한상태인지\n" +
             "   brfIntroduction : 쿠폰 간략 소개\n" +
@@ -138,6 +140,52 @@ public class CouponController {
     @PostMapping("/downloadAllCoupon")
     public Boolean downloadAllCoupon(@RequestHeader("Authorization") String sessionToken) throws ResourceNotFoundException {
         return couponService.downloadAllCoupon(sessionToken);
+    }
+
+    /*관리자 항목들*/
+
+    /*쿠폰 생성*/
+    @ApiOperation(value = "쿠폰 생성",notes = "" +
+            "요청필드 ) \n" +
+            "- name : String / 필수 / 쿠폰명\n" +
+            "- saleValue : Integer / 필수 / 쿠폰 할인 금액\n" +
+            "- description : String / 필수 / 쿠폰 설명\n" +
+            "- maxIssueCount : Integer / 필수 / 최대 발행 수량\n" +
+            "- issueStartDate : yyyy-MM-dd / 필수 / 발행 시작일\n" +
+            "- issueEndDate : yyyy-MM-dd / 필수 / 발행 종료일\n" +
+            "- effectiveStartDate : yyyy-MM-dd / 필수 / 유효일 시작\n" +
+            "- effectiveEndDate : yyyy-MM-dd / 필수 / 유효일 종료\n" +
+            "응답 필드 ) 생성된 쿠폰의 id\n")
+    @PostMapping("/manage/coupon")
+    public Long makeCoupon(
+            @RequestHeader("Authorization") String token,
+            @RequestBody @Valid CouponMakeDto dto
+    ) throws ResourceNotFoundException {
+
+        /*날짜 검증. 시작일이 종료일 이전인지 검사. */
+        if(dto.getEffectiveStartDate().isAfter(dto.getEffectiveEndDate())){
+            throw new RuntimeException("유효일 시작이 유효일 종료보다 늦습니다.");
+        }
+        if(dto.getIssueStartDate().isAfter(dto.getIssueEndDate())){
+            throw new RuntimeException("발행 시작일이 발행 종료일보다 늦습니다.");
+        }
+
+        return couponService.makeCoupon(token, dto.getName(), dto.getSaleValue(), dto.getDescription(), dto.getMaxIssueCount(),
+                dto.getIssueStartDate(), dto.getIssueEndDate(), dto.getEffectiveStartDate(), dto.getEffectiveEndDate());
+    }
+
+    /*쿠폰 리스트 검색 (다운받은 쿠폰, 즉, couponMember아님)*/
+    @ApiOperation(value = "쿠폰 리스트 검색",notes = "" +
+            "요청 필드 ) \n" +
+            "- sort : String / 정렬기준(내림차순). 조건 인자명 중 하나를 넘기면 되나, saleValuesStart, saleValueEnd의 경우엔 saleValues로." +
+            "   issueQty와 useQty도 동일. ")
+    @GetMapping("manage/coupon/list/{page}")
+    public Page<CouponManageDtoForPage> getCouponList(
+            @PathVariable("page") int page,
+            @RequestHeader("Authorization") String token,
+            CouponSearchConditionDto dto
+    ) throws ResourceNotFoundException {
+        return couponService.getCouponList(page, token, dto);
     }
 
 }

@@ -230,11 +230,18 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   p.channel_type channelType, " +
                     "   p.question_type questionType, " +
                     "   p.title title, " +
+                    "   LEFT(p.contents,30) content, " +
                     "   p.author_name authorName, " +
                     "   p.author_id authorId, " +
+                    "   p.return_type returnType, " +
+                    "   p.return_no_address returnNoAddress, " +
+                    "   p.created_at createdAt, " +
                     "   p.is_secret isSecret, " +
                     "   p.created_date createdDate, " +
                     "   p.modified_date modifiedDate, " +
+                    "   p.created_by createdBy, " +
+                    "   p.modified_by modifiedBy, " +
+                    "   p.target_role targetRole, " +
                     "   p.is_replied isReplied   " +
                     "from post p join board b on (p.board_id = b.id) " +
                     "where " +
@@ -258,7 +265,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   and if(:modifiedDateEnd is null,true,(p.modified_date < :modifiedDateEnd)) "+
                     "   and if(:targetRole is null, true, (p.target_role = :targetRole)) " +
                     "   and if(:createdBy is null, true, (p.created_by = :createdBy)) " +
-                    "   and if(:modifiedBy is null, true, (p.modified_by = :modifiedBy)) ",
+                    "   and if(:modifiedBy is null, true, (p.modified_by = :modifiedBy)) "+
+                    "   and if(:isReplied is null, true, (p.is_replied = :isReplied)) ",
             countQuery = "select p.id " +
                     "from post p join board b on (p.board_id = b.id) " +
                     "where " +
@@ -281,7 +289,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   and if(:modifiedDateEnd is null,true,(p.modified_date < :modifiedDateEnd)) " +
                     "   and if(:targetRole is null, true, (p.target_role = :targetRole)) " +
                     "   and if(:createdBy is null, true, (p.created_by = :createdBy)) " +
-                    "   and if(:modifiedBy is null, true, (p.modified_by = :modifiedBy)) ",
+                    "   and if(:modifiedBy is null, true, (p.modified_by = :modifiedBy)) " +
+                    "   and if(:isReplied is null, true, (p.is_replied = :isReplied)) ",
             nativeQuery = true
     )
     Page<PostManageDtoForPage> findAllByConditions(
@@ -305,6 +314,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             @Param("targetRole") Boolean targetRole,
             @Param("createdBy") Long createdBy,
             @Param("modifiedBy") Long modifiedBy,
+            @Param("isReplied") Boolean isReplied,
             Pageable pageable
     );
 

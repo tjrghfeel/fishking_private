@@ -23,7 +23,7 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
     @Query(value = "select " +
             "   cm.id id, " +
             "   cm.member_coupon_id coupon, " +
-            "   cm.coupon_code couponCode, " +
+            "   cm.coupon_issue_code couponCode, " +
             "   cm.coupon_member_id member, " +
             "   cm.is_use isUse, " +
             "   cm.reg_date regDate, " +
@@ -34,7 +34,8 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   c.coupon_type couponType, " +
             "   c.coupon_name couponName, " +
             "   c.sale_values saleValues, " +
-            "   c.effective_days effectiveDays, " +
+            "   c.effective_start_date effectiveStartDate, " +
+            "   c.effective_end_date effectiveEndDate, " +
             "   c.is_issue isIssue, " +
             "   c.is_use isUsable, " +
             "   c.brf_introduction brfIntroduction, " +
@@ -51,7 +52,8 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
                     "   and cm.member_coupon_id = c.id "+
                     "   and cm.is_use = :isUse " +
                     "   and c.is_use = true " +
-                    "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
+                    "   and c.effective_start_date < :today " +
+                    "   and c.effective_end_date > :today " +
                     "order by DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY)",
             nativeQuery = true
     )
@@ -63,7 +65,7 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
     @Query(value = "select " +
             "   cm.id id, " +
             "   cm.member_coupon_id coupon, " +
-            "   cm.coupon_code couponCode, " +
+            "   cm.coupon_issue_code couponCode, " +
             "   cm.coupon_member_id member, " +
             "   cm.is_use isUse, " +
             "   cm.reg_date regDate, " +
@@ -74,7 +76,8 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   c.coupon_type couponType, " +
             "   c.coupon_name couponName, " +
             "   c.sale_values saleValues, " +
-            "   c.effective_days effectiveDays, " +
+            "   c.effective_start_date effectiveStartDate, " +
+            "   c.effective_end_date effectiveEndDate, " +
             "   c.is_issue isIssue, " +
             "   c.is_use isUsable, " +
             "   c.brf_introduction brfIntroduction, " +
@@ -91,7 +94,8 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
                     "   and cm.member_coupon_id = c.id "+
                     "   and cm.is_use = :isUse " +
                     "   and c.is_use = true " +
-                    "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
+                    "   and c.effective_start_date < :today " +
+                    "   and c.effective_end_date > :today " +
                     "order by c.use_qty DESC",
             nativeQuery = true
     )
@@ -152,7 +156,7 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
     @Query(value = "select " +
             "   cm.id id, " +
             "   cm.member_coupon_id coupon, " +
-            "   cm.coupon_code couponCode, " +
+            "   cm.coupon_issue_code couponCode, " +
             "   cm.coupon_member_id member, " +
             "   cm.is_use isUse, " +
             "   cm.reg_date regDate, " +
@@ -163,7 +167,8 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   c.coupon_type couponType, " +
             "   c.coupon_name couponName, " +
             "   c.sale_values saleValues, " +
-            "   c.effective_days effectiveDays, " +
+            "   c.effective_start_date effectiveStartDate, " +
+            "   c.effective_end_date effectiveEndDate, " +
             "   c.is_issue isIssue, " +
             "   c.is_use isUsable, " +
             "   c.brf_introduction brfIntroduction, " +
@@ -173,7 +178,8 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   and cm.member_coupon_id = c.id "+
             "   and cm.is_use = :isUse " +
             "   and c.is_use = true " +
-            "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
+            "   and c.effective_start_date < :today " +
+            "   and c.effective_end_date > :today " +
             "order by c.use_qty DESC",
             nativeQuery = true
     )
@@ -182,4 +188,5 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
 
     Boolean existsByMemberAndCoupon(Member member, Coupon coupon);
 
+    CouponMember findTopByCouponOrderByCreatedDateDesc(Coupon coupon);
 }

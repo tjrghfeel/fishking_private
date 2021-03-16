@@ -3,10 +3,10 @@ package com.tobe.fishking.v2.service.common;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.fishing.CouponMember;
+import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.common.CouponType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.common.CouponDTO;
-import com.tobe.fishking.v2.model.common.CouponDownloadDto;
-import com.tobe.fishking.v2.model.common.CouponMemberDTO;
+import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.repository.common.CouponRepository;
@@ -14,10 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,12 +59,15 @@ public class CouponService {
         boolean isDownloaded = couponMemberRepository.existsByMemberAndCoupon(member, coupon);
         if(isDownloaded == true){ return -1L;}
 
-        //!!!!!!!!!!!!쿠폰 번호 생성. (일단은 랜덤숫자 넣음. 번호어떻게만들지 정해지고 수정필요.
-        String couponCodeOfCouponMember = coupon.getCouponCode() + String.format("%03d",(int)(Math.random()*1000));
+        /*couponIssueCode 생성*/
+        CouponMember lastCouponMember = couponMemberRepository.findTopByCouponOrderByCreatedDateDesc(coupon);
+        String lastCouponIssueCode = lastCouponMember.getCouponIssueCode();
+        int lastCouponIssueCodeNum = Integer.parseInt(lastCouponIssueCode.substring(8));
+        String newCouponIssueCode = coupon.getCouponCreateCode()+ (lastCouponIssueCodeNum+1);
 
         CouponMember couponMember = CouponMember.builder()
                 .coupon(coupon)
-                .couponCode(couponCodeOfCouponMember)
+                .couponIssueCode(newCouponIssueCode)
                 .member(member)
                 .isUse(false)
                 .regDate(LocalDateTime.now())
@@ -113,9 +121,16 @@ public class CouponService {
             Long couponId = downloadableCouponList.get(i);
             Coupon coupon = couponRepository.findById(couponId)
                     .orElseThrow(()->new ResourceNotFoundException("coupon not found for this id :: "+couponId));
+
+            /*couponIssueCode 생성*/
+            CouponMember lastCouponMember = couponMemberRepository.findTopByCouponOrderByCreatedDateDesc(coupon);
+            String lastCouponIssueCode = lastCouponMember.getCouponIssueCode();
+            int lastCouponIssueCodeNum = Integer.parseInt(lastCouponIssueCode.substring(8));
+            String newCouponIssueCode = coupon.getCouponCreateCode()+ (lastCouponIssueCodeNum+1);
+
             CouponMember couponMember = CouponMember.builder()
                     .coupon(coupon)
-                    .couponCode(coupon.getCouponCode() + String.format("%03d",(int)(Math.random()*1000)))
+                    .couponIssueCode(newCouponIssueCode)
                     .member(member)
                     .isUse(false)
                     .regDate(LocalDateTime.now())
@@ -130,4 +145,83 @@ public class CouponService {
         couponMemberRepository.saveAll(couponMemberList);
         return true;
     }
+
+    /*쿠폰 생성*/
+    @Transactional
+    public Long makeCoupon(String token, String name, Integer saleValue, String description, Integer maxIssueCount,
+                           LocalDate issueStartDate, LocalDate issueEndDate, LocalDate effectiveStartDate, LocalDate effectiveEndDate) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member"));
+
+        /*member의 권한확인*/
+        if(member.getRoles() != Role.admin){throw new RuntimeException("쿠폰 생성의 권한이 없습니다.");}
+
+        /*coupon create code 생성. 형식은 yyMM(*4자리일련번호*) */
+        String couponCreateCode = null;
+        LocalDate today = LocalDate.now();
+        String yyMM = today.format(DateTimeFormatter.ofPattern("yyMM"));
+        /*coupon create code에 들어갈 일련번호 생성*/
+        int maxOfMonth = YearMonth.from(LocalDateTime.now()).lengthOfMonth();
+        LocalDateTime start = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = LocalDateTime.now().withDayOfMonth(maxOfMonth).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        Coupon lastCreatedCoupon = couponRepository.findTop1ByCreatedDateGreaterThanAndCreatedDateLessThanOrderByCreatedDateDesc(
+                start, end
+        );
+        if(lastCreatedCoupon != null) {
+            int sequenceNum = Integer.parseInt(lastCreatedCoupon.getCouponCreateCode().substring(4)) + 1;
+            couponCreateCode = yyMM + String.format("%04d",sequenceNum);
+        }
+        else{ couponCreateCode = yyMM + "0001";}
+
+        /*쿠폰 생성*/
+        Coupon coupon = Coupon.builder()
+                .couponType(CouponType.amount)
+                .couponCreateCode(couponCreateCode)
+                .couponName(name)
+                .exposureStartDate(issueStartDate)
+                .exposureEndDate(issueEndDate)
+                .saleValues(saleValue)
+                .maxIssueCount(maxIssueCount)
+                .effectiveStartDate(effectiveStartDate)
+                .effectiveEndDate(effectiveEndDate)
+                .issueQty(0)
+                .useQty(0)
+                .isIssue(true)
+                .isUse(true)
+                .fromPurchaseAmount(0)
+                .toPurchaseAmount(1000000)
+//                .brfIntroduction()
+                .couponDescription(description)
+                .createdBy(member)
+                .modifiedBy(member)
+                .build();
+        couponRepository.save(coupon);
+
+        return coupon.getId();
+    }
+
+    /*쿠폰 리스트 검색*/
+    @Transactional
+    public Page<CouponManageDtoForPage> getCouponList(int page, String token, CouponSearchConditionDto dto) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+
+        /*권한 확인.*/
+        if(member.getRoles() != Role.admin){throw new RuntimeException("쿠폰 조회 권한이 없습니다.");}
+
+        /*조건 형식변환*/
+        Integer couponType = null;
+        if(dto.getCouponType()!=null){ couponType = CouponType.valueOf(dto.getCouponType()).ordinal();}
+
+        Pageable pageable = PageRequest.of(page, 30, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
+        Page<CouponManageDtoForPage> result = couponRepository.getCouponList(
+            dto.getCouponId(), couponType, dto.getCouponCreateCode(), dto.getCouponName(), dto.getExposureStartDate(),
+                dto.getExposureEndDate(), dto.getSaleValuesStart(), dto.getSaleValuesEnd(), dto.getEffectiveStartDate(), dto.getEffectiveEndDate(),
+                dto.getIssueQtyStart(), dto.getIssueQtyEnd(), dto.getUseQtyStart(), dto.getUseQtyEnd(), dto.getIsIssue(),
+                dto.getIsUse(), dto.getCouponDescription(), dto.getCreatedBy(), dto.getModifiedBy(), pageable
+        );
+
+        return result;
+    }
+
 }

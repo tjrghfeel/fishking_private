@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.enums.common.CouponType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,25 +34,25 @@ public class Coupon extends BaseTime {
     //생성규칙  VIP/General(V/G)  + A(정액, R:정률) +  '00'  +  발행일자(6)  + 일련번호 (7)\
     //ex) GA00201231000000
     @Column(columnDefinition = "varchar(20)  comment '쿠폰코드'  ")
-    public String couponCode;
+    public String couponCreateCode;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'쿠폰명', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  couponName
     @Column(columnDefinition = "varchar(50)  comment '쿠폰명'  ")
     public String couponName;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'노출기간-시작', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  exposure_start_date
-    @Column(columnDefinition = "varchar(8)   comment '노출기간-시작 - 발행일자'  ")
-    private String exposureStartDate;
+    @Column(columnDefinition = "datetime   comment '노출기간-시작 - 발행일자'  ")
+    private LocalDate exposureStartDate;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'노출기간-종료', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  exposure_end_date
     //만료일자 23:59까지 발행 가능
-    @Column(columnDefinition = "varchar(8)  comment '노출기간-종료 -만료일자'  ")
-    private String exposureEndDate;
+    @Column(columnDefinition = "datetime  comment '노출기간-종료 -만료일자'  ")
+    private LocalDate exposureEndDate;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'할인금액(율)', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  saleValues
-    @Column(columnDefinition = "decimal(18,0)  comment '할인금액(율)'  ")
-    private Double saleValues;
+    @Column(columnDefinition = "int  comment '할인금액(율)'  ")
+    private Integer saleValues;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'최대발행갯수', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  maxIssue
     //발행갯수가 최대발행갯수를 넘으면 발행중지
@@ -59,17 +60,19 @@ public class Coupon extends BaseTime {
     private Integer maxIssueCount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'유효일수', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  effective_days
-    @Column(columnDefinition = "int  comment '유효일수'  ")
-    private Integer effectiveDays;
+    @Column(columnDefinition = "datetime comment '유효기간 시작'  ")
+    private LocalDate effectiveStartDate;
+    @Column(columnDefinition = "datetime  comment '유효기간 종료'  ")
+    private LocalDate effectiveEndDate;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'발행수량', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  issue_qty
     //발행수량은  최대발행수량은 넘지 않게
-    @Column(columnDefinition = "float comment '발행수량'")
-    private Double issueQty;
+    @Column(columnDefinition = "int comment '발행수량'")
+    private Integer issueQty;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'사용여부(중지)', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  use_qty
-    @Column(columnDefinition = "float  comment '사용수량'")
-    private Double useQty;
+    @Column(columnDefinition = "int  comment '사용수량'")
+    private Integer useQty;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'발행여부', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  is_issue
     @Column(columnDefinition = "bit default 1  comment '발행/발행중지'")
@@ -82,14 +85,12 @@ public class Coupon extends BaseTime {
     //--condition (ex: 100000 구매이상) 0원은 모두 쿠폰 배포
 
     // EXEC sp_addextendedproperty 'MS_Description', N'구매금액 0이면 구매금액 상관없음', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  from_purchase_amount
-    @Column(columnDefinition = "float  comment '구매금액 0이면 구매금액 상관없음' ")
-    private Double fromPurchaseAmount;
+    @Column(columnDefinition = "int  comment '구매금액 0이면 구매금액 상관없음' ")
+    private Integer fromPurchaseAmount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'구매금액 0이면 구매금액 상관없음', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  to_purchase_amount
-    @Column(columnDefinition = "float  comment '구매금액 0이면 구매금액 상관없음' ")
-    private Double toPurchaseAmount;
-
-
+    @Column(columnDefinition = "int  comment '구매금액 0이면 구매금액 상관없음' ")
+    private Integer toPurchaseAmount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'설명', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  introduce
     @Column(columnDefinition = "varchar(200)   comment '간략소개'  ")
@@ -108,7 +109,7 @@ public class Coupon extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', coupon, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null comment '수정자' ")
+    @JoinColumn(name="modified_by" ,  columnDefinition = " bigint not null comment '수정자' ")
     private Member modifiedBy;
 
 }

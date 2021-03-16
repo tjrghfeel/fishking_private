@@ -30,7 +30,7 @@ public class CouponMember extends BaseTime {
     /*쿠폰코드중에서 일련번호부분 말하는건가? Coupon에 쿠폰코드 필드가 있는데 여기도 있다. */
     /*쿠폰코드는 Coupon 엔터티 code의  뒤에서 6자리  순차적으로 생성*/
     @Column(columnDefinition = "varchar(50) comment  '쿠폰코드'")
-    private String couponCode;
+    private String couponIssueCode;
 
 
     //발급된후 Member가 직접 쿠폰번호를 등록할수 있다.

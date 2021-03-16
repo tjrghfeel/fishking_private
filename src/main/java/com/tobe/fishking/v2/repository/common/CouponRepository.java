@@ -4,7 +4,9 @@ package com.tobe.fishking.v2.repository.common;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.fishing.CouponMember;
+import com.tobe.fishking.v2.model.PageRequest;
 import com.tobe.fishking.v2.model.common.CouponDTO;
+import com.tobe.fishking.v2.model.common.CouponManageDtoForPage;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +24,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     /*유효기간 내의 모든 Coupon의 개수. */
     @Query("select count(a) from Coupon a where a.createdDate >= :from and a.createdDate < :to")
     int countByRegistDate(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
-
-    @Query("select a from Coupon a where a.couponCode = :couponCode")
-    Optional<Coupon> findByCouponCode(@Param("couponCode") String couponCode);
 
     /*멤버가 가진 사용가능한 모든 쿠폰 리스트. */
     @Query("select a from Coupon_member a where  a.member = :member and a.isUse = true")
@@ -48,12 +47,13 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     @Query(value = "select " +
             "c.id id, " +
             "c.coupon_type couponType, " +
-            "c.coupon_code couponCode, " +
+            "c.coupon_create_code couponCode, " +
             "c.coupon_name couponName, " +
 //            "c.exposure_start_date exposureStartDate, " +
             "c.exposure_end_date exposureEndDate, " +
             "c.sale_values saleValues, " +
-            "c.effective_days effectiveDays, " +
+            "c.effective_start_date effectiveStartDate, " +
+            "c.effective_end_date effectiveEndDate, " +
 //            "c.is_issue isIssue, " +
             "c.is_use isUsable, " +
             "c.from_purchase_amount fromPurchaseAmount, " +
@@ -112,4 +112,105 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             nativeQuery = true
     )
     List<Long> findDownloadableCouponList(@Param("memberId") Long memberId, @Param("today") LocalDateTime today);
+
+    /*이번 달에 생성된 쿠폰중 가장 최근 쿠폰 하나 반환*/
+    Coupon findTop1ByCreatedDateGreaterThanAndCreatedDateLessThanOrderByCreatedDateDesc(LocalDateTime start, LocalDateTime end);
+
+    @Query(value = "select " +
+            "   c.id couponId," +
+            "   c.coupon_type couponType," +
+            "   c.coupon_create_code couponCreateCode," +
+            "   c.coupon_name couponName, " +
+            "   c.exposure_start_date exposureStartDate, " +
+            "   c.exposure_end_date exposureEndDate, " +
+            "   c.sale_values saleValues, " +
+            "   c.max_issue_count maxIssueCount, " +
+            "   c.effective_start_date effectiveStartDate, " +
+            "   c.effective_end_date effectiveEndDate, " +
+            "   c.issue_qty issueQty, " +
+            "   c.use_qty useQty, " +
+            "   c.is_issue isIssue, " +
+            "   c.is_use isUse, " +
+//            "   c.from_purchase_amount fromPhurchaseAmount, " +
+//            "   c.to_purchase_amount toPhurchaseAmoutn, " +
+//            "   c.brf_introduction brfIntroduction, " +
+            "   c.coupon_description couponDescription, " +
+            "   c.created_by createdBy, " +
+            "   c.modified_by modifiedBy   "+
+            "from coupon c " +
+            "where " +
+            "   if(:couponId is null, true, c.id = :couponId) " +
+            "   and if(:couponType is null, true, c.coupon_type = :couponType) " +
+            "   and if(:couponCreateCode is null, true, c.coupon_create_code = :couponCreateCode) " +
+            "   and if(:couponName is null, true, c.coupon_name like %:couponName%) " +
+            "   and if(:exposureStartDate is null, true, c.exposure_start_date >= :exposureStartDate) " +
+            "   and if(:exposureEndDate is null, true, c.exposure_end_date <= :exposureEndDate) " +
+            "   and if(:saleValuesStart is null, true, c.sale_values >= :saleValuesStart) " +
+            "   and if(:saleValuesEnd is null, true, c.sale_values <= :saleValuesEnd) " +
+            "   and if(:effectiveStartDate is null, true, c.effective_start_date >= :effectiveStartDate) " +
+            "   and if(:effectiveEndDate is null, true, c.effective_end_date <= :effectiveEndDate) " +
+            "   and if(:issueQtyStart is null, true, c.issue_qty >= :issueQtyStart) " +
+            "   and if(:issueQtyEnd is null, true, c.issue_qty <= :issueQtyEnd) " +
+            "   and if(:useQtyStart is null, true, c.use_qty >= :useQtyStart) " +
+            "   and if(:useQtyEnd is null, true, c.use_qty <= :useQtyEnd) " +
+            "   and if(:isIssue is null, true, c.is_issue = :isIssue) " +
+            "   and if(:isUse is null, true, c.is_use = :isUse) " +
+//            "   and if(:fromPurchaseAmount is null, true, c.from_purchase_amount = :fromPurchaseAmount) " +
+//            "   and if(:toPurchaseAmount is null, true, c.to_purchase_amount = :toPurchaseAmount) " +
+//            "   and if(:brfIntroduction is null, true, c.brf_introduction like %:brfIntroduction%) " +
+            "   and if(:couponDescription is null, true, c.coupon_description like %:couponDescription%) " +
+            "   and if(:createdBy is null, true, c.created_by = :createdBy) " +
+            "   and if(:modifiedBy is null, true, c.modified_by = :modifiedBy) ",
+            countQuery = "select c.id " +
+                    "from coupon c " +
+                    "where " +
+                    "   if(:couponId is null, true, c.id = :couponId) " +
+                    "   and if(:couponType is null, true, c.coupon_type = :couponType) " +
+                    "   and if(:couponCreateCode is null, true, c.coupon_create_code = :couponCreateCode) " +
+                    "   and if(:couponName is null, true, c.coupon_name like %:couponName%) " +
+                    "   and if(:exposureStartDate is null, true, c.exposure_start_date > :exposureStartDate) " +
+                    "   and if(:exposureEndDate is null, true, c.exposure_end_date < :exposureEndDate) " +
+                    "   and if(:saleValuesStart is null, true, c.sale_values > :saleValuesStart) " +
+                    "   and if(:saleValuesEnd is null, true, c.sale_values < :saleValuesEnd) " +
+                    "   and if(:effectiveStartDate is null, true, c.effective_start_date > :effectiveStartDate) " +
+                    "   and if(:effectiveEndDate is null, true, c.effective_end_date < :effectiveEndDate) " +
+                    "   and if(:issueQtyStart is null, true, c.issue_qty > :issueQtyStart) " +
+                    "   and if(:issueQtyEnd is null, true, c.issue_qty < :issueQtyEnd) " +
+                    "   and if(:useQtyStart is null, true, c.use_qty > :useQtyStart) " +
+                    "   and if(:useQtyEnd is null, true, c.use_qty < :useQtyEnd) " +
+                    "   and if(:isIssue is null, true, c.is_issue = :isIssue) " +
+                    "   and if(:isUse is null, true, c.is_use = :isUse) " +
+//                    "   and if(:fromPurchaseAmount is null, true, c.from_purchase_amount = :fromPurchaseAmount) " +
+//                    "   and if(:toPurchaseAmount is null, true, c.to_purchase_amount = :toPurchaseAmount) " +
+//                    "   and if(:brfIntroduction is null, true, c.brf_introduction like %:brfIntroduction%) " +
+                    "   and if(:couponDescription is null, true, c.coupon_description like %:couponDescription%) " +
+                    "   and if(:createdBy is null, true, c.created_by = :createdBy) " +
+                    "   and if(:modifiedBy is null, true, c.modified_by = :modifiedBy) ",
+            nativeQuery = true
+    )
+    Page<CouponManageDtoForPage> getCouponList(
+        @Param("couponId") Long couponId,
+        @Param("couponType") Integer couponType,
+        @Param("couponCreateCode") String couponCreateCode,
+        @Param("couponName") String couponName,
+        @Param("exposureStartDate") LocalDate exposureStartDate,
+        @Param("exposureEndDate") LocalDate exposureEndDate,
+        @Param("saleValuesStart") Integer saleValuesStart,
+        @Param("saleValuesEnd") Integer saleValuesEnd,
+        @Param("effectiveStartDate") LocalDate effectiveStartDate,
+        @Param("effectiveEndDate") LocalDate effectiveEndDate,
+        @Param("issueQtyStart") Integer issueQtyStart,
+        @Param("issueQtyEnd") Integer issueQtyEnd,
+        @Param("useQtyStart") Integer useQtyStart,
+        @Param("useQtyEnd") Integer useQtyEnd,
+        @Param("isIssue") Boolean isIssue,
+        @Param("isUse") Boolean isUse,
+//        @Param("fromPurchaseAmount") Integer fromPurchaseAmount,
+//        @Param("toPurchaseAmount") Integer toPurchaseAmount,
+//        @Param("brfIntroduction") String brfIntroduction,
+        @Param("couponDescription") String couponDescription,
+        @Param("createdBy") Long createdBy,
+        @Param("modifiedBy") Long modifiedBy,
+        Pageable pageable
+    );
 }
