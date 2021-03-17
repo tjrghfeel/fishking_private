@@ -8,7 +8,8 @@ const {
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "NativeStore"
 )(
   observer(
     class extends React.Component {
@@ -27,6 +28,7 @@ export default inject(
       async componentDidMount() {
         const {
           PageStore,
+          NativeStore,
           match: {
             params: { tab = "ship" },
           },
@@ -43,32 +45,7 @@ export default inject(
         if (tab === "ship" || tab === "live") order = "distance";
         else order = "createDate";
         let type = qp.type || null;
-        // window.navigator.geolocation.getCurrentPosition((position) => {
-        //   let latitude = null;
-        //   let longitude = null;
-        //   try {
-        //     latitude = position.coords.latitude;
-        //     longitude = position.coords.longitude;
-        //   } catch (err) {
-        //   } finally {
-        //     const restored = PageStore.restoreState({
-        //       isPending: false,
-        //       isEnd: false,
-        //       totalElements: 0,
-        //       list: [],
-        //       keyword,
-        //       page: 0,
-        //       order,
-        //       type,
-        //       latitude,
-        //       longitude,
-        //     });
-        //     PageStore.setScrollEvent(() => {
-        //       this.loadPageData(PageStore.state.page + 1);
-        //     });
-        //     if (!restored) this.loadPageData();
-        //   }
-        // });
+        const { lat, lng } = await NativeStore.getCurrentPosition();
         const restored = PageStore.restoreState({
           isPending: false,
           isEnd: false,
@@ -78,8 +55,8 @@ export default inject(
           page: 0,
           order,
           type,
-          latitude: null,
-          longitude: null,
+          latitude: lat,
+          longitude: lng,
         });
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
