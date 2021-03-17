@@ -32,8 +32,10 @@ public class YoutubeService {
     //동영상 카운트
     private int cnt = 1;
     private final String apiKey = "AIzaSyCCIfMaRDWX-7fGtQZHGvMi2E5fnR1eIHc";
-    private final String channelId = "UCB643Ee7lPtNWJem92gb03g";
-    private final String UPplaylistid ="UUB643Ee7lPtNWJem92gb03g";
+//    private final String channelId = "UCB643Ee7lPtNWJem92gb03g";
+//    private final String UPplaylistid ="UUB643Ee7lPtNWJem92gb03g";
+    private final String channelId = "UCSsCUId0aJfU67B0ZbnS0TA";
+    private final String UPplaylistid ="UUSsCUId0aJfU67B0ZbnS0TA";
 //            + "&type=video&fields=nextPageToken,pageInfo,items(id,snippet(publishedAt,title,description,thumbnails(high(url)),resourceId(videoId)))&order=date&maxResults=10";
 
     private final String USER_AGENT = "Mozilla/5.0";
