@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.exception.EmptyListException;
+import com.tobe.fishking.v2.exception.NotAuthException;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
 import com.tobe.fishking.v2.model.response.OrderDetailResponse;
 import com.tobe.fishking.v2.model.response.OrderListResponse;
@@ -11,6 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -40,12 +45,16 @@ public class OrderController {
             "\n totalPages: 총 페이지 수" +
             "\n last: 마지막페이지 여부" +
             "\n first: 첫페이지 여부" +
-            "\n")
+            "\n }" +
+            "\n 상태가 '예약진행중' 인 경우 예약승인 버튼 노출")
     @GetMapping("/orders/{page}")
     public Page<OrderListResponse> searchOrders(@RequestHeader(name = "Authorization") String token,
                                                 @PathVariable Integer page,
-                                                SearchOrdersDTO searchOrdersDTO) throws EmptyListException {
+                                                SearchOrdersDTO searchOrdersDTO) throws EmptyListException, ResourceNotFoundException, NotAuthException {
         Long memberId = memberService.getMemberSeqBySessionToken(token);
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
         return ordersService.searchOrders(searchOrdersDTO, memberId, page);
     }
 
@@ -72,8 +81,32 @@ public class OrderController {
             "\n 예약자 생년월일은 빼주세요")
     @GetMapping("/orders/detail/{orderId}")
     public OrderDetailResponse getOrderDetail(@RequestHeader(name = "Authorization") String token,
-                                              @PathVariable Long orderId) {
+                                              @PathVariable Long orderId) throws ResourceNotFoundException, NotAuthException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
         return ordersService.getOrderDetail(orderId);
+    }
+
+    @ApiOperation(value = "예약 승인", notes = "예약 승인 {" +
+            "\n success: 성공여부" +
+            "\n message: 메세지" +
+            "\n }")
+    @PostMapping("/order/confirm")
+    public Map<String, Object> confirmOrder(@RequestHeader(name = "Authorization") String token,
+                                            @RequestParam Long orderId) throws ResourceNotFoundException, NotAuthException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Map<String, Object> result = new HashMap<>();
+        if (ordersService.confirmOrder(orderId)) {
+            result.put("success", true);
+            result.put("message", "승인되었습니다.");
+        } else {
+            result.put("success", false);
+            result.put("message", "실패했습니다. 다시 시도해주세요.");
+        }
+        return result;
     }
 
 //    @GetMapping("/changeusername")

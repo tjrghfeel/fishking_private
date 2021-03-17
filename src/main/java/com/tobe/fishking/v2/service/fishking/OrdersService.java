@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.fishking;
 
 
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
+import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.EmptyListException;
@@ -97,6 +98,23 @@ public class OrdersService {
             response.getRideList().add(r);
         }
         return response;
+    }
+
+    @Transactional
+    public boolean confirmOrder(Long orderId) {
+        try {
+            Orders orders = ordersRepository.getOne(orderId);
+            OrderStatus orderStatus = orders.getOrderStatus();
+            if (orderStatus.equals(OrderStatus.bookRunning)) {
+                orders.changeStatus(OrderStatus.bookConfirm);
+                ordersRepository.save(orders);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }
