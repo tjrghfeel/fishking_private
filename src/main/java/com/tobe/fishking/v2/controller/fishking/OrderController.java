@@ -59,7 +59,6 @@ public class OrderController {
             "\n reserveName: 예약자명" +
             "\n reservePhone: 예약자 전화번호" +
             "\n rideList: 승선자 리스트 [ {" +
-            "\n rideList: 승선자 리스트 [ {" +
             "\n     birthday: 생년월일" +
             "\n     phone: 전화번호" +
             "\n     name: 이름" +
