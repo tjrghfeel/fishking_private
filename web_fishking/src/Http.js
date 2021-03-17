@@ -9,6 +9,7 @@ const http = axios.create({
 http.defaults.headers.common["Authorization"] =
   localStorage.getItem("@accessToken") || "";
 http.defaults.headers.common["Accept"] = "application/json";
+http.defaults.timeout = 2500;
 
 export default (() => {
   const request = (url, method, headers = {}, params, data) => {
@@ -33,12 +34,12 @@ export default (() => {
             data,
           })
           .then((response, xhr) => {
-            if (response && response['status'] == '204') {
+            if (response && response["status"] == "204") {
               ModalStore.openModal("Alert", {
                 body: "요청하신 검색 결과가 없습니다.",
               });
               resolve(null);
-            }else{
+            } else {
               resolve(response.data);
             }
           })

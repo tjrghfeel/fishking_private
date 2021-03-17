@@ -31,6 +31,7 @@ export default inject(
         this.cardMap = null;
         this.cardMapMarkers = [];
         this.state = {
+          isPageUpdate: false,
           showCardMap: false,
           uploaded: [],
           category: "fishingBlog",
@@ -58,6 +59,54 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      async componentDidMount() {
+        const { PageStore, APIStore } = this.props;
+        const { put: fishingDiaryId } = PageStore.getQueryParams();
+        if (fishingDiaryId) {
+          const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
+            fishingDiaryId,
+          });
+          console.log(JSON.stringify(resolve));
+          // 첨부이미지
+          const uploaded = [];
+          if (resolve.imageUrlList) {
+            for (let i = 0; i < resolve.imageUrlList.length; i++) {
+              const downloadUrl = resolve.imageUrlList[i];
+              uploaded.push({ fileId: null, downloadUrl });
+            }
+          }
+          await this.setState({
+            isPageUpdate: true,
+            title: resolve.title,
+            // 어종
+            fishingSpeciesName: resolve.fishingSpecies
+              .replace(/[ ]/g, "")
+              .split(","),
+            fishingSpecies: resolve.fishingSpeciesCodeList,
+            // 날짜
+            fishingDate: resolve.fishingDate,
+            // 물때
+            tide: resolve.tide,
+            tideName: resolve.tide,
+            // 낚시기법
+            fishingTechnicListName: resolve.fishingTechnic
+              .replace(/[ ]/g, "")
+              .split(","),
+            // 미끼
+            fishingLureListName: resolve.fishingLure
+              .replace(/[ ]/g, "")
+              .split(","),
+            // 낚시장소
+            fishingTypeName: resolve.fishingType,
+            // 선상/위치
+            // 내용
+            content: resolve.content,
+            // 첨부이미지
+            uploaded,
+          });
+        }
+      }
+
       moveCardMap = () => {
         for (let m of this.cardMapMarkers) {
           m.setMap(null);
@@ -284,12 +333,12 @@ export default inject(
             />
             <SelectPlaceModal
               id={"selPlaceModal"}
-              onSelected={(selected) =>
+              onSelected={(selected) => {
                 this.setState({
                   fishingType: selected === null ? null : selected.key,
                   fishingTypeName: selected === null ? "" : selected.value,
-                })
-              }
+                });
+              }}
             />
             <SelectLocationModal
               id={"selLocationModal"}
@@ -499,6 +548,7 @@ export default inject(
                           content: e.target.value.substr(0, 1000),
                         })
                       }
+                      value={this.state.content}
                     ></textarea>
                   </div>
                 </div>
