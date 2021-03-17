@@ -102,4 +102,46 @@ export default new (class {
     }
     return granted;
   };
+  /** 위치 권한 체크 */
+  checkLocationPermissions = async () => {
+    return await this.checkMultiplePermission(
+      Platform.select({
+        ios: [
+          PERMISSIONS.IOS.LOCATION_ALWAYS,
+          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        ],
+        android: [
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+          PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+        ],
+      }),
+    );
+  };
+  checkStoragePermissions = async () => {
+    return await this.checkMultiplePermission(
+      Platform.select({
+        ios: [
+          PERMISSIONS.IOS.CAMERA,
+          PERMISSIONS.IOS.PHOTO_LIBRARY,
+          PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
+        ],
+        android: [
+          PERMISSIONS.ANDROID.CAMERA,
+          PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+          PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+        ],
+      }),
+    );
+  };
+  checkContactPermissions = async () => {
+    return await this.checkMultiplePermission(
+      Platform.select({
+        ios: [PERMISSIONS.IOS.CONTACTS],
+        android: [
+          PERMISSIONS.ANDROID.CALL_PHONE,
+          PERMISSIONS.ANDROID.READ_CONTACTS,
+        ],
+      }),
+    );
+  };
 })();

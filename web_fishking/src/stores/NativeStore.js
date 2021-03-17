@@ -65,6 +65,34 @@ const NativeStore = new (class {
       });
     }
   }
+  /** 현재 위치 정보 조회 */
+  getCurrentPosition = () => {
+    return new Promise((resolve) => {
+      const wversion = window.wversion || null;
+      const permission = window.permission_location || null;
+      if (wversion === null || (wversion !== null && permission == "true")) {
+        // 위치 조회
+        APIStore.setLoading(true);
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const coords = pos.coords;
+              const lat = coords.latitude;
+              const lng = coords.longitude;
+              APIStore.setLoading(false);
+              resolve({ lat, lng });
+            },
+            (err) => {
+              APIStore.setLoading(false);
+              resolve({ lat: null, lng: null });
+            }
+          );
+        } else APIStore.setLoading(false);
+      } else {
+        resolve({ lat: null, lng: null });
+      }
+    });
+  };
 })();
 
 export default NativeStore;
