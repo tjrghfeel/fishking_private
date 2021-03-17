@@ -10,10 +10,7 @@ import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
-import com.tobe.fishking.v2.model.response.OrderDetailResponse;
-import com.tobe.fishking.v2.model.response.OrderListResponse;
-import com.tobe.fishking.v2.model.response.QOrderDetailResponse;
-import com.tobe.fishking.v2.model.response.QOrderListResponse;
+import com.tobe.fishking.v2.model.response.*;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static com.tobe.fishking.v2.entity.fishing.QCompany.company;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
@@ -76,6 +74,80 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
 //        return null;
     }
+
+    @Override
+    public List<OrderListResponse> getBookRunning(Long memberId) {
+        List<OrderListResponse> response = queryFactory
+                .select(new QOrderListResponse(
+                        orders.id,
+                        ship.shipName,
+                        goods.name,
+                        orders.orderNumber,
+                        orders.fishingDate,
+                        goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
+                        goods.fishingEndTime.substring(0,2).concat(":").concat(goods.fishingEndTime.substring(2,4)),
+                        orders.createdDate,
+                        orderDetails.personnel,
+                        orders.totalAmount,
+                        orders.orderStatus,
+                        orders.createdBy.profileImage,
+                        orders.createdBy.memberName
+                ))
+                .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company)).join(orderDetails).on(orderDetails.orders.eq(orders))
+                .where(
+                        orders.orderStatus.eq(OrderStatus.bookRunning),
+                        orders.isPay.eq(true),
+                        company.member.id.eq(memberId)
+                )
+                .orderBy(Expressions.asDate(orders.fishingDate).asc())
+                .limit(5)
+                .fetch();
+        return response;
+    }
+
+    @Override
+    public List<OrderListResponse> getBookConfirm(Long memberId) {
+        List<OrderListResponse> response = queryFactory
+                .select(new QOrderListResponse(
+                        orders.id,
+                        ship.shipName,
+                        goods.name,
+                        orders.orderNumber,
+                        orders.fishingDate,
+                        goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
+                        goods.fishingEndTime.substring(0,2).concat(":").concat(goods.fishingEndTime.substring(2,4)),
+                        orders.createdDate,
+                        orderDetails.personnel,
+                        orders.totalAmount,
+                        orders.orderStatus,
+                        orders.createdBy.profileImage,
+                        orders.createdBy.memberName
+                ))
+                .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company)).join(orderDetails).on(orderDetails.orders.eq(orders))
+                .where(
+                        orders.orderStatus.eq(OrderStatus.bookConfirm),
+                        orders.isPay.eq(true),
+                        company.member.id.eq(memberId)
+                )
+                .orderBy(orders.createdDate.desc())
+                .limit(5)
+                .fetch();
+        return response;
+    }
+
+//    public FishingDashboardResponse getStatus(Long memberId) {
+//        FishingDashboardResponse response = queryFactory
+//                .select(new FishingDashboardResponse(
+//                        ExpressionUtils.as(JPAExpressions.select(orders.count()).from(orders).where(), Expressions.numberPath(Long.class, "countRunning"),
+//                ))
+//                .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company))
+//                .where(
+//                        orders.isPay.eq(true),
+//                        company.member.id.eq(memberId)
+//                )
+//                .fetchOne();
+//        return response;
+//    }
 
     @Override
     public OrderDetailResponse orderDetail(Long orderId) {

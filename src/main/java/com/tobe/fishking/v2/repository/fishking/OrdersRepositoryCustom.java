@@ -20,4 +20,6 @@ public interface OrdersRepositoryCustom {
     List<Orders> getCheckOrders();
     Page<OrderListResponse> searchOrders(SearchOrdersDTO dto, Long memberId, Pageable pageable, String keys);
     OrderDetailResponse orderDetail(Long orderId);
+    List<OrderListResponse> getBookRunning(Long memberId);
+    List<OrderListResponse> getBookConfirm(Long memberId);
 }

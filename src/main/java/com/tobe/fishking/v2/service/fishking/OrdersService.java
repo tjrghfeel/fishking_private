@@ -117,4 +117,28 @@ public class OrdersService {
         }
     }
 
+    @Transactional
+    public List<OrderListResponse> getBookRunning(Long memberId) throws EmptyListException {
+        List<OrderListResponse> response = ordersRepository.getBookRunning(memberId);
+        if (response.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        }
+        return response;
+    }
+
+    @Transactional
+    public List<OrderListResponse> getBookConfirm(Long memberId) throws EmptyListException {
+        List<OrderListResponse> response = ordersRepository.getBookConfirm(memberId);
+        if (response.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        }
+        return response;
+    }
+
+    @Transactional
+    public Map<String, Object> getStatus(Long memberId) {
+        Map<String, Object> response = new HashMap<>();
+        return response;
+    }
+
 }

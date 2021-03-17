@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.controller.fishking;
+package com.tobe.fishking.v2.controller.smartfishing;
 
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.NotAuthException;
@@ -22,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/v2/api")
 @Api(tags = {"예약 및 주문 (스마트출조)"})
 @RequiredArgsConstructor
-public class OrderController {
+public class SmartOrderController {
 
     private final MemberService memberService;
     private final OrdersService ordersService;
