@@ -69,7 +69,7 @@ public class OrderController {
             "\n shipType: 선박 타입 (3: 8인승, 5: 18인승, 9: 22인승)" +
             "\n cancelDate: 취소시 취소 날짜. 취소 아닌경우 빈 문자열" +
             "\n refundAmount: 취소금액. 취소 아닌경우 null" +
-            "\n")
+            "\n 예약자 생년월일은 빼주세요")
     @GetMapping("/orders/detail/{orderId}")
     public OrderDetailResponse getOrderDetail(@RequestHeader(name = "Authorization") String token,
                                               @PathVariable Long orderId) {
