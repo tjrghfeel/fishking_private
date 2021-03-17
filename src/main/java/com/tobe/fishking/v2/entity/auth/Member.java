@@ -26,7 +26,7 @@ public class Member {
     @Column
     public String uid;
 
-    @Convert(converter = StringConverter.class)
+//    @Convert(converter = StringConverter.class)
     @Column(name = "member_name")
     public String memberName;
 
@@ -90,7 +90,7 @@ public class Member {
     @Embedded
     private Address address;
 
-    @Column(columnDefinition = "varchar(100) comment '푸쉬알림용 등록토큰'")
+    @Column(columnDefinition = "varchar(255) comment '푸쉬알림용 등록토큰'")
     private String registrationToken;
 
     @Builder

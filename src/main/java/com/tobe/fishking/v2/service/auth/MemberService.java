@@ -1707,4 +1707,41 @@ public class MemberService {
         return memberRepository.getOne(member_id);
     }
 
+//    @Transactional
+//    public void ttt() {
+//        List<Member> members = memberRepository.getMemberNameNotNull();
+//        for (Member member : members) {
+//            String name = null;
+//            String areaCode = null;
+//            String phoneNum = null;
+//            try {
+//                name = AES.aesDecode(member.getMemberName(), "fishking12345abcde");
+//                PhoneNumber number = member.getPhoneNumber();
+//                if (number != null) {
+//                    areaCode = AES.aesDecode(number.getAreaCode(), "fishking12345abcde");
+//                    phoneNum = AES.aesDecode(number.getLocalNumber(), "fishking12345abcde");
+//                    number.setAreaCode(areaCode);
+//                    number.setLocalNumber(phoneNum);
+//                    member.setPhoneNumber(number);
+//                }
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            } catch (NoSuchAlgorithmException e) {
+//                e.printStackTrace();
+//            } catch (NoSuchPaddingException e) {
+//                e.printStackTrace();
+//            } catch (InvalidKeyException e) {
+//                e.printStackTrace();
+//            } catch (InvalidAlgorithmParameterException e) {
+//                e.printStackTrace();
+//            } catch (IllegalBlockSizeException e) {
+//                e.printStackTrace();
+//            } catch (BadPaddingException e) {
+//                e.printStackTrace();
+//            }
+//            member.setMemberName(name);
+//
+//            memberRepository.save(member);
+//        }
+//    }
 }
