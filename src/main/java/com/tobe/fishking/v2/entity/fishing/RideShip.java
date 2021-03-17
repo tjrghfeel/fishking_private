@@ -91,14 +91,18 @@ public class RideShip extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    @Column(columnDefinition = "varchar(20) comment '비상연락처'")
+    private String emergencyPhone;
+
     @Builder
-    public RideShip(OrderDetails ordersDetail, String name, String birthday, String phoneNumber, Member member) {
+    public RideShip(OrderDetails ordersDetail, String name, String birthday, String phoneNumber, String emergencyPhone, Member member) {
         this.ordersDetail = ordersDetail;
         this.name = name;
         this.birthday = birthday;
         this.phoneNumber = phoneNumber;
         this.createdBy = member;
         this.modifiedBy = member;
+        this.emergencyPhone = emergencyPhone;
     }
 
     public void updateFingerPrint(String fingerPrint, Member member) {

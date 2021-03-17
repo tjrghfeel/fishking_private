@@ -50,6 +50,9 @@ public class ReserveDTO {
     @ApiParam(value = "승선자 전화번호 리스트")
     private @Valid String[] personsPhone;
 
+    @ApiParam(value = "승선자 비상연락처 리스트")
+    private @Valid String[] emergencyPhone;
+
     @ApiParam(value = "승선자 이름 리스트")
     private @Valid String[] personsName;
 

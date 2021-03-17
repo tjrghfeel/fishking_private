@@ -356,7 +356,7 @@ public class ShipService {
 
     /* 선상 예약 */
     @Transactional
-    public OrderResponse reserve(ReserveDTO reserveDTO, String token, String[] names, String[] phones, String[] birthdates) {
+    public OrderResponse reserve(ReserveDTO reserveDTO, String token, String[] names, String[] phones, String[] emergencyPhones, String[] birthdates) {
         Member member = null;
 //        member = memberRepo.getOne(Objects.requireNonNullElse(member_id, 22L));
         Optional<Member> memberOpt = memberRepo.findBySessionToken(token);
@@ -420,21 +420,31 @@ public class ShipService {
         for (int idx = 0 ; idx < names.length; idx++) {
             String birthdate;
             String phone;
+            String emergencyPhone;
             if (birthdates[idx].contains("-")) {
                 birthdate = birthdates[idx];
             } else {
                 birthdate = birthdates[idx].substring(0,4) + "-" + birthdates[idx].substring(4,6) + "-" + birthdates[idx].substring(6);
             }
             if (phones[idx].contains("-")) {
-                phone = birthdates[idx];
+                phone = phones[idx];
             } else {
                 if (phones[idx].length() == 11) {
-                    phone = birthdates[idx].substring(0,3) + "-" + birthdates[idx].substring(3,6) + "-" + birthdates[idx].substring(6);
+                    phone = phones[idx].substring(0,3) + "-" + phones[idx].substring(3,6) + "-" + phones[idx].substring(6);
                 } else {
-                    phone = birthdates[idx].substring(0,3) + "-" + birthdates[idx].substring(3,7) + "-" + birthdates[idx].substring(7);
+                    phone = phones[idx].substring(0,3) + "-" + phones[idx].substring(3,7) + "-" + phones[idx].substring(7);
                 }
             }
-            RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, member);
+            if (emergencyPhones[idx].contains("-")) {
+                emergencyPhone = emergencyPhones[idx];
+            } else {
+                if (emergencyPhones[idx].length() == 11) {
+                    emergencyPhone = emergencyPhones[idx].substring(0,3) + "-" + emergencyPhones[idx].substring(3,6) + "-" + emergencyPhones[idx].substring(6);
+                } else {
+                    emergencyPhone = emergencyPhones[idx].substring(0,3) + "-" + emergencyPhones[idx].substring(3,7) + "-" + emergencyPhones[idx].substring(7);
+                }
+            }
+            RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, emergencyPhone, member);
             rideShipRepository.save(rideShip);
         }
 
