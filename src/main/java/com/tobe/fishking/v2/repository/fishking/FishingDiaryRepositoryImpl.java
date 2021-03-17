@@ -43,7 +43,10 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
     public List<FishingDiary> getDiaryByShipId(Long ship_id) {
         List<FishingDiary> results = queryFactory
                 .selectFrom(fishingDiary)
-                .where(fishingDiary.ship.id.eq(ship_id), fishingDiary.filePublish.eq(FilePublish.fishingDiary))
+                .where(fishingDiary.ship.id.eq(ship_id),
+                        fishingDiary.filePublish.eq(FilePublish.fishingDiary),
+                        fishingDiary.createdBy.isActive.eq(true)
+                )
                 .orderBy(fishingDiary.createdDate.desc())
                 .fetch();
         return results;
@@ -53,7 +56,10 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
     public List<FishingDiary> getBlogByShipId(Long ship_id) {
         List<FishingDiary> results = queryFactory
                 .selectFrom(fishingDiary)
-                .where(fishingDiary.ship.id.eq(ship_id), fishingDiary.filePublish.eq(FilePublish.fishingBlog))
+                .where(fishingDiary.ship.id.eq(ship_id),
+                        fishingDiary.filePublish.eq(FilePublish.fishingBlog),
+                        fishingDiary.createdBy.isActive.eq(true)
+                )
                 .orderBy(fishingDiary.createdDate.desc())
                 .fetch();
         return results;
