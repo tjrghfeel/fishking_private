@@ -12,9 +12,9 @@ import javax.validation.Valid;
 @NoArgsConstructor
 public class SearchOrdersDTO {
 
-    @ApiParam(value = "검색 시작일")
+    @ApiParam(value = "검색 시작일", example = "2021-01-01")
     public @Valid String startDate = "";
-    @ApiParam(value = "검색 종료일")
+    @ApiParam(value = "검색 종료일", example = "2021-06-01")
     public @Valid String endDate = "";
     @ApiParam(value = "주문상태, ")
     public @Valid String status = "";

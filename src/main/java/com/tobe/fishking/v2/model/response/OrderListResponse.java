@@ -39,7 +39,7 @@ public class OrderListResponse {
                              String fishingStartTime,
                              String fishingEndTime,
                              LocalDateTime orderDate,
-                             Long personnel,
+                             Integer personnel,
                              Integer totalAmount,
                              OrderStatus status,
                              String profileImage,
@@ -52,7 +52,7 @@ public class OrderListResponse {
         this.fishingDate = date.getYear() + "년 " + date.getMonthValue() + "월 " + date.getDayOfMonth() + "일 " + "(" + date.getDayOfWeek().getDisplayName(TextStyle.NARROW, Locale.KOREAN) + ")"
                 + fishingStartTime + " ~ " + fishingEndTime;
         this.orderDate = orderDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm:ss"));
-        this.reservePersonnel = personnel.intValue();
+        this.reservePersonnel = personnel;
         this.totalAmount = totalAmount;
         this.status = status.getValue();
         this.profileImage = "/resource" + profileImage;

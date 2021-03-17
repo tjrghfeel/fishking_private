@@ -2,47 +2,33 @@ package com.tobe.fishking.v2.repository.fishking;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.entity.fishing.Orders;
-import com.tobe.fishking.v2.entity.fishing.QOrders;
-import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
+import com.tobe.fishking.v2.model.response.OrderDetailResponse;
 import com.tobe.fishking.v2.model.response.OrderListResponse;
+import com.tobe.fishking.v2.model.response.QOrderDetailResponse;
 import com.tobe.fishking.v2.model.response.QOrderListResponse;
-import com.tobe.fishking.v2.service.AES;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.tobe.fishking.v2.entity.fishing.QCompany.company;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
+import static com.tobe.fishking.v2.entity.fishing.QOrderDetails.orderDetails;
 import static com.tobe.fishking.v2.entity.fishing.QOrders.orders;
 import static com.tobe.fishking.v2.entity.fishing.QRideShip.rideShip;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
-import static com.tobe.fishking.v2.entity.fishing.QCompany.company;
 
 @RequiredArgsConstructor
 public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
@@ -67,13 +53,14 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                         goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
                         goods.fishingEndTime.substring(0,2).concat(":").concat(goods.fishingEndTime.substring(2,4)),
                         orders.createdDate,
-                        ExpressionUtils.as(JPAExpressions.select(rideShip.count()).from(rideShip).where(rideShip.ordersDetail.orders.eq(orders)), Expressions.numberPath(Long.class, "personnel")),
+                        orderDetails.personnel,
+//                        ExpressionUtils.as(JPAExpressions.select(rideShip.count()).from(rideShip).where(rideShip.ordersDetail.orders.eq(orders)), Expressions.numberPath(Long.class, "personnel")),
                         orders.totalAmount,
                         orders.orderStatus,
                         orders.createdBy.profileImage,
                         orders.createdBy.memberName
                 ))
-                .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company))
+                .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company)).join(orderDetails).on(orderDetails.orders.eq(orders))
                 .where(
                         eqStatus(dto.getStatus()),
                         eqPayMethod(dto.getPayMethod()),
@@ -89,6 +76,29 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
 //        return null;
     }
+
+    @Override
+    public OrderDetailResponse orderDetail(Long orderId) {
+        OrderDetailResponse response = queryFactory
+                .select(new QOrderDetailResponse(
+                        orders.id,
+                        goods.name,
+                        goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
+                        goods.totalAmount,
+                        orders.orderNumber,
+                        orders.orderStatus,
+                        orders.createdBy.memberName,
+                        orders.createdBy.phoneNumber.areaCode.concat(orders.createdBy.phoneNumber.localNumber),
+                        ship.positions,
+                        orderDetails.positions,
+                        ship.weight
+                ))
+                .from(orders).join(orderDetails).on(orderDetails.orders.eq(orders)).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship))
+                .where(orders.id.eq(orderId))
+                .fetchOne();
+        return response;
+    }
+
 
     private BooleanExpression eqStatus(String status) {
         return status.isEmpty() ? null : orders.orderStatus.eq(OrderStatus.valueOf(status));
