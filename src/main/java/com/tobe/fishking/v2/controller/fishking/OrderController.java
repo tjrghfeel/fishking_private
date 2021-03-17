@@ -64,11 +64,11 @@ public class OrderController {
             "\n     name: 이름" +
             "\n     emergencyPhone: 비상연락처" +
             "\n }, ... ]" +
-            "\n shipPositions:" +
-            "\n reservePositions:" +
-            "\n shipType:" +
-            "\n cancelDate:" +
-            "\n refundAmount:" +
+            "\n shipPositions: 선박의 사용 위치" +
+            "\n reservePositions: 예약에서 지정한 위치" +
+            "\n shipType: 선박 타입 (3: 8인승, 5: 18인승, 9: 22인승)" +
+            "\n cancelDate: 취소시 취소 날짜. 취소 아닌경우 빈 문자열" +
+            "\n refundAmount: 취소금액. 취소 아닌경우 null" +
             "\n")
     @GetMapping("/orders/detail/{orderId}")
     public OrderDetailResponse getOrderDetail(@RequestHeader(name = "Authorization") String token,
