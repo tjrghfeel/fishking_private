@@ -74,6 +74,10 @@ public class SmartOrderController {
             "\n     name: 이름" +
             "\n     emergencyPhone: 비상연락처" +
             "\n }, ... ]" +
+            "\n orderDate: 결제일" +
+            "\n payMethod: 결제수단" +
+            "\n payTotalAmount: 총 주문 금액" +
+            "\n discountAmount: 할인금액" +
             "\n shipPositions: 선박의 사용 위치" +
             "\n reservePositions: 예약에서 지정한 위치" +
             "\n shipType: 선박 타입 (3: 8인승, 5: 18인승, 9: 22인승)" +
