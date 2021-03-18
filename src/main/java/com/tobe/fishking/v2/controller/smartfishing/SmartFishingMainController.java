@@ -76,7 +76,7 @@ public class SmartFishingMainController {
         return ordersService.getBookConfirm(memberId);
     }
 
-    @ApiOperation(value = "예약 탭 리스트", notes = "예약 리스트. {" +
+    @ApiOperation(value = "결제현황", notes = "결제현황. {" +
             "\n countRunning: 승인필요 수" +
             "\n countConfirm: 예약완료 수" +
             "\n percentRunning: 승인필요 %" +
