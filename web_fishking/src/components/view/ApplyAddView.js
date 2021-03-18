@@ -19,6 +19,10 @@ export default inject(
         this.bizNoFile = React.createRef(null);
         this.representFile = React.createRef(null);
         this.accountFile = React.createRef(null);
+        this.adtId = React.createRef(null);
+        this.adtPw = React.createRef(null);
+        this.nhnId = React.createRef(null);
+        this.nhnPw = React.createRef(null);
         this.state = {
           companyName: "",
           phoneNumber: "", // 휴대폰번호
@@ -29,6 +33,10 @@ export default inject(
           bizNoFile: -1,
           representFile: -1,
           accountFile: -1,
+          adtId: "",
+          adtPw: "",
+          nhnId: "",
+          nhnPw: "",
         };
       }
       /********** ********** ********** ********** **********/
@@ -309,6 +317,75 @@ export default inject(
                           className="form-control"
                           placeholder="정산 통장사본을 첨부하세요 "
                           onChange={() => this.uploadFile("account")}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <div className="input-group">
+                        <label className="input-group-addon">
+                          ADT 캡스 아이디
+                        </label>
+                        <input
+                          ref={this.adtId}
+                          type="text"
+                          className="form-control"
+                          placeholder="ADT 캡스 아이디를 입력하세요"
+                          value={this.state.adtId}
+                          onChange={(e) =>
+                            this.setState({ adtId: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <div className="input-group">
+                        <label className="input-group-addon">
+                          ADT 캡스 비밀번호
+                        </label>
+                        <input
+                          ref={this.adtPw}
+                          type="text"
+                          className="form-control"
+                          placeholder="ADT 캡스 비밀번호를 입력하세요"
+                          value={this.state.adtPw}
+                          onChange={(e) =>
+                            this.setState({ adtPw: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <div className="input-group">
+                        <label className="input-group-addon">
+                          NHN 토스트캠 아이디
+                        </label>
+                        <input
+                          ref={this.nhnId}
+                          type="text"
+                          className="form-control"
+                          placeholder="NHN 토스트캠 아이디를 입력하세요"
+                          value={this.state.nhnId}
+                          onChange={(e) =>
+                            this.setState({ nhnId: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <div className="input-group">
+                        <label className="input-group-addon">
+                          NHN 토스트캠 비밀번호
+                        </label>
+                        <input
+                          ref={this.nhnPw}
+                          type="text"
+                          className="form-control"
+                          placeholder="NHN 토스트캠 비밀번호를 입력하세요"
+                          value={this.state.nhnPw}
+                          onChange={(e) =>
+                            this.setState({ nhnPw: e.target.value })
+                          }
                         />
                       </div>
                     </div>

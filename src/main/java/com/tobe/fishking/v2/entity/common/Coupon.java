@@ -135,4 +135,7 @@ public class Coupon extends BaseTime {
     /*쿠폰 다운*/
     public void addIssueCount(){this.issueQty++;}
 
+    public void useCoupon() {
+        this.useQty += 1;
+    }
 }

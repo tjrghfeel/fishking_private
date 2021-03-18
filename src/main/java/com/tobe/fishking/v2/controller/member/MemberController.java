@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
+import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.auth.*;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
@@ -372,6 +373,17 @@ public class MemberController {
     @ResponseBody
     public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException {
         return memberService.login(loginDTO);
+    }
+
+    @ApiOperation(value = "스마트출조 로그인",notes = "" +
+            "요청 필드 ) \n" +
+            "- memberId : String / 필수 / 회원 아이디\n" +
+            "- password : String / 필수 / 비밀번호\n" +
+            "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
+    @PostMapping("/smartfishing/login")
+    @ResponseBody
+    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+        return memberService.smartfishingLogin(loginDTO);
     }
 
     /*로그아웃*/

@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -86,6 +87,12 @@ public class Orders extends BaseTime {
     @JoinColumn(name = "goods", columnDefinition = "bigint comment '상품' ")
     private Goods goods;
 
+    @Column(columnDefinition = "datetime comment '취소일시' ")
+    private LocalDateTime cancelDate;
+
+    @Column(columnDefinition = "varchar(200) comment '취소번호' ")
+    private String cancelNumber;
+
 /*
 
 - 결제수단
@@ -126,10 +133,11 @@ public class Orders extends BaseTime {
         this.modifiedBy = member;
     }
 
-    public void cancelled(Member member) {
-        this.isPay = false;
+    public void cancelled(Member member, String cancelNumber) {
+        this.cancelDate = LocalDateTime.now();
+        this.cancelNumber = cancelNumber;
         this.modifiedBy = member;
+        this.orderStatus = OrderStatus.bookCancel;
     }
-
 
 }

@@ -11,11 +11,13 @@ import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
+import com.tobe.fishking.v2.model.board.FishingDiarySearchResponse;
 import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
@@ -295,53 +297,85 @@ public class CommonService {
     }
 
     @Transactional
-    public Map<String, Object> searchShip(String keyword, Integer page, String order, Double lat, Double lng) {
+    public Map<String, Object> searchShip(String keyword, Integer page, String order, Double lat, Double lng) throws EmptyListException {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10,
                 order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
-        result.put("keyword", keyword);
-        result.put("ship", shipRepository.searchMain(keyword, "ship", lat, lng, pageable));
-        return result;
+        Page<ShipListResponse> ship = shipRepository.searchMain(keyword, "ship", lat, lng, pageable);
+        if (ship.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            result.put("keyword", keyword);
+            result.put("ship", ship);
+            return result;
+        }
     }
 
     @Transactional
-    public Map<String, Object> searchShipWithType(String keyword, Integer page, String order, String type, Double lat, Double lng) {
+    public Map<String, Object> searchShipWithType(String keyword, Integer page, String order, String type, Double lat, Double lng) throws EmptyListException {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10,
                 order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
-        result.put("keyword", keyword);
-        result.put("type", "ship");
-        result.put("ship", shipRepository.searchMainWithType(keyword, type, lat, lng, pageable));
-        return result;
+        Page<ShipListResponse> ship = shipRepository.searchMainWithType(keyword, type, lat, lng, pageable);
+        if (ship.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            result.put("keyword", keyword);
+            result.put("type", "ship");
+            result.put("ship", ship);
+            return result;
+        }
+//        result.put("keyword", keyword);
+//        result.put("type", "ship");
+//        result.put("ship", shipRepository.searchMainWithType(keyword, type, lat, lng, pageable));
+//        return result;
     }
 
     @Transactional
-    public Map<String, Object> searchLive(String keyword, Integer page, String order, Double lat, Double lng) {
+    public Map<String, Object> searchLive(String keyword, Integer page, String order, Double lat, Double lng) throws EmptyListException {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate"));
-        result.put("keyword", keyword);
-        result.put("live", shipRepository.searchMain(keyword, "live", lat, lng, pageable));
-        return result;
+        Page<ShipListResponse> live = shipRepository.searchMain(keyword, "live", lat, lng, pageable);
+        if (live.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            result.put("keyword", keyword);
+            result.put("live", live);
+            return result;
+        }
     }
 
     @Transactional
-    public Map<String, Object> searchDiary(String keyword, Integer page, String order) {
+    public Map<String, Object> searchDiary(String keyword, Integer page, String order) throws EmptyListException {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10,
                 order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
-        result.put("keyword", keyword);
-        result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
-        return result;
+        Page<FishingDiarySearchResponse> diaries = fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            result.put("keyword", keyword);
+            result.put("diary", diaries);
+            return result;
+        }
     }
 
     @Transactional
-    public Map<String, Object> searchBlog(String keyword, Integer page, String order) {
+    public Map<String, Object> searchBlog(String keyword, Integer page, String order) throws EmptyListException {
         Map<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 10,
                 order.equals("") ? Sort.by("createdDate") : Sort.by("createdDate").and(Sort.by(order)));
-        result.put("keyword", keyword);
-        result.put("ship", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
-        return result;
+        Page<FishingDiarySearchResponse> diaries = fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            result.put("keyword", keyword);
+            result.put("ship", diaries);
+            return result;
+        }
+//        result.put("keyword", keyword);
+//        result.put("ship", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
+//        return result;
     }
 
     @Transactional

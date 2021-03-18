@@ -20,7 +20,8 @@ const {
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "NativeStore"
 )(
   observer(
     class extends React.Component {
@@ -48,10 +49,11 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      componentDidMount() {
+      async componentDidMount() {
         const {
           PageStore,
           APIStore,
+          NativeStore,
           match: {
             params: { fishingType },
           },
@@ -77,43 +79,7 @@ export default inject(
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
 
-        // APIStore.setLoading(true);
-        // window.navigator.geolocation.getCurrentPosition(async (position) => {
-        //   let latitude = null;
-        //   let longitude = null;
-        //   try {
-        //     latitude = position.coords.latitude;
-        //     longitude = position.coords.longitude;
-        //   } catch (err) {
-        //   } finally {
-        //     APIStore.setLoading(false);
-        //     const restored = PageStore.restoreState({
-        //       isPending: false,
-        //       isEnd: false,
-        //       premium: [],
-        //       normal: [],
-        //       list: [],
-        //       fishingType: type,
-        //       page: 0,
-        //       size: 20,
-        //       hasRealTimeVideo,
-        //       fishingDate: fishingDate,
-        //       sido: null,
-        //       sigungu: null,
-        //       species,
-        //       orderBy: "popular",
-        //       facilities: null,
-        //       genres: null,
-        //       services: null,
-        //       latitude,
-        //       longitude,
-        //     });
-        //     PageStore.setScrollEvent(() => {
-        //       this.loadPageData(PageStore.state.page + 1);
-        //     });
-        //     if (!restored) this.loadPageData();
-        //   }
-        // });
+        const { lat, lng } = await NativeStore.getCurrentPosition();
         const restored = PageStore.restoreState({
           isPending: false,
           isEnd: false,
@@ -132,8 +98,8 @@ export default inject(
           facilities: null,
           genres: null,
           services: null,
-          latitude: null,
-          longitude: null,
+          latitude: lat,
+          longitude: lng,
         });
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
@@ -144,7 +110,8 @@ export default inject(
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
 
-        if ((page > 0 && PageStore.state.isEnd) || APIStore.isLoading) return;
+        if ((page > 0 && PageStore.state.isEnd) || PageStore.state.isPending)
+          return;
 
         PageStore.setState({ page, isPending: true });
 
@@ -189,6 +156,7 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
+        PageStore.setState({ isPending: false });
       };
       onClick = async (item) => {
         const {

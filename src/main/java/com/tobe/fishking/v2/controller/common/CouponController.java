@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.common;
 
 import com.tobe.fishking.v2.enums.common.CouponType;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.service.common.CouponService;
@@ -48,8 +49,14 @@ public class CouponController {
     public Page<CouponDTO> getDownloadableCouponList(
             @RequestHeader("Authorization") String token,
             @PathVariable("page") int page
-    ) throws ResourceNotFoundException {
-        return couponService.getDownloadableCouponList(token, page);
+    ) throws ResourceNotFoundException, EmptyListException {
+//        return couponService.getDownloadableCouponList(token, page);
+        Page<CouponDTO> coupons = couponService.getDownloadableCouponList(token, page);
+        if (coupons.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return coupons;
+        }
     }
 
     /*쿠폰 다운 받기.
@@ -95,8 +102,14 @@ public class CouponController {
     public Page<CouponMemberDTO> getCouponMemberList(
             @RequestHeader("Authorization") String token,
             @PathVariable("page") int page,
-            @RequestParam(value = "sort", required = false, defaultValue = "basic") String sort) throws ResourceNotFoundException {
-        return  couponService.getCouponMemberList(token, page, sort);
+            @RequestParam(value = "sort", required = false, defaultValue = "basic") String sort) throws ResourceNotFoundException, EmptyListException {
+//        return  couponService.getCouponMemberList(token, page, sort);
+        Page<CouponMemberDTO> coupons = couponService.getCouponMemberList(token, page, sort);
+        if (coupons.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return coupons;
+        }
     }
 
     @ApiOperation(value = "사용 가능한 쿠폰 리스트 조회",notes = "현재 로그인한 회원이 다운받은 쿠폰들 중에서 사용가능한 전체 쿠폰목록 반환. \n" +
@@ -126,12 +139,16 @@ public class CouponController {
             "size: 쿠폰 갯수")
     @GetMapping("/usableCoupons")
     public Map<String, Object> getAllCouponMemberList(
-            @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+            @RequestHeader("Authorization") String token) throws ResourceNotFoundException, EmptyListException {
         Map<String, Object> result = new HashMap<>();
         List<CouponMemberDTO> coupons = couponService.getAllCouponMemberList(token);
-        result.put("coupons", coupons);
-        result.put("size", coupons.size());
-        return result;
+        if (coupons.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            result.put("coupons", coupons);
+            result.put("size", coupons.size());
+            return result;
+        }
     }
 
     /*쿠폰 전체 다운받기

@@ -43,4 +43,12 @@ public class PhoneNumber {
     public String getFullNumber() {
         return this.areaCode + this.localNumber;
     }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
+
+    public void setLocalNumber(String localNumber) {
+        this.localNumber = localNumber;
+    }
 }

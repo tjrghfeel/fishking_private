@@ -49,27 +49,28 @@ export default inject(
             const goods = await APIStore._get(`/v2/api/ship/${shipId}/goods`, {
               date: this.state.selectedDate.format("-"),
             });
-            this.setState({ goods, selected: null });
+            await this.setState({ goods, selected: null });
           } catch (err) {
-            this.setState({ goods: [], selected: null });
+            await this.setState({ goods: [], selected: null });
           }
           // # 물때정보
+          console.log("A");
           try {
             const tideTime = await APIStore._get(`/v2/api/tideTime`, {
               date: selected.format("-"),
               shipId,
             });
-            this.setState({
+            await this.setState({
               tideTime: tideTime.tideTime,
               weather: tideTime.weather,
             });
           } catch (err) {
-            this.setState({
+            await this.setState({
               tideTime: null,
               weather: null,
             });
           }
-
+          console.log("B");
           if (this.state.goods && this.state.goods.length > 0) {
             const resolve = await APIStore._get("/v2/api/tidalPeak", {
               code: this.state.goods[0]["observerCode"],
@@ -85,7 +86,7 @@ export default inject(
               tide.push(null);
             }
 
-            this.setState({ tide });
+            await this.setState({ tide });
           }
         };
 

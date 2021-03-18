@@ -38,7 +38,7 @@ public class ShipController {
                                            @RequestParam(value = "species[]", required = false) String[] species,
                                            @RequestParam(value = "services[]", required = false) String[] services,
                                            @RequestParam(value = "facilities[]", required = false) String[] facilities,
-                                           @RequestParam(value = "genres[]", required = false) String[] genres) {
+                                           @RequestParam(value = "genres[]", required = false) String[] genres) throws EmptyListException {
         if (species != null) {
             if (species.length != 0) {
                 shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
@@ -59,7 +59,12 @@ public class ShipController {
                 shipSearchDTO.setGenresList(Arrays.asList(genres.clone()));
             }
         }
-        return shipService.getShips(shipSearchDTO, page);
+        Page<ShipListResponse> ship = shipService.getShips(shipSearchDTO, page);
+        if (ship.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return ship;
+        }
     }
 
     @ApiOperation(value = "배 리스트", notes = "지도보기를 위한 배 리스트." +
@@ -98,7 +103,7 @@ public class ShipController {
                                                  @RequestParam(value = "species[]", required = false) String[] species,
                                                  @RequestParam(value = "services[]", required = false) String[] services,
                                                  @RequestParam(value = "facilities[]", required = false) String[] facilities,
-                                                 @RequestParam(value = "genres[]", required = false) String[] genres) {
+                                                 @RequestParam(value = "genres[]", required = false) String[] genres) throws EmptyListException {
         if (species != null) {
             if (species.length != 0) {
                 shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
@@ -119,7 +124,13 @@ public class ShipController {
                 shipSearchDTO.setGenresList(Arrays.asList(genres.clone()));
             }
         }
-        return shipService.getShipsForMap(shipSearchDTO);
+        List<ShipListResponse> ship = shipService.getShipsForMap(shipSearchDTO);
+        if (ship.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return ship;
+        }
+
     }
 
     @ApiOperation(value = "배 정보", notes = "배 정보." +
@@ -197,8 +208,13 @@ public class ShipController {
     public List<GoodsResponse> shipGoods(
             @RequestHeader(name = "Authorization") String sessionToken,
             @ApiParam(value = "선택 날짜", required = true, example = "2021-02-19") @RequestParam String date,
-            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
-        return shipService.getShipGoods(ship_id, date);
+            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) throws EmptyListException {
+        List<GoodsResponse> goods = shipService.getShipGoods(ship_id, date);
+        if (goods.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return goods;
+        }
     }
 
     @ApiOperation(value = "해당 상품 정보 ", notes = "해당 상품 정보 " +
@@ -291,7 +307,7 @@ public class ShipController {
     public OrderResponse Reserve(
             @RequestHeader(name = "Authorization") String token,
             @RequestBody ReserveDTO reserveDTO) {
-        OrderResponse response = shipService.reserve(reserveDTO, token, reserveDTO.getPersonsName(), reserveDTO.getPersonsPhone(), reserveDTO.getPersonsBirthdate());
+        OrderResponse response = shipService.reserve(reserveDTO, token, reserveDTO.getPersonsName(), reserveDTO.getPersonsPhone(), reserveDTO.getEmergencyPhone(), reserveDTO.getPersonsBirthdate());
 //        model.addAttribute("pay", response);
 //        return "pay_request";
         return response;
@@ -335,7 +351,7 @@ public class ShipController {
     public Map<String, Object> getShipReviews(
             @PathVariable Long ship_id,
             @PathVariable Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "10") Integer size) throws EmptyListException {
         return shipService.getReviewByShip(ship_id, page, size);
     }
 

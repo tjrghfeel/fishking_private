@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.controller.fishking;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
@@ -123,7 +124,7 @@ public class FishingDiaryController {
             @RequestParam(value = "keyword", required = false) String keyword,
 //            @RequestParam(value = "sortBy", required = false, defaultValue = "name") String sortBy,
             @PathVariable("page") int page
-    ){
+    ) throws EmptyListException {
         /*검색 키워드 검증*/
         if(keyword!=null) {
             if (!(Pattern.matches("^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣\\s]{2,}$", keyword))) {
@@ -136,7 +137,13 @@ public class FishingDiaryController {
             throw new RuntimeException("정렬조건은 'distance'또는 'name'만 가능합니다.");
         }*/
 
-        return shipService.searchShipForWriteFishingDiary(keyword/*,sortBy*/,page);
+//        return shipService.searchShipForWriteFishingDiary(keyword/*,sortBy*/,page);
+        Page<ShipListForWriteFishingDiary> diaries = shipService.searchShipForWriteFishingDiary(keyword/*,sortBy*/,page);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return diaries;
+        }
     }
 
     /*어복스토리 리스트 출력*/
@@ -185,7 +192,7 @@ public class FishingDiaryController {
             @RequestParam(value = "shipId",required = false) Long shipId,
             @RequestParam(value = "sort", required = false, defaultValue = "createdDate") String sort,
             @RequestHeader(value = "Authorization", required = false) String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, EmptyListException {
         if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount"))){
             throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
         }
@@ -195,8 +202,15 @@ public class FishingDiaryController {
 
         if(token == null){}
         else if(token.equals("")){token = null;}
-        return fishingDiaryService.getFishingDiaryList(
+//        return fishingDiaryService.getFishingDiaryList(
+//                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
+        Page<FishingDiaryDtoForPage> diaries = fishingDiaryService.getFishingDiaryList(
                 page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return diaries;
+        }
     }
 
 
@@ -237,16 +251,24 @@ public class FishingDiaryController {
 //            @RequestParam(value = "fishSpeciesList", required = false) String[] fishSpecies,
 //            @RequestParam(value = "sort", required = false, defaultValue = "createdDate") String sort,
             @RequestHeader("Authorization") String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, EmptyListException {
         if(searchTarget!=null) {
             if (!(searchTarget.equals("content") || searchTarget.equals("title"))) {
                 throw new RuntimeException("searchTarget의 값은 'content', 'title'중 하나이어야 합니다.");
             }
         }
 
-        return fishingDiaryService.getFishingDiaryList(
+//        return fishingDiaryService.getFishingDiaryList(
+//                page, "fishingDiary", null, null, districtSearchKey, searchTarget, shipId,
+//                null, "createdDate", token, true);
+        Page<FishingDiaryDtoForPage> diaries = fishingDiaryService.getFishingDiaryList(
                 page, "fishingDiary", null, null, districtSearchKey, searchTarget, shipId,
                 null, "createdDate", token, true);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return diaries;
+        }
     }
 
     /*조항일지, 유저조행기 상세보기*/
@@ -331,7 +353,4 @@ public class FishingDiaryController {
     ) throws ResourceNotFoundException {
         return fishingDiaryService.deleteScrap(dto,token);
     }
-
-
-
 }

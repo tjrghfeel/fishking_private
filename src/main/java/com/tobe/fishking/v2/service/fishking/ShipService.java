@@ -2,10 +2,7 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.common.Event;
-import com.tobe.fishking.v2.entity.common.ObserverCode;
-import com.tobe.fishking.v2.entity.common.Popular;
+import com.tobe.fishking.v2.entity.common.*;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
@@ -14,6 +11,7 @@ import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.model.fishing.AddShipDTO;
@@ -74,6 +72,8 @@ public class ShipService {
     private final PlacesRepository placesRepository;
     private final PlacePointRepository placePointRepository;
     private final ShipSeaRocksRepository shipSeaRocksRepository;
+    private final CouponRepository couponRepository;
+    private final CouponMemberRepository couponMemberRepository;
 
 
     /*
@@ -356,7 +356,7 @@ public class ShipService {
 
     /* 선상 예약 */
     @Transactional
-    public OrderResponse reserve(ReserveDTO reserveDTO, String token, String[] names, String[] phones, String[] birthdates) {
+    public OrderResponse reserve(ReserveDTO reserveDTO, String token, String[] names, String[] phones, String[] emergencyPhones, String[] birthdates) {
         Member member = null;
 //        member = memberRepo.getOne(Objects.requireNonNullElse(member_id, 22L));
         Optional<Member> memberOpt = memberRepo.findBySessionToken(token);
@@ -420,26 +420,41 @@ public class ShipService {
         for (int idx = 0 ; idx < names.length; idx++) {
             String birthdate;
             String phone;
+            String emergencyPhone;
             if (birthdates[idx].contains("-")) {
                 birthdate = birthdates[idx];
             } else {
                 birthdate = birthdates[idx].substring(0,4) + "-" + birthdates[idx].substring(4,6) + "-" + birthdates[idx].substring(6);
             }
             if (phones[idx].contains("-")) {
-                phone = birthdates[idx];
+                phone = phones[idx];
             } else {
                 if (phones[idx].length() == 11) {
-                    phone = birthdates[idx].substring(0,3) + "-" + birthdates[idx].substring(3,6) + "-" + birthdates[idx].substring(6);
+                    phone = phones[idx].substring(0,3) + "-" + phones[idx].substring(3,6) + "-" + phones[idx].substring(6);
                 } else {
-                    phone = birthdates[idx].substring(0,3) + "-" + birthdates[idx].substring(3,7) + "-" + birthdates[idx].substring(7);
+                    phone = phones[idx].substring(0,3) + "-" + phones[idx].substring(3,7) + "-" + phones[idx].substring(7);
                 }
             }
-            RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, member);
+            if (emergencyPhones[idx].contains("-")) {
+                emergencyPhone = emergencyPhones[idx];
+            } else {
+                if (emergencyPhones[idx].length() == 11) {
+                    emergencyPhone = emergencyPhones[idx].substring(0,3) + "-" + emergencyPhones[idx].substring(3,6) + "-" + emergencyPhones[idx].substring(6);
+                } else {
+                    emergencyPhone = emergencyPhones[idx].substring(0,3) + "-" + emergencyPhones[idx].substring(3,7) + "-" + emergencyPhones[idx].substring(7);
+                }
+            }
+            RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, emergencyPhone, member);
             rideShipRepository.save(rideShip);
         }
 
-//        GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(reserveDTO.getGoodsId(), reserveDTO.getDate());
-//        goodsFishingDateRepository.save(goodsFishingDate);
+        // 쿠폰 사용
+        CouponMember myCoupon = couponMemberRepository.getOne(reserveDTO.getCouponId());
+        Coupon coupon = myCoupon.getCoupon();
+        myCoupon.use(order);
+        coupon.useCoupon();
+        couponMemberRepository.save(myCoupon);
+        couponRepository.save(coupon);
 
         return new OrderResponse(order.getId(),
                 orderNumber,
@@ -494,10 +509,13 @@ public class ShipService {
 //    }
 
     @Transactional
-    public Map<String, Object> getReviewByShip(Long shipId, Integer page, Integer size) {
+    public Map<String, Object> getReviewByShip(Long shipId, Integer page, Integer size) throws EmptyListException {
         Pageable pageable = PageRequest.of(page, size);
         Page<ReviewResponse> responses = reviewRepository.getShipReviews(shipId, pageable);
         List<ReviewResponse> contents = responses.getContent();
+        if (contents.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        }
         for (ReviewResponse review : contents) {
             review.setImages(fileRepo.findByPidAndFilePublishAndIsDelete(review.getId(), FilePublish.review, false).stream().map(FilesDTO::of).collect(Collectors.toList()));
         }

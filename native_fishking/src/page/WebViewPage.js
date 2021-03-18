@@ -27,11 +27,22 @@ export default inject(
       componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress');
       }
-      onNavigationStateChange(state) {
+      async onNavigationStateChange(state) {
+        const {AppStore, WebViewStore} = this.props;
         console.log(`onNavigationStateChange :: ${state.url}`);
-        const {WebViewStore} = this.props;
         WebViewStore.setCanGoBack(state.canGoBack);
         WebViewStore.setRecentUrl(state.url);
+
+        const location = await AppStore.checkLocationPermissions();
+        const storage = await AppStore.checkStoragePermissions();
+        const contact = await AppStore.checkContactPermissions();
+        WebViewStore.runWebViewJavaScript(
+          `
+          window.permission_location = '${location}';
+          window.permission_storage = '${storage}';
+          window.permission_contact = '${contact}';
+          `,
+        );
       }
       onShouldStartLoadWithRequest(request) {
         if (request.url === 'about:blank') return false;

@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
 import com.tobe.fishking.v2.model.fishing.RiderShipDTO;
@@ -247,7 +248,7 @@ public class MainController {
                                                    @RequestParam(defaultValue = "distance") String order,
                                                    @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
                                                    @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
-                                                   @PathVariable Integer page) {
+                                                   @PathVariable Integer page) throws EmptyListException {
         if (type == null) {
             commonService.addSearchKeys(token, keyword, SearchPublish.COMPANY);
             return commonService.searchShip(keyword, page, order, latitude, longitude);
@@ -300,7 +301,7 @@ public class MainController {
                                                    @RequestParam(defaultValue = "") String order,
                                                    @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
                                                    @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
-                                                   @PathVariable Integer page) {
+                                                   @PathVariable Integer page) throws EmptyListException {
         commonService.addSearchKeys(token, keyword, SearchPublish.TV);
         return commonService.searchLive(keyword, page, order, latitude, longitude);
     }
@@ -337,7 +338,7 @@ public class MainController {
                                                     @RequestParam(defaultValue = "") String order,
                                                     @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
                                                     @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
-                                                    @PathVariable Integer page) {
+                                                    @PathVariable Integer page) throws EmptyListException {
         commonService.addSearchKeys(token, keyword, SearchPublish.FISHINGDIARY);
         return commonService.searchDiary(keyword, page, order);
     }
@@ -374,7 +375,7 @@ public class MainController {
                                                    @RequestParam(defaultValue = "") String order,
                                                    @RequestParam(required = false, defaultValue = "37.5642135") Double latitude,
                                                    @RequestParam(required = false, defaultValue = "127.0016985") Double longitude,
-                                                   @PathVariable Integer page) {
+                                                   @PathVariable Integer page) throws EmptyListException {
         commonService.addSearchKeys(token, keyword, SearchPublish.FISHINGDIARY2);
         return commonService.searchBlog(keyword, page, order);
     }

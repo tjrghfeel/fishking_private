@@ -31,6 +31,7 @@ export default inject(
           personCount: 0, // 승선자 수
           personsName: [], // 승선자 정보
           personsPhone: [], // 승선자 정보
+          emergencyPhone: [], // 승선자 정보
           personsBirthdate: [], // 승선자 정보
           positions: [], // 승선위치 정보
           payMethod: "1000000000", // 결제수단
@@ -150,10 +151,12 @@ export default inject(
           // >>>>> Step-2 :: validate
           const personsName = [];
           const personsPhone = [];
+          const emergencyPhone = [];
           const personsBirthdate = [];
           for (let i = 0; i < this.state.personCount; i++) {
             const name = document.querySelector(`#person-name-${i}`);
             const phone = document.querySelector(`#person-phone-${i}`);
+            const emergency = document.querySelector(`#person-emergency-${i}`);
             const birthdate = document.querySelector(`#person-birthdate-${i}`);
 
             if (name.value === "") {
@@ -174,6 +177,17 @@ export default inject(
             } else {
               phone.classList.remove("is-invalid");
             }
+            if (
+              emergency.value === "" ||
+              emergency.value.length < 10 ||
+              emergency.value.length > 11
+            ) {
+              emergency.classList.add("is-invalid");
+              emergency.focus();
+              return;
+            } else {
+              emergency.classList.remove("is-invalid");
+            }
             if (birthdate.value === "" || birthdate.value.length !== 8) {
               birthdate.classList.add("is-invalid");
               birthdate.focus();
@@ -184,6 +198,7 @@ export default inject(
 
             personsName.push(name.value);
             personsPhone.push(phone.value);
+            emergencyPhone.push(emergency.value);
             personsBirthdate.push(birthdate.value);
           }
           // >>>>> Step-3 :: prepare
@@ -193,11 +208,11 @@ export default inject(
               date: this.state.date,
             }
           );
-          console.log(JSON.stringify(resolve));
           this.setState({
             boat: resolve,
             personsName,
             personsPhone,
+            emergencyPhone,
             personsBirthdate,
             step: 3,
           });
@@ -245,6 +260,7 @@ export default inject(
             personCount,
             personsName,
             personsPhone,
+            emergencyPhone,
             personsBirthdate,
             positions,
             payMethod,
@@ -263,6 +279,7 @@ export default inject(
             personCount,
             personsName,
             personsPhone,
+            emergencyPhone,
             personsBirthdate,
             positions,
             payMethod,
@@ -273,6 +290,7 @@ export default inject(
           };
 
           console.log(JSON.stringify(params));
+
           const resolve = await APIStore._post(`/v2/api/ship/reserve`, params);
 
           if (resolve) {
@@ -547,6 +565,19 @@ export default inject(
                             maxLength={11}
                             id={`person-phone-${index}`}
                             placeholder="휴대폰 번호를 입력해 주세요."
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="inputPhone" className="sr-only">
+                            비상연락처
+                          </label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            minLength={10}
+                            maxLength={11}
+                            id={`person-emergency-${index}`}
+                            placeholder="비상연락처를 입력해 주세요."
                           />
                         </div>
                         <div className="form-group">

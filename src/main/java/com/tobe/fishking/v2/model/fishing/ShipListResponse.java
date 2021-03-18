@@ -53,4 +53,28 @@ public class ShipListResponse {
 //        this.distance = CalcUtils.round(distance, 3);
         this.distance = (int) Math.round(distance);
     }
+
+    public ShipListResponse(
+            Integer lowPrice,
+            Integer sold,
+            Long liked,
+            Ship ship
+    ) {
+        List<CommonCode> species = ship.getFishSpecies();
+        this.id = ship.getId();
+        this.shipImageFileUrl = "/resource" + ship.getProfileImage();
+        this.shipName = ship.getShipName();
+        this.sido = ship.getSido();
+        this.sigungu = ship.getSigungu();
+//        this.distance = ship.getDistance();
+        this.location = ship.getLocation();
+        this.address = ship.getAddress();
+        this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
+        this.fishSpeciesCount = species.size();
+        this.lowPrice = lowPrice==null?0:lowPrice;
+        this.sold = sold==null?0:sold;
+        this.type = ship.getFishingType().getValue();
+//        this.distance = CalcUtils.round(distance, 3);
+//        this.distance = (int) Math.round(distance);
+    }
 }
