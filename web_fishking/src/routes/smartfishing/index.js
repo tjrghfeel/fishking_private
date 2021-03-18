@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import LoginPage from "../../pages/smartfishing/LoginPage";
 import DashboardPage from "../../pages/smartfishing/DashboardPage";
 import ReservationPage from "../../pages/smartfishing/ReservationPage";
+import ReservationDetailPage from "../../pages/smartfishing/ReservationDetailPage";
 import FishPage from "../../pages/smartfishing/FishPage";
 import GoodsPage from "../../pages/smartfishing/GoodsPage";
 import BoatPage from "../../pages/smartfishing/BoatPage";
@@ -20,28 +21,49 @@ export default inject("PageStore")(
       "/assets/smartfishing/css/style.css";
     return (
       <BrowserRouter>
-        <Switch>
-          {/** 로그인 */}
-          <Route path={`${match.url}/login`} component={LoginPage} />
-          {/** 대시보드 */}
-          <Route path={`${match.url}/dashboard`} component={DashboardPage} />
-          {/** 예약 */}
-          <Route
-            path={`${match.url}/reservation`}
-            component={ReservationPage}
-          />
-          {/** 조황 */}
-          <Route path={`${match.url}/fish`} component={FishPage} />
-          {/** 상품 */}
-          <Route path={`${match.url}/goods`} component={GoodsPage} />
-          {/** 선상 */}
-          <Route path={`${match.url}/boat`} component={BoatPage} />
-          {/** 정산 */}
-          <Route path={`${match.url}/paid`} component={PaidPage} />
-
-          {/** 기본 리디렉션 */}
-          <Redirect from={`*`} to={`${match.url}/login`} />
-        </Switch>
+        {!PageStore.loggedIn && (
+          <React.Fragment>
+            <Switch>
+              {/** 로그인 */}
+              <Route path={`${match.url}/login`} component={LoginPage} />
+              {/** 기본 리디렉션 */}
+              <Redirect from={`*`} to={`${match.url}/login`} />
+            </Switch>
+          </React.Fragment>
+        )}
+        {PageStore.loggedIn && (
+          <React.Fragment>
+            <Switch>
+              {/** 대시보드 */}
+              <Route
+                exact
+                path={`${match.url}/dashboard`}
+                component={DashboardPage}
+              />
+              {/** 예약 */}
+              <Route
+                exact
+                path={`${match.url}/reservation`}
+                component={ReservationPage}
+              />
+              {/** 예약 > 상세 */}
+              <Route
+                exact
+                path={`${match.url}/reservation/detail`}
+                component={ReservationDetailPage}
+              />
+              {/** 조황 */}
+              <Route exact path={`${match.url}/fish`} component={FishPage} />
+              {/** 상품 */}
+              <Route exact path={`${match.url}/goods`} component={GoodsPage} />
+              {/** 선상 */}
+              <Route exact path={`${match.url}/boat`} component={BoatPage} />
+              {/** 정산 */}
+              <Route exact path={`${match.url}/paid`} component={PaidPage} />
+              <Redirect from={`*`} to={`${match.url}/dashboard`} />
+            </Switch>
+          </React.Fragment>
+        )}
       </BrowserRouter>
     );
   })

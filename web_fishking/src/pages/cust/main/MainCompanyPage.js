@@ -110,7 +110,8 @@ export default inject(
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
 
-        if ((page > 0 && PageStore.state.isEnd) || APIStore.isLoading) return;
+        if ((page > 0 && PageStore.state.isEnd) || PageStore.state.isPending)
+          return;
 
         PageStore.setState({ page, isPending: true });
 
@@ -155,6 +156,7 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
+        PageStore.setState({ isPending: false });
       };
       onClick = async (item) => {
         const {

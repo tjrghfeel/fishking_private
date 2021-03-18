@@ -99,6 +99,7 @@ import FilterListItemView from "./view/FilterListItemView";
 import StoryTvLiveListItemView from "./view/StoryTvLiveListItemView";
 import StoryTvTubeListItemView from "./view/StoryTvTubeListItemView";
 import StoryTvLiveOtherListItemView from "./view/StoryTvLiveOtherListItemView";
+import SmartfishingReservationListItemView from "./view/SmartfishingReservationListItemView";
 
 export default {
   /********** MODAL **********/
@@ -197,5 +198,6 @@ export default {
     StoryTvLiveListItemView,
     StoryTvTubeListItemView,
     StoryTvLiveOtherListItemView,
+    SmartfishingReservationListItemView,
   },
 };
