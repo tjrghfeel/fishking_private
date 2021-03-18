@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.repository.fishking;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -14,6 +15,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.fishing.*;
+import com.tobe.fishking.v2.model.response.FishingShipResponse;
+import com.tobe.fishking.v2.model.response.QFishingShipResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,7 +30,10 @@ import static com.querydsl.core.types.dsl.MathExpressions.*;
 import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.common.QObserverCode.observerCode;
 import static com.tobe.fishking.v2.entity.common.QTake.take;
+import static com.tobe.fishking.v2.entity.fishing.QCompany.company;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
+import static com.tobe.fishking.v2.entity.fishing.QOrderDetails.orderDetails;
+import static com.tobe.fishking.v2.entity.fishing.QOrders.orders;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
 import static com.tobe.fishking.v2.utils.QueryDslUtil.getSortedColumn;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -413,5 +419,76 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .where(ship.id.eq(ship_id))
                 .fetchOne();
         return result;
+    }
+
+    @Override
+    public Page<FishingShipResponse> getShipsByCompanyMember(Long memberId, String keywordType, String keyword, String status, Pageable pageable) {
+        QueryResults<FishingShipResponse> results = queryFactory
+                .select(new QFishingShipResponse(ship))
+                .from(ship).join(company).on(ship.company.eq(company))
+                .where(company.member.id.eq(memberId), containKeyword(keywordType, keyword), eqGoodStatus(status))
+                .orderBy(ship.shipName.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    @Override
+    public Page<FishingShipResponse> getShipsByCompanyMember2(Long memberId, String keyword, String cameraActive, Pageable pageable) {
+        QueryResults<FishingShipResponse> results = queryFactory
+                .select(new QFishingShipResponse(ship))
+                .from(ship).join(company).on(ship.company.eq(company))
+                .where(company.member.id.eq(memberId), containKeyword("shipName", keyword), cameraOn(cameraActive))
+                .orderBy(ship.shipName.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    private BooleanExpression cameraOn(String cameraActive) {
+        BooleanExpression expression;
+        switch (cameraActive) {
+            case "true":
+                expression = ship.shiipRealTimeVideos.any().isUse.eq(true);
+                break;
+            case "false":
+                expression = ship.shiipRealTimeVideos.any().isUse.eq(false);
+                break;
+            default:
+                expression = null;
+        }
+        return expression;
+    }
+
+    private BooleanExpression containKeyword(String keywordType, String keyword) {
+        BooleanExpression expression;
+        switch (keywordType) {
+            case "goodsName":
+                expression = ship.goods.any().name.containsIgnoreCase(keyword);
+                break;
+            case "shipName":
+                expression = ship.shipName.containsIgnoreCase(keyword);
+                break;
+            default:
+                expression = null;
+        }
+        return expression;
+    }
+
+    private BooleanExpression eqGoodStatus(String status) {
+        BooleanExpression expression;
+        switch (status) {
+            case "active":
+                expression = ship.goods.any().isUse.eq(true);
+                break;
+            case "inactive":
+                expression = ship.goods.any().isUse.eq(false);
+                break;
+            default:
+                expression = null;
+        }
+        return expression;
     }
 }

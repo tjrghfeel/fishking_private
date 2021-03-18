@@ -1,6 +1,7 @@
 
 package com.tobe.fishking.v2.service.fishking;
 
+import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
@@ -15,9 +16,12 @@ import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.CMemberNotFoundException;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
 import com.tobe.fishking.v2.exception.CResourceNotExistException;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.ModelMapperUtils;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.ParamsPopular;
+import com.tobe.fishking.v2.model.response.FishingShipResponse;
+import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
 import com.tobe.fishking.v2.repository.fishking.specs.GoodsSpecs;
 import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -28,9 +32,9 @@ import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
@@ -228,5 +232,19 @@ public class GoodsService {
         return true;
     }
 
+    @Transactional
+    public Page<FishingShipResponse> getGoods(Long memberId, String keywordType, String keyword, String status, Integer page) throws EmptyListException {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("shipName").ascending());
+        Page<FishingShipResponse> ships = shipRepo.getShipsByCompanyMember(memberId, keywordType, keyword, status, pageable);
+        List<FishingShipResponse> contents = ships.getContent();
+        if (contents.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        }
+        for (FishingShipResponse ship : contents) {
+            List<GoodsSmallResponse> goods = goodsRepo.searchGoods(ship.getId(), keyword, status);
+            ship.setGoodsList(goods);
+        }
+        return new PageImpl<>(contents, pageable, ships.getTotalElements());
+    }
 
 }

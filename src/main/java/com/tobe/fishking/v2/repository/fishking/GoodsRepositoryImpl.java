@@ -1,14 +1,18 @@
 package com.tobe.fishking.v2.repository.fishking;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.model.fishing.GoodsResponse;
+import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
+import com.tobe.fishking.v2.model.response.QGoodsSmallResponse;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 
@@ -56,5 +60,38 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 .where(goods.ship.id.eq(ship_id), goods.isUse.eq(true))
                 .fetchResults();
         return result.getResults();
+    }
+
+    @Override
+    public List<GoodsSmallResponse> searchGoods(Long shipId, String keyword, String status) {
+        List<GoodsSmallResponse> results = queryFactory
+                .select(new QGoodsSmallResponse(
+                        goods.id,
+                        goods.name,
+                        goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
+                        goods.minPersonnel,
+                        goods.maxPersonnel,
+                        goods.totalAmount,
+                        goods.isUse
+                ))
+                .from(goods)
+                .where(goods.ship.id.eq(shipId), goods.name.containsIgnoreCase(keyword), eqStatus(status))
+                .fetch();
+        return results;
+    }
+
+    private BooleanExpression eqStatus(String status) {
+        BooleanExpression expression;
+        switch (status) {
+            case "active":
+                expression = goods.isUse.eq(true);
+                break;
+            case "inactive":
+                expression = goods.isUse.eq(false);
+                break;
+            default:
+                expression = null;
+        }
+        return expression;
     }
 }

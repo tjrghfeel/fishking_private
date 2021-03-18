@@ -75,8 +75,18 @@ public class RealTimeVideo extends BaseTime {
     @Column(columnDefinition = "varchar(100) comment '시리얼넘버' ")
     private String serial;
 
+    @Column(columnDefinition = "bit comment '사용여부' ")
+    private Boolean isUse;
+
     public void updateToken(String token) {
         this.token = token;
     }
 
+    public void setUse() {
+        this.isUse = true;
+    }
+
+    public void setNotUse() {
+        this.isUse = false;
+    }
 }

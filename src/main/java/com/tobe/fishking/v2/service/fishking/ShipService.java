@@ -19,6 +19,8 @@ import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.ReviewResponse;
 import com.tobe.fishking.v2.model.fishing.*;
+import com.tobe.fishking.v2.model.response.FishingShipResponse;
+import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
@@ -712,6 +714,17 @@ public class ShipService {
         }
 
         return ship.getId();
+    }
+
+    @Transactional
+    public Page<FishingShipResponse> getFishingShips(Long memberId, String keyword, String cameraActive, Integer page) throws EmptyListException {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("shipName").ascending());
+        Page<FishingShipResponse> ships = shipRepo.getShipsByCompanyMember2(memberId, keyword, cameraActive, pageable);
+        List<FishingShipResponse> contents = ships.getContent();
+        if (contents.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        }
+        return ships;
     }
 
 }
