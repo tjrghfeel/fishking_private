@@ -1,6 +1,5 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Components from "../../components";
 
 export default inject(
   "PageStore",
@@ -114,17 +113,33 @@ export default inject(
                   로그인
                 </a>
                 <p class="text-center mt-3">
-                  <a>
+                  <a onClick={() => PageStore.push(`/findpw`)}>
                     <small class="grey">비밀번호를 잊으셨나요?</small>
                   </a>
                 </p>
-                <a class="btn btn-grey btn-lg btn-block mt-4">업체등록</a>
+                <a
+                  class="btn btn-grey btn-lg btn-block mt-4"
+                  onClick={() => PageStore.push(`/apply`)}
+                >
+                  업체등록
+                </a>
 
                 <p class="text-center mt-4">
                   스마트출조 로그인/업체등록시 <br />
-                  <a class="text-primary">이용약관</a> 및{" "}
-                  <a class="text-primary">개인정보취급방침</a>에 동의하게
-                  됩니다.
+                  <a
+                    class="text-primary"
+                    onClick={() => PageStore.push(`/cust/policy/terms`)}
+                  >
+                    이용약관
+                  </a>{" "}
+                  및{" "}
+                  <a
+                    class="text-primary"
+                    onClick={() => PageStore.push(`/cust/policy/privacy`)}
+                  >
+                    개인정보취급방침
+                  </a>
+                  에 동의하게 됩니다.
                 </p>
               </div>
               <p class="clearfix">

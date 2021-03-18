@@ -3,6 +3,8 @@ import { inject, observer } from "mobx-react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 import LoginPage from "../../pages/smartfishing/LoginPage";
+import FindpwPage from "../../pages/smartfishing/FindpwPage";
+import ApplyPage from "../../pages/smartfishing/ApplyPage";
 import DashboardPage from "../../pages/smartfishing/DashboardPage";
 import ReservationPage from "../../pages/smartfishing/ReservationPage";
 import ReservationDetailPage from "../../pages/smartfishing/ReservationDetailPage";
@@ -26,6 +28,10 @@ export default inject("PageStore")(
             <Switch>
               {/** 로그인 */}
               <Route path={`${match.url}/login`} component={LoginPage} />
+              {/** 비밀번호재설정 */}
+              <Route path={`${match.url}/findpw`} component={FindpwPage} />
+              {/** 업체등록 */}
+              <Route path={`${match.url}/apply`} component={ApplyPage} />
               {/** 기본 리디렉션 */}
               <Redirect from={`*`} to={`${match.url}/login`} />
             </Switch>
