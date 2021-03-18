@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.smartfishing;
 
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
@@ -100,6 +101,28 @@ public class SmartOrderController {
         }
         Map<String, Object> result = new HashMap<>();
         if (ordersService.confirmOrder(orderId)) {
+            result.put("success", true);
+            result.put("message", "승인되었습니다.");
+        } else {
+            result.put("success", false);
+            result.put("message", "실패했습니다. 다시 시도해주세요.");
+        }
+        return result;
+    }
+
+    @ApiOperation(value = "예약 승인", notes = "예약 승인 {" +
+            "\n success: 성공여부" +
+            "\n message: 메세지" +
+            "\n }")
+    @PostMapping("/order/cancel")
+    public Map<String, Object> cancelOrder(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam Long orderId) throws ResourceNotFoundException, NotAuthException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+        Map<String, Object> result = new HashMap<>();
+        if (ordersService.cancelOrder(orderId, member)) {
             result.put("success", true);
             result.put("message", "승인되었습니다.");
         } else {

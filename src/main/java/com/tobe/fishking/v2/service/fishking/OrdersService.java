@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.fishking;
 
 
 import com.querydsl.core.Tuple;
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +116,18 @@ public class OrdersService {
             } else {
                 return false;
             }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Transactional
+    public boolean cancelOrder(Long orderId, Member member) {
+        try {
+            Orders orders = ordersRepository.getOne(orderId);
+            orders.cancelled(member, "cancel"+ LocalDateTime.now().toString());
+            ordersRepository.save(orders);
+            return true;
         } catch (Exception e) {
             return false;
         }
