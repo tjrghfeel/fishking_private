@@ -6,7 +6,6 @@ public interface MemberManageDtoForPage {
 
     Long getId();
     String getUid();
-    @Value("#{@mapperUtility.decodeString(target.memberName)}")
     String getMemberName();
     String getNickName();
 //    String getPassword();
@@ -29,9 +28,7 @@ public interface MemberManageDtoForPage {
     String getGu();
     @Value("#{@mapperUtility.decodeString(target.dong)}")
     String getDong();
-    @Value("#{@mapperUtility.decodeString(target.areaCode)}")
     String getAreaCode();
-    @Value("#{@mapperUtility.decodeString(target.localNumber)}")
     String getLocalNumber();
 
 

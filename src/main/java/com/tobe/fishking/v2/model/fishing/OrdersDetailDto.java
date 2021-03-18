@@ -46,7 +46,7 @@ public class OrdersDetailDto {
     private Integer discountAmount;
     private Integer paymentAmount;
     private String goodsName;
-
+    private String tradeNumber;
 
 }
 /*

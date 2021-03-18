@@ -44,6 +44,7 @@ public class PostSearchConditionDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate modifiedDateEnd;
     private Boolean targetRole;
+    private Boolean isReplied;
 
     private String sort;
 }

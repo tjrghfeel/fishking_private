@@ -261,7 +261,8 @@ public class MyMenuController {
             "   totalAmount : 총 주문금액\n" +
             "   discountAmount : 할인금액\n" +
             "   paymentAmount : 결재금액\n" +
-            "   goodsName : 상품명\n")
+            "   goodsName : 상품명\n" +
+            "   tradeNumber : 결재번호\n")
     @GetMapping("/OrdersDetail")
     public OrdersDetailDto getOrdersDetail(
             @RequestParam("ordersId") Long ordersId

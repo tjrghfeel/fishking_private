@@ -104,6 +104,7 @@ public class PostManagerService {
                 dto.getTargetRole(),
                 dto.getCreatedBy(),
                 dto.getModifiedBy(),
+                dto.getIsReplied(),
                 pageable
         );
     }

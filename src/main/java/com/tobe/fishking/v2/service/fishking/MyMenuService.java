@@ -201,6 +201,7 @@ public class MyMenuService {
                 .discountAmount(orders.getDiscountAmount())
                 .paymentAmount(orders.getPaymentAmount())
                 .goodsName(goods.getName())
+                .tradeNumber(orders.getTradeNumber())
                 .build();
 
         List<CommonCode> list = goods.getFishSpecies();

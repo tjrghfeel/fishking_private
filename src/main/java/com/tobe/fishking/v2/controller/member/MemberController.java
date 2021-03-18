@@ -14,6 +14,7 @@ import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
@@ -54,29 +55,6 @@ public class MemberController {
 
     @Autowired
     MemberService memberService;
-
-    /*회원가입 - 휴대폰인증
-     * - 이미 가입된 번호인지 확인
-     * - 실제로 전송가능한 번호인지 확인
-     * - 인증 문자 전송. */
-    /*@ApiOperation(value = "휴대폰 인증")
-    @PostMapping("/smsAuthReq")
-    public boolean requestSmsAuth(@ModelAttribute("phoneInfo") PhoneAuthDto phoneAuthDto){
-        return memberService.smsAuthForSignUp(phoneAuthDto);
-    }*/
-
-    /*회원가입시 문자인증 api
-     * */
-    /*@ApiOperation(value = "회원가입 문자인증 문자 보내기",notes = "" +
-            "- 회원가입시, 문자 인증 문자를 보내고 해당 문자인증 건에 대한 id를 반환한다. 인증번호를 보낼때 이 id값을 같이 보내야 한다. " +
-            "- 요청 필드 )\n" +
-            "   areaCode : 지역번호 및 휴대폰 앞번호\n" +
-            "   localNumber : 나머지 번호(공백,'-'없이 숫자만입력)\n" +
-            "- 응답 ) 문자 인증건에 대한 id. ")
-    @PostMapping("/signUp/sendSms")
-    public Long sendSms(@RequestBody PhoneAuthDto dto){
-        return memberService.sendSmsForSignup(dto);
-    }*/
 
     /*문자인증 확인
      * - 인증번호 보내면 일치하는지 확인. */
@@ -793,5 +771,7 @@ public class MemberController {
     public boolean modifyPhoneNumber(@RequestBody @Valid ModifyPhoneNumberDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
         return memberService.modifyPhoneNumber(dto,token);
     }
+    
+
 
 }

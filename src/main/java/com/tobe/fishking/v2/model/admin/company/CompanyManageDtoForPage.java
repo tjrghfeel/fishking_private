@@ -6,7 +6,6 @@ public interface CompanyManageDtoForPage {
 
     Long getId();
     Long getMemberId();
-    @Value("#{@mapperUtility.decodeString(target.memberName)}")
     String getMemberName();
     String getCompanyName();
     String getSido();
