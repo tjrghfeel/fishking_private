@@ -9,10 +9,22 @@ import { inject, observer } from "mobx-react";
 export default inject()(
   observer(
     forwardRef(
-      ({ data: { total, used } = { total: [], used: [] }, count = 0 }, ref) => {
+      (
+        {
+          data: { total, used } = {
+            total: [],
+            used: [],
+          },
+          editable = true,
+          count = 0,
+        },
+        ref
+      ) => {
         const [selected, setSelected] = useState([]);
         const onSelect = useCallback(
           (num) => {
+            if (!editable) return;
+
             if (used.indexOf(num) !== -1) return;
 
             if (selected.indexOf(num) === -1 && selected.length < count) {
@@ -39,7 +51,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("1") !== -1
+                          (used.indexOf("1") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("1") !== -1
                             ? " disabled"
                             : selected.indexOf("1") !== -1
                             ? " active"
@@ -54,7 +68,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("2") !== -1
+                          (used.indexOf("2") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("2") !== -1
                             ? " disabled"
                             : selected.indexOf("2") !== -1
                             ? " active"
@@ -69,7 +85,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("3") !== -1
+                          (used.indexOf("3") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("3") !== -1
                             ? " disabled"
                             : selected.indexOf("3") !== -1
                             ? " active"
@@ -84,7 +102,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("4") !== -1
+                          (used.indexOf("4") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("4") !== -1
                             ? " disabled"
                             : selected.indexOf("4") !== -1
                             ? " active"
@@ -99,7 +119,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("5") !== -1
+                          (used.indexOf("5") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("5") !== -1
                             ? " disabled"
                             : selected.indexOf("5") !== -1
                             ? " active"
@@ -114,7 +136,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("6") !== -1
+                          (used.indexOf("6") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("6") !== -1
                             ? " disabled"
                             : selected.indexOf("6") !== -1
                             ? " active"
@@ -129,7 +153,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("7") !== -1
+                          (used.indexOf("7") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("7") !== -1
                             ? " disabled"
                             : selected.indexOf("7") !== -1
                             ? " active"
@@ -144,7 +170,9 @@ export default inject()(
                       <span
                         className={
                           "boat-position" +
-                          (used.indexOf("8") !== -1
+                          (used.indexOf("8") !== -1 && !editable
+                            ? " active"
+                            : used.indexOf("8") !== -1
                             ? " disabled"
                             : selected.indexOf("8") !== -1
                             ? " active"

@@ -79,6 +79,7 @@ const APIStore = new (class {
   };
 
   _post = (url, data, headers) => {
+    console.log(url);
     return new Promise((resolve, reject) => {
       runInAction(async () => {
         this.isLoading = true;

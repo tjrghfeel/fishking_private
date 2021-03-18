@@ -25,7 +25,8 @@ const PageStore = new (class {
     if (
       pathname.indexOf("/cust") !== -1 ||
       pathname.indexOf("/police") !== -1 ||
-      pathname.indexOf("/common") !== -1
+      pathname.indexOf("/common") !== -1 ||
+      pathname.indexOf("/smartfishing") !== -1
     )
       service = "";
     else service = "/" + service;
@@ -63,7 +64,7 @@ const PageStore = new (class {
       else sessionStorage.setItem(`@accessToken_${service}`, accessToken);
     }
   };
-  loadAccessToken = (service = "cust" | "police") => {
+  loadAccessToken = (service = "cust" | "police" | "smartfishing") => {
     const accessToken =
       localStorage.getItem(`@accessToken_${service}`) ||
       sessionStorage.getItem(`@accessToken_${service}`) ||

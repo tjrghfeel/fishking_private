@@ -5,12 +5,27 @@ const {
   LAYOUT: { NavigationLayout, SmartFishingMainTab },
 } = Components;
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "APIStore"
+)(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {};
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        this.loadPageData();
+      }
+      loadPageData = async () => {
+        const { APIStore } = this.props;
+        const resolve = await APIStore._get(`/v2/api/smartfishing/dashboard`);
+        console.log(JSON.stringify(resolve));
+      };
 
       /********** ********** ********** ********** **********/
       /** render */
@@ -32,11 +47,11 @@ export default inject("PageStore")(
             <SmartFishingMainTab activeIndex={0} />
 
             <div className="container nopadding mt-2">
-              <h5>금일현황</h5>
+              <h5>결제현황</h5>
               <div className="card-round-box-grey text-center">
                 <div className="row mt-3 mb-3">
                   <div className="col-4">
-                    <strong>예약진행</strong>
+                    <strong>예약</strong>
                     <p className="mt-2 mb-2">
                       <img
                         src="/assets/smartfishing/img/svg/chart.svg"
@@ -53,24 +68,7 @@ export default inject("PageStore")(
                     </p>
                   </div>
                   <div className="col-4">
-                    <strong>최종결제</strong>
-                    <p className="mt-2 mb-2">
-                      <img
-                        src="/assets/smartfishing/img/svg/chart.svg"
-                        alt=""
-                      />
-                    </p>
-                    <p>
-                      <small className="grey">예약취소</small> :{" "}
-                      <strong className="large orange">13</strong>
-                    </p>
-                    <p>
-                      <small className="grey">예약확정</small> :{" "}
-                      <strong className="large text-primary">87</strong>
-                    </p>
-                  </div>
-                  <div className="col-4">
-                    <strong>고객현황</strong>
+                    <strong>진행</strong>
                     <p className="mt-2 mb-2">
                       <img
                         src="/assets/smartfishing/img/svg/chart.svg"
@@ -79,6 +77,23 @@ export default inject("PageStore")(
                     </p>
                     <p>
                       <small className="grey">대기예약</small> :{" "}
+                      <strong className="large orange">13</strong>
+                    </p>
+                    <p>
+                      <small className="grey">예약확정</small> :{" "}
+                      <strong className="large text-primary">87</strong>
+                    </p>
+                  </div>
+                  <div className="col-4">
+                    <strong>최종</strong>
+                    <p className="mt-2 mb-2">
+                      <img
+                        src="/assets/smartfishing/img/svg/chart.svg"
+                        alt=""
+                      />
+                    </p>
+                    <p>
+                      <small className="grey">예약취소</small> :{" "}
                       <strong className="large orange">13</strong>
                     </p>
                     <p>
