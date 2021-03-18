@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
 import com.tobe.fishking.v2.model.response.OrderDetailResponse;
@@ -22,4 +23,5 @@ public interface OrdersRepositoryCustom {
     OrderDetailResponse orderDetail(Long orderId);
     List<OrderListResponse> getBookRunning(Long memberId);
     List<OrderListResponse> getBookConfirm(Long memberId);
+    List<Tuple> getStatus(Long memberId);
 }

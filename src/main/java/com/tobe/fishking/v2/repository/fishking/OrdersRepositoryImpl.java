@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.repository.fishking;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -12,6 +13,7 @@ import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
 import com.tobe.fishking.v2.model.response.*;
 import com.tobe.fishking.v2.utils.DateUtils;
+import javassist.expr.Expr;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -135,19 +137,26 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
         return response;
     }
 
-//    public FishingDashboardResponse getStatus(Long memberId) {
-//        FishingDashboardResponse response = queryFactory
-//                .select(new FishingDashboardResponse(
-//                        ExpressionUtils.as(JPAExpressions.select(orders.count()).from(orders).where(), Expressions.numberPath(Long.class, "countRunning"),
-//                ))
-//                .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company))
-//                .where(
-//                        orders.isPay.eq(true),
-//                        company.member.id.eq(memberId)
-//                )
-//                .fetchOne();
-//        return response;
-//    }
+    @Override
+    public List<Tuple> getStatus(Long memberId) {
+        List<Tuple> response = queryFactory
+                .select(
+                        Expressions.as(orders.orderStatus, "status"),
+                        Expressions.as(orders.id.count(), "count")
+                )
+                .from(orders)
+                .where(
+                        orders.id.in(
+                                JPAExpressions
+                                        .select(orders.id)
+                                        .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company))
+                                        .where(orders.isPay.eq(true), company.member.id.eq(memberId))
+                        )
+                )
+                .groupBy(orders.orderStatus)
+                .fetch();
+        return response;
+    }
 
     @Override
     public OrderDetailResponse orderDetail(Long orderId) {

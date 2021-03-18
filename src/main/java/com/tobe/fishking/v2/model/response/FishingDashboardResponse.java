@@ -34,17 +34,17 @@ public class FishingDashboardResponse {
                                     Long countComplete) {
         this.countRunning = countRunning;
         this.countConfirm = countConfirm;
-        this.percentRunning = countRunning * 1.0 / (countRunning + countConfirm);
-        this.percentConfirm = countConfirm * 1.0 / (countRunning + countConfirm);
+        this.percentRunning = countRunning * 100.0 / (countRunning + countConfirm);
+        this.percentConfirm = countConfirm * 100.0 / (countRunning + countConfirm);
 
         this.countWait = countWait;
         this.countFix = countFix;
-        this.percentWait = countWait * 1.0 / (countWait + countFix);
-        this.percentFix = countFix * 1.0 / (countWait + countFix);
+        this.percentWait = countWait * 100.0 / (countWait + countFix);
+        this.percentFix = countFix * 100.0 / (countWait + countFix);
 
         this.countCancel = countCancel;
         this.countComplete = countComplete;
-        this.percentCancel = countCancel * 1.0 / (countCancel + countComplete);
-        this.percentComplete = countComplete * 1.0 / (countCancel + countComplete);
+        this.percentCancel = countCancel * 100.0 / (countCancel + countComplete);
+        this.percentComplete = countComplete * 100.0 / (countCancel + countComplete);
     }
 }

@@ -1,7 +1,11 @@
 package com.tobe.fishking.v2.controller.post;
 
+import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.board.Post;
+import com.tobe.fishking.v2.entity.fishing.QOrders;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.repository.board.PostRepository;
+import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +22,20 @@ import static org.junit.Assert.assertThat;
 public class QuerydslTest {
 
     @Autowired
-    private PostRepository postRepository;
+    private OrdersRepository ordersRepository;
 
     @Test
     public void querydslCustomTest() {
         //given
-        String title = "안녕";
+        Long memberId = 13L;
 
         //when
-        List<Post> result = postRepository.findByTitle(title);
-
+        List<Tuple> result = ordersRepository.getStatus(memberId);
+        for (Tuple r : result) {
+            System.out.println(r.get(0, OrderStatus.class) + ": " + r.get(1, Long.class));
+        }
         //then
-        assertThat(result.size(), is(3));
+        assertThat(result.size(), is(5));
     }
 
 }

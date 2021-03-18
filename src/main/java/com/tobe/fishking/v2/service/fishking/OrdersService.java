@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.service.fishking;
 
 
+import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
@@ -9,6 +10,7 @@ import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
 import com.tobe.fishking.v2.model.fishing.RiderShipDTO;
 import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
+import com.tobe.fishking.v2.model.response.FishingDashboardResponse;
 import com.tobe.fishking.v2.model.response.OrderDetailResponse;
 import com.tobe.fishking.v2.model.response.OrderListResponse;
 import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
@@ -136,9 +138,41 @@ public class OrdersService {
     }
 
     @Transactional
-    public Map<String, Object> getStatus(Long memberId) {
-        Map<String, Object> response = new HashMap<>();
-        return response;
+    public FishingDashboardResponse getStatus(Long memberId) {
+        Long countRunning = 0L;
+        Long countConfirm = 0L;
+        Long countWait = 0L;
+        Long countFix = 0L;
+        Long countCancel = 0L;
+        Long countComplete = 0L;
+
+        List<Tuple> list = ordersRepository.getStatus(memberId);
+        for (Tuple tuple : list) {
+            switch (tuple.get(0, OrderStatus.class)) {
+                case book:
+                    break;
+                case bookRunning:
+                    countRunning = tuple.get(1, Long.class);
+                    break;
+                case waitBook:
+                    countWait = tuple.get(1, Long.class);
+                    break;
+                case bookFix:
+                    countFix = tuple.get(1, Long.class);
+                    break;
+                case bookCancel:
+                    countCancel = tuple.get(1, Long.class);
+                    break;
+                case fishingComplete:
+                    countComplete = tuple.get(1, Long.class);
+                    break;
+                case bookConfirm:
+                    countConfirm = tuple.get(1, Long.class);
+                    break;
+                default:
+            }
+        }
+        return new FishingDashboardResponse(countRunning, countConfirm, countWait, countFix, countCancel, countComplete);
     }
 
 }
