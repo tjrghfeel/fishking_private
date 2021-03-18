@@ -26,7 +26,7 @@ public class Member {
     @Column
     public String uid;
 
-    @Convert(converter = StringConverter.class)
+//    @Convert(converter = StringConverter.class)
     @Column(name = "member_name")
     public String memberName;
 

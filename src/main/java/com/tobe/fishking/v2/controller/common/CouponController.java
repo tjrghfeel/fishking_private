@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.common;
 
+import com.tobe.fishking.v2.enums.common.CouponType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.service.common.CouponService;
@@ -7,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -142,6 +144,7 @@ public class CouponController {
         return couponService.downloadAllCoupon(sessionToken);
     }
 
+
     /*관리자 항목들*/
 
     /*쿠폰 생성*/
@@ -174,7 +177,20 @@ public class CouponController {
                 dto.getIssueStartDate(), dto.getIssueEndDate(), dto.getEffectiveStartDate(), dto.getEffectiveEndDate());
     }
 
-    /*쿠폰 리스트 검색 (다운받은 쿠폰, 즉, couponMember아님)*/
+    /*쿠폰 수정*/
+    @ApiOperation(value = "쿠폰 수정",notes = "")
+    @PutMapping("/manage/coupon")
+    public Boolean modifyCoupon(
+            @RequestBody @Valid ModifyCouponDto dto,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        try{ if(dto.getCouponType()!=null){CouponType.valueOf(dto.getCouponType()); }}
+        catch (Exception e){ throw new RuntimeException("couponType의 값으로는 'amount' 또는 'rate'만 가능합니다.");  }
+
+        return couponService.modifyCoupon(dto,token);
+    }
+
+    /*쿠폰 리스트 검색 (couponMember아님)*/
     @ApiOperation(value = "쿠폰 리스트 검색",notes = "" +
             "요청 필드 ) \n" +
             "- sort : String / 정렬기준(내림차순). 조건 인자명 중 하나를 넘기면 되나, saleValuesStart, saleValueEnd의 경우엔 saleValues로." +
@@ -185,7 +201,27 @@ public class CouponController {
             @RequestHeader("Authorization") String token,
             CouponSearchConditionDto dto
     ) throws ResourceNotFoundException {
+        try{ if(dto.getCouponType()!=null){CouponType.valueOf(dto.getCouponType()); }}
+        catch (Exception e){ throw new RuntimeException("couponType의 값으로는 'amount' 또는 'rate'만 가능합니다.");  }
+
         return couponService.getCouponList(page, token, dto);
     }
 
+    /*발급 쿠폰 검색*/
+    @ApiOperation(value = "발급 쿠폰 검색",notes = "")
+    @GetMapping("manage/couponMember/list/{page}")
+    public Page<CouponMemberManageDtoForPage> getCouponMemberList(
+            @PathVariable("page") int page,
+            @RequestHeader("Authorization") String token,
+            CouponMemberSearchConditionDto dto
+    ) throws ResourceNotFoundException {
+        return couponService.getCouponMemberManageList(page, token, dto);
+    }
+
+    /*쿠폰 디테일*/
+    @ApiOperation(value = "쿠폰 디테일")
+    @GetMapping("manage/coupon/detail")
+    public CouponDetail getCouponDetail(@Param("couponId") Long couponId) throws ResourceNotFoundException {
+        return couponService.getCouponDetail(couponId);
+    }
 }

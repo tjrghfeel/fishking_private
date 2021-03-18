@@ -34,4 +34,7 @@ public interface CouponManageDtoForPage {
      Long getCreatedBy();
      Long getModifiedBy();
 
+
+
+
 }

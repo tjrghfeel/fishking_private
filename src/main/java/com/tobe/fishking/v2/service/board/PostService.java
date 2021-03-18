@@ -177,7 +177,7 @@ public class PostService {
                 .createdAt(postDTO.getCreatedAt())
                 .returnNoAddress(postDTO.getReturnNoAddress())
                 .returnType(ReturnType.valueOf(postDTO.getReturnType()))
-                .authorName(authorOfPost.getMemberName())
+                .authorName(authorOfPost.getNickName())
                 .contents(postDTO.getContents())
                 .title(postDTO.getTitle())
                 .channelType(ChannelType.valueOf(postDTO.getChannelType()))

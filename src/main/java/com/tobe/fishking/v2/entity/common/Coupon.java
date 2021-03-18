@@ -112,4 +112,27 @@ public class Coupon extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = " bigint not null comment '수정자' ")
     private Member modifiedBy;
 
+    /*null이 아닌 입력값들에 대해서 엔터티 업데이트.*/
+    public void modify(
+            String couponType, String couponName, LocalDate exposureStartDate, LocalDate exposureEndDate,
+            Integer saleValues, Integer maxIssueCount, LocalDate effectiveStartDate, LocalDate effectiveEndDate,
+            Boolean isIssue, Boolean isUse, String couponDescription, Member modifiedBy
+    ){
+        if(couponType!=null){this.couponType = CouponType.valueOf(couponType);}
+        if(couponName != null){ this.couponName = couponName; }
+        if(exposureStartDate != null){ this.exposureStartDate = exposureStartDate; }
+        if(exposureEndDate != null){ this.exposureEndDate = exposureEndDate; }
+        if(saleValues != null){ this.saleValues = saleValues; }
+        if(maxIssueCount != null){ this.maxIssueCount = maxIssueCount; }
+        if(effectiveStartDate != null){ this.effectiveStartDate = effectiveStartDate; }
+        if(effectiveEndDate != null){ this.effectiveEndDate = effectiveEndDate; }
+        if(isIssue != null){ this.isIssue = isIssue; }
+        if(isUse != null){ this.isUse = isUse; }
+        if(couponDescription != null){ this.couponDescription = couponDescription; }
+        this.modifiedBy = modifiedBy;
+    }
+
+    /*쿠폰 다운*/
+    public void addIssueCount(){this.issueQty++;}
+
 }

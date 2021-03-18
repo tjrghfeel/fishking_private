@@ -55,15 +55,20 @@ public class CouponService {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
+        if(coupon.getIssueQty() >= coupon.getMaxIssueCount()){throw new RuntimeException("해당 쿠폰의 최대발행 개수를 초과하였습니다.");}
+
         /*이미 다운받았는지 확인*/
         boolean isDownloaded = couponMemberRepository.existsByMemberAndCoupon(member, coupon);
         if(isDownloaded == true){ return -1L;}
 
         /*couponIssueCode 생성*/
         CouponMember lastCouponMember = couponMemberRepository.findTopByCouponOrderByCreatedDateDesc(coupon);
-        String lastCouponIssueCode = lastCouponMember.getCouponIssueCode();
-        int lastCouponIssueCodeNum = Integer.parseInt(lastCouponIssueCode.substring(8));
-        String newCouponIssueCode = coupon.getCouponCreateCode()+ (lastCouponIssueCodeNum+1);
+        int lastCouponIssueCodeNum = 0;
+        if(lastCouponMember!=null) {
+            String lastCouponIssueCode = lastCouponMember.getCouponIssueCode();
+            lastCouponIssueCodeNum = Integer.parseInt(lastCouponIssueCode.substring(8));
+        }
+        String newCouponIssueCode = coupon.getCouponCreateCode()+ String.format("%08d",lastCouponIssueCodeNum+1);
 
         CouponMember couponMember = CouponMember.builder()
                 .coupon(coupon)
@@ -75,6 +80,7 @@ public class CouponService {
                 .modifiedBy(member)
                 .build();
         couponMember = couponMemberRepository.save(couponMember);
+        coupon.addIssueCount();
 
         return couponMember.getId();
     }
@@ -121,12 +127,17 @@ public class CouponService {
             Long couponId = downloadableCouponList.get(i);
             Coupon coupon = couponRepository.findById(couponId)
                     .orElseThrow(()->new ResourceNotFoundException("coupon not found for this id :: "+couponId));
+            /*쿠폰 발행 개수 초과 확인.*/
+            if(coupon.getIssueQty() >= coupon.getMaxIssueCount()){throw new RuntimeException("해당 쿠폰의 최대발행 개수를 초과하였습니다.");}
 
             /*couponIssueCode 생성*/
             CouponMember lastCouponMember = couponMemberRepository.findTopByCouponOrderByCreatedDateDesc(coupon);
-            String lastCouponIssueCode = lastCouponMember.getCouponIssueCode();
-            int lastCouponIssueCodeNum = Integer.parseInt(lastCouponIssueCode.substring(8));
-            String newCouponIssueCode = coupon.getCouponCreateCode()+ (lastCouponIssueCodeNum+1);
+            int lastCouponIssueCodeNum = 00000000;
+            if(lastCouponMember!=null) {
+                String lastCouponIssueCode = lastCouponMember.getCouponIssueCode();
+                lastCouponIssueCodeNum = Integer.parseInt(lastCouponIssueCode.substring(8));
+            }
+            String newCouponIssueCode = coupon.getCouponCreateCode()+ String.format("%08d",lastCouponIssueCodeNum+1);
 
             CouponMember couponMember = CouponMember.builder()
                     .coupon(coupon)
@@ -140,6 +151,7 @@ public class CouponService {
                     .modifiedBy(member)
                     .build();
             couponMemberList.add(couponMember);
+            coupon.addIssueCount();
         }
         /*생성된 couponMember들을 저장. */
         couponMemberRepository.saveAll(couponMemberList);
@@ -200,6 +212,22 @@ public class CouponService {
         return coupon.getId();
     }
 
+    /*쿠폰 수정*/
+    @Transactional
+    public Boolean modifyCoupon(ModifyCouponDto dto, String token) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        if(member.getRoles() != Role.admin){throw new RuntimeException("쿠폰 수정 권한이 없습니다.");}
+
+        Coupon coupon = couponRepository.findById(dto.getCouponId())
+                .orElseThrow(()->new ResourceNotFoundException("coupon not found for this id :: "+dto.getCouponId()));
+        coupon.modify(dto.getCouponType(), dto.getCouponName(), dto.getExposureStartDate(),dto.getExposureEndDate(),
+                dto.getSaleValues(), dto.getMaxIssueCount(), dto.getEffectiveStartDate(), dto.getEffectiveEndDate(),
+                dto.getIsIssue(), dto.getIsUse(), dto.getCouponDescription(), member);
+
+        return true;
+    }
+
     /*쿠폰 리스트 검색*/
     @Transactional
     public Page<CouponManageDtoForPage> getCouponList(int page, String token, CouponSearchConditionDto dto) throws ResourceNotFoundException {
@@ -221,6 +249,55 @@ public class CouponService {
                 dto.getIsUse(), dto.getCouponDescription(), dto.getCreatedBy(), dto.getModifiedBy(), pageable
         );
 
+        return result;
+    }
+
+    /*발급 쿠폰 검색*/
+    @Transactional
+    public Page<CouponMemberManageDtoForPage> getCouponMemberManageList(int  page, String token, CouponMemberSearchConditionDto dto) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+
+        /*권한 확인.*/
+        if(member.getRoles() != Role.admin){throw new RuntimeException("쿠폰 조회 권한이 없습니다.");}
+
+        /*조건 형식변환*/
+
+        Pageable pageable = PageRequest.of(page, 30, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
+        Page<CouponMemberManageDtoForPage> result = couponRepository.getCouponMemberList(
+                dto.getUseDateStart(), dto.getUseDateEnd(), dto.getEffectiveStartDate(),dto.getEffectiveEndDate(),
+                dto.getCouponName(), dto.getAreaCode(), dto.getLocalNumber(), dto.getExposureStartDate(),
+                dto.getExposureEndDate(), dto.getIsUse(), pageable
+        );
+
+        return result;
+    }
+
+    /*coupon detail*/
+    @Transactional
+    public CouponDetail getCouponDetail(Long couponId) throws ResourceNotFoundException {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(()->new ResourceNotFoundException("coupon not found for this id :: "+couponId));
+
+        CouponDetail result = CouponDetail.builder()
+                .id(coupon.getId())
+                .couponType(coupon.getCouponType().getValue())
+                .couponCreateCode(coupon.getCouponCreateCode())
+                .couponName(coupon.getCouponName())
+                .exposureStartDate(coupon.getExposureStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .exposureEndDate(coupon.getExposureEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .effectiveStartDate(coupon.getEffectiveStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .effectiveEndDate(coupon.getEffectiveEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .saleValues(coupon.getSaleValues())
+                .maxIssueCount(coupon.getMaxIssueCount())
+                .issueQty(coupon.getIssueQty())
+                .useQty(coupon.getUseQty())
+                .isIssue(coupon.getIsIssue())
+                .isUse(coupon.getIsUse())
+                .couponDescription(coupon.getCouponDescription())
+                .createdBy(coupon.getCreatedBy().getId())
+                .modifiedBy(coupon.getModifiedBy().getId())
+                .build();
         return result;
     }
 

@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.model.PageRequest;
 import com.tobe.fishking.v2.model.common.CouponDTO;
 import com.tobe.fishking.v2.model.common.CouponManageDtoForPage;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
+import com.tobe.fishking.v2.model.common.CouponMemberManageDtoForPage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -168,16 +169,16 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
                     "   and if(:couponType is null, true, c.coupon_type = :couponType) " +
                     "   and if(:couponCreateCode is null, true, c.coupon_create_code = :couponCreateCode) " +
                     "   and if(:couponName is null, true, c.coupon_name like %:couponName%) " +
-                    "   and if(:exposureStartDate is null, true, c.exposure_start_date > :exposureStartDate) " +
-                    "   and if(:exposureEndDate is null, true, c.exposure_end_date < :exposureEndDate) " +
-                    "   and if(:saleValuesStart is null, true, c.sale_values > :saleValuesStart) " +
-                    "   and if(:saleValuesEnd is null, true, c.sale_values < :saleValuesEnd) " +
-                    "   and if(:effectiveStartDate is null, true, c.effective_start_date > :effectiveStartDate) " +
-                    "   and if(:effectiveEndDate is null, true, c.effective_end_date < :effectiveEndDate) " +
-                    "   and if(:issueQtyStart is null, true, c.issue_qty > :issueQtyStart) " +
-                    "   and if(:issueQtyEnd is null, true, c.issue_qty < :issueQtyEnd) " +
-                    "   and if(:useQtyStart is null, true, c.use_qty > :useQtyStart) " +
-                    "   and if(:useQtyEnd is null, true, c.use_qty < :useQtyEnd) " +
+                    "   and if(:exposureStartDate is null, true, c.exposure_start_date >= :exposureStartDate) " +
+                    "   and if(:exposureEndDate is null, true, c.exposure_end_date <= :exposureEndDate) " +
+                    "   and if(:saleValuesStart is null, true, c.sale_values >= :saleValuesStart) " +
+                    "   and if(:saleValuesEnd is null, true, c.sale_values <= :saleValuesEnd) " +
+                    "   and if(:effectiveStartDate is null, true, c.effective_start_date >= :effectiveStartDate) " +
+                    "   and if(:effectiveEndDate is null, true, c.effective_end_date <= :effectiveEndDate) " +
+                    "   and if(:issueQtyStart is null, true, c.issue_qty >= :issueQtyStart) " +
+                    "   and if(:issueQtyEnd is null, true, c.issue_qty <= :issueQtyEnd) " +
+                    "   and if(:useQtyStart is null, true, c.use_qty >= :useQtyStart) " +
+                    "   and if(:useQtyEnd is null, true, c.use_qty <= :useQtyEnd) " +
                     "   and if(:isIssue is null, true, c.is_issue = :isIssue) " +
                     "   and if(:isUse is null, true, c.is_use = :isUse) " +
 //                    "   and if(:fromPurchaseAmount is null, true, c.from_purchase_amount = :fromPurchaseAmount) " +
@@ -212,5 +213,79 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
         @Param("createdBy") Long createdBy,
         @Param("modifiedBy") Long modifiedBy,
         Pageable pageable
+    );
+
+    /*발급 쿠폰 검색*/
+    @Query(value = "select " +
+            "   cm.id couponMemberId, " +
+            "   cm.coupon_issue_code couponIssueCode, " +
+            "   c.id couponId, " +
+            "   c.coupon_name couponName, " +
+            "   m.id memberId, " +
+            "   m.nick_name nickname, " +
+            "   m.member_name memberName, " +
+            "   m.areacode areaCode, " +
+            "   m.localnumber localNumber, " +
+            "   m.city city, " +
+            "   m.dong dong, " +
+            "   m.gu gu, " +
+            "   c.sale_values saleValues, " +
+            "   c.coupon_description couponDescription, " +
+            "   cm.reg_date regDate, " +
+            "   c.effective_start_date effectiveStartDate, " +
+            "   c.effective_end_date effectiveEndDate, " +
+            "   c.coupon_create_code couponCreateCode, " +
+            "   cm.use_date useDate, " +
+            "   o.id orderId, " +
+            "   o.discount_amount discountAmount, " +
+            "   o.total_amount totalAmount, " +
+            "   o.payment_amount paymentAmount, " +
+            "   o.goods goodsId, " +
+            "   o.order_date orderDate, " +
+            "   o.order_status orderStatus, " +
+            "   o.order_number orderNumber " +
+            "from coupon_member cm left join orders o on cm.coupon_orders_id = o.id, coupon c, member m " +
+            "where " +
+            "   cm.coupon_member_id = m.id " +
+            "   and cm.member_coupon_id = c.id " +
+            "   and if(:useDateStart is null, true, cm.use_date >= :useDateStart) " +
+            "   and if(:useDateEnd is null, true, cm.use_date <= :useDateEnd) " +
+            "   and if(:effectiveStartDate is null, true, c.effective_start_date >= :effectiveStartDate) " +
+            "   and if(:effectiveEndDate is null, true, c.effective_end_date <= :effectiveEndDate) " +
+            "   and if(:exposureStartDate is null, true, c.exposure_start_date >= :exposureStartDate) " +
+            "   and if(:exposureEndDate is null, true, c.exposure_end_date <= :exposureEndDate) " +
+            "   and if(:couponName is null, true, c.coupon_name like %:couponName%) " +
+            "   and if(:areaCode is null, true, m.areacode like %:areaCode%) " +
+            "   and if(:localNumber is null, true, m.localnumber like %:localNumber%) " +
+            "   and if(:isUse is null, true, cm.is_use = :isUse) ",
+            countQuery = "select cm.id " +
+                    "from coupon_member cm left join orders o on cm.coupon_orders_id = o.id, coupon c, member m " +
+                    "where " +
+                    "   cm.coupon_member_id = m.id " +
+                    "   and cm.member_coupon_id = c.id " +
+                    "   and if(:useDateStart is null, true, cm.use_date >= :useDateStart) " +
+                    "   and if(:useDateEnd is null, true, cm.use_date <= :useDateEnd) " +
+                    "   and if(:effectiveStartDate is null, true, c.effective_start_date >= :effectiveStartDate) " +
+                    "   and if(:effectiveEndDate is null, true, c.effective_end_date <= :effectiveEndDate) " +
+                    "   and if(:exposureStartDate is null, true, c.exposure_start_date >= :exposureStartDate) " +
+                    "   and if(:exposureEndDate is null, true, c.exposure_end_date <= :exposureEndDate) " +
+                    "   and if(:couponName is null, true, c.coupon_name like %:couponName%) " +
+                    "   and if(:areaCode is null, true, m.areacode like %:areaCode%) " +
+                    "   and if(:localNumber is null, true, m.localnumber like %:localNumber%) " +
+                    "   and if(:isUse is null, true, cm.is_use = :isUse) ",
+            nativeQuery = true
+    )
+    Page<CouponMemberManageDtoForPage> getCouponMemberList(
+            @Param("useDateStart") LocalDate useDateStart,
+            @Param("useDateEnd") LocalDate useDateEnd,
+            @Param("effectiveStartDate") LocalDate effectiveStartDate,
+            @Param("effectiveEndDate") LocalDate effectiveEndDate,
+            @Param("couponName") String couponName,
+            @Param("areaCode") String areaCode,
+            @Param("localNumber") String localNumber,
+            @Param("exposureStartDate") LocalDate exposureStartDate,
+            @Param("exposureEndDate") LocalDate exposureEndDate,
+            @Param("isUse") Boolean isUse,
+            Pageable pageable
     );
 }

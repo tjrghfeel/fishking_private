@@ -120,8 +120,10 @@ public class MapperUtility {
         else{return tide.toString()+"물";}
     }
 
-    public String transDateString(LocalDateTime date){return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
-
+    public String transDateString(LocalDateTime date) {
+        if (date != null) {return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
+        else return null;
+    }
 
 
 

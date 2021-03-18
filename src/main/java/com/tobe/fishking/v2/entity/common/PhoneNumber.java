@@ -12,11 +12,11 @@ import javax.persistence.*;
 @Embeddable
 @Getter
 public class PhoneNumber {
-    @Convert(converter = StringConverter.class)
+//    @Convert(converter = StringConverter.class)
     @Column(name = "AREACODE")
     private String areaCode;
 
-    @Convert(converter = StringConverter.class)
+//    @Convert(converter = StringConverter.class)
     @Column(name = "LOCALNUMBER")
     private String localNumber;
 
