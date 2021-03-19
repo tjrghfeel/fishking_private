@@ -46,6 +46,11 @@ export default inject(
         const status = await DataStore.getEnums("orderStatus");
         this.setState({ status });
 
+        let { qStatus = null } = PageStore.getQueryParams();
+        if (qStatus !== null) {
+          this.status.current.value = qStatus;
+        }
+
         const restored = PageStore.restoreState({
           isPending: false,
           isEnd: false,
@@ -55,7 +60,7 @@ export default inject(
           endDate: null,
           keywordType: null,
           keyword: null,
-          status: null,
+          status: qStatus,
           payMethod: null,
         });
         PageStore.setScrollEvent(() => {
@@ -139,7 +144,7 @@ export default inject(
           ),
           onOk: async () => {
             const resolve = await APIStore._post(
-              `/v2/api/order/confirm?orderId=${item.orderNumber}`
+              `/v2/api/order/confirm?orderId=${item.id}`
             );
             console.log(resolve);
             if (resolve && resolve.success) {

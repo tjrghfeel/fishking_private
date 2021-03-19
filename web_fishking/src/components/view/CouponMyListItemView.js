@@ -4,7 +4,14 @@ import { inject, observer } from "mobx-react";
 export default inject()(
   observer(
     ({
-      data: { couponName, couponType, saleValues, useDate, couponDescription },
+      data: {
+        couponName,
+        couponType,
+        saleValues,
+        effectiveStartDate,
+        effectiveEndDate,
+        couponDescription,
+      },
       data,
       onClick,
     }) => {
@@ -71,7 +78,7 @@ export default inject()(
                 )}
               </h2>
               <small className="grey">
-                {useDate && <React.Fragment>~ {useDate}</React.Fragment>}
+                {effectiveStartDate} ~ {effectiveEndDate}
                 <br />
                 {couponDescription}
               </small>
