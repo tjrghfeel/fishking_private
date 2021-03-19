@@ -8,7 +8,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.querydsl.core.types.dsl.MathExpressions.*;
 import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
@@ -32,8 +32,6 @@ import static com.tobe.fishking.v2.entity.common.QObserverCode.observerCode;
 import static com.tobe.fishking.v2.entity.common.QTake.take;
 import static com.tobe.fishking.v2.entity.fishing.QCompany.company;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
-import static com.tobe.fishking.v2.entity.fishing.QOrderDetails.orderDetails;
-import static com.tobe.fishking.v2.entity.fishing.QOrders.orders;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
 import static com.tobe.fishking.v2.utils.QueryDslUtil.getSortedColumn;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -490,5 +488,15 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 expression = null;
         }
         return expression;
+    }
+
+    @Override
+    public List<Tuple> getGoodsShips(Long memberId) {
+        List<Tuple> response = queryFactory
+                .select(ship.id, ship.shipName)
+                .from(ship).join(company).on(ship.company.eq(company))
+                .where(company.member.id.eq(memberId))
+                .fetch();
+        return response;
     }
 }

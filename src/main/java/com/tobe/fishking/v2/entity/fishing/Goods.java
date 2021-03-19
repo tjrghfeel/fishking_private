@@ -317,6 +317,22 @@ public class Goods extends BaseTime {
         return this;
     }
 
-
+    public void updateGoods(Ship ship, Member member, AddGoods addGoods, List<CommonCode> fishSpecies) {
+        this.ship = ship;
+        this.name = addGoods.getName();
+        this.fishingStartTime = addGoods.getFishingStartTime();
+        this.fishingEndTime = addGoods.getFishingEndTime();
+        this.totalAmount = addGoods.getAmount();
+        this.minPersonnel = addGoods.getMinPersonnel();
+        this.maxPersonnel = addGoods.getMaxPersonnel();
+        this.isUse = addGoods.getIsUse();
+        this.fishSpecies = fishSpecies;
+        this.reserveType = addGoods.getReserveType().equals("auto") ? ReserveType.auto : ReserveType.approval;
+        this.positionSelect = addGoods.getPositionSelect();
+        this.extraRun = addGoods.getExtraRun();
+        this.extraPersonnel = addGoods.getExtraPersonnel();
+        this.extraShipNumber = addGoods.getExtraShipNumber();
+        this.modifiedBy = member;
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.RealTimeVideo;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.repository.BaseRepository;
@@ -18,5 +19,8 @@ public interface RealTimeVideoRepository extends BaseRepository<RealTimeVideo, L
     @Modifying
     @Query("update RealTimeVideo v set v.token = :newToken, v.expireTime = :time where v.token = :beforeToken")
     void updateToken(String newToken, String time, String beforeToken);
+
+    @Query("select v from RealTimeVideo v where v.ships.company.member = :member")
+    List<RealTimeVideo> getRealTimeVideoByMember(Member member);
 
 }

@@ -1,7 +1,6 @@
 
 package com.tobe.fishking.v2.service.fishking;
 
-import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
@@ -9,19 +8,16 @@ import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Places;
 import com.tobe.fishking.v2.entity.fishing.Ship;
-import com.tobe.fishking.v2.enums.board.FilePublish;
-import com.tobe.fishking.v2.enums.common.OperatorType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
-import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.CMemberNotFoundException;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
 import com.tobe.fishking.v2.exception.CResourceNotExistException;
 import com.tobe.fishking.v2.exception.EmptyListException;
-import com.tobe.fishking.v2.model.ModelMapperUtils;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.ParamsPopular;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
+import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.repository.fishking.specs.GoodsSpecs;
 import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -245,6 +241,11 @@ public class GoodsService {
             ship.setGoodsList(goods);
         }
         return new PageImpl<>(contents, pageable, ships.getTotalElements());
+    }
+
+    @Transactional
+    public UpdateGoodsResponse getGoodsData(Long goodsId) {
+        return goodsRepo.getGoodsData(goodsId);
     }
 
 }

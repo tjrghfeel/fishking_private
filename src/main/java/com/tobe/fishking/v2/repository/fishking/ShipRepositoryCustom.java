@@ -17,4 +17,5 @@ public interface ShipRepositoryCustom {
     ShipResponse getDetail(Long ship_id);
     Page<FishingShipResponse> getShipsByCompanyMember(Long memberId, String keywordType, String keyword, String status, Pageable pageable);
     Page<FishingShipResponse> getShipsByCompanyMember2(Long memberId, String keyword, String cameraActive, Pageable pageable);
+    List<Tuple> getGoodsShips(Long memberId);
 }

@@ -28,6 +28,7 @@ import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -239,6 +240,7 @@ public class ShipService {
                         Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
                         TimeZone.getDefault().toZoneId()
                 );
+//                LocalDateTime expTime = LocalDateTime.of(2100, 12, 31, 12, 12);
                 String token = "";
                 if (now.isAfter(expTime)) {
                     Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
@@ -647,6 +649,21 @@ public class ShipService {
     }
 
     @Transactional
+    public boolean updateGoods(Long goodsId, AddGoods addGoods, Member member) {
+        Goods goods = goodsRepository.getOne(goodsId);
+        Ship ship = shipRepo.getOne(addGoods.getShipId());
+        List<CommonCode> species = new ArrayList<>();
+        for (String species_code : addGoods.getSpecies()) {
+            CommonCode commonCode = codeRepository.getByCode(species_code);
+            species.add(commonCode);
+        }
+        goods.updateGoods(ship, member, addGoods, species);
+        goodsRepository.save(goods);
+
+        return true;
+    }
+
+    @Transactional
     public Long addShip(AddShipDTO addShipDTO, String token) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
@@ -715,16 +732,4 @@ public class ShipService {
 
         return ship.getId();
     }
-
-    @Transactional
-    public Page<FishingShipResponse> getFishingShips(Long memberId, String keyword, String cameraActive, Integer page) throws EmptyListException {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("shipName").ascending());
-        Page<FishingShipResponse> ships = shipRepo.getShipsByCompanyMember2(memberId, keyword, cameraActive, pageable);
-        List<FishingShipResponse> contents = ships.getContent();
-        if (contents.isEmpty()) {
-            throw new EmptyListException("결과리스트가 비어있습니다.");
-        }
-        return ships;
-    }
-
 }

@@ -95,7 +95,7 @@ public class HttpRequestService {
 
             httpClient.close();
 
-            newToken = ((Map<String, Object>) res.get("result")).get("token").toString();
+            newToken = String.valueOf(((Map<String, Object>) res.get("result")).get("token"));
             expireTime = ((Map<String, Object>) res.get("result")).get("expirationTime").toString();
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,7 +104,7 @@ public class HttpRequestService {
         }
         Map<String, String> result = new HashMap<>();
         result.put("token", newToken);
-        result.put("expireTime", expireTime);
+        result.put("expireTime", expireTime.split("E")[0].replace(".", ""));
         return result;
     }
 

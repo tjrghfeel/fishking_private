@@ -10,7 +10,6 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Builder
 @AllArgsConstructor
 @Table(name = "realtime_video")
 public class RealTimeVideo extends BaseTime {
@@ -77,6 +76,19 @@ public class RealTimeVideo extends BaseTime {
 
     @Column(columnDefinition = "bit comment '사용여부' ")
     private Boolean isUse;
+
+    @Builder
+    public RealTimeVideo(Integer rNo, Member member, Ship ship, String name, String serial, String token, String expireTime) {
+        this.rNo = rNo;
+        this.createdBy = member;
+        this.modifiedBy = member;
+        this.ships = ship;
+        this.name = name;
+        this.serial = serial;
+        this.token = token;
+        this.expireTime = expireTime;
+        this.isUse = true;
+    }
 
     public void updateToken(String token) {
         this.token = token;

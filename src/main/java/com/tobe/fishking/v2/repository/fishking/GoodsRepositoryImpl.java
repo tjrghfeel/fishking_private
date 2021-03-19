@@ -13,6 +13,8 @@ import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.model.fishing.GoodsResponse;
 import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
 import com.tobe.fishking.v2.model.response.QGoodsSmallResponse;
+import com.tobe.fishking.v2.model.response.QUpdateGoodsResponse;
+import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 
@@ -93,5 +95,15 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 expression = null;
         }
         return expression;
+    }
+
+    @Override
+    public UpdateGoodsResponse getGoodsData(Long goodsId) {
+        UpdateGoodsResponse response = queryFactory
+                .select(new QUpdateGoodsResponse(goods, goods.ship.id, goods.ship.shipName))
+                .from(goods)
+                .where(goods.id.eq(goodsId))
+                .fetchOne();
+        return response;
     }
 }
