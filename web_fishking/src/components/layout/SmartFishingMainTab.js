@@ -38,7 +38,7 @@ export default inject("PageStore")(
           onClick={() => PageStore.push(`/boat`)}
         >
           <figure className="boat"></figure>
-          선상
+          선박
         </a>
         <a
           className={"nav-link" + (activeIndex === 5 ? " active" : "")}
