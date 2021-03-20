@@ -48,8 +48,8 @@ export default inject(
           { text: "예약확정", value: resolve["percentFix"] },
         ]);
         this.drawChart(this.chart3.current, [
-          { text: "예약취소", value: resolve["percentWait"] },
-          { text: "출조완료", value: resolve["percentFix"] },
+          { text: "예약취소", value: resolve["percentCancel"] },
+          { text: "출조완료", value: resolve["percentComplete"] },
         ]);
         // >>>>> 승인필요
         resolve = await APIStore._get(
@@ -201,11 +201,19 @@ export default inject(
                     </p>
                     <p>
                       <small className="grey">예약취소</small> :{" "}
-                      <strong className="large orange">13</strong>
+                      <strong className="large orange">
+                        {Intl.NumberFormat().format(
+                          this.state.count?.countCancel || 0
+                        )}
+                      </strong>
                     </p>
                     <p>
                       <small className="grey">출조완료</small> :{" "}
-                      <strong className="large text-primary">87</strong>
+                      <strong className="large text-primary">
+                        {Intl.NumberFormat().format(
+                          this.state.count?.countComplete || 0
+                        )}
+                      </strong>
                     </p>
                   </div>
                 </div>
