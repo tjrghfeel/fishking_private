@@ -7,10 +7,13 @@ import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.fishing.AddGoods;
+import com.tobe.fishking.v2.model.fishing.AddShipDTO;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
+import com.tobe.fishking.v2.model.response.UpdateShipResponse;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.fishking.GoodsService;
+import com.tobe.fishking.v2.service.fishking.PlacesService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
 import com.tobe.fishking.v2.service.smartfishing.FishingShipService;
 import io.swagger.annotations.Api;
@@ -37,6 +40,7 @@ public class ShipsGoodsController {
     private final ShipService shipService;
     private final FishingShipService fishingShipService;
     private final GoodsService goodsService;
+    private final PlacesService placesService;
 
     @ApiOperation(value = "선박 리스트", notes = "선박 탭의 상 리스트. " +
             "\n keywordType: 검색어타입 (선박명: shipName) 한 종류 입니다." +
@@ -186,15 +190,153 @@ public class ShipsGoodsController {
     }
 
     @ApiOperation(value = "선박등록 - 카메라 리스트", notes= "선박등록에 필요한 카메라리스트 데이터 {" +
+            "\n nhn: [{" +
             "\n serial: 시리얼번호" +
             "\n name: 카메라 이름" +
-            "\n ")
+            "\n }, .. ]," +
+            "\n adt: [{" +
+            "\n }, .. ]," +
+            "")
     @GetMapping("/ship/cameras")
-    public List<Map<String, Object>> getCameras(@RequestHeader(name = "Authorization") String token) throws ResourceNotFoundException, NotAuthException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException, EmptyListException {
+    public Map<String, Object> getCameras(@RequestHeader(name = "Authorization") String token) throws ResourceNotFoundException, NotAuthException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException, EmptyListException {
         if (!memberService.checkAuth(token)) {
             throw new NotAuthException("권한이 없습니다.");
         }
         Member member = memberService.getMemberBySessionToken(token);
-        return fishingShipService.getCameraList(member);
+        Map<String, Object> result = new HashMap<>();
+        result.put("nhn", fishingShipService.getCameraList(member));
+        return result;
+    }
+
+    @ApiOperation(value = "선박등록", notes = "선박등록")
+    @PostMapping("/ship/add")
+    public Map<String, Object> addShip(
+            @RequestHeader(name = "Authorization") String token,
+            AddShipDTO addShipDTO) throws ResourceNotFoundException {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Long shipId = fishingShipService.addShip(addShipDTO, token);
+            result.put("result", "success");
+            result.put("id", shipId);
+            return result;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
+        }
+    }
+
+    @ApiOperation(value = "선박수정", notes = "선박수정")
+    @PutMapping("/ship/update/{shipId}")
+    public Map<String, Object> updateShip(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody AddShipDTO addShipDTO,
+            @PathVariable Long shipId) throws ResourceNotFoundException {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            fishingShipService.updateShip(shipId, addShipDTO, token);
+            result.put("result", "success");
+            result.put("id", shipId);
+            return result;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 수정에 실패했습니다.");
+        }
+    }
+
+    @ApiOperation(value = "선박정보 ", notes= "선박정보 {" +
+            "\n id: 선박 id" +
+            "\n name: 선박명" +
+            "\n fishingType: 타입 (ship, seaRocks)" +
+            "\n address: 주소" +
+            "\n sido: 시/도 (경기도)" +
+            "\n sigungu: 시/군/구 (고양시)" +
+            "\n tel: 전화번호" +
+            "\n weight: 선박크기 (3, 5, 9)" +
+            "\n boardingPerson: 탑승인원" +
+            "\n latitude: 위도" +
+            "\n longitude: 경도" +
+            "\n profileImage: 선박 이미지" +
+            "\n fishSpecies: 어종 코드 리스트 [어종 code, ...] " +
+            "\n services: 서비스 코드 리스트 [서비스 code, ...] " +
+            "\n facilities: 편의시설 코드 리스트 [편의시설 code, ...] " +
+            "\n devices: 보유장비 코드 리스트 [보유장비 code, ...] " +
+            "\n events: [{eventId: 이벤트 id, title: 제목, startDate: 시작일, endDate: 종료일, contents: 내용, imageId: 이미지 id, imageUrl: 이미지 주소}, ... ]" +
+            "\n positions: 사용하는 위치, 갯바위 타입의 경우 null" +
+            "\n seaRocks: 갯바위 리스트. 선상 타입의 경우 null [{" +
+            "\n     id: 갯바위 id" +
+            "\n     name: 갯바위 명" +
+            "\n     address: 갯바위의 주소" +
+            "\n     latitude: 갯바위의 위도" +
+            "\n     longitude: 갯바위의 경도" +
+            "\n     points: 해당 갯바위의 포인트 리스트 [{ " +
+            "\n         latitude: 포인트의 위도" +
+            "\n         longitude: 포인트의 경도" +
+            "\n         id: 포인트 id " +
+            "\n     }, ... ]" +
+            "\n ownerWordingTitle: 한마디 제목 " +
+            "\n ownerWording: 한마디 내용 " +
+            "\n noticeTitle: 공지사항 제목 " +
+            "\n notice: 공지사항 내용 " +
+            "\n adtCameras: ADT 캡스 리스트 [{serial: 시리얼넘버, name: 카메라명}, ... ]" +
+            "\n nhnCameras: NHN 토스트캠 리스트 [{serial: 시리얼넘버, name: 카메라명}, ... ]" +
+            "\n ")
+    @GetMapping("/ship/detail/{shipId}")
+    public UpdateShipResponse getShipDetails(@RequestHeader(name = "Authorization") String token,
+                                             @PathVariable Long shipId) throws NotAuthException, ResourceNotFoundException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        return fishingShipService.getShipDetails(shipId);
+    }
+
+    @ApiOperation(value = "갯바위 검색 ", notes = "주소로 갯바위를 검색합니다"  +
+            "\n data: 갯바위 포인트 [{" +
+            "\n     id: 갯바위 id" +
+            "\n     name: 갯바위 명" +
+            "\n }, ... ]" +
+            "\n 결과값이 없는 경우 body 가 비어있고 status 가 204인 응답이 전달됩니다. ")
+    @GetMapping("/searocks")
+    public Map<String, Object> searchSeaRock(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestParam(required = false, defaultValue = "") String sido,
+            @RequestParam(required = false, defaultValue = "") String sigungu,
+            @RequestParam(required = false, defaultValue = "") String dong) throws EmptyListException {
+        Map<String, Object> response = new HashMap<>();
+        List<Map<String, Object>> rocks = placesService.searchSeaRock(sido, sigungu, dong, token);
+        if (rocks.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            response.put("data", rocks);
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "갯바위 리스트 ", notes = "id로 갯바위 정보를 얻습니다"  +
+            "\n data: 갯바위 포인트 [{" +
+            "\n     id: 갯바위 id" +
+            "\n     name: 갯바위 명" +
+            "\n     address: 갯바위의 주소" +
+            "\n     latitude: 갯바위의 위도" +
+            "\n     longitude: 갯바위의 경도" +
+            "\n     points: 해당 갯바위의 포인트 리스트 [{ " +
+            "\n         latitude: 포인트의 위도" +
+            "\n         longitude: 포인트의 경도" +
+            "\n         id: 포인트 id " +
+            "\n     }, ... ]" +
+            "\n }, ... ]" +
+            "seaRockId%5B%5D=5&seaRockId%5B%5D=3 와 같이 urlencoding 해서 보내주세요")
+    @GetMapping("/searocks/id")
+    public Map<String, Object> getSeaRocks(
+            @RequestParam(value = "seaRockId[]", required = false) Long[] seaRockId) throws EmptyListException {
+        Map<String, Object> response = new HashMap<>();
+        List<Map<String, Object>> rocks = placesService.getSeaRocks(seaRockId);
+        if (rocks.size() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            response.put("data", rocks);
+        }
+        return response;
     }
 }

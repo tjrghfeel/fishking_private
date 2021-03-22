@@ -78,7 +78,7 @@ public class RealTimeVideo extends BaseTime {
     private Boolean isUse;
 
     @Builder
-    public RealTimeVideo(Integer rNo, Member member, Ship ship, String name, String serial, String token, String expireTime) {
+    public RealTimeVideo(Integer rNo, Member member, Ship ship, String name, String serial, String token, String expireTime, String type) {
         this.rNo = rNo;
         this.createdBy = member;
         this.modifiedBy = member;
@@ -88,6 +88,7 @@ public class RealTimeVideo extends BaseTime {
         this.token = token;
         this.expireTime = expireTime;
         this.isUse = true;
+        this.type = type;
     }
 
     public void updateToken(String token) {

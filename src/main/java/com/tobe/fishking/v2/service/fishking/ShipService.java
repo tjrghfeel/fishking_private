@@ -2,7 +2,10 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.common.*;
+import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.Coupon;
+import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
@@ -12,15 +15,10 @@ import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.exception.EmptyListException;
-import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.common.ShareStatus;
-import com.tobe.fishking.v2.model.fishing.AddShipDTO;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.ReviewResponse;
 import com.tobe.fishking.v2.model.fishing.*;
-import com.tobe.fishking.v2.model.response.FishingShipResponse;
-import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
@@ -28,7 +26,6 @@ import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -69,11 +66,8 @@ public class ShipService {
     private final ReviewRepository reviewRepository;
     private final HttpRequestService httpRequestService;
     private final RealTimeVideoRepository realTimeVideoRepository;
-    private final CompanyRepository companyRepository;
-    private final CommonCodeRepository codeRepository;
     private final PlacesRepository placesRepository;
     private final PlacePointRepository placePointRepository;
-    private final ShipSeaRocksRepository shipSeaRocksRepository;
     private final CouponRepository couponRepository;
     private final CouponMemberRepository couponMemberRepository;
 
@@ -614,75 +608,5 @@ public class ShipService {
         }
         response.putIfAbsent("cameraData", null);
         return response;
-    }
-
-    @Transactional
-    public Long addShip(AddShipDTO addShipDTO, String token) throws ResourceNotFoundException {
-        Member member = memberRepo.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
-        Company company = companyRepository.findByMember(member);
-        List<ObserverCode> codes = observerCodeRepository.findAll();
-        Ship ship = addShipDTO.toEntity(member, company, codes);
-
-        List<CommonCode> speciesList = new ArrayList<>();
-        for (String species : addShipDTO.getFishSpecies()) {
-            speciesList.add(codeRepository.getByCode(species));
-        }
-        ship.setFishSpecies(speciesList);
-
-        List<CommonCode> serviceList = new ArrayList<>();
-        for (String service : addShipDTO.getServices()) {
-            serviceList.add(codeRepository.getByCode(service));
-        }
-        ship.setServices(serviceList);
-
-        List<CommonCode> facilityList = new ArrayList<>();
-        for (String facility : addShipDTO.getFacilities()) {
-            facilityList.add(codeRepository.getByCode(facility));
-        }
-        ship.setFacilities(facilityList);
-
-        List<CommonCode> deviceList = new ArrayList<>();
-        for (String device : addShipDTO.getDevices()) {
-            deviceList.add(codeRepository.getByCode(device));
-        }
-        ship.setDevices(deviceList);
-
-        shipRepo.save(ship);
-
-        for (AddEvent event : addShipDTO.getEvents()) {
-            ShareStatus status = ShareStatus.builder()
-                    .viewCount(0)
-                    .likeCount(0)
-                    .commentCount(0)
-                    .shareCount(0)
-                    .build();
-            Event e = Event.builder()
-                    .addEvent(event)
-                    .member(member)
-                    .ship(ship)
-                    .status(status)
-                    .build();
-            eventRepository.save(e);
-            if (event.getImage_id() != null) {
-                FileEntity file = fileRepo.getOne(event.getImage_id());
-                file.saveTemporaryFile(e.getId());
-                fileRepo.save(file);
-            }
-        }
-
-        if (ship.getFishingType().equals(FishingType.seaRocks)) {
-            for (String position : addShipDTO.getPositions()) {
-                Places places = placesRepository.getOne(Long.parseLong(position));
-                shipSeaRocksRepository.save(
-                        ShipSeaRocks.builder()
-                                .ship(ship)
-                                .places(places)
-                                .build()
-                );
-            }
-        }
-
-        return ship.getId();
     }
 }
