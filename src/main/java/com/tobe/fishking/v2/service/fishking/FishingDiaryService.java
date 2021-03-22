@@ -495,8 +495,10 @@ public class FishingDiaryService {
         FishingDiary fishingDiary  = fishingDiaryRepo.findById(fishingDiaryId)
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
         Long shipId = null;
+        String shipAddress = null;
         if(fishingDiary.getShip()!=null){
             shipId = fishingDiary.getShip().getId();
+            shipAddress = fishingDiary.getShip().getAddress();
         }
 
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
@@ -538,18 +540,24 @@ public class FishingDiaryService {
 
         /*imageUrlList 설정*/
         ArrayList<String> imageUrlList = new ArrayList<>();
+        ArrayList<Long> imageIdList =new ArrayList<>();
         String path = env.getProperty("file.downloadUrl");
         List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
                 fishingDiaryId, fishingDiary.getFilePublish(), FileType.image, false);
         for(int i=0; i<fileEntityList.size(); i++){
             FileEntity fileEntity = fileEntityList.get(i);
             imageUrlList.add(path + "/" +fileEntity.getFileUrl() + "/" + fileEntity.getStoredFile());
+            imageIdList.add(fileEntity.getId());
         }
         /*비디오 url 설정*/
         String videoUrl = null;
+        Long videoId = null;
         List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
                 fishingDiaryId, fishingDiary.getFilePublish(), FileType.video, false);
-        if(video.size()!=0){videoUrl = path + "/" + video.get(0).getFileUrl() + "/" + video.get(0).getStoredFile();}
+        if(video.size()!=0){
+            videoUrl = path + "/" + video.get(0).getFileUrl() + "/" + video.get(0).getStoredFile();
+            videoId = video.get(0).getId();
+        }
         /*자신글여부 설정*/
         Boolean isMine = null;
         if(member==fishingDiary.getMember()){isMine=true;}
@@ -557,10 +565,44 @@ public class FishingDiaryService {
         /*fish species의 common code 추가*/
         String codeNameString = fishingDiary.getFishingSpeciesName();
         String[] codeNameArray = codeNameString.split(", ");
-        CodeGroup codeGroup = codeGroupRepo.findById(80L)
+        CodeGroup speciesCodeGroup = codeGroupRepo.findById(80L)
                 .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+80L));
-        ArrayList<String> codeList = commonCodeRepo.findCodeByCodeNameAndCodeGroup(codeNameArray, codeGroup);
-
+        ArrayList<String> codeList = commonCodeRepo.findCodeByCodeNameAndCodeGroup(codeNameArray, speciesCodeGroup);
+        //tide
+        String tideCode = null;
+        if(fishingDiary.getFishingTideTime()!=null){
+            String tideTime = fishingDiary.getFishingTideTime();
+            TideTime[] tideTimeEnumList = TideTime.values();
+            for(int i=0; i<tideTimeEnumList.length; i++){
+                if(tideTimeEnumList[i].getValue().equals(tideTime)){tideCode = tideTimeEnumList[i].getKey();}
+            }
+        }
+        /*fishingTechnicList*/
+        ArrayList<String> techCodeList = new ArrayList<>();
+        if(fishingDiary.getFishingTechnic()!=null){
+            String techNameString = fishingDiary.getFishingTechnic();
+            String[] techNameArray = techNameString.split(", ");
+            FishingTechnic[] technicEnumList = FishingTechnic.values();
+            for(int j=0; j<techNameArray.length; j++){
+                for(int i=0; i<technicEnumList.length; i++){
+                    if(technicEnumList[i].getValue().equals(techNameArray[j])){techCodeList.add(technicEnumList[i].getKey());}
+                }
+            }
+        }
+        //fishingLureList
+        ArrayList<String> lureCodeList = new ArrayList<>();
+        if(fishingDiary.getFishingLure()!=null){
+            String lureNameString = fishingDiary.getFishingLure();
+            String[] lureNameArray = lureNameString.split(", ");
+            CodeGroup lureCodeGroup = codeGroupRepo.findById(89L)
+                    .orElseThrow(()->new ResourceNotFoundException("codeGroup not found for this id :: "+89L));
+            lureCodeList = commonCodeRepo.findCodeByCodeNameAndCodeGroup(lureNameArray, lureCodeGroup);
+        }
+        //fishingType. enum값으로 저장.
+        String fishingTypeCode = null;
+        if(fishingDiary.getFishingType() != null){
+            fishingTypeCode = fishingDiary.getFishingType().getKey();
+        }
 
         /*글의 조회수 증가*/
         fishingDiary.getStatus().plusViewCount();
@@ -570,21 +612,31 @@ public class FishingDiaryService {
                 .fishingDiaryId(fishingDiary.getId())
                 .fishingDiaryType(fishingDiaryType)
                 .shipId(shipId)
+                .shipAddress(shipAddress)
+                .address(fishingDiary.getFishingLocation())
+                .latitude(fishingDiary.getWriteLatitude())
+                .longitude(fishingDiary.getWriteLongitude())
                 .nickName(nickName)
                 .profileImage(path + fishingDiary.getMember().getProfileImage())
                 .isLive(isLive)
                 .fishingType(fishingType)
+                .fishingTypeCode(fishingTypeCode)
                 .title(fishingDiary.getTitle())
                 .createdDate(fishingDiary.getCreatedDate())
                 .fishingSpecies(fishingDiary.getFishingSpeciesName())
                 .fishingSpeciesCodeList(codeList)
                 .fishingDate(fishingDiary.getFishingDate())
                 .tide(fishingDiary.getFishingTideTime())
+                .tideCode(tideCode)
                 .fishingLure(fishingDiary.getFishingLure())
+                .fishingLureCodeList(lureCodeList)
                 .fishingTechnic(fishingDiary.getFishingTechnic())
+                .fishingTechnicCodeList(techCodeList)
                 .content(fishingDiary.getContents())
                 .imageUrlList(imageUrlList)
+                .imageIdList(imageIdList)
                 .videoUrl(videoUrl)
+                .videoId(videoId)
                 .isLikeTo(isLikeTo)
                 .isScraped(isScraped)
                 .likeCount(fishingDiary.getStatus().getLikeCount())

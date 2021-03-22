@@ -70,12 +70,31 @@ public class PostService {
 
     /*FAQ 조회*/
     @Transactional(readOnly = true)
-    public Page<FAQDto> getFAQList(int page, String role){
+    public Page<FAQDto> getFAQList(int page, String role, String title, String inputQuestionType){
         Boolean roleValue = null;
         if(role.equals("member")){roleValue=true;}
         else if(role.equals("shipowner")){roleValue=false;}
+        Integer questionType = null;
+        if(inputQuestionType != null){questionType = QuestionType.valueOf(inputQuestionType).ordinal();}
+
         Pageable pageable = PageRequest.of(page,10);
-        return postRepository.findAllFAQList(roleValue, pageable);
+        return postRepository.findAllFAQList(roleValue,title,questionType, pageable);
+    }
+    /*faq 상세*/
+    @Transactional
+    public FAQDto getFAQ(String token, Long postId) throws ResourceNotFoundException {
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        Post faq = postRepository.findById(postId)
+                .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postId));
+        Role targetRole = null;
+        if(faq.getTargetRole()==true){targetRole = Role.member;}
+        else targetRole=Role.shipowner;
+        if(member.getRoles() != Role.admin && member.getRoles()!=targetRole){
+            throw new RuntimeException("해당 글에 대한 조회 권한이 없스니다.");
+        }
+
+        return postRepository.findFAQDetail(postId);
     }
 
     /*QnA 리스트 조회*/
@@ -95,12 +114,15 @@ public class PostService {
 
     /*공지사항 리스트 조회*/
     @Transactional(readOnly = true)
-    public Page<NoticeDtoForPage> getNoticeList(int page, String role){
+    public Page<NoticeDtoForPage> getNoticeList(int page, String role, String inputChannelType, String inputTitle){
         Boolean roleValue = null;
         if(role.equals("member")){roleValue=true;}
         else if(role.equals("shipowner")){roleValue=false;}
+        Integer channelType = null;
+        if(inputChannelType != null){channelType = ChannelType.valueOf(inputChannelType).ordinal();}
+
         Pageable pageable = PageRequest.of(page,10);
-        return postRepository.findNoticeList(roleValue, pageable);
+        return postRepository.findNoticeList(roleValue, channelType, inputTitle, pageable);
     }
 
     /*공지사항 상세보기*/
@@ -188,6 +210,7 @@ public class PostService {
                 .questionType(QuestionType.valueOf(postDTO.getQuestionType()))
                 .parent_id(postDTO.getParentId())
                 .targetRole(postDTO.getTargetRole())
+                .isDeleted(false)
                 .build();
         post = postRepository.save(post);
 
@@ -417,6 +440,7 @@ public class PostService {
         Boolean targetRole;
         if(dto.getTargetRole().equals("member")){targetRole=true;}
         else targetRole=false;
+
         UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
                 /*dto에 있는 필드들*/
                 .postId(dto.getPostId())
@@ -429,7 +453,6 @@ public class PostService {
                 .returnType("email")
                 .returnNoAddress("sampleReturnAddress")
                 .channelType("notice")
-                .title("noTitle")
                 .createdAt("sampleCreatedAt")
                 .targetRole(targetRole)
                 .build();
@@ -475,7 +498,7 @@ public class PostService {
 
         /*현재 회원이 관리자거나 현재회원이 작성한 글이면 삭제가능. */
         if(role == Role.admin || post.getAuthor() == member){
-            postRepository.delete(post);
+            post.delete();
             return true;
         }
         /*아니면 삭제 불가*/

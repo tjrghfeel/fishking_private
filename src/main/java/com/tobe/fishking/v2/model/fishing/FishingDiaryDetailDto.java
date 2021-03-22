@@ -15,21 +15,31 @@ public class FishingDiaryDetailDto {
     private Long fishingDiaryId;
     private String fishingDiaryType;
     private Long shipId;
+    private String shipAddress;
+    private String address;
+    private Double latitude;
+    private Double longitude;
     private String nickName;
     private String profileImage;
     private Boolean isLive;//!!!!!현장실시간 여부버튼 어케할지 결정후 수정.
     private String fishingType;
+    private String fishingTypeCode;
     private String title;
     private LocalDateTime createdDate;//!!!!!데이터 타입 확인.
     private String fishingSpecies;
     private ArrayList<String> fishingSpeciesCodeList;
     private String fishingDate;
     private String tide;
+    private String tideCode;
     private String fishingLure;
+    private ArrayList<String> fishingLureCodeList;
     private String fishingTechnic;
+    private ArrayList<String> fishingTechnicCodeList;
     private String content;
     private ArrayList<String> imageUrlList;
+    private ArrayList<Long> imageIdList;
     private String videoUrl;
+    private Long videoId;
     private Boolean isLikeTo;
     private Boolean isScraped;
     private int likeCount;

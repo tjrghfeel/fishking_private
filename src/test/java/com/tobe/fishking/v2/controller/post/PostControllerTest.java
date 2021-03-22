@@ -37,8 +37,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
-//import org.junit.jupiter.api.Test;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+//import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -163,11 +163,13 @@ public class PostControllerTest {
     @Test
     @Transactional
     public void noName() throws Exception {
-        Member member = memberRepository.findById(147L)
-                .orElseThrow(()->new RuntimeException(""));
+        String aaa = AES.aesDecode("H9Q8zROABmLt2zH9SphnHQ==",env.getProperty("encrypKey.key"));
 
-        member.setMemberName("apple man");
 
+
+
+
+        System.out.println("result >>> " +aaa);
         return;
 
     }

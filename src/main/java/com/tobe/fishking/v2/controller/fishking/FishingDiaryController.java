@@ -280,6 +280,10 @@ public class FishingDiaryController {
             "- authorId : Long / 작성자 id\n" +
             "- fishingDiaryId : Long / 글 id\n" +
             "- shipId : Long / 글에 해당하는 선박 id\n" +
+            "- shipAddress : String\n" +
+            "- address : String (shipId존재시 null) / '위치선택'을 통해 선택한 위치의 주소값.\n" +
+            "- latitude : Double (shipId존재시 null) / '위치선택'을 통해 선택한 위치의 위도값\n" +
+            "- longitude : Double (shipId존재시 null) / '위치선택'을 통해 선택한 위치의 경도값\n"+
             "- nickName : String / 작성자명. 유저조행기일경우 회원의 닉네임, 조항일지일 경우 선박명.\n" +
             "- profileImage : String / 프사 url\n" +
             "- isLive : Boolean / 현장실시간 여부\n" +
