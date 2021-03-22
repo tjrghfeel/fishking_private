@@ -26,6 +26,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select e from Event e where e.ship.id = :ship_id")
     List<ShipEventResponse> getEventByShip(Long ship_id);
 
+    @Query("select e from Event e where e.ship.id = :ship_id and e.isDeleted = false")
+    List<Event> getEventByShipActive(Long ship_id);
+
     /*이벤트 목록 가져오기*/
     @Query(value = "" +
             "select " +

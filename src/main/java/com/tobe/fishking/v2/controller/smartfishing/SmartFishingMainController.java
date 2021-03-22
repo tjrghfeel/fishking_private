@@ -85,10 +85,10 @@ public class SmartFishingMainController {
             "\n countFix: 예약완료 수" +
             "\n percentWait: 대기예약 %" +
             "\n percentFix: 예약완료 %" +
-            "\n countCancel: 총 데이터 수" +
-            "\n countComplete: 총 페이지 수" +
-            "\n percentCancel: 마지막페이지 여부" +
-            "\n percentComplete: 첫페이지 여부" +
+            "\n countCancel: 예약취소 수" +
+            "\n countComplete: 출조완료 수" +
+            "\n percentCancel: 예약취소 %" +
+            "\n percentComplete: 출조완료 %" +
             "\n }" +
             "\n 상태가 '예약진행중' 인 경우 예약승인 버튼 노출")
     @GetMapping("/smartfishing/dashboard/count")

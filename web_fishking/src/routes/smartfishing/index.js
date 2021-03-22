@@ -10,7 +10,9 @@ import ReservationPage from "../../pages/smartfishing/ReservationPage";
 import ReservationDetailPage from "../../pages/smartfishing/ReservationDetailPage";
 import FishPage from "../../pages/smartfishing/FishPage";
 import GoodsPage from "../../pages/smartfishing/GoodsPage";
+import GoodsAddPage from "../../pages/smartfishing/GoodsAddPage";
 import BoatPage from "../../pages/smartfishing/BoatPage";
+import BoatAddPage from "../../pages/smartfishing/BoatAddPage";
 import PaidPage from "../../pages/smartfishing/PaidPage";
 
 export default inject("PageStore")(
@@ -62,8 +64,20 @@ export default inject("PageStore")(
               <Route exact path={`${match.url}/fish`} component={FishPage} />
               {/** 상품 */}
               <Route exact path={`${match.url}/goods`} component={GoodsPage} />
-              {/** 선상 */}
+              {/** 상품 > 등록 */}
+              <Route
+                exact
+                path={`${match.url}/goods/add`}
+                component={GoodsAddPage}
+              />
+              {/** 선박 */}
               <Route exact path={`${match.url}/boat`} component={BoatPage} />
+              {/** 선박 > 등록 */}
+              <Route
+                exact
+                path={`${match.url}/boat/add`}
+                component={BoatAddPage}
+              />
               {/** 정산 */}
               <Route exact path={`${match.url}/paid`} component={PaidPage} />
               <Redirect from={`*`} to={`${match.url}/dashboard`} />

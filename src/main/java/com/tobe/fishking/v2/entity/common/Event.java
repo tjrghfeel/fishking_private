@@ -65,10 +65,20 @@ public class Event extends BaseTime {
         this.contents = addEvent.getTitle();
         this.ship = ship;
         this.isDeleted = false;
-        this.startDay = "2020-01-01";
-        this.endDay = "2100-12-31";
+        this.startDay = addEvent.getStartDate();
+        this.endDay = addEvent.getEndDate();
         this.status = status;
         this.createdBy = member;
+        this.modifiedBy = member;
+    }
+
+    public void setDelete(Member member) {
+        this.isDeleted = true;
+        this.modifiedBy = member;
+    }
+
+    public void setNotDelete(Member member) {
+        this.isDeleted = false;
         this.modifiedBy = member;
     }
 }

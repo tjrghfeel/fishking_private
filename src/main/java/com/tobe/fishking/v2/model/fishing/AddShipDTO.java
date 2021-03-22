@@ -56,7 +56,7 @@ public class AddShipDTO {
     private @Valid List<String> devices;
     @ApiParam(value = "이벤트 리스트")
     private @Valid List<AddEvent> events;
-    @ApiParam(value = "사용할 위치 리스트 (예: [1,2,3,4])")
+    @ApiParam(value = "사용할 위치 리스트 (예: [1,2,3,4]), 갯바위 타입의 경우에는 갯바위 id 리스트")
     private @Valid List<String> positions;
     @ApiParam(value = "한마디 제목")
     private @Valid String ownerWordingTitle;
@@ -66,6 +66,10 @@ public class AddShipDTO {
     private @Valid String noticeTitle;
     @ApiParam(value = "공지사항")
     private @Valid String notice;
+    @ApiParam(value = "adt 카메라리스트")
+    private @Valid List<AddShipCamera> adtCameras;
+    @ApiParam(value = "nhn 카메라리스트")
+    private @Valid List<AddShipCamera> nhnCameras;
 
     public Ship toEntity(Member member, Company company, List<ObserverCode> codes) {
         Location loc = Location.builder().latitude(latitude).longitude(longitude).build();

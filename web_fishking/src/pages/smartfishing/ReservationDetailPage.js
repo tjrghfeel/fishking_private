@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
+import PageStore from "../../stores/PageStore";
 const {
   LAYOUT: { NavigationLayout },
   VIEW: { ShipType3PositionView, ShipType5PositionView, ShipType9PositionView },
@@ -16,6 +17,14 @@ export default inject(
       constructor(props) {
         super(props);
         this.state = {};
+        this.arr_status = [
+          "대기자 예약",
+          "예약 진행중",
+          "예약 완료",
+          "예약 확정",
+          "출조 완료",
+          "예약 취소",
+        ];
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -28,6 +37,7 @@ export default inject(
         const { orderId } = PageStore.getQueryParams();
         const resolve = await APIStore._get(`/v2/api/orders/detail/${orderId}`);
         this.setState({ ...resolve });
+        console.log(JSON.stringify(resolve));
       };
       requestApprove = async () => {
         const { ModalStore, APIStore } = this.props;
@@ -41,10 +51,23 @@ export default inject(
             </React.Fragment>
           ),
           onOk: async () => {
-            console.log("승인!");
-            this.loadPageData();
+            const resolve = await APIStore._post(
+              `/v2/api/order/confirm?orderId=${this.state.id}`
+            );
+            if (resolve && resolve.success) {
+              this.loadPageData();
+            }
           },
         });
+      };
+      requestCancel = async () => {
+        const { APIStore } = this.props;
+        const resolve = await APIStore._post(
+          `/v2/api/order/cancel?orderId=${this.state.id}`
+        );
+        if (resolve && resolve.success) {
+          this.loadPageData();
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -68,9 +91,27 @@ export default inject(
                 </h5>
                 <div className="pay-bg">
                   <ol className="pay-step">
-                    <li>대기자예약</li>
-                    <li className="active">예약확정</li>
-                    <li>출조완료</li>
+                    {this.arr_status.slice(0, 5).map((text, index) => (
+                      <React.Fragment>
+                        {this.state.status === "예약 취소" &&
+                          text === "출조 완료" && (
+                            <li key={index} className="active">
+                              {this.arr_status[5]}
+                            </li>
+                          )}
+                        {(this.state.status !== "예약 취소" ||
+                          text !== "출조 완료") && (
+                          <li
+                            key={index}
+                            className={
+                              this.state.status == text ? "active" : ""
+                            }
+                          >
+                            {text}
+                          </li>
+                        )}
+                      </React.Fragment>
+                    ))}
                   </ol>
                 </div>
               </div>
@@ -120,16 +161,12 @@ export default inject(
                       예약자명
                       <br />
                       연락처
-                      <br />
-                      생년월일
                     </small>
                   </div>
                   <div className="col-6 text-right">
                     {this.state.reserveName}
                     <br />
                     {this.state.reservePhone}
-                    <br />
-                    1980-07-07
                   </div>
                 </div>
               </div>
@@ -184,13 +221,20 @@ export default inject(
                     </small>
                   </div>
                   <div className="col-6 text-right">
-                    2020-08-17
+                    {this.state.orderDate?.substr(0, 10)}
                     <br />
-                    실시간계좌이체 간편결제
+                    {this.state.payMethod}
                     <br />
-                    40,000원
+                    {Intl.NumberFormat().format(this.state.payTotalAmount || 0)}
+                    원
                     <br />
-                    <strong className="red">-2,000원</strong>
+                    <strong className="red">
+                      -
+                      {Intl.NumberFormat().format(
+                        this.state.discountAmount || 0
+                      )}
+                      원
+                    </strong>
                   </div>
                 </div>
                 <hr className="full mt-1 mb-2" />
@@ -242,16 +286,10 @@ export default inject(
                     <hr className="full mt-1 mb-2" />
                     <div className="row no-gutters">
                       <div className="col-6">
-                        <small className="grey">
-                          취소 신청일
-                          <br />
-                          환불 처리일
-                        </small>
+                        <small className="grey">취소 신청일</small>
                       </div>
                       <div className="col-6 text-right">
                         {this.state.cancelDate}
-                        <br />
-                        2020-08-17
                       </div>
                     </div>
                     <hr className="full mt-1 mb-2" />
@@ -278,25 +316,34 @@ export default inject(
             {/** 하단버튼 */}
             <div className="fixed-bottom">
               <div className="row no-gutters">
-                <div className="col-6">
-                  <a
-                    onClick={this.requestApprove}
-                    className="btn btn-primary btn-lg btn-block"
-                    data-toggle="modal"
-                    data-target="#confirmModal"
-                  >
-                    예약승인
-                  </a>
-                </div>
-                <div className="col-6">
-                  <a
-                    className="btn btn-secondary btn-lg btn-block"
-                    data-toggle="modal"
-                    data-target="#cancelModal"
-                  >
-                    취소완료
-                  </a>
-                </div>
+                {this.state.status === "예약 진행중" && (
+                  <div className="col-6">
+                    <a
+                      onClick={this.requestApprove}
+                      className="btn btn-primary btn-lg btn-block"
+                      data-toggle="modal"
+                      data-target="#confirmModal"
+                    >
+                      예약승인
+                    </a>
+                  </div>
+                )}
+                {this.state.status !== "대기자 예약" &&
+                  this.state.status !== "예약 취소" && (
+                    <div
+                      className={
+                        this.state.status === "예약 진행중" ? "col-6" : "col-12"
+                      }
+                    >
+                      <a
+                        className="btn btn-secondary btn-lg btn-block"
+                        data-toggle="modal"
+                        data-target="#cancelModal"
+                      >
+                        예약취소
+                      </a>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -340,7 +387,7 @@ export default inject(
                     <div className="row no-gutters">
                       <div className="col-6">
                         <a
-                          href="#none"
+                          onClick={this.requestCancel}
                           className="btn btn-primary btn-lg btn-block"
                           data-dismiss="modal"
                         >
@@ -349,7 +396,6 @@ export default inject(
                       </div>
                       <div className="col-6">
                         <a
-                          href="#none"
                           className="btn btn-third btn-lg btn-block"
                           data-dismiss="modal"
                         >

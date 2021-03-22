@@ -42,7 +42,7 @@ public class HttpRequestService {
     private final String vendorId = "tobe";
     private final String vendorPw = "toastcam1!";
 
-    public String getToken(String bizId) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
+    public Map<String, Object> getToken(String bizId) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(CAM_BASE_URL + CAM_AUTH_URL + "token");
         httpPost.addHeader("User-Agent", USER_AGENT);
@@ -57,7 +57,7 @@ public class HttpRequestService {
 
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
-        String result;
+        Map<String, Object> result = new HashMap<>();
         try {
             CloseableHttpResponse response = httpClient.execute(httpPost);
             System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
@@ -67,13 +67,15 @@ public class HttpRequestService {
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
             String token = res.getAsJsonObject("result").get("token").toString();
+            String expireTime = res.getAsJsonObject("result").get("expireTime").toString();
 
             httpClient.close();
 
-            result = token;
+            result.put("token", token);
+            result.put("expireTime", expireTime.split("E")[0].replace(".", ""));
         } catch (IOException e) {
             e.printStackTrace();
-            result = "error";
+            result = null;
         }
         return result;
     }
@@ -95,7 +97,7 @@ public class HttpRequestService {
 
             httpClient.close();
 
-            newToken = ((Map<String, Object>) res.get("result")).get("token").toString();
+            newToken = String.valueOf(((Map<String, Object>) res.get("result")).get("token"));
             expireTime = ((Map<String, Object>) res.get("result")).get("expirationTime").toString();
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,7 +106,7 @@ public class HttpRequestService {
         }
         Map<String, String> result = new HashMap<>();
         result.put("token", newToken);
-        result.put("expireTime", expireTime);
+        result.put("expireTime", expireTime.split("E")[0].replace(".", ""));
         return result;
     }
 

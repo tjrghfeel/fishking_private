@@ -35,9 +35,9 @@ export default (() => {
           })
           .then((response, xhr) => {
             if (response && response["status"] == "204") {
-              ModalStore.openModal("Alert", {
-                body: "요청하신 검색 결과가 없습니다.",
-              });
+              // ModalStore.openModal("Alert", {
+              //   body: "요청하신 검색 결과가 없습니다.",
+              // });
               resolve(null);
             } else {
               resolve(response.data);

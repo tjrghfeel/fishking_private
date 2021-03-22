@@ -6,18 +6,18 @@ import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.Popular;
 import com.tobe.fishking.v2.entity.fishing.Goods;
+import com.tobe.fishking.v2.entity.fishing.GoodsFishingDate;
 import com.tobe.fishking.v2.entity.fishing.Places;
 import com.tobe.fishking.v2.entity.fishing.Ship;
-import com.tobe.fishking.v2.enums.board.FilePublish;
-import com.tobe.fishking.v2.enums.common.OperatorType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
-import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.exception.CMemberNotFoundException;
-import com.tobe.fishking.v2.exception.CNotOwnerException;
-import com.tobe.fishking.v2.exception.CResourceNotExistException;
-import com.tobe.fishking.v2.model.ModelMapperUtils;
+import com.tobe.fishking.v2.exception.*;
+import com.tobe.fishking.v2.model.fishing.AddGoods;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.ParamsPopular;
+import com.tobe.fishking.v2.model.response.FishingShipResponse;
+import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
+import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
+import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.GoodsSpecs;
 import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
@@ -28,9 +28,9 @@ import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
@@ -47,6 +47,9 @@ public class GoodsService {
     private final CommonCodeRepository commonCodeRepo;  //JpaResposistory
     private final CodeGroupRepository codeGroupRepo;  //JpaResposistory
     private final PopularRepository popularRepo;  //JpaResposistory
+    private final GoodsRepository goodsRepository;
+    private final CommonCodeRepository codeRepository;
+    private final GoodsFishingDateRepository goodsFishingDateRepository;
 
 
     private static int searchSize = 0;
@@ -228,5 +231,70 @@ public class GoodsService {
         return true;
     }
 
+    @Transactional
+    public Page<FishingShipResponse> getGoods(Long memberId, String keywordType, String keyword, String status, Integer page) throws EmptyListException {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("shipName").ascending());
+        Page<FishingShipResponse> ships = shipRepo.getShipsByCompanyMember(memberId, keywordType, keyword, status, pageable);
+        List<FishingShipResponse> contents = ships.getContent();
+        if (contents.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        }
+        for (FishingShipResponse ship : contents) {
+            List<GoodsSmallResponse> goods = goodsRepo.searchGoods(ship.getId(), keyword, status);
+            ship.setGoodsList(goods);
+        }
+        return new PageImpl<>(contents, pageable, ships.getTotalElements());
+    }
+
+    @Transactional
+    public UpdateGoodsResponse getGoodsData(Long goodsId) {
+        return goodsRepo.getGoodsData(goodsId);
+    }
+
+    @Transactional
+    public Long addGood(AddGoods addGoods, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: " + token));
+        Ship ship = shipRepo.getOne(addGoods.getShipId());
+
+        List<CommonCode> species = new ArrayList<>();
+        for (String species_code : addGoods.getSpecies()) {
+            CommonCode commonCode = codeRepository.getByCode(species_code);
+            species.add(commonCode);
+        }
+
+        Goods goods = Goods.builder()
+                .ship(ship)
+                .member(member)
+                .addGoods(addGoods)
+                .fishSpecies(species)
+                .build();
+        goodsRepository.save(goods);
+
+        for (String fishingDate : addGoods.getFishingDates()) {
+            GoodsFishingDate goodsFishingDate = GoodsFishingDate.builder()
+                    .goods(goods)
+                    .fishingDateString(fishingDate)
+                    .member(member)
+                    .build();
+            goodsFishingDateRepository.save(goodsFishingDate);
+        }
+        return goods.getId();
+    }
+
+    @Transactional
+    public boolean updateGoods(Long goodsId, AddGoods addGoods, Member member) {
+        Goods goods = goodsRepository.getOne(goodsId);
+        Ship ship = shipRepo.getOne(addGoods.getShipId());
+        List<CommonCode> species = new ArrayList<>();
+        for (String species_code : addGoods.getSpecies()) {
+            CommonCode commonCode = codeRepository.getByCode(species_code);
+            species.add(commonCode);
+        }
+        goods.updateGoods(ship, member, addGoods, species);
+        goodsRepository.save(goods);
+
+        return true;
+    }
 
 }

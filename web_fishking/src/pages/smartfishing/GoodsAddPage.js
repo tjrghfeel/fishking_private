@@ -1,0 +1,590 @@
+import React from "react";
+import { inject, observer } from "mobx-react";
+import Components from "../../components";
+import Calendar from "react-calendar-multiday";
+const {
+  LAYOUT: { NavigationLayout },
+} = Components;
+
+export default inject(
+  "PageStore",
+  "APIStore",
+  "DataStore",
+  "ModalStore"
+)(
+  observer(
+    class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.shipId = React.createRef(null);
+        this.fishingStartTime = React.createRef(null);
+        this.fishingEndTime = React.createRef(null);
+        this.isUseTrue = React.createRef(null);
+        this.isUseFalse = React.createRef(null);
+        this.calendar = React.createRef(null);
+        this.positionSelectTrue = React.createRef(null);
+        this.positionSelectFalse = React.createRef(null);
+        this.reserveTypeAuto = React.createRef(null);
+        this.reserveTypeApproval = React.createRef(null);
+        this.state = {
+          id: null,
+
+          shipId: null, // 선박
+          name: null, // 상품명
+          amount: 0, // 상품가격
+          minPersonnel: 0, // 정원 - 최소인원
+          maxPersonnel: 0, // 정원 - 최대인원
+          fishingStartTime: null, // 운항시간 - 시작
+          fishingEndTime: null, // 운항시간 - 종료
+          isUse: true, // 상태
+          species: [], // 주요어종
+          fishingDates: [], // 조업일 리스트
+          positionSelect: true, // 예약시 위치선정
+          reserveType: "auto", // 예약확정방법
+
+          arr_ship: [],
+          arr_species: [],
+        };
+        this.arr_hour = [];
+        for (let i = 0; i < 24; i++) {
+          this.arr_hour.push(i);
+        }
+      }
+      /********** ********** ********** ********** **********/
+      /** function */
+      /********** ********** ********** ********** **********/
+      async componentDidMount() {
+        const { PageStore, APIStore, DataStore } = this.props;
+
+        // 선박명-업체명
+        let resolve = await APIStore._get(`/v2/api/goods/ships`);
+        this.setState({ arr_ship: resolve });
+        // 주요어종
+        resolve = await DataStore.getCodes("80", 3);
+        this.setState({ arr_species: resolve });
+
+        const { id } = PageStore.getQueryParams();
+        if (id) {
+          this.setState({ id });
+          this.loadPageData(id);
+        }
+      }
+      loadPageData = async (id) => {
+        const { APIStore } = this.props;
+        let {
+          shipId,
+          name,
+          amount,
+          minPersonnel,
+          maxPersonnel,
+          fishingStartTime,
+          fishingEndTime,
+          isUse,
+          species,
+          fishingDates,
+          positionSelect,
+          reserveType,
+        } = await APIStore._get(`/v2/api/goods/detail/${id}`);
+
+        this.shipId.current.value = shipId;
+        this.fishingStartTime.current.value = fishingStartTime;
+        this.fishingEndTime.current.value = fishingEndTime;
+        if (isUse) this.isUseTrue.current.checked = true;
+        else this.isUseFalse.current.checked = true;
+        for (let item of species) {
+          document.querySelector(
+            `[name='check-species'][data-value='${item}']`
+          ).checked = true;
+        }
+        if (positionSelect) {
+          this.positionSelectTrue.current.click();
+        } else {
+          this.positionSelectFalse.current.click();
+        }
+        if (reserveType === "auto") this.reserveTypeAuto.current.checked = true;
+        else this.reserveTypeApproval.current.checked = true;
+        this.setState({
+          shipId,
+          name,
+          amount,
+          minPersonnel,
+          maxPersonnel,
+          fishingStartTime,
+          fishingEndTime,
+          isUse,
+          species,
+          fishingDates,
+          positionSelect,
+          reserveType,
+        });
+      };
+      selectAllSpecies = () => {
+        const eles = document.querySelectorAll('[name="check-species"]');
+        for (let ele of eles) ele.checked = true;
+      };
+      selectSpecies = (code, checked) => {
+        const { DataStore } = this.props;
+        console.log(code);
+        if (checked) {
+          this.setState({ species: this.state.species.concat(code) });
+        } else {
+          this.setState({
+            species: DataStore.removeItemOfArrayByItem(
+              this.state.species,
+              code
+            ),
+          });
+        }
+      };
+      onSubmit = async () => {
+        const { APIStore, ModalStore } = this.props;
+        const {
+          id,
+          shipId,
+          name,
+          amount,
+          minPersonnel,
+          maxPersonnel,
+          fishingStartTime,
+          fishingEndTime,
+          isUse,
+          species,
+          fishingDates,
+          positionSelect,
+          reserveType,
+        } = this.state;
+        if (shipId === null || shipId === "") {
+          ModalStore.openModal("Alert", {
+            body: "선상명-업체명 을 선택해주세요.",
+          });
+          return;
+        }
+        if (name === null || name === "") {
+          ModalStore.openModal("Alert", {
+            body: "상품명을 입력해주세요.",
+          });
+          return;
+        }
+        if (minPersonnel > maxPersonnel) {
+          ModalStore.openModal("Alert", {
+            body: "정원을 확인해주세요.",
+          });
+          return;
+        }
+        if (
+          fishingStartTime === null ||
+          fishingEndTime === null ||
+          fishingStartTime.replace(":", "") > fishingEndTime.replace(":", "")
+        ) {
+          ModalStore.openModal("Alert", {
+            body: "운항시간을 확인해주세요.",
+          });
+          return;
+        }
+        if (species.length === 0) {
+          ModalStore.openModal("Alert", {
+            body: "주요어종을 선택해주세요.",
+          });
+          return;
+        }
+        if (fishingDates.length === 0) {
+          ModalStore.openModal("Alert", {
+            body: "조업일을 선택해주세요.",
+          });
+          return;
+        }
+
+        let resolve = null;
+        if (id !== null) {
+          // 수정
+          resolve = await APIStore._put(`/v2/api/goods/update/${id}`, {
+            shipId,
+            name,
+            amount,
+            minPersonnel,
+            maxPersonnel,
+            fishingStartTime,
+            fishingEndTime,
+            isUse,
+            species,
+            fishingDates,
+            positionSelect,
+            reserveType,
+          });
+        } else {
+          // 등록
+          resolve = await APIStore._put(`/v2/api/goods/add`, {
+            shipId,
+            name,
+            amount,
+            minPersonnel,
+            maxPersonnel,
+            fishingStartTime,
+            fishingEndTime,
+            isUse,
+            species,
+            fishingDates,
+            positionSelect,
+            reserveType,
+          });
+        }
+
+        console.log(JSON.stringify(resolve));
+      };
+      /********** ********** ********** ********** **********/
+      /** render */
+      /********** ********** ********** ********** **********/
+      render() {
+        const { PageStore } = this.props;
+        return (
+          <React.Fragment>
+            <NavigationLayout title={"상품등록"} showBackIcon={true} />
+
+            <div className="container nopadding mt-3">
+              <p className="text-right">
+                <strong className="required"></strong> 필수입력
+              </p>
+              <form>
+                <div className="form-group">
+                  <label htmlFor="InputCName">
+                    선상명 – 업체명 <strong className="required"></strong>
+                  </label>
+                  <select
+                    ref={this.shipId}
+                    className="form-control"
+                    onChange={(e) =>
+                      this.setState({
+                        shipId: e.target.selectedOptions[0].value,
+                      })
+                    }
+                  >
+                    <option value={""}>선상명을 선택하세요</option>
+                    {this.state.arr_ship.map((data, index) => (
+                      <option value={data["id"]}>{data["shipName"]}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputGName">
+                    상품명 <strong className="required"></strong>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="상품명을 입력하세요"
+                    value={this.state.name}
+                    onChange={(e) => this.setState({ name: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputGPrice">
+                    상품가격 <small>(숫자만 입력)</small>{" "}
+                    <strong className="required"></strong>
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="상품가격을 입력하세요"
+                    value={this.state.amount}
+                    onChange={(e) => this.setState({ amount: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputGPrice">
+                    정원 <small>(숫자만 입력)</small>{" "}
+                    <strong className="required"></strong>
+                  </label>
+                  <div className="input-group mb-3">
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="최소"
+                      value={this.state.minPersonnel}
+                      onChange={(e) =>
+                        this.setState({ minPersonnel: e.target.value })
+                      }
+                    />
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">~</span>
+                    </div>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="최대"
+                      value={this.state.maxPersonnel}
+                      onChange={(e) =>
+                        this.setState({ maxPersonnel: e.target.value })
+                      }
+                    />
+                    <div className="input-group-append">
+                      <span className="input-group-text">명</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputGPrice">
+                    운항 시간 <strong className="required"></strong>
+                  </label>
+                  <div className="input-group mb-3">
+                    <select
+                      ref={this.fishingStartTime}
+                      className="form-control"
+                      onChange={(e) =>
+                        this.setState({
+                          fishingStartTime: e.target.selectedOptions[0].value,
+                        })
+                      }
+                    >
+                      <option value={""}>시작시간</option>
+                      {this.arr_hour.map((data, index) => (
+                        <option
+                          value={
+                            data < 10
+                              ? "0".concat(data).concat("00")
+                              : "".concat(data).concat("00")
+                          }
+                        >
+                          {data < 12 ? "오전" : "오후"}
+                          {data}시
+                        </option>
+                      ))}
+                    </select>
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">부터</span>
+                    </div>
+                    <select
+                      ref={this.fishingEndTime}
+                      className="form-control"
+                      onChange={(e) =>
+                        this.setState({
+                          fishingEndTime: e.target.selectedOptions[0].value,
+                        })
+                      }
+                    >
+                      <option>종료시간</option>
+                      {this.arr_hour.map((data, index) => (
+                        <option
+                          value={
+                            data < 10
+                              ? "0".concat(data).concat("00")
+                              : "".concat(data).concat("00")
+                          }
+                        >
+                          {data < 12 ? "오전" : "오후"}
+                          {data}시
+                        </option>
+                      ))}
+                    </select>
+                    <div className="input-group-append">
+                      <span className="input-group-text">까지</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="space mb-4"></div>
+                <div className="form-group">
+                  <label htmlFor="InputGPrice" className="d-block">
+                    상태 <strong className="required"></strong>
+                  </label>
+                  <label className="control radio">
+                    <input
+                      ref={this.isUseTrue}
+                      name={"isUse"}
+                      type="radio"
+                      className="add-contrast"
+                      data-role="collar"
+                      defaultChecked={this.state.isUse}
+                      onChange={(e) => {
+                        if (e.target.checked) this.setState({ isUse: true });
+                      }}
+                    />
+                    <span className="control-indicator"></span>
+                    <span className="control-text">판매</span>
+                  </label>{" "}
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                  <label className="control radio">
+                    <input
+                      ref={this.isUseFalse}
+                      name={"isUse"}
+                      type="radio"
+                      className="add-contrast"
+                      data-role="collar"
+                      defaultChecked={!this.state.isUse}
+                      onChange={(e) => {
+                        if (e.target.checked) this.setState({ isUse: false });
+                      }}
+                    />
+                    <span className="control-indicator"></span>
+                    <span className="control-text">대기</span>
+                  </label>
+                </div>
+                <div className="space mt-0 mb-4"></div>
+                <div className="form-group">
+                  <a
+                    className="btn btn btn-round-grey btn-xs-round float-right"
+                    onClick={this.selectAllSpecies}
+                  >
+                    전체선택
+                  </a>
+                  <label htmlFor="InputGPrice" className="d-block">
+                    주요어종 <strong className="required"></strong>
+                  </label>
+                  {this.state.arr_species.map((data, index) => (
+                    <div className="row" key={index}>
+                      {data.map((item, index2) => (
+                        <div className="col" key={index2}>
+                          {item["code"] !== null && (
+                            <label className="control checkbox">
+                              <input
+                                name={"check-species"}
+                                type="checkbox"
+                                className="add-contrast"
+                                data-role="collar"
+                                data-value={item["code"]}
+                                onChange={(e) =>
+                                  this.selectSpecies(
+                                    item["code"],
+                                    e.target.checked
+                                  )
+                                }
+                              />
+                              <span className="control-indicator"></span>
+                              <span className="control-text">
+                                {item["codeName"]}
+                              </span>
+                            </label>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <div className="space mb-4"></div>
+                <div className="form-group">
+                  <label htmlFor="InputGPrice" className="d-block">
+                    조업일 선택 <strong className="required"></strong>
+                  </label>
+                  <Calendar
+                    ref={this.calendar}
+                    isMultiple={true}
+                    selected={this.state.fishingDates}
+                    onChange={(e) => {
+                      const selected = e["selected"];
+                      const fishingDates = [];
+                      for (let date of selected) {
+                        fishingDates.push(date.substr(0, 10));
+                      }
+                      this.setState({ fishingDates });
+                    }}
+                  />
+                </div>
+                <div className="space mb-4"></div>
+                <div className="form-group">
+                  <div className="row no-gutters align-items-center">
+                    <div className="col">
+                      <label className="d-block">
+                        예약시 위치 선정 <strong className="required"></strong>
+                      </label>
+                    </div>
+                    <div className="col setwrap">
+                      <nav>
+                        <div
+                          className="nav nav-tabs btn-set"
+                          id="nav-tab"
+                          role="tablist"
+                        >
+                          <a
+                            ref={this.positionSelectTrue}
+                            className="nav-link active btn btn-on"
+                            id="nav-home-tab"
+                            data-toggle="tab"
+                            role="tab"
+                            aria-controls="nav-on"
+                            aria-selected="true"
+                            onClick={() =>
+                              this.setState({ positionSelect: true })
+                            }
+                          >
+                            ON
+                          </a>
+                          <a
+                            ref={this.positionSelectFalse}
+                            className="nav-link btn btn-off"
+                            id="nav-profile-tab"
+                            data-toggle="tab"
+                            role="tab"
+                            aria-controls="nav-off"
+                            aria-selected="false"
+                            onClick={() =>
+                              this.setState({ positionSelect: false })
+                            }
+                          >
+                            OFF
+                          </a>
+                        </div>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+                <div className="space mt-0 mb-4"></div>
+                <div className="form-group">
+                  <label htmlFor="InputGPrice" className="d-block">
+                    예약 확정 방법 <strong className="required"></strong>
+                  </label>
+                  <label className="control radio">
+                    <input
+                      ref={this.reserveTypeAuto}
+                      name={"reserveType"}
+                      type="radio"
+                      className="add-contrast"
+                      data-role="collar"
+                      defaultChecked={this.state.reserveType === "auto"}
+                      onChange={(e) => {
+                        if (e.target.checked)
+                          this.setState({ reserveType: "auto" });
+                      }}
+                    />
+                    <span className="control-indicator"></span>
+                    <span className="control-text">자동 확정</span>
+                  </label>{" "}
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                  <label className="control radio">
+                    <input
+                      ref={this.reserveTypeApproval}
+                      name={"reserveType"}
+                      type="radio"
+                      className="add-contrast"
+                      data-role="collar"
+                      onChange={(e) => {
+                        if (e.target.checked)
+                          this.setState({ reserveType: "approval" });
+                      }}
+                    />
+                    <span className="control-indicator"></span>
+                    <span className="control-text">선장 수동 확정</span>
+                  </label>
+                </div>
+                <div className="space mt-0 mb-4"></div>
+              </form>
+              <p className="clearfix">
+                <br />
+                <br />
+              </p>
+            </div>
+            <div className="fixed-bottom">
+              <div className="row no-gutters">
+                <div className="col-12">
+                  <a
+                    onClick={this.onSubmit}
+                    className="btn btn-primary btn-lg btn-block"
+                  >
+                    확인
+                  </a>
+                </div>
+              </div>
+            </div>
+          </React.Fragment>
+        );
+      }
+    }
+  )
+);
