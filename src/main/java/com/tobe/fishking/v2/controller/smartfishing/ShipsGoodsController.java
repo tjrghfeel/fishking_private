@@ -341,27 +341,14 @@ public class ShipsGoodsController {
         return response;
     }
 
-    @ApiOperation(value = "갯바위 리스트 ", notes = "id로 갯바위 정보를 얻습니다"  +
-            "\n data: 갯바위 포인트 [{" +
-            "\n     id: 갯바위 id" +
-            "\n     name: 갯바위 명" +
-            "\n     address: 갯바위의 주소" +
-            "\n     latitude: 갯바위의 위도" +
-            "\n     longitude: 갯바위의 경도" +
-            "\n     points: 해당 갯바위의 포인트 리스트 [{ " +
-            "\n         latitude: 포인트의 위도" +
-            "\n         longitude: 포인트의 경도" +
-            "\n         id: 포인트 id " +
-            "\n     }, ... ]" +
-            "\n }, ... ]" +
-            "seaRockId%5B%5D=5&seaRockId%5B%5D=3 와 같이 urlencoding 해서 보내주세요")
+    @ApiOperation(value = "갯바위 등록 ", notes = "갯바위 등록")
     @PostMapping("/searocks/add")
     public Map<String, Object> addSeaRock(
             @RequestHeader(name = "Authorization") String token,
             PlaceDTO placeDTO) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
-            Long placeId = fishingShipService.addSeaRock(placeDTO, token);
+            Long placeId = placesService.addSeaRock(placeDTO, token);
             result.put("result", "success");
             result.put("id", placeId);
             return result;

@@ -7,7 +7,11 @@ import com.tobe.fishking.v2.entity.fishing.PlacePoint;
 import com.tobe.fishking.v2.entity.fishing.Places;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.model.fishing.PlacesDTO;
+import com.tobe.fishking.v2.model.smartfishing.PlaceDTO;
+import com.tobe.fishking.v2.model.smartfishing.PlacePointDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
@@ -112,9 +116,39 @@ public class PlacesService {
     }
 
     @Transactional
-    public Long addSeaRocks() {
-        return -1L;
-    }
+    public Long addSeaRock(PlaceDTO dto, String token) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+        Places places = Places.builder()
+                .placeName(dto.getName())
+                .sido(dto.getSido())
+                .sigungu(dto.getSigungu())
+                .dong(dto.getDong())
+                .address(dto.getAddress())
+                .location(new Location(dto.getLatitude(), dto.getLongitude()))
+                .averageDepth(dto.getAverageDepth())
+                .floorMaterial(dto.getFloorMaterial())
+                .tideTime(dto.getTideTime())
+                .introduce(dto.getIntroduce())
+                .open(dto.getIsOpen())
+                .createdBy(member)
+                .modifiedBy(member)
+                .build();
+        placesRepo.save(places);
 
+        int number = 0;
+        for (PlacePointDTO pointDTO : dto.getPoints()) {
+            number += 1;
+            placePointRepository.save(
+                    PlacePoint.builder()
+                            .place(places)
+                            .location(new Location(pointDTO.getLatitude(), pointDTO.getLongitude()))
+                            .number(number)
+                            .member(member)
+                            .build()
+            );
+        }
+        return places.getId();
+    }
 
 }
