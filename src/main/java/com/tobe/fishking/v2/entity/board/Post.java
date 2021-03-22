@@ -66,7 +66,7 @@ public class Post extends BaseTime {
     private Member author;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'작성자이름', 'USER', DBO, 'TABLE', post, 'COLUMN',  writer_name
-    @Convert(converter = StringConverter.class)
+//    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(200)  comment '작성자' ",  nullable = false)   //1:1문의
     private String authorName;
 
@@ -112,6 +112,9 @@ public class Post extends BaseTime {
     @Column(columnDefinition = "bit comment '1:1문의의 경우 답변여부'")
     private Boolean isReplied;
 
+    @Column(columnDefinition = "bit comment '삭제여부'")
+    private Boolean isDeleted;
+
     public Post(){
 
     }
@@ -147,4 +150,6 @@ public class Post extends BaseTime {
         isSecret = postDTO.getIsSecret();
 
     }
+
+    public void delete(){this.isDeleted = true;}
 }

@@ -1,6 +1,8 @@
 package com.tobe.fishking.v2.controller.board;
 
 import com.tobe.fishking.v2.addon.UploadService;
+import com.tobe.fishking.v2.enums.board.QuestionType;
+import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.board.*;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,17 +55,36 @@ public class PostController {
             "   contents : faq 내용\n" +
             "   authorId : 작성자 id\n" +
             "   createdBy : 글 생성자 id\n" +
-            "   modifiedBy : 글 수정자 id\n")
+            "   modifiedBy : 글 수정자 id\n" +
+            "   date : 작성일\n")
     @GetMapping("/faq/{page}")
-    public Page<FAQDto> getFAQList(@PathVariable("page") int page,@RequestParam("role") String role) throws EmptyListException {
-//        return postService.getFAQList(page,role);
-        Page<FAQDto> faq = postService.getFAQList(page,role);
+    public Page<FAQDto> getFAQList(
+            @PathVariable("page") int page,
+            @RequestParam("role") String role,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "questionType",required = false) String questionType
+    ) throws EmptyListException {
+        try{if(questionType!=null) {
+            QuestionType.valueOf(questionType);
+        }}catch(Exception e){throw new RuntimeException("questionType의 값으로는 'order', 'cancel', 'accuse'만 가능합니다.");}
+        Page<FAQDto> faq = postService.getFAQList(page,role,title,questionType);
         if (faq.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
             return faq;
         }
     }
+    /*faq 상세보기*/
+    @ApiOperation(value="faq 상세")
+    @GetMapping("/faq/detail/{id}")
+    public FAQDto getFAQ(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("id") Long postId
+    ) throws ResourceNotFoundException {
+        return postService.getFAQ(token, postId);
+    }
+
+
 
     /*1:1문의내역 리스트 조회*/
     @ApiOperation(value = "1:1문의내역 리스트 조회", notes = "자신이 문의한 내역을 볼 수 있다. \n" +
@@ -119,13 +142,20 @@ public class PostController {
             "   role : String / 어떤 유형의 회원에 대한 faq인지 결정을 위한 필드 / member : 일반회원, shipowner : 업주회원" +
             "- 필드 ) \n" +
             "   id : 공지사항 글 id\n" +
-            "   channelType : 공지사항 유형 / order(\"예약결제\"), cancel(\"취소\")\n" +
+            "   channelType : 공지사항 유형 / (\"공지\"), (\"이벤트\")\n" +
             "   title : 공지사항 제목\n" +
             "   date : 공지사항 작성일\n")
     @GetMapping("/notice/{page}")
-    public Page<NoticeDtoForPage> getNoticeList(@PathVariable("page") int page, @RequestParam("role") String role) throws EmptyListException {
-//        return postService.getNoticeList(page,role);
-        Page<NoticeDtoForPage> notices = postService.getNoticeList(page,role);
+    public Page<NoticeDtoForPage> getNoticeList(
+            @PathVariable("page") int page,
+            @RequestParam("role") String role,
+            @RequestParam(value = "channelType",required = false) String channelType,
+            @RequestParam(value = "title", required = false) String title
+    ) throws EmptyListException {
+        try{if(channelType!=null) {
+            ChannelType.valueOf(channelType);
+        }}catch(Exception e){throw new RuntimeException("channelType의 값으로는 'notice', 'event'만 가능합니다.");}
+        Page<NoticeDtoForPage> notices = postService.getNoticeList(page,role,channelType, title);
         if (notices.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
@@ -139,6 +169,7 @@ public class PostController {
             "- 필드 )\n" +
             "   id : 공지사항 글 id\n" +
             "   channelType : 공지사항 유형 / order(\"예약결제\"), cancel(\"취소\")\n" +
+            "   channelTypeCode : channelType공지사항의 키값\n" +
             "   title : 공지사항 제목\n" +
             "   contents : 공지사항 내용 \n" +
             "   fileList : 파일 download url 리스트\n")
@@ -226,7 +257,7 @@ public class PostController {
             "       ㄴ shipowner : 업체회원\n"+
             "")
     @PostMapping("/post/notice")
-    public Long writeNotice(@RequestBody NoticeWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+    public Long writeNotice(@RequestBody @Valid NoticeWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
         return postService.writeNotice(dto,token);
     }
 
@@ -282,6 +313,7 @@ public class PostController {
             "       ㄴ shipowner : 업체회원\n")
     @PutMapping("/post/faq")
     public Long updateFaq(@RequestBody FaqUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        if(dto.getFileList()==null){dto.setFileList(new Long[0]);}
         return postService.updateFaq(dto,token);
     }
     /*공지사항 수정*/
@@ -299,6 +331,7 @@ public class PostController {
             "       ㄴ shipowner : 업체회원\n")
     @PutMapping("/post/notice")
     public Long updateNotice(@RequestBody NoticeUpdateDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        if(dto.getFileList()==null){dto.setFileList(new Long[0]);}
         return postService.updateNotice(dto,token);
     }
 

@@ -15,6 +15,8 @@ public interface NoticeDetailDto {
     Long getId();
     @Value("#{@mapperUtility.transEnumChannelType(target.channelType)}")
     String getChannelType();
+    @Value("#{@mapperUtility.transEnumChannelTypeKey(target.channelType)}")
+    String getChannelTypeCode();
     String getTitle();
     LocalDateTime getDate();
     String getContents();

@@ -107,11 +107,12 @@ public class Company extends BaseTime {  //선상
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'Skb계정', 'USER', DBO, 'TABLE', company, 'COLUMN',  skb_account
-    @Convert(converter = StringConverter.class)
+
     @Column(columnDefinition = "varchar(50) comment 'Skb계정' ")
     private String  skbAccount;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'Skb패스워드', 'USER', DBO, 'TABLE', company, 'COLUMN',  skb_password
+    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(150) comment 'Skb패스워드' ")
     private String skbPassword;
 

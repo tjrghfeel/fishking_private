@@ -35,19 +35,45 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   p.contents contents, " +
             "   p.author_id authorId, " +
             "   p.created_by createdBy, " +
-            "   p.modified_by modifiedBy " +
+            "   p.modified_by modifiedBy, " +
+            "   p.created_date date  " +
             "from post p " +
             "where p.board_id = (select b.id from board b where b.board_type = 3) " +
             "   and p.target_role = :role " +
+            "   and if(:title is null, true, p.title like %:title%) " +
+            "   and if(:questionType is null, true, p.question_type = :questionType) " +
+            "   and p.is_deleted = false "+
             "order by p.question_type ",
             countQuery = "select p.id " +
                     "from post p " +
                     "where p.board_id = (select b.id from board b where b.board_type = 3) " +
                     "   and p.target_role = :role " +
+                    "   and if(:title is null, true, p.title like %:title%) " +
+                    "   and if(:questionType is null, true, p.question_type = :questionType) " +
+                    "   and p.is_deleted = false "+
                     "order by p.question_type ",
             nativeQuery = true
     )
-    Page<FAQDto> findAllFAQList(@Param("role") Boolean role, Pageable pageable);
+    Page<FAQDto> findAllFAQList(
+            @Param("role") Boolean role,
+            @Param("title") String title,
+            @Param("questionType") Integer questionType,
+            Pageable pageable
+    );
+    @Query(
+            value = "select " +
+                    "   p.id id, " +
+                    "   p.question_type questionType, " +
+                    "   p.title title, " +
+                    "   p.contents contents, " +
+                    "   p.author_id authorId, " +
+                    "   p.created_date date, " +
+                    "   p.target_role targetRole " +
+                    "from post p " +
+                    "where p.id = :postId ",
+            nativeQuery = true
+    )
+    FAQDto findFAQDetail(@Param("postId") Long postId);
 
     /*QnA 리스트 조회*/
     @Query(value = "" +
@@ -59,11 +85,13 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "from post p " +
             "where p.board_id = (select b.id from board b where b.board_type = 2) " +
             "   and p.author_id = :member " +
+            "   and p.is_deleted = false "+
             "order by  p.created_date desc",
             countQuery = "select p.id " +
                     "from post p " +
                     "where p.board_id = (select b.id from board b where b.board_type = 2) " +
                     "   and p.author_id = :member " +
+                    "   and p.is_deleted = false "+
                     "order by p.created_date desc",
             nativeQuery = true
     )
@@ -103,10 +131,12 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
 //            "   (select group_concat(f2.file_url separator ',') from files f2 " +
 //            "       where f2.file_publish = 2 and f2.pid = rp.id and f2.is_delete = false group by f2.pid) replyFilePathList " +
             "from post p left outer join post rp on rp.parent_id = p.id " +
-            "where p.id = :postId ",
+            "where p.id = :postId " +
+            "   and p.is_deleted = false ",
             countQuery = "select p.id " +
                     "from post p join post rp on rp.parent_id = p.id " +
-                    "where p.id = :postId ",
+                    "where p.id = :postId " +
+                    "   and p.is_deleted = false ",
             nativeQuery = true
     )
     QnADetailDto findQnADetailByPostId(@Param("postId") Long postId);
@@ -121,11 +151,27 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "from post p " +
             "where p.board_id = 74 " +
             "   and p.target_role = :role " +
+            "   and if(:channelType is null, true, p.channel_type = :channelType) " +
+            "   and if(:title is null, true, p.title like %:title%) " +
+            "   and p.is_deleted = false " +
             "order by p.created_date desc, p.channel_type ",
-            countQuery = "select p.id from post p where p.board_id = 74 and p.target_role = :role order by p.created_date desc, p.channel_type ",
+            countQuery = "select p.id " +
+                    "from post p " +
+                    "where " +
+                    "p.board_id = 74 " +
+                    "and p.target_role = :role " +
+                    "   and if(:channelType is null, true, p.channel_type = :channelType) " +
+                    "   and if(:title is null, true, p.title like %:title%) " +
+                    "   and p.is_deleted = false " +
+                    "order by p.created_date desc, p.channel_type ",
             nativeQuery = true
     )
-    Page<NoticeDtoForPage> findNoticeList(@Param("role") Boolean role, Pageable pageable);
+    Page<NoticeDtoForPage> findNoticeList(
+            @Param("role") Boolean role,
+            @Param("channelType") Integer channelType,
+            @Param("title") String title,
+            Pageable pageable
+    );
 
     /* 공지사항 detail 조회*/
     @Query(value = "" +
@@ -146,10 +192,12 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   p.created_by createdBy, " +
             "   p.modified_by modifiedBy " +
             "from post p left outer join post rp on rp.parent_id = p.id " +
-            "where p.id = :postId ",
+            "where p.id = :postId " +
+            "   and p.is_deleted = false ",
             countQuery = "select p.id " +
                     "from post p join post rp on rp.parent_id = p.id " +
-                    "where p.id = :postId ",
+                    "where p.id = :postId " +
+                    "   and p.is_deleted=false ",
             nativeQuery = true
     )
     NoticeDetailDto findNoticeDetailByPostId(@Param("postId") Long postId);
