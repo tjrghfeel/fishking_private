@@ -11,6 +11,7 @@ import com.tobe.fishking.v2.model.fishing.AddShipDTO;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.model.response.UpdateShipResponse;
+import com.tobe.fishking.v2.model.smartfishing.PlaceDTO;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.fishking.GoodsService;
 import com.tobe.fishking.v2.service.fishking.PlacesService;
@@ -338,5 +339,36 @@ public class ShipsGoodsController {
             response.put("data", rocks);
         }
         return response;
+    }
+
+    @ApiOperation(value = "갯바위 리스트 ", notes = "id로 갯바위 정보를 얻습니다"  +
+            "\n data: 갯바위 포인트 [{" +
+            "\n     id: 갯바위 id" +
+            "\n     name: 갯바위 명" +
+            "\n     address: 갯바위의 주소" +
+            "\n     latitude: 갯바위의 위도" +
+            "\n     longitude: 갯바위의 경도" +
+            "\n     points: 해당 갯바위의 포인트 리스트 [{ " +
+            "\n         latitude: 포인트의 위도" +
+            "\n         longitude: 포인트의 경도" +
+            "\n         id: 포인트 id " +
+            "\n     }, ... ]" +
+            "\n }, ... ]" +
+            "seaRockId%5B%5D=5&seaRockId%5B%5D=3 와 같이 urlencoding 해서 보내주세요")
+    @PostMapping("/searocks/add")
+    public Map<String, Object> addSeaRock(
+            @RequestHeader(name = "Authorization") String token,
+            PlaceDTO placeDTO) throws ResourceNotFoundException {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Long placeId = fishingShipService.addSeaRock(placeDTO, token);
+            result.put("result", "success");
+            result.put("id", placeId);
+            return result;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "갯바위 등록에 실패했습니다.");
+        }
     }
 }

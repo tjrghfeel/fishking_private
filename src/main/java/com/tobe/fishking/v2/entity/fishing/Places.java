@@ -35,6 +35,9 @@ public class Places extends BaseTime {
     @Column(columnDefinition = "varchar(30)   comment '시군구'  ")
     private String sigungu;
 
+    @Column(columnDefinition = "varchar(30)   comment '읍면동'  ")
+    private String dong;
+
     @Column(columnDefinition = "varchar(200)   comment '주소'  ")
     private String address;
 
