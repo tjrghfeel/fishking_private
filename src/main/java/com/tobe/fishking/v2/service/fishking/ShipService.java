@@ -65,7 +65,6 @@ public class ShipService {
     private final OrderDetailsRepository orderDetailsRepository;
     private final RideShipRepository rideShipRepository;
     private final GoodsRepository goodsRepository;
-    private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final FileRepository fileRepository;
     private final ReviewRepository reviewRepository;
     private final HttpRequestService httpRequestService;
@@ -615,52 +614,6 @@ public class ShipService {
         }
         response.putIfAbsent("cameraData", null);
         return response;
-    }
-
-    @Transactional
-    public Long addGood(AddGoods addGoods, String token) throws ResourceNotFoundException {
-        Member member = memberRepo.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: " + token));
-        Ship ship = shipRepo.getOne(addGoods.getShipId());
-
-        List<CommonCode> species = new ArrayList<>();
-        for (String species_code : addGoods.getSpecies()) {
-            CommonCode commonCode = codeRepository.getByCode(species_code);
-            species.add(commonCode);
-        }
-
-        Goods goods = Goods.builder()
-                .ship(ship)
-                .member(member)
-                .addGoods(addGoods)
-                .fishSpecies(species)
-                .build();
-        goodsRepository.save(goods);
-
-        for (String fishingDate : addGoods.getFishingDates()) {
-            GoodsFishingDate goodsFishingDate = GoodsFishingDate.builder()
-                    .goods(goods)
-                    .fishingDateString(fishingDate)
-                    .member(member)
-                    .build();
-            goodsFishingDateRepository.save(goodsFishingDate);
-        }
-        return goods.getId();
-    }
-
-    @Transactional
-    public boolean updateGoods(Long goodsId, AddGoods addGoods, Member member) {
-        Goods goods = goodsRepository.getOne(goodsId);
-        Ship ship = shipRepo.getOne(addGoods.getShipId());
-        List<CommonCode> species = new ArrayList<>();
-        for (String species_code : addGoods.getSpecies()) {
-            CommonCode commonCode = codeRepository.getByCode(species_code);
-            species.add(commonCode);
-        }
-        goods.updateGoods(ship, member, addGoods, species);
-        goodsRepository.save(goods);
-
-        return true;
     }
 
     @Transactional

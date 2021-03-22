@@ -129,7 +129,7 @@ public class ShipsGoodsController {
             AddGoods addGoods) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
-            Long goodsId = shipService.addGood(addGoods, token);
+            Long goodsId = goodsService.addGood(addGoods, token);
             result.put("result", "success");
             result.put("id", goodsId);
             return result;
@@ -149,7 +149,7 @@ public class ShipsGoodsController {
         Map<String, Object> result = new HashMap<>();
         Member member = memberService.getMemberBySessionToken(token);
         try {
-            Boolean success = shipService.updateGoods(goodsId, addGoods, member);
+            Boolean success = goodsService.updateGoods(goodsId, addGoods, member);
             result.put("result", "success");
             result.put("id", goodsId);
             return result;
