@@ -352,7 +352,7 @@ a.skyblue:active {
 }
 .form-group .form-control {
 	border-radius:0;
-	font-family: 'NanumSquare', 'Malgun Gothic', '맑은 고딕', Helvetica, Arial, sans-serif !important;
+	font-family: 'NanumSquare', 'Malgun Gothic', '맑은 고딕', Helvetica, Arial, sans-serif;
 	font-size:13px;
 }
 .form-group label {
@@ -370,7 +370,7 @@ a.skyblue:active {
   border-radius: 0rem;
 }
 input[type="password"] {
-	font-family: Arial, sans-serif;
+	font-family: Arial, sans-serif !important;
 }
 .form-control::-moz-placeholder {
 	font-family: 'NanumSquare', 'Malgun Gothic', '맑은 고딕', Helvetica, Arial, sans-serif !important;
