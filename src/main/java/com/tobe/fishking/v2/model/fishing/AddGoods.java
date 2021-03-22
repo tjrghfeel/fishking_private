@@ -39,7 +39,7 @@ public class AddGoods {
     private @Valid Boolean positionSelect;
     @ApiParam(value = "추가운행여부")
     private @Valid Boolean extraRun;
-    @ApiParam(value = "추가 운항 최소 인원 수 ")
+    @ApiParam(value = "추가 운행 최소 인원 수 ")
     private @Valid Integer extraPersonnel;
     @ApiParam(value = "최대 선박 수 ")
     private @Valid Integer extraShipNumber;

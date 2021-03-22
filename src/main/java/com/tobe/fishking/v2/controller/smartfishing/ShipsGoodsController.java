@@ -123,7 +123,7 @@ public class ShipsGoodsController {
     }
 
     @ApiOperation(value = "상품등록", notes = "상품등록")
-    @PutMapping("/goods/add")
+    @PostMapping("/goods/add")
     public Map<String, Object> addGoods(
             @RequestHeader(name = "Authorization") String token,
             AddGoods addGoods) throws ResourceNotFoundException {
@@ -144,7 +144,7 @@ public class ShipsGoodsController {
     @PutMapping("/goods/update/{goodsId}")
     public Map<String, Object> updateGoods(
             @RequestHeader(name = "Authorization") String token,
-            AddGoods addGoods,
+            @RequestBody AddGoods addGoods,
             @PathVariable Long goodsId) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         Member member = memberService.getMemberBySessionToken(token);
