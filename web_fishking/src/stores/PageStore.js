@@ -71,8 +71,19 @@ const PageStore = new (class {
       null;
     if (accessToken !== null) {
       localStorage.setItem(`@accessToken`, accessToken);
-      this.loggedIn = true;
+      // this.loggedIn = true;
     }
+
+    const cust =
+      localStorage.getItem(`@accessToken_cust`) ||
+      sessionStorage.getItem(`@accessToken_cust`) ||
+      null;
+    const smartfishing =
+      localStorage.getItem(`@accessToken_smartfishing`) ||
+      sessionStorage.getItem(`@accessToken_smartfishing`) ||
+      null;
+    if (cust === null && smartfishing === null) this.loggedIn = false;
+    else this.loggedIn = true;
   };
   setScrollEvent = (onScroll, element) => {
     if (element) {
