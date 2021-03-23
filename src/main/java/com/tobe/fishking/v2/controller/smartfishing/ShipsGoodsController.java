@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.fishing.AddGoods;
 import com.tobe.fishking.v2.model.fishing.AddShipDTO;
+import com.tobe.fishking.v2.model.fishing.UpdateGoods;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.model.response.UpdateShipResponse;
@@ -19,6 +20,7 @@ import com.tobe.fishking.v2.service.fishking.ShipService;
 import com.tobe.fishking.v2.service.smartfishing.FishingShipService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -131,10 +133,12 @@ public class ShipsGoodsController {
     @PostMapping("/goods/add")
     public Map<String, Object> addGoods(
             @RequestHeader(name = "Authorization") String token,
+            @RequestParam(name = "species[]") List<String> species,
+            @RequestParam(name = "fishingDates[]") List<String> fishingDates,
             AddGoods addGoods) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
-            Long goodsId = goodsService.addGood(addGoods, token);
+            Long goodsId = goodsService.addGood(addGoods, token, species, fishingDates);
             result.put("result", "success");
             result.put("id", goodsId);
             return result;
@@ -149,12 +153,12 @@ public class ShipsGoodsController {
     @PutMapping("/goods/update/{goodsId}")
     public Map<String, Object> updateGoods(
             @RequestHeader(name = "Authorization") String token,
-            @RequestBody AddGoods addGoods,
+            @RequestBody UpdateGoods updateGoods,
             @PathVariable Long goodsId) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         Member member = memberService.getMemberBySessionToken(token);
         try {
-            Boolean success = goodsService.updateGoods(goodsId, addGoods, member);
+            Boolean success = goodsService.updateGoods(goodsId, updateGoods, member);
             result.put("result", "success");
             result.put("id", goodsId);
             return result;
@@ -223,7 +227,7 @@ public class ShipsGoodsController {
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등*.록에 실패했습니다.");
         }
     }
 

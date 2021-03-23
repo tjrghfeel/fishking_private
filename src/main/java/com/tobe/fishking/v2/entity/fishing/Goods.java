@@ -1,34 +1,26 @@
 package com.tobe.fishking.v2.entity.fishing;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.enums.fishing.FishSpecies;
-import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.Meridiem;
-//import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import com.tobe.fishking.v2.model.fishing.AddGoods;
-import com.tobe.fishking.v2.model.fishing.ParamsGoods;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.tobe.fishking.v2.model.fishing.UpdateGoods;
+import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@AllArgsConstructor
 @Table(name = "goods") //상품정보
 public class Goods extends BaseTime {
-
 
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', goods, 'COLUMN',  id
     @Id
@@ -86,7 +78,7 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'마감여부', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_close
     @Column(nullable = false, columnDefinition = "bit default 0 comment '마감여부'  ")
-    private Boolean isClose;
+    private Boolean isClose = false;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'예약인수', 'USER', DBO, 'TABLE', goods, 'COLUMN',  notice
     @Column(columnDefinition = "float comment '예약인수'  ")
@@ -98,16 +90,16 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'초보가능여부', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_close
     @Column(nullable = false, columnDefinition = "bit default 1 comment  '초보가능여부'") //comment '초보가능여부'  ")
-    private Boolean isBeginnerPossible;
+    private Boolean isBeginnerPossible = true;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(nullable = false, columnDefinition = "bit default 0  comment  '상태(노출여부)'  ")
-    private Boolean isVisible;
+    private Boolean isVisible = true;
 
     @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_fish_species", columnDefinition = " comment  '상품 어종'  ")
     @LazyCollection(LazyCollectionOption.FALSE)
-    @Builder.Default
+    @JsonBackReference
     private List<CommonCode> fishSpecies = new ArrayList<>();
 
 
@@ -119,7 +111,6 @@ public class Goods extends BaseTime {
     // EXEC sp_addextendedproperty 'MS_Description', N'상품정보-미끼목록', 'USER', DBO, 'TABLE', goods, 'COLUMN',  lure
     @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_fish_lure ", columnDefinition = " comment  '루어낚시'  ")
-    @Builder.Default
     private List<CommonCode> fishingLures = new ArrayList<>();
 
     // EXEC sp_addextendedproperty 'MS_Description', N'적립포인트', 'USER', DBO, 'TABLE', goods, 'COLUMN',  accumulate_point
@@ -146,29 +137,26 @@ public class Goods extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'상태(노출여부)', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(nullable = false, columnDefinition = "bit default 1  comment  '사용여부'  ")
-    private Boolean isUse;
+    private Boolean isUse = true;
 
     @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_facility", columnDefinition = " comment  '편의시설'  ")
-    @Builder.Default
     private List<CommonCode> facilities = new ArrayList<>();
 
 
     @ManyToMany(targetEntity = CommonCode.class)
     @JoinColumn(name = "goods_nearby_facility", columnDefinition = " comment  '주변시설'  ")
-    @Builder.Default
     private List<CommonCode> nearbyFacilities = new ArrayList<>();
 
     // EXEC sp_addextendedproperty 'MS_Description', N'추천업체', 'USER', DBO, 'TABLE', ship, 'COLUMN',  is_recommend
     @Column(nullable = false, columnDefinition = "int default 0  comment '추천업체'  ")
-    private Boolean isRecommend;
+    private Boolean isRecommend = false;
 
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name = "created_by", insertable = false, updatable = false, columnDefinition = " bigint not null comment '생성자'")
     private Member createdBy;
-
 
     // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', goods, 'COLUMN',  modified_by
     @ManyToOne
@@ -181,7 +169,6 @@ public class Goods extends BaseTime {
     @ManyToMany(targetEntity = CommonCode.class)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "goods_genres", columnDefinition = " comment  '장르'  ")
-    @Builder.Default
     private List<CommonCode> genres = new ArrayList<>();
 
     @Column(columnDefinition = "int comment '예약타입' ")
@@ -199,7 +186,6 @@ public class Goods extends BaseTime {
 
     @Column(columnDefinition = "int comment '최대 선박 수 ' ")
     private Integer extraShipNumber;
-
 
     @Builder
     public Goods(Ship ship, Member member, AddGoods addGoods, List<CommonCode> fishSpecies) {
@@ -221,40 +207,46 @@ public class Goods extends BaseTime {
         this.modifiedBy = member;
     }
 
-    // 생성자
-    public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {
+    public void setMember(Member member) {
         this.createdBy = member;
-        this.modifiedBy = member;
-        this.name = paramsGoods.getGoodsName();
-//        this.fishingType = paramsGoods.getFishingType();
-        this.fishingDate = paramsGoods.getFishingDate();
-        this.shipStartTime = paramsGoods.getShipStartTime();
-        this.meridiem = paramsGoods.getMeridiem();
-        this.fishingStartTime = paramsGoods.getFishingStartTime();
-        this.fishingEndTime = paramsGoods.getFishingEndTime();
-        this.totalAmount = paramsGoods.getTotalAmount();
-        this.minPersonnel = paramsGoods.getMinPersonnel();
-        this.maxPersonnel = paramsGoods.getMaxPersonnel();
-        this.isClose = paramsGoods.isClose();
-        this.reservationPersonnel = paramsGoods.getReservationPersonnel();
-        this.waitingPersonnel = paramsGoods.getWaitingPersonnel();
-        this.isBeginnerPossible = paramsGoods.isBeginnerPossible();
-        this.isVisible = paramsGoods.isVisible();
-        this.ship = ship;
-
-        //this.fishSpecies = paramsGoods.getFishSpecies();
-        //this.fishingLures = paramsGoods.getFishingLures();
-
-//        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
-//        this.tasteByReview = paramsGoods.getTasteByReview();
-//        this.serviceByReview = paramsGoods.getServiceByReview();
-//        this.cleanByReview = paramsGoods.getCleanByReview();
-        this.accumulatePoint = paramsGoods.getAccumulatePoint();
-        this.notice = paramsGoods.getNotice();
-        this.onSitePurchase = paramsGoods.getOnSitePurchase();
-        this.etc = paramsGoods.getEtc();
-        this.places = places;
     }
+
+//    // 생성자
+//    public Goods(Member member, Ship ship, ParamsGoods paramsGoods) {
+//        this.createdBy = member;
+//        this.modifiedBy = member;
+//        this.name = paramsGoods.getGoodsName();
+////        this.fishingType = paramsGoods.getFishingType();
+//        this.fishingDate = paramsGoods.getFishingDate();
+//        this.shipStartTime = paramsGoods.getShipStartTime();
+//        this.meridiem = paramsGoods.getMeridiem();
+//        this.fishingStartTime = paramsGoods.getFishingStartTime();
+//        this.fishingEndTime = paramsGoods.getFishingEndTime();
+//        this.totalAmount = paramsGoods.getTotalAmount();
+//        this.minPersonnel = paramsGoods.getMinPersonnel();
+//        this.maxPersonnel = paramsGoods.getMaxPersonnel();
+//        this.isClose = paramsGoods.isClose();
+//        this.reservationPersonnel = paramsGoods.getReservationPersonnel();
+//        this.waitingPersonnel = paramsGoods.getWaitingPersonnel();
+//        this.isBeginnerPossible = paramsGoods.isBeginnerPossible();
+//        this.isVisible = paramsGoods.isVisible();
+//        this.ship = ship;
+//
+//        //this.fishSpecies = paramsGoods.getFishSpecies();
+//        //this.fishingLures = paramsGoods.getFishingLures();
+//
+////        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
+////        this.tasteByReview = paramsGoods.getTasteByReview();
+////        this.serviceByReview = paramsGoods.getServiceByReview();
+////        this.cleanByReview = paramsGoods.getCleanByReview();
+//        this.accumulatePoint = paramsGoods.getAccumulatePoint();
+//        this.notice = paramsGoods.getNotice();
+//        this.onSitePurchase = paramsGoods.getOnSitePurchase();
+//        this.etc = paramsGoods.getEtc();
+//        this.places = places;
+//        this.createdBy = member;
+//        this.modifiedBy = member;
+//    }
 
     public void setFishSpecies(List<CommonCode> fishSpecies) {
         this.fishSpecies = fishSpecies;
@@ -264,74 +256,58 @@ public class Goods extends BaseTime {
         this.fishingLures = fishingLures;
     }
 
-    public Goods() {
-
-    }
-
-    public Goods(Member member,  Ship ship,  String name, FishingType fishingType, List<CommonCode> arrFishSpecies ) {
-        this.modifiedBy = member;
-        this.name = name;
-//        this.fishingType = fishingType;
-        this.ship = ship;
-
-    }
-
-
-
-
-
     // 수정시 데이터 처리
-    public Goods setUpdate(Member member, Ship ship, Places places, ParamsGoods paramsGoods) {
+//    public Goods setUpdate(Member member, Ship ship, Places places, ParamsGoods paramsGoods) {
+//
+//        this.modifiedBy = member;
+//
+//        this.name = paramsGoods.getGoodsName();
+////        this.fishingType = paramsGoods.getFishingType();
+//        this.fishingDate = paramsGoods.getFishingDate();
+//        this.shipStartTime = paramsGoods.getShipStartTime();
+//        this.meridiem = paramsGoods.getMeridiem();
+//        this.fishingStartTime = paramsGoods.getFishingStartTime();
+//        this.fishingEndTime = paramsGoods.getFishingEndTime();
+//        this.totalAmount = paramsGoods.getTotalAmount();
+//        this.minPersonnel = paramsGoods.getMinPersonnel();
+//        this.maxPersonnel = paramsGoods.getMaxPersonnel();
+//        this.isClose = paramsGoods.isClose();
+//        this.reservationPersonnel = paramsGoods.getReservationPersonnel();
+//        this.waitingPersonnel = paramsGoods.getWaitingPersonnel();
+//        this.isBeginnerPossible = paramsGoods.isBeginnerPossible();
+//        this.isVisible = paramsGoods.isVisible();
+//        this.ship = ship;
+//
+//        //this.fishSpecies = paramsGoods.getFishSpecies();
+//        //this.fishingLures = paramsGoods.getFishingLures();
+//
+////        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
+////        this.tasteByReview = paramsGoods.getTasteByReview();
+////        this.serviceByReview = paramsGoods.getServiceByReview();
+////        this.cleanByReview = paramsGoods.getCleanByReview();
+//        this.accumulatePoint = paramsGoods.getAccumulatePoint();
+//        this.notice = paramsGoods.getNotice();
+//        this.onSitePurchase = paramsGoods.getOnSitePurchase();
+//        this.etc = paramsGoods.getEtc();
+//        this.places = places;
+//        return this;
+//    }
 
-        this.modifiedBy = member;
-
-        this.name = paramsGoods.getGoodsName();
-//        this.fishingType = paramsGoods.getFishingType();
-        this.fishingDate = paramsGoods.getFishingDate();
-        this.shipStartTime = paramsGoods.getShipStartTime();
-        this.meridiem = paramsGoods.getMeridiem();
-        this.fishingStartTime = paramsGoods.getFishingStartTime();
-        this.fishingEndTime = paramsGoods.getFishingEndTime();
-        this.totalAmount = paramsGoods.getTotalAmount();
-        this.minPersonnel = paramsGoods.getMinPersonnel();
-        this.maxPersonnel = paramsGoods.getMaxPersonnel();
-        this.isClose = paramsGoods.isClose();
-        this.reservationPersonnel = paramsGoods.getReservationPersonnel();
-        this.waitingPersonnel = paramsGoods.getWaitingPersonnel();
-        this.isBeginnerPossible = paramsGoods.isBeginnerPossible();
-        this.isVisible = paramsGoods.isVisible();
+    public void updateGoods(Ship ship, Member member, UpdateGoods updateGoods, List<CommonCode> fishSpecies) {
         this.ship = ship;
-
-        //this.fishSpecies = paramsGoods.getFishSpecies();
-        //this.fishingLures = paramsGoods.getFishingLures();
-
-//        this.totalAvgByReview = paramsGoods.getTotalAvgByReview();
-//        this.tasteByReview = paramsGoods.getTasteByReview();
-//        this.serviceByReview = paramsGoods.getServiceByReview();
-//        this.cleanByReview = paramsGoods.getCleanByReview();
-        this.accumulatePoint = paramsGoods.getAccumulatePoint();
-        this.notice = paramsGoods.getNotice();
-        this.onSitePurchase = paramsGoods.getOnSitePurchase();
-        this.etc = paramsGoods.getEtc();
-        this.places = places;
-        return this;
-    }
-
-    public void updateGoods(Ship ship, Member member, AddGoods addGoods, List<CommonCode> fishSpecies) {
-        this.ship = ship;
-        this.name = addGoods.getName();
-        this.fishingStartTime = addGoods.getFishingStartTime();
-        this.fishingEndTime = addGoods.getFishingEndTime();
-        this.totalAmount = addGoods.getAmount();
-        this.minPersonnel = addGoods.getMinPersonnel();
-        this.maxPersonnel = addGoods.getMaxPersonnel();
-        this.isUse = addGoods.getIsUse();
+        this.name = updateGoods.getName();
+        this.fishingStartTime = updateGoods.getFishingStartTime();
+        this.fishingEndTime = updateGoods.getFishingEndTime();
+        this.totalAmount = updateGoods.getAmount();
+        this.minPersonnel = updateGoods.getMinPersonnel();
+        this.maxPersonnel = updateGoods.getMaxPersonnel();
+        this.isUse = updateGoods.getIsUse();
         this.fishSpecies = fishSpecies;
-        this.reserveType = addGoods.getReserveType().equals("auto") ? ReserveType.auto : ReserveType.approval;
-        this.positionSelect = addGoods.getPositionSelect();
-        this.extraRun = addGoods.getExtraRun();
-        this.extraPersonnel = addGoods.getExtraPersonnel();
-        this.extraShipNumber = addGoods.getExtraShipNumber();
+        this.reserveType = updateGoods.getReserveType().equals("auto") ? ReserveType.auto : ReserveType.approval;
+        this.positionSelect = updateGoods.getPositionSelect();
+        this.extraRun = updateGoods.getExtraRun();
+        this.extraPersonnel = updateGoods.getExtraPersonnel();
+        this.extraShipNumber = updateGoods.getExtraShipNumber();
         this.modifiedBy = member;
     }
 
