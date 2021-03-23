@@ -41,6 +41,9 @@ export default inject(
           fishingDates: [], // 조업일 리스트
           positionSelect: true, // 예약시 위치선정
           reserveType: "auto", // 예약확정방법
+          extraRun: true, // 추가운행여부
+          extraPersonnel: 0, // 추가운행최소인원수
+          extraShipNumber: 0, // 최대선박수
 
           arr_ship: [],
           arr_species: [],
@@ -152,6 +155,9 @@ export default inject(
           fishingDates,
           positionSelect,
           reserveType,
+          extraRun,
+          extraPersonnel,
+          extraShipNumber,
         } = this.state;
         if (shipId === null || shipId === "") {
           ModalStore.openModal("Alert", {
@@ -194,6 +200,25 @@ export default inject(
           return;
         }
 
+        const params = {
+          shipId,
+          name,
+          amount,
+          minPersonnel,
+          maxPersonnel,
+          fishingStartTime,
+          fishingEndTime,
+          isUse,
+          species,
+          fishingDates,
+          positionSelect,
+          reserveType,
+          extraRun,
+          extraPersonnel,
+          extraShipNumber,
+        };
+        console.log(JSON.stringify(params));
+
         let resolve = null;
         if (id !== null) {
           // 수정
@@ -210,10 +235,13 @@ export default inject(
             fishingDates,
             positionSelect,
             reserveType,
+            extraRun,
+            extraPersonnel,
+            extraShipNumber,
           });
         } else {
           // 등록
-          resolve = await APIStore._put(`/v2/api/goods/add`, {
+          resolve = await APIStore._post(`/v2/api/goods/add`, {
             shipId,
             name,
             amount,
@@ -226,6 +254,9 @@ export default inject(
             fishingDates,
             positionSelect,
             reserveType,
+            extraRun,
+            extraPersonnel,
+            extraShipNumber,
           });
         }
 
@@ -564,6 +595,97 @@ export default inject(
                   </label>
                 </div>
                 <div className="space mt-0 mb-4"></div>
+                <div className="form-group">
+                  <div className="row no-gutters align-items-center mb-3">
+                    <div className="col">
+                      <label className="d-block">
+                        추가운행 <strong className="required"></strong>
+                      </label>
+                    </div>
+                    <div className="col setwrap">
+                      <nav>
+                        <div
+                          className="nav nav-tabs btn-set"
+                          id="nav-tab"
+                          role="tablist"
+                        >
+                          <a
+                            className="nav-link active btn btn-on"
+                            id="nav-home-tab"
+                            data-toggle="tab"
+                            role="tab"
+                            aria-controls="nav-on"
+                            aria-selected="true"
+                            onClick={() => this.setState({ extraRun: true })}
+                          >
+                            ON
+                          </a>
+                          <a
+                            className="nav-link btn btn-off"
+                            id="nav-profile-tab"
+                            data-toggle="tab"
+                            role="tab"
+                            aria-controls="nav-off"
+                            aria-selected="false"
+                            onClick={() => this.setState({ extraRun: false })}
+                          >
+                            OFF
+                          </a>
+                        </div>
+                      </nav>
+                    </div>
+                  </div>
+                  {this.state.extraRun && (
+                    <React.Fragment>
+                      <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            선박당 대기자가
+                          </span>
+                        </div>
+                        <div className="input-group-append">
+                          <span className="input-group-text">
+                            <input
+                              type="number"
+                              className="form-control"
+                              placeholder=""
+                              value={this.state.extraPersonnel}
+                              onChange={(e) =>
+                                this.setState({
+                                  extraPersonnel: e.target.value,
+                                })
+                              }
+                            />
+                            명 이상 발생할 경우{" "}
+                            <input
+                              type="number"
+                              className="form-control"
+                              placeholder=""
+                              value={this.state.extraShipNumber}
+                              onChange={(e) =>
+                                this.setState({
+                                  extraShipNumber: e.target.value,
+                                })
+                              }
+                            />{" "}
+                            대까지 추가 운행을 진행하며
+                          </span>
+                        </div>
+                      </div>
+                      <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">출조</span>
+                        </div>
+                        <div className="input-group-append">
+                          <span className="input-group-text">
+                            12시간 이전까지 인원이 차지 않는 경우 해당 선박
+                            운행이 취소됩니다.{" "}
+                          </span>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  )}
+                </div>
               </form>
               <p className="clearfix">
                 <br />

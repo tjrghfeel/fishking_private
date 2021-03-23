@@ -3,19 +3,208 @@ import { inject, observer } from "mobx-react";
 import Components from "../../components";
 const {
   LAYOUT: { NavigationLayout, SmartFishingMainTab },
+  VIEW: { SmartfishingDiaryListItemView, StoryPostListItemView },
 } = Components;
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "APIStore",
+  "ModalStore",
+  "DataStore"
+)(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          arr_searchTarget: [
+            { text: "내용", value: "content" },
+            { text: "제목", value: "title" },
+          ],
+          arr_shipId: [],
+        };
+        this.searchTarget = React.createRef(null);
+        this.searchKey = React.createRef(null);
+        this.shipId = React.createRef(null);
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      async componentDidMount() {
+        const { PageStore, APIStore } = this.props;
+        const restored = PageStore.restoreState({
+          isPending: false,
+          isEnd: false,
+          page: 0,
+          list: [],
+          searchTarget: "content",
+          searchKey: null,
+          shipId: null,
+        });
+        PageStore.setScrollEvent(() => {
+          this.loadPageData(PageStore.state.page + 1);
+        });
+        let isShipListEnd = false;
+        let shipPage = 0;
+        const arr_shipId = [];
+        while (!isShipListEnd) {
+          const resolve = await APIStore._get(
+            `/v2/api/smartfishing/ship/${shipPage}`
+          );
+          if (resolve && resolve["content"] && resolve["content"].length > 0) {
+            for (let item of resolve["content"]) {
+              arr_shipId.push({
+                text: item["shipName"],
+                value: item["id"],
+              });
+            }
+            shipPage = shipPage + 1;
+          } else {
+            isShipListEnd = true;
+          }
+        }
+        this.setState({ arr_shipId });
+        if (!restored) this.loadPageData(0);
+      }
+      initSearchData = () => {
+        const { PageStore } = this.props;
+        PageStore.setState({
+          searchTarget: "content",
+          searchKey: null,
+          shipId: null,
+        });
+        this.searchTarget.current.value = "content";
+        this.searchKey.current.value = "";
+        this.shipId.current.value = "";
+      };
+      loadPageData = async (page = 0) => {
+        const { APIStore, PageStore, ModalStore } = this.props;
+        const {
+          isPending,
+          isEnd,
+          searchTarget,
+          searchKey,
+          shipId,
+        } = PageStore.state;
 
+        if (APIStore.isLoading || isPending || (page > 0 && isEnd)) return;
+
+        PageStore.setState({ isPending: true, page });
+
+        const { content = [], pageable: { pageSize = 0 } = {} } =
+          (await APIStore._get(
+            `/v2/api/smartFishing/fishingDiary/list/${page}`,
+            {
+              searchTarget,
+              searchKey,
+              shipId,
+            }
+          )) || {};
+
+        console.log(JSON.stringify(content));
+
+        if (page === 0) {
+          PageStore.setState({ list: content });
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 100);
+          if (content.length === 0) {
+            ModalStore.openModal("Alert", {
+              body: "조회된 데이터가 없습니다.",
+            });
+          }
+        } else {
+          PageStore.setState({ list: PageStore.state.list.concat(content) });
+        }
+        if (content.length < pageSize) {
+          PageStore.setState({ isEnd: true });
+        } else {
+          PageStore.setState({ isEnd: false });
+        }
+        PageStore.setState({ isPending: false });
+      };
+      onClick = async (item) => {
+        const { PageStore } = this.props;
+        PageStore.storeState();
+        PageStore.push(`/cust/story/diary/detail/${item.id}`);
+      };
+      onClickProfile = async (item) => {
+        const { PageStore } = this.props;
+        PageStore.storeState();
+        PageStore.push(`/cust/member/profile/${item.memberId}`);
+      };
+      onClickLike = async (item) => {
+        const { APIStore, DataStore, PageStore } = this.props;
+        if (item.isLikeTo) {
+          const resolve = await APIStore._delete("/v2/api/loveto", {
+            linkId: item.id,
+            takeType: "fishingDiary",
+          });
+          if (resolve) {
+            const list = DataStore.updateItemOfArrayByKey(
+              PageStore.state.list,
+              "id",
+              item.id,
+              { isLikeTo: false, likeCount: item.likeCount - 1 }
+            );
+            PageStore.setState({ list });
+          }
+        } else {
+          const resolve = await APIStore._post("/v2/api/loveto", {
+            linkId: item.id,
+            takeType: "fishingDiary",
+          });
+          if (resolve) {
+            const list = DataStore.updateItemOfArrayByKey(
+              PageStore.state.list,
+              "id",
+              item.id,
+              { isLikeTo: true, likeCount: item.likeCount + 1 }
+            );
+            PageStore.setState({ list });
+          }
+        }
+      };
+      onClickComment = async (item) => {
+        const { PageStore } = this.props;
+        PageStore.storeState();
+        PageStore.push(`/cust/story/diary/comment/${item.id}`);
+      };
+      onClickScrap = async (item) => {
+        const { APIStore, DataStore, PageStore } = this.props;
+        if (item.isScraped) {
+          const resolve = await APIStore._delete("/v2/api/fishingDiary/scrap", {
+            fishingDiaryId: item.id,
+          });
+          if (resolve) {
+            const list = DataStore.updateItemOfArrayByKey(
+              PageStore.state.list,
+              "id",
+              item.id,
+              { isScraped: false, scrapCount: item.scrapCount - 1 }
+            );
+            PageStore.setState({ list });
+          }
+        } else {
+          const resolve = await APIStore._post("/v2/api/fishingDiary/scrap", {
+            fishingDiaryId: item.id,
+          });
+          if (resolve) {
+            const list = DataStore.updateItemOfArrayByKey(
+              PageStore.state.list,
+              "id",
+              item.id,
+              { isScraped: true, scrapCount: item.scrapCount + 1 }
+            );
+            PageStore.setState({ list });
+          }
+        }
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout title={"조황관리"} showBackIcon={true} />
@@ -25,15 +214,30 @@ export default inject("PageStore")(
               <ul className="nav nav-tabs nav-filter">
                 <li>
                   <div className="input-group keyword">
-                    <select className="custom-select">
-                      <option>제목</option>
-                      <option>내용</option>
+                    <select
+                      ref={this.searchTarget}
+                      className="custom-select"
+                      onChange={(e) =>
+                        PageStore.setState({
+                          searchTarget: e.target.selectedOptions[0].value,
+                        })
+                      }
+                    >
+                      {this.state.arr_searchTarget.map((data, index) => (
+                        <option key={index} value={data["value"]}>
+                          {data["text"]}
+                        </option>
+                      ))}
                     </select>
                     <input
+                      ref={this.searchKey}
                       type="text"
                       className="form-control"
                       placeholder="검색어 입력"
-                      value=""
+                      value={PageStore.state.searchKey}
+                      onChange={(e) =>
+                        PageStore.setState({ searchKey: e.target.value })
+                      }
                     />
                   </div>
                 </li>
@@ -41,124 +245,68 @@ export default inject("PageStore")(
                   <label htmlFor="selPay" className="sr-only">
                     선상명
                   </label>
-                  <select className="form-control" id="selPay">
-                    <option>전체</option>
-                    <option>어복황제3호</option>
-                    <option>어복호</option>
+                  <select
+                    ref={this.shipId}
+                    className="form-control"
+                    onChange={(e) =>
+                      PageStore.setState({
+                        shipId: e.target.selectedOptions[0].value,
+                      })
+                    }
+                  >
+                    <option value={""}>전체</option>
+                    {this.state.arr_shipId.map((data, index) => (
+                      <option key={index} value={data["value"]}>
+                        {data["text"]}
+                      </option>
+                    ))}
                   </select>
                 </li>
                 <li className="full">
                   <p>
-                    <a className="btn btn-primary btn-sm">검색</a>
-                    <a className="btn btn-grey btn-sm">초기화</a>
+                    <a
+                      className="btn btn-primary btn-sm"
+                      onClick={() => this.loadPageData(0)}
+                    >
+                      검색
+                    </a>
+                    <a
+                      className="btn btn-grey btn-sm"
+                      onClick={this.initSearchData}
+                    >
+                      초기화
+                    </a>
                   </p>
                 </li>
               </ul>
             </div>
             <p className="clearfix"></p>
 
-            <div className="container nopadding">
-              <div className="row-story-col ">
-                <div className="col">
-                  <a>
-                    <figure>
-                      <img
-                        src="/assets/smartfishing/img/sample/boat1.jpg"
-                        alt=""
-                      />
-                    </figure>
-                  </a>
-                </div>
-                <div className="col">
-                  <a>
-                    <h5>어복황제3호</h5>
-                    <p>
-                      <img
-                        src="/assets/smartfishing/img/svg/icon-map-grey.svg"
-                        alt=""
-                        className="vam"
-                      />
-                      <small className="grey">경북 포항시 남구</small>
-                    </p>
-                  </a>
-                </div>
-                <div className="col">
-                  <small className="grey">17분전</small>
-                </div>
-              </div>
-              <div className="row-story">
-                <a>
-                  <h6>전남 진도 어복황제3호 8월 17일 오전시간 배조황!!</h6>
-                  <p>
-                    태풍바비가 오기전에 수온이 25도 였는데, 태풍지나가면서
-                    수온이 27.5도…남쪽에서 난류도 같이…{" "}
-                    <a className="grey">더보기</a>
-                  </p>
-                </a>
-                <p className="clearfix-sm"></p>
-                <div
-                  id="carousel-sub"
-                  className="carousel slide"
-                  data-ride="carousel"
-                >
-                  <div className="carouselwrap w-full">
-                    <ol className="carousel-indicators">
-                      <li
-                        data-target="#carousel-sub"
-                        data-slide-to="0"
-                        className="active"
-                      ></li>
-                      <li data-target="#carousel-sub" data-slide-to="1"></li>
-                      <li data-target="#carousel-sub" data-slide-to="2"></li>
-                    </ol>
-                    <div className="carousel-inner">
-                      <div className="carousel-item active">
-                        <img
-                          src="/assets/smartfishing/img/sample/photo1.jpg"
-                          className="d-block w-100"
-                          alt=""
-                        />
-                      </div>
-                      <div className="carousel-item">
-                        <img
-                          src="/assets/smartfishing/img/sample/photo2.jpg"
-                          className="d-block w-100"
-                          alt=""
-                        />
-                      </div>
-                      <div className="carousel-item">
-                        <img
-                          src="/assets/smartfishing/img/sample/photo3.jpg"
-                          className="d-block w-100"
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row no-gutters">
-                <div className="col-6">
-                  <small>좋아요 1개</small>
-                </div>
-                <div className="col-6 text-right">
-                  <small>댓글 0 &nbsp;&nbsp; 스크랩 0</small>
-                </div>
-              </div>
-              <hr />
-              <nav className="nav nav-pills nav-comment nav-justified">
-                <a className="nav-link active">
-                  <span className="icon icon-good"></span>좋아요
-                </a>
-                <a className="nav-link">
-                  <span className="icon icon-comment"></span>댓글쓰기
-                </a>
-                <a className="nav-link">
-                  <span className="icon icon-scrap"></span>스크랩
-                </a>
-              </nav>
-              <p className="space"></p>
-            </div>
+            {PageStore.state.list?.map((data, index) => (
+              <StoryPostListItemView
+                key={index}
+                data={data}
+                showLikeIcon={true}
+                showCommentIcon={true}
+                showScrapIcon={true}
+                onClick={this.onClick}
+                onClickProfile={this.onClickProfile}
+                onClickLike={this.onClickLike}
+                onClickComment={this.onClickComment}
+                onClickScrap={this.onClickScrap}
+              />
+            ))}
+
+            <a
+              onClick={() => PageStore.push(`/cust/story/add`)}
+              className="add-circle"
+            >
+              <img
+                src="/assets/smartfishing/img/svg/icon-write-white.svg"
+                alt=""
+                className="add-icon"
+              />
+            </a>
           </React.Fragment>
         );
       }
