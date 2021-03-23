@@ -71,6 +71,17 @@ public class MapperUtility {
         }
         return result;
     }
+    public ArrayList<Long>  transFileIdArray(String fileIdListString){
+        ArrayList<Long> result = new ArrayList<>();
+        if(fileIdListString!=null) {
+            String[] fileUrlListArray = fileIdListString.split(",");
+
+            for(int i=0; i<fileUrlListArray.length; i++){
+                result.add(Long.parseLong(fileUrlListArray[i]) );
+            }
+        }
+        return result;
+    }
 
     /*도커환경인지 로컬환경인지에 따라 downloadUrl 설정해주는 메소드*/
     public String transDownloadUrl(String inputUrl){

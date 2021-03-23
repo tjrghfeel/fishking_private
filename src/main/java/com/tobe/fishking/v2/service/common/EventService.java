@@ -5,11 +5,11 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Event;
 import com.tobe.fishking.v2.entity.common.LoveTo;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.common.EventDto;
-import com.tobe.fishking.v2.model.common.EventDtoForPage;
+import com.tobe.fishking.v2.model.common.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.EventRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
@@ -46,10 +46,14 @@ public class EventService {
 
     /*이벤트 목록 출력*/
     @Transactional
-    public Page<EventDtoForPage> getEventList(int page) {
+    public Page<EventDtoForPage> getEventList(int page, EventSearchCondition dto) {
+        String startDate = null;
+        if(dto.getStartDate()!=null){startDate=dto.getStartDate().toString();}
+        String endDate = null;
+        if(dto.getEndDate()!=null){endDate=dto.getEndDate().toString();}
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         Pageable pageable = PageRequest.of(page,10);
-        return eventRepository.findEventList(today, pageable);
+        return eventRepository.findEventList(today, dto.getIsLast(), dto.getTitle(), startDate, endDate, dto.getShipName(), pageable);
     }
 
     /*이벤트 상세보기*/
@@ -92,4 +96,50 @@ public class EventService {
                 .build();
         return result;
     }
+
+    /*이벤트 생성*/
+    @Transactional
+    public Long makeEvent(MakeEventDto dto, String token) throws ResourceNotFoundException {
+        Ship ship = null;
+        if(dto.getShipId()!=null) {
+            ship = shipRepository.findById(dto.getShipId())
+                    .orElseThrow(() -> new ResourceNotFoundException("ship not found for this id :: " + dto.getShipId()));
+        }
+        Member member = memberRepository.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+
+        if(member.getRoles() != Role.admin && member.getRoles() != Role.shipowner){
+            throw new RuntimeException("이벤트 작성 권한이 없습니다.");
+        }
+
+        Event event = new Event(dto.getTitle(),
+                dto.getContent(),
+                ship,
+                dto.getStartDate().toString(),
+                dto.getEndDate().toString(),
+                new ShareStatus(0,0,0,0),
+                false,
+                member,
+                member,
+                true);
+
+        event = eventRepository.save(event);
+
+        /*파일 저장*/
+        Long[] fileList = dto.getFileList();
+        if(fileList.length>0){
+            List<FileEntity> fileEntityList = fileRepository.findAllById(fileList);
+            for(int i=0; i<fileEntityList.size(); i++){
+                fileEntityList.get(i).saveTemporaryFile(event.getId());
+            }
+        }
+
+        return event.getId();
+    }
+
+    /*이벤트 수정*/
+//    @Transactional
+//    public Boolean modifyEvent(ModifyEventDto dto, String token){
+//        Member membe = memberRepository
+//    }
 }

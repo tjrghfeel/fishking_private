@@ -16,7 +16,7 @@ public interface PostManageDtoForPage {
     String getContent();
     String getAuthorName();
     Long getAuthorId();
-    @Value("#{@mapperUtility.transEnumReturnType(target.questionType)}")
+    @Value("#{@mapperUtility.transEnumReturnType(target.returnType)}")
     String getReturnType();
     String getReturnNoAddress();
     String getCreatedAt();

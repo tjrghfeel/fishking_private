@@ -56,8 +56,14 @@ public class Event extends BaseTime {
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', event, 'COLUMN',  modified_by
     @ManyToOne
-    @JoinColumn(name="modified_by" , insertable= false ,  updatable= false , columnDefinition = " bigint not null  comment '수정자'")
+    @JoinColumn(name="modified_by" ,  columnDefinition = " bigint not null  comment '수정자'")
     private Member modifiedBy;
+
+    @Column(columnDefinition = "int comment '이벤트 나열 순서'")
+    private Integer orderLevel;
+
+    @Column(columnDefinition = "bit comment '활성화 여부'")
+    private Boolean isActive;
 
     @Builder
     public Event(Member member, AddEvent addEvent, Ship ship, ShareStatus status) {
@@ -81,4 +87,25 @@ public class Event extends BaseTime {
         this.isDeleted = false;
         this.modifiedBy = member;
     }
+
+    public Event(String title, String contents, Ship ship, String startDay, String endDay, ShareStatus status, Boolean isDeleted,
+                 Member createdBy, Member modifiedBy, Boolean isActive){
+        this.title = title;
+        this.contents = contents;
+        this.ship = ship;
+        this.startDay = startDay;
+        this.endDay = endDay;
+        this.status = status;
+        this.isDeleted =isDeleted;
+        this.createdBy = createdBy;
+        this.modifiedBy = modifiedBy;
+        this.isActive = isActive;
+    }
+
+//    public void modify(
+//
+//    ){
+//
+//    }
+
 }

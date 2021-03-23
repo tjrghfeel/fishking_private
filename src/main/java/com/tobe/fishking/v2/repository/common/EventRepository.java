@@ -34,30 +34,41 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "select " +
             "   e.id eventId, " +
             "   s.id shipId, " +
-//            "   if(f.stored_file is null, " +
-//            "       (select c.extra_value1 from common_code c where c.code_group_id=154 and c.code='eventDefault'), " +
-//            "       f.stored_file) fileName, " +
-//            "   if(f.file_url is null, 'common', f.file_url) filePath, " +
-            "   if(f.stored_file is null, " +
-            "       (select c.extra_value1 from common_code c where c.code_group_id=154 and c.code='eventDefault'), " +
-            "       concat('/',f.file_url,'/',f.stored_file)" +
+            "   if((select count(f.id) from files f where f.pid=e.id and f.file_publish=13 and f.is_delete=false)>0," +
+            "       (select concat('/',f.file_url,'/',f.stored_file) from files f " +
+            "           where f.pid=e.id and f.file_publish=13 and f.is_delete=false limit 1), " +
+            "       (select c.extra_value1 from common_code c where c.code_group_id=154 and c.code='eventDefault')" +
             "   ) imageUrl, " +
             "   e.title eventTitle, " +
             "   s.ship_name shipName, " +
             "   e.start_day startDay, " +
             "   e.end_day endDay " +
-            "from event e join ship s on e.ship_id = s.id left join files f on f.pid=e.id and f.file_publish=13 and f.is_delete = false " +
-            "where e.end_day > :today " +
-            "group by f.pid " +
-            "order by e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
+            "from event e join ship s on e.ship_id = s.id " +
+            "where if(:isLast = false or :isLast is null, e.end_day >= :today, e.end_day < :today) " +
+            "   and if(:title is null, true, e.title like %:title%) " +
+            "   and if(:startDate is null, true, :startDate <= e.start_day) " +
+            "   and if(:endDate is null, true, :endDate >= e.end_day) " +
+            "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+            "order by e.order_level desc, e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
             "",
             countQuery = "select e.id " +
-                    "from event e join ship s on e.ship_id = s.id left join files f on f.pid=e.id and f.file_publish=13 and f.is_delete = false  " +
-                    "where e.end_day > :today " +
-                    "group by f.pid " +
-                    "order by e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
+                    "from event e join ship s on e.ship_id = s.id " +
+                    "where if(:isLast = false, e.end_day >= :today, e.end_day < :today) " +
+                    "   and if(:title is null, true, e.title like %:title%) " +
+                    "   and if(:startDate is null, true, :startDate <= e.start_day) " +
+                    "   and if(:endDate is null, true, :endDate >= e.end_day) " +
+                    "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "order by e.order_level desc, e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
                     "",
             nativeQuery = true
     )
-    Page<EventDtoForPage> findEventList(@Param("today") String today, Pageable pageable);
+    Page<EventDtoForPage> findEventList(
+            @Param("today") String today,
+            @Param("isLast") Boolean isLast,
+            @Param("title") String title,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("shipName") String shipName,
+            Pageable pageable
+    );
 }

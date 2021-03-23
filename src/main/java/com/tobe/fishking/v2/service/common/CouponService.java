@@ -241,7 +241,7 @@ public class CouponService {
         Integer couponType = null;
         if(dto.getCouponType()!=null){ couponType = CouponType.valueOf(dto.getCouponType()).ordinal();}
 
-        Pageable pageable = PageRequest.of(page, 30, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
+        Pageable pageable = PageRequest.of(page, 3, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
         Page<CouponManageDtoForPage> result = couponRepository.getCouponList(
             dto.getCouponId(), couponType, dto.getCouponCreateCode(), dto.getCouponName(), dto.getExposureStartDate(),
                 dto.getExposureEndDate(), dto.getSaleValuesStart(), dto.getSaleValuesEnd(), dto.getEffectiveStartDate(), dto.getEffectiveEndDate(),
@@ -262,8 +262,10 @@ public class CouponService {
         if(member.getRoles() != Role.admin){throw new RuntimeException("쿠폰 조회 권한이 없습니다.");}
 
         /*조건 형식변환*/
+        if(dto.getEffectiveEndDate()!=null){ dto.setEffectiveEndDate(dto.getEffectiveEndDate().plusDays(1L));}
+        if(dto.getExposureEndDate()!=null){dto.setExposureEndDate(dto.getExposureEndDate().plusDays(1L));}
 
-        Pageable pageable = PageRequest.of(page, 30, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
+        Pageable pageable = PageRequest.of(page, 3, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
         Page<CouponMemberManageDtoForPage> result = couponRepository.getCouponMemberList(
                 dto.getUseDateStart(), dto.getUseDateEnd(), dto.getEffectiveStartDate(),dto.getEffectiveEndDate(),
                 dto.getCouponName(), dto.getAreaCode(), dto.getLocalNumber(), dto.getExposureStartDate(),

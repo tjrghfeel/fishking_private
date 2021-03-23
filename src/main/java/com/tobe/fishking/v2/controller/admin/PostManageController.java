@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -75,7 +76,7 @@ public class PostManageController {
             "   fileList : 파일id 배열\n" +
             "- 응답 ) 답변이 달린 1:1문의글의 id ")
     @PostMapping("/manage/post/one2one/answer")
-    public Long makeOne2oneAnswer(@RequestBody WriteOne2oneAnswerDto dto,@RequestHeader("Authorization") String token)
+    public Long makeOne2oneAnswer(@RequestBody @Valid WriteOne2oneAnswerDto dto, @RequestHeader("Authorization") String token)
             throws ResourceNotFoundException, IOException {
         return postManagerService.makeOne2oneAnswer(dto,token);
     }
