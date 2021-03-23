@@ -6,9 +6,7 @@ import com.tobe.fishking.v2.exception.ApiException;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.fishing.AddGoods;
-import com.tobe.fishking.v2.model.fishing.AddShipDTO;
-import com.tobe.fishking.v2.model.fishing.UpdateGoods;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.model.response.UpdateShipResponse;
@@ -25,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -213,13 +212,31 @@ public class ShipsGoodsController {
         return result;
     }
 
-    @ApiOperation(value = "선박등록", notes = "선박등록")
+    @ApiOperation(value = "선박등록", notes = "선박등록 아래는 요청데이터의 일부입니" +
+            "\n fishSpecies[] 어종 리스트" +
+            "\n services[] 서비스 리스트" +
+            "\n facilities[] 편의시설 리스트" +
+            "\n devices[] 장비 리스트" +
+            "\n events[] 이벤트 리스트" +
+            "\n positions[] 사용할 위치 리스트 (예: [1,2,3,4]), 갯바위 타입의 경우에는 갯바위 id 리스트" +
+            "\n adtCameras[] adt 카메라리스트" +
+            "\n nhnCameras[] nhn 카메라리스트" +
+            "\n")
     @PostMapping("/ship/add")
     public Map<String, Object> addShip(
             @RequestHeader(name = "Authorization") String token,
-            AddShipDTO addShipDTO) throws ResourceNotFoundException {
+//            @RequestParam(name = "fishSpecies[]") List<String> fishSpecies,
+//            @RequestParam(name = "services[]") List<String> services,
+//            @RequestParam(name = "facilities[]") List<String> facilities,
+//            @RequestParam(name = "devices[]") List<String> devices,
+//            @RequestParam(name = "events[]") List<AddEvent> events,
+//            @RequestParam(name = "positions[]") List<String> positions,
+//            @RequestParam(name = "adtCameras[]") List<AddShipCamera> adtCameras,
+//            @RequestParam(name = "nhnCameras[]") List<AddShipCamera> nhnCameras,
+            @RequestBody UpdateShipDTO addShipDTO) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
+//            Long shipId = fishingShipService.addShip(addShipDTO, token, fishSpecies, services, facilities, devices, events, positions, adtCameras, nhnCameras);
             Long shipId = fishingShipService.addShip(addShipDTO, token);
             result.put("result", "success");
             result.put("id", shipId);
@@ -227,7 +244,7 @@ public class ShipsGoodsController {
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등*.록에 실패했습니다.");
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
         }
     }
 
@@ -235,11 +252,11 @@ public class ShipsGoodsController {
     @PutMapping("/ship/update/{shipId}")
     public Map<String, Object> updateShip(
             @RequestHeader(name = "Authorization") String token,
-            @RequestBody AddShipDTO addShipDTO,
+            @RequestBody UpdateShipDTO updateShipDTO,
             @PathVariable Long shipId) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
-            fishingShipService.updateShip(shipId, addShipDTO, token);
+            fishingShipService.updateShip(shipId, updateShipDTO, token);
             result.put("result", "success");
             result.put("id", shipId);
             return result;

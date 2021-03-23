@@ -78,7 +78,7 @@ public class Ship extends BaseTime {  //선상
     // EXEC sp_addextendedproperty 'MS_Description', N'지역별', 'USER', DBO, 'TABLE', ship, 'COLUMN',  by_region
     @Column(columnDefinition = "int comment '지역별' ", nullable = false)
     @Enumerated(EnumType.ORDINAL) //ORDINAL -> int로 할당 STRING -> 문자열로 할당
-    private SeaDirection seaDirection;
+    private SeaDirection seaDirection = SeaDirection.west;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'중량', 'USER', DBO, 'TABLE', ship, 'COLUMN',  weight
     @Column(columnDefinition = "decimal(5,2)  comment  '거리'  ")
@@ -100,7 +100,7 @@ public class Ship extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'추천업체', 'USER', DBO, 'TABLE', ship, 'COLUMN',  is_recommend
     @Column(nullable = false, columnDefinition = "int default 0  comment '추천업체'  ")
-    private Boolean isRecommend;
+    private Boolean isRecommend = false;
 
     @Column(columnDefinition = "varchar(500) comment '사장님한마디 제목'  ")
     private String ownerWordingTitle;
@@ -154,7 +154,7 @@ public class Ship extends BaseTime {  //선상
     private String observerCode;
 
     @ApiModelProperty(name ="뷰-좋아요수")
-    private ShareStatus status;
+    private ShareStatus status = new ShareStatus(0,0,0,0);
 
 
     @ApiModelProperty(name = "작성위치")
@@ -178,21 +178,21 @@ public class Ship extends BaseTime {  //선상
 
     // EXEC sp_addextendedproperty 'MS_Description', N'전체평균평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  total_average
     @Column(columnDefinition = "float  default 0.0 comment  '전체평균평점'  ")
-    private Double totalAvgByReview;
+    private Double totalAvgByReview = 0d;;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'손맛평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(columnDefinition = "float  default 0.0  comment  '손맛평점'  ")
-    private Double tasteByReview;
+    private Double tasteByReview = 0d;;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'서비스평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(columnDefinition = "float  default 0.0  comment  '서비스평점'  ")
-    private Double serviceByReview;
+    private Double serviceByReview = 0d;
     // EXEC sp_addextendedproperty 'MS_Description', N'청결도평점', 'USER', DBO, 'TABLE', goods, 'COLUMN',  is_visible
     @Column(columnDefinition = "float  default 0.0  comment  '청결도평점'  ")
-    private Double cleanByReview;
+    private Double cleanByReview = 0d;;
 
     @Column(columnDefinition = "int default 0 comment '리뷰 수'")
-    private int reviewCount;
+    private int reviewCount = 0;
 
 
     @Column(columnDefinition = "tinyint(1) default 1 comment '운행여부(페업)'")
