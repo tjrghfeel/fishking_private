@@ -11,15 +11,12 @@ import com.tobe.fishking.v2.entity.fishing.Places;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.exception.*;
-import com.tobe.fishking.v2.model.fishing.AddGoods;
-import com.tobe.fishking.v2.model.fishing.GoodsDTO;
-import com.tobe.fishking.v2.model.fishing.ParamsPopular;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.GoodsSpecs;
-import com.tobe.fishking.v2.model.fishing.ParamsGoods;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
@@ -47,7 +44,6 @@ public class GoodsService {
     private final CommonCodeRepository commonCodeRepo;  //JpaResposistory
     private final CodeGroupRepository codeGroupRepo;  //JpaResposistory
     private final PopularRepository popularRepo;  //JpaResposistory
-    private final GoodsRepository goodsRepository;
     private final CommonCodeRepository codeRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
 
@@ -175,43 +171,43 @@ public class GoodsService {
         return goodsRepo.countTotalGoodsByRegion();
     }
 
-    public Goods writeGoods(String uid, long shipId, ParamsGoods paramsGoods) {
-
-        CodeGroup cgSpecies =  codeGroupRepo.findByCode("fishspecies");
-
-        List<CommonCode> fishSpecies = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(cgSpecies, paramsGoods.getFishSpecies() );
-
-        CodeGroup cgLures =  codeGroupRepo.findByCode("fishinglure");
-
-        List<CommonCode> fishingLures = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(cgLures, paramsGoods.getFishSpecies() );
-
-
-        Goods goods = new Goods(memberRepo.findByUid(uid).orElseThrow(CMemberNotFoundException::new), shipRepo.findById(shipId).orElseThrow(CResourceNotExistException::new), paramsGoods);
-
-        goods.setFishSpecies(fishSpecies);
-        goods.setFishSpecies(fishingLures);
-
-
-        return goodsRepo.save(goods);
-    }
+//    public Goods writeGoods(String uid, long shipId, ParamsGoods paramsGoods) {
+//
+//        CodeGroup cgSpecies =  codeGroupRepo.findByCode("fishspecies");
+//
+//        List<CommonCode> fishSpecies = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(cgSpecies, paramsGoods.getFishSpecies() );
+//
+//        CodeGroup cgLures =  codeGroupRepo.findByCode("fishinglure");
+//
+//        List<CommonCode> fishingLures = commonCodeRepo.findCommonCodesByCodeGroupAndCodes(cgLures, paramsGoods.getFishSpecies() );
+//
+//
+//        Goods goods = new Goods(memberRepo.findByUid(uid).orElseThrow(CMemberNotFoundException::new), shipRepo.findById(shipId).orElseThrow(CResourceNotExistException::new), paramsGoods);
+//
+//        goods.setFishSpecies(fishSpecies);
+//        goods.setFishSpecies(fishingLures);
+//
+//
+//        return goodsRepo.save(goods);
+//    }
 
 
     // 게시글을 수정합니다. 게시글 등록자와 로그인 회원정보가 틀리면 CNotOwnerException 처리합니다.
     //@CachePut(value = CacheKey.POST, key = "#postId") 갱신된 정보만 캐시할경우에만 사용!
     
-    public Goods updateGoods(long goodsId, String uid, long shipId, long placesId, ParamsGoods paramsGoods) {
-        Goods goods = getGoods(goodsId);
-        Ship ship = getShip(shipId);
-        Places places = getPlaces(placesId);
-
-        Member member = goods.getCreatedBy();
-        if (!uid.equals(member.getUid()))
-            throw new CNotOwnerException();
-
-        // 영속성 컨텍스트의 변경감지(dirty checking) 기능에 의해 조회한 Goods내용을 변경만 해도 Update쿼리가 실행됩니다.
-        goods.setUpdate(member, ship, places, paramsGoods);
-        return goods;
-    }
+//    public Goods updateGoods(long goodsId, String uid, long shipId, long placesId, ParamsGoods paramsGoods) {
+//        Goods goods = getGoods(goodsId);
+//        Ship ship = getShip(shipId);
+//        Places places = getPlaces(placesId);
+//
+//        Member member = goods.getCreatedBy();
+//        if (!uid.equals(member.getUid()))
+//            throw new CNotOwnerException();
+//
+//        // 영속성 컨텍스트의 변경감지(dirty checking) 기능에 의해 조회한 Goods내용을 변경만 해도 Update쿼리가 실행됩니다.
+//        goods.setUpdate(member, ship, places, paramsGoods);
+//        return goods;
+//    }
 
 
 
@@ -252,26 +248,28 @@ public class GoodsService {
     }
 
     @Transactional
-    public Long addGood(AddGoods addGoods, String token) throws ResourceNotFoundException {
+    public Long addGood(AddGoods addGoods, String token, List<String> speciesList, List<String> fishingDatesList) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: " + token));
         Ship ship = shipRepo.getOne(addGoods.getShipId());
 
         List<CommonCode> species = new ArrayList<>();
-        for (String species_code : addGoods.getSpecies()) {
+//        for (String species_code : addGoods.getSpecies()) {
+        for (String species_code : speciesList) {
             CommonCode commonCode = codeRepository.getByCode(species_code);
             species.add(commonCode);
         }
 
         Goods goods = Goods.builder()
+                .fishSpecies(species)
                 .ship(ship)
                 .member(member)
                 .addGoods(addGoods)
-                .fishSpecies(species)
                 .build();
-        goodsRepository.save(goods);
+        goodsRepo.save(goods);
 
-        for (String fishingDate : addGoods.getFishingDates()) {
+//        for (String fishingDate : addGoods.getFishingDates()) {
+        for (String fishingDate : fishingDatesList) {
             GoodsFishingDate goodsFishingDate = GoodsFishingDate.builder()
                     .goods(goods)
                     .fishingDateString(fishingDate)
@@ -283,16 +281,37 @@ public class GoodsService {
     }
 
     @Transactional
-    public boolean updateGoods(Long goodsId, AddGoods addGoods, Member member) {
-        Goods goods = goodsRepository.getOne(goodsId);
-        Ship ship = shipRepo.getOne(addGoods.getShipId());
+    public boolean updateGoods(Long goodsId, UpdateGoods updateGoods, Member member) {
+        Goods goods = goodsRepo.getOne(goodsId);
+        Ship ship = shipRepo.getOne(updateGoods.getShipId());
         List<CommonCode> species = new ArrayList<>();
-        for (String species_code : addGoods.getSpecies()) {
+        for (String species_code : updateGoods.getSpecies()) {
+//        for (String species_code : speciesList) {
             CommonCode commonCode = codeRepository.getByCode(species_code);
             species.add(commonCode);
         }
-        goods.updateGoods(ship, member, addGoods, species);
-        goodsRepository.save(goods);
+        goods.updateGoods(ship, member, updateGoods, species);
+        goodsRepo.save(goods);
+
+        List<GoodsFishingDate> oldDates = goodsFishingDateRepository.findAllByGoodsId(goodsId);
+        List<String> fishingDatesList = updateGoods.getFishingDates();
+        for (GoodsFishingDate o : oldDates) {
+            if (fishingDatesList.contains(o.getFishingDateString())) {
+                fishingDatesList.remove(o.getFishingDateString());
+            } else {
+                goodsFishingDateRepository.delete(o);
+            }
+        }
+
+        for (String fishingDate : fishingDatesList) {
+//        for (String fishingDate : fishingDatesList) {
+            GoodsFishingDate goodsFishingDate = GoodsFishingDate.builder()
+                    .goods(goods)
+                    .fishingDateString(fishingDate)
+                    .member(member)
+                    .build();
+            goodsFishingDateRepository.save(goodsFishingDate);
+        }
 
         return true;
     }

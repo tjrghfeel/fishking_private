@@ -36,40 +36,36 @@
 </body>
 <script type="text/javascript">
     function test() {
-        let p = {}
+        let p = {
+            "shipId": "24",
+            "name": "test",
+            "amount": 0,
+            "minPersonnel": 0,
+            "maxPersonnel": 0,
+            "fishingStartTime": "0000",
+            "fishingEndTime": "0500",
+            "isUse": true,
+            "species": [
+                "열기"
+            ],
+            "fishingDates": [
+                "2021-03-30"
+            ],
+            "positionSelect": true,
+            "reserveType": "auto",
+            "extraRun": false,
+            "extraPersonnel": 0,
+            "extraShipNumber": 0
+        }
 
-        p.birthdate = '1990-09-07'
-        p.name = '박세중'
-        p.phone = '010-8476-4876'
-
-        let persons = []
-        persons[0] = p
-        persons[0].birthdate = '1990-09-07'
-        persons[0].name = '박세중'
-        persons[0].phone = '010-8476-4876'
 
         $.ajax({
-            url: "http://112.220.72.178:8083/v2/api/ship/reserve",
+            url: "http://112.220.72.178:8083/v2/api/goods/add",
             method: "post",
             beforeSend : function(xhr){
-                xhr.setRequestHeader("Authorization", "22");
+                xhr.setRequestHeader("Authorization", "13");
             },
-            dataType: 'json',
-            data: {
-                date: '2021-02-19',
-                discountPrice: 0,
-                goodsId: 1,
-                payMethod: '1000000000',
-                paymentPrice: 1000,
-                personCount: 1,
-                'positions[]': [3,4],
-                'personsName[]': ['123', '124'],
-                'personsPhone[]': ['123', '124'],
-                'personsBirthdate[]': ['123', '124'],
-                reservePersonName: '123',
-                reservePersonPhone: '123',
-                totalPrice: 1000
-            }
+            data: p
         })
         .done(function (json) {
         });

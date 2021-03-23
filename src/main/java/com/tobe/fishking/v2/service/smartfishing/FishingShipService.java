@@ -12,12 +12,15 @@ import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.model.fishing.AddEvent;
 import com.tobe.fishking.v2.model.fishing.AddShipCamera;
 import com.tobe.fishking.v2.model.fishing.AddShipDTO;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateShipResponse;
+import com.tobe.fishking.v2.model.smartfishing.PlaceDTO;
+import com.tobe.fishking.v2.model.smartfishing.PlacePointDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.EventRepository;
@@ -476,4 +479,5 @@ public class FishingShipService {
         response.setNhnCameras(cameras);
         return response;
     }
+
 }

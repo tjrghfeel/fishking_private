@@ -103,6 +103,7 @@ import SmartfishingReservationListItemView from "./view/SmartfishingReservationL
 import SmartfishingDashboardListItemView from "./view/SmartfishingDashboardListItemView";
 import SmartfishingGoodsListItemView from "./view/SmartfishingGoodsListItemView";
 import SmartfishingBoatListItemView from "./view/SmartfishingBoatListItemView";
+import SmartfishingDiaryListItemView from "./view/SmartfishingDiaryListItemView";
 
 export default {
   /********** MODAL **********/
@@ -205,5 +206,6 @@ export default {
     SmartfishingDashboardListItemView,
     SmartfishingGoodsListItemView,
     SmartfishingBoatListItemView,
+    SmartfishingDiaryListItemView,
   },
 };
