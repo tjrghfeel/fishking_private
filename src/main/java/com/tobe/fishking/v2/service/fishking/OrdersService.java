@@ -14,9 +14,8 @@ import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
 import com.tobe.fishking.v2.model.response.FishingDashboardResponse;
 import com.tobe.fishking.v2.model.response.OrderDetailResponse;
 import com.tobe.fishking.v2.model.response.OrderListResponse;
-import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
-import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
-import com.tobe.fishking.v2.repository.fishking.RideShipRepository;
+import com.tobe.fishking.v2.model.smartfishing.CalculateResponse;
+import com.tobe.fishking.v2.repository.fishking.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
@@ -27,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +47,8 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrderDetailsRepository orderDetailsRepo;
     private final RideShipRepository rideShipRepo;
+    private final ShipRepository shipRepository;
+    private final CalculateRepository calculateRepository;
 
 
     private static ModelMapper modelMapper = new ModelMapper();
@@ -187,6 +189,45 @@ public class OrdersService {
             }
         }
         return new FishingDashboardResponse(countRunning, countConfirm, countWait, countFix, countCancel, countComplete);
+    }
+
+    @Transactional
+    public Map<String, Object> searchCalculation(Long memberId, String shipName, String year, String month, Boolean isCalculate) {
+        List<Tuple> ships = shipRepository.getGoodsShips(memberId);
+        List<CalculateResponse> calcs = calculateRepository.searchCalculate(memberId, shipName, year, month, isCalculate);
+        List<Long> ids = calcs.stream().map(CalculateResponse::getShipId).collect(Collectors.toList());
+        for (Tuple tuple : ships) {
+            Long id = tuple.get(0, Long.class);
+            String name = tuple.get(1, String.class);
+            if (!ids.contains(id)) {
+                calcs.add(new CalculateResponse(id, name, 0L, 0L));
+            }
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("year", year);
+        response.put("month", month);
+        response.put("content", calcs);
+        return response;
+    }
+
+    @Transactional
+    public Map<String, Object> getCalculationThisMonth(Long memberId) {
+        List<Tuple> ships = shipRepository.getGoodsShips(memberId);
+        LocalDate today = LocalDate.now();
+        List<CalculateResponse> calcs = calculateRepository.searchCalculate(memberId, "", String.valueOf(today.getYear()), String.valueOf(today.getMonthValue()), null);
+        List<Long> ids = calcs.stream().map(CalculateResponse::getShipId).collect(Collectors.toList());
+        for (Tuple tuple : ships) {
+            Long id = tuple.get(0, Long.class);
+            String name = tuple.get(1, String.class);
+            if (!ids.contains(id)) {
+                calcs.add(new CalculateResponse(id, name, 0L, 0L));
+            }
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("year", String.valueOf(today.getYear()));
+        response.put("month", String.valueOf(today.getMonthValue()));
+        response.put("content", calcs);
+        return response;
     }
 
 }
