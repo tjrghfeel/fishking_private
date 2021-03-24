@@ -42,22 +42,25 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "   e.title eventTitle, " +
             "   s.ship_name shipName, " +
             "   e.start_day startDay, " +
-            "   e.end_day endDay " +
-            "from event e join ship s on e.ship_id = s.id " +
+            "   e.end_day endDay, " +
+            "   e.is_active isActive " +
+            "from event e left join ship s on e.ship_id = s.id " +
             "where if(:isLast = false or :isLast is null, e.end_day >= :today, e.end_day < :today) " +
             "   and if(:title is null, true, e.title like %:title%) " +
             "   and if(:startDate is null, true, :startDate <= e.start_day) " +
             "   and if(:endDate is null, true, :endDate >= e.end_day) " +
             "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+            "   and if(:isActive is null, true, e.is_active = :isActive) " +
             "order by e.order_level desc, e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
             "",
             countQuery = "select e.id " +
-                    "from event e join ship s on e.ship_id = s.id " +
-                    "where if(:isLast = false, e.end_day >= :today, e.end_day < :today) " +
+                    "from event e left join ship s on e.ship_id = s.id " +
+                    "where if(:isLast = false or :isLast is null, e.end_day >= :today, e.end_day < :today) " +
                     "   and if(:title is null, true, e.title like %:title%) " +
                     "   and if(:startDate is null, true, :startDate <= e.start_day) " +
                     "   and if(:endDate is null, true, :endDate >= e.end_day) " +
                     "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "   and if(:isActive is null, true, e.is_active = :isActive) " +
                     "order by e.order_level desc, e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
                     "",
             nativeQuery = true
@@ -69,6 +72,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("startDate") String startDate,
             @Param("endDate") String endDate,
             @Param("shipName") String shipName,
+            @Param("isActive") Boolean isActive,
             Pageable pageable
     );
 }

@@ -13,14 +13,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class ModifyEventDto {
-
     @NotNull
+    private Long eventId;
+//    @NotNull
     @Size(min = 1,max = 100)
     private String title;
-    @NotNull
     @Size(min = 1,max = 2000)
     private String content;
-    private Long shipId;
+//    private Long shipId;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

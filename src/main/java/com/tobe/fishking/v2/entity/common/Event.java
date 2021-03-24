@@ -89,7 +89,7 @@ public class Event extends BaseTime {
     }
 
     public Event(String title, String contents, Ship ship, String startDay, String endDay, ShareStatus status, Boolean isDeleted,
-                 Member createdBy, Member modifiedBy, Boolean isActive){
+                 Member createdBy, Member modifiedBy, Integer orderLevel, Boolean isActive){
         this.title = title;
         this.contents = contents;
         this.ship = ship;
@@ -99,13 +99,21 @@ public class Event extends BaseTime {
         this.isDeleted =isDeleted;
         this.createdBy = createdBy;
         this.modifiedBy = modifiedBy;
+        this.orderLevel = orderLevel;
         this.isActive = isActive;
     }
 
-//    public void modify(
-//
-//    ){
-//
-//    }
+    /*이벤트 수정. 들어온 값들중, null이 아닌값들만 수정한다. */
+    public void modify(
+        String title, String content, /*Ship ship,*/ String startDay, String endDay, Integer orderLevel, Boolean isActive
+    ){
+        if(title!=null){this.title = title;}
+        if(content!=null){this.contents = content;}
+//        if(ship!=null){this.ship = ship;}
+        if(startDay!=null){this.startDay = startDay;}
+        if(endDay!=null){this.endDay = endDay;}
+        if(orderLevel!=null){this.orderLevel = orderLevel;}
+        if(isActive !=null ){this.isActive = isActive;}
+    }
 
 }

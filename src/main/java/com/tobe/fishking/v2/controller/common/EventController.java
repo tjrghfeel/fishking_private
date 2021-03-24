@@ -1,8 +1,10 @@
 package com.tobe.fishking.v2.controller.common;
 
+import com.tobe.fishking.v2.entity.common.Event;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.*;
+import com.tobe.fishking.v2.repository.common.EventRepository;
 import com.tobe.fishking.v2.service.common.EventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Api(tags = {"이벤트"})
 @RequiredArgsConstructor
 @RequestMapping(value = "/v2/api")
@@ -20,6 +26,8 @@ public class EventController {
 
     @Autowired
     EventService eventService;
+    @Autowired
+    EventRepository eventRepository;
 
     /*이벤트 목록 보기*/
     @ApiOperation(value = "이벤트 목록",notes = "" +
@@ -40,10 +48,11 @@ public class EventController {
     @GetMapping("/event/list/{page}")
     public Page<EventDtoForPage> getEventList(
             @PathVariable("page") int page,
+            @RequestHeader(value = "Authorization",required = false) String token,
             EventSearchCondition dto
     ) throws EmptyListException {
 //        return eventService.getEventList(page);
-        Page<EventDtoForPage> events = eventService.getEventList(page, dto);
+        Page<EventDtoForPage> events = eventService.getEventList(page, token, dto);
         if (events.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
@@ -85,7 +94,10 @@ public class EventController {
             @RequestBody MakeEventDto dto,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
+        /*입력값 검증*/
         if (dto.getFileList() == null) { dto.setFileList(new Long[0]);}
+        if(dto.getStartDate().isAfter(dto.getEndDate())){throw new RuntimeException("시작일은 종료일 이전이어야 합니다.");}
+
         return eventService.makeEvent(dto, token);
     }
 
@@ -93,9 +105,18 @@ public class EventController {
     @ApiOperation(value = "이벤트 수정",notes = "")
     @PutMapping("/event")
     public Boolean modifyEvent(
-            @RequestBody ModifyEventDto dto,
+            @RequestBody @Valid ModifyEventDto dto,
             @RequestHeader("Authorization") String token
-    ){
-        return true;
+    ) throws ResourceNotFoundException {
+        //입력값 검증.
+        if (dto.getFileList() == null) { dto.setFileList(new Long[0]);}
+        Event event = eventRepository.findById(dto.getEventId())
+                .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+dto.getEventId()));
+        LocalDate.parse(event.getStartDay());
+        LocalDate startDate = (dto.getStartDate()==null)? LocalDate.parse(event.getStartDay()):dto.getStartDate();
+        LocalDate endDate = (dto.getEndDate()==null)? LocalDate.parse(event.getEndDay()):dto.getEndDate();
+        if(startDate.isAfter(endDate)){throw new RuntimeException("시작일은 종료일 이전이어야 합니다.");}
+
+        return eventService.modifyEvent(dto,token);
     }
 }

@@ -19,4 +19,9 @@ public class EventDto {
     private int likeCount;
     private int commentCount;
     private Boolean isLikeTo;
+
+    private Boolean isActive;
+    private String startDate;
+    private String endDate;
+    private ArrayList<Long> fileIdList;
 }
