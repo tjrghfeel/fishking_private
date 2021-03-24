@@ -13,5 +13,6 @@ public interface EventDtoForPage {
     String getShipName();
     String getStartDay();
     String getEndDay();
+    Boolean getIsActive();
 
 }

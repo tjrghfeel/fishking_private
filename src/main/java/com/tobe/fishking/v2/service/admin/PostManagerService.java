@@ -76,12 +76,13 @@ public class PostManagerService {
         Integer channelType = (dto.getChannelType()==null)? null : (ChannelType.valueOf(dto.getChannelType()).ordinal());
         Integer questionType = (dto.getQuestionType()==null)? null : (QuestionType.valueOf(dto.getQuestionType()).ordinal());
         Integer returnType = (dto.getReturnType()==null)? null : (ReturnType.valueOf(dto.getReturnType()).ordinal());
-
+        if(dto.getCreatedDateEnd()!=null){ dto.setCreatedDateEnd(dto.getCreatedDateEnd().plusDays(1L));}
+        if(dto.getModifiedDateEnd()!=null){dto.setModifiedDateEnd(dto.getModifiedDateEnd().plusDays(1L));}
         Pageable pageable=null;
         if(dto.getSort()!=null) {
-            pageable = PageRequest.of(page, 30, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));//JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")")
+            pageable = PageRequest.of(page, 3, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));//JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")")
         }
-        else pageable = PageRequest.of(page,30);
+        else pageable = PageRequest.of(page,3);
 
         return postRepository.findAllByConditions(
                 dto.getId(),
@@ -97,8 +98,8 @@ public class PostManagerService {
                 dto.getReturnNoAddress(),
                 dto.getCreatedAt(),
                 dto.getIsSecret(),
-                dto.getCreateDateStart(),
-                dto.getCreateDateEnd(),
+                dto.getCreatedDateStart(),
+                dto.getCreatedDateEnd(),
                 dto.getModifiedDateStart(),
                 dto.getModifiedDateEnd(),
                 dto.getTargetRole(),
@@ -176,6 +177,7 @@ public class PostManagerService {
                 .questionType(parentPost.getQuestionType().getKey())
                 .isSecret(false)
                 .parentId(dto.getParentId())
+                .targetRole(parentPost.getTargetRole())
                 .files(dto.getFileList())
                 .build();
 

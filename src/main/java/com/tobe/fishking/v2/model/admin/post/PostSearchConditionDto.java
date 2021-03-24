@@ -36,9 +36,9 @@ public class PostSearchConditionDto {
     private Long createdBy;
     private Long modifiedBy;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate createDateStart;
+    private LocalDate createdDateStart;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate createDateEnd;
+    private LocalDate createdDateEnd;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate modifiedDateStart;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

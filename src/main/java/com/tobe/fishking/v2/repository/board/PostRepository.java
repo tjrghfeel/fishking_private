@@ -114,22 +114,22 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   (select GROUP_CONCAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
             "       from files f where f.pid = p.id and f.file_publish = 2 and f.is_delete = false " +
             "       group by f.pid) fileUrlList, " +
-//            "   (select group_concat(f.stored_file separator ',') from files f " +
-//            "       where f.file_publish = 2 and f.pid = p.id and f.is_delete = false group by f.pid) fileNameList, " +
-//            "   (select group_concat(f.file_url separator ',') from files f " +
-//            "       where f.file_publish = 2 and f.pid = p.id and f.is_delete = false group by f.pid) filePathList, " +
+            "   (select GROUP_CONCAT(f.id separator ',') " +
+            "       from files f where f.pid = p.id and f.file_publish = 2 and f.is_delete = false " +
+            "       group by f.pid) fileIdList, " +
+            "   rp.id replyId, " +
             "   rp.contents replyContents, " +
             "   rp.created_date replyDate, " +
             "   rp.author_id replyAuthorId, " +
+            "   rp.author_name replyAuthorName, " +
             "   rp.created_by replyCreatedBy, " +
             "   rp.modified_by replyModifiedBy, " +
             "   (select GROUP_CONCAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
             "       from files f where f.pid = rp.id and f.file_publish = 2 and f.is_delete = false " +
-            "       group by f.pid) replyFileUrlList " +
-//            "   (select group_concat(f2.thumbnail_file separator ',') from files f2 " +
-//            "       where f2.file_publish = 2 and f2.pid = rp.id and f2.is_delete = false group by f2.pid) replyFileNameList, " +
-//            "   (select group_concat(f2.file_url separator ',') from files f2 " +
-//            "       where f2.file_publish = 2 and f2.pid = rp.id and f2.is_delete = false group by f2.pid) replyFilePathList " +
+            "       group by f.pid) replyFileUrlList, " +
+            "   (select GROUP_CONCAT(f.id separator ',') " +
+            "       from files f where f.pid = rp.id and f.file_publish = 2 and f.is_delete = false " +
+            "       group by f.pid) replyFileIdList " +
             "from post p left outer join post rp on rp.parent_id = p.id " +
             "where p.id = :postId " +
             "   and p.is_deleted = false ",
@@ -296,7 +296,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   (:postId is null or (:postId is not null and p.id = :postId))" +
 //                    "   if(:postId is null,true,(p.id = :postId)) " +
                     "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
-                    "   and if(:parentId is null,true,(p.parent_id = :parentId)) " +
+                    "   and if(:parentId is null, (p.parent_id is null), (p.parent_id = :parentId)) " +
                     "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
                     "   and if(:questionType is null,true,(p.question_type = :questionType)) " +
                     "   and if(:title is null,true,(p.title like %:title%)) " +
@@ -320,7 +320,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "where " +
                     "   if(:postId is null,true,(p.id = :postId)) " +
                     "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
-                    "   and if(:parentId is null,true,(p.parent_id = :parentId)) " +
+                    "   and if(:parentId is null, (p.parent_id is null), (p.parent_id = :parentId)) " +
                     "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
                     "   and if(:questionType is null,true,(p.question_type = :questionType)) " +
                     "   and if(:title is null,true,(p.title like %:title%)) " +

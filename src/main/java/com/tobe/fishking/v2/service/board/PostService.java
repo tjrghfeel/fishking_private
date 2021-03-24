@@ -62,7 +62,7 @@ public class PostService {
     public Page<PostListDTO> getPostListInPageForm(Long board_id, int page) throws ResourceNotFoundException {
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(()->new ResourceNotFoundException("Board not found for this id :: " + board_id));
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 3);
         Page<PostListDTO> postResponse = postRepository.findAllByBoard(board.getId(), pageable);
 
         return postResponse;
@@ -77,7 +77,7 @@ public class PostService {
         Integer questionType = null;
         if(inputQuestionType != null){questionType = QuestionType.valueOf(inputQuestionType).ordinal();}
 
-        Pageable pageable = PageRequest.of(page,10);
+        Pageable pageable = PageRequest.of(page,3);
         return postRepository.findAllFAQList(roleValue,title,questionType, pageable);
     }
     /*faq 상세*/
@@ -102,7 +102,7 @@ public class PostService {
     public Page<QnADtoForPage> getQnAList(int page, String sessionToken) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 3);
         return postRepository.findAllQnAList(member, pageable);
     }
 
@@ -121,7 +121,7 @@ public class PostService {
         Integer channelType = null;
         if(inputChannelType != null){channelType = ChannelType.valueOf(inputChannelType).ordinal();}
 
-        Pageable pageable = PageRequest.of(page,10);
+        Pageable pageable = PageRequest.of(page,3);
         return postRepository.findNoticeList(roleValue, channelType, inputTitle, pageable);
     }
 
@@ -211,6 +211,7 @@ public class PostService {
                 .parent_id(postDTO.getParentId())
                 .targetRole(postDTO.getTargetRole())
                 .isDeleted(false)
+                .isReplied(false)
                 .build();
         post = postRepository.save(post);
 
