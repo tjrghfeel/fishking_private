@@ -43,6 +43,8 @@ public class UpdateShipDTO {
     private @Valid Double longitude;
     @ApiParam(value = "선박 사진")
     private @Valid String profileImage;
+    @ApiParam(value = "선박 영상 id")
+    private @Valid Long videoId;
     @ApiParam(value = "어종 리스트", name = "fishSpecies[]")
     private @Valid List<String> fishSpecies;
     @ApiParam(value = "서비스 리스트", name = "services[]")
