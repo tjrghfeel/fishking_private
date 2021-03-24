@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import Components from "../../components";
 const {
   LAYOUT: { NavigationLayout, SmartFishingMainTab },
-  VIEW: { SmartfishingDiaryListItemView, StoryPostListItemView },
+  VIEW: { StoryPostListItemView },
 } = Components;
 
 export default inject(

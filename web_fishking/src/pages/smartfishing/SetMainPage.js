@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import Components from "../../../components";
+import Components from "../../components";
 const {
   LAYOUT: { NavigationLayout },
 } = Components;
@@ -12,13 +12,17 @@ export default inject(
   observer(
     class extends React.Component {
       menus = [
-        { text: "프로필 관리", loggedIn: true, pathname: "/set/profile" },
-        { text: "알림설정", loggedIn: false, pathname: "/set/alarm" },
+        { text: "프로필 관리", loggedIn: true, pathname: "/cust/set/profile" },
+        { text: "알림설정", loggedIn: false, pathname: "/cust/set/alarm" },
+        { text: "정산 계좌 설정", loggedIn: false, pathname: "/set/paid" },
         { text: "접근 권한 설정", loggedIn: false, pathname: "" },
-        { text: "동영상 설정", loggedIn: false, pathname: "/set/vod" },
-        { text: "약관 및 정책", loggedIn: false, pathname: "/policy/main" },
-        { text: "탈퇴하기", loggedIn: true, pathname: "/member/signout" },
-        { text: "로그아웃", loggedIn: true, pathname: "/member/logout" },
+        { text: "동영상 설정", loggedIn: false, pathname: "/cust/set/vod" },
+        {
+          text: "약관 및 정책",
+          loggedIn: false,
+          pathname: "/cust/policy/main",
+        },
+        { text: "탈퇴하기", loggedIn: true, pathname: "/cust/member/signout" },
       ];
       constructor(props) {
         super(props);
@@ -42,8 +46,8 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         const resolve = APIStore._post("/v2/api/logout");
         if (resolve) {
-          PageStore.setAccessToken(null, "cust");
-          PageStore.push(`/member/login`);
+          PageStore.setAccessToken(null, "smartfishing");
+          PageStore.push(`/login`);
         }
       };
       /********** ********** ********** ********** **********/
@@ -54,11 +58,7 @@ export default inject(
         return (
           <React.Fragment>
             {/** Navigation */}
-            <NavigationLayout
-              title={"설정"}
-              showBackIcon={true}
-              backPathname={`/main/my`}
-            />
+            <NavigationLayout title={"설정"} showBackIcon={true} />
 
             {/** 입력 */}
             <div className="container nopadding mt-0">

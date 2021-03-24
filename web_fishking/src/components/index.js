@@ -45,6 +45,7 @@ import PoliceMainTab from "./layout/PoliceMainTab";
 import SmartSailMainTab from "./layout/SmartSailMainTab";
 import SmartFishingMainTab from "./layout/SmartFishingMainTab";
 import TideTab from "./layout/TideTab";
+import SmartfishingCsTab from "./layout/SmartfishingCsTab";
 
 /********** ********** ********** ********** **********/
 /** ITEM */
@@ -103,7 +104,6 @@ import SmartfishingReservationListItemView from "./view/SmartfishingReservationL
 import SmartfishingDashboardListItemView from "./view/SmartfishingDashboardListItemView";
 import SmartfishingGoodsListItemView from "./view/SmartfishingGoodsListItemView";
 import SmartfishingBoatListItemView from "./view/SmartfishingBoatListItemView";
-import SmartfishingDiaryListItemView from "./view/SmartfishingDiaryListItemView";
 
 export default {
   /********** MODAL **********/
@@ -151,6 +151,7 @@ export default {
     SmartSailMainTab,
     SmartFishingMainTab,
     TideTab,
+    SmartfishingCsTab,
   },
   /********** ITEM **********/
   ITEM: {},
@@ -206,6 +207,5 @@ export default {
     SmartfishingDashboardListItemView,
     SmartfishingGoodsListItemView,
     SmartfishingBoatListItemView,
-    SmartfishingDiaryListItemView,
   },
 };
