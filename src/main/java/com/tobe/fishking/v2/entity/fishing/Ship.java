@@ -215,6 +215,12 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(100) comment '승선위치' ")
     private String positions;
 
+    @Column(columnDefinition = "varchar(500) comment 'LTE 라우터 IMEI' ")
+    private String routerIMEI;
+
+    @Column(columnDefinition = "varchar(500) comment '등록 영상 아이디' ")
+    private Long videoId;
+
 //    @Builder
 //    public Ship(Long id, String shipName, Company company, Member member, SeaDirection seaDirection ) {
 //        this.id = id;
@@ -243,7 +249,9 @@ public class Ship extends BaseTime {  //선상
                 Company company,
                 Member createdBy,
                 String code,
-                String positions) {
+                String positions,
+                String router,
+                Long videoId) {
         this.shipName = name;
         this.fishingType = fishingType;
         this.address = address;
@@ -265,6 +273,8 @@ public class Ship extends BaseTime {  //선상
         this.isActive = true;
         this.departStatus = false;
         this.observerCode = code;
+        this.routerIMEI = router;
+        this.videoId = videoId;
     }
 
     /*리뷰 평점 적용*/

@@ -67,6 +67,7 @@ public class UpdateShipDTO {
     private @Valid List<AddShipCamera> adtCameras;
     @ApiParam(value = "nhn 카메라리스트", name = "nhnCameras[]")
     private @Valid List<AddShipCamera> nhnCameras;
+    private @Valid String router;
 
     public Ship toEntity(Member member, Company company, List<ObserverCode> codes, List<String> positions) {
         Location loc = Location.builder().latitude(latitude).longitude(longitude).build();
@@ -93,6 +94,7 @@ public class UpdateShipDTO {
                 .createdBy(member)
                 .positions(String.join(",", positions))
                 .code(code.getCode())
+                .router(router)
                 .build();
     }
 }

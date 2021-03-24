@@ -428,7 +428,7 @@ public class FishingShipService {
         response.setBoardingPerson(ship.getBoardingPerson());
         response.setLatitude(ship.getLocation().getLatitude());
         response.setLongitude(ship.getLocation().getLongitude());
-        response.setProfileImage("/resource" + ship.getProfileImage());
+        response.setProfileImage(ship.getProfileImage());
         response.setOwnerWordingTitle(ship.getOwnerWordingTitle());
         response.setOwnerWording(ship.getOwnerWording());
         response.setNoticeTitle(ship.getNoticeTitle());
@@ -437,6 +437,12 @@ public class FishingShipService {
         response.setFacilities(ship.getFacilities().stream().map(CommonCode::getCode).collect(Collectors.toList()));
         response.setServices(ship.getServices().stream().map(CommonCode::getCode).collect(Collectors.toList()));
         response.setDevices(ship.getDevices().stream().map(CommonCode::getCode).collect(Collectors.toList()));
+        response.setRouter(ship.getRouterIMEI() == null ? "" : ship.getRouterIMEI());
+        response.setVideoId(ship.getVideoId());
+        if (ship.getVideoId() != null) {
+            String videoUrl = fileRepo.getOne(ship.getVideoId()).getDownloadUrl();
+            response.setVideo(videoUrl);
+        }
         if (ship.getFishingType() == FishingType.ship) {
             response.setPositions(Arrays.asList(ship.getPositions().split(",").clone()));
             response.setSeaRocks(null);
