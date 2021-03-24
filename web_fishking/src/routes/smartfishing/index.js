@@ -14,6 +14,12 @@ import GoodsAddPage from "../../pages/smartfishing/GoodsAddPage";
 import BoatPage from "../../pages/smartfishing/BoatPage";
 import BoatAddPage from "../../pages/smartfishing/BoatAddPage";
 import PaidPage from "../../pages/smartfishing/PaidPage";
+import CsNoticePage from "../../pages/smartfishing/CsNoticePage";
+import CsFaqPage from "../../pages/smartfishing/CsFaqPage";
+import CsQnaAddPage from "../../pages/smartfishing/CsQnaAddPage";
+import CsQnaListPage from "../../pages/smartfishing/CsQnaListPage";
+import SetMainPage from "../../pages/smartfishing/SetMainPage";
+import SetPaidPage from "../../pages/smartfishing/SetPaidPage";
 
 export default inject("PageStore")(
   observer(({ PageStore, history, match }) => {
@@ -80,6 +86,38 @@ export default inject("PageStore")(
               />
               {/** 정산 */}
               <Route exact path={`${match.url}/paid`} component={PaidPage} />
+              {/** 고객센터 > 공지사항 */}
+              <Route
+                exact
+                path={`${match.url}/cs/notice`}
+                component={CsNoticePage}
+              />
+              {/** 고객센터 > 자주하는질문 */}
+              <Route exact path={`${match.url}/cs/faq`} component={CsFaqPage} />
+              {/** 고객센터 > 1:1문의 > 문의하기 */}
+              <Route
+                exact
+                path={`${match.url}/cs/qna/add`}
+                component={CsQnaAddPage}
+              />
+              {/** 고객센터 > 1:1문의 > 문의내역 */}
+              <Route
+                exact
+                path={`${match.url}/cs/qna/list`}
+                component={CsQnaListPage}
+              />
+              {/** 고객센터 > 설정 */}
+              <Route
+                exact
+                path={`${match.url}/set/main`}
+                component={SetMainPage}
+              />
+              {/** 고객센터 > 정산계좌설정 */}
+              <Route
+                exact
+                path={`${match.url}/set/paid`}
+                component={SetPaidPage}
+              />
               <Redirect from={`*`} to={`${match.url}/dashboard`} />
             </Switch>
           </React.Fragment>

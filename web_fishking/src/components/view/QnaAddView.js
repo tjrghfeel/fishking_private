@@ -56,7 +56,13 @@ export default inject(
         }
       };
       requestSubmit = async () => {
-        const { APIStore, ModalStore, DataStore, PageStore } = this.props;
+        const {
+          APIStore,
+          ModalStore,
+          DataStore,
+          PageStore,
+          targetRole = "member",
+        } = this.props;
         const {
           questionType,
           contents,
@@ -108,7 +114,7 @@ export default inject(
           returnType,
           returnAddress,
           fileList,
-          targetRole: "member",
+          targetRole,
         });
         if (resolve) {
           ModalStore.openModal("Alert", {
@@ -266,8 +272,6 @@ export default inject(
                   <a
                     onClick={this.requestSubmit}
                     className="btn btn-primary btn-lg btn-block"
-                    data-toggle="modal"
-                    data-target="#inputModal"
                   >
                     문의하기
                   </a>
