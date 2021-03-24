@@ -67,7 +67,7 @@ public class HttpRequestService {
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
             String token = res.getAsJsonObject("result").get("token").toString();
-            String expireTime = res.getAsJsonObject("result").get("expireTime").toString();
+            String expireTime = res.getAsJsonObject("result").get("expirationTime").toString();
 
             httpClient.close();
 

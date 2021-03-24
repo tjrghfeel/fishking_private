@@ -6,9 +6,7 @@ import com.tobe.fishking.v2.exception.ApiException;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.fishing.AddGoods;
-import com.tobe.fishking.v2.model.fishing.AddShipDTO;
-import com.tobe.fishking.v2.model.fishing.UpdateGoods;
+import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.model.response.UpdateShipResponse;
@@ -25,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -213,13 +212,43 @@ public class ShipsGoodsController {
         return result;
     }
 
-    @ApiOperation(value = "선박등록", notes = "선박등록")
+    @ApiOperation(value = "선박등록", notes = "선박등록 아래는 요청데이터의 일부입니" +
+            "\n name: 선박명 " +
+            "\n fishingType: 선박 구분 (ship: 선상, seaRocks: 갯바위) " +
+            "\n address: 선박 탑승 주소 " +
+            "\n sido: 시/도 " +
+            "\n sigungu: 시/군/구 " +
+            "\n tel: 전화번호 " +
+            "\n weight: 무게 (3, 5, 9 t 선택) " +
+            "\n boardingPerson: 탑승인원 " +
+            "\n latitude: 주소 위도 " +
+            "\n longitude: 주소 경도 " +
+            "\n profileImage: 사진등록 (등록 후 응답의 downloadUrl 을 보내주세요 )" +
+            "\n videoId: 녹화영상 등록. 등록한 영상 id." +
+            "\n ownerWordingTitle: 한마디 제목 " +
+            "\n ownerWording: 한마디 내용 " +
+            "\n noticeTitle: 공지 제목 " +
+            "\n notice: 공지 내용 " +
+            "\n fishSpecies[] 어종 리스트" +
+            "\n services[] 서비스 리스트" +
+            "\n facilities[] 편의시설 리스트" +
+            "\n devices[] 장비 리스트" +
+            "\n events[] 이벤트 리스트 [{eventId: 이벤트 id 신규는 null, title: 제목, startDate: 시작일, endDate: 종료일, contents: 내용, imageId: 이미지 아이디, imageUrl: 이미지 주소, 신규는 null}, ... ]" +
+            "\n positions[] 사용할 위치 리스트 (예: [1,2,3,4]), 갯바위 타입의 경우에는 갯바위 id 리스트" +
+            "\n adtCameras[] adt 카메라리스트 [{serial: 시리얼번호, name: 카메라명}, .. ] " +
+            "\n nhnCameras[] nhn 카메라리스트 [{serial: 시리얼번호, name: 카메라명}, .. ] " +
+            "\n router: LTE 라우터 IMEI" +
+            "\n 메인화면 노출은 빠집니다" +
+            "\n 녹화영상은 파일 업로드 시 filePublish: ship 으로 이미지와 같은 방법으로 업로드 하시면 됩니다. " +
+            "\n 주소 아래의 좌표는 위경도로 변경해주세요. 사용자 입력이 아닌 주소 검색결과값 넣어주시면 됩니다" +
+            "\n")
     @PostMapping("/ship/add")
     public Map<String, Object> addShip(
             @RequestHeader(name = "Authorization") String token,
-            AddShipDTO addShipDTO) throws ResourceNotFoundException {
+            @RequestBody UpdateShipDTO addShipDTO) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
+//            Long shipId = fishingShipService.addShip(addShipDTO, token, fishSpecies, services, facilities, devices, events, positions, adtCameras, nhnCameras);
             Long shipId = fishingShipService.addShip(addShipDTO, token);
             result.put("result", "success");
             result.put("id", shipId);
@@ -227,7 +256,7 @@ public class ShipsGoodsController {
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등*.록에 실패했습니다.");
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
         }
     }
 
@@ -235,11 +264,11 @@ public class ShipsGoodsController {
     @PutMapping("/ship/update/{shipId}")
     public Map<String, Object> updateShip(
             @RequestHeader(name = "Authorization") String token,
-            @RequestBody AddShipDTO addShipDTO,
+            @RequestBody UpdateShipDTO updateShipDTO,
             @PathVariable Long shipId) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
-            fishingShipService.updateShip(shipId, addShipDTO, token);
+            fishingShipService.updateShip(shipId, updateShipDTO, token);
             result.put("result", "success");
             result.put("id", shipId);
             return result;
@@ -263,6 +292,8 @@ public class ShipsGoodsController {
             "\n latitude: 위도" +
             "\n longitude: 경도" +
             "\n profileImage: 선박 이미지" +
+            "\n videoId: 비디오 id" +
+            "\n video: 비디오 주소" +
             "\n fishSpecies: 어종 코드 리스트 [어종 code, ...] " +
             "\n services: 서비스 코드 리스트 [서비스 code, ...] " +
             "\n facilities: 편의시설 코드 리스트 [편의시설 code, ...] " +
@@ -286,6 +317,7 @@ public class ShipsGoodsController {
             "\n notice: 공지사항 내용 " +
             "\n adtCameras: ADT 캡스 리스트 [{serial: 시리얼넘버, name: 카메라명}, ... ]" +
             "\n nhnCameras: NHN 토스트캠 리스트 [{serial: 시리얼넘버, name: 카메라명}, ... ]" +
+            "\n router: LTE 라우터 IMEI" +
             "\n ")
     @GetMapping("/ship/detail/{shipId}")
     public UpdateShipResponse getShipDetails(@RequestHeader(name = "Authorization") String token,

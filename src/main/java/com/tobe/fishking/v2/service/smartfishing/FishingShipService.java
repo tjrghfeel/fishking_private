@@ -17,6 +17,7 @@ import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.model.fishing.AddEvent;
 import com.tobe.fishking.v2.model.fishing.AddShipCamera;
 import com.tobe.fishking.v2.model.fishing.AddShipDTO;
+import com.tobe.fishking.v2.model.fishing.UpdateShipDTO;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateShipResponse;
 import com.tobe.fishking.v2.model.smartfishing.PlaceDTO;
@@ -134,33 +135,47 @@ public class FishingShipService {
     }
 
     @Transactional
-    public Long addShip(AddShipDTO addShipDTO, String token) throws ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public Long addShip(UpdateShipDTO addShipDTO,
+                        String token
+//                        List<String> fishSpecies,
+//                        List<String> services,
+//                        List<String> facilities,
+//                        List<String> devices,
+//                        List<AddEvent> events,
+//                        List<String> positions,
+//                        List<AddShipCamera> adtCameras,
+//                        List<AddShipCamera> nhnCameras
+    ) throws ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
         Company company = companyRepository.findByMember(member);
         List<ObserverCode> codes = observerCodeRepository.findAll();
-        Ship ship = addShipDTO.toEntity(member, company, codes);
+        Ship ship = addShipDTO.toEntity(member, company, codes, addShipDTO.getPositions());
 
         List<CommonCode> speciesList = new ArrayList<>();
         for (String species : addShipDTO.getFishSpecies()) {
+//        for (String species : fishSpecies) {
             speciesList.add(codeRepository.getByCode(species));
         }
         ship.setFishSpecies(speciesList);
 
         List<CommonCode> serviceList = new ArrayList<>();
         for (String service : addShipDTO.getServices()) {
+//        for (String service : services) {
             serviceList.add(codeRepository.getByCode(service));
         }
         ship.setServices(serviceList);
 
         List<CommonCode> facilityList = new ArrayList<>();
         for (String facility : addShipDTO.getFacilities()) {
+//        for (String facility : facilities) {
             facilityList.add(codeRepository.getByCode(facility));
         }
         ship.setFacilities(facilityList);
 
         List<CommonCode> deviceList = new ArrayList<>();
         for (String device : addShipDTO.getDevices()) {
+//        for (String device : devices) {
             deviceList.add(codeRepository.getByCode(device));
         }
         ship.setDevices(deviceList);
@@ -172,6 +187,7 @@ public class FishingShipService {
         Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
 
         for (AddShipCamera addShipCamera : addShipDTO.getNhnCameras()) {
+//        for (AddShipCamera addShipCamera : nhnCameras) {
             cameraNum += 1;
             RealTimeVideo video = RealTimeVideo.builder()
                     .rNo(cameraNum)
@@ -187,6 +203,7 @@ public class FishingShipService {
         }
 
         for (AddEvent event : addShipDTO.getEvents()) {
+//        for (AddEvent event : events) {
             ShareStatus status = ShareStatus.builder()
                     .viewCount(0)
                     .likeCount(0)
@@ -209,6 +226,7 @@ public class FishingShipService {
 
         if (ship.getFishingType().equals(FishingType.seaRocks)) {
             for (String position : addShipDTO.getPositions()) {
+//            for (String position : positions) {
                 Places places = placesRepository.getOne(Long.parseLong(position));
                 shipSeaRocksRepository.save(
                         ShipSeaRocks.builder()
@@ -223,32 +241,32 @@ public class FishingShipService {
     }
 
     @Transactional
-    public void updateShip(Long shipId, AddShipDTO addShipDTO, String token) throws ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public void updateShip(Long shipId, UpdateShipDTO updateShipDTO, String token) throws ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
         Company company = companyRepository.findByMember(member);
         Ship ship = shipRepository.getOne(shipId);
 
         List<CommonCode> speciesList = new ArrayList<>();
-        for (String species : addShipDTO.getFishSpecies()) {
+        for (String species : updateShipDTO.getFishSpecies()) {
             speciesList.add(codeRepository.getByCode(species));
         }
         ship.setFishSpecies(speciesList);
 
         List<CommonCode> serviceList = new ArrayList<>();
-        for (String service : addShipDTO.getServices()) {
+        for (String service : updateShipDTO.getServices()) {
             serviceList.add(codeRepository.getByCode(service));
         }
         ship.setServices(serviceList);
 
         List<CommonCode> facilityList = new ArrayList<>();
-        for (String facility : addShipDTO.getFacilities()) {
+        for (String facility : updateShipDTO.getFacilities()) {
             facilityList.add(codeRepository.getByCode(facility));
         }
         ship.setFacilities(facilityList);
 
         List<CommonCode> deviceList = new ArrayList<>();
-        for (String device : addShipDTO.getDevices()) {
+        for (String device : updateShipDTO.getDevices()) {
             deviceList.add(codeRepository.getByCode(device));
         }
         ship.setDevices(deviceList);
@@ -261,7 +279,7 @@ public class FishingShipService {
         if (videos.isEmpty()) {
             Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
 
-            for (AddShipCamera addShipCamera : addShipDTO.getNhnCameras()) {
+            for (AddShipCamera addShipCamera : updateShipDTO.getNhnCameras()) {
                 cameraNum += 1;
                 RealTimeVideo video = RealTimeVideo.builder()
                         .rNo(cameraNum)
@@ -278,7 +296,7 @@ public class FishingShipService {
         } else {
             String cameraToken = videos.get(0).getToken();
             String serial = videos.get(0).getSerial();
-            List<AddShipCamera> newCameras = addShipDTO.getNhnCameras();
+            List<AddShipCamera> newCameras = updateShipDTO.getNhnCameras();
             List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
             for (RealTimeVideo v : videos) {
                 boolean use = newSerials.contains(v.getSerial());
@@ -309,7 +327,7 @@ public class FishingShipService {
 
         List<Event> events = eventRepository.getEventByShipActive(shipId);
         if (events.isEmpty()) {
-            for (AddEvent event : addShipDTO.getEvents()) {
+            for (AddEvent event : updateShipDTO.getEvents()) {
                 ShareStatus status = ShareStatus.builder()
                         .viewCount(0)
                         .likeCount(0)
@@ -330,8 +348,8 @@ public class FishingShipService {
                 }
             }
         } else {
-            List<AddEvent> newEvents = addShipDTO.getEvents().stream().filter(e -> e.getEventId() == null).collect(Collectors.toList());
-            List<Long> newEventsId = addShipDTO.getEvents().stream().map(AddEvent::getEventId).filter(Objects::nonNull).collect(Collectors.toList());
+            List<AddEvent> newEvents = updateShipDTO.getEvents().stream().filter(e -> e.getEventId() == null).collect(Collectors.toList());
+            List<Long> newEventsId = updateShipDTO.getEvents().stream().map(AddEvent::getEventId).filter(Objects::nonNull).collect(Collectors.toList());
             for (Event e : events) {
                 boolean use = newEventsId.contains(e.getId());
                 if (!use) {
@@ -364,7 +382,7 @@ public class FishingShipService {
         if (ship.getFishingType().equals(FishingType.seaRocks)) {
             List<Places> oldPlaces = placesRepository.getPlacesByShipId(shipId);
             if (oldPlaces.isEmpty()) {
-                for (String position : addShipDTO.getPositions()) {
+                for (String position : updateShipDTO.getPositions()) {
                     Places places = placesRepository.getOne(Long.parseLong(position));
                     shipSeaRocksRepository.save(
                             ShipSeaRocks.builder()
@@ -374,7 +392,7 @@ public class FishingShipService {
                     );
                 }
             } else {
-                List<String> newPlaces = addShipDTO.getPositions();
+                List<String> newPlaces = updateShipDTO.getPositions();
                 for (Places p : oldPlaces) {
                     if (newPlaces.contains(String.valueOf(p.getId()))) {
                         newPlaces.remove(String.valueOf(p.getId()));
@@ -410,7 +428,7 @@ public class FishingShipService {
         response.setBoardingPerson(ship.getBoardingPerson());
         response.setLatitude(ship.getLocation().getLatitude());
         response.setLongitude(ship.getLocation().getLongitude());
-        response.setProfileImage("/resource" + ship.getProfileImage());
+        response.setProfileImage(ship.getProfileImage());
         response.setOwnerWordingTitle(ship.getOwnerWordingTitle());
         response.setOwnerWording(ship.getOwnerWording());
         response.setNoticeTitle(ship.getNoticeTitle());
@@ -419,6 +437,12 @@ public class FishingShipService {
         response.setFacilities(ship.getFacilities().stream().map(CommonCode::getCode).collect(Collectors.toList()));
         response.setServices(ship.getServices().stream().map(CommonCode::getCode).collect(Collectors.toList()));
         response.setDevices(ship.getDevices().stream().map(CommonCode::getCode).collect(Collectors.toList()));
+        response.setRouter(ship.getRouterIMEI() == null ? "" : ship.getRouterIMEI());
+        response.setVideoId(ship.getVideoId());
+        if (ship.getVideoId() != null) {
+            String videoUrl = fileRepo.getOne(ship.getVideoId()).getDownloadUrl();
+            response.setVideo(videoUrl);
+        }
         if (ship.getFishingType() == FishingType.ship) {
             response.setPositions(Arrays.asList(ship.getPositions().split(",").clone()));
             response.setSeaRocks(null);

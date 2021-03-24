@@ -41,5 +41,8 @@ public class UpdateShipResponse {
     private String notice;
     private List<AddShipCamera> adtCameras;
     private List<AddShipCamera> nhnCameras;
+    private String router;
+    private Long videoId;
+    private String video;
 
 }

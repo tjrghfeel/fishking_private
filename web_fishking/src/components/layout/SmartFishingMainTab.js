@@ -49,7 +49,7 @@ export default inject("PageStore")(
         </a>
         <a
           className={"nav-link" + (activeIndex === 6 ? " active" : "")}
-          onClick={() => PageStore.push(`/cs`)}
+          onClick={() => PageStore.push(`/cs/notice`)}
         >
           <figure className="cs"></figure>
           고객센터
