@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
@@ -14,6 +15,7 @@ import com.tobe.fishking.v2.model.fishing.SearchOrdersDTO;
 import com.tobe.fishking.v2.model.response.FishingDashboardResponse;
 import com.tobe.fishking.v2.model.response.OrderDetailResponse;
 import com.tobe.fishking.v2.model.response.OrderListResponse;
+import com.tobe.fishking.v2.model.smartfishing.CalculateDetailResponse;
 import com.tobe.fishking.v2.model.smartfishing.CalculateResponse;
 import com.tobe.fishking.v2.repository.fishking.*;
 import lombok.RequiredArgsConstructor;
@@ -226,6 +228,22 @@ public class OrdersService {
         Map<String, Object> response = new HashMap<>();
         response.put("year", String.valueOf(today.getYear()));
         response.put("month", String.valueOf(today.getMonthValue()));
+        response.put("content", calcs);
+        return response;
+    }
+
+    @Transactional
+    public Map<String, Object> getCalculateDetail(Long shipId, String year, String month) {
+        List<CalculateDetailResponse> calcs = calculateRepository.calculateDetail(shipId, year, month);
+        Ship ship = shipRepository.getOne(shipId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("year", year);
+        response.put("month", month);
+        response.put("shipId", ship.getId());
+        response.put("shipName", ship.getShipName());
+        response.put("total", calcs.stream().mapToInt(CalculateDetailResponse::getPayAmount).sum());
+        response.put("cancel", calcs.stream().filter(c -> c.getPayAmount() < 0).mapToInt(CalculateDetailResponse::getPayAmount).sum());
+        response.put("order", calcs.stream().filter(c -> c.getPayAmount() >= 0).mapToInt(CalculateDetailResponse::getPayAmount).sum());
         response.put("content", calcs);
         return response;
     }

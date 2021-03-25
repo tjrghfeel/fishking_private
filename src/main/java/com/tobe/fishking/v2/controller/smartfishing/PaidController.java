@@ -84,4 +84,37 @@ public class PaidController {
         return ordersService.getCalculationThisMonth(memberId);
     }
 
+    @GetMapping("/calculate/detail")
+    @ApiOperation(value = "정산 상세보기", notes = "정산 상세보기 페이지" +
+            "\n year: 연 선택 (2021)" +
+            "\n month: 달 선택 (01, 02, ... , 12)" +
+            "\n shipId: 상세보기의 선박 id" +
+            "\n 아래는 응답 입니다." +
+            "\n {" +
+            "\n year: 해당 년도" +
+            "\n month: 해당 월" +
+            "\n shipId: 해당 선박 id" +
+            "\n shipName: 해당 선박명" +
+            "\n order: 예약금액" +
+            "\n cancel: 취소금액" +
+            "\n total: 정산금액" +
+            "\n content: [{" +
+            "\n     payDate: 결제일" +
+            "\n     orderName: 주문자" +
+            "\n     goodsName: 상품명" +
+            "\n     personnel: 인원" +
+            "\n     payAmount: 결제금액 " +
+            "\n }, ... ]" +
+            "\n }" +
+            "\n 상단의 정산일은 정산 월로 바꿔주시고 해당 년-월 로 보여주세요")
+    public Map<String, Object> getNowCalculate(@RequestHeader(name = "Authorization") String token,
+                                               @RequestParam Long shipId,
+                                               @RequestParam String year,
+                                               @RequestParam String month) throws NotAuthException, ResourceNotFoundException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        return ordersService.getCalculateDetail(shipId, year, month);
+    }
+
 }
