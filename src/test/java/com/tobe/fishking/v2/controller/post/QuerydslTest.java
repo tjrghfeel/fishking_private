@@ -4,7 +4,9 @@ import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.fishing.QOrders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.model.smartfishing.CalculateResponse;
 import com.tobe.fishking.v2.repository.board.PostRepository;
+import com.tobe.fishking.v2.repository.fishking.CalculateRepository;
 import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class QuerydslTest {
 
     @Autowired
-    private OrdersRepository ordersRepository;
+    private CalculateRepository calculateRepository;
 
     @Test
     public void querydslCustomTest() {
@@ -30,12 +32,13 @@ public class QuerydslTest {
         Long memberId = 13L;
 
         //when
-        List<Tuple> result = ordersRepository.getStatus(memberId);
-        for (Tuple r : result) {
-            System.out.println(r.get(0, OrderStatus.class) + ": " + r.get(1, Long.class));
-        }
+        List<CalculateResponse> result = calculateRepository.searchCalculate(memberId, "", "2021", "02", null);
+//        for (Tuple r : result) {
+//            System.out.println(r.get(0, Integer.class) + ", " + r.get(1, Integer.class) + ", " + r.get(2, Long.class) + ", " + r.get(3, Long.class) + ", " + r.get(3, Long.class));
+////            System.out.println(r.get(0, Integer.class) + ", " + r.get(1, Integer.class));
+//        }
         //then
-        assertThat(result.size(), is(5));
+        assertThat(result.size(), is(1));
     }
 
 }

@@ -137,14 +137,6 @@ public class FishingShipService {
     @Transactional
     public Long addShip(UpdateShipDTO addShipDTO,
                         String token
-//                        List<String> fishSpecies,
-//                        List<String> services,
-//                        List<String> facilities,
-//                        List<String> devices,
-//                        List<AddEvent> events,
-//                        List<String> positions,
-//                        List<AddShipCamera> adtCameras,
-//                        List<AddShipCamera> nhnCameras
     ) throws ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
@@ -154,28 +146,24 @@ public class FishingShipService {
 
         List<CommonCode> speciesList = new ArrayList<>();
         for (String species : addShipDTO.getFishSpecies()) {
-//        for (String species : fishSpecies) {
             speciesList.add(codeRepository.getByCode(species));
         }
         ship.setFishSpecies(speciesList);
 
         List<CommonCode> serviceList = new ArrayList<>();
         for (String service : addShipDTO.getServices()) {
-//        for (String service : services) {
             serviceList.add(codeRepository.getByCode(service));
         }
         ship.setServices(serviceList);
 
         List<CommonCode> facilityList = new ArrayList<>();
         for (String facility : addShipDTO.getFacilities()) {
-//        for (String facility : facilities) {
             facilityList.add(codeRepository.getByCode(facility));
         }
         ship.setFacilities(facilityList);
 
         List<CommonCode> deviceList = new ArrayList<>();
         for (String device : addShipDTO.getDevices()) {
-//        for (String device : devices) {
             deviceList.add(codeRepository.getByCode(device));
         }
         ship.setDevices(deviceList);
@@ -184,10 +172,19 @@ public class FishingShipService {
 
 
         int cameraNum = 0;
-        Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
+        List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
+        String cameraToken;
+        String expTime;
+        if (allVideos.isEmpty()) {
+            Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
+            cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+            expTime = (String) nhnCameraToken.get("expireTime");
+        } else {
+            cameraToken = allVideos.get(0).getToken();
+            expTime = allVideos.get(0).getExpireTime();
+        }
 
         for (AddShipCamera addShipCamera : addShipDTO.getNhnCameras()) {
-//        for (AddShipCamera addShipCamera : nhnCameras) {
             cameraNum += 1;
             RealTimeVideo video = RealTimeVideo.builder()
                     .rNo(cameraNum)
@@ -195,8 +192,8 @@ public class FishingShipService {
                     .ship(ship)
                     .name(addShipCamera.getName())
                     .serial(addShipCamera.getSerial())
-                    .token((String) nhnCameraToken.get("token"))
-                    .expireTime((String) nhnCameraToken.get("expireTime"))
+                    .token(cameraToken)
+                    .expireTime(expTime)
                     .type("toast")
                     .build();
             realTimeVideoRepository.save(video);
@@ -276,9 +273,19 @@ public class FishingShipService {
 
         int cameraNum = 0;
         List<RealTimeVideo> videos = realTimeVideoRepository.getNHNByShipsId(shipId);
-        if (videos.isEmpty()) {
+        List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
+        String cameraToken;
+        String expTime;
+        if (allVideos.isEmpty()) {
             Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
+            cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+            expTime = (String) nhnCameraToken.get("expireTime");
+        } else {
+            cameraToken = allVideos.get(0).getToken();
+            expTime = allVideos.get(0).getExpireTime();
+        }
 
+        if (videos.isEmpty()) {
             for (AddShipCamera addShipCamera : updateShipDTO.getNhnCameras()) {
                 cameraNum += 1;
                 RealTimeVideo video = RealTimeVideo.builder()
@@ -287,15 +294,14 @@ public class FishingShipService {
                         .ship(ship)
                         .name(addShipCamera.getName())
                         .serial(addShipCamera.getSerial())
-                        .token((String) nhnCameraToken.get("token"))
-                        .expireTime((String) nhnCameraToken.get("expireTime"))
+                        .token(cameraToken)
+                        .expireTime(expTime)
                         .type("toast")
                         .build();
                 realTimeVideoRepository.save(video);
             }
         } else {
-            String cameraToken = videos.get(0).getToken();
-            String serial = videos.get(0).getSerial();
+            String serial = allVideos.get(0).getSerial();
             List<AddShipCamera> newCameras = updateShipDTO.getNhnCameras();
             List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
             for (RealTimeVideo v : videos) {
@@ -304,6 +310,7 @@ public class FishingShipService {
                     newSerials.remove(v.getSerial());
                 } else {
                     v.setNotUse();
+                    v.updateToken(cameraToken, expTime);
                     realTimeVideoRepository.save(v);
                 }
             }
@@ -317,7 +324,7 @@ public class FishingShipService {
                                     .name(c.getName())
                                     .serial(c.getSerial())
                                     .token(cameraToken)
-                                    .expireTime(serial)
+                                    .expireTime(expTime)
                                     .type("toast")
                                     .build()
                     );
@@ -504,4 +511,52 @@ public class FishingShipService {
         return response;
     }
 
+    @Transactional
+    public void changeCameraStatus(Long cameraId, Boolean isUse) {
+        RealTimeVideo realTimeVideo = realTimeVideoRepository.getOne(cameraId);
+        if (isUse) {
+            realTimeVideo.setUse();
+        } else {
+            realTimeVideo.setNotUse();
+        }
+        realTimeVideoRepository.save(realTimeVideo);
+    }
+
+    @Transactional
+    public Map<String, Object> getShipCamera(Long shipId) {
+        Ship ship = shipRepository.getOne(shipId);
+        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(shipId);
+        List<Map<String, Object>> videoRes = new ArrayList<>();
+        for (RealTimeVideo v : videos) {
+            Map<String, Object> r = new HashMap<>();
+            r.put("image", "/resource" + ship.getProfileImage());
+            r.put("cameraId", v.getId());
+            r.put("name", v.getName());
+            r.put("isUse", v.getIsUse());
+            videoRes.add(r);
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("shipId", ship.getId());
+        result.put("shipName", ship.getShipName());
+        result.put("count", videoRes.size());
+        result.put("content", videoRes);
+        return result;
+    }
+
+    @Transactional
+    public List<Map<String, Object>> getShipsCameraTab(Long memberId, String keyword, Boolean hasVideo) {
+        List<Tuple> ships = shipRepository.getShipsCameraTab(memberId, keyword, hasVideo);
+
+        List<Map<String, Object>> shipsRes = new ArrayList<>();
+        for (Tuple s : ships) {
+            Map<String, Object> r = new HashMap<>();
+            r.put("shipId", s.get(0, Long.class));
+            r.put("shipName", s.get(1, String.class));
+            r.put("hasVideo", s.get(2, Boolean.class));
+            r.put("profileImage", "/resource" + s.get(3, String.class));
+            r.put("takes", s.get(4, Long.class));
+            shipsRes.add(r);
+        }
+        return shipsRes;
+    }
 }
