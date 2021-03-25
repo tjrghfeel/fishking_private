@@ -14,6 +14,7 @@ import GoodsAddPage from "../../pages/smartfishing/GoodsAddPage";
 import BoatPage from "../../pages/smartfishing/BoatPage";
 import BoatAddPage from "../../pages/smartfishing/BoatAddPage";
 import PaidPage from "../../pages/smartfishing/PaidPage";
+import PaidDetailPage from "../../pages/smartfishing/PaidDetailPage";
 import CsNoticePage from "../../pages/smartfishing/CsNoticePage";
 import CsFaqPage from "../../pages/smartfishing/CsFaqPage";
 import CsQnaAddPage from "../../pages/smartfishing/CsQnaAddPage";
@@ -86,6 +87,12 @@ export default inject("PageStore")(
               />
               {/** 정산 */}
               <Route exact path={`${match.url}/paid`} component={PaidPage} />
+              {/** 정산 > 정산내역 */}
+              <Route
+                exact
+                path={`${match.url}/paid/detail`}
+                component={PaidDetailPage}
+              />
               {/** 고객센터 > 공지사항 */}
               <Route
                 exact
