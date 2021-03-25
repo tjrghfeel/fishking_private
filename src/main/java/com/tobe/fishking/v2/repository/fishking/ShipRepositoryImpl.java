@@ -499,4 +499,29 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                 .fetch();
         return response;
     }
+
+    @Override
+    public List<Tuple> getShipsCameraTab(Long memberId, String keyword, Boolean hasVideo) {
+        NumberPath<Long> aliasLiked = Expressions.numberPath(Long.class, "liked");
+        List<Tuple> response = queryFactory
+                .select(ship.id,
+                        ship.shipName,
+                        ship.videoId.isNotNull(),
+                        ship.profileImage,
+                        ExpressionUtils.as(JPAExpressions.select(take.count()).from(take).where(take.linkId.eq(ship.id), take.takeType.eq(TakeType.ship)), aliasLiked))
+                .from(ship).join(company).on(ship.company.eq(company))
+                .where(company.member.id.eq(memberId),
+                        hasVideo(hasVideo),
+                        ship.shipName.containsIgnoreCase(keyword))
+                .fetch();
+        return response;
+    }
+
+    private BooleanExpression hasVideo(Boolean hasVideo) {
+        if (hasVideo == null) {
+            return null;
+        } else {
+            return hasVideo ? ship.videoId.isNotNull() : ship.videoId.isNull();
+        }
+    }
 }

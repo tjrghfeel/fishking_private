@@ -511,4 +511,52 @@ public class FishingShipService {
         return response;
     }
 
+    @Transactional
+    public void changeCameraStatus(Long cameraId, Boolean isUse) {
+        RealTimeVideo realTimeVideo = realTimeVideoRepository.getOne(cameraId);
+        if (isUse) {
+            realTimeVideo.setUse();
+        } else {
+            realTimeVideo.setNotUse();
+        }
+        realTimeVideoRepository.save(realTimeVideo);
+    }
+
+    @Transactional
+    public Map<String, Object> getShipCamera(Long shipId) {
+        Ship ship = shipRepository.getOne(shipId);
+        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(shipId);
+        List<Map<String, Object>> videoRes = new ArrayList<>();
+        for (RealTimeVideo v : videos) {
+            Map<String, Object> r = new HashMap<>();
+            r.put("image", "/resource" + ship.getProfileImage());
+            r.put("cameraId", v.getId());
+            r.put("name", v.getName());
+            r.put("isUse", v.getIsUse());
+            videoRes.add(r);
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("shipId", ship.getId());
+        result.put("shipName", ship.getShipName());
+        result.put("count", videoRes.size());
+        result.put("content", videoRes);
+        return result;
+    }
+
+    @Transactional
+    public List<Map<String, Object>> getShipsCameraTab(Long memberId, String keyword, Boolean hasVideo) {
+        List<Tuple> ships = shipRepository.getShipsCameraTab(memberId, keyword, hasVideo);
+
+        List<Map<String, Object>> shipsRes = new ArrayList<>();
+        for (Tuple s : ships) {
+            Map<String, Object> r = new HashMap<>();
+            r.put("shipId", s.get(0, Long.class));
+            r.put("shipName", s.get(1, String.class));
+            r.put("hasVideo", s.get(2, Boolean.class));
+            r.put("profileImage", "/resource" + s.get(3, String.class));
+            r.put("takes", s.get(4, Long.class));
+            shipsRes.add(r);
+        }
+        return shipsRes;
+    }
 }
