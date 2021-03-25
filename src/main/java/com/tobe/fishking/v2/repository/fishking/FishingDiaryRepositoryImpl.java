@@ -45,7 +45,9 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
                 .selectFrom(fishingDiary)
                 .where(fishingDiary.ship.id.eq(ship_id),
                         fishingDiary.filePublish.eq(FilePublish.fishingDiary),
-                        fishingDiary.createdBy.isActive.eq(true)
+                        fishingDiary.createdBy.isActive.eq(true),
+                        fishingDiary.isActive.eq(true),
+                        fishingDiary.isDeleted.eq(false)
                 )
                 .orderBy(fishingDiary.createdDate.desc())
                 .fetch();
@@ -58,7 +60,9 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
                 .selectFrom(fishingDiary)
                 .where(fishingDiary.ship.id.eq(ship_id),
                         fishingDiary.filePublish.eq(FilePublish.fishingBlog),
-                        fishingDiary.createdBy.isActive.eq(true)
+                        fishingDiary.createdBy.isActive.eq(true),
+                        fishingDiary.isActive.eq(true),
+                        fishingDiary.isDeleted.eq(false)
                 )
                 .orderBy(fishingDiary.createdDate.desc())
                 .fetch();

@@ -76,7 +76,7 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
                     "       else  concat(:path,m.profileImage) end, " +
                     "   case when c.isDeleted=true then '****' else m.nickName end, " +
                     "   c.createdDate, " +
-                    "   case when c.isDeleted=true then '삭제된 댓글입니다' else c.contents end, " +
+                    "   case when c.isDeleted=true then '삭제된 댓글입니다' when c.isActive=false then '숨김처리된 글입니다' else c.contents end, " +
                     "   case when c.isDeleted=true " +
                     "       then null " +
                     "       else (select concat(:path,'/',f.fileUrl,'/',f.storedFile) from FileEntity f " +

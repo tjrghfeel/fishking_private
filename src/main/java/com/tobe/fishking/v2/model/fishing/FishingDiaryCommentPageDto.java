@@ -12,5 +12,6 @@ import java.util.List;
 public class FishingDiaryCommentPageDto {
     private int commentCount;
     private String title;
+    private Boolean isManager;
     private List<FishingDiaryCommentDtoForPage> commentList;
 }

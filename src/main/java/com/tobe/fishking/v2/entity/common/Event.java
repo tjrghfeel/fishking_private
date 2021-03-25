@@ -116,4 +116,6 @@ public class Event extends BaseTime {
         if(isActive !=null ){this.isActive = isActive;}
     }
 
+    public void delete(){this.isDeleted=true;}
+    public void setActive(Boolean active){this.isActive = active;}
 }

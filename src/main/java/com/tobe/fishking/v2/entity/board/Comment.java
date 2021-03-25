@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
@@ -70,6 +71,9 @@ public class Comment extends BaseTime {
     @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
     private Boolean isDeleted;
 
+    @Column(columnDefinition = "bit default 1 comment '숨김처리 여부'")
+    private Boolean isActive;
+
     /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -85,5 +89,5 @@ public class Comment extends BaseTime {
     public void modify(String content){
         this.contents = content;
     }
-
+    public void setActive(Boolean active){this.isActive = active;}
 }

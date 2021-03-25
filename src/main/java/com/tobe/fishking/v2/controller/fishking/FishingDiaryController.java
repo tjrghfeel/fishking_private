@@ -191,7 +191,12 @@ public class FishingDiaryController {
             @RequestParam(value = "fishSpeciesList", required = false) String[] fishSpecies,
             @RequestParam(value = "shipId",required = false) Long shipId,
             @RequestParam(value = "sort", required = false, defaultValue = "createdDate") String sort,
-            @RequestHeader(value = "Authorization", required = false) String token
+            @RequestHeader(value = "Authorization", required = false) String token,
+            //아래는 관리자 조회시 사용하는 필드들
+            @RequestParam(value = "shipName",required = false) String shipName,
+            @RequestParam(value = "nickName",required = false) String nickName,
+            @RequestParam(value = "title",required = false) String title,
+            @RequestParam(value= "content",required = false) String content
     ) throws ResourceNotFoundException, EmptyListException {
         if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount"))){
             throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
@@ -205,7 +210,8 @@ public class FishingDiaryController {
 //        return fishingDiaryService.getFishingDiaryList(
 //                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
         Page<FishingDiaryDtoForPage> diaries = fishingDiaryService.getFishingDiaryList(
-                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
+                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies,
+                shipName, nickName, title, content, sort, token, false);
         if (diaries.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
@@ -263,7 +269,7 @@ public class FishingDiaryController {
 //                null, "createdDate", token, true);
         Page<FishingDiaryDtoForPage> diaries = fishingDiaryService.getFishingDiaryList(
                 page, "fishingDiary", null, null, districtSearchKey, searchTarget, shipId,
-                null, "createdDate", token, true);
+                null, null, null, null, null, "createdDate", token, true);
         if (diaries.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
@@ -327,6 +333,16 @@ public class FishingDiaryController {
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return fishingDiaryService.deleteFishingDiary(dto,token);
+    }
+    //숨김처리
+    @ApiOperation(value = "숨김처리")
+    @PutMapping("/fishingDiary/hide/{id}/{active}")
+    public Boolean hideFishingDiary(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("id") Long fishingDiaryId,
+            @PathVariable("active") String active
+    ) throws ResourceNotFoundException {
+        return fishingDiaryService.hideFishingDiary(fishingDiaryId,active, token);
     }
 
     /*스크랩 추가*/

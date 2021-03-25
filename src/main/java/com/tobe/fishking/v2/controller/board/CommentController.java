@@ -117,4 +117,16 @@ public class CommentController {
 
         return commentService.getCommentList(linkId,DependentType.valueOf(dependentType),token);
     }
+
+    //숨김처리
+    @ApiOperation(value = "댓글 숨김처리",notes = "")
+    @PutMapping("/comment/hide/{id}/{active}")
+    public Boolean hideComment(
+            @PathVariable("id") Long id,
+            @PathVariable("active") String active,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        if(!active.equals("true") && !active.equals("false") ){ throw new RuntimeException("active값에는 'true'또는 'false'만 가능합니다.");}
+        return commentService.hideComment( id, active, token);
+    }
 }

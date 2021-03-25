@@ -22,6 +22,7 @@ import com.tobe.fishking.v2.repository.common.EventRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,8 @@ public class CommentService {
     UploadService uploadService;
     @Autowired
     EventRepository eventRepository;
+    @Autowired
+    MemberService memberService;
 
     /*댓글 작성*/
     @Transactional
@@ -157,10 +160,12 @@ public class CommentService {
         Integer commentCount =0;
         String title = null;
         Long memberId = null;
+        Boolean isManager = false;
         if(token !=null) {
             Member member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
             memberId = member.getId();
+            if(member.getRoles() == Role.admin){isManager= true;}
         }
         if(dependentType==DependentType.event){
             Event event = eventRepository.findById(linkId)
@@ -182,10 +187,28 @@ public class CommentService {
         }
         result = CommentPageDto.builder()
                 .title(title)
+                .isManager(isManager)
                 .commentCount(commentCount)
                 .commentList(parentCommentList)
                 .build();
 
         return result;
+    }
+
+    //숨김처리
+    @Transactional
+    public Boolean hideComment(Long id, String active, String token) throws ResourceNotFoundException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Boolean isActive = null;
+        if(active.equals("true")){isActive=true;}
+        else if(active.equals("false")){isActive = false; }
+
+        if(member.getRoles()==Role.admin){
+            Comment comment = commentRepository.findById(id)
+                    .orElseThrow(()->new ResourceNotFoundException("comment not found for this id :: "+id));
+            comment.setActive(isActive);
+            return true;
+        }
+        else return false;
     }
 }

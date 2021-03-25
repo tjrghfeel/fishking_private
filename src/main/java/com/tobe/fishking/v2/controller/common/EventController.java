@@ -119,4 +119,25 @@ public class EventController {
 
         return eventService.modifyEvent(dto,token);
     }
+
+    //이벤트 비활성화
+    @ApiOperation(value = "비활성화")
+    @PutMapping("/event/hide/{id}/{active}")
+    public Boolean hideEvent(
+            @PathVariable("id") Long eventId,
+            @PathVariable("active") String active,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        if(!active.equals("true") && !active.equals("false") ){ throw new RuntimeException("active값에는 'true'또는 'false'만 가능합니다.");}
+        return eventService.hideEvent( eventId, active, token);
+    }
+    //이벤트 삭제
+    @ApiOperation(value = "이벤트 삭제",notes = "")
+    @DeleteMapping("/event/{id}")
+    public Boolean deleteEvent(
+            @PathVariable("id") Long id,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        return eventService.deleteEvent(id,token);
+    }
 }

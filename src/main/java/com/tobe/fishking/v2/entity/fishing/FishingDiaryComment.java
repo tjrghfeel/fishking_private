@@ -63,6 +63,9 @@ public class FishingDiaryComment extends BaseTime {
     @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
     private Boolean isDeleted;
 
+    @Column(columnDefinition = "bit default 1 comment '숨김처리여부'")
+    private Boolean isActive;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', comment, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint  NOT NULL   comment '생성자'  ")
@@ -94,4 +97,5 @@ public class FishingDiaryComment extends BaseTime {
     public void modify(String content){
         this.contents = content;
     }
+    public void setActive(Boolean active){this.isActive = active;}
 }

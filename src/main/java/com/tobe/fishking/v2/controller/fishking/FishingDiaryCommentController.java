@@ -84,6 +84,7 @@ public class FishingDiaryCommentController {
             "응답 필드 ) \n" +
             "- commentCount : Integer / 총 댓글 수 \n" +
             "- title : String / 본글 제목\n" +
+            "- isManager : Boolean / 현재 조회자가 관리자인지 아닌지\n" +
             "- commentList : 댓글객체의 배열. 아래는 항목들.\n" +
             "\t\t\t- authorId : Long / 댓글 작성자 id\n" +
             "\t\t\t- commentId : Long / 댓글 id\n" +
@@ -107,5 +108,17 @@ public class FishingDiaryCommentController {
         if(token == null){}
         else if(token.equals("")){token = null;}
         return commentService.getCommentList(fishingDiaryId,token);
+    }
+
+    //숨김처리
+    @ApiOperation(value = "댓글 숨김처리",notes = "")
+    @PutMapping("/fishingDiaryComment/hide/{id}/{active}")
+    public Boolean hideComment(
+            @PathVariable("id") Long id,
+            @PathVariable("active") String active,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        if(!active.equals("true") && !active.equals("false") ){ throw new RuntimeException("active값에는 'true'또는 'false'만 가능합니다.");}
+        return commentService.hideFishingDiaryComment( id, active, token);
     }
 }

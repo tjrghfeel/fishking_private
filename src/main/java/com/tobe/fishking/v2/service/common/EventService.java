@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.board.Comment;
 import com.tobe.fishking.v2.entity.common.Event;
 import com.tobe.fishking.v2.entity.common.LoveTo;
 import com.tobe.fishking.v2.entity.fishing.Ship;
@@ -73,6 +74,8 @@ public class EventService {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+eventId));
+        if(event.getIsDeleted()==true){throw new RuntimeException("삭제된 이벤트입니다.");}
+
         Member member = null;
         if(token != null ){
             member = memberRepository.findBySessionToken(token)
@@ -192,5 +195,36 @@ public class EventService {
         for(int i=0; i<fileEntityList.size(); i++){ fileEntityList.get(i).saveTemporaryFile(event.getId());}
 
         return true;
+    }
+
+    //숨김처리
+    @Transactional
+    public Boolean hideEvent(Long id, String active, String token) throws ResourceNotFoundException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Boolean isActive = null;
+        if(active.equals("true")){isActive=true;}
+        else if(active.equals("false")){isActive = false; }
+
+        if(member.getRoles()==Role.admin){
+            Event event = eventRepository.findById(id)
+                    .orElseThrow(()->new ResourceNotFoundException("comment not found for this id :: "+id));
+            event.setActive(isActive);
+            return true;
+        }
+        else return false;
+    }
+
+    //이벤트 삭제
+    @Transactional
+    public Boolean deleteEvent(Long id, String token) throws ResourceNotFoundException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Event event = eventRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("event not found for this id :: "+id));
+
+        if(event.getCreatedBy() != member){return false;}
+        else{
+            event.delete();
+            return true;
+        }
     }
 }

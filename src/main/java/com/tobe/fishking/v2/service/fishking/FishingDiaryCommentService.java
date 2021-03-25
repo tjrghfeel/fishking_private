@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.service.fishking;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.board.Comment;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
 import com.tobe.fishking.v2.enums.auth.Role;
@@ -14,6 +15,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,8 @@ public class FishingDiaryCommentService {
     Environment env;
     @Autowired
     UploadService uploadService;
+    @Autowired
+    MemberService memberService;
 
     /*댓글 작성*/
     @Transactional
@@ -147,10 +151,14 @@ public class FishingDiaryCommentService {
         FishingDiaryCommentPageDto result = null;
         int commentCount = 0;
         Member member =null;
+        Boolean isManager = false;
         if(token!=null) {
             member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
+            if(member.getRoles() == Role.admin){ isManager = true; }
         }
+
+
         FishingDiary fishingDiary = fishingDiaryRepository.findById(fishingDiaryId)
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
         String path = env.getProperty("file.downloadUrl");
@@ -170,8 +178,26 @@ public class FishingDiaryCommentService {
         result = FishingDiaryCommentPageDto.builder()
                 .commentList(parentCommentList)
                 .commentCount(commentCount)
+                .isManager(isManager)
                 .title(fishingDiary.getTitle())
                 .build();
         return result;
+    }
+
+    //숨김처리
+    @Transactional
+    public Boolean hideFishingDiaryComment(Long id, String active, String token) throws ResourceNotFoundException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Boolean isActive = null;
+        if(active.equals("true")){isActive=true;}
+        else if(active.equals("false")){isActive = false; }
+
+        if(member.getRoles()==Role.admin){
+            FishingDiaryComment comment = commentRepository.findById(id)
+                    .orElseThrow(()->new ResourceNotFoundException("comment not found for this id :: "+id));
+            comment.setActive(isActive);
+            return true;
+        }
+        else return false;
     }
 }

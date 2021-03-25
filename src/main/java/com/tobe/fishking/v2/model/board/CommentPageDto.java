@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 public class CommentPageDto {
     private String title;
+    private Boolean isManager;
     private Integer commentCount;
     private List<CommentDtoForPage> commentList;
 }

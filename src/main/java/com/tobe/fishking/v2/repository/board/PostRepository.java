@@ -43,7 +43,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   and if(:title is null, true, p.title like %:title%) " +
             "   and if(:questionType is null, true, p.question_type = :questionType) " +
             "   and p.is_deleted = false "+
-            "order by p.question_type ",
+            "order by p.question_type, created_date desc ",
             countQuery = "select p.id " +
                     "from post p " +
                     "where p.board_id = (select b.id from board b where b.board_type = 3) " +
@@ -51,7 +51,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   and if(:title is null, true, p.title like %:title%) " +
                     "   and if(:questionType is null, true, p.question_type = :questionType) " +
                     "   and p.is_deleted = false "+
-                    "order by p.question_type ",
+                    "order by p.question_type, created_date desc ",
             nativeQuery = true
     )
     Page<FAQDto> findAllFAQList(
@@ -106,7 +106,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   p.created_date date, " +
             "   p.contents contents, " +
             "   p.author_id authorId, " +
-            "   p.author_name authorName, " +
+            "   m.nick_name authorName, " +
             "   p.return_type returnType, " +
             "   p.return_no_address returnNoAddress, " +
             "   p.created_by createdBy, " +
@@ -130,12 +130,14 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   (select GROUP_CONCAT(f.id separator ',') " +
             "       from files f where f.pid = rp.id and f.file_publish = 2 and f.is_delete = false " +
             "       group by f.pid) replyFileIdList " +
-            "from post p left outer join post rp on rp.parent_id = p.id " +
+            "from post p left outer join post rp on rp.parent_id = p.id, member m " +
             "where p.id = :postId " +
+            "   and p.author_id = m.id " +
             "   and p.is_deleted = false ",
             countQuery = "select p.id " +
-                    "from post p join post rp on rp.parent_id = p.id " +
+                    "from post p join post rp on rp.parent_id = p.id, member m " +
                     "where p.id = :postId " +
+                    "   and p.author_id = m.id " +
                     "   and p.is_deleted = false ",
             nativeQuery = true
     )
@@ -279,7 +281,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   p.question_type questionType, " +
                     "   p.title title, " +
                     "   LEFT(p.contents,30) content, " +
-                    "   p.author_name authorName, " +
+                    "   m.nick_name authorName, " +
                     "   p.author_id authorId, " +
                     "   p.return_type returnType, " +
                     "   p.return_no_address returnNoAddress, " +
@@ -291,9 +293,10 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   p.modified_by modifiedBy, " +
                     "   p.target_role targetRole, " +
                     "   p.is_replied isReplied   " +
-                    "from post p join board b on (p.board_id = b.id) " +
+                    "from post p join board b on (p.board_id = b.id), member m " +
                     "where " +
-                    "   (:postId is null or (:postId is not null and p.id = :postId))" +
+                    "   p.author_id=m.id " +
+                    "   and (:postId is null or (:postId is not null and p.id = :postId)) " +
 //                    "   if(:postId is null,true,(p.id = :postId)) " +
                     "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
                     "   and if(:parentId is null, (p.parent_id is null), (p.parent_id = :parentId)) " +
@@ -302,7 +305,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   and if(:title is null,true,(p.title like %:title%)) " +
                     "   and if(:content is null,true,(p.contents like %:content%)) " +
                     "   and if(:authorId is null,true,(p.author_id = :authorId)) " +
-                    "   and if(:authorName is null,true,(p.author_name = :authorName)) " +
+                    "   and if(:authorName is null,true,(m.nick_name like %:authorName%)) " +
                     "   and if(:returnType is null,true,(p.return_type = :returnType)) " +
                     "   and if(:returnNoAddress is null,true,(p.return_no_address like %:returnNoAddress%)) " +
                     "   and if(:createdAt is null,true,(p.created_at like %:createdAt%)) " +
@@ -316,9 +319,10 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   and if(:modifiedBy is null, true, (p.modified_by = :modifiedBy)) "+
                     "   and if(:isReplied is null, true, (p.is_replied = :isReplied)) ",
             countQuery = "select p.id " +
-                    "from post p join board b on (p.board_id = b.id) " +
+                    "from post p join board b on (p.board_id = b.id), member m " +
                     "where " +
-                    "   if(:postId is null,true,(p.id = :postId)) " +
+                    "   p.author_id = m.id " +
+                    "   and if(:postId is null,true,(p.id = :postId)) " +
                     "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
                     "   and if(:parentId is null, (p.parent_id is null), (p.parent_id = :parentId)) " +
                     "   and if(:channelType is null,true,(p.channel_type = :channelType)) " +
@@ -326,7 +330,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   and if(:title is null,true,(p.title like %:title%)) " +
                     "   and if(:content is null,true,(p.contents like %:content%)) " +
                     "   and if(:authorId is null,true,(p.author_id = :authorId)) " +
-                    "   and if(:authorName is null,true,(p.author_name = :authorName)) " +
+                    "   and if(:authorName is null,true,(m.nick_name like %:authorName%)) " +
                     "   and if(:returnType is null,true,(p.return_type = :returnType)) " +
                     "   and if(:returnNoAddress is null,true,(p.return_no_address like %:returnNoAddress%)) " +
                     "   and if(:createdAt is null,true,(p.created_at like %:createdAt%)) " +

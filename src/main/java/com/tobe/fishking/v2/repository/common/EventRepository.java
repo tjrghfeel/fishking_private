@@ -46,6 +46,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "   e.is_active isActive " +
             "from event e left join ship s on e.ship_id = s.id " +
             "where if(:isLast = false or :isLast is null, e.end_day >= :today, e.end_day < :today) " +
+            "   and e.is_deleted = false " +
             "   and if(:title is null, true, e.title like %:title%) " +
             "   and if(:startDate is null, true, :startDate <= e.start_day) " +
             "   and if(:endDate is null, true, :endDate >= e.end_day) " +
@@ -56,6 +57,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             countQuery = "select e.id " +
                     "from event e left join ship s on e.ship_id = s.id " +
                     "where if(:isLast = false or :isLast is null, e.end_day >= :today, e.end_day < :today) " +
+                    "   and e.is_deleted = false " +
                     "   and if(:title is null, true, e.title like %:title%) " +
                     "   and if(:startDate is null, true, :startDate <= e.start_day) " +
                     "   and if(:endDate is null, true, :endDate >= e.end_day) " +

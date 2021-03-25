@@ -35,6 +35,7 @@ import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
 import com.tobe.fishking.v2.repository.fishking.RealTimeVideoRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.repository.fishking.specs.FishingDiarySpecs;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.utils.NativeResultProcessUtils;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.apache.bcel.classfile.Code;
@@ -70,6 +71,7 @@ public class FishingDiaryService {
     private final LoveToRepository loveToRepository;
     private final RealTimeVideoRepository realTimeVideoRepo;
     private final Environment env;
+    private final MemberService memberService;
 
     private static int searchSize = 0;
     //검색 -- 통합검색
@@ -428,10 +430,12 @@ public class FishingDiaryService {
     @Transactional
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(
             int page, String category, String district1, String[] district2List, String searchKey, String searchTarget, Long shipId,
-            String[] fishSpecies, String sort, String token, Boolean myPost) throws ResourceNotFoundException {
+            String[] fishSpecies, String shipName, String nickName, String title, String content, String sort, String token, Boolean myPost)
+            throws ResourceNotFoundException {
+        Member member =null;
         Long memberId = null;
         if(token !=null){
-            Member member = memberRepo.findBySessionToken(token)
+            member = memberRepo.findBySessionToken(token)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
             memberId = member.getId();
         }
@@ -471,8 +475,19 @@ public class FishingDiaryService {
 
         Pageable pageable = PageRequest.of(page, 30);
         if(sort.equals("createdDate")){
-            return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
-                    filePublish.ordinal(),district1Regex, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
+            if(member !=null && member.getRoles() == Role.admin){
+                return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
+                        filePublish.ordinal(),district1Regex, district2Regex, fishSpeciesRegex, searchKey, null,
+                        memberId,myPost,searchTarget,shipId,shipName,nickName,title,content, true, pageable
+                );
+            }
+            else {
+                return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
+                        filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, null,
+                        memberId, myPost, searchTarget, shipId, null, null, null, null, false, pageable
+                );
+            }
+        }
         else if(sort.equals("likeCount")){
             return fishingDiaryRepo.getFishingDiaryListOrderByLikeCount(
                     filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
@@ -500,9 +515,10 @@ public class FishingDiaryService {
             shipId = fishingDiary.getShip().getId();
             shipAddress = fishingDiary.getShip().getAddress();
         }
-
+        Boolean isActive = true;
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
         else if(fishingDiary.getIsDeleted() == true){ throw new RuntimeException("삭제된 게시물입니다.");}
+        else if(fishingDiary.getIsActive()==false){isActive =false;}
 
         /*닉네임, 글 종류 설정.*/
         String nickName = null;
@@ -542,21 +558,25 @@ public class FishingDiaryService {
         ArrayList<String> imageUrlList = new ArrayList<>();
         ArrayList<Long> imageIdList =new ArrayList<>();
         String path = env.getProperty("file.downloadUrl");
-        List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
-                fishingDiaryId, fishingDiary.getFilePublish(), FileType.image, false);
-        for(int i=0; i<fileEntityList.size(); i++){
-            FileEntity fileEntity = fileEntityList.get(i);
-            imageUrlList.add(path + "/" +fileEntity.getFileUrl() + "/" + fileEntity.getStoredFile());
-            imageIdList.add(fileEntity.getId());
+        if(isActive == true) {
+            List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                    fishingDiaryId, fishingDiary.getFilePublish(), FileType.image, false);
+            for (int i = 0; i < fileEntityList.size(); i++) {
+                FileEntity fileEntity = fileEntityList.get(i);
+                imageUrlList.add(path + "/" + fileEntity.getFileUrl() + "/" + fileEntity.getStoredFile());
+                imageIdList.add(fileEntity.getId());
+            }
         }
         /*비디오 url 설정*/
         String videoUrl = null;
         Long videoId = null;
-        List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
-                fishingDiaryId, fishingDiary.getFilePublish(), FileType.video, false);
-        if(video.size()!=0){
-            videoUrl = path + "/" + video.get(0).getFileUrl() + "/" + video.get(0).getStoredFile();
-            videoId = video.get(0).getId();
+        if(isActive == true) {
+            List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
+                    fishingDiaryId, fishingDiary.getFilePublish(), FileType.video, false);
+            if (video.size() != 0) {
+                videoUrl = path + "/" + video.get(0).getFileUrl() + "/" + video.get(0).getStoredFile();
+                videoId = video.get(0).getId();
+            }
         }
         /*자신글여부 설정*/
         Boolean isMine = null;
@@ -621,7 +641,7 @@ public class FishingDiaryService {
                 .isLive(isLive)
                 .fishingType(fishingType)
                 .fishingTypeCode(fishingTypeCode)
-                .title(fishingDiary.getTitle())
+                .title((isActive)?fishingDiary.getTitle():"숨김처리된 글입니다.")
                 .createdDate(fishingDiary.getCreatedDate())
                 .fishingSpecies(fishingDiary.getFishingSpeciesName())
                 .fishingSpeciesCodeList(codeList)
@@ -632,7 +652,7 @@ public class FishingDiaryService {
                 .fishingLureCodeList(lureCodeList)
                 .fishingTechnic(fishingDiary.getFishingTechnic())
                 .fishingTechnicCodeList(techCodeList)
-                .content(fishingDiary.getContents())
+                .content((isActive)?fishingDiary.getContents():"숨김처리된 글입니다.")
                 .imageUrlList(imageUrlList)
                 .imageIdList(imageIdList)
                 .videoUrl(videoUrl)
@@ -667,6 +687,22 @@ public class FishingDiaryService {
             fileList.get(i).setIsDelete(true);
         }
         return true;
+    }
+    //숨김처리
+    @Transactional
+    public Boolean hideFishingDiary(Long id, String active, String token) throws ResourceNotFoundException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Boolean isActive = null;
+        if(active.equals("true")){isActive=true;}
+        else if(active.equals("false")){isActive = false; }
+
+        if(member.getRoles()==Role.admin){
+            FishingDiary fishingDiary = fishingDiaryRepo.findById(id)
+                    .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+id));
+            fishingDiary.setActive(isActive);
+            return true;
+        }
+        else return false;
     }
 
     /*스크랩 추가*/

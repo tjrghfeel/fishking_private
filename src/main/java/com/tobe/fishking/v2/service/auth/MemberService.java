@@ -1466,7 +1466,7 @@ public class MemberService {
 //        return fishingDiaryRepository.findByMember(user,member,pageable);
         return fishingDiaryRepository.getFishingDiaryListOrderByCreatedDate(
                 null, null,null, null, null, user.getId(), memberId, false,
-                null, null, pageable
+                null, null, null, null, null, null, false, pageable
         );
     }
 
