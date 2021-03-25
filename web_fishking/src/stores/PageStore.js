@@ -50,14 +50,15 @@ const PageStore = new (class {
   };
   setAccessToken = (
     accessToken = null,
-    service = "cust" | "police",
+    service = "cust" | "police" | "smartfishing",
     auto = "Y" | "N"
   ) => {
     if (accessToken === null) {
-      localStorage.removeItem("@accessToken");
-      localStorage.removeItem(`@accessToken_${service}`);
-      sessionStorage.removeItem("@accessToken");
-      sessionStorage.removeItem(`@accessToken_${service}`);
+      localStorage.clear();
+      // localStorage.removeItem("@accessToken");
+      // localStorage.removeItem(`@accessToken_${service}`);
+      // sessionStorage.removeItem("@accessToken");
+      // sessionStorage.removeItem(`@accessToken_${service}`);
     } else {
       if (auto === "Y")
         localStorage.setItem(`@accessToken_${service}`, accessToken);
