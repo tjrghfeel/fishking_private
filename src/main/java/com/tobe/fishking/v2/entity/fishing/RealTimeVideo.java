@@ -91,8 +91,9 @@ public class RealTimeVideo extends BaseTime {
         this.type = type;
     }
 
-    public void updateToken(String token) {
+    public void updateToken(String token, String expTime) {
         this.token = token;
+        this.expireTime = expTime;
     }
 
     public void setUse() {
