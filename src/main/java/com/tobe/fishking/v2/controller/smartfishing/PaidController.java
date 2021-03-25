@@ -48,7 +48,7 @@ public class PaidController {
                                                @RequestParam String year,
                                                @RequestParam String month,
                                                @RequestParam(defaultValue = "") String shipName,
-                                               @RequestParam(defaultValue = "null") Boolean isCalculate) throws NotAuthException, ResourceNotFoundException {
+                                               @RequestParam(required = false) Boolean isCalculate) throws NotAuthException, ResourceNotFoundException {
         if (!memberService.checkAuth(token)) {
             throw new NotAuthException("권한이 없습니다.");
         }

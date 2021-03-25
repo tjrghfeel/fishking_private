@@ -49,5 +49,4 @@ public class CalculateRepositoryImpl implements CalculateRepositoryCustom {
             return  calculate.isCalculate.eq(status);
         }
     }
-
 }
