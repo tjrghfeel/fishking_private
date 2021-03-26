@@ -37,11 +37,24 @@ const PageStore = new (class {
     window.location.reload();
   };
   goBack = () => {
-    const redirectUrl = sessionStorage.getItem("@redirect-url");
-    sessionStorage.removeItem("@redirect-url");
-    sessionStorage.setItem("@goBack", "Y");
-    if (redirectUrl === null) window.history.back();
-    else window.history.go(-2);
+    if (
+      window.isNative &&
+      (window.location.pathname.indexOf("/cust/main/home") !== -1 ||
+        window.location.pathname.indexOf("/smartfishing/dashboard") !== -1)
+    ) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          process: "Exit",
+          data: "",
+        })
+      );
+    } else {
+      const redirectUrl = sessionStorage.getItem("@redirect-url");
+      sessionStorage.removeItem("@redirect-url");
+      sessionStorage.setItem("@goBack", "Y");
+      if (redirectUrl === null) window.history.back();
+      else window.history.go(-2);
+    }
   };
   getQueryParams = () => {
     const params = qs.parse(window.location.search, {

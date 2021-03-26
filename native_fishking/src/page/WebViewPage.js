@@ -86,6 +86,11 @@ export default inject(
         const {AppStore, WebViewStore} = this.props;
         const {process, data} = JSON.parse(nativeEvent.data);
         switch (process) {
+          case 'Exit': {
+            // >>>>> 앱 종료
+            BackHandler.exitApp();
+            break;
+          }
           case 'Linking': {
             // >>>>> URL Scheme 호출
             Linking.openURL(data).catch((err) => {

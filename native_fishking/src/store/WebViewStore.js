@@ -51,6 +51,11 @@ export default new (class {
   }
   /** action :: goBack */
   goBack() {
+    this.webview.current.injectJavaScript(
+      `window.postMessage('goBack');
+      true;`,
+    );
+    if (true) return;
     if ((this.recentUrl || '').indexOf('/cust/main/home') !== -1) {
       BackHandler.exitApp();
       return true;
