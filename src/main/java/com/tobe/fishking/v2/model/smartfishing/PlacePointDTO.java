@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.model.smartfishing;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +13,9 @@ import javax.validation.Valid;
 @NoArgsConstructor
 public class PlacePointDTO {
 
-    @ApiParam(value = "위도")
+    @ApiModelProperty(example = "위도")
     private @Valid Double latitude;
-    @ApiParam(value = "경도")
+    @ApiModelProperty(example = "경도")
     private @Valid Double longitude;
 
 }

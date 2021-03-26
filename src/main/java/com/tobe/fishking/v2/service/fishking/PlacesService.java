@@ -119,36 +119,37 @@ public class PlacesService {
     public Long addSeaRock(PlaceDTO dto, String token) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
-        Places places = Places.builder()
-                .placeName(dto.getName())
-                .sido(dto.getSido())
-                .sigungu(dto.getSigungu())
-                .dong(dto.getDong())
-                .address(dto.getAddress())
-                .location(new Location(dto.getLatitude(), dto.getLongitude()))
-                .averageDepth(dto.getAverageDepth())
-                .floorMaterial(dto.getFloorMaterial())
-                .tideTime(dto.getTideTime())
-                .introduce(dto.getIntroduce())
-                .open(dto.getIsOpen())
-                .createdBy(member)
-                .modifiedBy(member)
-                .build();
-        placesRepo.save(places);
+//        Places places = Places.builder()
+//                .placeName(dto.getName())
+//                .sido(dto.getSido())
+//                .sigungu(dto.getSigungu())
+//                .dong(dto.getDong())
+//                .address(dto.getAddress())
+//                .location(new Location(dto.getLatitude(), dto.getLongitude()))
+//                .averageDepth(dto.getAverageDepth())
+//                .floorMaterial(dto.getFloorMaterial())
+//                .tideTime(dto.getTideTime())
+//                .introduce(dto.getIntroduce())
+//                .open(dto.getIsOpen())
+//                .createdBy(member)
+//                .modifiedBy(member)
+//                .build();
+//        placesRepo.save(places);
 
-        int number = 0;
-        for (PlacePointDTO pointDTO : dto.getPoints()) {
-            number += 1;
-            placePointRepository.save(
-                    PlacePoint.builder()
-                            .place(places)
-                            .location(new Location(pointDTO.getLatitude(), pointDTO.getLongitude()))
-                            .number(number)
-                            .member(member)
-                            .build()
-            );
-        }
-        return places.getId();
+//        int number = 0;
+//        for (PlacePointDTO pointDTO : dto.getPoints()) {
+//            number += 1;
+//            placePointRepository.save(
+//                    PlacePoint.builder()
+//                            .place(places)
+//                            .location(new Location(pointDTO.getLatitude(), pointDTO.getLongitude()))
+//                            .number(number)
+//                            .member(member)
+//                            .build()
+//            );
+//        }
+//        return places.getId();
+        return -1L;
     }
 
 }

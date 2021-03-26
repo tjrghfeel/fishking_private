@@ -20,6 +20,7 @@ import com.tobe.fishking.v2.service.fishking.ShipService;
 import com.tobe.fishking.v2.service.smartfishing.FishingShipService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -381,7 +382,7 @@ public class ShipsGoodsController {
     @PostMapping("/searocks/add")
     public Map<String, Object> addSeaRock(
             @RequestHeader(name = "Authorization") String token,
-            PlaceDTO placeDTO) throws ResourceNotFoundException {
+            @RequestBody PlaceDTO placeDTO) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
             Long placeId = placesService.addSeaRock(placeDTO, token);
