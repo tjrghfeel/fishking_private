@@ -3,10 +3,12 @@ package com.tobe.fishking.v2.repository.common;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.model.common.MainSpeciesResponse;
 import com.tobe.fishking.v2.model.fishing.SmallShipResponse;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +62,23 @@ public class CommonCodeRepositoryImpl implements CommonCodeRepositoryCustom {
                 .groupBy(observerCode.forecastCode)
                 .fetchResults();
         return results.getResults();
+    }
+
+    @Override
+    public List<CommonCode> findAllByCodeGroupIdAndParCode(Long codeGroupId, String parCode) {
+        return queryFactory
+                .selectFrom(commonCode)
+                .where(commonCode.isActive.eq(true),
+                        commonCode.codeGroup.id.eq(codeGroupId),
+                        checkParCode(parCode))
+                .fetch();
+    }
+
+    private BooleanExpression checkParCode(String parCode) {
+        if (parCode == null) {
+            return null;
+        } else {
+            return commonCode.extraValue1.eq(parCode);
+        }
     }
 }
