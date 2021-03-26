@@ -68,8 +68,6 @@ export default inject(
           });
           this.setState({ average, service, taste, clean });
 
-          console.log(JSON.stringify(content));
-
           if (page === 0) {
             this.setState({ list: content });
             // # 별점 스크립트 로드

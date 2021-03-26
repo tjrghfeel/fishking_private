@@ -26,6 +26,8 @@ import InputModal from "./modal/InputModal";
 import MapCompanyInfoModal from "./modal/MapCompanyInfoModal";
 import SelectMultiAreaModal from "./modal/SelectMultiAreaModal";
 import SelectTideAreaModal from "./modal/SelectTideAreaModal";
+import SelectSeaRocksModal from "./modal/SelectSeaRocksModal";
+import AddSeaRocksModal from "./modal/AddSeaRocksModal";
 
 /********** ********** ********** ********** **********/
 /** LAYOUT */
@@ -133,6 +135,8 @@ export default {
     MapCompanyInfoModal,
     SelectMultiAreaModal,
     SelectTideAreaModal,
+    SelectSeaRocksModal,
+    AddSeaRocksModal,
   },
   /********** LAYOUT **********/
   LAYOUT: {

@@ -37,7 +37,6 @@ const APIStore = new (class {
               }
             }
           }
-          console.log(url);
 
           const response = await Http.request(
             url,
@@ -79,7 +78,6 @@ const APIStore = new (class {
   };
 
   _post = (url, data, headers) => {
-    console.log(url);
     return new Promise((resolve, reject) => {
       runInAction(async () => {
         this.isLoading = true;

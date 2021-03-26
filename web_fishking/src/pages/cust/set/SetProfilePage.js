@@ -29,7 +29,6 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         const resolve = await APIStore._get("/v2/api/profileManage");
         PageStore.setState(resolve);
-        console.log(JSON.stringify(resolve));
       };
 
       openChangeProfile = () => {

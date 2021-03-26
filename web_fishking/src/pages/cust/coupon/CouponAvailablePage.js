@@ -43,7 +43,6 @@ export default inject(
           pageable: { pageSize = 0 },
         } = await APIStore._get("/v2/api/downloadableCouponList/" + page);
 
-        console.log(JSON.stringify(content));
         PageStore.setState({ totalElements });
         if (page === 0) {
           PageStore.setState({ list: content });

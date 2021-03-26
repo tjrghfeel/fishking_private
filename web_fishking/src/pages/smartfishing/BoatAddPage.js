@@ -4,6 +4,8 @@ import { inject, observer } from "mobx-react";
 import Components from "../../components";
 const {
   LAYOUT: { NavigationLayout },
+  VIEW: { ShipType3PositionView, ShipType5PositionView, ShipType9PositionView },
+  MODAL: { SelectSeaRocksModal, AddSeaRocksModal },
 } = Components;
 
 export default inject(
@@ -21,6 +23,9 @@ export default inject(
         this.ifrmAddress = React.createRef(null);
         this.zonecode = React.createRef(null);
         this.textAddr = React.createRef(null);
+        this.shipType3 = React.createRef(null);
+        this.shipType5 = React.createRef(null);
+        this.shipType9 = React.createRef(null);
         this.state = {
           name: "", // 선박명
           fishingType: "ship", // 구분 : 선상 = ship , 갯바위 = seaRocks
@@ -37,11 +42,17 @@ export default inject(
           latitude: null,
           longitude: null,
           router: null,
+          adtCameras: [],
+          nhnCameras: [],
+          weight: null, // 선박크기
+          boardingPerson: 0, // 탑승인원 - 슬롯개수
+          positions: [], // 사용위치목록
 
           arr_fishSpecies: [],
           arr_services: [],
           arr_facilities: [],
           arr_adtCameras: [],
+          arr_nhnCameras: [],
         };
       }
       /********** ********** ********** ********** **********/
@@ -59,9 +70,11 @@ export default inject(
         const arr_facilities = await DataStore.getCodes("87", 3);
         this.setState({ arr_facilities });
         // 카메라 리스트
-        const arr_adtCameras = await APIStore._get(`/v2/api/ship/cameras`);
-        this.setState({ arr_adtCameras });
-        console.log(JSON.stringify(arr_adtCameras));
+        const cameras = await APIStore._get(`/v2/api/ship/cameras`);
+        this.setState({
+          arr_adtCameras: cameras["adt"] || [],
+          arr_nhnCameras: cameras["nhn"] || [],
+        });
       }
       uploadFile = async (uploadType) => {
         const { APIStore } = this.props;
@@ -104,7 +117,6 @@ export default inject(
           width: "100%",
           height: "100%",
           oncomplete: (data) => {
-            console.log(JSON.stringify(data));
             let addr = "";
             if (data.userSelectedType === "R") {
               addr = data.roadAddress;
@@ -122,7 +134,6 @@ export default inject(
             // 좌표변환
             const geocoder = new kakao.maps.services.Geocoder();
             geocoder.addressSearch(addr, (result, status) => {
-              console.log(JSON.stringify(result));
               if (status === kakao.maps.services.Status.OK) {
                 const x = result[0].x;
                 const y = result[0].y;
@@ -196,6 +207,126 @@ export default inject(
                   </label>
                 </div>
                 <div className="space mt-1 mb-4"></div>
+                {/** 선상 / 갯바위 선택 */}
+                {this.state.fishingType === "ship" && (
+                  <React.Fragment>
+                    <div className="form-group">
+                      <label className="d-block">
+                        선상 예약 위치 설정{" "}
+                        <strong className="required"></strong>
+                      </label>
+                      <p className="text-primary pl-0">
+                        선상 예약 위치를 설정하시면 고객이 어복황제 예약시 선상
+                        위치를 선택가능합니다.
+                      </p>
+                    </div>
+                    <div className="form-group">
+                      <div className="input-group">
+                        <select
+                          className="form-control"
+                          onChange={(e) => {
+                            const selectedValue =
+                              e.target.selectedOptions[0].value;
+                            if (selectedValue == 0) {
+                              this.setState({
+                                weight: null,
+                                boardingPerson: 0,
+                                positions: [],
+                              });
+                            } else {
+                              this.setState({
+                                weight: selectedValue,
+                                boardingPerson: 0,
+                                positions: [],
+                              });
+                            }
+                          }}
+                        >
+                          <option value={0}>선박크기 선택</option>
+                          <option value={3}>3톤 (8명)</option>
+                          <option value={5}>5톤 (18명)</option>
+                          <option value={9}>9톤 (22명)</option>
+                        </select>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="슬롯 개수 입력"
+                          readOnly
+                          value={this.state.boardingPerson}
+                          onChange={(e) =>
+                            this.setState({ boardingPerson: e.target.value })
+                          }
+                        />
+                        <div className="input-group-append">
+                          <span className="input-group-text">개</span>
+                        </div>
+                      </div>
+                      {this.state.weight == 3 && (
+                        <React.Fragment>
+                          <ShipType3PositionView
+                            ref={this.shipType3}
+                            count={8}
+                            onChange={(selected) =>
+                              this.setState({
+                                boardingPerson: selected.length,
+                                positions: selected,
+                              })
+                            }
+                          />
+                        </React.Fragment>
+                      )}
+                      {this.state.weight == 5 && (
+                        <React.Fragment>
+                          <ShipType5PositionView
+                            ref={this.shipType5}
+                            count={18}
+                            onChange={(selected) =>
+                              this.setState({
+                                boardingPerson: selected.length,
+                                positions: selected,
+                              })
+                            }
+                          />
+                        </React.Fragment>
+                      )}
+                      {this.state.weight == 9 && (
+                        <React.Fragment>
+                          <ShipType9PositionView
+                            ref={this.shipType9}
+                            count={22}
+                            onChange={(selected) =>
+                              this.setState({
+                                boardingPerson: selected.length,
+                                positions: selected,
+                              })
+                            }
+                          />
+                        </React.Fragment>
+                      )}
+                    </div>
+                  </React.Fragment>
+                )}
+                {this.state.fishingType === "seaRocks" && (
+                  <React.Fragment>
+                    <SelectSeaRocksModal
+                      id={"selRocksModal"}
+                      onSelect={(selected) =>
+                        console.log(JSON.stringify(selected))
+                      }
+                    />
+                    <AddSeaRocksModal id={"addRocksModal"} />
+                    <div className="form-group text-center">
+                      <a
+                        className="btn btn-secondary btn-block btn-sm"
+                        data-toggle="modal"
+                        data-target="#selRocksModal"
+                      >
+                        갯바위 선택
+                      </a>
+                    </div>
+                  </React.Fragment>
+                )}
+                <div className="space mt-0 mb-4"></div>
                 <div className="form-group">
                   <a
                     className="btn btn btn-round-grey btn-xs-round float-right"
@@ -585,6 +716,82 @@ export default inject(
                     onChange={(e) => this.setState({ router: e.target.value })}
                   />
                 </div>
+                {this.state.arr_adtCameras.length > 0 && (
+                  <div className="form-group">
+                    <label className="d-block">카메라 </label>
+
+                    {this.state.arr_adtCameras?.map((data, index) => (
+                      <div className="input-group mb-2" key={index}>
+                        <select
+                          className="form-control"
+                          onChange={(e) => {
+                            if (e.target.selectedOptions[0].value === "N") {
+                              this.setState({
+                                adtCameras: DataStore.removeItemOfArrayByKey(
+                                  this.state.adtCameras,
+                                  "serial",
+                                  data["serial"]
+                                ),
+                              });
+                            } else {
+                              this.setState({
+                                adtCameras: this.state.adtCameras.concat(data),
+                              });
+                            }
+                          }}
+                        >
+                          <option value={"Y"}>카메라 선택</option>
+                          <option value={"N"}>카메라 미선택</option>
+                        </select>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="카메라 이름을 입력하세요"
+                          readOnly
+                          value={data["name"].concat(`[${data["serial"]}]`)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="space mt-0 mb-4"></div>
+                <h6 className="mb-3 mt-3">NHN토스트캠 카메라등록</h6>
+                <div className="form-group">
+                  {this.state.arr_nhnCameras?.map((data, index) => (
+                    <div className="input-group mb-2" key={index}>
+                      <select
+                        className="form-control"
+                        onChange={(e) => {
+                          if (e.target.selectedOptions[0].value === "N") {
+                            this.setState({
+                              nhnCameras: DataStore.removeItemOfArrayByKey(
+                                this.state.nhnCameras,
+                                "serial",
+                                data["serial"]
+                              ),
+                            });
+                          } else {
+                            this.setState({
+                              nhnCameras: this.state.nhnCameras.concat(data),
+                            });
+                          }
+                        }}
+                      >
+                        <option value={"Y"}>카메라 선택</option>
+                        <option value={"N"}>카메라 미선택</option>
+                      </select>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="카메라 이름을 입력하세요"
+                        readOnly
+                        value={data["name"].concat(`[${data["serial"]}]`)}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="space mb-4"></div>
               </form>
               <p className="clearfix">
                 <br />

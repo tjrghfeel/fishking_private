@@ -38,7 +38,6 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/OrdersDetail", {
             ordersId,
           });
-          console.log(JSON.stringify(resolve));
           this.setState(resolve);
 
           const shipData = await APIStore._get(
@@ -154,7 +153,6 @@ export default inject(
         };
         requestReservation = () => {
           // TODO : 다시 예약하기
-          console.log(JSON.stringify(this.state));
           const { PageStore } = this.props;
           PageStore.push(
             `/company/${

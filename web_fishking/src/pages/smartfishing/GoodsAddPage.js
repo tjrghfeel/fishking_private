@@ -127,7 +127,6 @@ export default inject(
       };
       selectSpecies = (code, checked) => {
         const { DataStore } = this.props;
-        console.log(code);
         if (checked) {
           this.setState({ species: this.state.species.concat(code) });
         } else {
@@ -217,7 +216,6 @@ export default inject(
           extraPersonnel,
           extraShipNumber,
         };
-        console.log(JSON.stringify(params));
 
         let resolve = null;
         if (id !== null) {
@@ -259,8 +257,6 @@ export default inject(
             extraShipNumber,
           });
         }
-
-        console.log(JSON.stringify(resolve));
       };
       /********** ********** ********** ********** **********/
       /** render */

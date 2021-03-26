@@ -53,13 +53,11 @@ export default inject(
       };
 
       onClick = (item) => {
-        console.log(JSON.stringify(item));
         const { PageStore } = this.props;
         PageStore.push(`/story/diary/detail/${item.id}`);
       };
 
       onClickLike = async (item) => {
-        console.log(JSON.stringify(item));
         const { APIStore, DataStore, PageStore } = this.props;
         const takeType =
           item.fishingDiaryType === "조행일지" ? "fishingDiary" : "fishingBlog";

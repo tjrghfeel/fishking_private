@@ -14,6 +14,7 @@ export default inject()(
           data: { total, used } = { total: [], used: [] },
           editable = true,
           count = 0,
+          onChange,
         },
         ref
       ) => {
@@ -27,14 +28,16 @@ export default inject()(
             if (selected.indexOf(num) === -1 && selected.length < count) {
               const arr = selected.concat(num);
               setSelected(arr);
+              if (onChange) onChange(arr);
             } else if (selected.indexOf(num) !== -1) {
               const index = selected.indexOf(num);
               const bef = selected.slice(0, index);
               const aft = selected.slice(index + 1, selected.length);
               setSelected(bef.concat(aft));
+              if (onChange) onChange(bef.concat(aft));
             }
           },
-          [used, selected, setSelected]
+          [used, selected, setSelected, onChange]
         );
         useImperativeHandle(ref, () => ({ selected }));
         return (
