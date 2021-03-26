@@ -52,7 +52,7 @@ export default inject("DataStore")(
               </a>
             </div>
             <div className="col">
-              <small className="grey">{createdDate.latest()}</small>
+              <small className="grey">{createdDate?.latest()}</small>
             </div>
           </div>
           <div className="row-story">

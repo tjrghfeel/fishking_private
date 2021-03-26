@@ -216,7 +216,7 @@ export default inject(
                               <br />
                               취소금액:{" "}
                               <strong className="red">
-                                -{Intl.NumberFormat().format(data["cancel"])}
+                                {Intl.NumberFormat().format(data["cancel"])}
                               </strong>
                               원
                             </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import PolicyMainPage from "../../pages/cust/policy/PolicyMainPage";
 import PolicyTermsPage from "../../pages/cust/policy/PolicyTermsPage";
@@ -10,9 +10,9 @@ import PolicyLbsPage from "../../pages/cust/policy/PolicyLbsPage";
 import PolicyAgreePage from "../../pages/cust/policy/PolicyAgreePage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 약관및정책 > 메인 */}
           <Route exact path={`${match.url}/main`} component={PolicyMainPage} />
@@ -43,7 +43,7 @@ export default inject()(
             component={PolicyAgreePage}
           />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

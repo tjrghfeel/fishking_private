@@ -30,7 +30,8 @@ const PageStore = new (class {
     )
       service = "";
     else service = "/" + service;
-    window.location.href = `${service}${pathname}`;
+    // window.location.href = `${service}${pathname}`;
+    this.history.push(`${service}${pathname}`);
   };
   reload = () => {
     window.location.reload();

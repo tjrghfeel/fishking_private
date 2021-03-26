@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import StoryAddPage from "../../pages/cust/story/StoryAddPage";
 import StoryMyPostPage from "../../pages/cust/story/StoryMyPostPage";
@@ -13,9 +13,9 @@ import StoryTvLiveDetailPage from "../../pages/cust/story/StoryTvLiveDetailPage"
 import StoryTvTubeDetailPage from "../../pages/cust/story/StoryTvTubeDetailPage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 스토리 > 글쓰기 */}
           <Route exact path={`${match.url}/add`} component={StoryAddPage} />
@@ -69,7 +69,7 @@ export default inject()(
             component={StoryTvTubeDetailPage}
           />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

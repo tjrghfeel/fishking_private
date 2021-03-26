@@ -1,14 +1,14 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import CouponMyPage from "../../pages/cust/coupon/CouponMyPage";
 import CouponAvailablePage from "../../pages/cust/coupon/CouponAvailablePage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 쿠폰 > 내쿠폰함 */}
           <Route exact path={`${match.url}/my`} component={CouponMyPage} />
@@ -19,7 +19,7 @@ export default inject()(
             component={CouponAvailablePage}
           />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );
