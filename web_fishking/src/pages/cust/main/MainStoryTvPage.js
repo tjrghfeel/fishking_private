@@ -61,6 +61,10 @@ export default inject(
           this.loadPageDataForTube(false);
         }
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
       loadPageDataForLive = async () => {
         const { APIStore, PageStore } = this.props;
         const {
@@ -83,7 +87,7 @@ export default inject(
           latitude,
           longitude,
         });
-        PageStore.setState({ live_list: live.content || [] });
+        PageStore.setState({ live_list: live?.content || [] });
         PageStore.reloadSwipe();
       };
       loadPageDataForTube = async (nextPage = false) => {

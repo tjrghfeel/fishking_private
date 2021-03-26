@@ -25,7 +25,6 @@ export default inject(
         });
         this.loadPageData();
       }
-
       loadPageData = async (page = 0, sort = "createDate") => {
         const { APIStore, PageStore } = this.props;
 
@@ -33,10 +32,12 @@ export default inject(
 
         PageStore.setState({ page, sort });
         const {
-          content,
-          totalElements,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get("/v2/api/usableCouponList/" + page, { sort });
+          content = [],
+          totalElements = 0,
+          pageable: { pageSize = 0 } = {},
+        } =
+          (await APIStore._get("/v2/api/usableCouponList/" + page, { sort })) ||
+          {};
 
         PageStore.setState({ totalElements });
         if (page === 0) {

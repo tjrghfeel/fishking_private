@@ -29,6 +29,10 @@ export default inject(
         }, document.querySelector(`#${parent} .modal-body`));
         this.loadPageData();
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
 
       loadPageData = async (page = 0, keyword = "") => {
         const { parent, APIStore } = this.props;

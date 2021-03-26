@@ -37,7 +37,6 @@ const APIStore = new (class {
               }
             }
           }
-
           const response = await Http.request(
             url,
             "GET",

@@ -12,7 +12,7 @@ export default inject()(
               <strong className="text-primary">[{channelType}] </strong> {title}
               <br />
               <small className="grey">
-                {date !== null && (
+                {date && (
                   <React.Fragment>
                     {date.substr(0, 10).replace(/[-]/g, ".")}
                   </React.Fragment>

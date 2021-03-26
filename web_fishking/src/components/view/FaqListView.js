@@ -23,6 +23,10 @@ export default inject(
         });
         if (!restored) this.loadPageData();
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
 
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore, role } = this.props;
@@ -30,10 +34,8 @@ export default inject(
         if (page > 0 && PageStore.state.isEnd) return;
 
         PageStore.setState({ page });
-        const {
-          content,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get("/v2/api/faq/" + page, { role });
+        const { content = [], pageable: { pageSize = 0 } = {} } =
+          (await APIStore._get("/v2/api/faq/" + page, { role })) || {};
 
         if (page === 0) {
           PageStore.setState({ list: content });

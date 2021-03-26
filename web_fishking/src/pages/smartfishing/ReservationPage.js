@@ -68,6 +68,11 @@ export default inject(
         });
         if (!restored) this.loadPageData();
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
+
       initSearchData = () => {
         const { PageStore } = this.props;
         PageStore.setState({
@@ -99,17 +104,15 @@ export default inject(
           payMethod,
         } = PageStore.state;
 
-        const {
-          content,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get(`/v2/api/orders/${page}`, {
-          startDate,
-          endDate,
-          keywordType,
-          keyword,
-          status,
-          payMethod,
-        });
+        const { content = [], pageable: { pageSize = 0 } = {} } =
+          (await APIStore._get(`/v2/api/orders/${page}`, {
+            startDate,
+            endDate,
+            keywordType,
+            keyword,
+            status,
+            payMethod,
+          })) || {};
 
         if (page === 0) {
           PageStore.setState({ list: content });

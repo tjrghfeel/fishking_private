@@ -30,6 +30,10 @@ export default inject(
         });
         this.loadPageData();
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
 
       loadPageData = async (page = 0, sort = "createDate") => {
         const { APIStore, PageStore } = this.props;
@@ -38,10 +42,11 @@ export default inject(
 
         PageStore.setState({ page, sort });
         const {
-          content,
-          totalElements,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get("/v2/api/downloadableCouponList/" + page);
+          content = [],
+          totalElements = 0,
+          pageable: { pageSize = 0 } = {},
+        } =
+          (await APIStore._get("/v2/api/downloadableCouponList/" + page)) || {};
 
         PageStore.setState({ totalElements });
         if (page === 0) {

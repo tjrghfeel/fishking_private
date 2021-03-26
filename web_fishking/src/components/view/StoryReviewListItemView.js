@@ -35,8 +35,8 @@ export default inject("PageStore")(
                 <h5>{nickName}</h5>
                 <p>
                   <small className="grey">
-                    {fishingDate.substr(0, 4)}년 {fishingDate.substr(4, 2)}월{" "}
-                    {fishingDate.substr(6, 2)}일 이용
+                    {fishingDate?.substr(0, 4)}년 {fishingDate?.substr(4, 2)}월{" "}
+                    {fishingDate?.substr(6, 2)}일 이용
                   </small>
                 </p>
               </a>

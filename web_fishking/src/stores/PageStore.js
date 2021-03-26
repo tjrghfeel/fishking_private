@@ -87,9 +87,11 @@ const PageStore = new (class {
     if (cust === null && smartfishing === null) this.loggedIn = false;
     else this.loggedIn = true;
   };
+  scrollEventHandler = [];
   setScrollEvent = (onScroll, element) => {
+    let scrollEventHandler;
     if (element) {
-      element.addEventListener("scroll", () => {
+      scrollEventHandler = () => {
         const scrollHeight = element.scrollHeight - element.offsetHeight;
         const itemHeight = 80;
         const scrollPosition = element.scrollTop;
@@ -97,9 +99,11 @@ const PageStore = new (class {
         if (scrollPosition + itemHeight >= scrollHeight) {
           onScroll();
         }
-      });
+      };
+      element.addEventListener("scroll", scrollEventHandler);
+      this.scrollEventHandler.push({ handler: scrollEventHandler, element });
     } else {
-      window.addEventListener("scroll", () => {
+      scrollEventHandler = () => {
         const scrollHeight =
           document.scrollingElement.scrollHeight - window.outerHeight;
         const itemHeight = 80;
@@ -108,8 +112,27 @@ const PageStore = new (class {
         if (scrollPosition + itemHeight >= scrollHeight) {
           onScroll();
         }
+      };
+      window.addEventListener("scroll", scrollEventHandler);
+      this.scrollEventHandler.push({
+        handler: scrollEventHandler,
+        element: null,
       });
     }
+  };
+  removeScrollEvent = () => {
+    if (this.scrollEventHandler.length === 0) return;
+    for (let evt of this.scrollEventHandler) {
+      const element = evt["element"] || null;
+      const handler = evt["handler"] || null;
+      if (handler === null) continue;
+      if (element) {
+        element.removeEventListener("scroll", handler);
+      } else {
+        window.removeEventListener("scroll", handler);
+      }
+    }
+    this.scrollEventHandler = [];
   };
   setState = (state) => {
     this.state = {
@@ -239,6 +262,31 @@ const PageStore = new (class {
         $(target).click();
       },
       threshold: 75,
+    });
+
+    // # 토글 버튼
+    $(".toggle_menu").on("click", function () {
+      $(".toggle_menu>span").stop().toggleClass("on");
+      $(this).stop().toggleClass("on");
+    });
+
+    let chkNum = 0;
+    $(".toggle_menu").click(function () {
+      if (chkNum == 0) {
+        $(".toggle_menu>span").stop().addClass("on");
+        $("nav").stop().addClass("view");
+        $(".navbar").stop().addClass("on");
+        $(this).stop().addClass("on");
+        $(".allmenu").fadeIn();
+        chkNum = 1;
+      } else {
+        $(".toggle_menu>span").stop().removeClass("on");
+        $("nav").stop().removeClass("view");
+        $(".navbar").stop().removeClass("on");
+        $(this).stop().removeClass("on");
+        $(".allmenu").fadeOut();
+        chkNum = 0;
+      }
     });
   };
 })();

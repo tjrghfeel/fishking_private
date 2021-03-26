@@ -66,6 +66,10 @@ export default inject(
         this.setState({ arr_shipId });
         if (!restored) this.loadPageData(0);
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
       initSearchData = () => {
         const { PageStore } = this.props;
         PageStore.setState({

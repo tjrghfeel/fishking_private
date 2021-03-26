@@ -106,8 +106,12 @@ export default inject(
           this.loadPageData(PageStore.state.page + 1);
         });
         if (!restored) this.loadPageData();
+        PageStore.reloadSwipe();
       }
-
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
 
@@ -170,6 +174,7 @@ export default inject(
         PageStore.push(`/company/${fishingType}/detail/${item.id}`);
       };
       onClickFAB = async (text) => {
+        console.log("A");
         const {
           PageStore,
           match: {
@@ -436,7 +441,7 @@ export default inject(
               onClick={this.onClickFAB}
             />
 
-            <MainTab activeIndex={fishingType == "boat" ? 1 : 2} />
+            <MainTab activeIndex={1} />
           </React.Fragment>
         );
       }

@@ -39,6 +39,10 @@ export default inject(
           });
           this.loadPageData();
         }
+        componentWillUnmount() {
+          const { PageStore } = this.props;
+          PageStore.removeScrollEvent();
+        }
 
         loadPageData = async (page = 0) => {
           const {
