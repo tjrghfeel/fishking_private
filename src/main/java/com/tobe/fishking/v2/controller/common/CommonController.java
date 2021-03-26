@@ -280,6 +280,7 @@ public class CommonController {
     @ApiOperation(value = "행정구역 코드리스트", notes = "행정구역 코드리스트. \n" +
             "152    : 시/도 \n" +
             "156    : 시/군/구 \n" +
+            "163    : 읍/면/동 \n" +
             "시/군/구 의 경우 parCode에 검색할 시/도의 코드값을 넣어주세요 \n" +
             "{id: 코드 id, code: 코드, code_name: 코드명, ... } \n" +
             "위의 세 데이터 외에는 크게 필요 없을것으로 보입니다. ")
