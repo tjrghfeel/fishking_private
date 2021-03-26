@@ -1,15 +1,15 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import EventListPage from "../../pages/cust/event/EventListPage";
 import EventDetailPage from "../../pages/cust/event/EventDetailPage";
 import EventCommentPage from "../../pages/cust/event/EventCommentPage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 이벤트 > 목록 */}
           <Route exact path={`${match.url}/list`} component={EventListPage} />
@@ -28,7 +28,7 @@ export default inject()(
             component={EventCommentPage}
           />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

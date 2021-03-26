@@ -41,7 +41,7 @@ export default inject()(
                   </div>
                 </div>
               </div>
-              {goodsList.map((data, index) => (
+              {goodsList?.map((data, index) => (
                 <React.Fragment>
                   <hr className="full mt-2 mb-3" />
                   <div className="row no-gutters d-flex align-items-center">

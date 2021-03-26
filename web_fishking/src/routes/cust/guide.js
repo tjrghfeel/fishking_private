@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import GuideMainPage from "../../pages/cust/guide/GuideMainPage";
 import GuideTimePage from "../../pages/cust/guide/GuideTimePage";
@@ -11,9 +11,9 @@ import GuideSmartPage from "../../pages/cust/guide/GuideSmartPage";
 import GuideLivePage from "../../pages/cust/guide/GuideLivePage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 가이드 > 메인 */}
           <Route exact path={`${match.url}/main`} component={GuideMainPage} />
@@ -36,7 +36,7 @@ export default inject()(
           {/** 가이드 > 실시간조황 */}
           <Route exact path={`${match.url}/live`} component={GuideLivePage} />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

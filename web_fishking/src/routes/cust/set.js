@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import SetMainPage from "../../pages/cust/set/SetMainPage";
 import SetProfilePage from "../../pages/cust/set/SetProfilePage";
@@ -12,9 +12,9 @@ import SetAlarmPage from "../../pages/cust/set/SetAlarmPage";
 import SetVodPage from "../../pages/cust/set/SetVodPage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 설정 > 메인 */}
           <Route exact path={`${match.url}/main`} component={SetMainPage} />
@@ -54,7 +54,7 @@ export default inject()(
           {/** 설정 > 동영상설정 */}
           <Route exact path={`${match.url}/vod`} component={SetVodPage} />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

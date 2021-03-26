@@ -35,7 +35,6 @@ export default inject(
           pageable: { pageSize = 0 },
         } = await APIStore._get("/v2/api/myFishingPostList/" + page);
 
-        console.log(JSON.stringify(content));
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {

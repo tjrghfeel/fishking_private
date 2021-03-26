@@ -37,7 +37,6 @@ export default inject(
             eventId,
           });
           this.setState(resolve);
-          console.log(JSON.stringify(resolve));
         };
 
         onClickLike = async () => {

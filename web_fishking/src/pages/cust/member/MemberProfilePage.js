@@ -30,7 +30,6 @@ export default inject(
           APIStore,
         } = this.props;
         const resolve = await APIStore._get("/v2/api/profile", { userId });
-        console.log(JSON.stringify(resolve));
         this.setState(resolve);
       };
 

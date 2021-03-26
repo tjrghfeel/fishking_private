@@ -15,8 +15,9 @@ export default inject()(
             total: [],
             used: [],
           },
-          editable = true,
-          count = 0,
+          editable = true, // 선택가능여부
+          count = 0, // 선택가능한 최대수
+          onChange,
         },
         ref
       ) => {
@@ -30,14 +31,16 @@ export default inject()(
             if (selected.indexOf(num) === -1 && selected.length < count) {
               const arr = selected.concat(num);
               setSelected(arr);
+              if (onChange) onChange(arr);
             } else if (selected.indexOf(num) !== -1) {
               const index = selected.indexOf(num);
               const bef = selected.slice(0, index);
               const aft = selected.slice(index + 1, selected.length);
               setSelected(bef.concat(aft));
+              if (onChange) onChange(bef.concat(aft));
             }
           },
-          [used, selected, setSelected]
+          [used, selected, setSelected, onChange]
         );
         useImperativeHandle(ref, () => ({ selected }));
         return (

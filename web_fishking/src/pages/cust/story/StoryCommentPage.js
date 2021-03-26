@@ -151,16 +151,6 @@ export default inject(
               fileId: this.state.file?.fileId || null,
             });
           } else {
-            console.log(
-              JSON.stringify({
-                dependentType:
-                  category === "diary" ? "fishingDiary" : "fishingBlog",
-                linkId: id,
-                parentId: this.state.parent?.commentId || 0,
-                content: text,
-                fileId: this.state.file?.fileId || null,
-              })
-            );
             // 등록
             resolve = await APIStore._post(`/v2/api/fishingDiaryComment`, {
               dependentType:

@@ -146,7 +146,6 @@ export default inject(
             const resolve = await APIStore._post(
               `/v2/api/order/confirm?orderId=${item.id}`
             );
-            console.log(resolve);
             if (resolve && resolve.success) {
               const list = DataStore.updateItemOfArrayByKey(
                 PageStore.state.list,

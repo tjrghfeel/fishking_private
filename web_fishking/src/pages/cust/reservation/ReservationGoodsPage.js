@@ -54,7 +54,6 @@ export default inject(
             await this.setState({ goods: [], selected: null });
           }
           // # 물때정보
-          console.log("A");
           try {
             const tideTime = await APIStore._get(`/v2/api/tideTime`, {
               date: selected.format("-"),
@@ -70,7 +69,6 @@ export default inject(
               weather: null,
             });
           }
-          console.log("B");
           if (this.state.goods && this.state.goods.length > 0) {
             const resolve = await APIStore._get("/v2/api/tidalPeak", {
               code: this.state.goods[0]["observerCode"],

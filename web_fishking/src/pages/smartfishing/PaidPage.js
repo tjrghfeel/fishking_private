@@ -38,7 +38,6 @@ export default inject(
         // 정산예정금액 리스트
         const resolve = await APIStore._get(`/v2/api/calculate/now`);
         this.setState({ pre: resolve });
-        console.log(JSON.stringify(resolve));
 
         this.loadPageData();
       }
@@ -217,7 +216,7 @@ export default inject(
                               <br />
                               취소금액:{" "}
                               <strong className="red">
-                                -{Intl.NumberFormat().format(data["cancel"])}
+                                {Intl.NumberFormat().format(data["cancel"])}
                               </strong>
                               원
                             </div>

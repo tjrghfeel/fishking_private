@@ -50,8 +50,6 @@ const ModalStore = new (class {
   };
   removeItemOfArrayByKey = (list = [], keyData = "", keyValue = "") => {
     let index = -1;
-    console.log(keyData);
-    console.log(keyValue);
     for (let i = 0; i < list.length; i++) {
       if (list[i][keyData] == keyValue) {
         index = i;

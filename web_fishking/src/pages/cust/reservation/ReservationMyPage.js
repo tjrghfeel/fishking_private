@@ -45,7 +45,6 @@ export default inject(
           pageable: { pageSize = 0 },
         } = await APIStore._get("/v2/api/myOrdersList/" + page, { sort });
 
-        console.log(JSON.stringify(content));
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {
@@ -69,7 +68,6 @@ export default inject(
       onClickMap = (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        console.log(JSON.stringify(item));
       };
       onClickReservation = (item) => {
         const { PageStore } = this.props;

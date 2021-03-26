@@ -78,6 +78,7 @@ export default inject(
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
+        type = "ship";
 
         const { lat, lng } = await NativeStore.getCurrentPosition();
         const restored = PageStore.restoreState({

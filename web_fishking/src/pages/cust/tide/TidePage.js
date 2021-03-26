@@ -79,7 +79,6 @@ export default inject(
             observerId,
           });
           this.setState({ location: resolve });
-          console.log(JSON.stringify(resolve));
         } else {
           // 날짜별 -
           const resolve = await APIStore._get(`/v2/api/tideByDate`, {
@@ -92,7 +91,6 @@ export default inject(
             day: resolve.alertDayList,
             time: resolve.alertTimeList,
           });
-          console.log(JSON.stringify(resolve));
         }
         await this.setState({
           arr_150: this.state.sav_150,
@@ -163,14 +161,6 @@ export default inject(
           if (resolve) this.onSelectedTideArea();
         } else {
           // > 날짜별 -
-          console.log(
-            JSON.stringify({
-              observerId: this.state.location.observerId,
-              tide: this.state.tide,
-              day: this.state.day,
-              time: this.state.time,
-            })
-          );
           const resolve = await APIStore._post(`/v2/api/addTideAlert`, {
             observerId: this.state.location.observerId,
             tide: this.state.tide,
