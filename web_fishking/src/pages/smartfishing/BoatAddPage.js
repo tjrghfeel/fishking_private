@@ -137,6 +137,7 @@ export default inject(
               if (status === kakao.maps.services.Status.OK) {
                 const x = result[0].x;
                 const y = result[0].y;
+                this.setState({ latitude: x, longitude: y });
               }
             });
           },

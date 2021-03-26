@@ -33,6 +33,12 @@ export default inject("PageStore")(
   observer(
     withRouter(({ PageStore }) => {
       useEffect(() => {
+        window.addEventListener("message", (message) => {
+          const data = message.data;
+          if (data === "goBack") {
+            PageStore.goBack();
+          }
+        });
         (async () => {
           // # 카카오 라이브러리
           await PageStore.injectScript("/assets/cust/js/kakao.min.js", {
