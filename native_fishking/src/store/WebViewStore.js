@@ -50,21 +50,23 @@ export default new (class {
     this.recentUrl = recentUrl;
   }
   /** action :: goBack */
+  backPressTime = new Date();
   goBack() {
-    this.webview.current.injectJavaScript(
-      `window.postMessage('goBack');
-      true;`,
-    );
-    if (true) return;
-    if ((this.recentUrl || '').indexOf('/cust/main/home') !== -1) {
-      BackHandler.exitApp();
-      return true;
-    } else if (this.canGoBack) {
-      this.webview.current.goBack();
-      return true;
-    } else {
-      BackHandler.exitApp();
-      return true;
-    }
+    // # 2 . route history back
+    // this.webview.current.injectJavaScript(
+    //   `window.postMessage('goBack');
+    //   true;`,
+    // );
+    // # 1 . window history back
+    // if ((this.recentUrl || '').indexOf('/cust/main/home') !== -1) {
+    //   BackHandler.exitApp();
+    //   return true;
+    // } else if (this.canGoBack) {
+    //   this.webview.current.goBack();
+    //   return true;
+    // } else {
+    //   BackHandler.exitApp();
+    //   return true;
+    // }
   }
 })();

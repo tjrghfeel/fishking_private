@@ -4,7 +4,10 @@ import ActivityIndicator from '../component/ActivityIndicator';
 import {inject, observer} from 'mobx-react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default inject('WebViewStore')(
+export default inject(
+  'WebViewStore',
+  'AppStore',
+)(
   observer(
     class extends React.Component {
       componentDidMount() {
@@ -24,7 +27,8 @@ export default inject('WebViewStore')(
         }
         const {navigation} = this.props;
         setTimeout(() => {
-          navigation.navigate('webview');
+          // navigation.navigate('webview');
+          this.props.AppStore.setSplashed(true);
         }, 1500);
       };
       render() {

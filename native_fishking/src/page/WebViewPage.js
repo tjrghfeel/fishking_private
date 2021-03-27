@@ -1,5 +1,11 @@
 import React from 'react';
-import {Platform, BackHandler, Linking, Alert} from 'react-native';
+import {
+  Platform,
+  BackHandler,
+  Linking,
+  Alert,
+  ToastAndroid,
+} from 'react-native';
 import {inject, observer} from 'mobx-react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SendIntentAndroid from 'react-native-send-intent';
@@ -15,13 +21,28 @@ export default inject(
     class extends React.Component {
       constructor(props) {
         super(props);
+        this.state = {
+          backPressTime: 0,
+        };
       }
       async componentDidMount() {
         const {WebViewStore} = this.props;
         if (Platform.OS === 'android') {
-          BackHandler.addEventListener('hardwareBackPress', () =>
-            WebViewStore.goBack(),
-          );
+          BackHandler.addEventListener('hardwareBackPress', () => {
+            const now = new Date().getTime();
+            if (now - this.state.backPressTime < 2000) {
+              BackHandler.exitApp();
+            } else {
+              this.setState({backPressTime: new Date().getTime()});
+              ToastAndroid.showWithGravity(
+                '뒤로 가기 버튼을 한번 더 누르시면 앱이 종료됩니다',
+                ToastAndroid.SHORT,
+                ToastAndroid.BOTTOM,
+              );
+            }
+            // WebViewStore.goBack();
+            return true;
+          });
         }
       }
       componentWillUnmount() {
