@@ -21,6 +21,7 @@ const PageStore = new (class {
     this.history = history;
   };
   push = (pathname) => {
+    this.removeScrollEvent();
     let service = this.history.location.pathname.split("/")[1];
     if (
       pathname.indexOf("/cust") !== -1 ||
