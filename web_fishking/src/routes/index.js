@@ -32,6 +32,7 @@ const {
 export default inject("PageStore")(
   observer(
     withRouter(({ PageStore }) => {
+      window.wversion = "202103281942";
       useEffect(() => {
         window.addEventListener("message", (message) => {
           const data = message.data;
