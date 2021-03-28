@@ -100,11 +100,11 @@ const PageStore = new (class {
     if (cust === null && smartfishing === null) this.loggedIn = false;
     else this.loggedIn = true;
   };
-  scrollEventHandler = [];
+  windowEventHandler = [];
+  elementEventHandler = [];
   setScrollEvent = (onScroll, element) => {
-    let scrollEventHandler;
     if (element) {
-      scrollEventHandler = () => {
+      const scrollEventHandler = () => {
         const scrollHeight = element.scrollHeight - element.offsetHeight;
         const itemHeight = 80;
         const scrollPosition = element.scrollTop;
@@ -114,9 +114,9 @@ const PageStore = new (class {
         }
       };
       element.addEventListener("scroll", scrollEventHandler);
-      this.scrollEventHandler.push({ handler: scrollEventHandler, element });
+      this.elementEventHandler.push({ element, scrollEventHandler });
     } else {
-      scrollEventHandler = () => {
+      const scrollEventHandler = () => {
         const scrollHeight =
           document.scrollingElement.scrollHeight - window.outerHeight;
         const itemHeight = 80;
@@ -127,25 +127,17 @@ const PageStore = new (class {
         }
       };
       window.addEventListener("scroll", scrollEventHandler);
-      this.scrollEventHandler.push({
-        handler: scrollEventHandler,
-        element: null,
-      });
+      this.windowEventHandler.push(scrollEventHandler);
     }
   };
   removeScrollEvent = () => {
-    if (this.scrollEventHandler.length === 0) return;
-    for (let evt of this.scrollEventHandler) {
-      const element = evt["element"] || null;
-      const handler = evt["handler"] || null;
-      if (handler === null) continue;
-      if (element) {
-        element.removeEventListener("scroll", handler);
-      } else {
-        window.removeEventListener("scroll", handler);
-      }
+    for (let windowEvent of this.windowEventHandler) {
+      window.removeEventListener("scroll", windowEvent);
     }
-    this.scrollEventHandler = [];
+    for (let elementEvent of this.elementEventHandler) {
+      const { element, scrollEventHandler } = elementEvent;
+      element.removeEventListener("scroll", scrollEventHandler);
+    }
   };
   setState = (state) => {
     this.state = {
