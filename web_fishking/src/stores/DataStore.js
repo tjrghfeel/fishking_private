@@ -87,10 +87,10 @@ const ModalStore = new (class {
     try {
       let resolve;
       if (this.stateCodes.type) {
-        resolve = this.stateCodes["type"];
+        resolve = this.stateCodes[type];
       } else {
         resolve = await Http._get("/v2/api/value");
-        this.stateCodes["type"] = resolve;
+        this.stateCodes[type] = resolve;
       }
 
       const enums = [];
