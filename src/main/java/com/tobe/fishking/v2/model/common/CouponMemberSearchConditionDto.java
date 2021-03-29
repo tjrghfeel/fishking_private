@@ -28,4 +28,5 @@ public class CouponMemberSearchConditionDto {
     private LocalDate exposureEndDate;
     private Boolean isUse;
     private String sort;
+    private Integer pageCount=10;
 }

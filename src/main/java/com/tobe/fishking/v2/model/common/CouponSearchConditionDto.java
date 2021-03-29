@@ -40,4 +40,5 @@ public class CouponSearchConditionDto {
     private Long createdBy;
     private Long modifiedBy;
     private String sort;
+    private Integer pageCount=10;
 }

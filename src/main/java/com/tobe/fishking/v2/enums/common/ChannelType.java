@@ -4,8 +4,8 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 
 public enum ChannelType  implements IEnumModel {
 
-    notice("공지"),
-    event("이벤트");
+    important("중요"),
+    general("일반");
 
     private String value;
     ChannelType(String value) {

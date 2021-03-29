@@ -17,6 +17,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,8 @@ public class PostManagerService {
     MemberRepository memberRepository;
     @Autowired
     AlertService alertService;
+    @Autowired
+    MemberService memberService;
 
     public void checkAdminAuthor(String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
@@ -73,6 +76,7 @@ public class PostManagerService {
         checkAdminAuthor(token);
 
         /*findAllByConditions()에 넘겨줄 인자들 변환해주는 부분*/
+        Boolean targetRole = (dto.getTargetRole() ==null)?null:(dto.getTargetRole().equals("member"))?true:false;
         Integer channelType = (dto.getChannelType()==null)? null : (ChannelType.valueOf(dto.getChannelType()).ordinal());
         Integer questionType = (dto.getQuestionType()==null)? null : (QuestionType.valueOf(dto.getQuestionType()).ordinal());
         Integer returnType = (dto.getReturnType()==null)? null : (ReturnType.valueOf(dto.getReturnType()).ordinal());
@@ -80,9 +84,9 @@ public class PostManagerService {
         if(dto.getModifiedDateEnd()!=null){dto.setModifiedDateEnd(dto.getModifiedDateEnd().plusDays(1L));}
         Pageable pageable=null;
         if(dto.getSort()!=null) {
-            pageable = PageRequest.of(page, 3, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));//JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")")
+            pageable = PageRequest.of(page, dto.getPageCount(), JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));//JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")")
         }
-        else pageable = PageRequest.of(page,3);
+        else pageable = PageRequest.of(page,dto.getPageCount());
 
         return postRepository.findAllByConditions(
                 dto.getId(),
@@ -102,7 +106,7 @@ public class PostManagerService {
                 dto.getCreatedDateEnd(),
                 dto.getModifiedDateStart(),
                 dto.getModifiedDateEnd(),
-                dto.getTargetRole(),
+                targetRole,
                 dto.getCreatedBy(),
                 dto.getModifiedBy(),
                 dto.getIsReplied(),
@@ -152,6 +156,7 @@ public class PostManagerService {
                 .modifiedByNickName(post.getModifiedBy().getNickName())
                 .targetRole(targetRole)
                 .isReplied(post.getIsReplied())
+                .createdDate(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
 
         return result;
@@ -203,6 +208,9 @@ public class PostManagerService {
     public Long modifyOne2oneAnswer(ModifyOne2oneAnswerDto dto, String token) throws ResourceNotFoundException, IOException {
         Post answerPost = postRepository.findById(dto.getAnswerPostId())
                 .orElseThrow(()->new ResourceNotFoundException("post not found for this id ::"+dto.getAnswerPostId()));
+
+        Member member = memberService.getMemberBySessionToken(token);
+        if(member.getRoles() != Role.admin){throw new RuntimeException("수정 권한이 없습니다.");}
 
         UpdatePostDTO updatePostDTO = UpdatePostDTO.builder()
                 .postId(dto.getAnswerPostId())

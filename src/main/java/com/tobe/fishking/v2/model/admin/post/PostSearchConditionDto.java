@@ -43,8 +43,9 @@ public class PostSearchConditionDto {
     private LocalDate modifiedDateStart;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate modifiedDateEnd;
-    private Boolean targetRole;
+    private String targetRole;
     private Boolean isReplied;
 
+    private Integer pageCount=10;
     private String sort;
 }

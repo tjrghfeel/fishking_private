@@ -289,10 +289,10 @@ public class UploadService {
     }
 
     /*파일 리사이징
-     * 4MB이하가 될때까지 반복문으로 이미지 퀄리티를 떨어뜨려 용량을 줄인다. */
+     * 1MB이하가 될때까지 반복문으로 이미지 퀄리티를 떨어뜨려 용량을 줄인다. */
     public File resize(File originalFile) throws IOException {
         long fileSize = originalFile.length();
-        for(; fileSize > 4*1024*1024; ){
+        for(; fileSize > 1*1024*1024; ){
             BufferedImage image = ImageIO.read(originalFile);
 
             File output = originalFile;

@@ -40,14 +40,20 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "       (select c.extra_value1 from common_code c where c.code_group_id=154 and c.code='eventDefault')" +
             "   ) imageUrl, " +
             "   e.title eventTitle, " +
+            "   LEFT(e.contents,30) content, " +
             "   s.ship_name shipName, " +
             "   e.start_day startDay, " +
             "   e.end_day endDay, " +
             "   e.is_active isActive " +
-            "from event e left join ship s on e.ship_id = s.id " +
+            "from event e left join ship s on e.ship_id = s.id, member m " +
             "where if(:isLast = false or :isLast is null, e.end_day >= :today, e.end_day < :today) " +
+            "   and e.created_by = m.id " +
             "   and e.is_deleted = false " +
             "   and if(:title is null, true, e.title like %:title%) " +
+            "   and if(:content is null, true, e.contents like %:content%) " +
+            "   and if(:createdDateStart is null, true, e.created_date >= :createdDateStart) " +
+            "   and if(:createdDateEnd is null, true, e.created_date <= :createdDateEnd) " +
+            "   and if(:nickName is null, true, m.nick_name like %:nickName%) " +
             "   and if(:startDate is null, true, :startDate <= e.start_day) " +
             "   and if(:endDate is null, true, :endDate >= e.end_day) " +
             "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
@@ -55,10 +61,15 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "order by e.order_level desc, e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
             "",
             countQuery = "select e.id " +
-                    "from event e left join ship s on e.ship_id = s.id " +
+                    "from event e left join ship s on e.ship_id = s.id, member m " +
                     "where if(:isLast = false or :isLast is null, e.end_day >= :today, e.end_day < :today) " +
+                    "   and e.created_by = m.id " +
                     "   and e.is_deleted = false " +
                     "   and if(:title is null, true, e.title like %:title%) " +
+                    "   and if(:content is null, true, e.contents like %:content%) " +
+                    "   and if(:createdDateStart is null, true, e.created_date >= :createdDateStart) " +
+                    "   and if(:createdDateEnd is null, true, e.created_date <= :createdDateEnd) " +
+                    "   and if(:nickName is null, true, m.nick_name like %:nickName%) " +
                     "   and if(:startDate is null, true, :startDate <= e.start_day) " +
                     "   and if(:endDate is null, true, :endDate >= e.end_day) " +
                     "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
@@ -71,6 +82,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("today") String today,
             @Param("isLast") Boolean isLast,
             @Param("title") String title,
+            @Param("content") String content,
+            @Param("createdDateStart") String createdDateStart,
+            @Param("createdDateEnd") String createdDateEnd,
+            @Param("nickName") String nickName,
             @Param("startDate") String startDate,
             @Param("endDate") String endDate,
             @Param("shipName") String shipName,

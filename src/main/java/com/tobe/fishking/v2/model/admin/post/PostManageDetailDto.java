@@ -28,4 +28,5 @@ public class PostManageDetailDto {
     private String modifiedByNickName;
     private String targetRole;
     private Boolean isReplied;
+    private String createdDate;
 }

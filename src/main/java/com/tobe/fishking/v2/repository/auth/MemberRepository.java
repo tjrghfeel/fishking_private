@@ -100,68 +100,70 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "   m.created_date createdDate " +
             "from member m " +
             "where " +
-            "   if(:id is null,true,(m.id = :id)) " +
+            "   m.is_certified =true " +
+//            "   if(:id is null,true,(m.id = :id)) " +
             "   and if(:roles is null,true,(m.roles = :roles)) " +
-            "   and if(:memberName is null,true,(m.member_name = :memberName)) " +
+            "   and if(:memberName is null,true,(m.member_name like %:memberName%)) " +
             "   and if(:uid is null,true,(m.uid like %:uid%)) " +
             "   and if(:nickName is null,true,(m.nick_name like %:nickName%)) " +
-            "   and if(:email is null, true, (m.email like %:email%)) " +
-            "   and if(:gender is null,true,(m.gender = :gender)) " +
+//            "   and if(:email is null, true, (m.email like %:email%)) " +
+//            "   and if(:gender is null,true,(m.gender = :gender)) " +
             "   and if(:isActive is null,true,(m.is_active = :isActive)) " +
-            "   and if(:certifiedNo is null, true, (m.certified_no like %:certifiedNo%)) " +
-            "   and if(:isCertified is null, true, (m.is_certified = :isCertified)) " +
-            "   and if(:snsType is null,true,(m.sns_type = :snsType)) " +
-            "   and if(:snsId is null,true,(m.sns_id like %:snsId%)) " +
-            "   and if(:city is null,true,(m.city = :city)) " +
-            "   and if(:gu is null,true,(m.gu = :gu)) " +
-            "   and if(:dong is null,true,(m.dong = :dong)) " +
-            "   and if(:areaCode is null,true,(m.areacode = :areaCode)) " +
-            "   and if(:localNumber is null,true,(m.localnumber = :localNumber)) " +
-            "   and if(:joinDtStart  is null, true, (m.created_date > :joinDtStart)) " +
-            "   and if(:joinDtEnd is null, true, (m.created_date < :joinDtEnd)) ",
+//            "   and if(:certifiedNo is null, true, (m.certified_no like %:certifiedNo%)) " +
+//            "   and if(:isCertified is null, true, (m.is_certified = :isCertified)) " +
+//            "   and if(:snsType is null,true,(m.sns_type = :snsType)) " +
+//            "   and if(:snsId is null,true,(m.sns_id like %:snsId%)) " +
+//            "   and if(:city is null,true,(m.city = :city)) " +
+//            "   and if(:gu is null,true,(m.gu = :gu)) " +
+//            "   and if(:dong is null,true,(m.dong = :dong)) " +
+            "   and if(:areaCode is null,true,(m.areacode like %:areaCode%)) " +
+            "   and if(:localNumber is null,true,(m.localnumber like %:localNumber%)) ",
+//            "   and if(:joinDtStart  is null, true, (m.created_date > :joinDtStart)) " +
+//            "   and if(:joinDtEnd is null, true, (m.created_date < :joinDtEnd)) ",
             countQuery = "select m.id from member m " +
                     "where " +
-                    "   if(:id is null,true,(m.id = :id)) " +
+                    "   m.is_certified = true " +
+//                    "   if(:id is null,true,(m.id = :id)) " +
                     "   and if(:roles is null,true,(m.roles = :roles)) " +
-                    "   and if(:memberName is null,true,(m.member_name = :memberName)) " +
+                    "   and if(:memberName is null,true,(m.member_name like %:memberName%)) " +
                     "   and if(:uid is null,true,(m.uid like %:uid%)) " +
                     "   and if(:nickName is null,true,(m.nick_name like %:nickName%)) " +
-                    "   and if(:email is null, true, (m.email like %:email%)) " +
-                    "   and if(:gender is null,true,(m.gender = :gender)) " +
+//                    "   and if(:email is null, true, (m.email like %:email%)) " +
+//                    "   and if(:gender is null,true,(m.gender = :gender)) " +
                     "   and if(:isActive is null,true,(m.is_active = :isActive)) " +
-                    "   and if(:certifiedNo is null, true, (m.certified_no like %:certifiedNo%)) " +
-                    "   and if(:isCertified is null, true, (m.is_certified = :isCertified)) " +
-                    "   and if(:snsType is null,true,(m.sns_type = :snsType)) " +
-                    "   and if(:snsId is null,true,(m.sns_id like %:snsId%)) " +
-                    "   and if(:city is null,true,(m.city = :city)) " +
-                    "   and if(:gu is null,true,(m.gu = :gu)) " +
-                    "   and if(:dong is null,true,(m.dong = :dong)) " +
-                    "   and if(:areaCode is null,true,(m.areacode = :areaCode)) " +
-                    "   and if(:localNumber is null,true,(m.localnumber = :localNumber)) " +
-                    "   and if(:joinDtStart  is null, true, (m.created_date > :joinDtStart)) " +
-                    "   and if(:joinDtEnd is null, true, (m.created_date < :joinDtEnd)) ",
+//                    "   and if(:certifiedNo is null, true, (m.certified_no like %:certifiedNo%)) " +
+//                    "   and if(:isCertified is null, true, (m.is_certified = :isCertified)) " +
+//                    "   and if(:snsType is null,true,(m.sns_type = :snsType)) " +
+//                    "   and if(:snsId is null,true,(m.sns_id like %:snsId%)) " +
+//                    "   and if(:city is null,true,(m.city = :city)) " +
+//                    "   and if(:gu is null,true,(m.gu = :gu)) " +
+//                    "   and if(:dong is null,true,(m.dong = :dong)) " +
+                    "   and if(:areaCode is null,true,(m.areacode like %:areaCode%)) " +
+                    "   and if(:localNumber is null,true,(m.localnumber like %:localNumber%)) ",
+//                    "   and if(:joinDtStart  is null, true, (m.created_date > :joinDtStart)) " +
+//                    "   and if(:joinDtEnd is null, true, (m.created_date < :joinDtEnd)) ",
             nativeQuery = true
     )
     Page<MemberManageDtoForPage> findMemberListByConditions(
-            @Param("id") Long id,
+//            @Param("id") Long id,
             @Param("roles") Integer roles,
             @Param("memberName") String memberName,
             @Param("uid") String uid,
             @Param("nickName") String nickName,
-            @Param("email") String email,
-            @Param("gender") Integer gender,
+//            @Param("email") String email,
+//            @Param("gender") Integer gender,
             @Param("isActive") Boolean isActive,
-            @Param("certifiedNo") String certifiedNo,
-            @Param("isCertified") Boolean isCertified,
-            @Param("snsType") Integer snsType,
-            @Param("snsId") String snsId,
-            @Param("city") String city,
-            @Param("gu") String gu,
-            @Param("dong") String dong,
+//            @Param("certifiedNo") String certifiedNo,
+//            @Param("isCertified") Boolean isCertified,
+//            @Param("snsType") Integer snsType,
+//            @Param("snsId") String snsId,
+//            @Param("city") String city,
+//            @Param("gu") String gu,
+//            @Param("dong") String dong,
             @Param("areaCode") String areaCode,
             @Param("localNumber") String localNumber,
-            @Param("joinDtStart") LocalDate joinDtStart,
-            @Param("joinDtEnd") LocalDate joinDtEnd,
+//            @Param("joinDtStart") LocalDate joinDtStart,
+//            @Param("joinDtEnd") LocalDate joinDtEnd,
             Pageable pageable
     );
 

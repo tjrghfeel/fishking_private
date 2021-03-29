@@ -12,7 +12,8 @@ public interface MemberManageDtoForPage {
 //    @Value("#{@mapperUtility.decodeString(target.email)}")
     String getEmail();
     Integer getGender();
-    Integer getRoles();
+    @Value("#{@mapperUtility.transEnumRoles(target.roles)}")
+    String getRoles();
     String getProfileImage();
     Boolean getIsActive();
     String getCertifiedNo();

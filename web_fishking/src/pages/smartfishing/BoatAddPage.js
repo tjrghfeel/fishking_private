@@ -194,9 +194,17 @@ export default inject(
           positions,
         };
         console.log(JSON.stringify(params));
-        const { APIStore } = this.props;
+        const { APIStore, ModalStore, PageStore } = this.props;
         const resolve = APIStore._post(`/v2/api/ship/add`, params);
         console.log(JSON.stringify(resolve));
+        if (resolve) {
+          ModalStore.openModal("Alert", {
+            body: "등록되었습니다.",
+            onOk: () => {
+              PageStore.push(`/boat`);
+            },
+          });
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -431,6 +439,7 @@ export default inject(
                             style={{ height: "270px" }}
                           ></div>
                         </div>
+                        <div className="space mt-0 mb-4"></div>
                       </React.Fragment>
                     ))}
                   </React.Fragment>
