@@ -119,6 +119,22 @@ public class PlacesService {
     public Long addSeaRock(PlaceDTO dto, String token) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+        if (dto.getLatitude() == null) {
+            return -1L;
+        } else if (dto.getLongitude() == null) {
+            return -2L;
+        } else if (dto.getName() == null) {
+            return -3L;
+        } else if (dto.getSido() == null) {
+            return -4L;
+        } else if (dto.getSigungu() == null) {
+            return -5L;
+        } else if (dto.getAddress() == null) {
+            return -6L;
+        } else if (dto.getIsOpen() == null) {
+            return -7L;
+        }
+
         Places places = Places.builder()
                 .placeName(dto.getName())
                 .sido(dto.getSido())

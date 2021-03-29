@@ -386,8 +386,47 @@ public class ShipsGoodsController {
         Map<String, Object> result = new HashMap<>();
         try {
             Long placeId = placesService.addSeaRock(placeDTO, token);
-            result.put("result", "success");
-            result.put("id", placeId);
+
+            switch (placeId.intValue()) {
+                case -1:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "위도값이 없습니다");
+                    break;
+                case -2:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "경도값이 없습니다");
+                    break;
+                case -3:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "명칭값이 없습니다");
+                    break;
+                case -4:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "시/도 값이 없습니다");
+                    break;
+                case -5:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "시/군/구 값이 없습니다");
+                    break;
+                case -6:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "주소값이 없습니다");
+                    break;
+                case -7:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "공개여부값이 없습니다");
+                    break;
+                default:
+                    result.put("result", "success");
+                    result.put("id", placeId);
+            }
             return result;
         } catch (ResourceNotFoundException e) {
             throw e;
