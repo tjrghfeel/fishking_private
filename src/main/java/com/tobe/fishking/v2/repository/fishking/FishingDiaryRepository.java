@@ -22,6 +22,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Tuple;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -216,9 +217,9 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
-                    "   if(d.is_active=true,d.title,if(:isManager=true,d.title,'숨김처리된 글입니다.')) title, " +
+                    "   d.title title, " +
                     "   d.fishing_type fishingType, " +
-                    "   if(d.is_active=true,LEFT(d.contents,50), if(:isManager=true, LEFT(d.contents,50), '숨김처리된 글입니다.')) contents, " +
+                    "   LEFT(d.contents,50) contents, " +
                     "   d.file_publish fishingDiaryType, " +
                     "   (select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
@@ -229,12 +230,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.like_count likeCount, " +
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
-                    "   if(d.is_active=false, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "   (select GROUP_CONCAT(f2.stored_file separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
-                    "       group by f2.pid order by f2.file_no)) fileNameList, " +
-                    "   if(d.is_active=false, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       group by f2.pid order by f2.file_no) fileNameList, " +
+                    "   (select GROUP_CONCAT(f2.file_url separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
-                    "       group by f2.pid order by f2.file_no)) filePathList, " +
+                    "       group by f2.pid order by f2.file_no) filePathList, " +
                     //관리자페이지에서 추가로 사용할 항목들
                     "   d.is_active isActive, " +
                     "   s.ship_name shipName, " +
@@ -256,11 +257,16 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     "   and d.is_deleted = false " +
                     "   and m.is_active = true " +
+                    "   and if(:isManager = true, true, d.is_active = true) " +
                     //관리자 조회시 사용되는 조건들.
                     "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
                     "   and if(:nickName is null, true, m.nick_name like %:nickName%) " +
                     "   and if(:title is null, true, d.title like %:title%) " +
                     "   and if(:content is null, true, d.contents like %:content%) " +
+                    "   and if(:createdDateStart is null, true, d.created_date >= :createdDateStart) " +
+                    "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
+                    "   and if(:hasShipData is null, true, " +
+                    "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
                     " group by d.id " +
                     "order by createdDate desc ",
             countQuery = "select d.id " +
@@ -281,11 +287,16 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     "   and d.is_deleted = false " +
                     "   and m.is_active = true " +
+                    "   and if(:isManager = true, true, d.is_active = true) " +
                     //관리자 조회시 사용되는 조건들.
                     "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
                     "   and if(:nickName is null, true, m.nick_name like %:nickName%) " +
                     "   and if(:title is null, true, d.title like %:title%) " +
                     "   and if(:content is null, true, d.contents like %:content%) " +
+                    "   and if(:createdDateStart is null, true, d.created_date >= :createdDateStart) " +
+                    "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
+                    "   and if(:hasShipData is null, true, " +
+                    "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
                     " group by d.id ",
             nativeQuery = true
     )
@@ -305,6 +316,9 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
             @Param("nickName") String nickName,
             @Param("title") String title,
             @Param("content") String content,
+            @Param("createdDateStart") LocalDate createdDateStart,
+            @Param("createdDateEnd") LocalDate createdDateEnd,
+            @Param("hasShipData") Boolean hasShipData,
             @Param("isManager") Boolean isManager,
             Pageable pageable
     );
@@ -322,9 +336,9 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
-                    "   if(d.is_active=true, d.title, '숨김처리된 글입니다.') title, " +
+                    "   d.title title, " +
                     "   d.fishing_type fishingType, " +
-                    "   if(d.is_active=true, LEFT(d.contents,50), '숨김처리된 글입니다.') contents, " +
+                    "   LEFT(d.contents,50) contents, " +
                     "   d.file_publish fishingDiaryType, " +
                     "   (select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
@@ -335,12 +349,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.like_count likeCount, " +
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
-                    "   if(d.is_active=false, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "   (select GROUP_CONCAT(f2.stored_file separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
-                    "       group by f2.pid order by f2.file_no)) fileNameList, " +
-                    "   if(d.is_active=false, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       group by f2.pid order by f2.file_no) fileNameList, " +
+                    "   (select GROUP_CONCAT(f2.file_url separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
-                    "       group by f2.pid order by f2.file_no)) filePathList " +
+                    "       group by f2.pid order by f2.file_no) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   if(:category is null, true, d.file_publish = :category) " +
@@ -358,6 +372,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     "   and d.is_deleted = false " +
                     "   and m.is_active = true " +
+                    "   and d.is_active = true " +
                     " group by d.id " +
                     "order by likeCount desc ",
             countQuery = "select d.id " +
@@ -378,6 +393,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     "   and d.is_deleted = false " +
                     "   and m.is_active = true " +
+                    "   and d.is_active = true " +
                     " group by d.id ",
             nativeQuery = true
     )
@@ -408,9 +424,9 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
-                    "   if(d.is_active=true, d.title, '숨김처리된 글입니다.') title, " +
+                    "   d.title title, " +
                     "   d.fishing_type fishingType, " +
-                    "   if(d.is_active=true, LEFT(d.contents,50), '숨김처리된 글입니다') contents, " +
+                    "   LEFT(d.contents,50) contents, " +
                     "   d.file_publish fishingDiaryType, " +
                     "   (select case when exists (select v.id from realtime_video as v " +
                     "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
@@ -421,12 +437,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.like_count likeCount, " +
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
-                    "   if(d.is_active=false, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "   (select GROUP_CONCAT(f2.stored_file separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
-                    "       group by f2.pid order by f2.file_no)) fileNameList, " +
-                    "   if(d.is_active=false, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       group by f2.pid order by f2.file_no) fileNameList, " +
+                    "   (select GROUP_CONCAT(f2.file_url separator ',') " +
                     "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
-                    "       group by f2.pid order by f2.file_no)) filePathList " +
+                    "       group by f2.pid order by f2.file_no) filePathList " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
                     "   if(:category is null, true, d.file_publish = :category) " +
@@ -444,6 +460,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     "   and d.is_deleted = false " +
                     "   and m.is_active = true " +
+                    "   and d.is_active = true " +
                     " group by d.id " +
                     "order by commentCount desc ",
             countQuery = "select d.id " +
@@ -464,6 +481,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:shipId is null, true, s.id = :shipId) " +
                     "   and d.is_deleted = false " +
                     "   and m.is_active = true " +
+                    "   and d.is_active = true " +
+                    "" +
                     " group by d.id ",
             nativeQuery = true
     )

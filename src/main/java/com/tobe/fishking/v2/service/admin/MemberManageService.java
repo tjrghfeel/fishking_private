@@ -50,39 +50,36 @@ public class MemberManageService {
             BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         /*db에 암호화되어 들어가는 필드들에 대해 native query검색을 위해 똑같이 암호화를 해줌.*/
         String key = env.getProperty("encrypKey.key");
-        if(dto.getMemberName()!=null){dto.setMemberName(AES.aesEncode(dto.getMemberName(),key));}
-        if(dto.getCity()!=null){dto.setCity(AES.aesEncode(dto.getCity(),key));}
-        if(dto.getGu()!=null){dto.setGu(AES.aesEncode(dto.getGu(),key));}
-        if(dto.getDong()!=null){dto.setDong(AES.aesEncode(dto.getDong(),key));}
-        if(dto.getAreaCode()!=null){dto.setAreaCode(AES.aesEncode(dto.getAreaCode(),key));}
-        if(dto.getLocalNumber()!=null){dto.setLocalNumber(AES.aesEncode(dto.getLocalNumber(),key));}
+//        if(dto.getCity()!=null){dto.setCity(AES.aesEncode(dto.getCity(),key));}
+//        if(dto.getGu()!=null){dto.setGu(AES.aesEncode(dto.getGu(),key));}
+//        if(dto.getDong()!=null){dto.setDong(AES.aesEncode(dto.getDong(),key));}
 
         Pageable pageable;
         if(dto.getSort()==null){
-            pageable = PageRequest.of(page, 10);
+            pageable = PageRequest.of(page, dto.getPageCount());
         }
-        else{pageable = PageRequest.of(page, 10,JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));}
+        else{pageable = PageRequest.of(page, dto.getPageCount(),JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));}
 
         return memberRepository.findMemberListByConditions(
-                dto.getId(),
+//                dto.getId(),
                 dto.getRoles(),
                 dto.getMemberName(),
                 dto.getUid(),
                 dto.getNickName(),
-                dto.getEmail(),
-                dto.getGender(),
+//                dto.getEmail(),
+//                dto.getGender(),
                 dto.getIsActive(),
-                dto.getCertifiedNo(),//!!!!!인증번호 필드인데 혹시 암호화필요하면 위에서 다른필드(city,gu,areacode 등)들 암호화하는것처럼 하기.
-                dto.getIsCertified(),
-                dto.getSnsType(),
-                dto.getSnsId(),
-                dto.getCity(),
-                dto.getGu(),
-                dto.getDong(),
+//                dto.getCertifiedNo(),//!!!!!인증번호 필드인데 혹시 암호화필요하면 위에서 다른필드(city,gu,areacode 등)들 암호화하는것처럼 하기.
+//                dto.getIsCertified(),
+//                dto.getSnsType(),
+//                dto.getSnsId(),
+//                dto.getCity(),
+//                dto.getGu(),
+//                dto.getDong(),
                 dto.getAreaCode(),
                 dto.getLocalNumber(),
-                dto.getJoinDtStart(),
-                dto.getJoinDtEnd(),
+//                dto.getJoinDtStart(),
+//                dto.getJoinDtEnd(),
                 pageable
         );
     }

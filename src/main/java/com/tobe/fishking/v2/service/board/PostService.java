@@ -19,6 +19,7 @@ import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.board.TagRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
 import org.springframework.core.env.Environment;
@@ -55,6 +56,8 @@ public class PostService {
     private FileRepository fileRepository;
     @Autowired
     private UploadService uploadService;
+    @Autowired
+    private MemberService memberService;
 
     /*PostResponse를 Page형태로 반환해주는 메소드.
      * 반환하는 PostResponse에는 contents필드가 포함되어있지 않다. */
@@ -128,7 +131,9 @@ public class PostService {
     /*공지사항 상세보기*/
     @Transactional(readOnly = true)
     public NoticeDetailDto getNoticeDetail(Long postId) throws ResourceNotFoundException {
-        return postRepository.findNoticeDetailByPostId(postId);
+        NoticeDetailDto post = postRepository.findNoticeDetailByPostId(postId);
+        if(post == null){throw new RuntimeException("해당 글이 존재하지 않습니다.");}
+        else return post;
         /*
         Post post = postRepository.findById(postId)
                 .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postId));
@@ -279,7 +284,7 @@ public class PostService {
                 .files(dto.getFileList())
                 /*QnaWriteDto안에 없는것들*/
                 .boardId(board.getId())
-                .channelType("notice")
+                .channelType("general")
                 .title("noTitle")
                 .targetRole(targetRole)
                 .createdAt("sampleCreatedAt")
@@ -304,7 +309,7 @@ public class PostService {
                 .files(dto.getFileList())
                 /*FaqWriteDto안에 없는것들*/
                 .boardId(board.getId())
-                .channelType("notice")
+                .channelType("general")
                 .returnType("email")
                 .returnNoAddress("sampleReturnAddress")
                 .createdAt("sampleCreatedAt")
@@ -360,11 +365,6 @@ public class PostService {
         Post post = postRepository.findById(postDTO.getPostId())
                 .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postDTO.getPostId()));
 
-        /*현재 로그인된 회원이 글의 작성자가 아닐경우 예외처리. */
-        if(member.getId()!=post.getAuthor().getId()){
-            throw new RuntimeException("자신의 글만 수정할 수 있습니다");
-        }
-
         post.updatePost(postDTO);
 
         /*Post에 올려놓은 File들 삭제하고 다시 올림. */
@@ -410,6 +410,11 @@ public class PostService {
     /*1:1문의 수정*/
     @Transactional
     public Long updateOne2one(QnaUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Post post = postRepository.findById(dto.getPostId())
+                .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+dto.getPostId()));
+        if(post.getAuthor() != member){throw new RuntimeException("수정 권한이 없습니다.");}
+
         /*UpdatePostDTO생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.one2one);
         Boolean targetRole;
@@ -425,7 +430,7 @@ public class PostService {
                 .files(dto.getFileList())
                 /*dto에 없는 필드들*/
                 .boardId(board.getId())
-                .channelType("notice")
+                .channelType("general")
                 .title("noTitle")
                 .createdAt("sampleCreatedAt")
                 .targetRole(targetRole)
@@ -436,6 +441,9 @@ public class PostService {
     /*faq 수정*/
     @Transactional
     public Long updateFaq(FaqUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
+        Member member = memberService.getMemberBySessionToken(token);
+        if(member.getRoles() != Role.admin){throw new RuntimeException("수정 권한이 없습니다.");}
+
         /*UpdatePostDTO생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.faq);
         Boolean targetRole;
@@ -453,7 +461,7 @@ public class PostService {
                 .boardId(board.getId())
                 .returnType("email")
                 .returnNoAddress("sampleReturnAddress")
-                .channelType("notice")
+                .channelType("general")
                 .createdAt("sampleCreatedAt")
                 .targetRole(targetRole)
                 .build();
@@ -463,6 +471,9 @@ public class PostService {
     /*공지사항 수정*/
     @Transactional
     public Long updateNotice(NoticeUpdateDto dto, String token) throws ResourceNotFoundException, IOException {
+        Member member = memberService.getMemberBySessionToken(token);
+        if(member.getRoles() != Role.admin){throw new RuntimeException("수정 권한이 없습니다.");}
+
         /*UpdatePostDTO생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
         Boolean targetRole;

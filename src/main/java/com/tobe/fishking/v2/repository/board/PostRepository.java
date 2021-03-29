@@ -156,7 +156,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   and if(:channelType is null, true, p.channel_type = :channelType) " +
             "   and if(:title is null, true, p.title like %:title%) " +
             "   and p.is_deleted = false " +
-            "order by p.created_date desc, p.channel_type ",
+            "order by p.channel_type asc, p.created_date desc ",
             countQuery = "select p.id " +
                     "from post p " +
                     "where " +
@@ -165,7 +165,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "   and if(:channelType is null, true, p.channel_type = :channelType) " +
                     "   and if(:title is null, true, p.title like %:title%) " +
                     "   and p.is_deleted = false " +
-                    "order by p.created_date desc, p.channel_type ",
+                    "order by p.channel_type asc, p.created_date desc ",
             nativeQuery = true
     )
     Page<NoticeDtoForPage> findNoticeList(

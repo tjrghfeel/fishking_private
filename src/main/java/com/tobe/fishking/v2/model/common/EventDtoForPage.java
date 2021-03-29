@@ -10,6 +10,7 @@ public interface EventDtoForPage {
     @Value("#{@mapperUtility.transDownloadUrl(target.imageUrl)}")
     String getImageUrl();
     String getEventTitle();
+    String getContent();
     String getShipName();
     String getStartDay();
     String getEndDay();

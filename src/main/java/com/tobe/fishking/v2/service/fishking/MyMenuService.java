@@ -117,7 +117,8 @@ public class MyMenuService {
 //        return fishingDiaryRepository.findByMember(member, member,pageable);
         return fishingDiaryRepository.getFishingDiaryListOrderByCreatedDate(
                 FilePublish.fishingBlog.ordinal(), null, null, null, null, null, member.getId(),
-                true, null, null, null, null, null, null, false, pageable
+                true, null, null, null, null, null, null, null,null,
+                null,false, pageable
         );
     }
 

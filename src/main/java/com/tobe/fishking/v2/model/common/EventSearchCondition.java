@@ -13,9 +13,16 @@ import java.time.LocalDate;
 public class EventSearchCondition {
     private Boolean isLast;
     private String title;
+    private String content;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate createdDateStart;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate createdDateEnd;
+    private String nickName;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
     private String shipName;
+    private Integer pageCount=10;
 }

@@ -34,9 +34,14 @@ public class EventController {
             "요청 필드 ) \n" +
             "- isLast : Boolean / 선택 / true시, 지난 이벤트 반환\n" +
             "- title : String / 선택 / 이벤트명 검색시 사용\n" +
+            "- content : String / 선택 / 이벤트 내용\n" +
+            "- createdDateStart : String / 선택 / 이벤트 생성일 시작. yyyy-MM-dd형식\n" +
+            "- createdDateEnd : String / 선택 / 이벤트 생성일 종료. yyyy-MM-dd형식\n"+
+            "- nickName : String / 선택 / 작성자 닉네임\n" +
             "- startDate : String / 선택 / 이벤트 시작일 검색시 사용. yyyy-MM-dd형식\n" +
             "- endDate : STring / 선택 / 이벤트 종료일 검색시 사용. yyyy-MM-dd형식\n" +
             "- shipName : String / 선택 / 이벤트중인 선박명 검색시 사용. \n" +
+            "- pageCount : Integer / 선택 / 페이지당 요소 몇개일지\n" +
             "응답 필드 ) \n" +
             "- eventId : Long / 이벤트의 id\n" +
             "- shipId : Long / 해당 이벤트가 속한 선박 id\n" +

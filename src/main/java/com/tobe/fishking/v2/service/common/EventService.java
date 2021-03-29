@@ -62,9 +62,14 @@ public class EventService {
         if(dto.getStartDate()!=null){startDate=dto.getStartDate().toString();}
         String endDate = null;
         if(dto.getEndDate()!=null){endDate=dto.getEndDate().toString();}
+        String createdDateStart = null;
+        if(dto.getCreatedDateStart()!=null){createdDateStart=dto.getCreatedDateStart().toString();}
+        String createdDateEnd = null;
+        if(dto.getCreatedDateEnd()!=null){createdDateEnd=dto.getCreatedDateEnd().toString();}
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        Pageable pageable = PageRequest.of(page,10);
-        return eventRepository.findEventList(today, dto.getIsLast(), dto.getTitle(), startDate, endDate, dto.getShipName(), isActive, pageable);
+        Pageable pageable = PageRequest.of(page,dto.getPageCount());
+        return eventRepository.findEventList(today, dto.getIsLast(), dto.getTitle(), dto.getContent(),
+                createdDateStart, createdDateEnd, dto.getNickName(), startDate, endDate, dto.getShipName(), isActive, pageable);
     }
 
     /*이벤트 상세보기*/

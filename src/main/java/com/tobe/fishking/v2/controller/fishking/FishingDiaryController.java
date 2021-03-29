@@ -15,9 +15,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 @Api(tags = {"조항일지, 유저조행기"})
@@ -158,7 +160,8 @@ public class FishingDiaryController {
             "- districtSearchKey : String / 선택 / 팝업창에서 '지역명 검색'부분에 직접입력한 값. \n" +
             "- fishSpecies : String[] / 선택 / 팝업창에서 선택한 어종에 해당하는 common code의 code값들의 배열.\n" +
             "- shipId : Long / 선택 / 선박의 id. 특정 선박에 대한 조항일지 또는 유저조행기만 보려할때 입력.\n" +
-            "- sort : String / 선택 / 글들의 정렬기준. / 'createdDate', 'likeCount', 'commentCount' 중 하나 입력. \n"+
+            "- sort : String / 선택 / 글들의 정렬기준. / 'createdDate', 'likeCount', 'commentCount' 중 하나 입력. \n" +
+            "- pageCount : Integer / 선택 / 페이지당 요소 개수. \n"+
             "- header에 세션토큰 필요.\n" +
             "응답 필드 )\n" +
             "- id : Long / 게시글의 id \n" +
@@ -196,7 +199,13 @@ public class FishingDiaryController {
             @RequestParam(value = "shipName",required = false) String shipName,
             @RequestParam(value = "nickName",required = false) String nickName,
             @RequestParam(value = "title",required = false) String title,
-            @RequestParam(value= "content",required = false) String content
+            @RequestParam(value= "content",required = false) String content,
+            @RequestParam(value = "createdDateStart",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate createdDateStart,
+            @RequestParam(value = "createdDateEnd",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate createdDateEnd,
+            @RequestParam(value = "hasShipData",required = false) Boolean hasShipData,
+            @RequestParam(value = "pageCount",required = false,defaultValue = "10") Integer pageCount
     ) throws ResourceNotFoundException, EmptyListException {
         if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount"))){
             throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
@@ -211,7 +220,7 @@ public class FishingDiaryController {
 //                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
         Page<FishingDiaryDtoForPage> diaries = fishingDiaryService.getFishingDiaryList(
                 page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies,
-                shipName, nickName, title, content, sort, token, false);
+                shipName, nickName, title, content, createdDateStart, createdDateEnd, hasShipData, pageCount, sort, token, false);
         if (diaries.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
@@ -269,7 +278,7 @@ public class FishingDiaryController {
 //                null, "createdDate", token, true);
         Page<FishingDiaryDtoForPage> diaries = fishingDiaryService.getFishingDiaryList(
                 page, "fishingDiary", null, null, districtSearchKey, searchTarget, shipId,
-                null, null, null, null, null, "createdDate", token, true);
+                null, null, null, null, null, null, null, null, 30, "createdDate", token, true);
         if (diaries.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {

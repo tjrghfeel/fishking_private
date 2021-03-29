@@ -430,7 +430,8 @@ public class FishingDiaryService {
     @Transactional
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(
             int page, String category, String district1, String[] district2List, String searchKey, String searchTarget, Long shipId,
-            String[] fishSpecies, String shipName, String nickName, String title, String content, String sort, String token, Boolean myPost)
+            String[] fishSpecies, String shipName, String nickName, String title, String content, LocalDate createdDateStart,
+            LocalDate createdDateEnd, Boolean hasShipData, Integer pageCount, String sort, String token, Boolean myPost)
             throws ResourceNotFoundException {
         Member member =null;
         Long memberId = null;
@@ -473,18 +474,20 @@ public class FishingDiaryService {
             }
         }
 
-        Pageable pageable = PageRequest.of(page, 30);
+        Pageable pageable = PageRequest.of(page, pageCount);
         if(sort.equals("createdDate")){
             if(member !=null && member.getRoles() == Role.admin){
                 return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
                         filePublish.ordinal(),district1Regex, district2Regex, fishSpeciesRegex, searchKey, null,
-                        memberId,myPost,searchTarget,shipId,shipName,nickName,title,content, true, pageable
+                        memberId,myPost,searchTarget,shipId,shipName,nickName,title,content, createdDateStart,createdDateEnd,
+                        hasShipData, true, pageable
                 );
             }
             else {
                 return fishingDiaryRepo.getFishingDiaryListOrderByCreatedDate(
                         filePublish.ordinal(), district1Regex, district2Regex, fishSpeciesRegex, searchKey, null,
-                        memberId, myPost, searchTarget, shipId, null, null, null, null, false, pageable
+                        memberId, myPost, searchTarget, shipId, null, null, null, null, null,null,
+                        hasShipData, false, pageable
                 );
             }
         }

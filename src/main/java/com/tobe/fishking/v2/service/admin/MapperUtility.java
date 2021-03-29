@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.service.admin;
 
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
@@ -116,6 +117,7 @@ public class MapperUtility {
     public String transEnumFilePublish(Integer ordinal){if(ordinal!=null){return FilePublish.values()[ordinal].getValue();}else return null;}
     public String transEnumMeridiem(Integer ordinal){if(ordinal!=null){return Meridiem.values()[ordinal].getValue();}else return null;}
     public String transEnumReturnType(Integer ordinal){ if(ordinal!=null){ return ReturnType.values()[ordinal].getValue();} else return null; }
+    public String transEnumRoles(Integer ordinal){if(ordinal!=null){ return Role.values()[ordinal].getValue();} else return null;}
 
     public String transEnumChannelTypeKey(Integer ordinal){if(ordinal!=null){return ChannelType.values()[ordinal].getKey();}else return null;}
     public String transEnumQuestionTypeKey(Integer ordinal){if(ordinal!=null){return QuestionType.values()[ordinal].getKey();}else return null;}

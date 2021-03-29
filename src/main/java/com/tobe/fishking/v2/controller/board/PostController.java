@@ -142,7 +142,7 @@ public class PostController {
             "   role : String / 어떤 유형의 회원에 대한 faq인지 결정을 위한 필드 / member : 일반회원, shipowner : 업주회원" +
             "- 필드 ) \n" +
             "   id : 공지사항 글 id\n" +
-            "   channelType : 공지사항 유형 / (\"공지\"), (\"이벤트\")\n" +
+            "   channelType : 공지사항 유형 / (\"중요\"), (\"일반\")\n" +
             "   title : 공지사항 제목\n" +
             "   date : 공지사항 작성일\n")
     @GetMapping("/notice/{page}")
@@ -154,7 +154,7 @@ public class PostController {
     ) throws EmptyListException {
         try{if(channelType!=null) {
             ChannelType.valueOf(channelType);
-        }}catch(Exception e){throw new RuntimeException("channelType의 값으로는 'notice', 'event'만 가능합니다.");}
+        }}catch(Exception e){throw new RuntimeException("channelType의 값으로는 'important', 'general'만 가능합니다.");}
         Page<NoticeDtoForPage> notices = postService.getNoticeList(page,role,channelType, title);
         if (notices.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
@@ -247,8 +247,8 @@ public class PostController {
     @ApiOperation(value = "공지사항 생성",notes = "" +
             "- 요청필드 )\n" +
             "   channelType : String / 공지 유형\n" +
-            "       ㄴ notice : 공지\n" +
-            "       ㄴ event : 이벤트\n" +
+            "       ㄴ important : 공지\n" +
+            "       ㄴ general : 이벤트\n" +
             "   title : String / 제목\n" +
             "   contents : String / 내용\n" +
             "   fileList : Integer 배열 / 파일id 배열\n" +
@@ -321,8 +321,8 @@ public class PostController {
             "- 요청필드 )\n" +
             "   postId : 공지사항 글의 id\n" +
             "   channelType : String / 공지 유형\n" +
-            "       ㄴ notice : 공지\n" +
-            "       ㄴ event : 이벤트\n" +
+            "       ㄴ important : 중요 공지\n" +
+            "       ㄴ general : 일반\n" +
             "   title : String / 제목\n" +
             "   contents : String / 내용\n" +
             "   fileList : Integer 배열 / 파일id 배열\n" +
