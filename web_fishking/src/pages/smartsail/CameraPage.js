@@ -16,6 +16,7 @@ export default inject("PageStore")(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout
@@ -72,7 +73,7 @@ export default inject("PageStore")(
             <p className="clearfix"></p>
 
             <div className="container nopadding mt-3">
-              <a>
+              <a onClick={() => PageStore.push(`/camera/add`)}>
                 <div className="card card-sm">
                   <div className="row no-gutters">
                     <div className="cardimgWrap">
