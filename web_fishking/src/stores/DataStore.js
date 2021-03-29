@@ -141,10 +141,10 @@ const ModalStore = new (class {
     try {
       let resolve;
       if (this.stateCodes.groupId) {
-        resolve = this.stateCodes["groupId"];
+        resolve = this.stateCodes[groupId];
       } else {
         resolve = await Http._get("/v2/api/commonCode/" + groupId);
-        this.stateCodes["groupId"] = resolve;
+        this.stateCodes[groupId] = resolve;
       }
 
       const codes = [];
