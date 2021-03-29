@@ -81,9 +81,17 @@ const ModalStore = new (class {
     const after = list.slice(index + 1, list.length);
     return before.concat(updatedItem).concat(after);
   };
+  /* stateEnums */
+  stateEnums = {};
   getEnums = async (type, columnLength = 0) => {
     try {
-      const resolve = await Http._get("/v2/api/value");
+      let resolve;
+      if (this.stateCodes.type) {
+        resolve = this.stateCodes["type"];
+      } else {
+        resolve = await Http._get("/v2/api/value");
+        this.stateCodes["type"] = resolve;
+      }
 
       const enums = [];
       if (resolve[type] && resolve[type].length > 0) {
@@ -127,9 +135,17 @@ const ModalStore = new (class {
       return null;
     }
   };
+  /* stateCodes */
+  stateCodes = {};
   getCodes = async (groupId, columnLength = 0) => {
     try {
-      const resolve = await Http._get("/v2/api/commonCode/" + groupId);
+      let resolve;
+      if (this.stateCodes.groupId) {
+        resolve = this.stateCodes["groupId"];
+      } else {
+        resolve = await Http._get("/v2/api/commonCode/" + groupId);
+        this.stateCodes["groupId"] = resolve;
+      }
 
       const codes = [];
       if (resolve.list && resolve.list.length > 0) {
