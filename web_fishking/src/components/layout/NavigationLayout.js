@@ -17,7 +17,6 @@ export default inject("PageStore")(
         customButton,
         backPathname,
       }) => {
-        console.log(pathname);
         return (
           <React.Fragment>
             <nav

@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import ReservationMyPage from "../../pages/cust/reservation/ReservationMyPage";
 import ReservationMyDetailPage from "../../pages/cust/reservation/ReservationMyDetailPage";
@@ -9,9 +9,9 @@ import ReservationGoodsPage from "../../pages/cust/reservation/ReservationGoodsP
 import ReservationPaymentPage from "../../pages/cust/reservation/ReservationPaymentPage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 예약 > 나의예약내역 */}
           <Route exact path={`${match.url}/my`} component={ReservationMyPage} />
@@ -40,7 +40,7 @@ export default inject()(
             component={ReservationPaymentPage}
           />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

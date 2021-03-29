@@ -40,13 +40,13 @@ logging:
   level:
     org:
       hibernate:
-        SQL: DEBUG
+        SQL: info
         type:
           descriptor:
             sql:
-              BasicBinder: TRACE
-      springframework: DEBUG
+              BasicBinder: error
+      springframework: info
     com:
       tobe:
         fishing:
-          pagination=debug: debug
+          pagination=debug: info

@@ -51,6 +51,10 @@ export default inject(
         });
         if (!restored) this.loadPageData();
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
 
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
@@ -91,7 +95,6 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
-
         PageStore.reloadSwipe();
       };
 

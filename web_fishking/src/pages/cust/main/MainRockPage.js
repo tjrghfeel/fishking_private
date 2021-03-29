@@ -88,8 +88,6 @@ export default inject(
           services: PageStore.state.services,
         });
 
-        console.log(JSON.stringify(content));
-
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {

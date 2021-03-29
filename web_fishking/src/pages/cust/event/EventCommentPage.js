@@ -67,7 +67,6 @@ export default inject(
           const { APIStore } = this.props;
           if (index === 0) {
             // 수정하기
-            console.log(JSON.stringify(item));
             this.text.current.value = item.content;
             this.setState({
               isEdit: true,

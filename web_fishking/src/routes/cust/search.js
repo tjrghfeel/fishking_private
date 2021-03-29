@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import SearchAllPage from "../../pages/cust/search/SearchAllPage";
 import SearchReservePage from "../../pages/cust/search/SearchReservePage";
@@ -8,9 +8,9 @@ import SearchKeywordAllPage from "../../pages/cust/search/SearchKeywordAllPage";
 import SearchKeywordTabPage from "../../pages/cust/search/SearchKeywordTabPage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 검색 > 전체 */}
           <Route exact path={`${match.url}/all`} component={SearchAllPage} />
@@ -33,7 +33,7 @@ export default inject()(
             component={SearchKeywordTabPage}
           />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

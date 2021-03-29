@@ -66,6 +66,10 @@ export default inject(
         this.setState({ arr_shipId });
         if (!restored) this.loadPageData(0);
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
       initSearchData = () => {
         const { PageStore } = this.props;
         PageStore.setState({
@@ -100,8 +104,6 @@ export default inject(
               shipId,
             }
           )) || {};
-
-        console.log(JSON.stringify(content));
 
         if (page === 0) {
           PageStore.setState({ list: content });

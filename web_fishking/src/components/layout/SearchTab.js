@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 
 export default inject("PageStore")(
   observer(
-    withRouter(({ activeIndex = 0, keyword, PageStore }) => {
+    withRouter(({ activeIndex = 0, keyword, PageStore, onClick }) => {
       return (
         <nav className="nav nav-pills nav-menu nav-justified">
           <a
@@ -17,33 +17,37 @@ export default inject("PageStore")(
           </a>
           <a
             className={"nav-link" + (activeIndex === 1 ? " active" : "")}
-            onClick={() =>
-              PageStore.push(`/search/keyword/ship?keyword=${keyword}`)
-            }
+            onClick={() => {
+              PageStore.push(`/search/keyword/ship?keyword=${keyword}`);
+              if (onClick) onClick("ship");
+            }}
           >
             선박
           </a>
           <a
             className={"nav-link" + (activeIndex === 2 ? " active" : "")}
-            onClick={() =>
-              PageStore.push(`/search/keyword/diary?keyword=${keyword}`)
-            }
+            onClick={() => {
+              PageStore.push(`/search/keyword/diary?keyword=${keyword}`);
+              if (onClick) onClick("diary");
+            }}
           >
             조황일지
           </a>
           <a
             className={"nav-link" + (activeIndex === 3 ? " active" : "")}
-            onClick={() =>
-              PageStore.push(`/search/keyword/live?keyword=${keyword}`)
-            }
+            onClick={() => {
+              PageStore.push(`/search/keyword/live?keyword=${keyword}`);
+              if (onClick) onClick("live");
+            }}
           >
             어복TV
           </a>
           <a
             className={"nav-link" + (activeIndex === 4 ? " active" : "")}
-            onClick={() =>
-              PageStore.push(`/search/keyword/blog?keyword=${keyword}`)
-            }
+            onClick={() => {
+              PageStore.push(`/search/keyword/blog?keyword=${keyword}`);
+              if (onClick) onClick("blog");
+            }}
           >
             조행기
           </a>

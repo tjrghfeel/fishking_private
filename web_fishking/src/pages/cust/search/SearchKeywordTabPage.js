@@ -25,13 +25,20 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      async componentDidMount() {
+      componentDidMount() {
+        this.initPageData();
+      }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
+      initPageData = async (tab = "ship") => {
         const {
           PageStore,
           NativeStore,
-          match: {
-            params: { tab = "ship" },
-          },
+          // match: {
+          //   params: { tab = "ship" },
+          // },
         } = this.props;
         const qp = PageStore.getQueryParams();
         const keyword = qp.keyword || null;
@@ -62,8 +69,7 @@ export default inject(
           this.loadPageData(PageStore.state.page + 1);
         });
         if (!restored) this.loadPageData();
-      }
-
+      };
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
 
@@ -71,16 +77,14 @@ export default inject(
 
         await PageStore.setState({ page, isPending: true });
 
-        const resolve = await APIStore._get(
-          `/v2/api/search/${this.state.tab}/${page}`,
-          {
+        const resolve =
+          (await APIStore._get(`/v2/api/search/${this.state.tab}/${page}`, {
             keyword: PageStore.state.keyword,
             order: PageStore.state.order,
             type: PageStore.state.type,
             latitude: PageStore.state.latitude,
             longitude: PageStore.state.longitude,
-          }
-        );
+          })) || {};
 
         const {
           content = [],
@@ -129,6 +133,7 @@ export default inject(
             <SearchTab
               activeIndex={this.state.activeIndex}
               keyword={PageStore.state.keyword}
+              onClick={(type) => this.initPageData(type)}
             />
 
             {/** Filter */}

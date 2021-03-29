@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import MemberLoginPage from "../../pages/cust/member/MemberLoginPage";
 import MemberLoginTokenPage from "../../pages/cust/member/MemberLoginTokenPage";
@@ -10,9 +10,9 @@ import MemberSignoutPage from "../../pages/cust/member/MemberSignoutPage";
 import MemberProfilePage from "../../pages/cust/member/MemberProfilePage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 멤버 > 로그인 */}
           <Route
@@ -51,7 +51,7 @@ export default inject()(
             component={MemberProfilePage}
           />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

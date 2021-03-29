@@ -23,19 +23,19 @@ export default inject(
         });
         if (!restored) this.loadPageData();
       }
-
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
 
         if (page > 0 && PageStore.state.isEnd) return;
 
         PageStore.setState({ page });
-        const {
-          content,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get("/v2/api/myFishingPostList/" + page);
+        const { content = [], pageable: { pageSize = 0 } = {} } =
+          (await APIStore._get("/v2/api/myFishingPostList/" + page)) || {};
 
-        console.log(JSON.stringify(content));
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {

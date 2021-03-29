@@ -17,6 +17,14 @@ const ModalStore = new (class {
   onOk = null;
   onClose = null;
   onSelect = null;
+
+  state = {};
+  setState = (state) => {
+    this.state = {
+      ...this.state,
+      ...state,
+    };
+  };
   /********** ********** ********** ********** **********/
   /** action */
   /********** ********** ********** ********** **********/

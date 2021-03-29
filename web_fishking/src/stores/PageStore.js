@@ -1,4 +1,4 @@
-/* global $ */
+/* global $, kakao */
 import { makeAutoObservable } from "mobx";
 import qs from "qs";
 import * as path from "path";
@@ -21,6 +21,7 @@ const PageStore = new (class {
     this.history = history;
   };
   push = (pathname) => {
+    this.removeScrollEvent();
     let service = this.history.location.pathname.split("/")[1];
     if (
       pathname.indexOf("/cust") !== -1 ||
@@ -30,17 +31,34 @@ const PageStore = new (class {
     )
       service = "";
     else service = "/" + service;
-    window.location.href = `${service}${pathname}`;
+    // window.location.href = `${service}${pathname}`;
+    this.history.push(`${service}${pathname}`);
   };
   reload = () => {
     window.location.reload();
   };
   goBack = () => {
-    const redirectUrl = sessionStorage.getItem("@redirect-url");
-    sessionStorage.removeItem("@redirect-url");
-    sessionStorage.setItem("@goBack", "Y");
-    if (redirectUrl === null) window.history.back();
-    else window.history.go(-2);
+    if (
+      window.isNative &&
+      (window.location.pathname.indexOf("/cust/main/home") !== -1 ||
+        window.location.pathname.indexOf("/smartfishing/dashboard") !== -1)
+    ) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          process: "Exit",
+          data: "",
+        })
+      );
+    } else {
+      const redirectUrl = sessionStorage.getItem("@redirect-url");
+      sessionStorage.removeItem("@redirect-url");
+      sessionStorage.setItem("@goBack", "Y");
+      if (redirectUrl === null) {
+        window.history.back();
+      } else {
+        window.history.go(-2);
+      }
+    }
   };
   getQueryParams = () => {
     const params = qs.parse(window.location.search, {
@@ -86,9 +104,11 @@ const PageStore = new (class {
     if (cust === null && smartfishing === null) this.loggedIn = false;
     else this.loggedIn = true;
   };
+  windowEventHandler = [];
+  elementEventHandler = [];
   setScrollEvent = (onScroll, element) => {
     if (element) {
-      element.addEventListener("scroll", () => {
+      const scrollEventHandler = () => {
         const scrollHeight = element.scrollHeight - element.offsetHeight;
         const itemHeight = 80;
         const scrollPosition = element.scrollTop;
@@ -96,9 +116,11 @@ const PageStore = new (class {
         if (scrollPosition + itemHeight >= scrollHeight) {
           onScroll();
         }
-      });
+      };
+      element.addEventListener("scroll", scrollEventHandler);
+      this.elementEventHandler.push({ element, scrollEventHandler });
     } else {
-      window.addEventListener("scroll", () => {
+      const scrollEventHandler = () => {
         const scrollHeight =
           document.scrollingElement.scrollHeight - window.outerHeight;
         const itemHeight = 80;
@@ -107,7 +129,18 @@ const PageStore = new (class {
         if (scrollPosition + itemHeight >= scrollHeight) {
           onScroll();
         }
-      });
+      };
+      window.addEventListener("scroll", scrollEventHandler);
+      this.windowEventHandler.push(scrollEventHandler);
+    }
+  };
+  removeScrollEvent = () => {
+    for (let windowEvent of this.windowEventHandler) {
+      window.removeEventListener("scroll", windowEvent);
+    }
+    for (let elementEvent of this.elementEventHandler) {
+      const { element, scrollEventHandler } = elementEvent;
+      element.removeEventListener("scroll", scrollEventHandler);
     }
   };
   setState = (state) => {
@@ -238,6 +271,43 @@ const PageStore = new (class {
         $(target).click();
       },
       threshold: 75,
+    });
+
+    // # 토글 버튼
+    $(".toggle_menu").on("click", function () {
+      $(".toggle_menu>span").stop().toggleClass("on");
+      $(this).stop().toggleClass("on");
+    });
+
+    let chkNum = 0;
+    $(".toggle_menu").click(function () {
+      if (chkNum == 0) {
+        $(".toggle_menu>span").stop().addClass("on");
+        $("nav").stop().addClass("view");
+        $(".navbar").stop().addClass("on");
+        $(this).stop().addClass("on");
+        $(".allmenu").fadeIn();
+        chkNum = 1;
+      } else {
+        $(".toggle_menu>span").stop().removeClass("on");
+        $("nav").stop().removeClass("view");
+        $(".navbar").stop().removeClass("on");
+        $(this).stop().removeClass("on");
+        $(".allmenu").fadeOut();
+        chkNum = 0;
+      }
+    });
+  };
+  getAddressInfo = (lat, lng) => {
+    return new Promise((resolve) => {
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.coord2RegionCode(lng, lat, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          resolve(result);
+        } else {
+          resolve(false);
+        }
+      });
     });
   };
 })();

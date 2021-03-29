@@ -57,6 +57,12 @@ export default inject(
         });
         this.setState({ list: resolve });
       };
+      onClick = (item) => {
+        const { PageStore } = this.props;
+        PageStore.push(
+          `/paid/detail?year=${this.state.year}&month=${this.state.month}&shipId=${item.shipId}`
+        );
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -163,6 +169,7 @@ export default inject(
                           className={
                             "carousel-item" + (index === 0 ? " active" : "")
                           }
+                          onClick={() => this.onClick(data)}
                         >
                           <div className="row no-gutters">
                             <div className="col-12">
@@ -192,7 +199,7 @@ export default inject(
                 <div className="container nopadding">
                   {(this.state.list.content || []).map((data, index) => (
                     <React.Fragment key={index}>
-                      <a>
+                      <a onClick={() => this.onClick(data)}>
                         <div className="card card-sm">
                           <div className="row no-gutters d-flex align-items-center">
                             <div className="col-3">
@@ -209,15 +216,15 @@ export default inject(
                               <br />
                               취소금액:{" "}
                               <strong className="red">
-                                -{Intl.NumberFormat().format(data["cancel"])}
+                                {Intl.NumberFormat().format(data["cancel"])}
                               </strong>
                               원
                             </div>
-                            <div className="col-3 text-right">
-                              <span className="status relative status2">
-                                정산대기
-                              </span>
-                            </div>
+                            {/*<div className="col-3 text-right">*/}
+                            {/*  <span className="status relative status2">*/}
+                            {/*    정산대기*/}
+                            {/*  </span>*/}
+                            {/*</div>*/}
                           </div>
                         </div>
                       </a>

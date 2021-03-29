@@ -42,7 +42,6 @@ export default inject(
           } = this.props;
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           this.setState(resolve);
-          console.log(JSON.stringify(resolve));
 
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {

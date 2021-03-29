@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.enums.ErrorCodes;
 import com.tobe.fishking.v2.exception.ApiException;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.smartsail.CameraUpdateDTO;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.smartfishing.FishingShipService;
 import io.swagger.annotations.Api;
@@ -29,16 +30,15 @@ public class CameraController {
             "\n isUse: 사용인경우 true, 미사용인경우 false")
     @PostMapping("/sail/camera/update")
     public Map<String, Object> changeCameraStatus(@RequestHeader(name = "Authorization") String token,
-                                                  @RequestParam Long cameraId,
-                                                  @RequestParam Boolean isUse) throws NotAuthException, ResourceNotFoundException {
+                                                  @RequestBody CameraUpdateDTO dto) throws NotAuthException, ResourceNotFoundException {
         if (!memberService.checkAuth(token)) {
             throw new NotAuthException("권한이 없습니다.");
         }
         Map<String, Object> result = new HashMap<>();
         try {
-            fishingShipService.changeCameraStatus(cameraId, isUse);
+            fishingShipService.changeCameraStatus(dto.getCameraId(), dto.getIsUse());
             result.put("result", "success");
-            result.put("id", cameraId);
+            result.put("id", dto.getCameraId());
             return result;
         } catch (Exception e) {
             throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");

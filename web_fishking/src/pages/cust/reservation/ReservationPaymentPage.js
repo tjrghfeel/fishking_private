@@ -289,8 +289,6 @@ export default inject(
             totalPrice,
           };
 
-          console.log(JSON.stringify(params));
-
           const resolve = await APIStore._post(`/v2/api/ship/reserve`, params);
 
           if (resolve) {

@@ -37,7 +37,6 @@ export default inject(
         const { orderId } = PageStore.getQueryParams();
         const resolve = await APIStore._get(`/v2/api/orders/detail/${orderId}`);
         this.setState({ ...resolve });
-        console.log(JSON.stringify(resolve));
       };
       requestApprove = async () => {
         const { ModalStore, APIStore } = this.props;

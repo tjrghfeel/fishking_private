@@ -39,6 +39,10 @@ export default inject(
           });
           this.loadPageData();
         }
+        componentWillUnmount() {
+          const { PageStore } = this.props;
+          PageStore.removeScrollEvent();
+        }
 
         loadPageData = async (page = 0) => {
           const {
@@ -67,8 +71,6 @@ export default inject(
             size: this.state.size,
           });
           this.setState({ average, service, taste, clean });
-
-          console.log(JSON.stringify(content));
 
           if (page === 0) {
             this.setState({ list: content });

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import crypto from "crypto";
 import Routers from "./routes";
 
@@ -227,12 +227,12 @@ String.prototype.latest = function () {
   }
 };
 
-const App = () => {
+const App = withRouter(() => {
   return (
-    <BrowserRouter>
-      <Route path={`/*`} component={Routers} />
-    </BrowserRouter>
+    <React.Fragment>
+      <Routers />
+    </React.Fragment>
   );
-};
+});
 
 export default App;

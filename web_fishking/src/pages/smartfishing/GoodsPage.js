@@ -46,6 +46,10 @@ export default inject(
         });
         if (!restored) this.loadPageData();
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
       initSearchData = () => {
         const { PageStore } = this.props;
         PageStore.setState({

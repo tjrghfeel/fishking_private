@@ -422,4 +422,24 @@ public class CommonService {
         result.put("normal", normal);
         return result;
     }
+
+    @Transactional
+    public List<CommonCodeDTO> getAddrCodes(Long groupId, String parCode) {
+        List<CommonCodeDTO> commonCodeDTOList = new ArrayList<>();
+        List<CommonCode> commonCodeList = commonCodeRepo.findAllByCodeGroupIdAndParCode(groupId, parCode);
+        for(int i=0; i<commonCodeList.size(); i++){
+            CommonCode commonCode = commonCodeList.get(i);
+            CommonCodeDTO commonCodeDTO = new CommonCodeDTO();
+            commonCodeDTO.setId(commonCode.getId());
+            commonCodeDTO.setCode(commonCode.getCode());
+            commonCodeDTO.setCodeGroup(commonCode.getCodeGroup());
+            commonCodeDTO.setCodeName(commonCode.getCodeName());
+            commonCodeDTO.setExtraValue1(commonCode.getExtraValue1());
+            commonCodeDTO.setRemark(commonCode.getRemark());
+
+            commonCodeDTOList.add(commonCodeDTO);
+        }
+
+        return commonCodeDTOList;
+    }
 }

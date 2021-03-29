@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import CsFaqPage from "../../pages/cust/cs/CsFaqPage";
 import CsApplyPage from "../../pages/cust/cs/CsApplyPage";
@@ -13,9 +13,9 @@ import CsNoticeDetailPage from "../../pages/cust/cs/CsNoticeDetailPage";
 import CsAlarmPage from "../../pages/cust/cs/CsAlarmPage";
 
 export default inject()(
-  observer(({ match }) => {
-    return (
-      <BrowserRouter>
+  observer(
+    withRouter(({ match }) => {
+      return (
         <Switch>
           {/** 고객센터 > FAQ */}
           <Route exact path={`${match.url}/faq`} component={CsFaqPage} />
@@ -56,7 +56,7 @@ export default inject()(
           {/** 고객센터 > 알림 */}
           <Route exact path={`${match.url}/alarm`} component={CsAlarmPage} />
         </Switch>
-      </BrowserRouter>
-    );
-  })
+      );
+    })
+  )
 );

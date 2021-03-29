@@ -1,19 +1,19 @@
 package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.fishing.Goods;
-import com.tobe.fishking.v2.entity.fishing.GoodsFishingDate;
-import com.tobe.fishking.v2.entity.fishing.OrderDetails;
-import com.tobe.fishking.v2.entity.fishing.Orders;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.fishking.CalculateRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
 import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
 import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import com.tobe.fishking.v2.utils.KSPayWebHostBean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +23,7 @@ public class PayService {
     private final OrdersRepository ordersRepository;
     private final OrderDetailsRepository orderDetailsRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
+    private final CalculateRepository calculateRepository;
 
     public Long payResult(String rcid, String rctype, String rhash, String rcancel) {
         /* rcid 없으면 결제를 끝까지 진행하지 않고 중간에 결제취소 */
@@ -80,6 +81,19 @@ public class PayService {
                         }
                         ordersRepository.save(order);
                         goodsFishingDateRepository.save(goodsFishingDate);
+                        LocalDate date = LocalDate.now();
+                        String year = String.valueOf(date.getYear());
+                        String month = String.valueOf(date.getMonthValue()).length() != 2
+                                ? "0" + String.valueOf(date.getMonthValue())
+                                : String.valueOf(date.getMonthValue());
+                        Calculate calculate = Calculate.builder()
+                                .orders(order)
+                                .year(year)
+                                .month(month)
+                                .ship(goods.getShip())
+                                .isCancel(false)
+                                .build();
+                        calculateRepository.save(calculate);
                         return order.getId();
 //                        return 0L;
                     } else {

@@ -66,7 +66,6 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
-          console.log(JSON.stringify(resolve));
           // 첨부이미지
           const uploaded = [];
           if (resolve.imageUrlList) {

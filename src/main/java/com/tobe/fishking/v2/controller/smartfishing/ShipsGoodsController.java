@@ -20,6 +20,7 @@ import com.tobe.fishking.v2.service.fishking.ShipService;
 import com.tobe.fishking.v2.service.smartfishing.FishingShipService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -215,10 +216,9 @@ public class ShipsGoodsController {
     @ApiOperation(value = "선박등록", notes = "선박등록 아래는 요청데이터의 일부입니" +
             "\n name: 선박명 " +
             "\n fishingType: 선박 구분 (ship: 선상, seaRocks: 갯바위) " +
-            "\n address: 선박 탑승 주소 " +
+            "\n address: 선박 탑승 주소. 필수로 보내주세요. 검색 후 기본주소 + 상세주소 보내주시면 됩니다." +
             "\n sido: 시/도 " +
             "\n sigungu: 시/군/구 " +
-            "\n tel: 전화번호 " +
             "\n weight: 무게 (3, 5, 9 t 선택) " +
             "\n boardingPerson: 탑승인원 " +
             "\n latitude: 주소 위도 " +
@@ -241,23 +241,28 @@ public class ShipsGoodsController {
             "\n 메인화면 노출은 빠집니다" +
             "\n 녹화영상은 파일 업로드 시 filePublish: ship 으로 이미지와 같은 방법으로 업로드 하시면 됩니다. " +
             "\n 주소 아래의 좌표는 위경도로 변경해주세요. 사용자 입력이 아닌 주소 검색결과값 넣어주시면 됩니다" +
+            "\n devices는 /v2/api/commonCode/153 으로 나오는 코드 리스트중 선택 한 장비의 코드 리스트입니다  보내주세요." +
             "\n")
     @PostMapping("/ship/add")
     public Map<String, Object> addShip(
             @RequestHeader(name = "Authorization") String token,
-            @RequestBody UpdateShipDTO addShipDTO) throws ResourceNotFoundException {
+            @RequestBody UpdateShipDTO addShipDTO) throws ResourceNotFoundException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException {
         Map<String, Object> result = new HashMap<>();
-        try {
-//            Long shipId = fishingShipService.addShip(addShipDTO, token, fishSpecies, services, facilities, devices, events, positions, adtCameras, nhnCameras);
-            Long shipId = fishingShipService.addShip(addShipDTO, token);
-            result.put("result", "success");
-            result.put("id", shipId);
-            return result;
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
-        }
+        Long shipId = fishingShipService.addShip(addShipDTO, token);
+        result.put("result", "success");
+        result.put("id", shipId);
+        return result;
+//        try {
+////            Long shipId = fishingShipService.addShip(addShipDTO, token, fishSpecies, services, facilities, devices, events, positions, adtCameras, nhnCameras);
+//            Long shipId = fishingShipService.addShip(addShipDTO, token);
+//            result.put("result", "success");
+//            result.put("id", shipId);
+//            return result;
+//        } catch (ResourceNotFoundException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
+//        }
     }
 
     @ApiOperation(value = "선박수정", notes = "선박수정")
@@ -381,12 +386,51 @@ public class ShipsGoodsController {
     @PostMapping("/searocks/add")
     public Map<String, Object> addSeaRock(
             @RequestHeader(name = "Authorization") String token,
-            PlaceDTO placeDTO) throws ResourceNotFoundException {
+            @RequestBody PlaceDTO placeDTO) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
             Long placeId = placesService.addSeaRock(placeDTO, token);
-            result.put("result", "success");
-            result.put("id", placeId);
+
+            switch (placeId.intValue()) {
+                case -1:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "위도값이 없습니다");
+                    break;
+                case -2:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "경도값이 없습니다");
+                    break;
+                case -3:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "명칭값이 없습니다");
+                    break;
+                case -4:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "시/도 값이 없습니다");
+                    break;
+                case -5:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "시/군/구 값이 없습니다");
+                    break;
+                case -6:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "주소값이 없습니다");
+                    break;
+                case -7:
+                    result.put("result", "fail");
+                    result.put("id", placeId);
+                    result.put("message", "공개여부값이 없습니다");
+                    break;
+                default:
+                    result.put("result", "success");
+                    result.put("id", placeId);
+            }
             return result;
         } catch (ResourceNotFoundException e) {
             throw e;

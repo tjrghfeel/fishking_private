@@ -25,7 +25,7 @@ public interface PlacesRepository extends BaseRepository<Places, Long> {
     List<Places> getPlacesByShipId(Long shipId);
 
     @Query("select p from Places p " +
-            "where p.sido like concat('%', :sido, '%') and p.sigungu like concat('%', :sigungu, '%') and p.address like concat('%', :dong, '%') " +
+            "where p.sido like concat('%', :sido, '%') and p.sigungu like concat('%', :sigungu, '%') and p.dong like concat('%', :dong, '%') " +
             "and (p.open = true or p.createdBy = :member)")
     List<Places> getPlacesByAddress(String sido, String sigungu, String dong, Member member);
 

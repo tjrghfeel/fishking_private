@@ -50,6 +50,10 @@ export default inject(
         });
         if (!restored) this.loadPageData();
       }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
 
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
@@ -90,7 +94,6 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
-
         PageStore.reloadSwipe();
       };
 
@@ -172,7 +175,6 @@ export default inject(
         }
       };
       onSelectedArea = (selected) => {
-        console.log(JSON.stringify(selected));
         const { PageStore } = this.props;
         if (selected.length === 0) {
           this.setState({ selAreaActive: false });

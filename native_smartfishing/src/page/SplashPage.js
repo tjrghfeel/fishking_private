@@ -3,7 +3,10 @@ import {View, Image} from 'react-native';
 import ActivityIndicator from '../component/ActivityIndicator';
 import {inject, observer} from 'mobx-react';
 
-export default inject('WebViewStore')(
+export default inject(
+  'WebViewStore',
+  'AppStore',
+)(
   observer(
     class extends React.Component {
       componentDidMount() {
@@ -14,7 +17,8 @@ export default inject('WebViewStore')(
         WebViewStore.setApplicationUrl('https://fishkingapp.com/smartfishing');
         const {navigation} = this.props;
         setTimeout(() => {
-          navigation.navigate('webview');
+          // navigation.navigate('webview');
+          this.props.AppStore.setSplashed(true);
         }, 1500);
       };
       render() {

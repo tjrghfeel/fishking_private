@@ -21,15 +21,17 @@ export default inject(
       <>
         <StatusBar />
         <SafeAreaView>
-          <RootStackNav.Navigator
-            screenOptions={{headerShown: false}}
-            initialRouteName={'splash'}>
-            <RootStackNav.Screen
-              name={'splash'}
-              component={SplashPage}
-              options={{animationTypeForReplace: 'push'}}
-            />
-            <RootStackNav.Screen name={'webview'} component={WebViewPage} />
+          <RootStackNav.Navigator screenOptions={{headerShown: false}}>
+            {!AppStore.splashed && (
+              <RootStackNav.Screen
+                name={'splash'}
+                component={SplashPage}
+                options={{animationTypeForReplace: 'push'}}
+              />
+            )}
+            {AppStore.splashed && (
+              <RootStackNav.Screen name={'webview'} component={WebViewPage} />
+            )}
           </RootStackNav.Navigator>
         </SafeAreaView>
       </>

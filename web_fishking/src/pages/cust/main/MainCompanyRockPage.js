@@ -78,6 +78,7 @@ export default inject(
         let type = "";
         if (fishingType == "boat") type = "ship";
         else if (fishingType == "rock") type = "seaRocks";
+        type = "seaRocks";
 
         const { lat, lng } = await NativeStore.getCurrentPosition();
         const restored = PageStore.restoreState({
@@ -105,8 +106,12 @@ export default inject(
           this.loadPageData(PageStore.state.page + 1);
         });
         if (!restored) this.loadPageData();
+        PageStore.reloadSwipe();
       }
-
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
 
@@ -435,7 +440,7 @@ export default inject(
               onClick={this.onClickFAB}
             />
 
-            <MainTab activeIndex={fishingType == "boat" ? 1 : 2} />
+            <MainTab activeIndex={2} />
           </React.Fragment>
         );
       }
