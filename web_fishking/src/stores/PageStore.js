@@ -1,4 +1,4 @@
-/* global $ */
+/* global $, kakao */
 import { makeAutoObservable } from "mobx";
 import qs from "qs";
 import * as path from "path";
@@ -53,8 +53,11 @@ const PageStore = new (class {
       const redirectUrl = sessionStorage.getItem("@redirect-url");
       sessionStorage.removeItem("@redirect-url");
       sessionStorage.setItem("@goBack", "Y");
-      if (redirectUrl === null) window.history.back();
-      else window.history.go(-2);
+      if (redirectUrl === null) {
+        window.history.back();
+      } else {
+        window.history.go(-2);
+      }
     }
   };
   getQueryParams = () => {
@@ -293,6 +296,18 @@ const PageStore = new (class {
         $(".allmenu").fadeOut();
         chkNum = 0;
       }
+    });
+  };
+  getAddressInfo = (lat, lng) => {
+    return new Promise((resolve) => {
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.coord2RegionCode(lng, lat, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          resolve(result);
+        } else {
+          resolve(false);
+        }
+      });
     });
   };
 })();

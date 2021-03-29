@@ -178,7 +178,13 @@ export default inject(
             </div>
           </div>
         </div>
-        {openAddModal && <AddSeaRocksModal ref={addRef} id={"addRocksModal"} />}
+        {openAddModal && (
+          <AddSeaRocksModal
+            ref={addRef}
+            id={"addRocksModal"}
+            onClose={loadPageData}
+          />
+        )}
       </div>
     );
   })

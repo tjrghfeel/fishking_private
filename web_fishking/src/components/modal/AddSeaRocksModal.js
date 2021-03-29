@@ -9,9 +9,12 @@ import React, {
 } from "react";
 import { inject, observer } from "mobx-react";
 
-export default inject("APIStore")(
+export default inject(
+  "APIStore",
+  "PageStore"
+)(
   observer(
-    forwardRef(({ APIStore, id = "" }, ref) => {
+    forwardRef(({ APIStore, PageStore, id = "", onClose }, ref) => {
       const [arrSido, setArrSido] = useState([]); // 시/도 리스트
       const [arrSigungu, setArrSigungu] = useState([]); // 시/군/구 리스트
       const [arrDong, setArrDong] = useState([]); // 동/읍/면 리스트
@@ -20,6 +23,7 @@ export default inject("APIStore")(
       const selDong = useRef(null);
       const container = useRef(null);
       let map = null;
+      const [arrMarker, setArrMarker] = useState([]);
       let markers = [];
 
       // 시도 리스트 조회
@@ -47,7 +51,13 @@ export default inject("APIStore")(
           level: 7,
         };
         map = new daum.maps.Map(container.current, options);
-        kakao.maps.event.addListener(map, "click", (e) => {
+        setTimeout(() => {
+          map.relayout();
+        }, 0);
+        kakao.maps.event.addListener(map, "click", addMarker);
+      }, [arrMarker, setArrMarker]);
+      const addMarker = useCallback(
+        (e) => {
           const latlng = e.latLng;
           const lat = latlng.getLat();
           const lng = latlng.getLng();
@@ -55,18 +65,17 @@ export default inject("APIStore")(
           const position = new kakao.maps.LatLng(lat, lng);
           const marker = new kakao.maps.Marker({ position });
           marker.setMap(map);
-          markers.push(marker);
-        });
-        setTimeout(() => {
-          map.relayout();
-        }, 0);
-      }, []);
+          arrMarker.push(marker);
+          setArrMarker([...arrMarker]);
+        },
+        [arrMarker, setArrMarker]
+      );
       // 지도 마커 삭제
       const removeMarkers = useCallback(() => {
-        for (let marker of markers) {
+        for (let marker of arrMarker) {
           marker.setMap(null);
         }
-        markers = [];
+        arrMarker.splice(0);
       }, []);
       // 신규 갯바위 등록
       const onSubmit = useCallback(async () => {
@@ -74,7 +83,7 @@ export default inject("APIStore")(
         const sigungu = selSigungu.current.selectedOptions[0].value;
         const dong = selDong.current.selectedOptions[0].value;
         const points = [];
-        for (let marker of markers) {
+        for (let marker of arrMarker) {
           const position = marker.getPosition();
           const latitude = position.getLat();
           const longitude = position.getLng();
@@ -82,26 +91,15 @@ export default inject("APIStore")(
         }
         const latitude = points[0]?.latitude;
         const longitude = points[0]?.longitude;
+        let address = null;
+        const addr = await PageStore.getAddressInfo(latitude, longitude);
+        address = addr[0]["address_name"];
 
-        console.log(
-          JSON.stringify({
-            sido,
-            sigungu,
-            dong,
-            points,
-            latitude,
-            longitude,
-            name,
-            averageDepth,
-            floorMaterial,
-            tideTime,
-            introduce,
-          })
-        );
         const resolve = await APIStore._post(`/v2/api/searocks/add`, {
           sido,
           sigungu,
           dong,
+          address,
           points,
           latitude,
           longitude,
@@ -110,10 +108,11 @@ export default inject("APIStore")(
           floorMaterial,
           tideTime,
           introduce,
+          isOpen: true,
         });
-        console.log(JSON.stringify(resolve));
         if (resolve["result"] === "success") {
           $(`#${id}`).modal("hide");
+          onClose();
         }
       });
       useImperativeHandle(ref, () => ({ relayout }));
