@@ -1,4 +1,4 @@
-/* global daum, kakao */
+/* global daum, kakao, $ */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
@@ -73,7 +73,9 @@ export default inject(
         const cameras = await APIStore._get(`/v2/api/ship/cameras`);
         this.setState({
           arr_adtCameras: cameras["adt"] || [],
+          adtCameras: cameras["adt"] || [],
           arr_nhnCameras: cameras["nhn"] || [],
+          nhnCameras: cameras["nhn"] || [],
         });
       }
       uploadFile = async (uploadType) => {
@@ -146,12 +148,61 @@ export default inject(
       };
       submit = async () => {
         console.log(JSON.stringify(this.state));
+        const {
+          name,
+          fishingType,
+          fishSpecies,
+          services,
+          facilities,
+          events,
+          noticeTitle,
+          notice,
+          profileImage,
+          videoId,
+          sido,
+          sigungu,
+          latitude,
+          longitude,
+          router,
+          adtCameras,
+          nhnCameras,
+          weight,
+          boardingPerson,
+          positions,
+        } = this.state;
+
+        const params = {
+          name,
+          fishingType,
+          fishSpecies,
+          services,
+          facilities,
+          events,
+          noticeTitle,
+          notice,
+          profileImage,
+          videoId,
+          sido,
+          sigungu,
+          latitude,
+          longitude,
+          router,
+          adtCameras,
+          nhnCameras,
+          weight,
+          boardingPerson,
+          positions,
+        };
+        console.log(JSON.stringify(params));
+        const { APIStore } = this.props;
+        const resolve = APIStore._post(`/v2/api/ship/add`, params);
+        console.log(JSON.stringify(resolve));
       };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { PageStore, DataStore } = this.props;
+        const { PageStore, DataStore, APIStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout title={"선박등록"} showBackIcon={true} />
@@ -168,8 +219,9 @@ export default inject(
                   <input
                     type="text"
                     className="form-control"
-                    id="InputGName"
                     placeholder="선박명을 입력하세요"
+                    value={this.state.name}
+                    onChange={(e) => this.setState({ name: e.target.value })}
                   />
                 </div>
                 <div className="form-group mb-1">
@@ -185,7 +237,12 @@ export default inject(
                       defaultChecked={this.state.fishingType}
                       onChange={(e) => {
                         if (e.target.checked)
-                          this.setState({ fishingType: "ship" });
+                          this.setState({
+                            fishingType: "ship",
+                            positions: [],
+                            boardingPerson: 0,
+                            weight: null,
+                          });
                       }}
                     />
                     <span className="control-indicator"></span>
@@ -200,7 +257,12 @@ export default inject(
                       data-role="collar"
                       onChange={(e) => {
                         if (e.target.checked)
-                          this.setState({ fishingType: "seaRocks" });
+                          this.setState({
+                            fishingType: "seaRocks",
+                            positions: [],
+                            boardingPerson: 0,
+                            weight: null,
+                          });
                       }}
                     />
                     <span className="control-indicator"></span>
@@ -311,11 +373,47 @@ export default inject(
                   <React.Fragment>
                     <SelectSeaRocksModal
                       id={"selRocksModal"}
-                      onSelect={(selected) =>
-                        console.log(JSON.stringify(selected))
-                      }
+                      onSelect={async (selected) => {
+                        await this.setState({ positions: selected });
+                        const resolve = await APIStore._get(
+                          `/v2/api/searocks/id`,
+                          { seaRockId: selected }
+                        );
+                        if (resolve && resolve["data"]) {
+                          for (
+                            let index = 0;
+                            index < resolve["data"].length;
+                            index++
+                          ) {
+                            // 지도 그리기
+                            const data = resolve["data"][index];
+                            const latitude = data["points"][0]["latitude"];
+                            const longitude = data["points"][0]["longitude"];
+                            const container = document.querySelector(
+                              `#map-${index}`
+                            );
+                            const tmpMap = new daum.maps.Map(container, {
+                              center: new daum.maps.LatLng(latitude, longitude),
+                              level: 7,
+                            });
+                            // 마커 그리기
+                            for (let point of data["points"]) {
+                              const marker = new kakao.maps.Marker({
+                                position: new kakao.maps.LatLng(
+                                  point["latitude"],
+                                  point["longitude"]
+                                ),
+                              });
+                              marker.setMap(tmpMap);
+                            }
+                            setTimeout(() => {
+                              tmpMap.relayout();
+                            }, 100);
+                          }
+                        }
+                      }}
                     />
-                    <AddSeaRocksModal id={"addRocksModal"} />
+                    {/*<AddSeaRocksModal id={"addRocksModal"} />*/}
                     <div className="form-group text-center">
                       <a
                         className="btn btn-secondary btn-block btn-sm"
@@ -325,6 +423,16 @@ export default inject(
                         갯바위 선택
                       </a>
                     </div>
+                    {this.state.positions.map((data, index) => (
+                      <React.Fragment>
+                        <div className="mapwrap">
+                          <div
+                            id={`map-${index}`}
+                            style={{ height: "270px" }}
+                          ></div>
+                        </div>
+                      </React.Fragment>
+                    ))}
                   </React.Fragment>
                 )}
                 <div className="space mt-0 mb-4"></div>

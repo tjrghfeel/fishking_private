@@ -1,13 +1,22 @@
-import React, { useEffect, useCallback, useState } from "react";
+/* global $ */
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import { inject, observer } from "mobx-react";
+import AddSeaRocksModal from "./AddSeaRocksModal";
 
 export default inject(
   "APIStore",
   "DataStore"
 )(
   observer(({ id = "", APIStore, DataStore, onSelect }) => {
-    const [list, setList] = useState([]);
+    const [list, setList] = useState([]); // 갯바위 목록
+    const selSido = useRef(null);
+    const selSigungu = useRef(null);
+    const [arrSido, setArrSido] = useState([]); // 시/도 리스트
+    const [arrSigungu, setArrSigungu] = useState([]); // 시/군/구 리스트
+    const [arrDong, setArrDong] = useState([]); // 동/읍/면 리스트
     const [selected, setSelected] = useState([]);
+    const [openAddModal, setOpenAddModal] = useState(false);
+    const addRef = useRef(null);
     const onSelected = useCallback(
       (checked, item) => {
         if (checked) {
@@ -18,10 +27,36 @@ export default inject(
       },
       [setSelected, selected]
     );
-    const loadPageData = useCallback(async () => {
-      const resolve = await APIStore._get(`/v2/api/searocks`);
-      setList(resolve["data"] || []);
+    const selectSido = useCallback(async () => {
+      let resolve = await APIStore._get(`/v2/api/searocks`, {
+        sido: selSido.current.selectedOptions[0].value,
+      });
+      setList(resolve?.data || []);
+      // 시군구 리스트
+      resolve = await APIStore._get(`/v2/api/commonCode/area`, {
+        groupId: 156,
+        parCode: selSido.current.selectedOptions[0].value,
+      });
+      setArrSigungu(resolve);
+      selSigungu.current.value = "";
+    }, [setArrSigungu, selSigungu]);
+    const selectSigungu = useCallback(async () => {
+      let resolve = await APIStore._get(`/v2/api/searocks`, {
+        sido: selSido.current.selectedOptions[0].value,
+        sigungu: selSigungu.current.selectedOptions[0].value,
+      });
+      setList(resolve?.data || []);
     }, [setList]);
+    const loadPageData = useCallback(async () => {
+      // 갯바위 목록
+      let resolve = await APIStore._get(`/v2/api/searocks`);
+      setList(resolve["data"] || []);
+      // 시도 리스트
+      resolve = await APIStore._get(`/v2/api/commonCode/area`, {
+        groupId: 152,
+      });
+      setArrSido(resolve);
+    }, [setList, setArrSido]);
     useEffect(() => {
       loadPageData();
     }, [loadPageData]);
@@ -45,13 +80,13 @@ export default inject(
               <h5 className="modal-title" id={id.concat("Label")}>
                 갯바위 선택
               </h5>
-              <a className="nav-right">
-                <img
-                  src="/assets/smartfishing/img/svg/navbar-refresh.svg"
-                  alt="Refresh"
-                />
-                <span>초기화</span>
-              </a>
+              {/*<a className="nav-right">*/}
+              {/*  <img*/}
+              {/*    src="/assets/smartfishing/img/svg/navbar-refresh.svg"*/}
+              {/*    alt="Refresh"*/}
+              {/*  />*/}
+              {/*  <span>초기화</span>*/}
+              {/*</a>*/}
             </div>
             <div className="modal-body">
               <div className="padding">
@@ -60,13 +95,35 @@ export default inject(
                     지역을 선택하신 후 원하시는 갯바위를 체크하세요.
                   </label>
                   <div className="input-group mb-3">
-                    <select className="form-control" id="">
-                      <option>시/도</option>
+                    <select
+                      ref={selSido}
+                      className="form-control"
+                      onChange={(e) => {
+                        selectSido();
+                      }}
+                    >
+                      <option value={""}>시/도</option>
+                      {arrSido.map((data, index) => (
+                        <option key={index} value={data["code"]}>
+                          {data["codeName"]}
+                        </option>
+                      ))}
                     </select>
-                    <select className="form-control" id="">
-                      <option>시/군/구</option>
+                    <select
+                      className="form-control"
+                      ref={selSigungu}
+                      onChange={(e) => {
+                        selectSigungu();
+                      }}
+                    >
+                      <option value={""}>시/군/구</option>
+                      {arrSigungu.map((data, index) => (
+                        <option key={index} value={data["code"]}>
+                          {data["codeName"]}
+                        </option>
+                      ))}
                     </select>
-                    <select className="form-control" id="">
+                    <select className="form-control">
                       <option>읍/면/동</option>
                     </select>
                   </div>
@@ -91,8 +148,15 @@ export default inject(
                 <div className="form-group text-right">
                   <a
                     className="btn btn-third btn-sm"
-                    data-toggle="modal"
-                    data-target="#addRocksModal"
+                    onClick={() => {
+                      setOpenAddModal(true);
+                      setTimeout(() => {
+                        $("#addRocksModal").modal("show");
+                        setTimeout(() => {
+                          addRef.current.relayout();
+                        }, 500);
+                      }, 100);
+                    }}
                   >
                     + 신규 갯바위 추가
                   </a>
@@ -114,6 +178,7 @@ export default inject(
             </div>
           </div>
         </div>
+        {openAddModal && <AddSeaRocksModal ref={addRef} id={"addRocksModal"} />}
       </div>
     );
   })
