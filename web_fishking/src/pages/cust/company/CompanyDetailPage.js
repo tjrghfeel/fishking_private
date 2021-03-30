@@ -1,4 +1,4 @@
-/* global daum, kakao, $, Hls, videojs */
+/* global daum, kakao, $, Hls, videojs , Cloudcam */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
@@ -53,10 +53,11 @@ export default inject(
             // url =
             //   "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTto%2FuWGJb2RWGJDx9WjuWrS&rtspURI=rtsp://116.122.207.198:10910/86322/0";
             if (url.startsWith("rtsp://")) {
-              const source = document.createElement("source");
-              source.type = "application/x-rtsp";
-              source.src = url;
-              video.append(source);
+              video.src = url;
+              const player = Cloudcam.player("video", {
+                socket: url,
+              });
+              player.start();
             } else if (Hls.isSupported()) {
               const hls = new Hls({
                 capLevelToPlayerSize: true,
