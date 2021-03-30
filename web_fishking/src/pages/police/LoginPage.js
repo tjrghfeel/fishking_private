@@ -38,8 +38,8 @@ export default inject(
         }
 
         const { ModalStore, PageStore } = this.props;
-        PageStore.push(`/dashboard`);
-        return;
+        // PageStore.push(`/dashboard`);
+        // return;
 
         ModalStore.openModal("Alert", {
           title: "로그인 안내",

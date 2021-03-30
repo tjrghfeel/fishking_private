@@ -16,6 +16,7 @@ export default inject("PageStore")(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout title={"선상정보"} showBackIcon={true} />
@@ -44,7 +45,12 @@ export default inject("PageStore")(
                     <a className="btn btn btn-round-grey btn-xs-round">보기</a>
                   </td>
                   <td>
-                    <a className="btn btn btn-round-grey btn-xs-round">확인</a>
+                    <a
+                      className="btn btn btn-round-grey btn-xs-round"
+                      onClick={() => PageStore.push(`/aboard`)}
+                    >
+                      확인
+                    </a>
                   </td>
                 </tr>
                 <tr>
@@ -60,7 +66,12 @@ export default inject("PageStore")(
                     <a className="btn btn btn-round-grey btn-xs-round">보기</a>
                   </td>
                   <td>
-                    <a className="btn btn btn-round-grey btn-xs-round">확인</a>
+                    <a
+                      className="btn btn btn-round-grey btn-xs-round"
+                      onClick={() => PageStore.push(`/aboard`)}
+                    >
+                      확인
+                    </a>
                   </td>
                 </tr>
                 <tr>
@@ -76,7 +87,12 @@ export default inject("PageStore")(
                     <a className="btn btn btn-round-grey btn-xs-round">보기</a>
                   </td>
                   <td>
-                    <a className="btn btn btn-round-grey btn-xs-round">확인</a>
+                    <a
+                      className="btn btn btn-round-grey btn-xs-round"
+                      onClick={() => PageStore.push(`/aboard`)}
+                    >
+                      확인
+                    </a>
                   </td>
                 </tr>
               </tbody>

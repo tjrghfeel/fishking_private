@@ -46,11 +46,18 @@ export default inject(
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {
             const video = document.querySelector("#video");
-            const url =
+            let url =
               resolve.liveVideo ||
               "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
-            if (Hls.isSupported()) {
+            // url =
+            //   "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTto%2FuWGJb2RWGJDx9WjuWrS&rtspURI=rtsp://116.122.207.198:10910/86322/0";
+            if (url.startsWith("rtsp://")) {
+              const source = document.createElement("source");
+              source.type = "application/x-rtsp";
+              source.src = url;
+              video.append(source);
+            } else if (Hls.isSupported()) {
               const hls = new Hls({
                 capLevelToPlayerSize: true,
                 capLevelOnFPSDrop: true,
