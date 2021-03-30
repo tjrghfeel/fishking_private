@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -35,10 +35,13 @@ public class NoNameTests {
         String camId = "86322";
 
         //when
-        token = httpRequestService.loginADT(id, pw, "13");
-        Map<String, Object> result = httpRequestService.getADTCameraDetail(camId, token);
-        List<Map<String, Object>> result2 = httpRequestService.getADTList(token);
-        String result3 = httpRequestService.getADTCameraLive(camId, token);
+        String t = "https://www.fishkingapp.com/resource/ship/seok%20ho_202103291813467.jpg";
+        String sp = t.split("resource")[1];
+        System.out.println(sp);
+//        token = httpRequestService.loginADT(id, pw, "13");
+//        Map<String, Object> result = httpRequestService.getADTCameraDetail(camId, token);
+//        List<Map<String, Object>> result2 = httpRequestService.getADTList(token);
+//        String result3 = httpRequestService.getADTCameraLive(camId, token);
 //        System.out.println(result);
 //        Map<String, Object> r = result2.get(0);
 //        System.out.println(((Double) r.get("camId")).intValue());
@@ -46,7 +49,8 @@ public class NoNameTests {
 //        System.out.println((String) r.get("imageUri"));
 //        System.out.println(result3);
         //then
-        assertThat(result.size(), is(5));
+        assertThat(sp, startsWith("/ship"));
+//        assertThat(result.size(), is(5));
 //        assertThat(result.length(), is(5));
     }
 
