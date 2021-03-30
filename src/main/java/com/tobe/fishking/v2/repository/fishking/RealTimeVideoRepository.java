@@ -29,6 +29,12 @@ public interface RealTimeVideoRepository extends BaseRepository<RealTimeVideo, L
     @Query("select v from RealTimeVideo v where v.ships.company.member.id = :memberId and v.type = 'toast'")
     List<RealTimeVideo> getNHNByMemberId(Long memberId);
 
+    @Query("select v from RealTimeVideo v where v.ships.id = :ship_id and v.type = 'caps'")
+    List<RealTimeVideo> getADTByShipsId(Long ship_id);
+
+    @Query("select v from RealTimeVideo v where v.ships.company.member.id = :memberId and v.type = 'caps'")
+    List<RealTimeVideo> getADTByMemberId(Long memberId);
+
     @Modifying
     @Query("update RealTimeVideo v set v.isUse = false where v in :videos")
     void setNotUse(List<RealTimeVideo> videos);
