@@ -2,15 +2,53 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "DataStore",
+  "APIStore"
+)(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.memberId = React.createRef(null);
+        this.password = React.createRef(null);
+        this.state = {
+          memberId: "",
+          password: "",
+        };
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
       login = async () => {
-        const { PageStore } = this.props;
-        PageStore.push(`/dashboard`);
+        const { DataStore, APIStore, PageStore } = this.props;
+        const { memberId, password } = this.state;
+
+        if (!DataStore.isEmail(memberId)) {
+          this.memberId.current?.classList.add("is-invalid");
+          return;
+        } else {
+          this.memberId.current?.classList.remove("is-invalid");
+        }
+        if (!DataStore.isPassword(password)) {
+          this.password.current?.classList.add("is-invalid");
+          return;
+        } else {
+          this.password.current?.classList.remove("is-invalid");
+        }
+
+        const response = await APIStore._post("/v2/api/smartsail/login", {
+          memberId,
+          password,
+          registrationToken: window.fcm_token || null,
+        });
+        if (response) {
+          PageStore.setAccessToken(response, "smartsail", "Y");
+          PageStore.push(`/dashboard`);
+        } else {
+          this.password.current?.classList.add("is-invalid");
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -43,11 +81,14 @@ export default inject("PageStore")(
                       이메일
                     </label>
                     <input
+                      ref={this.memberId}
                       type="email"
                       class="form-control"
-                      id="inputName"
                       placeholder="이메일"
-                      value=""
+                      value={this.state.memberId}
+                      onChange={(e) =>
+                        this.setState({ memberId: e.target.value })
+                      }
                     />
                   </div>
                   <div class="form-group">
@@ -55,11 +96,13 @@ export default inject("PageStore")(
                       비밀번호
                     </label>
                     <input
-                      type="email"
+                      type="password"
                       class="form-control"
-                      id="inputPhone"
                       placeholder="비밀번호 (영문/숫자/특수문자 조합, 8~15자 이내)"
-                      value=""
+                      value={this.state.password}
+                      onChange={(e) =>
+                        this.setState({ password: e.target.value })
+                      }
                     />
                   </div>
                 </form>
@@ -70,16 +113,27 @@ export default inject("PageStore")(
                   로그인
                 </a>
                 <p class="text-center mt-3">
-                  <a>
+                  <a onClick={() => PageStore.push(`/findpw`)}>
                     <small class="grey">비밀번호를 잊으셨나요?</small>
                   </a>
                 </p>
 
                 <p class="text-center mt-4">
                   스마트승선 로그인/업체등록시 <br />
-                  <a class="text-primary">이용약관</a> 및{" "}
-                  <a class="text-primary">개인정보취급방침</a>에 동의하게
-                  됩니다.
+                  <a
+                    class="text-primary"
+                    onClick={() => PageStore.push(`/cust/policy/terms`)}
+                  >
+                    이용약관
+                  </a>{" "}
+                  및{" "}
+                  <a
+                    class="text-primary"
+                    onClick={() => PageStore.push(`/cust/policy/privacy`)}
+                  >
+                    개인정보취급방침
+                  </a>
+                  에 동의하게 됩니다.
                 </p>
               </div>
               <p class="clearfix">

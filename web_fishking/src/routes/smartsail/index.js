@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 import LoginPage from "../../pages/smartsail/LoginPage";
+import FindpwPage from "../../pages/smartsail/FindpwPage";
 import DashboardPage from "../../pages/smartsail/DashboardPage";
 import SailPage from "../../pages/smartsail/SailPage";
 import SailDetailPage from "../../pages/smartsail/SailDetailPage";
@@ -22,6 +23,8 @@ export default inject("PageStore")(
       <Switch>
         {/** 로그인 */}
         <Route exact path={`${match.url}/login`} component={LoginPage} />
+        {/** 비밀번호찾기 */}
+        <Route exact path={`${match.url}/findpw`} component={FindpwPage} />
         {/** 대시보드 */}
         <Route
           exact
