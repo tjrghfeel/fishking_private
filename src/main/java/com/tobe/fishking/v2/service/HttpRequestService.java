@@ -241,14 +241,20 @@ public class HttpRequestService {
         httpGet.addHeader("Accept-Language", "ko");
         httpGet.addHeader("Content-Type", "application/json");
 
-        Map<String, Object> result;
+        Map<String, Object> result = new HashMap<>();
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
             System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
 
             String json = EntityUtils.toString(response.getEntity());
 //            Gson gson = new Gson();
-            result = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
+            Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
+            System.out.println("---detail---");
+            System.out.println(res);
+            System.out.println("------------");
+            result.put("serial", res.get("camId").toString());
+            result.put("name", res.get("camName").toString());
+            result.put("status", res.get("status").toString());
         } catch (IOException e) {
             e.printStackTrace();
             result = null;
@@ -284,6 +290,7 @@ public class HttpRequestService {
                 response = httpClient.execute(httpGet);
                 json = EntityUtils.toString(response.getEntity());
                 Map<String, Object> res = new Gson().fromJson(json, HashMap.class);
+                System.out.println(res);
                 result = res.get("liveUri").toString();
             } else {
                 result = null;

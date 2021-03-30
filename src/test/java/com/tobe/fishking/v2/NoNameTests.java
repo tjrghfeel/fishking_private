@@ -35,14 +35,16 @@ public class NoNameTests {
         String camId = "86322";
 
         //when
-//        Map<String, Object> result = httpRequestService.loginADT(id, pw);
         token = httpRequestService.loginADT(id, pw, "13");
-        List<Map<String, Object>> result = httpRequestService.getADTList(token);
-//        String result = httpRequestService.getADTCameraLive(camId, token);
-        Map<String, Object> r = result.get(0);
-        System.out.println(((Double) r.get("camId")).intValue());
-        System.out.println((String) r.get("camName"));
-        System.out.println((String) r.get("imageUri"));
+        Map<String, Object> result = httpRequestService.getADTCameraDetail(camId, token);
+        List<Map<String, Object>> result2 = httpRequestService.getADTList(token);
+        String result3 = httpRequestService.getADTCameraLive(camId, token);
+//        System.out.println(result);
+//        Map<String, Object> r = result2.get(0);
+//        System.out.println(((Double) r.get("camId")).intValue());
+//        System.out.println((String) r.get("camName"));
+//        System.out.println((String) r.get("imageUri"));
+//        System.out.println(result3);
         //then
         assertThat(result.size(), is(5));
 //        assertThat(result.length(), is(5));

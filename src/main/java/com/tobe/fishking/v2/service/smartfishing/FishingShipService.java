@@ -221,6 +221,21 @@ public class FishingShipService {
             realTimeVideoRepository.save(video);
         }
 
+        for (AddShipCamera addShipCamera : addShipDTO.getAdtCameras()) {
+            cameraNum += 1;
+            RealTimeVideo video = RealTimeVideo.builder()
+                    .rNo(cameraNum)
+                    .member(member)
+                    .ship(ship)
+                    .name(addShipCamera.getName())
+                    .serial(addShipCamera.getSerial())
+                    .token("")
+                    .expireTime("")
+                    .type("caps")
+                    .build();
+            realTimeVideoRepository.save(video);
+        }
+
         for (AddEvent event : addShipDTO.getEvents()) {
 //        for (AddEvent event : events) {
             ShareStatus status = ShareStatus.builder()
@@ -348,6 +363,53 @@ public class FishingShipService {
                                     .token(cameraToken)
                                     .expireTime(expTime)
                                     .type("toast")
+                                    .build()
+                    );
+                }
+            }
+        }
+
+        List<RealTimeVideo> adtVideos = realTimeVideoRepository.getADTByShipsId(shipId);
+        if (adtVideos.isEmpty()) {
+            for (AddShipCamera addShipCamera : updateShipDTO.getAdtCameras()) {
+                cameraNum += 1;
+                RealTimeVideo video = RealTimeVideo.builder()
+                        .rNo(cameraNum)
+                        .member(member)
+                        .ship(ship)
+                        .name(addShipCamera.getName())
+                        .serial(addShipCamera.getSerial())
+                        .token("")
+                        .expireTime("")
+                        .type("caps")
+                        .build();
+                realTimeVideoRepository.save(video);
+            }
+        } else {
+            List<AddShipCamera> newCameras = updateShipDTO.getAdtCameras();
+            List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            for (RealTimeVideo v : videos) {
+                boolean use = newSerials.contains(v.getSerial());
+                if (use) {
+                    newSerials.remove(v.getSerial());
+                } else {
+                    v.setNotUse();
+                    v.updateToken(cameraToken, expTime);
+                    realTimeVideoRepository.save(v);
+                }
+            }
+            for (AddShipCamera c : newCameras) {
+                if (newSerials.contains(c.getSerial())) {
+                    realTimeVideoRepository.save(
+                            RealTimeVideo.builder()
+                                    .rNo(cameraNum)
+                                    .member(member)
+                                    .ship(ship)
+                                    .name(c.getName())
+                                    .serial(c.getSerial())
+                                    .token("")
+                                    .expireTime("")
+                                    .type("caps")
                                     .build()
                     );
                 }
