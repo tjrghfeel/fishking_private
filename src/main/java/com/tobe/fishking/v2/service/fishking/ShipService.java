@@ -70,6 +70,7 @@ public class ShipService {
     private final PlacePointRepository placePointRepository;
     private final CouponRepository couponRepository;
     private final CouponMemberRepository couponMemberRepository;
+    private final CompanyRepository companyRepository;
 
 
     /*
@@ -227,50 +228,68 @@ public class ShipService {
         List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(ship_id);
         if (videos.size() > 0) {
             RealTimeVideo video = videos.get(0);
-            try {
-                LocalDateTime now = LocalDateTime.now();
-                LocalDateTime expTime = LocalDateTime.ofInstant(
-                        Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
-                        TimeZone.getDefault().toZoneId()
-                );
+            if (video.getType().equals("toast")) {
+                try {
+                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime expTime = LocalDateTime.ofInstant(
+                            Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                            TimeZone.getDefault().toZoneId()
+                    );
 //                LocalDateTime expTime = LocalDateTime.of(2100, 12, 31, 12, 12);
-                String token = "";
-                if (now.isAfter(expTime)) {
-                    Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
-                    token = tokenData.get("token");
-                    String expireTime = tokenData.get("expireTime");
-                    realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
-                } else {
-                    token = video.getToken();
-                }
-                if (!token.equals("")) {
-                    List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
-                    for (Map<String, Object> camera : cameras) {
-                        String serial = camera.get("serialNo").toString();
-                        if (serial.equals(video.getSerial())) {
-                            String type = camera.get("recordType").toString();
-                            String streamStatus = camera.get("streamStatus").toString();
-                            String controlStatus = camera.get("controlStatus").toString();
-                            String liveUrl = "";
-                            if (type.equals("24h")) {
-                                if (streamStatus.equals("on")) {
-                                    liveUrl = httpRequestService.getPlayUrl(token, serial);
+                    String token = "";
+                    if (now.isAfter(expTime)) {
+                        Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                        token = tokenData.get("token");
+                        String expireTime = tokenData.get("expireTime");
+                        realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
+                    } else {
+                        token = video.getToken();
+                    }
+                    if (!token.equals("")) {
+                        List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
+                        for (Map<String, Object> camera : cameras) {
+                            String serial = camera.get("serialNo").toString();
+                            if (serial.equals(video.getSerial())) {
+                                String type = camera.get("recordType").toString();
+                                String streamStatus = camera.get("streamStatus").toString();
+                                String controlStatus = camera.get("controlStatus").toString();
+                                String liveUrl = "";
+                                if (type.equals("24h")) {
+                                    if (streamStatus.equals("on")) {
+                                        liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                    }
+                                } else {
+                                    if (controlStatus.equals("on")) {
+                                        liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                    }
                                 }
-                            } else {
-                                if (controlStatus.equals("on")) {
-                                    liveUrl = httpRequestService.getPlayUrl(token, serial);
-                                }
+                                response.setLiveVideo(liveUrl);
                             }
-                            response.setLiveVideo(liveUrl);
                         }
                     }
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (KeyManagementException e) {
+                    e.printStackTrace();
                 }
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
+            } else {
+                Company company = companyRepository.getCompanyByShip(ship_id);
+                String token = null;
+                try {
+                    token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), sessionToken);
+                    String videoUrl = httpRequestService.getPlayUrl(video.getSerial(), token);
+                    if (videoUrl != null) {
+                        response.setLiveVideo(videoUrl);
+                    }
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (KeyManagementException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return response;

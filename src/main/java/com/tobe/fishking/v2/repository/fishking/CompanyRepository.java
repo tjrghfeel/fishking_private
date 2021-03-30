@@ -184,4 +184,6 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
     @Query(value = "SELECT COUNT(id) FROM Company WHERE isRegistered = true")
     Long findAllByIsRegistered();
 
+    @Query("select s.company from Ship s where s.id = :shipId")
+    Company getCompanyByShip(Long shipId);
 }
