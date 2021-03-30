@@ -578,41 +578,47 @@ public class ShipService {
                     c.put("species", ship.getFishSpecies().stream().map(CommonCode::getCodeName).collect(Collectors.joining(",")));
                     c.put("address", ship.getAddress());
 
-                    LocalDateTime now = LocalDateTime.now();
-                    LocalDateTime expTime = LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
-                            TimeZone.getDefault().toZoneId()
-                    );
-                    String token = "";
-                    if (now.isAfter(expTime)) {
-                        Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
-                        token = tokenData.get("token");
-                        String expireTime = tokenData.get("expireTime");
-                        realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
-                    } else {
-                        token = video.getToken();
-                    }
-                    if (!token.equals("")) {
-                        List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
-                        for (Map<String, Object> camera : cameras) {
-                            String serial = camera.get("serialNo").toString();
-                            if (serial.equals(video.getSerial())) {
-                                String type = camera.get("recordType").toString();
-                                String streamStatus = camera.get("streamStatus").toString();
-                                String controlStatus = camera.get("controlStatus").toString();
-                                String liveUrl = "";
-                                if (type.equals("24h")) {
-                                    if (streamStatus.equals("on")) {
-                                        liveUrl = httpRequestService.getPlayUrl(token, serial);
+                    if (video.getType().equals("toast")) {
+                        LocalDateTime now = LocalDateTime.now();
+                        LocalDateTime expTime = LocalDateTime.ofInstant(
+                                Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                                TimeZone.getDefault().toZoneId()
+                        );
+                        String token = "";
+                        if (now.isAfter(expTime)) {
+                            Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                            token = tokenData.get("token");
+                            String expireTime = tokenData.get("expireTime");
+                            realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
+                        } else {
+                            token = video.getToken();
+                        }
+                        if (!token.equals("")) {
+                            List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
+                            for (Map<String, Object> camera : cameras) {
+                                String serial = camera.get("serialNo").toString();
+                                if (serial.equals(video.getSerial())) {
+                                    String type = camera.get("recordType").toString();
+                                    String streamStatus = camera.get("streamStatus").toString();
+                                    String controlStatus = camera.get("controlStatus").toString();
+                                    String liveUrl = "";
+                                    if (type.equals("24h")) {
+                                        if (streamStatus.equals("on")) {
+                                            liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                        }
+                                    } else {
+                                        if (controlStatus.equals("on")) {
+                                            liveUrl = httpRequestService.getPlayUrl(token, serial);
+                                        }
                                     }
-                                } else {
-                                    if (controlStatus.equals("on")) {
-                                        liveUrl = httpRequestService.getPlayUrl(token, serial);
-                                    }
+                                    c.put("liveVideo", liveUrl);
                                 }
-                                c.put("liveVideo", liveUrl);
                             }
                         }
+                    } else {
+                        String token = httpRequestService.loginADT(ship.getCompany().getAdtId(), ship.getCompany().getAdtPw(), video.getId().toString());
+                        String liveUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
+                        c.put("liveVideo", Objects.requireNonNullElse(liveUrl, ""));
                     }
                     response.put("cameraData", c);
                 } else {
