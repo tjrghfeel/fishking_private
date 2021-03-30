@@ -33,7 +33,7 @@ public class SmallShipResponse {
     ) {
         Stream<CommonCode> species = ship.getFishSpecies().stream().filter(CommonCode::getIsActive);
         this.id = ship.getId();
-        this.shipImageFileUrl = "/resource" + ship.getProfileImage();
+        this.shipImageFileUrl = "/resource/" + ship.getProfileImage().split("/")[1] + "/thumb_" + ship.getProfileImage().split("/")[2];
         this.shipName = ship.getShipName();
         this.sido = ship.getSido();
         this.sigungu = ship.getSigungu();

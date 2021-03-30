@@ -67,6 +67,52 @@ public class ShipController {
         }
     }
 
+    @ApiOperation(value = "배 리스트 ad 통합",
+            notes = "{ " +
+                    "\n ad: 기존의 /v2/api/ship/ad 로 요청할 때와 같은 응답 값. page 가 0 이 아닌 경우에는 null" +
+                    "\n list: 기존의 /v2/api/ships/{page} 로 요청할 때와 같은 응답 값")
+    @GetMapping("/ships/list/{page}")
+    public Map<String, Object> getShipsList(ShipSearchDTO shipSearchDTO,
+                                           @ApiParam(value = "페이지. 0부터 시작", required = true, defaultValue = "0", example = "0") @PathVariable int page,
+                                           @RequestParam(value = "species[]", required = false) String[] species,
+                                           @RequestParam(value = "services[]", required = false) String[] services,
+                                           @RequestParam(value = "facilities[]", required = false) String[] facilities,
+                                           @RequestParam(value = "genres[]", required = false) String[] genres) throws EmptyListException {
+        if (species != null) {
+            if (species.length != 0) {
+                shipSearchDTO.setSpeciesList(Arrays.asList(species.clone()));
+            }
+        }
+        if (services != null) {
+            if (services.length != 0) {
+                shipSearchDTO.setServicesList(Arrays.asList(services.clone()));
+            }
+        }
+        if (facilities != null) {
+            if (facilities.length != 0) {
+                shipSearchDTO.setFacilitiesList(Arrays.asList(facilities.clone()));
+            }
+        }
+        if (genres != null) {
+            if (genres.length != 0) {
+                shipSearchDTO.setGenresList(Arrays.asList(genres.clone()));
+            }
+        }
+        Page<ShipListResponse> ship = shipService.getShips(shipSearchDTO, page);
+        if (ship.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            Map<String, Object> result = new HashMap<>();
+            result.put("list", ship);
+            if (page == 0) {
+                result.put("ad", commonService.shipAdList(shipSearchDTO.getFishingType(), shipSearchDTO.getLatitude(), shipSearchDTO.getLongitude()));
+            } else {
+                result.put("ad", null);
+            }
+            return result;
+        }
+    }
+
     @ApiOperation(value = "배 리스트", notes = "지도보기를 위한 배 리스트." +
             "\n 해당 필터에 걸리는 모든 선박 정보를 보내줍니다." +
             "\n 필수 아닌 값은 빈 문자열 또는 빈 리스트로 보내면 됩니다. speciesList, servicesList, facilitiesList, genresList는 무시하시면 됩니다." +

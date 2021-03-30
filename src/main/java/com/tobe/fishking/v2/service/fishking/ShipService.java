@@ -490,7 +490,7 @@ public class ShipService {
         for(int i=0; i<fileEntityList.size(); i++){
             if (i > 3) break;
             FileEntity fileEntity = fileEntityList.get(i);
-            imageUrlList.add(path + "/" +fileEntity.getFileUrl() + "/" + fileEntity.getStoredFile());
+            imageUrlList.add(path + "/" +fileEntity.getFileUrl() + "/" + fileEntity.getThumbnailFile());
         }
         return new FishingDiarySmallResponse(diary, imageUrlList, fileEntityList.size()-imageUrlList.size());
     }
