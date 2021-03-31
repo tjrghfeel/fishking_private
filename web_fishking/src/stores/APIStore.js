@@ -20,7 +20,7 @@ const APIStore = new (class {
   _get = (url, params, headers) => {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
           if (params) {
             const keys = Object.keys(params);
@@ -58,7 +58,7 @@ const APIStore = new (class {
   _delete = (url, params, headers) => {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
           const response = await Http.request(
             url,
@@ -80,7 +80,7 @@ const APIStore = new (class {
   _post = (url, data, headers) => {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
           const response = await Http.request(url, "POST", headers, null, data);
           this.isLoading = false;
@@ -96,7 +96,7 @@ const APIStore = new (class {
   _put = (url, data, headers) => {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
           const response = await Http.request(url, "PUT", headers, null, data);
           this.isLoading = false;
@@ -115,7 +115,7 @@ const APIStore = new (class {
         const file = form.get("file");
         const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
         form.set("file", compressedFile);
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
           const response = await Http.upload(url, "PUT", headers, form);
           this.isLoading = false;
@@ -134,7 +134,7 @@ const APIStore = new (class {
         const file = form.get("file");
         const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
         form.set("file", compressedFile);
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
           const response = await Http.upload(url, "POST", headers, form);
           this.isLoading = false;

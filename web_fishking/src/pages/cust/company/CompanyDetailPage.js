@@ -43,12 +43,12 @@ export default inject(
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           await this.setState({
             ...resolve,
-            // liveVideo:
-            //   "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTto%2FuWGJb2RWGJDx9WjuWrS&rtspURI=rtsp://116.122.207.198:10910/86322/0",
+            liveVideo:
+              "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTve2tY1%2FTx%2Bcm8%2B0umCilOa&rtspURI=rtsp://116.122.207.198:10910/86322/0",
           });
 
-          // resolve.liveVideo =
-          //   "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTto%2FuWGJb2RWGJDx9WjuWrS&rtspURI=rtsp://116.122.207.198:10910/86322/0";
+          resolve.liveVideo =
+            "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTve2tY1%2FTx%2Bcm8%2B0umCilOa&rtspURI=rtsp://116.122.207.198:10910/86322/0";
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {
             const video = document.querySelector("#video");
