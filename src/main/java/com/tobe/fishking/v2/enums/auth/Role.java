@@ -9,9 +9,10 @@ import lombok.Getter;
 public enum Role  implements IEnumModel {
 
     admin("관리자"),
-    shipowner("선주"),
+    shipowner("업주"),
     member("회원"),
-    guest("게스트");
+    guest("게스트"),//3
+    marine("해경");//4
 
     private String value;
 

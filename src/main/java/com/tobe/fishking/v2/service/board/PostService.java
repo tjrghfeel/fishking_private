@@ -217,6 +217,8 @@ public class PostService {
                 .targetRole(postDTO.getTargetRole())
                 .isDeleted(false)
                 .isReplied(false)
+//                .noticeStartDate(postDTO.getNoticeStartDate())
+                .noticeEndDate(postDTO.getNoticeEndDate())
                 .build();
         post = postRepository.save(post);
 
@@ -322,6 +324,8 @@ public class PostService {
     /*공지사항 생성*/
     @Transactional
     public Long writeNotice(NoticeWriteDto dto, String token) throws ResourceNotFoundException, IOException {
+
+
         /*WritePostDTO 생성*/
         Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
         Boolean targetRole;
@@ -340,6 +344,8 @@ public class PostService {
                 .returnNoAddress("sampleReturnAddress")
                 .createdAt("sampleCreatedAt")
                 .targetRole(targetRole)
+//                .noticeStartDate(dto.getNoticeStartDate())
+                .noticeEndDate(dto.getNoticeEndDate())
                 .build();
 
         /*writePost() 호출*/

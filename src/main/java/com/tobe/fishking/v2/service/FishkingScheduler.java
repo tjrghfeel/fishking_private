@@ -1,12 +1,18 @@
 package com.tobe.fishking.v2.service;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.board.Board;
+import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.common.Alerts;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.AddAlertDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.board.BoardRepository;
+import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
@@ -17,6 +23,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +39,8 @@ public class FishkingScheduler {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final PopularService popularService;
+    private final PostRepository postRepository;
+    private final BoardRepository boardRepository;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
@@ -140,6 +149,19 @@ public class FishkingScheduler {
         memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
         alerts.sent();
         alertsRepository.save(alerts);
+    }
+
+    @Scheduled(cron = "0 0 12 * * *")
+    void checkNoticeDate(){
+        Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
+        List<Post> noticeList = postRepository.findAllByBoardAndChannelType(board, ChannelType.important);
+
+        for(int i=0; i<noticeList.size(); i++){
+            Post notice = noticeList.get(i);
+            if(LocalDate.now().isAfter(notice.getNoticeEndDate())){//공지마지막날이 지났으면,
+                notice.setChannelType(ChannelType.general);
+            }
+        }
     }
 
     @Scheduled(cron = "0 0 1 * * ?")

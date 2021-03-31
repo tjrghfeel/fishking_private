@@ -241,7 +241,7 @@ public class UploadService {
         File uploadFile = convert(file, fileLocation, fileName).orElseThrow(FileUploadFailException::new);
 
         /*파일 크기가 4MB이상일 경우 용량줄이기. */
-        uploadFile = resize(uploadFile);
+        uploadFile = resize(uploadFile, fileLocation, fileName);
 
     /*    amazonS3Client.putObject(new PutObjectRequest(
                 bucket, uploadFilePath, uploadFile
@@ -290,7 +290,7 @@ public class UploadService {
 
     /*파일 리사이징
      * 1MB이하가 될때까지 반복문으로 이미지 퀄리티를 떨어뜨려 용량을 줄인다. */
-    public File resize(File originalFile) throws IOException {
+    public File resize(File originalFile, String fileLocation, String fileName) throws IOException {
         long fileSize = originalFile.length();
         for(; fileSize > 1*1024*1024; ){
             BufferedImage image = ImageIO.read(originalFile);
@@ -305,7 +305,10 @@ public class UploadService {
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()){
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                param.setCompressionQuality(0.5f);
+                param.setCompressionQuality(1f);
+                String[] aaa = param.getCompressionTypes();
+                String bbb = param.getCompressionType();
+                aaa.toString();
             }
 
             writer.write(null, new IIOImage(image, null, null), param);
@@ -314,7 +317,31 @@ public class UploadService {
             ios.close();
             writer.dispose();
 
+            //압축하여 줄은 용량이 2MB이하라면 더이상 jpeg압축이 안된다판단하고 반복종료.
+            if(fileSize - output.length() < 2*1024*1024){ fileSize = output.length(); break;}
+
             fileSize = output.length();
+        }
+
+        //파일 크기 줄이기. 압축과 마찬가지로 1MB이하가 될때까지 줄임.
+        try {
+            for(;fileSize > 1*1024*1024;) {
+                Image image = ImageIO.read(originalFile);
+                double scale = (double) 6 / (double) 10;
+
+                int scaledW = (int) (scale * image.getWidth(null));
+                int scaledH = (int) (scale * image.getHeight(null));
+
+                BufferedImage oBufferImage = ImageIO.read(originalFile);
+                BufferedImage tBufferImage = new BufferedImage(scaledW, scaledH, BufferedImage.TYPE_3BYTE_BGR);
+                Graphics2D graphic = tBufferImage.createGraphics();
+                graphic.drawImage(oBufferImage, 0, 0, scaledW, scaledH, null);
+                ImageIO.write(tBufferImage, "jpg", originalFile);
+
+                fileSize = originalFile.length();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return originalFile;

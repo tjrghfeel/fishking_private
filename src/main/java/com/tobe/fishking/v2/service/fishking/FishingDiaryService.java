@@ -518,10 +518,11 @@ public class FishingDiaryService {
             shipId = fishingDiary.getShip().getId();
             shipAddress = fishingDiary.getShip().getAddress();
         }
-        Boolean isActive = true;
+        Boolean isHidden = false;
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
         else if(fishingDiary.getIsDeleted() == true){ throw new RuntimeException("삭제된 게시물입니다.");}
-        else if(fishingDiary.getIsActive()==false){isActive =false;}
+        else if(fishingDiary.getIsActive() == false){throw new RuntimeException("숨김처리된 글입니다.");}
+        else if(fishingDiary.getIsHidden()==true){isHidden =true;}
 
         /*닉네임, 글 종류 설정.*/
         String nickName = null;
@@ -561,7 +562,7 @@ public class FishingDiaryService {
         ArrayList<String> imageUrlList = new ArrayList<>();
         ArrayList<Long> imageIdList =new ArrayList<>();
         String path = env.getProperty("file.downloadUrl");
-        if(isActive == true) {
+        if(isHidden == false) {
             List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
                     fishingDiaryId, fishingDiary.getFilePublish(), FileType.image, false);
             for (int i = 0; i < fileEntityList.size(); i++) {
@@ -573,7 +574,7 @@ public class FishingDiaryService {
         /*비디오 url 설정*/
         String videoUrl = null;
         Long videoId = null;
-        if(isActive == true) {
+        if(isHidden == false) {
             List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
                     fishingDiaryId, fishingDiary.getFilePublish(), FileType.video, false);
             if (video.size() != 0) {
@@ -644,7 +645,7 @@ public class FishingDiaryService {
                 .isLive(isLive)
                 .fishingType(fishingType)
                 .fishingTypeCode(fishingTypeCode)
-                .title((isActive)?fishingDiary.getTitle():"숨김처리된 글입니다.")
+                .title((isHidden)?"숨김처리된 글입니다.":fishingDiary.getTitle())
                 .createdDate(fishingDiary.getCreatedDate())
                 .fishingSpecies(fishingDiary.getFishingSpeciesName())
                 .fishingSpeciesCodeList(codeList)
@@ -655,7 +656,7 @@ public class FishingDiaryService {
                 .fishingLureCodeList(lureCodeList)
                 .fishingTechnic(fishingDiary.getFishingTechnic())
                 .fishingTechnicCodeList(techCodeList)
-                .content((isActive)?fishingDiary.getContents():"숨김처리된 글입니다.")
+                .content((isHidden)?"숨김처리된 글입니다.":fishingDiary.getContents())
                 .imageUrlList(imageUrlList)
                 .imageIdList(imageIdList)
                 .videoUrl(videoUrl)
@@ -703,6 +704,22 @@ public class FishingDiaryService {
             FishingDiary fishingDiary = fishingDiaryRepo.findById(id)
                     .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+id));
             fishingDiary.setActive(isActive);
+            return true;
+        }
+        else return false;
+    }
+    //내용 숨김처리
+    @Transactional
+    public Boolean hideContent(Long id, String active, String token) throws ResourceNotFoundException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Boolean isHidden = null;
+        if(active.equals("true")){isHidden=true;}
+        else if(active.equals("false")){isHidden = false; }
+
+        if(member.getRoles()==Role.admin){
+            FishingDiary fishingDiary = fishingDiaryRepo.findById(id)
+                    .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+id));
+            fishingDiary.setHide(isHidden);
             return true;
         }
         else return false;

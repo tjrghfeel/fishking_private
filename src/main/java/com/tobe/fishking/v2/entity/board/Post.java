@@ -12,6 +12,7 @@ import lombok.*;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +116,11 @@ public class Post extends BaseTime {
     @Column(columnDefinition = "bit comment '삭제여부'")
     private Boolean isDeleted;
 
+//    @Column(columnDefinition = "date null comment '공지사항의 중요공지 등록 기간 시작일'")
+//    private LocalDate noticeStartDate;
+    @Column(columnDefinition = "date null comment '공지사항의 중요공지 등록 기간 종료일'")
+    private LocalDate noticeEndDate;
+
     public Post(){
 
     }
@@ -152,4 +158,5 @@ public class Post extends BaseTime {
     }
 
     public void delete(){this.isDeleted = true;}
+    public void setChannelType(ChannelType channelType){this.channelType = channelType;}
 }

@@ -158,8 +158,11 @@ public class FishingDiary extends BaseTime {
     @Column(columnDefinition = "bit not null default 0 comment '삭제여부'")
     private Boolean isDeleted;
 
-    @Column(columnDefinition = "bit default 1 comment '숨김처리 여부'")
+    @Column(columnDefinition = "bit default 1 comment '숨김처리 여부. 글 자체가 없는것처럼 처리할때 사용. 관리자가 설정. '")
     private Boolean isActive;
+
+    @Column(columnDefinition = "bit default 0 comment '내용 숨김처리 여부. 내용만 가릴때 사용. 관리자가 설정'")
+    private Boolean isHidden;
 
 /*
     @ManyToMany(targetEntity= FishingDiaryComment.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
@@ -277,4 +280,5 @@ public class FishingDiary extends BaseTime {
 
     public void delete(){this.isDeleted = true;}
     public void setActive(Boolean isActive){this.isActive = isActive;}
+    public void setHide(Boolean isHidden){ this.isHidden = isHidden;}
 }

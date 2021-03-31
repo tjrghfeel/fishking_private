@@ -120,20 +120,7 @@ export default inject(
 
         PageStore.setState({ page, isPending: true });
 
-        const { premium = [], normal = [] } = await APIStore._get(
-          `/v2/api/ship/ad`,
-          {
-            fishingType: PageStore.state.fishingType,
-            latitude: PageStore.state.latitude,
-            longitude: PageStore.state.longitude,
-          }
-        );
-        PageStore.setState({ premium, normal });
-
-        const {
-          content,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get(`/v2/api/ships/${page}`, {
+        const resolve = await APIStore._get(`/v2/api/ships/list/${page}`, {
           fishingType: PageStore.state.fishingType,
           hasRealTimeVideo: PageStore.state.hasRealTimeVideo,
           fishingDate: PageStore.state.fishingDate,
@@ -147,9 +134,15 @@ export default inject(
           latitude: PageStore.state.latitude,
           longitude: PageStore.state.longitude,
         });
+        const { ad, list } = resolve;
+        const { normal = [], premium = [] } = ad || {};
+        const {
+          content = [],
+          pageable: { pageSize = 0 },
+        } = list || {};
 
         if (page === 0) {
-          PageStore.setState({ list: content });
+          PageStore.setState({ list: content, premium, normal });
           setTimeout(() => {
             window.scrollTo(0, 0);
           }, 100);

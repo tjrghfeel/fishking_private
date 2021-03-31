@@ -205,7 +205,7 @@ public class FishingDiaryController {
             @RequestParam(value = "createdDateEnd",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                     LocalDate createdDateEnd,
             @RequestParam(value = "hasShipData",required = false) Boolean hasShipData,
-            @RequestParam(value = "pageCount",required = false,defaultValue = "10") Integer pageCount
+            @RequestParam(value = "pageCount",required = false,defaultValue = "20") Integer pageCount
     ) throws ResourceNotFoundException, EmptyListException {
         if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount"))){
             throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
@@ -344,7 +344,7 @@ public class FishingDiaryController {
         return fishingDiaryService.deleteFishingDiary(dto,token);
     }
     //숨김처리
-    @ApiOperation(value = "숨김처리")
+    @ApiOperation(value = "글 전체 숨김처리")
     @PutMapping("/fishingDiary/hide/{id}/{active}")
     public Boolean hideFishingDiary(
             @RequestHeader("Authorization") String token,
@@ -352,6 +352,18 @@ public class FishingDiaryController {
             @PathVariable("active") String active
     ) throws ResourceNotFoundException {
         return fishingDiaryService.hideFishingDiary(fishingDiaryId,active, token);
+    }
+    //내용 숨김처리
+    @ApiOperation(value = "글 내용 숨김처리")
+    @PutMapping("/fishingDiary/hideContent/{id}/{hide}")
+    public Boolean hideContent(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("id") Long fishingDiaryId,
+            @PathVariable("hide") String hide
+    ) throws ResourceNotFoundException {
+        //입력값 검증
+        if(!hide.equals("true") && !hide.equals("false")){throw new RuntimeException("hide값으로는 'true'또는 'false'만 가능합니다.");}
+        return fishingDiaryService.hideContent(fishingDiaryId, hide, token);
     }
 
     /*스크랩 추가*/
