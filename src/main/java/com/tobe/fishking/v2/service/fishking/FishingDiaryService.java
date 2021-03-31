@@ -707,6 +707,22 @@ public class FishingDiaryService {
         }
         else return false;
     }
+    //내용 숨김처리
+    @Transactional
+    public Boolean hideContent(Long id, String active, String token) throws ResourceNotFoundException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Boolean isHidden = null;
+        if(active.equals("true")){isHidden=true;}
+        else if(active.equals("false")){isHidden = false; }
+
+        if(member.getRoles()==Role.admin){
+            FishingDiary fishingDiary = fishingDiaryRepo.findById(id)
+                    .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+id));
+            fishingDiary.setHide(isHidden);
+            return true;
+        }
+        else return false;
+    }
 
     /*스크랩 추가*/
     @Transactional

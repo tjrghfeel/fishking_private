@@ -19,8 +19,10 @@ public class CompanySearchConditionDto {
     private String memberName;//
     private String companyName;//
     private String sido;//
-    private String gungu;//
-    private String tel;//
+    private String gungu;
+    private String tel;
+    private String areaCode;//d
+    private String localNumber;//d
     private String bizNo;//
     private String bank;//
     private String accountNum;//

@@ -23,6 +23,7 @@ public class EventSearchCondition {
     private LocalDate startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
+    private Boolean shipEvent;
     private String shipName;
     private Integer pageCount=10;
 }

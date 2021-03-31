@@ -258,6 +258,9 @@ public class PostController {
             "")
     @PostMapping("/post/notice")
     public Long writeNotice(@RequestBody @Valid NoticeWriteDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException, IOException {
+        //입력값 검증
+//        if(dto.getNoticeStartDate().isAfter(dto.getNoticeEndDate())){throw new RuntimeException("공지 시작일은 종료일 이전이어야 합니다.");}
+
         return postService.writeNotice(dto,token);
     }
 

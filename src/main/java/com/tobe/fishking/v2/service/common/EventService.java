@@ -69,7 +69,8 @@ public class EventService {
         String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         Pageable pageable = PageRequest.of(page,dto.getPageCount());
         return eventRepository.findEventList(today, dto.getIsLast(), dto.getTitle(), dto.getContent(),
-                createdDateStart, createdDateEnd, dto.getNickName(), startDate, endDate, dto.getShipName(), isActive, pageable);
+                createdDateStart, createdDateEnd, dto.getNickName(), startDate, endDate, dto.getShipName(), isActive,
+                dto.getShipEvent(), pageable);
     }
 
     /*이벤트 상세보기*/

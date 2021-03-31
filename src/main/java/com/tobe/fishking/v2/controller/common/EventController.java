@@ -56,6 +56,9 @@ public class EventController {
             @RequestHeader(value = "Authorization",required = false) String token,
             EventSearchCondition dto
     ) throws EmptyListException {
+        if(token == null){}
+        else if(token.equals("")){token = null;}
+
 //        return eventService.getEventList(page);
         Page<EventDtoForPage> events = eventService.getEventList(page, token, dto);
         if (events.getTotalElements() == 0) {

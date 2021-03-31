@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.board.Tag;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,8 @@ public class WritePostDTO {
 
     private Long[] files;//
 
-
+    private LocalDate noticeStartDate;
+    private LocalDate noticeEndDate;
 
 }
 

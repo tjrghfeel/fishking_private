@@ -175,6 +175,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             Pageable pageable
     );
 
+    List<Post> findAllByBoardAndChannelType(Board board, ChannelType channelType);
+
     /* 공지사항 detail 조회*/
     @Query(value = "" +
             "select " +
@@ -296,6 +298,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "from post p join board b on (p.board_id = b.id), member m " +
                     "where " +
                     "   p.author_id=m.id " +
+                    "   and p.is_deleted = false " +
                     "   and (:postId is null or (:postId is not null and p.id = :postId)) " +
 //                    "   if(:postId is null,true,(p.id = :postId)) " +
                     "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
@@ -322,6 +325,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                     "from post p join board b on (p.board_id = b.id), member m " +
                     "where " +
                     "   p.author_id = m.id " +
+                    "   and p.is_deleted = false " +
                     "   and if(:postId is null,true,(p.id = :postId)) " +
                     "   and if(:boardId is null,true,(p.board_id = :boardId)) " +
                     "   and if(:parentId is null, (p.parent_id is null), (p.parent_id = :parentId)) " +

@@ -58,6 +58,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "   and if(:endDate is null, true, :endDate >= e.end_day) " +
             "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
             "   and if(:isActive is null, true, e.is_active = :isActive) " +
+            "   and if(:shipEvent is null, true, if(:shipEvent = true, e.ship_id is not null, e.ship_id is null))" +
             "order by e.order_level desc, e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
             "",
             countQuery = "select e.id " +
@@ -74,6 +75,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                     "   and if(:endDate is null, true, :endDate >= e.end_day) " +
                     "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
                     "   and if(:isActive is null, true, e.is_active = :isActive) " +
+                    "   and if(:shipEvent is null, true, if(:shipEvent = true, e.ship_id is not null, e.ship_id is null))" +
                     "order by e.order_level desc, e.end_day asc, e.start_day asc, e.like_count desc, e.created_date asc " +
                     "",
             nativeQuery = true
@@ -90,6 +92,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("endDate") String endDate,
             @Param("shipName") String shipName,
             @Param("isActive") Boolean isActive,
+            @Param("shipEvent") Boolean shipEvent,
             Pageable pageable
     );
 }
