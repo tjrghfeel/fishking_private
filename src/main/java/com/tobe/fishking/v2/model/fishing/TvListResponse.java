@@ -22,9 +22,6 @@ public class TvListResponse {
 
     @QueryProjection
     public TvListResponse(
-            Integer lowPrice,
-            Integer sold,
-            Long liked,
             Double distance,
             Ship ship) {
         this.id = ship.getId();

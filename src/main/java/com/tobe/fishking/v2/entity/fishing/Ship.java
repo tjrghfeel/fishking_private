@@ -194,7 +194,6 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "int default 0 comment '리뷰 수'")
     private int reviewCount = 0;
 
-
     @Column(columnDefinition = "tinyint(1) default 1 comment '운행여부(페업)'")
     private boolean isActive;
 
@@ -220,6 +219,15 @@ public class Ship extends BaseTime {  //선상
 
     @Column(columnDefinition = "varchar(500) comment '등록 영상 아이디' ")
     private Long videoId;
+
+    @Column(columnDefinition = "int comment '최저상품가격' ")
+    private Integer cheapestGoodsCost;
+
+    @Column(columnDefinition = "bigint comment '찜 수' ")
+    private Long zzimCount;
+
+    @Column(columnDefinition = "bigint comment '상품 판매 수 ' ")
+    private Long sellCount;
 
 //    @Builder
 //    public Ship(Long id, String shipName, Company company, Member member, SeaDirection seaDirection ) {
@@ -275,6 +283,9 @@ public class Ship extends BaseTime {  //선상
         this.observerCode = code;
         this.routerIMEI = router;
         this.videoId = videoId;
+        this.cheapestGoodsCost = 0;
+        this.zzimCount = 0L;
+        this.sellCount = 0L;
     }
 
     /*리뷰 평점 적용*/

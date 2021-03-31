@@ -157,9 +157,9 @@ public class ShipService {
     public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO, int page) {
         Pageable pageable;
         if (shipSearchDTO.getOrderBy().equals("")) {
-            pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+            pageable = PageRequest.of(page, 10, Sort.by(shipSearchDTO.getOrderBy()));
         } else {
-            pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
+            pageable = PageRequest.of(page, 10, Sort.by(shipSearchDTO.getOrderBy()));
         }
         return shipRepo.searchAll(shipSearchDTO, pageable);
     }

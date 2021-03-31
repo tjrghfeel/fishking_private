@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.model.fishing;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
@@ -54,9 +55,10 @@ public class ShipListResponse {
         this.distance = (int) Math.round(distance);
     }
 
+    @QueryProjection
     public ShipListResponse(
             Integer lowPrice,
-            Integer sold,
+            Long sold,
             Long liked,
             Ship ship
     ) {
@@ -72,9 +74,35 @@ public class ShipListResponse {
         this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
         this.fishSpeciesCount = species.size();
         this.lowPrice = lowPrice==null?0:lowPrice;
-        this.sold = sold==null?0:sold;
+        this.sold = sold==null?0:sold.intValue();
         this.type = ship.getFishingType().getValue();
 //        this.distance = CalcUtils.round(distance, 3);
 //        this.distance = (int) Math.round(distance);
+    }
+
+    @QueryProjection
+    public ShipListResponse(
+            Integer lowPrice,
+            Long sold,
+            Long liked,
+            Double distance,
+            Ship ship
+    ) {
+        List<CommonCode> species = ship.getFishSpecies();
+        this.id = ship.getId();
+        this.shipImageFileUrl = "/resource/" + ship.getProfileImage().split("/")[1] + "/thumb_" + ship.getProfileImage().split("/")[2];
+        this.shipName = ship.getShipName();
+        this.sido = ship.getSido();
+        this.sigungu = ship.getSigungu();
+//        this.distance = ship.getDistance();
+        this.location = ship.getLocation();
+        this.address = ship.getAddress();
+        this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
+        this.fishSpeciesCount = species.size();
+        this.lowPrice = lowPrice==null?0:lowPrice;
+        this.sold = sold==null?0:sold.intValue();
+        this.type = ship.getFishingType().getValue();
+//        this.distance = CalcUtils.round(distance, 3);
+        this.distance = (int) Math.round(distance);
     }
 }
