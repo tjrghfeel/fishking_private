@@ -131,6 +131,8 @@ public class PostControllerTest {
     TidalLevelRepository tidalLevelRepository;
     @Autowired
     MyMenuService myMenuService;
+    @Autowired
+    FishkingScheduler scheduler;
 
     @Test
     public void fileTest() throws Exception {
@@ -164,8 +166,6 @@ public class PostControllerTest {
     @Transactional
     public void noName() throws Exception {
         String aaa = AES.aesDecode("H9Q8zROABmLt2zH9SphnHQ==",env.getProperty("encrypKey.key"));
-
-
 
 
 

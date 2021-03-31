@@ -505,9 +505,11 @@ public class FishingDiaryService {
         FishingDiaryDetailDto result = null;
 
         Member member = null;
+        Boolean isManager = false;
         if(token !=null){
             member = memberRepo.findBySessionToken(token)
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+            if(member.getRoles() == Role.admin){isManager= true;}
         }
 
         FishingDiary fishingDiary  = fishingDiaryRepo.findById(fishingDiaryId)
@@ -521,7 +523,7 @@ public class FishingDiaryService {
         Boolean isHidden = false;
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
         else if(fishingDiary.getIsDeleted() == true){ throw new RuntimeException("삭제된 게시물입니다.");}
-        else if(fishingDiary.getIsActive() == false){throw new RuntimeException("숨김처리된 글입니다.");}
+        else if(isManager == false && fishingDiary.getIsActive() == false){throw new RuntimeException("숨김처리된 글입니다.");}
         else if(fishingDiary.getIsHidden()==true){isHidden =true;}
 
         /*닉네임, 글 종류 설정.*/
@@ -562,7 +564,7 @@ public class FishingDiaryService {
         ArrayList<String> imageUrlList = new ArrayList<>();
         ArrayList<Long> imageIdList =new ArrayList<>();
         String path = env.getProperty("file.downloadUrl");
-        if(isHidden == false) {
+        if(isHidden == false || isManager == true) {
             List<FileEntity> fileEntityList = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
                     fishingDiaryId, fishingDiary.getFilePublish(), FileType.image, false);
             for (int i = 0; i < fileEntityList.size(); i++) {
@@ -574,7 +576,7 @@ public class FishingDiaryService {
         /*비디오 url 설정*/
         String videoUrl = null;
         Long videoId = null;
-        if(isHidden == false) {
+        if(isHidden == false || isManager == true) {
             List<FileEntity> video = fileRepository.findByPidAndFilePublishAndFileTypeAndIsDelete(
                     fishingDiaryId, fishingDiary.getFilePublish(), FileType.video, false);
             if (video.size() != 0) {
@@ -645,7 +647,7 @@ public class FishingDiaryService {
                 .isLive(isLive)
                 .fishingType(fishingType)
                 .fishingTypeCode(fishingTypeCode)
-                .title((isHidden)?"숨김처리된 글입니다.":fishingDiary.getTitle())
+                .title((isHidden && isManager==false)?"숨김처리된 글입니다.":fishingDiary.getTitle())
                 .createdDate(fishingDiary.getCreatedDate())
                 .fishingSpecies(fishingDiary.getFishingSpeciesName())
                 .fishingSpeciesCodeList(codeList)
@@ -656,7 +658,7 @@ public class FishingDiaryService {
                 .fishingLureCodeList(lureCodeList)
                 .fishingTechnic(fishingDiary.getFishingTechnic())
                 .fishingTechnicCodeList(techCodeList)
-                .content((isHidden)?"숨김처리된 글입니다.":fishingDiary.getContents())
+                .content((isHidden && isManager==false)?"숨김처리된 글입니다.":fishingDiary.getContents())
                 .imageUrlList(imageUrlList)
                 .imageIdList(imageIdList)
                 .videoUrl(videoUrl)

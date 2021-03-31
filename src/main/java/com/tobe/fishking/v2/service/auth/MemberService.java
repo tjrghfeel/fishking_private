@@ -1362,7 +1362,7 @@ public class MemberService {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
-        member.setSessionToken(null);
+//        member.setSessionToken(null);
         return  true;
     }
 
