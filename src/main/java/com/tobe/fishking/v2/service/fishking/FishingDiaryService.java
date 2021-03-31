@@ -522,7 +522,7 @@ public class FishingDiaryService {
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
         else if(fishingDiary.getIsDeleted() == true){ throw new RuntimeException("삭제된 게시물입니다.");}
         else if(fishingDiary.getIsActive() == false){throw new RuntimeException("숨김처리된 글입니다.");}
-        else if(fishingDiary.getIsHidden()==false){isHidden =true;}
+        else if(fishingDiary.getIsHidden()==true){isHidden =true;}
 
         /*닉네임, 글 종류 설정.*/
         String nickName = null;
