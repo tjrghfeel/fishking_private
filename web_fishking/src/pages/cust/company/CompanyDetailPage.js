@@ -1,4 +1,4 @@
-/* global daum, kakao, $, Hls, videojs , Cloudcam */
+/* global daum, kakao, $, Hls, videojs , Cloudcam, Player */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
@@ -41,8 +41,14 @@ export default inject(
             PageStore,
           } = this.props;
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
-          this.setState(resolve);
+          await this.setState({
+            ...resolve,
+            liveVideo:
+              "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTto%2FuWGJb2RWGJDx9WjuWrS&rtspURI=rtsp://116.122.207.198:10910/86322/0",
+          });
 
+          resolve.liveVideo =
+            "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTto%2FuWGJb2RWGJDx9WjuWrS&rtspURI=rtsp://116.122.207.198:10910/86322/0";
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {
             const video = document.querySelector("#video");
@@ -50,14 +56,15 @@ export default inject(
               resolve.liveVideo ||
               "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
-            // url =
-            //   "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTto%2FuWGJb2RWGJDx9WjuWrS&rtspURI=rtsp://116.122.207.198:10910/86322/0";
+            console.log(url);
             if (url.startsWith("rtsp://")) {
-              video.src = url;
-              const player = Cloudcam.player("video", {
-                socket: url,
-              });
-              player.start();
+              const player = new Player({ streamUrl: url });
+              player.init();
+              // video.src = url;
+              // const player = Cloudcam.player("video", {
+              //   socket: "http://116.125.120.90:9080",
+              // });
+              // player.start();
             } else if (Hls.isSupported()) {
               const hls = new Hls({
                 capLevelToPlayerSize: true,
@@ -286,13 +293,29 @@ export default inject(
                       )}
                     {this.state.liveVideo !== "" && (
                       <React.Fragment>
+                        <canvas
+                          id="videoCanvas"
+                          style={{
+                            width: "100%",
+                            display: this.state.liveVideo?.startsWith("rtsp://")
+                              ? "block"
+                              : "none",
+                          }}
+                        />
                         <video
                           id="video"
                           muted
                           playsInline
                           controls
                           autoPlay
-                          style={{ width: "100%" }}
+                          style={{
+                            width: "100%",
+                            display: !this.state.liveVideo?.startsWith(
+                              "rtsp://"
+                            )
+                              ? "block"
+                              : "none",
+                          }}
                         ></video>
                         <span
                           className="play-live"
