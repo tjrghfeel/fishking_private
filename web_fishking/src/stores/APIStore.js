@@ -113,8 +113,8 @@ const APIStore = new (class {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
         const file = form.get("file");
-        const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
-        form.set("file", compressedFile);
+        // const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
+        form.set("file", file);
         // this.isLoading = true;
         try {
           const response = await Http.upload(url, "PUT", headers, form);
@@ -132,8 +132,8 @@ const APIStore = new (class {
     return new Promise((resolve, reject) => {
       runInAction(async () => {
         const file = form.get("file");
-        const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
-        form.set("file", compressedFile);
+        // const compressedFile = await imageCompression(file, { maxSizeMB: 4 });
+        form.set("file", file);
         // this.isLoading = true;
         try {
           const response = await Http.upload(url, "POST", headers, form);

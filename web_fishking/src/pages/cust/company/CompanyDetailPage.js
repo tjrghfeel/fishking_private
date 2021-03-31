@@ -43,12 +43,12 @@ export default inject(
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           await this.setState({
             ...resolve,
-            liveVideo:
-              "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTve2tY1%2FTx%2Bcm8%2B0umCilOa&rtspURI=rtsp://116.122.207.198:10910/86322/0",
+            // liveVideo:
+            //   "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=120371&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2v6yCsd61tkdWo5O5AFU4J5SJeE3SY%2Fx409MmKEnjIzYQxK1SkJqpDY1Y7wnK9vRSDdf%2BUaRKzkrbTCS6stbyrOCcIjA2L7nTT&rtspURI=rtsp://39.115.211.199:10901/120371/0",
           });
 
-          resolve.liveVideo =
-            "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=86322&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2vTf2zfLr9zK%2FdAqRZsPUrASu%2BRspCC9vqTQUUdtEAzwcHqzZlyJLnbC%2BmW2LD2cHi4oFW7OqXjTve2tY1%2FTx%2Bcm8%2B0umCilOa&rtspURI=rtsp://116.122.207.198:10910/86322/0";
+          // resolve.liveVideo =
+          //   "rtsp://vc-net2-ss.sktelecom.com:8558/live?camID=120371&authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC3%2BBnqxsYyB4%2FIfFlcR5p2v6yCsd61tkdWo5O5AFU4J5SJeE3SY%2Fx409MmKEnjIzYQxK1SkJqpDY1Y7wnK9vRSDdf%2BUaRKzkrbTCS6stbyrOCcIjA2L7nTT&rtspURI=rtsp://39.115.211.199:10901/120371/0";
           // # 비디오 표시
           if (resolve.liveVideo && resolve.liveVideo !== "") {
             const video = document.querySelector("#video");
@@ -61,7 +61,8 @@ export default inject(
               player.init();
               // video.src = url;
               // const player = Cloudcam.player("video", {
-              //   socket: "http://116.125.120.90:9080",
+              //   socket:
+              //     "ws://116.125.120.90:9000/streams/52fd554cc3ab32e99ed6e29f812cc6e2",
               // });
               // player.start();
             } else if (Hls.isSupported()) {
