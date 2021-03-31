@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tobe.fishking.v2.utils.HashUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -42,6 +43,10 @@ public class HttpRequestService {
     private final String vendorId = "tobe";
     private final String vendorPw = "toastcam1!";
 
+    private final String ADT_BASE_URL = "https://cloudcam.skbroadband.com";
+    private final String ADT_AUTH_URL = "/do/vcapi/mobile/user/login";
+    private final String ADT_CAMERA_URL = "/do/vcapi/mobile/camera";
+
     public Map<String, Object> getToken(String bizId) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(CAM_BASE_URL + CAM_AUTH_URL + "token");
@@ -60,7 +65,7 @@ public class HttpRequestService {
         Map<String, Object> result = new HashMap<>();
         try {
             CloseableHttpResponse response = httpClient.execute(httpPost);
-            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
 
             String json = EntityUtils.toString(response.getEntity());
 
@@ -90,7 +95,7 @@ public class HttpRequestService {
         String expireTime;
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
-            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
 
             String json = EntityUtils.toString(response.getEntity());
             Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
@@ -119,10 +124,10 @@ public class HttpRequestService {
         List<Map<String, Object>> result;
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
-            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println(json);
 //            Gson gson = new Gson();
             Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
 
@@ -144,10 +149,10 @@ public class HttpRequestService {
 
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
-            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println(json);
 //            Gson gson = new Gson();
             Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
 //            JsonObject res = new JsonParser().parse(json).getAsJsonObject();
@@ -158,6 +163,143 @@ public class HttpRequestService {
             e.printStackTrace();
         }
 
+        return result;
+    }
+
+    public String loginADT(String id, String pw, String uid) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpPost httpPost = new HttpPost(ADT_BASE_URL + ADT_AUTH_URL);
+        httpPost.addHeader("User-Agent", USER_AGENT);
+        httpPost.addHeader("Accept-Language", "ko");
+        httpPost.addHeader("Content-Type", "application/json");
+
+        JsonObject data = new JsonObject();
+        data.addProperty("id", id);
+//        data.addProperty("pwd", HashUtil.sha256(pw));
+        data.addProperty("pwd", pw);
+        data.addProperty("deviceId", uid);
+        data.addProperty("appId", "skbb");
+        data.addProperty("cflag", "yes");
+        data.addProperty("pwdEncNew", "Y");
+
+        httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
+
+        String result;
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+
+            String json = EntityUtils.toString(response.getEntity());
+
+            Gson gson = new Gson();
+            JsonObject res = gson.fromJson(json, JsonObject.class);
+//            result.put("resultCode", res.get("resultCode"));
+//            result.put("resultMsg", res.get("resultMsg"));
+//            result.put("authKey", res.get("authKey"));
+//            result.put("userName", res.get("projectAuth"));
+//            result.put("userGroup", res.get("userGroup"));
+            result = res.get("authKey").toString();
+            httpClient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = null;
+        }
+        return result;
+    }
+
+    public List<Map<String, Object>> getADTList(String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpGet httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "?order=1");
+        httpGet.addHeader("X-Scq-Auth-Key", token);
+        httpGet.addHeader("User-Agent", USER_AGENT);
+        httpGet.addHeader("Accept-Language", "ko");
+        httpGet.addHeader("Content-Type", "application/json");
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+
+            String json = EntityUtils.toString(response.getEntity());
+//            System.out.println(json);
+//            Gson gson = new Gson();
+            Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
+            result = (List<Map<String, Object>>) res.get("cameraList");
+            httpClient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = null;
+        }
+        return result;
+    }
+
+    public Map<String, Object> getADTCameraDetail(String camId, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpGet httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "/" + camId + "?eventType=64");
+        httpGet.addHeader("X-Scq-Auth-Key", token);
+        httpGet.addHeader("User-Agent", USER_AGENT);
+        httpGet.addHeader("Accept-Language", "ko");
+        httpGet.addHeader("Content-Type", "application/json");
+
+        Map<String, Object> result = new HashMap<>();
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+
+            String json = EntityUtils.toString(response.getEntity());
+//            Gson gson = new Gson();
+            Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
+//            System.out.println("---detail---");
+//            System.out.println(res);
+//            System.out.println("------------");
+            result.put("serial", res.get("camId").toString());
+            result.put("name", res.get("camName").toString());
+            result.put("status", res.get("status").toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = null;
+        }
+        return result;
+    }
+
+    public String getADTCameraLive(String camId, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpGet httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "/" + camId + "?eventType=64");
+        httpGet.addHeader("X-Scq-Auth-Key", token);
+        httpGet.addHeader("User-Agent", USER_AGENT);
+        httpGet.addHeader("Accept-Language", "ko");
+        httpGet.addHeader("Content-Type", "application/json");
+
+        String result;
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+
+            String json = EntityUtils.toString(response.getEntity());
+//            Gson gson = new Gson();
+            Map<String, Object> res_0 = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
+
+            String status = (String) res_0.get("status");
+            if (status.equals("1") || status.equals("3")) {
+                httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "/" + camId + "/live");
+                httpGet.addHeader("X-Scq-Auth-Key", token);
+                httpGet.addHeader("User-Agent", USER_AGENT);
+                httpGet.addHeader("Accept-Language", "ko");
+                httpGet.addHeader("Content-Type", "application/json");
+
+                response = httpClient.execute(httpGet);
+                json = EntityUtils.toString(response.getEntity());
+                Map<String, Object> res = new Gson().fromJson(json, HashMap.class);
+//                System.out.println(res);
+                result = res.get("liveUri").toString();
+            } else {
+                result = null;
+            }
+            httpClient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = null;
+        }
         return result;
     }
 

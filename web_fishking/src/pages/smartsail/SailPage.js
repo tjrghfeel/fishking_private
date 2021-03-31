@@ -16,6 +16,7 @@ export default inject("PageStore")(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout
@@ -124,7 +125,7 @@ export default inject("PageStore")(
               <div className="card-round-grey">
                 <span className="status status2">이용예정</span>
                 <span className="dday">D-42</span>
-                <a>
+                <a onClick={() => PageStore.push(`/sail/detail`)}>
                   <div className="card card-sm">
                     <div className="row no-gutters">
                       <div className="cardimgWrap">

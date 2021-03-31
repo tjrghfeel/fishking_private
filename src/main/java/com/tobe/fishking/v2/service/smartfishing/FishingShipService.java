@@ -93,10 +93,10 @@ public class FishingShipService {
     }
 
     @Transactional
-    public List<Map<String, Object>> getCameraList(Member member) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, EmptyListException {
+    public List<Map<String, Object>> getNHNCameraList(Member member) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, EmptyListException {
         Company company = companyRepository.findByMember(member);
         List<Map<String, Object>> response =  new ArrayList<>();
-        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByMember(member);
+        List<RealTimeVideo> videos = realTimeVideoRepository.getNHNByMemberId(member.getId());
         String token = "";
         if (videos.size() > 0) {
             RealTimeVideo video = videos.get(0);
@@ -126,6 +126,26 @@ public class FishingShipService {
             String name = camera.get("labelName").toString();
             c.put("serial", serial);
             c.put("name", name);
+            response.add(c);
+        }
+        if (response.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        }
+        return response;
+    }
+
+    @Transactional
+    public List<Map<String, Object>> getADTCameraList(Member member) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, EmptyListException {
+        Company company = companyRepository.findByMember(member);
+        List<Map<String, Object>> response =  new ArrayList<>();
+        List<RealTimeVideo> videos = realTimeVideoRepository.getADTByMemberId(member.getId());
+        String token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), member.getId().toString());
+
+        List<Map<String, Object>> cameras = httpRequestService.getADTList(token);
+        for (Map<String, Object> camera : cameras) {
+            Map<String, Object> c = new HashMap<>();
+            c.put("serial", String.valueOf(((Double) camera.get("camId")).intValue()));
+            c.put("name", (String) camera.get("camName"));
             response.add(c);
         }
         if (response.isEmpty()) {
@@ -197,6 +217,21 @@ public class FishingShipService {
                     .token(cameraToken)
                     .expireTime(expTime)
                     .type("toast")
+                    .build();
+            realTimeVideoRepository.save(video);
+        }
+
+        for (AddShipCamera addShipCamera : addShipDTO.getAdtCameras()) {
+            cameraNum += 1;
+            RealTimeVideo video = RealTimeVideo.builder()
+                    .rNo(cameraNum)
+                    .member(member)
+                    .ship(ship)
+                    .name(addShipCamera.getName())
+                    .serial(addShipCamera.getSerial())
+                    .token("")
+                    .expireTime("")
+                    .type("caps")
                     .build();
             realTimeVideoRepository.save(video);
         }
@@ -328,6 +363,53 @@ public class FishingShipService {
                                     .token(cameraToken)
                                     .expireTime(expTime)
                                     .type("toast")
+                                    .build()
+                    );
+                }
+            }
+        }
+
+        List<RealTimeVideo> adtVideos = realTimeVideoRepository.getADTByShipsId(shipId);
+        if (adtVideos.isEmpty()) {
+            for (AddShipCamera addShipCamera : updateShipDTO.getAdtCameras()) {
+                cameraNum += 1;
+                RealTimeVideo video = RealTimeVideo.builder()
+                        .rNo(cameraNum)
+                        .member(member)
+                        .ship(ship)
+                        .name(addShipCamera.getName())
+                        .serial(addShipCamera.getSerial())
+                        .token("")
+                        .expireTime("")
+                        .type("caps")
+                        .build();
+                realTimeVideoRepository.save(video);
+            }
+        } else {
+            List<AddShipCamera> newCameras = updateShipDTO.getAdtCameras();
+            List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            for (RealTimeVideo v : videos) {
+                boolean use = newSerials.contains(v.getSerial());
+                if (use) {
+                    newSerials.remove(v.getSerial());
+                } else {
+                    v.setNotUse();
+                    v.updateToken(cameraToken, expTime);
+                    realTimeVideoRepository.save(v);
+                }
+            }
+            for (AddShipCamera c : newCameras) {
+                if (newSerials.contains(c.getSerial())) {
+                    realTimeVideoRepository.save(
+                            RealTimeVideo.builder()
+                                    .rNo(cameraNum)
+                                    .member(member)
+                                    .ship(ship)
+                                    .name(c.getName())
+                                    .serial(c.getSerial())
+                                    .token("")
+                                    .expireTime("")
+                                    .type("caps")
                                     .build()
                     );
                 }

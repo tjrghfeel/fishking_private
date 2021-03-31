@@ -209,7 +209,8 @@ public class ShipsGoodsController {
         }
         Member member = memberService.getMemberBySessionToken(token);
         Map<String, Object> result = new HashMap<>();
-        result.put("nhn", fishingShipService.getCameraList(member));
+        result.put("nhn", fishingShipService.getNHNCameraList(member));
+        result.put("adt", fishingShipService.getADTCameraList(member));
         return result;
     }
 

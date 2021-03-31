@@ -16,6 +16,7 @@ import com.tobe.fishking.v2.model.fishing.CompanyWriteDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.CompanyRepository;
+import com.tobe.fishking.v2.utils.HashUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -94,7 +95,7 @@ public class CompanyService {
                 .modifiedBy(member)
                 .member(member)
                 .adtId(dto.getAdtId())
-                .adtPw(dto.getAdtPw())
+                .adtPw(HashUtil.sha256(dto.getAdtPw()))
                 .nhnId(dto.getNhnId())
                 .nhnPw(dto.getNhnPw())
                 .build();

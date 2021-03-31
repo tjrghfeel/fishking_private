@@ -26,7 +26,7 @@ public class ShipSearchDTO {
     @ApiParam(value = "페이지 당 데이터 수.", example = "5")
     private @Valid Integer size = 5;
 
-    @ApiParam(value = "날짜 검색. 하루 선택 yyyy-MM-dd", example = "2021-01-26")
+    @ApiParam(value = "날짜 검색. 하루 선택 yyyy-MM-dd")
     private @Valid String fishingDate = "";
 
     @ApiParam(value = "어종검색 리스트 ", example = "[rockcod, mackerel]")

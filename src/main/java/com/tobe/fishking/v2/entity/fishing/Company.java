@@ -130,14 +130,12 @@ public class Company extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(20) comment 'ADT캡스 아이디'")
     private String adtId;
 
-    @Convert(converter = StringConverter.class)
-    @Column(columnDefinition = "varchar(20) comment 'ADT캡스 비번")
+    @Column(columnDefinition = "varchar(200) comment 'ADT캡스 비번")
     private String adtPw;
 
     @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 아이디'")
     private String nhnId;
 
-    @Convert(converter = StringConverter.class)
     @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 비번'")
     private String nhnPw;
 

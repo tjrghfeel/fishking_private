@@ -106,6 +106,8 @@ import SmartfishingReservationListItemView from "./view/SmartfishingReservationL
 import SmartfishingDashboardListItemView from "./view/SmartfishingDashboardListItemView";
 import SmartfishingGoodsListItemView from "./view/SmartfishingGoodsListItemView";
 import SmartfishingBoatListItemView from "./view/SmartfishingBoatListItemView";
+import SmartsailCameraListItemView from "./view/SmartsailCameraListItemView";
+import SmartsailCameraSetListItemView from "./view/SmartsailCameraSetListItemView";
 
 export default {
   /********** MODAL **********/
@@ -211,5 +213,7 @@ export default {
     SmartfishingDashboardListItemView,
     SmartfishingGoodsListItemView,
     SmartfishingBoatListItemView,
+    SmartsailCameraListItemView,
+    SmartsailCameraSetListItemView,
   },
 };

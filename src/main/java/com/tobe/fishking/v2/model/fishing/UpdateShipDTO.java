@@ -91,7 +91,7 @@ public class UpdateShipDTO {
                 .noticeTitle(noticeTitle)
                 .notice(notice)
                 .location(loc)
-                .profileImage(profileImage)
+                .profileImage(profileImage.split("resource")[1])
                 .company(company)
                 .createdBy(member)
                 .positions(String.join(",", positions))
