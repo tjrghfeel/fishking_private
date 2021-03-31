@@ -277,6 +277,11 @@ public class GoodsService {
                     .build();
             goodsFishingDateRepository.save(goodsFishingDate);
         }
+
+        if (addGoods.getAmount() < ship.getCheapestGoodsCost()) {
+            ship.changeCheapest(member, addGoods.getAmount());
+            shipRepo.save(ship);
+        }
         return goods.getId();
     }
 
