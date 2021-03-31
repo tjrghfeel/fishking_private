@@ -26,12 +26,12 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
             value = "select " +
                     "   a.id alertId, " +
                     "   a.alert_type alertType, " +
-                    "   a.created_date createdDate, " +
+                    "   a.alert_time createdDate, " +
                     "   a.sentence content, " +
                     "   cc.extra_value1 iconDownloadUrl " +
                     "from alerts a, common_code cc " +
                     "where " +
-                    "   (a.is_sent = true or a.alert_time < NOW()) " +
+                    "   (a.is_sent = true or a.alert_time < :today) " +
                     "   and cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
                     "   and a.receiver_id = :memberId " +
@@ -40,7 +40,7 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
             countQuery = "select a.id " +
                     "from alerts a, common_code cc " +
                     "where " +
-                    "   (a.is_sent = true or a.alert_time < NOW()) " +
+                    "   (a.is_sent = true or a.alert_time < :today) " +
                     "   and cc.code_group_id = 93 " +
                     "   and cc.code = a.alert_type " +
                     "   and a.receiver_id = :memberId " +
@@ -48,7 +48,7 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "order by a.alert_time desc",
             nativeQuery = true
     )
-    Page<AlertListForPage> findAllByMember(@Param("memberId") Long memberId, Pageable pageable);
+    Page<AlertListForPage> findAllByMember(@Param("memberId") Long memberId, @Param("today") LocalDateTime today, Pageable pageable);
 
     /*세션토큰에 해당하는 회원의 알림 개수 카운트*/
     @Query(

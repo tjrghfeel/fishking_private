@@ -136,14 +136,16 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   cm.member_coupon_id = c.id "+
             "   and cm.is_use = false " +
             "   and c.is_use = true " +
-            "   and if( DATE_SUB(DATE_ADD(DATE(cm.reg_date), INTERVAL c.effective_days DAY), INTERVAL 7 DAY) = CURDATE(), true, false) " +
+            "   and if( DATE_SUB(DATE(c.effective_end_date), INTERVAL 7 DAY) = CURDATE(), true, false) " +
+//            "   and if( DATE_SUB(DATE_ADD(DATE(cm.reg_date), INTERVAL c.effective_days DAY), INTERVAL 7 DAY) = CURDATE(), true, false) " +
             "order by c.use_qty DESC",
             countQuery = "select cm.id from coupon_member cm, coupon c " +
                     "where " +
                     "   cm.member_coupon_id = c.id "+
                     "   and cm.is_use = false " +
                     "   and c.is_use = true " +
-                    "   and if( DATE_SUB(DATE_ADD(DATE(cm.reg_date), INTERVAL c.effective_days DAY), INTERVAL 7 DAY) = CURDATE(), true, false) " +
+                    "   and if( DATE_SUB(DATE(c.effective_end_date), INTERVAL 7 DAY) = CURDATE(), true, false) " +
+//            "   and if( DATE_SUB(DATE_ADD(DATE(cm.reg_date), INTERVAL c.effective_days DAY), INTERVAL 7 DAY) = CURDATE(), true, false) " +
                     "order by c.use_qty DESC",
             nativeQuery = true
     )

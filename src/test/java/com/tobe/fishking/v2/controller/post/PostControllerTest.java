@@ -133,6 +133,8 @@ public class PostControllerTest {
     MyMenuService myMenuService;
     @Autowired
     FishkingScheduler scheduler;
+    @Autowired
+    CouponMemberRepository couponMemberRepository;
 
     @Test
     public void fileTest() throws Exception {
@@ -166,7 +168,7 @@ public class PostControllerTest {
     @Transactional
     public void noName() throws Exception {
         String aaa = AES.aesDecode("H9Q8zROABmLt2zH9SphnHQ==",env.getProperty("encrypKey.key"));
-
+        couponMemberRepository.checkCouponExpire();
 
 
         System.out.println("result >>> " +aaa);

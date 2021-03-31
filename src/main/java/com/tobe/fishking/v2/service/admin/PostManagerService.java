@@ -3,11 +3,14 @@ package com.tobe.fishking.v2.service.admin;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
+import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
+import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.admin.post.*;
 import com.tobe.fishking.v2.model.board.UpdatePostDTO;
@@ -16,7 +19,9 @@ import com.tobe.fishking.v2.model.common.AddAlertDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
+import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.FishkingScheduler;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.common.AlertService;
@@ -61,6 +66,10 @@ public class PostManagerService {
     AlertService alertService;
     @Autowired
     MemberService memberService;
+    @Autowired
+    AlertsRepository alertsRepository;
+    @Autowired
+    FishkingScheduler scheduler;
 
     public void checkAdminAuthor(String token) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(token)
@@ -185,21 +194,40 @@ public class PostManagerService {
                 .targetRole(parentPost.getTargetRole())
                 .files(dto.getFileList())
                 .build();
-
-
         postService.writePost(writePostDTO,token);
         parentPost.setIsReplied(true);
 
         /*1:1답변완료알림 추가*/
-        AddAlertDto addAlertDto = AddAlertDto.builder()
-                .memberId(parentPost.getAuthor().getId())
-                .alertType("oneToQuery")
-                .entityType("post")
+        String sentence = parentPost.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"일자 문의에 대한 답변이 완료되었습니다.";
+
+        Alerts alerts = Alerts.builder()
+                .alertType(AlertType.oneToQuery)
+                .entityType(EntityType.post)
                 .pid(parentPost.getId())
-                .createdBy(manager.getId())
-                .content(parentPost.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"일자 문의.")
+                .content(null)
+                .sentence(sentence)
+                .isRead(false)
+                .isSent(false)
+                .receiver(parentPost.getAuthor())
+                .alertTime(LocalDateTime.now())
+                .createdBy(manager)
                 .build();
-        alertService.addAlert(addAlertDto);
+        alertsRepository.save(alerts);
+
+        String alertTitle = "1:1문의 답변 완료";
+        String registrationToken = parentPost.getAuthor().getRegistrationToken();
+
+        scheduler.sendPushAlert(alertTitle, sentence, alerts, registrationToken);
+//
+//        AddAlertDto addAlertDto = AddAlertDto.builder()
+//                .memberId(parentPost.getAuthor().getId())
+//                .alertType("oneToQuery")
+//                .entityType("post")
+//                .pid(parentPost.getId())
+//                .createdBy(manager.getId())
+//                .content(parentPost.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"일자 문의.")
+//                .build();
+//        alertService.addAlert(addAlertDto);
 
         return parentPost.getId();
     }

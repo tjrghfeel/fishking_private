@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.AddAlertDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
@@ -44,32 +45,37 @@ public class FishkingScheduler {
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
-    @Scheduled(cron = "0 0 12 * * *")
+    @Scheduled(cron = "0 0 12 * * *")//실서버용
+//    @Scheduled(cron = "0 0/1 * * * *")//테스트용
     void checkCouponExpire() throws ResourceNotFoundException, IOException {
         List<CouponMemberDTO> couponList = couponMemberRepository.checkCouponExpire();
+        Member manager = memberService.getMemberById(16L);
 
         for(int i=0; i<couponList.size(); i++){
             CouponMemberDTO dto = couponList.get(i);
-            AddAlertDto addAlertDto = AddAlertDto.builder()
-                    .memberId(dto.getMember())
-                    .alertType("couponExpire")
-                    .entityType("couponMember")
-                    .pid(dto.getId())
-                    .content(dto.getCouponName())
-                    .createdBy(16L)
-                    .build();
-            Long alertId = alertService.addAlert(addAlertDto);
-            Alerts alerts = alertsRepository.findById(alertId)
-                    .orElseThrow(()->new ResourceNotFoundException("alerts not found for this id :: "+alertId));
 
             Member receiver = memberRepository.findById(dto.getMember())
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMember()));
             String registrationToken = receiver.getRegistrationToken();
             String alertTitle = "쿠폰 만료 알림";
-            String alertContent = dto.getCouponName()+"의 유효기간이 7일 남았습니다.";
+            String sentence = "보유하고 계신 쿠폰 '"+dto.getCouponName()+"'의 유효기간이 7일 남았습니다."+" 7일 이후에는 자동 소멸됩니다.";
 
-            sendPushAlert(alertTitle,alertContent,alerts,registrationToken);
-            alerts.setSentence("보유하고 계신 쿠폰 "+alertContent+" 7일 이후에는 자동 소멸됩니다.");
+            Alerts alerts = Alerts.builder()
+                    .alertType(AlertType.couponExpire)
+                    .entityType(EntityType.couponMember)
+                    .pid(dto.getId())
+                    .content(null)
+                    .sentence(sentence)
+                    .isRead(false)
+                    .isSent(false)
+                    .receiver(receiver)
+                    .alertTime(LocalDateTime.now())
+                    .createdBy(manager)
+                    .build();
+
+            alerts = alertsRepository.save(alerts);
+
+            sendPushAlert(alertTitle,sentence,alerts,registrationToken);
         }
     }
 
@@ -140,7 +146,7 @@ public class FishkingScheduler {
         parameter.put("json",
                 "{ \"notification\": " +
                         "{" +
-                        "\"title\": \""+alertTitle+"\", " +
+                        "\"title\": \"["+alertTitle+"]\", " +
                         "\"body\": \""+alertContent+"\", " +
                         "\"android_channel_id\": \"notification.native_fishking\"" +
                         "}," +

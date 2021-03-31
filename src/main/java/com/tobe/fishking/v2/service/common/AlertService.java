@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,30 +36,30 @@ public class AlertService {
 
     /*알람 추가.
      * 해당 회원의 기존의 Alerts를 삭제하고 다시 생성. */
-    @Transactional
-    public Long addAlert(AddAlertDto dto) throws ResourceNotFoundException {
-        Member receiver = memberRepo.findById(dto.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMemberId()));
-        Member createdBy = memberRepo.findById(dto.getCreatedBy())
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getCreatedBy()));
-
-        EntityType entityType = null;
-        if(dto.getEntityType()!=null){
-            entityType = EntityType.valueOf(dto.getEntityType());
-        }
-
-        Alerts alerts = Alerts.builder()
-                .alertType(AlertType.valueOf(dto.getAlertType()))
-                .entityType(entityType)
-                .pid(dto.getPid())
-                .isRead(false)
-                .content(dto.getContent())
-                .receiver(receiver)
-                .createdBy(createdBy)
-                .isSent(false)
-                .build();
-        return alertsRepo.save(alerts).getId();
-    }
+//    @Transactional
+//    public Long addAlert(AddAlertDto dto) throws ResourceNotFoundException {
+//        Member receiver = memberRepo.findById(dto.getMemberId())
+//                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMemberId()));
+//        Member createdBy = memberRepo.findById(dto.getCreatedBy())
+//                .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getCreatedBy()));
+//
+//        EntityType entityType = null;
+//        if(dto.getEntityType()!=null){
+//            entityType = EntityType.valueOf(dto.getEntityType());
+//        }
+//
+//        Alerts alerts = Alerts.builder()
+//                .alertType(AlertType.valueOf(dto.getAlertType()))
+//                .entityType(entityType)
+//                .pid(dto.getPid())
+//                .isRead(false)
+//                .content(dto.getContent())
+//                .receiver(receiver)
+//                .createdBy(createdBy)
+//                .isSent(false)
+//                .build();
+//        return alertsRepo.save(alerts).getId();
+//    }
 
     /*알람 읽음처리 삭제*/
     @Transactional
@@ -80,6 +81,6 @@ public class AlertService {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         Pageable pageable = PageRequest.of(0,50);
-        return alertsRepo.findAllByMember(member.getId(),pageable);
+        return alertsRepo.findAllByMember(member.getId(), LocalDateTime.now(), pageable);
     }
 }
