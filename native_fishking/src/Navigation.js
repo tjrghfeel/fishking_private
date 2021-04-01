@@ -22,9 +22,9 @@ export default inject()(
           backgroundColor={'#3683d5'}
         />
         <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
-          <ScrollView refreshControl={<RefreshControl refreshing={true} />}>
-            <MainPage />
-          </ScrollView>
+          {/*<ScrollView refreshControl={<RefreshControl refreshing={true} />}>*/}
+          <MainPage />
+          {/*</ScrollView>*/}
         </SafeAreaView>
       </>
     );
