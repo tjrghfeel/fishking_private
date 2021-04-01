@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HashUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,6 +28,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -174,9 +178,11 @@ public class HttpRequestService {
         httpPost.addHeader("Content-Type", "application/json");
 
         JsonObject data = new JsonObject();
+        data.addProperty("cmd", "login.t_view_platform");
         data.addProperty("id", id);
 //        data.addProperty("pwd", HashUtil.sha256(pw));
         data.addProperty("pwd", pw);
+        data.addProperty("deviceType", "android");
         data.addProperty("deviceId", uid);
         data.addProperty("appId", "skbb");
         data.addProperty("cflag", "yes");
@@ -221,7 +227,7 @@ public class HttpRequestService {
 //            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
 
             String json = EntityUtils.toString(response.getEntity());
-//            System.out.println(json);
+            System.out.println(json);
 //            Gson gson = new Gson();
             Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
             result = (List<Map<String, Object>>) res.get("cameraList");
@@ -249,9 +255,9 @@ public class HttpRequestService {
             String json = EntityUtils.toString(response.getEntity());
 //            Gson gson = new Gson();
             Map<String, Object> res = (Map<String, Object>) new Gson().fromJson(json, HashMap.class);
-//            System.out.println("---detail---");
-//            System.out.println(res);
-//            System.out.println("------------");
+            System.out.println("---detail---");
+            System.out.println(res);
+            System.out.println("------------");
             result.put("serial", res.get("camId").toString());
             result.put("name", res.get("camName").toString());
             result.put("status", res.get("status").toString());
@@ -293,7 +299,37 @@ public class HttpRequestService {
 //                System.out.println(res);
                 result = res.get("liveUri").toString();
             } else {
-                result = null;
+                LocalDateTime today = LocalDateTime.now();
+                String toDate = today.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+                httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "/" + camId + "/timeline?maxCount=0&fromDateTime=20181205155534&toDateTime=" + toDate);
+                httpGet.addHeader("X-Scq-Auth-Key", token);
+                httpGet.addHeader("User-Agent", USER_AGENT);
+                httpGet.addHeader("Accept-Language", "ko");
+                httpGet.addHeader("Content-Type", "application/json");
+                response = httpClient.execute(httpGet);
+                json = EntityUtils.toString(response.getEntity());
+//                System.out.println(json);
+                Map<String, Object> res = new Gson().fromJson(json, HashMap.class);
+                List<Map<String, Object>> v = (List<Map<String, Object>>) res.get("video");
+                if (v.isEmpty()) {
+                    result = null;
+                } else {
+                    String from = v.get(0).get("fromDateTime").toString();
+//                    String to = v.get(0).get("toDateTime").toString();
+//                    String duration = v.get(0).get("duration").toString();
+
+                    httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "/" + camId + "/playback?scale=1&dateTime=" + from.substring(0,8) + "T" + from.substring(8) + "Z");
+                    httpGet.addHeader("X-Scq-Auth-Key", token);
+                    httpGet.addHeader("User-Agent", USER_AGENT);
+                    httpGet.addHeader("Accept-Language", "ko");
+                    httpGet.addHeader("Content-Type", "application/json");
+                    response = httpClient.execute(httpGet);
+                    json = EntityUtils.toString(response.getEntity());
+                    res = new Gson().fromJson(json, HashMap.class);
+//                    System.out.println(res);
+                    result = res.get("playbackUri").toString();
+                }
+//                System.out.println(res);
             }
             httpClient.close();
         } catch (IOException e) {
