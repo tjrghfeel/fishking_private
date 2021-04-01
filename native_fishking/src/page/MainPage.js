@@ -110,6 +110,7 @@ export default inject(
         <WebView
           ref={webview}
           source={{uri}}
+          mixedContentMode={'always'}
           originWhitelist={['*']}
           allowFileAccess={true}
           allowFileAccessFromFileURLs={true}
