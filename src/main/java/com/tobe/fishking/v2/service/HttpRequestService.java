@@ -178,11 +178,11 @@ public class HttpRequestService {
         httpPost.addHeader("Content-Type", "application/json");
 
         JsonObject data = new JsonObject();
-        data.addProperty("cmd", "login.t_view_platform");
+//        data.addProperty("cmd", "login.t_view_platform");
         data.addProperty("id", id);
 //        data.addProperty("pwd", HashUtil.sha256(pw));
         data.addProperty("pwd", pw);
-        data.addProperty("deviceType", "android");
+//        data.addProperty("deviceType", "android");
         data.addProperty("deviceId", uid);
         data.addProperty("appId", "skbb");
         data.addProperty("cflag", "yes");
