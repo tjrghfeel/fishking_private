@@ -419,46 +419,6 @@ public class MainController {
 
     }
 
-
-    @ApiOperation(value = "선박현황 -대시보드 ", notes = "선박수, 업체수 조회한다.   ")
-    @GetMapping(value = "/getMaininfoByMarine")
-    public HashMap<String, Long> getMaininfoByMarine(){
-
-        var marineCount  = new HashMap<String, Long>();
-
-        marineCount.put("company", companyService.findAllByIsRegistered());
-        marineCount.put("ship", shipService.findAllShipCount());
-
-        RiderShipDTO.RiderShipDTOResp _riderShipDTOResp  =  ordersService.findAllByDateAndRider(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")), OrderStatus.bookConfirm);
-
-
-        if (_riderShipDTOResp != null) {
-            marineCount.put("riderPersonalByOrder", _riderShipDTOResp.getPersonnelCountByOrder().longValue());
-            marineCount.put("realRider", _riderShipDTOResp.getRiderCountByOrder());
-        }
-        else {
-            marineCount.put("riderPersonalByOrder", 0L);
-            marineCount.put("realRider", 0L);
-        }
-
-        return marineCount;
-
-    }
-
-    @ApiOperation(value = " 출항현황 ", notes = "출항현황 Map.   ")
-    @GetMapping(value = "/getShipDepartInfoByMarine")
-    public ListResult<OrdersInfoDTO.ShipByOrdersDTOResp> getShipDepartInfoByMarine(){
-        return responseService.getListResult(ordersService.findAllByFishingDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))));
-    }
-
-
-    @ApiOperation(value = " 승선확인 -명단리스트 ", notes = "승선확인 -명단리스트.   ")
-    @GetMapping(value = "/getBoardingListForGoodsByMarine")
-    public ListResult<RiderShipDTO.BoardingListByOrdersDTOResp> getBoardingListForGoodsByMarine(Long goodsId){
-        if (goodsId == null ) return null;
-        return responseService.getListResult(ordersService.findAllByBoardingList(goodsId));
-    }
-
     @ApiOperation(value = "메인화면 데이터 ", notes = "메인화면 데이터 " +
             "\n live: 실시간 조황 [{ " +
             "\n id: 상품 id" +

@@ -8,17 +8,27 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.enums.common.TakeType;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.fishing.GoodsResponse;
+import com.tobe.fishking.v2.model.police.PoliceGoodsResponse;
+import com.tobe.fishking.v2.model.police.QPoliceGoodsResponse;
+import com.tobe.fishking.v2.model.police.QRiderResponse;
+import com.tobe.fishking.v2.model.police.RiderResponse;
 import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
 import com.tobe.fishking.v2.model.response.QGoodsSmallResponse;
 import com.tobe.fishking.v2.model.response.QUpdateGoodsResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.tobe.fishking.v2.entity.common.QLoveTo.loveTo;
@@ -26,6 +36,8 @@ import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
 import static com.tobe.fishking.v2.entity.fishing.QOrderDetails.orderDetails;
 import static com.tobe.fishking.v2.entity.fishing.QRideShip.rideShip;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
+import static com.tobe.fishking.v2.entity.fishing.QOrders.orders;
+import static com.tobe.fishking.v2.entity.fishing.QRealTimeVideo.realTimeVideo;
 
 @RequiredArgsConstructor
 public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
@@ -105,5 +117,157 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 .where(goods.id.eq(goodsId))
                 .fetchOne();
         return response;
+    }
+
+    @Override
+    public Long getTodayRunGoods() {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<OrderStatus> statuses = new ArrayList<>();
+        statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.fishingComplete);
+        return queryFactory
+                .selectFrom(goods).join(orderDetails).on(goods.eq(orderDetails.goods))
+                .where(goods.fishingDates.any().fishingDateString.eq(today), goods.isUse.eq(true))
+                .groupBy(goods)
+                .fetchCount();
+    }
+
+    @Override
+    public Long getNowRunGoods() {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+        List<OrderStatus> statuses = new ArrayList<>();
+        statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.fishingComplete);
+        return queryFactory
+                .selectFrom(goods).join(orderDetails).on(goods.eq(orderDetails.goods))
+                .where(goods.fishingDates.any().fishingDateString.eq(today),
+                        Expressions.asTime(goods.fishingStartTime).before(time),
+                        Expressions.asTime(goods.fishingEndTime).after(time),
+                        goods.isUse.eq(true),
+                        orderDetails.orders.orderStatus.in(statuses))
+                .groupBy(goods)
+                .fetchCount();
+    }
+
+    @Override
+    public Long getWaitRidePersonnel() {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<OrderStatus> statuses = new ArrayList<>();
+        statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.fishingComplete);
+        return queryFactory
+                .select(rideShip)
+                .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(goods).on(orderDetails.goods.eq(goods))
+                .where(goods.isUse.eq(true),
+                        goods.fishingDates.any().fishingDateString.eq(today),
+                        rideShip.isRide.eq(false),
+                        orderDetails.orders.orderStatus.in(statuses))
+                .fetchCount();
+    }
+
+    @Override
+    public Long getRealRidePersonnel() {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<OrderStatus> statuses = new ArrayList<>();
+        statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.fishingComplete);
+        return queryFactory
+                .select(rideShip)
+                .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(goods).on(orderDetails.goods.eq(goods))
+                .where(goods.isUse.eq(true),
+                        goods.fishingDates.any().fishingDateString.eq(today),
+                        rideShip.isRide.eq(true),
+                        orderDetails.orders.orderStatus.in(statuses))
+                .fetchCount();
+    }
+
+    @Override
+    public List<PoliceGoodsResponse> getPoliceAllGoods() {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+        JPAQuery<PoliceGoodsResponse> query = queryFactory
+                .select(new QPoliceGoodsResponse(
+                        ship.id,
+                        goods.id,
+                        ship.shipName,
+                        goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
+                        goods.fishingEndTime.substring(0,2).concat(":").concat(goods.fishingEndTime.substring(2,4)),
+                        goods.maxPersonnel,
+                        ExpressionUtils.as(JPAExpressions
+                                .select(rideShip.count())
+                                .from(rideShip)
+                                .where(rideShip.isRide.eq(true), rideShip.ordersDetail.orders.eq(orders)),
+                                Expressions.numberPath(Long.class, "ridePersonnel")),
+                        ship.liveLocation.latitude,
+                        ship.liveLocation.longitude,
+                        ExpressionUtils.as(JPAExpressions
+                                        .select(realTimeVideo.count())
+                                        .from(realTimeVideo)
+                                        .where(realTimeVideo.isUse.eq(true), realTimeVideo.ships.eq(ship)),
+                                Expressions.numberPath(Long.class, "cameraCount"))
+                ))
+                .from(goods).join(ship).on(goods.ship.eq(ship)).join(orders).on(orders.goods.eq(goods))
+                .where(goods.isUse.eq(true),
+                        goods.fishingDates.any().fishingDateString.eq(today),
+                        Expressions.asTime(goods.fishingStartTime).before(time),
+                        Expressions.asTime(goods.fishingEndTime).after(time))
+                .groupBy(goods);
+            return query.fetch();
+    }
+
+    @Override
+    public Page<PoliceGoodsResponse> getPoliceGoods(Integer page) {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+        JPAQuery<PoliceGoodsResponse> query = queryFactory
+                .select(new QPoliceGoodsResponse(
+                        ship.id,
+                        goods.id,
+                        ship.shipName,
+                        goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
+                        goods.fishingEndTime.substring(0,2).concat(":").concat(goods.fishingEndTime.substring(2,4)),
+                        goods.maxPersonnel,
+                        ExpressionUtils.as(JPAExpressions
+                                        .select(rideShip.count())
+                                        .from(rideShip)
+                                        .where(rideShip.isRide.eq(true), rideShip.ordersDetail.orders.eq(orders)),
+                                Expressions.numberPath(Long.class, "ridePersonnel")),
+                        ship.liveLocation.latitude,
+                        ship.liveLocation.longitude,
+                        ExpressionUtils.as(JPAExpressions
+                                        .select(realTimeVideo.count())
+                                        .from(realTimeVideo)
+                                        .where(realTimeVideo.isUse.eq(true), realTimeVideo.ships.eq(ship)),
+                                Expressions.numberPath(Long.class, "cameraCount"))
+                ))
+                .from(goods).join(ship).on(goods.ship.eq(ship)).join(orders).on(orders.goods.eq(goods))
+                .where(goods.isUse.eq(true),
+                        goods.fishingDates.any().fishingDateString.eq(today))
+                .groupBy(goods);
+
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("fishingStartTime"));
+        QueryResults<PoliceGoodsResponse> results = query.orderBy(goods.fishingStartTime.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    @Override
+    public List<RiderResponse> getRiderData(Long goodsId) {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<RiderResponse> responses = queryFactory
+                .select(new QRiderResponse(
+                        rideShip.name,
+                        rideShip.birthday,
+                        rideShip.phoneNumber,
+                        rideShip.bFingerPrint
+                ))
+                .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(orders).on(orderDetails.orders.eq(orders)).join(goods).on(orders.goods.eq(goods))
+                .where(orders.fishingDate.eq(today), goods.id.eq(goodsId))
+                .fetch();
+        return responses;
+
     }
 }

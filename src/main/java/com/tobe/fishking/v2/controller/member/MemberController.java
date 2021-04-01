@@ -397,6 +397,18 @@ public class MemberController {
         return memberService.smartfishingLogin(loginDTO);
     }
 
+    @ApiOperation(value = "해경 로그인",notes = "" +
+            "요청 필드 ) \n" +
+            "- memberId : String / 필수 / 회원 아이디\n" +
+            "- password : String / 필수 / 비밀번호\n" +
+            "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
+    @PostMapping("/police/login")
+    @ResponseBody
+    public String policeLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+        return memberService.policeLogin(loginDTO);
+    }
+
+
     /*로그아웃*/
     @ApiOperation(value = "로그아웃")
     @PostMapping("/logout")

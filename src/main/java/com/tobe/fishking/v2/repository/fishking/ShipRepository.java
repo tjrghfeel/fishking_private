@@ -119,4 +119,6 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
     )
     Page<LiveShipDtoForPage> getLiveShipList(Pageable pageable);
 
+    @Query("select g.ship.shipName from Goods g where g.id = :goodsId")
+    String getShipNameByGoodsId(Long goodsId);
 }
