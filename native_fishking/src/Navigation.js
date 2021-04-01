@@ -1,38 +1,22 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {inject, observer} from 'mobx-react';
-import StatusBar from './component/StatusBar';
-import SafeAreaView from './component/SafeAreaView';
-import {createStackNavigator} from '@react-navigation/stack';
+import {SafeAreaView, StatusBar, Platform} from 'react-native';
 
-const RootStackNav = createStackNavigator();
+import MainPage from './page/MainPage';
 
-import SplashPage from './page/SplashPage';
-import WebViewPage from './page/WebViewPage';
-
-export default inject(
-  'AppStore',
-  'DialogStore',
-)(
-  observer(({AppStore}) => {
-    useEffect(() => {
-      // AppStore.isGrantedPermissions();
-    });
+export default inject()(
+  observer(() => {
     return (
       <>
-        <StatusBar />
-        <SafeAreaView>
-          <RootStackNav.Navigator screenOptions={{headerShown: false}}>
-            {!AppStore.splashed && (
-              <RootStackNav.Screen
-                name={'splash'}
-                component={SplashPage}
-                options={{animationTypeForReplace: 'push'}}
-              />
-            )}
-            {AppStore.splashed && (
-              <RootStackNav.Screen name={'webview'} component={WebViewPage} />
-            )}
-          </RootStackNav.Navigator>
+        <StatusBar
+          barStyle={Platform.select({
+            ios: 'dark-content',
+            android: 'light-content',
+          })}
+          backgroundColor={'#3683d5'}
+        />
+        <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
+          <MainPage />
         </SafeAreaView>
       </>
     );
