@@ -15,7 +15,7 @@ const APIStore = new (class {
   /** action */
   /********** ********** ********** ********** **********/
   setLoading = (isLoading) => {
-    this.isLoading = isLoading;
+    this.isLoading = false;
   };
   _get = (url, params, headers) => {
     return new Promise((resolve, reject) => {
