@@ -49,7 +49,14 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      async componentDidMount() {
+      componentDidMount() {
+        this.init();
+      }
+      componentWillUnmount() {
+        const { PageStore } = this.props;
+        PageStore.removeScrollEvent();
+      }
+      init = async () => {
         const {
           PageStore,
           APIStore,
@@ -107,11 +114,7 @@ export default inject(
         });
         if (!restored) this.loadPageData();
         PageStore.reloadSwipe();
-      }
-      componentWillUnmount() {
-        const { PageStore } = this.props;
-        PageStore.removeScrollEvent();
-      }
+      };
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
 
