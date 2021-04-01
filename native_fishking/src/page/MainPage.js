@@ -247,9 +247,7 @@ export default inject(
                   );
                 }
                 await AsyncStorage.setItem('@initiated', 'Y');
-                this.props.WebViewStore.setApplicationUrl(
-                  'https://fishkingapp.com/cust/main/home',
-                );
+                setUri('https://fishkingapp.com/cust/main/home');
                 break;
               }
             }
