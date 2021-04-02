@@ -1,3 +1,4 @@
+/* global Kakao */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
@@ -5,7 +6,8 @@ import Components from "../../components";
 export default inject(
   "PageStore",
   "ModalStore",
-  "NativeStore"
+  "NativeStore",
+  "APIStore"
 )(
   observer(
     class extends React.Component {
@@ -23,8 +25,8 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       onClickLogin = async () => {
-        const { id, password } = this.state;
-        if (id === "") {
+        const { id: memberId, password } = this.state;
+        if (memberId === "") {
           this.id.current?.classList.add("is-invalid");
           return;
         } else {
@@ -37,30 +39,42 @@ export default inject(
           this.password.current?.classList.remove("is-invalid");
         }
 
-        const { ModalStore, PageStore } = this.props;
-        // PageStore.push(`/dashboard`);
-        // return;
+        const { APIStore, ModalStore, PageStore } = this.props;
 
-        ModalStore.openModal("Alert", {
-          title: "로그인 안내",
-          body: (
-            <React.Fragment>
-              <p>
-                ID/PW가 일치하지 않습니다. <br />
-                ㈜투비에서 제공한 해경용 아이디를 <br />
-                확인하신 후 다시 시도해 주세요.
-                <br />
-                (문의: 하단 고객센터)
-              </p>
-            </React.Fragment>
-          ),
-          onOk: () => {
-            PageStore.setAccessToken("a", "police", this.state.auto);
+        try {
+          const response = await APIStore._post(`/v2/api/police/login`, {
+            memberId,
+            password,
+            registrationToken: window.fcm_token || null,
+          });
+          if (response) {
+            PageStore.setSaved({ memberId });
+            PageStore.setAccessToken(response, "police", this.state.auto);
             PageStore.push(`/dashboard`);
-          },
+          }
+        } catch (err) {
+          ModalStore.openModal("Alert", {
+            title: "로그인 안내",
+            body: (
+              <React.Fragment>
+                <p>
+                  ID/PW가 일치하지 않습니다. <br />
+                  ㈜투비에서 제공한 해경용 아이디를 <br />
+                  확인하신 후 다시 시도해 주세요.
+                  <br />
+                  (문의: 하단 고객센터)
+                </p>
+              </React.Fragment>
+            ),
+            onOk: () => {},
+          });
+        }
+      };
+      onClickKakao = async () => {
+        Kakao.Channel.chat({
+          channelPublicId: "_NzxabK",
         });
       };
-      onClickKakao = async () => {};
       onClickCall = async () => {
         const { ModalStore, NativeStore } = this.props;
         ModalStore.openModal("Confirm", {

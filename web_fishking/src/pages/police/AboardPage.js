@@ -5,13 +5,29 @@ const {
   LAYOUT: { NavigationLayout, PoliceMainTab },
 } = Components;
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "APIStore"
+)(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {};
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        this.loadPageData();
+      }
+      loadPageData = async () => {
+        const { APIStore, PageStore } = this.props;
+        const { goodsId = null } = PageStore.getQueryParams();
 
+        const resolve = await APIStore._get(`/v2/api/police/ride/${goodsId}`);
+        this.setState(resolve);
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -37,12 +53,16 @@ export default inject("PageStore")(
             <div className="container nopadding">
               <div className="card mt-3">
                 <h4 className="text-center">
-                  어복황제1호 <small className="grey">|</small>{" "}
+                  {this.state.shipName} <small className="grey">|</small>{" "}
                   <small>
-                    현재 <strong className="large orange">10</strong>명
+                    현재{" "}
+                    <strong className="large orange">
+                      {Intl.NumberFormat().format(this.state.ridersCount || 0)}
+                    </strong>
+                    명
                   </small>
                   <br />
-                  <small className="grey">20.10.03 (토)</small>
+                  <small className="grey">{this.state.date}</small>
                 </h4>
               </div>
             </div>
@@ -59,30 +79,18 @@ export default inject("PageStore")(
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">홍길동</th>
-                  <td>남</td>
-                  <td>70.07.07</td>
-                  <td>서울시 강남구</td>
-                  <td>010-1234-5678</td>
-                  <td>지문완료</td>
-                </tr>
-                <tr>
-                  <th scope="row">박길동</th>
-                  <td>남</td>
-                  <td>70.07.07</td>
-                  <td>서울시 강남구</td>
-                  <td>010-1234-5678</td>
-                  <td>지문완료</td>
-                </tr>
-                <tr>
-                  <th scope="row">김길동</th>
-                  <td>남</td>
-                  <td>70.07.07</td>
-                  <td>서울시 강남구</td>
-                  <td>010-1234-5678</td>
-                  <td>지문완료</td>
-                </tr>
+                {this.state.riders?.map((data, index) => (
+                  <tr key={index}>
+                    <th scope="row">{data["name"]}</th>
+                    <td></td>
+                    <td>
+                      {data["birthdate"].substr(2, 8).replace(/[-]/g, ".")}
+                    </td>
+                    <td></td>
+                    <td>{data["phone"]}</td>
+                    <td>{data["fingerPrint"]}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
 

@@ -1,3 +1,4 @@
+/* global Kakao */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
@@ -5,17 +6,56 @@ const {
   LAYOUT: { NavigationLayout, PoliceMainTab },
 } = Components;
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "ModalStore",
+  "NativeStore"
+)(
   observer(
     class extends React.Component {
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        const { PageStore } = this.props;
+        PageStore.loadSaved();
+      }
 
+      logout = () => {
+        const { PageStore } = this.props;
+        PageStore.setAccessToken(null, "police");
+        PageStore.push(`/login`);
+      };
+      requestTalk = () => {
+        Kakao.Channel.chat({
+          channelPublicId: "_NzxabK",
+        });
+      };
+      requestCall = () => {
+        const { ModalStore, NativeStore } = this.props;
+        ModalStore.openModal("Confirm", {
+          title: "전화걸기",
+          body: (
+            <React.Fragment>
+              <p>
+                고객센터로 전화연결 하시겠습니까?
+                <br />
+                365일 10시 ~ 18시
+                <br />
+                (점심시간 12시 ~ 13시 30분)
+              </p>
+            </React.Fragment>
+          ),
+          textOk: "통화",
+          onOk: () =>
+            NativeStore.linking("tel:".concat(process.env.REACT_APP_CS_PHONE)),
+        });
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout title={"더보기"} showBackIcon={true} />
@@ -29,8 +69,11 @@ export default inject("PageStore")(
                 />
                 <div className="media-body">
                   <h6>
-                    <strong>ID : Admin</strong>
-                    <a className="btn btn-round-grey btn-xs float-right">
+                    <strong>ID : {PageStore.saved.memberId}</strong>
+                    <a
+                      className="btn btn-round-grey btn-xs float-right"
+                      onClick={this.logout}
+                    >
                       로그아웃
                     </a>
                   </h6>
@@ -49,7 +92,10 @@ export default inject("PageStore")(
               </p>
               <div className="row no-gutters no-gutters-cs d-flex align-items-center mt-4">
                 <div className="col-6">
-                  <a className="btn btn-yellow btn-round btn-lg btn-block cs-padding">
+                  <a
+                    className="btn btn-yellow btn-round btn-lg btn-block cs-padding"
+                    onClick={this.requestTalk}
+                  >
                     <img
                       src="/assets/police/img/svg/icon-talk.svg"
                       alt="Set"
@@ -61,8 +107,7 @@ export default inject("PageStore")(
                 <div className="col-6" style={{ paddingRight: "0px" }}>
                   <a
                     className="btn btn-grey btn-round btn-lg btn-block cs-padding"
-                    data-toggle="modal"
-                    data-target="#callModal"
+                    onClick={this.requestCall}
                   >
                     <img
                       src="/assets/police/img/svg/icon-call.svg"

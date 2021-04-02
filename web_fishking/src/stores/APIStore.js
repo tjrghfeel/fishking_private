@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import imageCompression from "browser-image-compression";
 import Http from "../Http";
 import PageStore from "./PageStore";
+import ModalStore from "./ModalStore";
 
 const APIStore = new (class {
   constructor(props) {
@@ -57,55 +58,85 @@ const APIStore = new (class {
 
   _delete = (url, params, headers) => {
     return new Promise((resolve, reject) => {
-      runInAction(async () => {
-        // this.isLoading = true;
-        try {
-          const response = await Http.request(
-            url,
-            "DELETE",
-            headers,
-            null,
-            params
-          );
-          this.isLoading = false;
-          resolve(response);
-        } catch (err) {
-          this.isLoading = false;
-          reject(err);
-        }
-      });
+      if ((localStorage.getItem("@accessToken") || null) === null) {
+        ModalStore.openModal("Alert", { body: "로그인이 필요합니다." });
+        reject("NOT FOUND ACCESS TOKEN");
+      } else {
+        runInAction(async () => {
+          // this.isLoading = true;
+          try {
+            const response = await Http.request(
+              url,
+              "DELETE",
+              headers,
+              null,
+              params
+            );
+            this.isLoading = false;
+            resolve(response);
+          } catch (err) {
+            this.isLoading = false;
+            reject(err);
+          }
+        });
+      }
     });
   };
 
   _post = (url, data, headers) => {
     return new Promise((resolve, reject) => {
-      runInAction(async () => {
-        // this.isLoading = true;
-        try {
-          const response = await Http.request(url, "POST", headers, null, data);
-          this.isLoading = false;
-          resolve(response);
-        } catch (err) {
-          this.isLoading = false;
-          reject(err);
-        }
-      });
+      if (
+        url.indexOf("/login") === -1 &&
+        (localStorage.getItem("@accessToken") || null) === null
+      ) {
+        ModalStore.openModal("Alert", { body: "로그인이 필요합니다." });
+        reject("NOT FOUND ACCESS TOKEN");
+      } else {
+        runInAction(async () => {
+          // this.isLoading = true;
+          try {
+            const response = await Http.request(
+              url,
+              "POST",
+              headers,
+              null,
+              data
+            );
+            this.isLoading = false;
+            resolve(response);
+          } catch (err) {
+            this.isLoading = false;
+            reject(err);
+          }
+        });
+      }
     });
   };
 
   _put = (url, data, headers) => {
     return new Promise((resolve, reject) => {
-      runInAction(async () => {
-        // this.isLoading = true;
-        try {
-          const response = await Http.request(url, "PUT", headers, null, data);
-          this.isLoading = false;
-          resolve(response);
-        } catch (err) {
-          this.isLoading = false;
-          reject(err);
-        }
-      });
+      if ((localStorage.getItem("@accessToken") || null) === null) {
+        ModalStore.openModal("Alert", { body: "로그인이 필요합니다." });
+        reject("NOT FOUND ACCESS TOKEN");
+      } else {
+        runInAction(async () => {
+          // this.isLoading = true;
+          try {
+            const response = await Http.request(
+              url,
+              "PUT",
+              headers,
+              null,
+              data
+            );
+            this.isLoading = false;
+            resolve(response);
+          } catch (err) {
+            this.isLoading = false;
+            reject(err);
+          }
+        });
+      }
     });
   };
 
