@@ -14,9 +14,24 @@ const PageStore = new (class {
   loggedIn = false;
   state = {};
   injectedScripts = [];
+  saved = {};
   /********** ********** ********** ********** **********/
   /** action */
   /********** ********** ********** ********** **********/
+  setSaved = (saved) => {
+    this.saved = {
+      ...this.saved,
+      ...saved,
+    };
+    localStorage.setItem("@saved", JSON.stringify(this.saved));
+  };
+  loadSaved = () => {
+    let saved = localStorage.getItem("@saved");
+    if (saved !== null) {
+      saved = JSON.parse(saved);
+      this.saved = saved;
+    }
+  };
   setHistory = (history) => {
     this.history = history;
   };
@@ -73,6 +88,7 @@ const PageStore = new (class {
   ) => {
     if (accessToken === null) {
       localStorage.clear();
+      sessionStorage.clear();
       // localStorage.removeItem("@accessToken");
       // localStorage.removeItem(`@accessToken_${service}`);
       // sessionStorage.removeItem("@accessToken");
@@ -101,7 +117,12 @@ const PageStore = new (class {
       localStorage.getItem(`@accessToken_smartfishing`) ||
       sessionStorage.getItem(`@accessToken_smartfishing`) ||
       null;
-    if (cust === null && smartfishing === null) this.loggedIn = false;
+    const police =
+      localStorage.getItem(`@accessToken_police`) ||
+      sessionStorage.getItem(`@accessToken_police`) ||
+      null;
+    if (cust === null && smartfishing === null && police === null)
+      this.loggedIn = false;
     else this.loggedIn = true;
   };
   windowEventHandler = [];

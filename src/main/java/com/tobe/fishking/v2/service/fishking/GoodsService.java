@@ -5,32 +5,34 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.Popular;
-import com.tobe.fishking.v2.entity.fishing.Goods;
-import com.tobe.fishking.v2.entity.fishing.GoodsFishingDate;
-import com.tobe.fishking.v2.entity.fishing.Places;
-import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.exception.*;
 import com.tobe.fishking.v2.model.fishing.*;
+import com.tobe.fishking.v2.model.police.PoliceGoodsResponse;
+import com.tobe.fishking.v2.model.police.RiderResponse;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.GoodsSmallResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
-import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
+import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.repository.fishking.specs.GoodsSpecs;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.PopularRepository;
-import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
-import com.tobe.fishking.v2.repository.fishking.PlacesRepository;
-import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.tobe.fishking.v2.repository.fishking.specs.RideShipSpecs.goodsIdEqu;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 
 @Service
@@ -46,6 +48,7 @@ public class GoodsService {
     private final PopularRepository popularRepo;  //JpaResposistory
     private final CommonCodeRepository codeRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
+    private final RideShipRepository rideShipRepository;
 
 
     private static int searchSize = 0;
@@ -277,6 +280,11 @@ public class GoodsService {
                     .build();
             goodsFishingDateRepository.save(goodsFishingDate);
         }
+
+        if (addGoods.getAmount() < ship.getCheapestGoodsCost()) {
+            ship.changeCheapest(member, addGoods.getAmount());
+            shipRepo.save(ship);
+        }
         return goods.getId();
     }
 
@@ -316,4 +324,47 @@ public class GoodsService {
         return true;
     }
 
+    @Transactional
+    public Long getTodayRunGoods() {
+        return goodsRepo.getTodayRunGoods();
+    }
+
+    @Transactional
+    public Long getNowRunGoods() {
+        return goodsRepo.getNowRunGoods();
+    }
+
+    @Transactional
+    public Long getWaitRidePersonnel() {
+        return goodsRepo.getWaitRidePersonnel();
+    }
+
+    @Transactional
+    public Long getRealRidePersonnel() {
+        return goodsRepo.getRealRidePersonnel();
+    }
+
+    @Transactional
+    public List<PoliceGoodsResponse> getPoliceAllGoods() {
+        return goodsRepo.getPoliceAllGoods();
+    }
+
+    @Transactional
+    public Page<PoliceGoodsResponse> getPoliceAllGoods(Integer page) {
+        return goodsRepo.getPoliceGoods(page);
+    }
+
+    @Transactional
+    public Map<String, Object> getRideData(Long goodsId) {
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("shipName", shipRepo.getShipNameByGoodsId(goodsId));
+        result.put("date", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd (EEE)")));
+
+        List<RiderResponse> response = goodsRepo.getRiderData(goodsId);
+        result.put("riders", response);
+        result.put("ridersCount", response.size());
+
+        return result;
+    }
 }

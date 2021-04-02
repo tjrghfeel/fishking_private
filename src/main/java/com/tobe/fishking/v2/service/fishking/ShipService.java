@@ -38,6 +38,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -278,8 +279,11 @@ public class ShipService {
                 Company company = companyRepository.getCompanyByShip(ship_id);
                 String token = null;
                 try {
+                    if (sessionToken.equals("")) {
+                        sessionToken = LocalTime.now().toString();
+                    }
                     token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), sessionToken);
-                    String videoUrl = httpRequestService.getPlayUrl(video.getSerial(), token);
+                    String videoUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
                     if (videoUrl != null) {
                         response.setLiveVideo(videoUrl);
                     }

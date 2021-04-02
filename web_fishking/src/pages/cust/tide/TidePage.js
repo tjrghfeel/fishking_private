@@ -67,6 +67,10 @@ export default inject(
           arr_158: [],
           arr_159: [],
           arr_160: [],
+          selected: [],
+          tide: [],
+          day: [],
+          time: [],
         });
 
         let observerId = null;
@@ -78,7 +82,10 @@ export default inject(
           const resolve = await APIStore._get(`/v2/api/todayTide`, {
             observerId,
           });
-          this.setState({ location: resolve });
+          this.setState({
+            location: resolve,
+            selected: resolve.tidalAlertTimeList,
+          });
         } else {
           // 날짜별 -
           const resolve = await APIStore._get(`/v2/api/tideByDate`, {

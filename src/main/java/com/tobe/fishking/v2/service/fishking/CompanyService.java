@@ -386,4 +386,6 @@ public class CompanyService {
         return companyRepository.findAllByIsRegistered();
     }
 
+
+
 }

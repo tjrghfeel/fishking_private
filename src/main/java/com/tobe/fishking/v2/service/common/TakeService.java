@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Take;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
@@ -10,6 +11,8 @@ import com.tobe.fishking.v2.model.common.DeletingTakeDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.TakeRepository;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
+import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,14 +21,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class TakeService {
 
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired
-    TakeRepository takeRepository;
-    @Autowired
-    GoodsRepository goodsRepository;
+    private final MemberRepository memberRepository;
+    private final TakeRepository takeRepository;
+    private final GoodsRepository goodsRepository;
+    private final ShipRepository shipRepository;
 
     /*찜 추가 메소드. */
     @Transactional
@@ -40,7 +42,9 @@ public class TakeService {
                 .createdBy(member)
                 .build();
         take = takeRepository.save(take);
-
+        Ship ship = shipRepository.getOne(linkId);
+        ship.addZzim(member);
+        shipRepository.save(ship);
         return take.getId();
     }
 
@@ -68,6 +72,9 @@ public class TakeService {
         /*찜 삭제*/
         Long deletedTakeId = take.getId();
         takeRepository.delete(take);
+        Ship ship = shipRepository.getOne(linkId);
+        ship.delZzim(member);
+        shipRepository.save(ship);
         return deletedTakeId;
     }
 

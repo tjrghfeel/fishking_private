@@ -15,7 +15,7 @@ export default inject("APIStore")(
               bottom: 0,
               left: 0,
               right: 0,
-              display: "flex",
+              display: "none",
               justifyContent: "center",
               alignItems: "center",
               backdropFilter: "blur(1.5px)",

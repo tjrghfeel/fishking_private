@@ -5,10 +5,7 @@ import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
-import com.tobe.fishking.v2.repository.fishking.CalculateRepository;
-import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
-import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
-import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
+import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.utils.KSPayWebHostBean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +21,7 @@ public class PayService {
     private final OrderDetailsRepository orderDetailsRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final CalculateRepository calculateRepository;
+    private final ShipRepository shipRepository;
 
     public Long payResult(String rcid, String rctype, String rhash, String rcancel) {
         /* rcid 없으면 결제를 끝까지 진행하지 않고 중간에 결제취소 */
@@ -94,6 +92,9 @@ public class PayService {
                                 .isCancel(false)
                                 .build();
                         calculateRepository.save(calculate);
+                        Ship ship = goods.getShip();
+                        ship.addSell(member);
+                        shipRepository.save(ship);
                         return order.getId();
 //                        return 0L;
                     } else {

@@ -14,44 +14,48 @@ http.defaults.timeout = 10000;
 export default (() => {
   const request = (url, method, headers = {}, params, data) => {
     return new Promise((resolve, reject) => {
-      // ##### >> API 요청시 권한 (로그인여부) 체크
-      if (
-        (localStorage.getItem("@accessToken") || null) === null &&
-        url === "/v2/api/loveto"
-      ) {
-        ModalStore.openModal("Alert", { body: "로그인이 필요합니다." });
-        reject("NOT FOUND ACCESS TOKEN");
-      } else {
-        http
-          .request({
-            url,
-            method,
-            headers: {
-              ...headers,
-              Authorization: localStorage.getItem("@accessToken") || "",
-            },
-            params,
-            data,
-          })
-          .then((response, xhr) => {
-            if (response && response["status"] == "204") {
-              // ModalStore.openModal("Alert", {
-              //   body: "요청하신 검색 결과가 없습니다.",
-              // });
-              resolve(null);
-            } else {
-              resolve(response.data);
-            }
-          })
-          .catch((err) => {
+      const startTime = new Date().getTime();
+      http
+        .request({
+          url,
+          method,
+          headers: {
+            ...headers,
+            Authorization: localStorage.getItem("@accessToken") || "",
+          },
+          params,
+          data,
+        })
+        .then((response, xhr) => {
+          console.log(
+            `${method} : ${Intl.NumberFormat().format(
+              new Date().getTime() - startTime
+            )}ms\n${url}`
+          );
+          if (response && response["status"] == "204") {
+            // ModalStore.openModal("Alert", {
+            //   body: "요청하신 검색 결과가 없습니다.",
+            // });
+            resolve(null);
+          } else {
+            resolve(response.data);
+          }
+        })
+        .catch((err) => {
+          console.log(
+            `${method} : ${Intl.NumberFormat().format(
+              new Date().getTime() - startTime
+            )}ms\n${url}`
+          );
+          if (err.message?.indexOf("500") !== -1) {
             ModalStore.openModal("Alert", {
               body: "요청 중 에러가 발생하였습니다.",
             });
-            console.error(`message:${err.message}`);
-            console.error(`stack:${err.stack}`);
-            reject(err);
-          });
-      }
+          }
+          console.error(`message:${err.message}`);
+          console.error(`stack:${err.stack}`);
+          reject(err);
+        });
     });
   };
 

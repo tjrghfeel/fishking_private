@@ -317,4 +317,26 @@ public class Ship extends BaseTime {  //선상
         this.devices = devices;
     }
 
+    public void addZzim(Member member) {
+        this.zzimCount += 1;
+        modifiedBy = member;
+    }
+
+    public void delZzim(Member member) {
+        if (this.zzimCount > 0) {
+            this.zzimCount -= 1;
+        }
+        modifiedBy = member;
+    }
+
+    public void addSell(Member member) {
+        this.sellCount += 1;
+        modifiedBy = member;
+    }
+
+    public void changeCheapest(Member member, Integer amount) {
+        this.cheapestGoodsCost = amount;
+        modifiedBy = member;
+    }
+
 }

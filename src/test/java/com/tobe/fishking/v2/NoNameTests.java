@@ -28,30 +28,33 @@ public class NoNameTests {
     public void querydslCustomTest() throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         //given
         Long memberId = 13L;
-        String id = "skb_test03";
-//        String pw = "solution1204";
-        String pw = "58326a9bf8afc4091405213a2efe355351e3a88c52a624def8a64f1ca7cad875";
-        String token = "UHFZa3BSWWR0SlZsMFBwZ3cxdmk5KzdPTFpXMGVNTVVkWU1mb083WUVFTHRBSDd5Z3NnelNEOFRNaGUxSm5NK2N6Q0VmV1RnUktVPQ0K";
-        String camId = "86322";
+//        String id = "skb_test03";
+        String id = "marine02";
+//        String pw = "58326a9bf8afc4091405213a2efe355351e3a88c52a624def8a64f1ca7cad875";
+        String pw = "155b89b0f83e5aca060ae2d2795a3fe711b874306a2ea6edccc89d944f3f5d58";
+        String token;
+        String camId = "243757";
 
         //when
-        String t = "https://www.fishkingapp.com/resource/ship/seok%20ho_202103291813467.jpg";
-        String sp = t.split("resource")[1];
-        System.out.println(sp);
-//        token = httpRequestService.loginADT(id, pw, "13");
-//        Map<String, Object> result = httpRequestService.getADTCameraDetail(camId, token);
+//        String t = "https://www.fishkingapp.com/resource/ship/seok%20ho_202103291813467.jpg";
+//        String sp = t.split("resource")[1];
+//        System.out.println(sp);
+        token = httpRequestService.loginADT(id, pw, "13");
 //        List<Map<String, Object>> result2 = httpRequestService.getADTList(token);
-//        String result3 = httpRequestService.getADTCameraLive(camId, token);
+//        Map<String, Object> result = httpRequestService.getADTCameraDetail(camId, token);
+        String result3 = httpRequestService.getADTCameraLive(camId, token);
 //        System.out.println(result);
 //        Map<String, Object> r = result2.get(0);
 //        System.out.println(((Double) r.get("camId")).intValue());
 //        System.out.println((String) r.get("camName"));
 //        System.out.println((String) r.get("imageUri"));
-//        System.out.println(result3);
+        System.out.println(result3);
         //then
-        assertThat(sp, startsWith("/ship"));
+//        assertThat(sp, startsWith("/ship"));
 //        assertThat(result.size(), is(5));
 //        assertThat(result.length(), is(5));
+        assertThat(result3, startsWith("rtsp"));
+//        assertThat(r.size(), is(5));
     }
 
 }
