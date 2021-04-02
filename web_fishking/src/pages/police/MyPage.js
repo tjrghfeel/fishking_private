@@ -114,7 +114,7 @@ export default inject(
                       alt="Set"
                       className="vam mr-1"
                     />
-                    1234-7777
+                    {process.env.REACT_APP_CS_PHONE}
                   </a>
                 </div>
               </div>
