@@ -64,25 +64,34 @@ public class CompanyManageService {
     public Page<CompanyManageDtoForPage> getCompanyList(CompanySearchConditionDto dto,int page)
             throws NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException,
             BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        if(dto.getMemberName()!=null) {dto.setMemberName(AES.aesEncode(dto.getMemberName(),env.getProperty("encrypKey.key")));}
-        Pageable pageable = PageRequest.of(page,10, JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
+
+
+
+        Pageable pageable = PageRequest.of(page, dto.getPageCount(), JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
         return companyRepository.findCompanyListByConditions(
                 dto.getCompanyId(),
                 dto.getMemberId(),
                 dto.getMemberName(),
+                dto.getMemberNickName(),
+                dto.getAreaCode(),
+                dto.getLocalNumber(),
                 dto.getCompanyName(),
+                dto.getShipOwner(),
                 dto.getSido(),
                 dto.getGungu(),
                 dto.getTel(),
+                dto.getPhoneNumber(),
                 dto.getBizNo(),
-                dto.getBank(),
-                dto.getAccountNum(),
                 dto.getHarbor(),
-                dto.getOwnerWording(),
+                dto.getAccountNum(),
+                dto.getBank(),
                 dto.getIsOpen(),
                 dto.getSkbAccount(),
                 dto.getCompanyAddress(),
                 dto.getIsRegistered(),
+                dto.getAdtId(),
+                dto.getNhnId(),
+                dto.getCreatedBy(),
                 dto.getCreatedDateStart(),
                 dto.getCreatedDateEnd(),
 //                dto.getSort(),

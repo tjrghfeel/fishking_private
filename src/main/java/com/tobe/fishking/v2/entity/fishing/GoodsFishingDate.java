@@ -29,7 +29,7 @@ public class GoodsFishingDate extends BaseTime {
     @Column(columnDefinition = "datetime comment '조업일' ")
     private LocalDate fishingDate;
 
-    @Column(columnDefinition = "varchar(10) commnet '조업일 문자열' ")
+    @Column(columnDefinition = "varchar(10) comment '조업일 문자열' ")
     private String fishingDateString;
 
     @Column(columnDefinition = "int comment '예약된 인원'")

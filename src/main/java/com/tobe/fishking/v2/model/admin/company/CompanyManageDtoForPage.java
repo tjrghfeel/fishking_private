@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 public interface CompanyManageDtoForPage {
 
-    Long getId();
+    Long getCompanyId();
     Long getMemberId();
     String getMemberName();
     String getCompanyName();

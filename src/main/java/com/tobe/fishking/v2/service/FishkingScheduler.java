@@ -80,7 +80,8 @@ public class FishkingScheduler {
     }
 
     /*물때 알림. */
-    @Scheduled(cron = "0 0/1 * * * *")
+//    @Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
     public void checkTideAlert() throws IOException {
         LocalDateTime dateTime = LocalDateTime.now();
         dateTime = dateTime/*.withMinute(0)*/.withSecond(0).withNano(0);
@@ -124,7 +125,7 @@ public class FishkingScheduler {
             Member receiver = alerts.getReceiver();
             String registrationToken = receiver.getRegistrationToken();
 //            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
-            String alertTitle = "["+alerts.getAlertType().getValue()+"]";
+            String alertTitle = ""+alerts.getAlertType().getValue()+"";
 //            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
 //            Integer time = Integer.parseInt(alertData[2]);
 //            String timeString = null;
@@ -157,7 +158,7 @@ public class FishkingScheduler {
         alertsRepository.save(alerts);
     }
 
-    @Scheduled(cron = "0 0 12 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     void checkNoticeDate(){
         Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
         List<Post> noticeList = postRepository.findAllByBoardAndChannelType(board, ChannelType.important);
@@ -166,6 +167,7 @@ public class FishkingScheduler {
             Post notice = noticeList.get(i);
             if(LocalDate.now().isAfter(notice.getNoticeEndDate())){//공지마지막날이 지났으면,
                 notice.setChannelType(ChannelType.general);
+                postRepository.save(notice);
             }
         }
     }

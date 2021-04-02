@@ -108,7 +108,9 @@ public class MapperUtility {
 
     /*enum값 변환 메소드*/
     public String transEnumQuestionType(Integer ordinal){ if(ordinal!=null){return QuestionType.values()[ordinal].getValue();}else return null; }
-    public String transEnumChannelType(Integer ordinal){ if(ordinal!=null){return ChannelType.values()[ordinal].getValue();}else return null; }
+    public String transEnumChannelType(Integer ordinal){
+        if(ordinal!=null){return ChannelType.values()[ordinal].getValue();}else return null;
+    }
     public String transEnumCouponType(Integer ordinal){ if(ordinal!=null){return CouponType.values()[ordinal].getValue();}else return null;}
     public String transEnumFishingType(Integer ordinal){ if(ordinal!=null){return FishingType.values()[ordinal].getValue();}else return null;}
     public String transEnumDependentType(Integer ordinal){if(ordinal!=null){return DependentType.values()[ordinal].getValue();}else return null;}

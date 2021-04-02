@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.TakeResponse;
+import com.tobe.fishking.v2.model.admin.GoodsManageDtoForPage;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -79,4 +81,60 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
             nativeQuery = true
     )
     Page<TakeResponse> findTakeListAboutFishType(@Param("member") Member member, @Param("fishingType") int fishingType,Pageable pageable);
+
+    //관리자페이지 - 상품목록 검색
+    @Query(
+            value = "select " +
+                    "   g.id goodsId, " +
+                    "   g.name goodsName, " +
+                    "   g.total_amount price, " +
+                    "   s.ship_name shipName, " +
+                    "   (select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
+                    "       where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) fishSpecies " +
+                    "from goods g left join goods_fishing_date d on d.goods_id = g.id,ship s, goods_fish_species gs, common_code cc " +
+                    "where " +
+                    "   g.goods_ship_id = s.id " +
+                    "   and gs.goods_id = g.id " +
+                    "   and gs.fish_species_id = cc.id " +
+                    "   and if(:isSpeciesList, (cc.code in :speciesList), true )  " +
+//                    "   and if(:speciesList is null, true, cc.code in :speciesList) " +
+                    "   and if(:goodsId is null, true, g.id = :goodsId) " +
+                    "   and if(:goodsName is null, true, g.name like %:goodsName%) " +
+                    "   and if(:priceStart is null, true, g.total_amount >= :priceStart) " +
+                    "   and if(:priceEnd is null, true, g.total_amount <= :priceEnd) " +
+                    "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "   and if(:fishingDateStart is null, true, DATE(d.fishing_date) >= :fishingDateStart) " +
+                    "   and if(:fishingDateEnd is null, true, DATE(d.fishing_date) <= :fishingDateEnd) " +
+                    "group by g.id ",
+            countQuery = "select " +
+                    "   g.id " +
+                    "from goods g left join goods_fishing_date d on d.goods_id = g.id,ship s, goods_fish_species gs, common_code cc " +
+                    "where " +
+                    "   g.goods_ship_id = s.id " +
+                    "   and gs.goods_id = g.id " +
+                    "   and gs.fish_species_id = cc.id " +
+                    "   and if(:isSpeciesList, (cc.code in :speciesList), true )  " +
+//                    "   and if(:speciesList is null, true, cc.code in :speciesList) " +
+                    "   and if(:goodsId is null, true, g.id = :goodsId) " +
+                    "   and if(:goodsName is null, true, g.name like %:goodsName%) " +
+                    "   and if(:priceStart is null, true, g.total_amount >= :priceStart) " +
+                    "   and if(:priceEnd is null, true, g.total_amount <= :priceEnd) " +
+                    "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "   and if(:fishingDateStart is null, true, DATE(d.fishing_date) >= :fishingDateStart) " +
+                    "   and if(:fishingDateEnd is null, true, DATE(d.fishing_date) <= :fishingDateEnd) " +
+                    "group by g.id ",
+            nativeQuery = true
+    )
+    Page<GoodsManageDtoForPage> getGoodsList(
+        @Param("goodsId") Long goodsId,
+        @Param("goodsName") String goodsName,
+        @Param("priceStart") Integer priceStart,
+        @Param("priceEnd") Integer priceEnd,
+        @Param("shipName") String shipName,
+        @Param("fishingDateStart") LocalDate fishingDateStart,
+        @Param("fishingDateEnd") LocalDate fishingDateEnd,
+        @Param("isSpeciesList") Boolean isSpeciesList,
+        @Param("speciesList") String[] speciesList,
+        Pageable pageable
+    );
 }
