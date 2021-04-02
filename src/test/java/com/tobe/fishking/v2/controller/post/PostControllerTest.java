@@ -45,6 +45,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -53,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.print.Pageable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -168,7 +168,12 @@ public class PostControllerTest {
     @Transactional
     public void noName() throws Exception {
         String aaa = AES.aesDecode("H9Q8zROABmLt2zH9SphnHQ==",env.getProperty("encrypKey.key"));
-        couponMemberRepository.checkCouponExpire();
+        Pageable pageable = PageRequest.of(0,100);
+        shipRepository.getShipList(
+                null, null, null, null, null, false,new Long[0],
+                false,new Long[0], false,new Long[0], false,new Long[0],
+                null, null, null, null, null,pageable
+        );
 
 
         System.out.println("result >>> " +aaa);

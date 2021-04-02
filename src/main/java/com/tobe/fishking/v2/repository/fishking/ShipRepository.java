@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.TakeResponse;
+import com.tobe.fishking.v2.model.admin.ShipManageDtoForPage;
 import com.tobe.fishking.v2.model.fishing.LiveShipDtoForPage;
 import com.tobe.fishking.v2.model.fishing.ShipListForWriteFishingDiary;
 import com.tobe.fishking.v2.repository.BaseRepository;
@@ -121,4 +122,91 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
 
     @Query("select g.ship.shipName from Goods g where g.id = :goodsId")
     String getShipNameByGoodsId(Long goodsId);
+
+    //관리자항목. 선박 리스트 검색
+    @Query(
+            value = "select " +
+                    "   s.id shipId, " +
+                    "   s.ship_name shipName, " +
+                    "   s.fishing_type fishingType, " +
+                    "   s.address address, " +
+                    "   s.tel tel, " +
+                    "   (select group_concat(cc.code_name separator ',') from ship_fish_species sfs2, common_code cc " +
+                    "       where sfs2.ship_id = s.id and sfs2.fish_species_id = cc.id group by sfs2.ship_id ) fishSpecies, " +
+                    "   (select group_concat(cc.code_name separator ',') from ship_facilities sf2, common_code cc " +
+                    "       where sf2.ship_id = s.id and sf2.facilities_id = cc.id group by sf2.ship_id ) facilities, " +
+                    "   (select group_concat(cc.code_name separator ',') from ship_services ss2, common_code cc " +
+                    "       where ss2.ship_id = s.id and ss2.services_id = cc.id group by ss2.ship_id ) services, " +
+                    "   (select group_concat(cc.code_name separator ',') from ship_devices sd2, common_code cc " +
+                    "       where sd2.ship_id = s.id and sd2.devices_id = cc.id group by sd2.ship_id ) devices, " +
+                    "   if(rv.id is null, false, true) isLive, " +
+                    "   c.company_name companyName, " +
+                    "   s.total_avg_by_review totalAvgByReview, " +
+                    "   s.is_active isActive, " +
+                    "   s.depart_status departStatus " +
+                    "from ship s left join ship_fish_species sfs on sfs.ship_id = s.id left join ship_facilities sf on sf.ship_id = s.id " +
+                    "   left join ship_services ss on ss.ship_id = s.id left join ship_devices sd on sd.ship_id = s.id " +
+                    "   left join realtime_video rv on rv.rtvideos_ship_id = s.id " +
+                    "   join company c on c.id = s.company_id " +
+                    "where " +
+                    "   if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "   and if(:fishingType is null, true, s.fishing_type = :fishingType) " +
+                    "   and if(:address is null, true, s.address like %:address%) " +
+                    "   and if(:tel is null, true, s.tel like %:tel%) " +
+                    "   and if(:seaDirection is null, true, s.sea_direction = :seaDirection) " +
+                    "   and if(:searchFishSpecies, (sfs.fish_species_id in :fishSpecies), true) " +
+                    "   and if(:searchServices, (ss.services_id in :services), true) " +
+                    "   and if(:searchFacilities, (sf.facilities_id in :facilities), true ) " +
+                    "   and if(:searchDevices, (sd.devices_id in :devices), true) " +
+                    "   and if(:isLive, rv.id is not null, true) " +
+                    "   and if(:companyName is null, true, c.company_name like %:companyName%) " +
+                    "   and if(:totalAvgByReview is null, true, s.total_avg_by_review > :totalAvgByReview) " +
+                    "   and if(:isActive is null, true, s.is_active = :isActive) " +
+                    "   and if(:departStatus is null, true, s.depart_status = :departStatus)  " +
+                    "group by s.id ",
+            countQuery = "select " +
+                    "   s.id " +
+                    "from ship s left join ship_fish_species sfs on sfs.ship_id = s.id left join ship_facilities sf on sf.ship_id = s.id " +
+                    "   left join ship_services ss on ss.ship_id = s.id left join ship_devices sd on sd.ship_id = s.id " +
+                    "   left join realtime_video rv on rv.rtvideos_ship_id = s.id " +
+                    "   join company c on c.id = s.company_id " +
+                    "where " +
+                    "   if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "   and if(:fishingType is null, true, s.fishing_type = :fishingType) " +
+                    "   and if(:address is null, true, s.address like %:address%) " +
+                    "   and if(:tel is null, true, s.tel like %:tel%) " +
+                    "   and if(:seaDirection is null, true, s.sea_direction = :seaDirection) " +
+                    "   and if(:searchFishSpecies, (sfs.fish_species_id in :fishSpecies), true) " +
+                    "   and if(:searchServices, (ss.services_id in :services), true) " +
+                    "   and if(:searchFacilities, (sf.facilities_id in :facilities), true ) " +
+                    "   and if(:searchDevices, (sd.devices_id in :devices), true) " +
+                    "   and if(:isLive, rv.id is not null, true) " +
+                    "   and if(:companyName is null, true, c.company_name like %:companyName%) " +
+                    "   and if(:totalAvgByReview is null, true, s.total_avg_by_review > :totalAvgByReview) " +
+                    "   and if(:isActive is null, true, s.is_active = :isActive) " +
+                    "   and if(:departStatus is null, true, s.depart_Status = :departStatus)  " +
+                    "group by s.id ",
+            nativeQuery = true
+    )
+    Page<ShipManageDtoForPage> getShipList(
+        @Param("shipName") String shipName,
+        @Param("fishingType") Integer fishingType,
+        @Param("address") String address,
+        @Param("tel") String tel,
+        @Param("seaDirection") Integer seaDirection,
+        @Param("searchFishSpecies") Boolean searchFishSpecies,
+        @Param("fishSpecies") Long[] fishSpecies,
+        @Param("searchServices") Boolean searchServices,
+        @Param("services") Long[] services,
+        @Param("searchFacilities") Boolean searchFacilities,
+        @Param("facilities") Long[] facilities,
+        @Param("searchDevices") Boolean searchDevices,
+        @Param("devices") Long[] devices,
+        @Param("isLive") Boolean isLive,
+        @Param("companyName") String companyName,
+        @Param("totalAvgByReview") Double totalAvgByReview,
+        @Param("isActive") Boolean isActive,
+        @Param("departStatus") Boolean departStatus,
+        Pageable pageable
+    );
 }

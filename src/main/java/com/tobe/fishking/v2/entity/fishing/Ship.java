@@ -256,7 +256,7 @@ public class Ship extends BaseTime {  //선상
                 String profileImage,
                 Company company,
                 Member createdBy,
-                String code,
+                 String code,
                 String positions,
                 String router,
                 Long videoId) {

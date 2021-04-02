@@ -42,4 +42,7 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, Long>, C
 
     @Query("select c.code from CommonCode c where c.codeGroup = :codeGroup and c.codeName in :codeNameList")
     ArrayList<String> findCodeByCodeNameAndCodeGroup(@Param("codeNameList") String[] codeNameList, @Param("codeGroup") CodeGroup codeGroup);
+
+    @Query("select c from CommonCode c where c.codeGroup.code in ('mainfishspecies','Cephalopod','otherfishspecies') and c.code in (:codeList) ")
+    List<CommonCode> findFishSpeciesCodeByCodeList(@Param("codeList") String[] codeList);
 }
