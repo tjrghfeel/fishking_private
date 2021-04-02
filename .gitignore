@@ -10,6 +10,8 @@ web_fishking/node_modules
 web_smartmarine/node_modules
 ### native_fishking/node_modules
 ### native_smartfishing/node_modules
+### native_police/node_modules
+### native_smartsail/node_modules
 
 web_fishking/.eslintcache
 
