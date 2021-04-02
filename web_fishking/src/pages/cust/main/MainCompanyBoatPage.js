@@ -137,6 +137,7 @@ export default inject(
           latitude: PageStore.state.latitude,
           longitude: PageStore.state.longitude,
         });
+
         const { ad, list } = resolve;
         const { normal = [], premium = [] } = ad || {};
         const {

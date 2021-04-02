@@ -85,6 +85,10 @@ const NativeStore = new (class {
             (err) => {
               APIStore.setLoading(false);
               resolve({ lat: null, lng: null });
+            },
+            {
+              enableHighAccuracy: false,
+              timeout: 3000,
             }
           );
         } else APIStore.setLoading(false);

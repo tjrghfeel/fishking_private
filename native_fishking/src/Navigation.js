@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {inject, observer} from 'mobx-react';
 import {
   SafeAreaView,
@@ -10,8 +10,9 @@ import {
 
 import MainPage from './page/MainPage';
 
-export default inject()(
-  observer(() => {
+export default inject('WebViewStore')(
+  observer(({WebViewStore}) => {
+    const [refreshing, setRefreshing] = useState(false);
     return (
       <>
         <StatusBar
@@ -22,7 +23,18 @@ export default inject()(
           backgroundColor={'#3683d5'}
         />
         <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
-          {/*<ScrollView refreshControl={<RefreshControl refreshing={true} />}>*/}
+          {/*<ScrollView*/}
+          {/*  contentContainerStyle={{*/}
+          {/*    flex: 1,*/}
+          {/*  }}*/}
+          {/*  refreshControl={*/}
+          {/*    <RefreshControl*/}
+          {/*      refreshing={refreshing}*/}
+          {/*      onRefresh={() => {*/}
+          {/*        WebViewStore.executeJavascript(`window.location.reload();`);*/}
+          {/*      }}*/}
+          {/*    />*/}
+          {/*  }>*/}
           <MainPage />
           {/*</ScrollView>*/}
         </SafeAreaView>

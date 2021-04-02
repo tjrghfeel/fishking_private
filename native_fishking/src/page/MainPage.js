@@ -120,8 +120,8 @@ export default inject(
               ? 'Mozilla/5.0 (Linux; Android 10; LM-V500N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.127 Mobile Safari/537.36'
               : 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148 Safari/604.1'
           }
-          cacheMode={'LOAD_NO_CACHE'}
-          cacheEnabled={false}
+          cacheMode={'LOAD_DEFAULT'}
+          cacheEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           javaScriptEnabled={true}
