@@ -14,6 +14,7 @@ http.defaults.timeout = 10000;
 export default (() => {
   const request = (url, method, headers = {}, params, data) => {
     return new Promise((resolve, reject) => {
+      const startTime = new Date().getTime();
       http
         .request({
           url,
@@ -26,6 +27,11 @@ export default (() => {
           data,
         })
         .then((response, xhr) => {
+          console.log(
+            `${method} : ${Intl.NumberFormat().format(
+              new Date().getTime() - startTime
+            )}ms\n${url}`
+          );
           if (response && response["status"] == "204") {
             // ModalStore.openModal("Alert", {
             //   body: "요청하신 검색 결과가 없습니다.",
@@ -36,6 +42,11 @@ export default (() => {
           }
         })
         .catch((err) => {
+          console.log(
+            `${method} : ${Intl.NumberFormat().format(
+              new Date().getTime() - startTime
+            )}ms\n${url}`
+          );
           if (err.message?.indexOf("500") !== -1) {
             ModalStore.openModal("Alert", {
               body: "요청 중 에러가 발생하였습니다.",

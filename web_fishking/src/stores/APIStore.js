@@ -38,7 +38,6 @@ const APIStore = new (class {
               }
             }
           }
-          console.log(`[_GET] ${url}`);
           const response = await Http.request(
             url,
             "GET",
