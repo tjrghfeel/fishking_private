@@ -88,6 +88,7 @@ const NativeStore = new (class {
             },
             {
               enableHighAccuracy: false,
+              maximumAge: 60000,
               timeout: 3000,
             }
           );
