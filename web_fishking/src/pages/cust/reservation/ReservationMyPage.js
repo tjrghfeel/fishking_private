@@ -1,3 +1,4 @@
+/* global $ */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
@@ -5,15 +6,23 @@ import DataStore from "../../../stores/DataStore";
 const {
   LAYOUT: { NavigationLayout, MainTab },
   VIEW: { ReservationMyListItemView },
+  MODAL: { ConfirmReservationCancelModal, SelectReservationCancelReasonModal },
 } = Components;
 
 export default inject(
   "PageStore",
   "DataStore",
-  "APIStore"
+  "APIStore",
+  "ModalStore"
 )(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          cancelOrderId: null,
+        };
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
@@ -84,7 +93,29 @@ export default inject(
         PageStore.storeState();
         PageStore.push(`/reservation/review/add/${item.id}`);
       };
-      onClickCancel = (item) => {};
+      onClickCancel = (item) => {
+        this.setState({ cancelOrderId: item.id });
+        $("#cancelModal").modal("show");
+      };
+      requestCancel = async () => {
+        const { APIStore, ModalStore, DataStore, PageStore } = this.props;
+        $("#reasonModal").modal("hide");
+        const resolve = await APIStore._post(`/v2/api/cancel`, {
+          orderId: this.state.cancelOrderId,
+        });
+        if (resolve && resolve["status"] === "success") {
+          ModalStore.openModal("Alert", { body: "취소되었습니다." });
+          const list = DataStore.updateItemOfArrayByKey(
+            PageStore.state.list,
+            "id",
+            this.state.cancelOrderId,
+            { ordersStatus: "취소 완료" }
+          );
+          PageStore.setState({ list });
+        } else {
+          ModalStore.openModal("Alert", { body: resolve["message"] });
+        }
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -173,6 +204,19 @@ export default inject(
             </p>
 
             <MainTab activeIndex={4} />
+
+            {/** 취소/환불규정 모달 */}
+            <ConfirmReservationCancelModal
+              id={"cancelModal"}
+              onClick={() => {
+                $("#cancelModal").modal("hide");
+                $("#reasonModal").modal("show");
+              }}
+            />
+            <SelectReservationCancelReasonModal
+              id={"reasonModal"}
+              onClick={this.requestCancel}
+            />
           </React.Fragment>
         );
       }
