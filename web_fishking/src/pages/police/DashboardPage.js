@@ -85,19 +85,25 @@ export default inject(
                 <div className="card card-sm">
                   <div className="row no-gutters">
                     <div className="col-6">
-                      <span className="grey">업체 수 : </span>
+                      <span className="grey">오늘 예정 : </span>
                     </div>
                     <div className="col-6 text-right">
-                      <strong className="large">53</strong>
+                      <strong className="large">
+                        {Intl.NumberFormat().format(
+                          this.state.runningToday || 0
+                        )}
+                      </strong>
                     </div>
                   </div>
                   <hr className="mt-1 mb-2" />
                   <div className="row no-gutters mb-1">
                     <div className="col-6">
-                      <span className="grey">선박 수 : </span>
+                      <span className="grey">현재 출조 : </span>
                     </div>
                     <div className="col-6 text-right">
-                      <strong className="large text-primary">198</strong>
+                      <strong className="large text-primary">
+                        {Intl.NumberFormat().format(this.state.runningNow || 0)}
+                      </strong>
                     </div>
                   </div>
                 </div>

@@ -63,6 +63,7 @@ export default inject(
       }
       componentWillUnmount() {
         const { PageStore } = this.props;
+        PageStore.setState({});
         PageStore.removeScrollEvent();
       }
       loadPageDataForLive = async () => {
