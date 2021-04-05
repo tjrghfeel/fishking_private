@@ -473,12 +473,14 @@ public class ShipService {
 
         // 쿠폰 사용
         if (reserveDTO.getCouponId() != null) {
-            CouponMember myCoupon = couponMemberRepository.getOne(reserveDTO.getCouponId());
-            Coupon coupon = myCoupon.getCoupon();
-            myCoupon.use(order);
-            coupon.useCoupon();
-            couponMemberRepository.save(myCoupon);
-            couponRepository.save(coupon);
+            if (!reserveDTO.getCouponId().equals("")) {
+                CouponMember myCoupon = couponMemberRepository.getOne(reserveDTO.getCouponId());
+                Coupon coupon = myCoupon.getCoupon();
+                myCoupon.use(order);
+                coupon.useCoupon();
+                couponMemberRepository.save(myCoupon);
+                couponRepository.save(coupon);
+            }
         }
 
         return new OrderResponse(order.getId(),
