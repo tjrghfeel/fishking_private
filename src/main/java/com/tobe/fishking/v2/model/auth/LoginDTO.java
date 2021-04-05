@@ -14,9 +14,11 @@ import javax.validation.constraints.Size;
 public class LoginDTO {
 
     @NotNull(message = "id가 비었습니다")
+    @Size(max = 100)
     private String memberId;
     
     @NotNull(message = "pw가 비었습니다")
+    @Size(max = 100)
     private String password;
 
     private String registrationToken;

@@ -80,7 +80,7 @@ public class PostService {
         Integer questionType = null;
         if(inputQuestionType != null){questionType = QuestionType.valueOf(inputQuestionType).ordinal();}
 
-        Pageable pageable = PageRequest.of(page,3);
+        Pageable pageable = PageRequest.of(page,20);
         return postRepository.findAllFAQList(roleValue,title,questionType, pageable);
     }
     /*faq 상세*/
@@ -105,7 +105,7 @@ public class PostService {
     public Page<QnADtoForPage> getQnAList(int page, String sessionToken) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
-        Pageable pageable = PageRequest.of(page, 3);
+        Pageable pageable = PageRequest.of(page, 20);
         return postRepository.findAllQnAList(member, pageable);
     }
 
@@ -124,7 +124,7 @@ public class PostService {
         Integer channelType = null;
         if(inputChannelType != null){channelType = ChannelType.valueOf(inputChannelType).ordinal();}
 
-        Pageable pageable = PageRequest.of(page,3);
+        Pageable pageable = PageRequest.of(page,20);
         return postRepository.findNoticeList(roleValue, channelType, inputTitle, pageable);
     }
 

@@ -111,7 +111,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "   p.return_no_address returnNoAddress, " +
             "   p.created_by createdBy, " +
             "   p.modified_by modifiedBy, " +
-            "   (select CAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
+            "   (select GROUP_CONCAT(concat(f.file_url,'/',f.stored_file) separator ',') " +
             "       from files f where f.pid = p.id and f.file_publish = 2 and f.is_delete = false " +
             "       group by f.pid) fileUrlList, " +
             "   (select GROUP_CONCAT(f.id separator ',') " +
