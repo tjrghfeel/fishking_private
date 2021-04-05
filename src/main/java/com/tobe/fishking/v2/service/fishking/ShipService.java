@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -172,7 +173,7 @@ public class ShipService {
 
     /* 선상, 갯바위 배 정보 */
     @Transactional
-    public ShipResponse getShipDetail(Long ship_id, String sessionToken) {
+    public ShipResponse getShipDetail(Long ship_id, String sessionToken) throws UnsupportedEncodingException {
         ShipResponse response = shipRepo.getDetail(ship_id);
         List<FishingDiary> diaries = fishingDiaryRepository.getDiaryByShipId(response.getId());
         List<FishingDiary> blogs = fishingDiaryRepository.getBlogByShipId(response.getId());
@@ -239,9 +240,11 @@ public class ShipService {
 //                LocalDateTime expTime = LocalDateTime.of(2100, 12, 31, 12, 12);
                     String token = "";
                     if (now.isAfter(expTime)) {
-                        Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
-                        token = tokenData.get("token");
-                        String expireTime = tokenData.get("expireTime");
+//                        Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                        Company company = companyRepository.getCompanyByShip(response.getId());
+                        Map<String, Object> tokenData = httpRequestService.getToken(company.getNhnId());
+                        token = ((String) tokenData.get("token")).replaceAll("\"", "");
+                        String expireTime = (String) tokenData.get("expireTime");
                         realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
                     } else {
                         token = video.getToken();
@@ -469,12 +472,14 @@ public class ShipService {
         }
 
         // 쿠폰 사용
-        CouponMember myCoupon = couponMemberRepository.getOne(reserveDTO.getCouponId());
-        Coupon coupon = myCoupon.getCoupon();
-        myCoupon.use(order);
-        coupon.useCoupon();
-        couponMemberRepository.save(myCoupon);
-        couponRepository.save(coupon);
+        if (reserveDTO.getCouponId() != null) {
+            CouponMember myCoupon = couponMemberRepository.getOne(reserveDTO.getCouponId());
+            Coupon coupon = myCoupon.getCoupon();
+            myCoupon.use(order);
+            coupon.useCoupon();
+            couponMemberRepository.save(myCoupon);
+            couponRepository.save(coupon);
+        }
 
         return new OrderResponse(order.getId(),
                 orderNumber,

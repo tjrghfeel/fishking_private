@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -245,7 +246,7 @@ public class ShipController {
     @GetMapping("/ship/{ship_id}")
     public ShipResponse shipDetail(
             @RequestHeader(name = "Authorization") String sessionToken,
-            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) {
+            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) throws UnsupportedEncodingException {
         return shipService.getShipDetail(ship_id, sessionToken);
     }
 

@@ -116,7 +116,7 @@ public class FishingShipService {
                 expireTime = video.getExpireTime();
             }
         } else {
-            token = (String) httpRequestService.getToken(company.getNhnId()).get("token");
+            token = ((String) httpRequestService.getToken(company.getNhnId()).get("token")).replaceAll("\"", "");
         }
 
         List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
