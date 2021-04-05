@@ -473,7 +473,7 @@ public class ShipService {
 
         // 쿠폰 사용
         if (reserveDTO.getCouponId() != null) {
-            if (!reserveDTO.getCouponId().equals("")) {
+            if (reserveDTO.getCouponId() != 0L) {
                 CouponMember myCoupon = couponMemberRepository.getOne(reserveDTO.getCouponId());
                 Coupon coupon = myCoupon.getCoupon();
                 myCoupon.use(order);
