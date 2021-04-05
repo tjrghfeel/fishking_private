@@ -115,7 +115,7 @@ public class PayService {
     }
 
     @Transactional
-    public void cancelOrder(Long orderId, String token) {
+    public String cancelOrder(Long orderId, String token) {
         String EncType = "0";      // 0: 암화안함, 1:openssl, 2: seed
         String Version = "0210";   // 전문버전
         String Type = "00";     // 구분
@@ -127,7 +127,7 @@ public class PayService {
         String GoodType = "0";      // 제품구분 0 : 실물, 1 : 디지털
         String HeadFiller = "";       // 예비
 
-        String StoreId = "1018400000";   // *상점아이디
+        String StoreId = "2040700001";   // *상점아이디
         String OrderNumber = "";                            // 주문번호
         String UserName = "";                                // *주문자명
         String IdNum = "";                                // 주민번호 or 사업자번호
@@ -235,5 +235,7 @@ public class PayService {
         } catch (Exception e) {
             rMessage2 = "P잠시후재시도(" + e.toString() + ")";    // 메시지2
         } // end of catch
+
+        return rMessage1 + rMessage2;
     }
 }
