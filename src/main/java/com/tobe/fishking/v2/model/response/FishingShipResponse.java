@@ -19,6 +19,7 @@ public class FishingShipResponse {
 
     private Long id;
     private String shipName;
+    private String profileImage;
     private String fishingType;
     private String createDate;
     private Boolean hasCamera;
@@ -30,6 +31,7 @@ public class FishingShipResponse {
     public FishingShipResponse(Ship ship) {
         this.id = ship.getId();
         this.shipName = ship.getShipName();
+        this.profileImage = "/resource/" + ship.getProfileImage().split("/")[1] + "/thumb_" + ship.getProfileImage().split("/")[2];
         this.fishingType = ship.getFishingType().getValue();
         this.createDate = DateUtils.getDateTimeInFormat(ship.getCreatedDate());
         if (ship.getShiipRealTimeVideos().size() == 0) {
