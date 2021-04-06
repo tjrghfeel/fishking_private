@@ -64,8 +64,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             "cc.extra_value1 couponImage " +
             "from coupon c, common_code cc " +
             "where " +
-            "   c.exposure_start_date <= now() and " +
-            "   c.exposure_end_date >= now() and " +
+            "   c.exposure_start_date <= :today and " +
+            "   c.exposure_end_date >= :today and " +
             "   c.is_issue = true and " +
             "   c.max_issue_count > c.issue_qty and " +
             "   c.id not in (select cm.member_coupon_id from coupon_member cm join member m on cm.coupon_member_id=m.id " +
@@ -76,8 +76,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             countQuery = "select c.id " +
                     "from coupon c, common_code cc " +
                     "where " +
-                    "   c.exposure_start_date <= now() and " +
-                    "   c.exposure_end_date >= now() and " +
+                    "   c.exposure_start_date <= :today and " +
+                    "   c.exposure_end_date >= :today and " +
                     "   c.is_issue = true and " +
                     "   c.max_issue_count > c.issue_qty and " +
                     "   c.id not in (select cm.member_coupon_id from coupon_member cm join member m on cm.coupon_member_id=m.id " +
@@ -87,7 +87,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
                     "order by c.exposure_end_date ",
             nativeQuery = true
     )
-    Page<CouponDTO> findCouponList(@Param("memberId") Long memberId, /*@Param("today") LocalDateTime today,*/ Pageable pageable);
+    Page<CouponDTO> findCouponList(@Param("memberId") Long memberId, @Param("today") LocalDate today, Pageable pageable);
 
     /*위의 findCouponList와 동일하나 List형으로 coupon엔터티의 id만 반환하는 쿼리메소드*/
     @Query(value = "select c.id id "+
@@ -137,7 +137,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 //            "   c.brf_introduction brfIntroduction, " +
             "   c.coupon_description couponDescription, " +
             "   c.created_by createdBy, " +
-            "   c.modified_by modifiedBy   "+
+            "   c.modified_by modifiedBy," +
+            "   c.created_date createdDate   "+
             "from coupon c " +
             "where " +
             "   if(:couponId is null, true, c.id = :couponId) " +
@@ -243,7 +244,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             "   o.goods goodsId, " +
             "   o.order_date orderDate, " +
             "   o.order_status orderStatus, " +
-            "   o.order_number orderNumber " +
+            "   o.order_number orderNumber, " +
+            "   cm.created_date createdDate " +
             "from coupon_member cm left join orders o on cm.coupon_orders_id = o.id, coupon c, member m " +
             "where " +
             "   cm.coupon_member_id = m.id " +

@@ -75,4 +75,13 @@ public class MemberManageController {
         return memberManageService.modifyMember(dto);
     }
 
+    //세션토큰 조회
+    @ApiOperation(value = "세션토큰 조회")
+    @GetMapping("/manage/member/token/{memberId}")
+    public String getSessionToken(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("memberId") Long memberId
+    ){
+        return memberManageService.getSessionToken(token,memberId);
+    }
 }

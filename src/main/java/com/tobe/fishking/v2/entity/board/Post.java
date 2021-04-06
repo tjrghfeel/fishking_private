@@ -154,7 +154,7 @@ public class Post extends BaseTime {
         createdAt = postDTO.getCreatedAt();
         questionType = QuestionType.valueOf(postDTO.getQuestionType());
         isSecret = postDTO.getIsSecret();
-
+        noticeEndDate = postDTO.getNoticeEndDate();
     }
 
     public void delete(){this.isDeleted = true;}

@@ -39,6 +39,6 @@ public class CouponSearchConditionDto {
     private String couponDescription;
     private Long createdBy;
     private Long modifiedBy;
-    private String sort;
+    private String sort="createdDate";
     private Integer pageCount=10;
 }

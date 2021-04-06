@@ -802,5 +802,4 @@ public class MemberController {
     }
     
 
-
 }

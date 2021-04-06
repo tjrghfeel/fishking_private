@@ -372,6 +372,7 @@ public class PostService {
                 .orElseThrow(()->new ResourceNotFoundException("post not found for this id :: "+postDTO.getPostId()));
 
         post.updatePost(postDTO);
+        postRepository.save(post);
 
         /*Post에 올려놓은 File들 삭제하고 다시 올림. */
         /*파일들 모두 삭제.*/
@@ -499,6 +500,7 @@ public class PostService {
                 .questionType("order")
                 .createdAt("sampleCreatedAt")
                 .targetRole(targetRole)
+                .noticeEndDate(dto.getNoticeEndDate())
                 .build();
         /*updatePost()호출*/
         return updatePost(updatePostDTO, token);

@@ -27,6 +27,6 @@ public class CouponMemberSearchConditionDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate exposureEndDate;
     private Boolean isUse;
-    private String sort;
+    private String sort="createdDate";
     private Integer pageCount=10;
 }

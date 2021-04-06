@@ -13,6 +13,7 @@ import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.member.MemberSearchConditionDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -31,10 +32,12 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
 @Service
 public class MemberManageService {
-
+    @Autowired
+    MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -192,4 +195,25 @@ public class MemberManageService {
         return true;
     }
 
+    //세션토큰반환
+    @Transactional
+    public String getSessionToken(String token, Long memberId){
+        Member manager = memberService.getMemberBySessionToken(token);
+
+        if(manager.getRoles() != Role.admin){throw new RuntimeException("관리자가 아닙니다.");}
+
+        Member member = memberService.getMemberById(memberId);
+        String sessionToken = member.getSessionToken();
+        if(sessionToken == null){
+            /*세션토큰 생성 및 저장. */
+            String rawToken = member.getUid() + LocalDateTime.now();
+            sessionToken = encoder.encode(rawToken);
+
+            System.out.println("token : "+sessionToken);
+            member.setSessionToken(sessionToken);
+            memberRepository.save(member);
+        }
+
+        return sessionToken;
+    }
 }

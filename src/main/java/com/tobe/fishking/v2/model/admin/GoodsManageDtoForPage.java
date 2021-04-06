@@ -7,4 +7,5 @@ public interface GoodsManageDtoForPage {
     Integer getPrice();
     String getShipName();
     String getFishSpecies();
+    Long getMemberId();
 }

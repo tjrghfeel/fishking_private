@@ -43,7 +43,7 @@ public class CouponService {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         Pageable pageable = PageRequest.of(page, 10);
-        return couponRepository.findCouponList(member.getId(), /*LocalDateTime.now(),*/ pageable);
+        return couponRepository.findCouponList(member.getId(), LocalDate.now(), pageable);
     }
 
     /*쿠폰 다운받기
@@ -102,7 +102,7 @@ public class CouponService {
             //!!!!!쿠폰 정렬기준이 '최신순'일 경우. (최신순이 뭔지 잘모르겟음)
         }
         //sort가 'basic'인 경우.
-        return couponMemberRepository.findCouponMemberListOrderByBasic(member, false, LocalDateTime.now(), pageable);
+        return couponMemberRepository.findCouponMemberListOrderByBasic(member, false, LocalDate.now(), pageable);
     }
 
     @Transactional
@@ -262,8 +262,8 @@ public class CouponService {
         if(member.getRoles() != Role.admin){throw new RuntimeException("쿠폰 조회 권한이 없습니다.");}
 
         /*조건 형식변환*/
-        if(dto.getEffectiveEndDate()!=null){ dto.setEffectiveEndDate(dto.getEffectiveEndDate().plusDays(1L));}
-        if(dto.getExposureEndDate()!=null){dto.setExposureEndDate(dto.getExposureEndDate().plusDays(1L));}
+//        if(dto.getEffectiveEndDate()!=null){ dto.setEffectiveEndDate(dto.getEffectiveEndDate().plusDays(1L));}
+//        if(dto.getExposureEndDate()!=null){dto.setExposureEndDate(dto.getExposureEndDate().plusDays(1L));}
 
         Pageable pageable = PageRequest.of(page, dto.getPageCount(), JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
         Page<CouponMemberManageDtoForPage> result = couponRepository.getCouponMemberList(

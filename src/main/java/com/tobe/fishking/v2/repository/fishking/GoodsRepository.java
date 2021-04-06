@@ -90,8 +90,9 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
                     "   g.total_amount price, " +
                     "   s.ship_name shipName, " +
                     "   (select group_concat(c.code_name separator ',') from goods_fish_species gs, common_code c " +
-                    "       where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) fishSpecies " +
-                    "from goods g left join goods_fishing_date d on d.goods_id = g.id,ship s, goods_fish_species gs, common_code cc " +
+                    "       where gs.goods_id = g.id and gs.fish_species_id = c.id group by gs.goods_id ) fishSpecies, " +
+                    "   p.member_id memberId " +
+                    "from goods g left join goods_fishing_date d on d.goods_id = g.id,ship s join company p on s.company_id = p.id, goods_fish_species gs, common_code cc " +
                     "where " +
                     "   g.goods_ship_id = s.id " +
                     "   and gs.goods_id = g.id " +

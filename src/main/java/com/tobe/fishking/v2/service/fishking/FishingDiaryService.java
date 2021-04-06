@@ -236,6 +236,8 @@ public class FishingDiaryService {
                 .writeLatitude(latitude)
                 .writeLongitude(longitude)
                 .isDeleted(false)
+                .isActive(true)
+                .isHidden(false)
                 .build();
         fishingDiary = fishingDiaryRepo.save(fishingDiary);
 
@@ -473,6 +475,8 @@ public class FishingDiaryService {
                 fishSpeciesRegex += "|"+districtListCommonCodeList.get(i).getCodeName() ;
             }
         }
+
+        if(createdDateEnd!=null){createdDateEnd = createdDateEnd.plusDays(1);}
 
         Pageable pageable = PageRequest.of(page, pageCount);
         if(sort.equals("createdDate")){

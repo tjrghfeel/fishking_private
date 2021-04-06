@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.model.board;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,4 +34,5 @@ public class UpdatePostDTO {
     //private Long parentId;
 
     private Long[] files;
+    private LocalDate noticeEndDate;
 }

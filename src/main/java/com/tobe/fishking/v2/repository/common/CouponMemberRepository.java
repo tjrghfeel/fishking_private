@@ -45,20 +45,21 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   and cm.member_coupon_id = c.id "+
             "   and cm.is_use = :isUse " +
             "   and c.is_use = true " +
-            "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
-            "order by DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY)",
+            "   and c.effective_start_date <= :today " +
+            "   and c.effective_end_date >= :today " +
+            "order by effectiveEndDate",
             countQuery = "select cm.id from coupon_member cm, coupon c " +
                     "where cm.coupon_member_id = :member " +
                     "   and cm.member_coupon_id = c.id "+
                     "   and cm.is_use = :isUse " +
                     "   and c.is_use = true " +
-                    "   and c.effective_start_date < :today " +
-                    "   and c.effective_end_date > :today " +
-                    "order by DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY)",
+                    "   and c.effective_start_date <= :today " +
+                    "   and c.effective_end_date >= :today " +
+                    "order by effectiveEndDate",
             nativeQuery = true
     )
     Page<CouponMemberDTO> findCouponMemberListOrderByBasic(
-            @Param("member") Member member, @Param("isUse") boolean isUse, @Param("today") LocalDateTime today, Pageable pageable);
+            @Param("member") Member member, @Param("isUse") boolean isUse, @Param("today") LocalDate today, Pageable pageable);
 
     /*member가 사용가능한 coupon_member리스트를 Page로 반환 메소드. 쿠폰사용량이 가장 많은순으로 반환.
      * 사용가능한 쿠폰이면서, 아직 사용하지 않았으면서, 유효기간이 지나지 않은 등록된 쿠폰 리스트 */
@@ -87,15 +88,16 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   and cm.member_coupon_id = c.id "+
             "   and cm.is_use = :isUse " +
             "   and c.is_use = true " +
-            "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today " +
+            "   and c.effective_start_date <= :today " +
+            "   and c.effective_end_date >= :today " +
             "order by c.use_qty DESC",
             countQuery = "select cm.id from coupon_member cm, coupon c " +
                     "where cm.coupon_member_id = :member " +
                     "   and cm.member_coupon_id = c.id "+
                     "   and cm.is_use = :isUse " +
                     "   and c.is_use = true " +
-                    "   and c.effective_start_date < :today " +
-                    "   and c.effective_end_date > :today " +
+                    "   and c.effective_start_date <= :today " +
+                    "   and c.effective_end_date >= :today " +
                     "order by c.use_qty DESC",
             nativeQuery = true
     )
@@ -109,14 +111,16 @@ public interface CouponMemberRepository extends BaseRepository<CouponMember, Lon
             "   and cm.member_coupon_id = c.id " +
             "   and cm.is_use = :isUse " +
             "   and c.is_use = true " +
-            "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today ",
+            "   and c.effective_start_date <= :today " +
+            "   and c.effective_end_date >= :today ",
             countQuery = "select cm.id " +
                     "from coupon_member cm, coupon c " +
                     "where cm.coupon_member_id = :member " +
                     "   and cm.member_coupon_id = c.id " +
                     "   and cm.is_use = :isUse " +
                     "   and c.is_use = true " +
-                    "   and DATE_ADD(cm.reg_date, INTERVAL c.effective_days DAY) >= :today ",
+                    "   and c.effective_start_date <= :today " +
+                    "   and c.effective_end_date >= :today ",
             nativeQuery = true
     )
     int countByMemberAndIsUseAndDays(
