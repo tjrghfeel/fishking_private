@@ -53,6 +53,7 @@ public class ShipsGoodsController {
             "\n content:[ {" +
             "\n     id: 상품 id" +
             "\n     shipName: 선박명" +
+            "\n     profileImage: 선박이미지" +
             "\n     fishingType: 낚시 타입" +
             "\n     createDate: 등록일" +
             "\n     hasCamera: 카메라유무" +
@@ -84,6 +85,7 @@ public class ShipsGoodsController {
             "\n content:[ {" +
             "\n     id: 상품 id" +
             "\n     shipName: 선박명" +
+            "\n     profileImage: 선박이미지" +
             "\n     fishingType: 낚시 타입" +
             "\n     createDate: 등록일" +
             "\n     hasCamera: 카메라유무" +

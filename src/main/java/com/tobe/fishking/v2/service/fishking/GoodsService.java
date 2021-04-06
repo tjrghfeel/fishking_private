@@ -232,7 +232,7 @@ public class GoodsService {
 
     @Transactional
     public Page<FishingShipResponse> getGoods(Long memberId, String keywordType, String keyword, String status, Integer page) throws EmptyListException {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("shipName").ascending());
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("shipName").ascending());
         Page<FishingShipResponse> ships = shipRepo.getShipsByCompanyMember(memberId, keywordType, keyword, status, pageable);
         List<FishingShipResponse> contents = ships.getContent();
         if (contents.isEmpty()) {
