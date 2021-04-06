@@ -148,6 +148,46 @@ public class FishingDiaryController {
         }
     }
 
+    /*글쓰기 - ship검색*/
+    @ApiOperation(value = "글쓰기 - ship검색  출조용 ",notes = "현재 로그인한 유저의 선박만 리스팅 " +
+            "요청 필드 )\n" +
+            "- keyword : String / 검색 키워드(선상명, 선상주소, 선상 전화번호로 검색가능) / 한글,영어,숫자,공백 포함 2자 이상. 키워드 검색 안할경우 null. \n" +
+//            "- sortBy : String / 정렬 기준 / distance(거리순), name(명칭순) 입력. / name이 디폴트값. \n" +
+            "응답 필드 )\n" +
+            "- shipId : 배 id\n" +
+            "- name : 선상명\n" +
+            "- fishingType : 선상/갯바위\n" +
+            "- address : 주소\n" +
+            "- distance : 거리\n" +
+            "- thumbnailUrl : 선상 대표 섬네일 url\n" +
+            "- isVideo : 선상 대표 섬네일이 동영상 섬네일인지 여부\n")
+    @GetMapping("/fishingDiary/searchShip/company/{page}")
+    public Page<ShipListForWriteFishingDiary> searchShipForWriteFishingDiaryCompany(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @PathVariable("page") int page
+    ) throws EmptyListException {
+        /*검색 키워드 검증*/
+        if(keyword!=null) {
+            if (!(Pattern.matches("^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣\\s]{2,}$", keyword))) {
+                throw new RuntimeException("검색어는 한글, 영어, 숫자만 2자 이상이어야합니다.");
+            }
+        }
+        else{keyword="";}
+        /*정렬 기준값 검증.*//*
+        if(!(sortBy.equals("distance") || sortBy.equals("name"))){
+            throw new RuntimeException("정렬조건은 'distance'또는 'name'만 가능합니다.");
+        }*/
+
+//        return shipService.searchShipForWriteFishingDiary(keyword/*,sortBy*/,page);
+        Page<ShipListForWriteFishingDiary> diaries = shipService.searchShipForWriteFishingDiaryCompany(keyword, page, token);
+        if (diaries.getTotalElements() == 0) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return diaries;
+        }
+    }
+
     /*어복스토리 리스트 출력*/
     @ApiOperation(value = "어복스토리 - 조항일지/유저조행기 목록 출력",notes = "" +
             "선택된 지역에 해당하면서 직접입력한 검색어에 해당하는 글들을 검색.\n" +

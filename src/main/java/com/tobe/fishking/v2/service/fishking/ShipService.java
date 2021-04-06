@@ -122,6 +122,21 @@ public class ShipService {
         }*/
     }
 
+    /*글쓰기시, ship선택버튼에 있는 ship검색 메소드 */
+    @Transactional
+    public Page<ShipListForWriteFishingDiary> searchShipForWriteFishingDiaryCompany(String keyword, int page, String token) {
+
+//        if(sortBy.equals("name")){
+        Pageable pageable = PageRequest.of(page, 10/*, JpaSort.unsafe(Sort.Direction.DESC,"("+sortBy+")")*/);
+        return shipRepo.findBySearchKeywordCompany(keyword, token, pageable);
+        /*}
+        //!!!!!정렬기준이 거리순일 경우, gps api를 이용해 처리해야할듯?
+        else{
+            Pageable pageable = PageRequest.of(page, 10, JpaSort.unsafe(Sort.Direction.DESC,"("+sortBy+")"));
+            return shipRepo.findBySearchKeyword(keyword,pageable);
+        }*/
+    }
+
 
     /*지도에 선상 위치 및 정보를 위한 Method*/
     public List<ShipDTO.ShipDTOResp> getShipListsForMap(FilePublish filePublish) {
