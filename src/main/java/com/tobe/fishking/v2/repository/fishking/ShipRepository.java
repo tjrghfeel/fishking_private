@@ -63,6 +63,43 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
     )
     Page<ShipListForWriteFishingDiary> findBySearchKeyword(@Param("keyword") String keyword, Pageable pageable);
 
+    @Query(
+            value = "select " +
+                    "   s.id shipId, " +
+                    "   s.ship_name name, " +
+                    "   s.fishing_type fishingType, " +
+                    "   s.address address, " +
+                    "   s.distance distance, " +
+                    "   f.file_url fileUrl, " +
+                    "   f.thumbnail_file fileName," +
+                    "   if(f.file_type=3, true, false) isVideo " +
+                    "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
+                    "       left join company c on s.company_id = c.id " +
+                    "       left join member m on c.member_id = m.id " +
+                    "where " +
+                    "   m.session_token = :token " +
+                    "   and  (s.ship_name like %:keyword% " +
+                    "   or s.address like %:keyword% " +
+                    "   or s.tel like %:keyword% " +
+                    "   or s.sido like %:keyword% " +
+                    "   or s.sigungu like %:keyword% ) " +
+                    "order by s.ship_name ",
+            countQuery = "select s.id " +
+                    "from ship s join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
+                    "       left join company c on s.company_id = c.id " +
+                    "       left join member m on c.member_id = m.id " +
+                    "where " +
+                    "   m.session_token = :token " +
+                    "   and  (s.ship_name like %:keyword% " +
+                    "   or s.address like %:keyword% " +
+                    "   or s.tel like %:keyword% " +
+                    "   or s.sido like %:keyword% " +
+                    "   or s.sigungu like %:keyword% ) " +
+                    "order by s.ship_name  ",
+            nativeQuery = true
+    )
+    Page<ShipListForWriteFishingDiary> findBySearchKeywordCompany(@Param("keyword") String keyword, String token, Pageable pageable);
+
     /*상품이 속한 ship을 검색하는 메소드*/
     @Query("select s from Ship s  where s = (select g.ship from Goods g where g = :goods)")
     Ship findByGoods(@Param("goods") Goods goods);

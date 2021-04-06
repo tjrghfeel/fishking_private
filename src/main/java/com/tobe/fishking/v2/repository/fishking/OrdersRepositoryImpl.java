@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -222,5 +223,14 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
         LocalDateTime start = DateUtils.getDateFromString(startDate).atTime(0, 0);
         LocalDateTime end = DateUtils.getDateFromString(endDate).atTime(0, 0);
         return orders.createdDate.between(start, end);
+    }
+
+    @Override
+    public List<Orders> getOrderByStatus(String date, OrderStatus status) {
+        return queryFactory
+                .selectFrom(orders)
+                .where(orders.fishingDate.eq(date),
+                        orders.orderStatus.eq(status))
+                .fetch();
     }
 }

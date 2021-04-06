@@ -53,6 +53,8 @@ public class ShipsGoodsController {
             "\n content:[ {" +
             "\n     id: 상품 id" +
             "\n     shipName: 선박명" +
+            "\n     profileImage: 선박이미지" +
+            "\n     address: 선박주소" +
             "\n     fishingType: 낚시 타입" +
             "\n     createDate: 등록일" +
             "\n     hasCamera: 카메라유무" +
@@ -84,6 +86,8 @@ public class ShipsGoodsController {
             "\n content:[ {" +
             "\n     id: 상품 id" +
             "\n     shipName: 선박명" +
+            "\n     profileImage: 선박이미지" +
+            "\n     address: 선박주소" +
             "\n     fishingType: 낚시 타입" +
             "\n     createDate: 등록일" +
             "\n     hasCamera: 카메라유무" +
@@ -133,12 +137,12 @@ public class ShipsGoodsController {
     @PostMapping("/goods/add")
     public Map<String, Object> addGoods(
             @RequestHeader(name = "Authorization") String token,
-            @RequestParam(name = "species[]") List<String> species,
-            @RequestParam(name = "fishingDates[]") List<String> fishingDates,
-            AddGoods addGoods) throws ResourceNotFoundException {
+//            @RequestParam(name = "species") List<String> species,
+//            @RequestParam(name = "fishingDates") List<String> fishingDates,
+            @RequestBody AddGoods addGoods) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
-            Long goodsId = goodsService.addGood(addGoods, token, species, fishingDates);
+            Long goodsId = goodsService.addGood(addGoods, token);
             result.put("result", "success");
             result.put("id", goodsId);
             return result;

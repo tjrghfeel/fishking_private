@@ -67,7 +67,7 @@ public class FishingShipService {
 
     @Transactional
     public Page<FishingShipResponse> getFishingShips(Long memberId, String keyword, String cameraActive, Integer page) throws EmptyListException {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("shipName").ascending());
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("shipName").ascending());
         Page<FishingShipResponse> ships = shipRepository.getShipsByCompanyMember2(memberId, keyword, cameraActive, pageable);
         List<FishingShipResponse> contents = ships.getContent();
         if (contents.isEmpty()) {
