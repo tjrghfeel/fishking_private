@@ -43,7 +43,6 @@ export default inject(
           const shipData = await APIStore._get(
             `/v2/api/ship/${resolve.shipId}`
           );
-          // console.log(JSON.stringify(shipData));
           // this.setState({ shipData });
 
           // 예약상태
@@ -147,9 +146,23 @@ export default inject(
             $("#reasonModal").modal("show");
           }
         };
-        requestCancel = async () => {
+        requestCancel = async (selectedReason) => {
           // TODO : 취소하기
+          const {
+            APIStore,
+            ModalStore,
+            match: {
+              params: { id: orderId },
+            },
+          } = this.props;
           $("#reasonModal").modal("hide");
+          const resolve = await APIStore._post(`/v2/api/cancel`, { orderId });
+          if (resolve && resolve["status"] === "success") {
+            ModalStore.openModal("Alert", { body: "취소되었습니다." });
+            this.loadPageData();
+          } else {
+            ModalStore.openModal("Alert", { body: resolve["message"] });
+          }
         };
         requestReservation = () => {
           // TODO : 다시 예약하기
@@ -465,7 +478,10 @@ export default inject(
                   $("#reasonModal").modal("show");
                 }}
               />
-              <SelectReservationCancelReasonModal id={"reasonModal"} />
+              <SelectReservationCancelReasonModal
+                id={"reasonModal"}
+                onClick={this.requestCancel}
+              />
             </React.Fragment>
           );
         }
