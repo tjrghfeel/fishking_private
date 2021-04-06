@@ -29,11 +29,11 @@ public class AddGoods {
     private @Valid String fishingEndTime;
     @ApiParam(value = "상태, 판매:true, 대기: false")
     private @Valid Boolean isUse;
-//    @ApiParam(value = "어종 리스트. 어종의 code 를 보내주세요", name = "species[]")
-//    private List<String> species;
+    @ApiParam(value = "어종 리스트. 어종의 code 를 보내주세요", name = "species[]")
+    private List<String> species;
 //    private String[] species;
-//    @ApiParam(value = "조업일 리스트", name = "fishingDates[]")
-//    private List<String> fishingDates;
+    @ApiParam(value = "조업일 리스트", name = "fishingDates[]")
+    private List<String> fishingDates;
 //    private String[] fishingDates;
     @ApiParam(value = "예약 확정 방법. 자동확정: 'auto', 선장 수동 확정: 'approval'")
     private @Valid String reserveType;

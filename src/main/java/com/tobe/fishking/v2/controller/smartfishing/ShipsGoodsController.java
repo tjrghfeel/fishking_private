@@ -137,12 +137,12 @@ public class ShipsGoodsController {
     @PostMapping("/goods/add")
     public Map<String, Object> addGoods(
             @RequestHeader(name = "Authorization") String token,
-            @RequestParam(name = "species") List<String> species,
-            @RequestParam(name = "fishingDates") List<String> fishingDates,
-            AddGoods addGoods) throws ResourceNotFoundException {
+//            @RequestParam(name = "species") List<String> species,
+//            @RequestParam(name = "fishingDates") List<String> fishingDates,
+            @RequestBody AddGoods addGoods) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
         try {
-            Long goodsId = goodsService.addGood(addGoods, token, species, fishingDates);
+            Long goodsId = goodsService.addGood(addGoods, token);
             result.put("result", "success");
             result.put("id", goodsId);
             return result;

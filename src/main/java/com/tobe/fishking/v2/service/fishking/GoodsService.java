@@ -251,14 +251,14 @@ public class GoodsService {
     }
 
     @Transactional
-    public Long addGood(AddGoods addGoods, String token, List<String> speciesList, List<String> fishingDatesList) throws ResourceNotFoundException {
+    public Long addGood(AddGoods addGoods, String token) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: " + token));
         Ship ship = shipRepo.getOne(addGoods.getShipId());
 
         List<CommonCode> species = new ArrayList<>();
-//        for (String species_code : addGoods.getSpecies()) {
-        for (String species_code : speciesList) {
+        for (String species_code : addGoods.getSpecies()) {
+//        for (String species_code : speciesList) {
             CommonCode commonCode = codeRepository.getByCode(species_code);
             species.add(commonCode);
         }
@@ -271,8 +271,8 @@ public class GoodsService {
                 .build();
         goodsRepo.save(goods);
 
-//        for (String fishingDate : addGoods.getFishingDates()) {
-        for (String fishingDate : fishingDatesList) {
+        for (String fishingDate : addGoods.getFishingDates()) {
+//        for (String fishingDate : fishingDatesList) {
             GoodsFishingDate goodsFishingDate = GoodsFishingDate.builder()
                     .goods(goods)
                     .fishingDateString(fishingDate)
