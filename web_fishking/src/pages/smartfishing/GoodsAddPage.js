@@ -1,7 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
-import Calendar from "react-calendar-multiday";
+import { Calendar } from "react-multi-date-picker";
 const {
   LAYOUT: { NavigationLayout },
 } = Components;
@@ -47,6 +47,7 @@ export default inject(
 
           arr_ship: [],
           arr_species: [],
+          minDate: null,
         };
         this.arr_hour = [];
         for (let i = 0; i < 24; i++) {
@@ -59,12 +60,21 @@ export default inject(
       async componentDidMount() {
         const { PageStore, APIStore, DataStore } = this.props;
 
+        // 최소선택 날짜 (오늘 + 3일)
+        let minDate = new Date();
+        minDate.setDate(minDate.getDate() + 3);
         // 선박명-업체명
-        let resolve = await APIStore._get(`/v2/api/goods/ships`);
+        const resolve = await APIStore._get(`/v2/api/goods/ships`);
         this.setState({ arr_ship: resolve });
         // 주요어종
-        resolve = await DataStore.getCodes("80", 3);
-        this.setState({ arr_species: resolve });
+        const arr80 = await DataStore.getCodes("80", 3);
+        const arr161 = await DataStore.getCodes("161", 3);
+        const arr162 = await DataStore.getCodes("162", 3);
+        this.setState({
+          minDate,
+          arr_ship: resolve,
+          arr_species: [...arr80, ...arr161, ...arr162],
+        });
 
         const { id } = PageStore.getQueryParams();
         if (id) {
@@ -274,7 +284,7 @@ export default inject(
               <form>
                 <div className="form-group">
                   <label htmlFor="InputCName">
-                    선상명 – 업체명 <strong className="required"></strong>
+                    선박명 <strong className="required"></strong>
                   </label>
                   <select
                     ref={this.shipId}
@@ -286,7 +296,7 @@ export default inject(
                     }
                   >
                     <option value={""}>선상명을 선택하세요</option>
-                    {this.state.arr_ship.map((data, index) => (
+                    {this.state.arr_ship?.map((data, index) => (
                       <option value={data["id"]}>{data["shipName"]}</option>
                     ))}
                   </select>
@@ -491,16 +501,20 @@ export default inject(
                     조업일 선택 <strong className="required"></strong>
                   </label>
                   <Calendar
-                    ref={this.calendar}
-                    isMultiple={true}
-                    selected={this.state.fishingDates}
-                    onChange={(e) => {
-                      const selected = e["selected"];
+                    style={{ width: "100%" }}
+                    multiple
+                    minDate={this.state.minDate}
+                    onChange={async (dates) => {
                       const fishingDates = [];
-                      for (let date of selected) {
-                        fishingDates.push(date.substr(0, 10));
+                      for (let item of dates) {
+                        const year = item["year"];
+                        let month = item["month"]["number"];
+                        if (month < 10) month = `0${month}`;
+                        let day = item["day"];
+                        if (day < 10) day = `0${day}`;
+                        fishingDates.push(`${year}-${month}-${day}`);
                       }
-                      this.setState({ fishingDates });
+                      await this.setState({ fishingDates });
                     }}
                   />
                 </div>

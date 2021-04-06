@@ -52,6 +52,7 @@ export default inject(
         this.reservePersonPhone = React.createRef(null);
         this.personCount = React.createRef(null);
         this.ship = React.createRef(null);
+        this.selCoupon = React.createRef(null);
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -85,6 +86,7 @@ export default inject(
       };
 
       onChangeCoupon = (selected) => {
+        const { ModalStore } = this.props;
         const index = selected.value;
         if (index == -1) {
           // 선택안함
@@ -96,27 +98,44 @@ export default inject(
         } else if (index != -1) {
           const item = this.state.coupons.coupons[index];
           const price = this.state.goodsPrice * this.state.personCount;
+          let discountPrice = 0;
           if (item.couponType === "정액") {
-            let discountPrice = item.saleValues;
+            discountPrice = item.saleValues;
             if (discountPrice > price) discountPrice = price;
-            this.setState({
-              couponId: item.id,
-              discountPrice,
-              paymentPrice: price - discountPrice,
-              totalPrice: this.state.goodsPrice * this.state.personCount,
-            });
+
+            if (
+              this.state.goodsPrice * this.state.personCount - discountPrice <=
+              0
+            ) {
+              ModalStore.openModal("Alert", {
+                body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+              });
+              this.selCoupon.current.value = "-1";
+              return;
+            }
           } else {
             let discountPrice = Math.round(
               price * (item.saleValues / 100) || 0
             );
             if (discountPrice > price) discountPrice = price;
-            this.setState({
-              couponId: item.id,
-              discountPrice,
-              paymentPrice: price - discountPrice,
-              totalPrice: this.state.goodsPrice * this.state.personCount,
-            });
+
+            if (
+              this.state.goodsPrice * this.state.personCount - discountPrice <=
+              0
+            ) {
+              ModalStore.openModal("Alert", {
+                body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+              });
+              this.selCoupon.current.value = "-1";
+              return;
+            }
           }
+          this.setState({
+            couponId: item.id,
+            discountPrice,
+            paymentPrice: price - discountPrice,
+            totalPrice: this.state.goodsPrice * this.state.personCount,
+          });
         }
       };
 
@@ -668,6 +687,7 @@ export default inject(
                       </p>
                       <hr className="pt-1 pb-1" />
                       <select
+                        ref={this.selCoupon}
                         className="form-control"
                         onChange={(e) =>
                           this.onChangeCoupon(e.target.selectedOptions[0])

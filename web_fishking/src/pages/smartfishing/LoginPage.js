@@ -4,6 +4,7 @@ import { inject, observer } from "mobx-react";
 export default inject(
   "PageStore",
   "DataStore",
+  "ModalStore",
   "APIStore"
 )(
   observer(
@@ -21,7 +22,7 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       onLogin = async () => {
-        const { DataStore, APIStore, PageStore } = this.props;
+        const { DataStore, APIStore, PageStore, ModalStore } = this.props;
         const { memberId, password } = this.state;
 
         if (!DataStore.isEmail(memberId)) {
@@ -37,16 +38,20 @@ export default inject(
           this.password.current?.classList.remove("is-invalid");
         }
 
-        const response = await APIStore._post("/v2/api/smartfishing/login", {
-          memberId,
-          password,
-          registrationToken: window.fcm_token || null,
-        });
-        if (response) {
-          PageStore.setAccessToken(response, "smartfishing", "Y");
-          PageStore.push(`/dashboard`);
-        } else {
-          this.password.current?.classList.add("is-invalid");
+        try {
+          const response = await APIStore._post("/v2/api/smartfishing/login", {
+            memberId,
+            password,
+            registrationToken: window.fcm_token || null,
+          });
+          if (response) {
+            PageStore.setAccessToken(response, "smartfishing", "Y");
+            PageStore.push(`/dashboard`);
+          } else {
+            this.password.current?.classList.add("is-invalid");
+          }
+        } catch (err) {
+          ModalStore.openModal("Alert", { body: "ID/PW를 확인해주세요." });
         }
       };
       /********** ********** ********** ********** **********/

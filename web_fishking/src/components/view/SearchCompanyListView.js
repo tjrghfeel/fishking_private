@@ -35,19 +35,26 @@ export default inject(
       }
 
       loadPageData = async (page = 0, keyword = "") => {
-        const { parent, APIStore } = this.props;
+        const { parent, APIStore, PageStore } = this.props;
 
         if ((page > 0 && this.state.isEnd) || this.state.isPending) return;
 
         if (keyword === "") keyword = null;
 
+        const { iscompany } = PageStore.getQueryParams();
+        let url = "";
+        if (iscompany === "Y") {
+          url = `/v2/api/fishingDiary/searchShip/company/${page}`;
+        } else {
+          url = `/v2/api/fishingDiary/searchShip/${page}`;
+        }
         try {
           this.setState({ page, keyword, isPending: true });
           const {
             content,
             totalElements,
             pageable: { pageSize = 0 },
-          } = await APIStore._get("/v2/api/fishingDiary/searchShip/" + page, {
+          } = await APIStore._get(url, {
             keyword,
           });
 

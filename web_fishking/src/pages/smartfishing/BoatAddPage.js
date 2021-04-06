@@ -139,7 +139,7 @@ export default inject(
               if (status === kakao.maps.services.Status.OK) {
                 const x = result[0].x;
                 const y = result[0].y;
-                this.setState({ latitude: x, longitude: y });
+                this.setState({ latitude: y, longitude: x });
               }
             });
           },
@@ -147,7 +147,6 @@ export default inject(
         this.ifrmAddress.current.style.display = "block";
       };
       submit = async () => {
-        console.log(JSON.stringify(this.state));
         const {
           name,
           fishingType,
@@ -193,10 +192,8 @@ export default inject(
           boardingPerson,
           positions,
         };
-        console.log(JSON.stringify(params));
         const { APIStore, ModalStore, PageStore } = this.props;
         const resolve = APIStore._post(`/v2/api/ship/add`, params);
-        console.log(JSON.stringify(resolve));
         if (resolve) {
           ModalStore.openModal("Alert", {
             body: "등록되었습니다.",
