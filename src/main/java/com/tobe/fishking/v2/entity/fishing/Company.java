@@ -96,6 +96,9 @@ public class Company extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(20)   comment '정산계좌번호'  ")
     private String accountNo ;
 
+    @Column(columnDefinition = "varchar(20)   comment '정산계좌 예금주명'  ")
+    private String accountName ;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'사장님한마디', 'USER', DBO, 'TABLE', company, 'COLUMN',  owner_wording
     @Column(columnDefinition = "varchar(500)  comment '사장님한마디'  ")
     private String ownerWording;
@@ -205,5 +208,12 @@ public class Company extends BaseTime {  //선상
         accountFileDownloadUrl = "/"+files[2].getFileUrl()+"/"+files[2].getStoredFile();
         modifiedBy = (manager);
         this.member = (member);
+    }
+
+    public void changeAccount(String bank, String accountNo, String accountName, Member member) {
+        this.bank = bank;
+        this.accountNo = accountNo;
+        this.accountName = accountName;
+        this.modifiedBy = member;
     }
 }
