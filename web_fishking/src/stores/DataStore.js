@@ -86,7 +86,7 @@ const ModalStore = new (class {
   getEnums = async (type, columnLength = 0) => {
     try {
       let resolve;
-      if (this.stateCodes.type) {
+      if (this.stateCodes[type] !== undefined) {
         resolve = this.stateCodes[type];
       } else {
         resolve = await Http._get("/v2/api/value");
@@ -140,7 +140,7 @@ const ModalStore = new (class {
   getCodes = async (groupId, columnLength = 0) => {
     try {
       let resolve;
-      if (this.stateCodes.groupId) {
+      if (this.stateCodes[groupId] !== undefined) {
         resolve = this.stateCodes[groupId];
       } else {
         resolve = await Http._get("/v2/api/commonCode/" + groupId);

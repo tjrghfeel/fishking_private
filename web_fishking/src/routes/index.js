@@ -33,6 +33,13 @@ export default inject("PageStore")(
   observer(
     withRouter(({ PageStore }) => {
       useEffect(() => {
+        window.addEventListener('scroll', () => {
+          if (window.pageYOffset === 0) {
+            window.ReactNativeWebView?.postMessage(JSON.stringify({ process:'Refresh', data: {enabled:'Y'} }));
+          }else{
+            window.ReactNativeWebView?.postMessage(JSON.stringify({ process:'Refresh', data: {enabled:'N'} }));
+          }
+        })
         window.addEventListener("message", (message) => {
           const data = message.data;
           if (data === "goBack") {
