@@ -238,7 +238,7 @@ public class FishkingScheduler {
                 Member receiver = o.getCreatedBy();
                 Goods goods = o.getGoods();
                 String registrationToken = receiver.getRegistrationToken();
-                String alertTitle = "예약 확정 알림";
+                String alertTitle = "예약 취소 알림";
                 String sentence = receiver.getMemberName() + "님 \n"
                         + goods.getShip().getShipName() + "의 \n"
                         + now + " " + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2) + "의 \n"
