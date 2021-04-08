@@ -79,6 +79,8 @@ export default inject(
             cameraActive,
           })) || {};
 
+        console.log(JSON.stringify(content));
+
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {

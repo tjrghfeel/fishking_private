@@ -20,7 +20,7 @@ export default inject("PageStore")(
         const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <NavigationLayout title={"공지사항"} showBackIcon={true} />
+            <NavigationLayout title={"고객센터"} showBackIcon={true} />
 
             <SmartfishingCsTab activeIndex={0} />
 

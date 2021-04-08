@@ -48,6 +48,7 @@ export default inject(
           arr_ship: [],
           arr_species: [],
           minDate: null,
+          arr_dates: [],
         };
         this.arr_hour = [];
         for (let i = 0; i < 24; i++) {
@@ -99,6 +100,15 @@ export default inject(
           reserveType,
         } = await APIStore._get(`/v2/api/goods/detail/${id}`);
 
+        let arr_dates = [];
+        for (let item of fishingDates) {
+          const year = new Number(item.substr(0, 4));
+          const month = new Number(item.substr(5, 2)) - 1;
+          const date = new Number(item.substr(8, 2));
+          const newDate = new Date(year, month, date);
+          arr_dates.push(newDate);
+        }
+
         this.shipId.current.value = shipId;
         this.fishingStartTime.current.value = fishingStartTime;
         this.fishingEndTime.current.value = fishingEndTime;
@@ -129,6 +139,7 @@ export default inject(
           fishingDates,
           positionSelect,
           reserveType,
+          arr_dates,
         });
       };
       selectAllSpecies = () => {
@@ -502,7 +513,9 @@ export default inject(
                   </label>
                   <Calendar
                     style={{ width: "100%" }}
+                    numberOfMonths={2}
                     multiple
+                    value={this.state.arr_dates}
                     minDate={this.state.minDate}
                     onChange={async (dates) => {
                       const fishingDates = [];
@@ -514,7 +527,7 @@ export default inject(
                         if (day < 10) day = `0${day}`;
                         fishingDates.push(`${year}-${month}-${day}`);
                       }
-                      await this.setState({ fishingDates });
+                      await this.setState({ fishingDates, arr_dates: dates });
                     }}
                   />
                 </div>
@@ -688,8 +701,8 @@ export default inject(
                         </div>
                         <div className="input-group-append">
                           <span className="input-group-text">
-                            12시간 이전까지 인원이 차지 않는 경우 해당 선박
-                            운행이 취소됩니다.{" "}
+                            2일 전 까지 인원이 차지 않는 경우 해당 선박 운행이
+                            취소됩니다.{" "}
                           </span>
                         </div>
                       </div>

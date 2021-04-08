@@ -12,7 +12,7 @@ export default inject(
   observer(
     class extends React.Component {
       menus = [
-        { text: "프로필 관리", loggedIn: true, pathname: "/cust/set/profile" },
+        // { text: "프로필 관리", loggedIn: true, pathname: "/cust/set/profile" },
         { text: "알림설정", loggedIn: false, pathname: "/cust/set/alarm" },
         { text: "정산 계좌 설정", loggedIn: false, pathname: "/set/paid" },
         { text: "접근 권한 설정", loggedIn: false, pathname: "" },
@@ -22,7 +22,7 @@ export default inject(
           loggedIn: false,
           pathname: "/cust/policy/main",
         },
-        { text: "탈퇴하기", loggedIn: true, pathname: "/cust/member/signout" },
+        // { text: "탈퇴하기", loggedIn: true, pathname: "/cust/member/signout" },
       ];
       constructor(props) {
         super(props);

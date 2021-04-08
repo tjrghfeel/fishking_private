@@ -57,6 +57,13 @@ export default inject(
           } = await APIStore._get(url, {
             keyword,
           });
+          console.log(
+            JSON.stringify(
+              await APIStore._get(url, {
+                keyword,
+              })
+            )
+          );
 
           if (page === 0) {
             this.setState({ list: content, totalElements });
