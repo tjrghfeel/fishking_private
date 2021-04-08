@@ -85,7 +85,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.sigungu like %:keyword% ) " +
                     "order by s.ship_name ",
             countQuery = "select s.id " +
-                    "from ship s join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
+                    "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
                     "       left join company c on s.company_id = c.id " +
                     "       left join member m on c.member_id = m.id " +
                     "where " +
@@ -95,7 +95,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
                     "   or s.sigungu like %:keyword% ) " +
-                    "order by s.ship_name  ",
+                    "order by s.ship_name ",
             nativeQuery = true
     )
     Page<ShipListForWriteFishingDiary> findBySearchKeywordCompany(@Param("keyword") String keyword, String token, Pageable pageable);
