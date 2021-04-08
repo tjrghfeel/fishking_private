@@ -19,7 +19,8 @@ export default inject(
         constructor(props) {
           super(props);
           this.state = {
-            selectedDate: new Date(),
+            minDate: null,
+            selectedDate: null,
             selected: null,
             goods: null,
           };
@@ -28,7 +29,10 @@ export default inject(
         /** function */
         /********** ********** ********** ********** **********/
         async componentDidMount() {
-          this.onChangeDate(new Date());
+          const minDate = new Date();
+          minDate.setDate(minDate.getDate() + 2);
+          await this.setState({ minDate, selectedDate: minDate });
+          this.onChangeDate(minDate);
         }
 
         onChangeDate = async (selected) => {
@@ -128,7 +132,11 @@ export default inject(
                   alignItems: "center",
                 }}
               >
-                <Calendar onChange={this.onChangeDate} minDate={new Date()} />
+                <Calendar
+                  value={this.state.selectedDate}
+                  onChange={this.onChangeDate}
+                  minDate={this.state.minDate}
+                />
               </div>
 
               {/** 날짜 */}
@@ -136,7 +144,7 @@ export default inject(
                 <div className="card-round-box card-round-box-sm pt-0 pb-0">
                   <h5 className="text-center">
                     <span className="text-primary">
-                      {this.state.selectedDate.toString()}
+                      {this.state.selectedDate?.toString()}
                     </span>
                   </h5>
                 </div>

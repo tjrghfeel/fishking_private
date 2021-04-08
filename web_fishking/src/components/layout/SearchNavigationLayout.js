@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { inject, observer } from "mobx-react";
 
 export default inject("PageStore")(
-  observer(({ text, PageStore }) => {
+  observer(({ text, onSubmit, PageStore }) => {
     const pathname = PageStore.history.location.pathname;
     const [value, setValue] = useState("");
     useEffect(() => {
@@ -28,13 +28,14 @@ export default inject("PageStore")(
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={(e) => {
-              if (e.keyCode === 13) {
+              if (e.keyCode === 13 && onSubmit) {
+                onSubmit(e.target.value);
                 e.preventDefault();
               }
             }}
           />
           <a
-            onClick={() => PageStore.push(`${pathname}?keyword=${value}`)}
+            onClick={() => (onSubmit ? onSubmit(value) : null)}
             className="float-right"
           >
             <img src="/assets/cust/img/svg/navbar-search.svg" alt="Search" />

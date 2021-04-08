@@ -594,7 +594,7 @@ export default inject(
                             minLength={10}
                             maxLength={11}
                             id={`person-emergency-${index}`}
-                            placeholder="비상연락처를 입력해 주세요."
+                            placeholder="비상연락처(본인 휴대폰 아닌 비상연락처)를 입력해 주세요."
                           />
                         </div>
                         <div className="form-group">
@@ -646,6 +646,12 @@ export default inject(
                     data={this.state.boat}
                     count={this.state.personCount}
                   />
+                )}
+                {this.state.boat?.type && (
+                  <React.Fragment>
+                    예약인원 수만큼 터치하여 자리를 정합니다. 변경시에는 다시
+                    터치하여 파란색을 풀고 다른 자리를 선택합니다.
+                  </React.Fragment>
                 )}
                 {(this.state.boat?.rockData || []).length > 0 &&
                   this.state.boat?.rockData.map((data, index) => (
@@ -754,9 +760,9 @@ export default inject(
                           className="form-control no-line form-price"
                           id="inputName"
                           placeholder=""
-                          value={Intl.NumberFormat().format(
-                            this.state.discountPrice
-                          )}
+                          value={Intl.NumberFormat()
+                            .format(this.state.discountPrice)
+                            .concat("원")}
                           disabled
                         />
                       </div>
