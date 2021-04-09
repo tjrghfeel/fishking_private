@@ -26,6 +26,8 @@ export default inject(
         this.positionSelectFalse = React.createRef(null);
         this.reserveTypeAuto = React.createRef(null);
         this.reserveTypeApproval = React.createRef(null);
+        this.extraRunSelectTrue = React.createRef(null);
+        this.extraRunSelectFalse = React.createRef(null);
         this.state = {
           id: null,
 
@@ -85,6 +87,7 @@ export default inject(
       }
       loadPageData = async (id) => {
         const { APIStore } = this.props;
+        const resolve = await APIStore._get(`/v2/api/goods/detail/${id}`);
         let {
           shipId,
           name,
@@ -98,7 +101,8 @@ export default inject(
           fishingDates,
           positionSelect,
           reserveType,
-        } = await APIStore._get(`/v2/api/goods/detail/${id}`);
+          extraRun,
+        } = resolve;
 
         let arr_dates = [];
         for (let item of fishingDates) {
@@ -126,21 +130,12 @@ export default inject(
         }
         if (reserveType === "auto") this.reserveTypeAuto.current.checked = true;
         else this.reserveTypeApproval.current.checked = true;
-        this.setState({
-          shipId,
-          name,
-          amount,
-          minPersonnel,
-          maxPersonnel,
-          fishingStartTime,
-          fishingEndTime,
-          isUse,
-          species,
-          fishingDates,
-          positionSelect,
-          reserveType,
-          arr_dates,
-        });
+        if (extraRun) {
+          this.extraRunSelectTrue.current.click();
+        } else {
+          this.extraRunSelectFalse.current.click();
+        }
+        this.setState({ ...resolve, arr_dates });
       };
       selectAllSpecies = () => {
         const eles = document.querySelectorAll('[name="check-species"]');
@@ -160,7 +155,7 @@ export default inject(
         }
       };
       onSubmit = async () => {
-        const { APIStore, ModalStore } = this.props;
+        const { APIStore, ModalStore, PageStore } = this.props;
         const {
           id,
           shipId,
@@ -191,7 +186,7 @@ export default inject(
           });
           return;
         }
-        if (minPersonnel > maxPersonnel) {
+        if (new Number(minPersonnel) > new Number(maxPersonnel)) {
           ModalStore.openModal("Alert", {
             body: "정원을 확인해주세요.",
           });
@@ -276,6 +271,14 @@ export default inject(
             extraRun,
             extraPersonnel,
             extraShipNumber,
+          });
+        }
+        if (resolve && resolve["result"] === "success") {
+          ModalStore.openModal("Alert", {
+            body: "저장되었습니다.",
+            onOk: () => {
+              PageStore.push(`/goods`);
+            },
           });
         }
       };
@@ -633,6 +636,7 @@ export default inject(
                           role="tablist"
                         >
                           <a
+                            ref={this.extraRunSelectTrue}
                             className="nav-link active btn btn-on"
                             id="nav-home-tab"
                             data-toggle="tab"
@@ -644,6 +648,7 @@ export default inject(
                             ON
                           </a>
                           <a
+                            ref={this.extraRunSelectFalse}
                             className="nav-link btn btn-off"
                             id="nav-profile-tab"
                             data-toggle="tab"

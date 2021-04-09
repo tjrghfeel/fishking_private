@@ -227,6 +227,7 @@ export default inject(
               date: this.state.date,
             }
           );
+          console.log(JSON.stringify(resolve));
           this.setState({
             boat: resolve,
             personsName,
