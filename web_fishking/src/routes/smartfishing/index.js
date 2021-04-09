@@ -19,6 +19,7 @@ import CsNoticePage from "../../pages/smartfishing/CsNoticePage";
 import CsFaqPage from "../../pages/smartfishing/CsFaqPage";
 import CsQnaAddPage from "../../pages/smartfishing/CsQnaAddPage";
 import CsQnaListPage from "../../pages/smartfishing/CsQnaListPage";
+import CsQnaDetailPage from "../../pages/smartfishing/CsQnaDetailPage";
 import SetMainPage from "../../pages/smartfishing/SetMainPage";
 import SetPaidPage from "../../pages/smartfishing/SetPaidPage";
 
@@ -121,6 +122,12 @@ export default inject("PageStore")(
                   exact
                   path={`${match.url}/cs/qna/list`}
                   component={CsQnaListPage}
+                />
+                {/** 고객센터 > 1:1문의 > 문의상세 */}
+                <Route
+                  exact
+                  path={`${match.url}/cs/qna/detail/:id`}
+                  component={CsQnaDetailPage}
                 />
                 {/** 고객센터 > 설정 */}
                 <Route

@@ -13,10 +13,13 @@ import com.tobe.fishking.v2.model.fishing.CompanyDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyListDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyUpdateDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyWriteDTO;
+import com.tobe.fishking.v2.model.smartfishing.AccountDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.CompanyRepository;
 import com.tobe.fishking.v2.utils.HashUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -30,25 +33,19 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class CompanyService {
-    @Autowired
-    CompanyRepository companyRepository;
-    @Autowired
-    UploadService uploadService;
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired
-    FileRepository fileRepository;
-    @Autowired
-    Environment env;
-    @Autowired
-    PasswordEncoder encoder;
+
+    private final CompanyRepository companyRepository;
+    private final UploadService uploadService;
+    private final MemberRepository memberRepository;
+    private final FileRepository fileRepository;
+    private final Environment env;
+    private final PasswordEncoder encoder;
+    private final CommonCodeRepository codeRepository;
 
 
     /*업체 등록 요청 처리 메소드. */
@@ -386,6 +383,29 @@ public class CompanyService {
         return companyRepository.findAllByIsRegistered();
     }
 
+    @Transactional
+    public Map<String, Object> getAccount(Member member) {
+        Company company = companyRepository.findByMember(member);
+        String bankName;
+        if (company.getBank() == null) {
+            bankName = "";
+        } else {
+            bankName = codeRepository.findCommonCodeByGroupAndCode(164L, company.getBank()).getCodeName();
+        }
+        companyRepository.save(company);
+        Map<String, Object> response = new HashMap<>();
+        response.put("bank", bankName);
+        response.put("bankCode", company.getBank());
+        response.put("accountNum", company.getAccountNo());
+        response.put("name", company.getAccountName());
+        return response;
+    }
 
+    @Transactional
+    public void updateAccount(AccountDTO accountDTO, Member member) {
+        Company company = companyRepository.findByMember(member);
+        company.changeAccount(accountDTO.getBankCode(), accountDTO.getAccountNum(), accountDTO.getName(), member);
+        companyRepository.save(company);
+    }
 
 }

@@ -104,6 +104,11 @@ export default inject(
         PageStore.storeState();
         PageStore.push(`/boat/add`);
       };
+      onClick = (item) => {
+        const { PageStore } = this.props;
+        PageStore.storeState();
+        PageStore.push(`/boat/add?id=${item.id}`);
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -185,7 +190,11 @@ export default inject(
             <p className="clearfix"></p>
 
             {PageStore.state.list?.map((data, index) => (
-              <SmartfishingBoatListItemView key={index} data={data} />
+              <SmartfishingBoatListItemView
+                key={index}
+                data={data}
+                onClick={this.onClick}
+              />
             ))}
 
             <a onClick={this.onClickAdd} className="add-circle">

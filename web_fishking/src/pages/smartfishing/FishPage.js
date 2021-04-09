@@ -300,7 +300,7 @@ export default inject(
             ))}
 
             <a
-              onClick={() => PageStore.push(`/cust/story/add`)}
+              onClick={() => PageStore.push(`/cust/story/add?iscompany=Y`)}
               className="add-circle"
             >
               <img

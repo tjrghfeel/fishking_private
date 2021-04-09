@@ -4,21 +4,23 @@ import { inject, observer } from "mobx-react";
 export default inject()(
   observer(
     ({
-      data: { shipName, species = [], speciesCount = 0, goodsList = [] },
+      data: {
+        shipName,
+        profileImage,
+        species = [],
+        speciesCount = 0,
+        goodsList = [],
+      },
       data,
       onClick,
     }) => {
       return (
         <div className="container nopadding mt-3">
-          <a onClick={() => (onClick ? onClick(data) : null)}>
+          <a>
             <div className="card card-sm">
               <div className="row no-gutters">
                 <div className="cardimgWrap">
-                  <img
-                    src="/assets/smartfishing/img/sample/boat1.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
+                  <img src={profileImage} className="img-fluid" alt="" />
                 </div>
                 <div className="cardInfoWrap">
                   <div className="card-body">
@@ -42,9 +44,12 @@ export default inject()(
                 </div>
               </div>
               {goodsList?.map((data, index) => (
-                <React.Fragment>
+                <React.Fragment key={index}>
                   <hr className="full mt-2 mb-3" />
-                  <div className="row no-gutters d-flex align-items-center">
+                  <div
+                    className="row no-gutters d-flex align-items-center"
+                    onClick={() => (onClick ? onClick(data) : null)}
+                  >
                     <div className="col-6">
                       <span className="tag-orange">
                         출발 {data["fishingStartTime"]}~

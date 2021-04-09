@@ -1,7 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
-import Calendar from "react-calendar-multiday";
+import { Calendar } from "react-multi-date-picker";
 const {
   LAYOUT: { NavigationLayout },
 } = Components;
@@ -26,6 +26,8 @@ export default inject(
         this.positionSelectFalse = React.createRef(null);
         this.reserveTypeAuto = React.createRef(null);
         this.reserveTypeApproval = React.createRef(null);
+        this.extraRunSelectTrue = React.createRef(null);
+        this.extraRunSelectFalse = React.createRef(null);
         this.state = {
           id: null,
 
@@ -47,6 +49,8 @@ export default inject(
 
           arr_ship: [],
           arr_species: [],
+          minDate: null,
+          arr_dates: [],
         };
         this.arr_hour = [];
         for (let i = 0; i < 24; i++) {
@@ -59,12 +63,21 @@ export default inject(
       async componentDidMount() {
         const { PageStore, APIStore, DataStore } = this.props;
 
+        // 최소선택 날짜 (오늘 + 3일)
+        let minDate = new Date();
+        minDate.setDate(minDate.getDate() + 3);
         // 선박명-업체명
-        let resolve = await APIStore._get(`/v2/api/goods/ships`);
+        const resolve = await APIStore._get(`/v2/api/goods/ships`);
         this.setState({ arr_ship: resolve });
         // 주요어종
-        resolve = await DataStore.getCodes("80", 3);
-        this.setState({ arr_species: resolve });
+        const arr80 = await DataStore.getCodes("80", 3);
+        const arr161 = await DataStore.getCodes("161", 3);
+        const arr162 = await DataStore.getCodes("162", 3);
+        this.setState({
+          minDate,
+          arr_ship: resolve,
+          arr_species: [...arr80, ...arr161, ...arr162],
+        });
 
         const { id } = PageStore.getQueryParams();
         if (id) {
@@ -74,6 +87,7 @@ export default inject(
       }
       loadPageData = async (id) => {
         const { APIStore } = this.props;
+        const resolve = await APIStore._get(`/v2/api/goods/detail/${id}`);
         let {
           shipId,
           name,
@@ -87,7 +101,17 @@ export default inject(
           fishingDates,
           positionSelect,
           reserveType,
-        } = await APIStore._get(`/v2/api/goods/detail/${id}`);
+          extraRun,
+        } = resolve;
+
+        let arr_dates = [];
+        for (let item of fishingDates) {
+          const year = new Number(item.substr(0, 4));
+          const month = new Number(item.substr(5, 2)) - 1;
+          const date = new Number(item.substr(8, 2));
+          const newDate = new Date(year, month, date);
+          arr_dates.push(newDate);
+        }
 
         this.shipId.current.value = shipId;
         this.fishingStartTime.current.value = fishingStartTime;
@@ -106,20 +130,12 @@ export default inject(
         }
         if (reserveType === "auto") this.reserveTypeAuto.current.checked = true;
         else this.reserveTypeApproval.current.checked = true;
-        this.setState({
-          shipId,
-          name,
-          amount,
-          minPersonnel,
-          maxPersonnel,
-          fishingStartTime,
-          fishingEndTime,
-          isUse,
-          species,
-          fishingDates,
-          positionSelect,
-          reserveType,
-        });
+        if (extraRun) {
+          this.extraRunSelectTrue.current.click();
+        } else {
+          this.extraRunSelectFalse.current.click();
+        }
+        this.setState({ ...resolve, arr_dates });
       };
       selectAllSpecies = () => {
         const eles = document.querySelectorAll('[name="check-species"]');
@@ -139,7 +155,7 @@ export default inject(
         }
       };
       onSubmit = async () => {
-        const { APIStore, ModalStore } = this.props;
+        const { APIStore, ModalStore, PageStore } = this.props;
         const {
           id,
           shipId,
@@ -170,7 +186,7 @@ export default inject(
           });
           return;
         }
-        if (minPersonnel > maxPersonnel) {
+        if (new Number(minPersonnel) > new Number(maxPersonnel)) {
           ModalStore.openModal("Alert", {
             body: "정원을 확인해주세요.",
           });
@@ -257,6 +273,14 @@ export default inject(
             extraShipNumber,
           });
         }
+        if (resolve && resolve["result"] === "success") {
+          ModalStore.openModal("Alert", {
+            body: "저장되었습니다.",
+            onOk: () => {
+              PageStore.push(`/goods`);
+            },
+          });
+        }
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -274,7 +298,7 @@ export default inject(
               <form>
                 <div className="form-group">
                   <label htmlFor="InputCName">
-                    선상명 – 업체명 <strong className="required"></strong>
+                    선박명 <strong className="required"></strong>
                   </label>
                   <select
                     ref={this.shipId}
@@ -286,7 +310,7 @@ export default inject(
                     }
                   >
                     <option value={""}>선상명을 선택하세요</option>
-                    {this.state.arr_ship.map((data, index) => (
+                    {this.state.arr_ship?.map((data, index) => (
                       <option value={data["id"]}>{data["shipName"]}</option>
                     ))}
                   </select>
@@ -491,16 +515,22 @@ export default inject(
                     조업일 선택 <strong className="required"></strong>
                   </label>
                   <Calendar
-                    ref={this.calendar}
-                    isMultiple={true}
-                    selected={this.state.fishingDates}
-                    onChange={(e) => {
-                      const selected = e["selected"];
+                    style={{ width: "100%" }}
+                    numberOfMonths={2}
+                    multiple
+                    value={this.state.arr_dates}
+                    minDate={this.state.minDate}
+                    onChange={async (dates) => {
                       const fishingDates = [];
-                      for (let date of selected) {
-                        fishingDates.push(date.substr(0, 10));
+                      for (let item of dates) {
+                        const year = item["year"];
+                        let month = item["month"]["number"];
+                        if (month < 10) month = `0${month}`;
+                        let day = item["day"];
+                        if (day < 10) day = `0${day}`;
+                        fishingDates.push(`${year}-${month}-${day}`);
                       }
-                      this.setState({ fishingDates });
+                      await this.setState({ fishingDates, arr_dates: dates });
                     }}
                   />
                 </div>
@@ -606,6 +636,7 @@ export default inject(
                           role="tablist"
                         >
                           <a
+                            ref={this.extraRunSelectTrue}
                             className="nav-link active btn btn-on"
                             id="nav-home-tab"
                             data-toggle="tab"
@@ -617,6 +648,7 @@ export default inject(
                             ON
                           </a>
                           <a
+                            ref={this.extraRunSelectFalse}
                             className="nav-link btn btn-off"
                             id="nav-profile-tab"
                             data-toggle="tab"
@@ -674,8 +706,8 @@ export default inject(
                         </div>
                         <div className="input-group-append">
                           <span className="input-group-text">
-                            12시간 이전까지 인원이 차지 않는 경우 해당 선박
-                            운행이 취소됩니다.{" "}
+                            2일 전 까지 인원이 차지 않는 경우 해당 선박 운행이
+                            취소됩니다.{" "}
                           </span>
                         </div>
                       </div>

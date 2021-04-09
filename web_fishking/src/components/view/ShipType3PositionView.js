@@ -42,7 +42,13 @@ export default inject()(
           },
           [used, selected, setSelected, onChange]
         );
-        useImperativeHandle(ref, () => ({ selected }));
+        const onSetSelected = useCallback(
+          (selectedData) => {
+            setSelected(selectedData);
+          },
+          [setSelected]
+        );
+        useImperativeHandle(ref, () => ({ selected, onSetSelected }));
         return (
           <React.Fragment>
             <div className="container nopadding bg-grey bg-grey-sm">

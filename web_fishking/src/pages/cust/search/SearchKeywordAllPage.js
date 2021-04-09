@@ -51,7 +51,7 @@ export default inject(
             {/** 업체 */}
             {(this.state.ship?.totalElements || 0) > 0 && (
               <div className="container nopadding mt-3 mb-0">
-                <h5>업체</h5>
+                <h5>선박</h5>
                 {this.state.ship.content.map((data, index) => (
                   <SearchCompanyListItem01View
                     key={index}
@@ -64,7 +64,7 @@ export default inject(
                 <p className="text-right">
                   <a onClick={() => PageStore.push(`/main/company/boat`)}>
                     <small>
-                      업체 더보기&nbsp;
+                      선박 더보기&nbsp;
                       <img
                         src="/assets/cust/img/svg/icon-arrow.svg"
                         alt=""

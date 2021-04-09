@@ -52,6 +52,7 @@ export default inject(
         this.reservePersonPhone = React.createRef(null);
         this.personCount = React.createRef(null);
         this.ship = React.createRef(null);
+        this.selCoupon = React.createRef(null);
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -85,6 +86,7 @@ export default inject(
       };
 
       onChangeCoupon = (selected) => {
+        const { ModalStore } = this.props;
         const index = selected.value;
         if (index == -1) {
           // 선택안함
@@ -96,27 +98,44 @@ export default inject(
         } else if (index != -1) {
           const item = this.state.coupons.coupons[index];
           const price = this.state.goodsPrice * this.state.personCount;
+          let discountPrice = 0;
           if (item.couponType === "정액") {
-            let discountPrice = item.saleValues;
+            discountPrice = item.saleValues;
             if (discountPrice > price) discountPrice = price;
-            this.setState({
-              couponId: item.id,
-              discountPrice,
-              paymentPrice: price - discountPrice,
-              totalPrice: this.state.goodsPrice * this.state.personCount,
-            });
+
+            if (
+              this.state.goodsPrice * this.state.personCount - discountPrice <=
+              0
+            ) {
+              ModalStore.openModal("Alert", {
+                body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+              });
+              this.selCoupon.current.value = "-1";
+              return;
+            }
           } else {
             let discountPrice = Math.round(
               price * (item.saleValues / 100) || 0
             );
             if (discountPrice > price) discountPrice = price;
-            this.setState({
-              couponId: item.id,
-              discountPrice,
-              paymentPrice: price - discountPrice,
-              totalPrice: this.state.goodsPrice * this.state.personCount,
-            });
+
+            if (
+              this.state.goodsPrice * this.state.personCount - discountPrice <=
+              0
+            ) {
+              ModalStore.openModal("Alert", {
+                body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+              });
+              this.selCoupon.current.value = "-1";
+              return;
+            }
           }
+          this.setState({
+            couponId: item.id,
+            discountPrice,
+            paymentPrice: price - discountPrice,
+            totalPrice: this.state.goodsPrice * this.state.personCount,
+          });
         }
       };
 
@@ -208,6 +227,7 @@ export default inject(
               date: this.state.date,
             }
           );
+          console.log(JSON.stringify(resolve));
           this.setState({
             boat: resolve,
             personsName,
@@ -575,7 +595,7 @@ export default inject(
                             minLength={10}
                             maxLength={11}
                             id={`person-emergency-${index}`}
-                            placeholder="비상연락처를 입력해 주세요."
+                            placeholder="비상연락처(본인 휴대폰 아닌 비상연락처)를 입력해 주세요."
                           />
                         </div>
                         <div className="form-group">
@@ -628,6 +648,12 @@ export default inject(
                     count={this.state.personCount}
                   />
                 )}
+                {this.state.boat?.type && (
+                  <React.Fragment>
+                    예약인원 수만큼 터치하여 자리를 정합니다. 변경시에는 다시
+                    터치하여 파란색을 풀고 다른 자리를 선택합니다.
+                  </React.Fragment>
+                )}
                 {(this.state.boat?.rockData || []).length > 0 &&
                   this.state.boat?.rockData.map((data, index) => (
                     <SelectRockPointView
@@ -668,6 +694,7 @@ export default inject(
                       </p>
                       <hr className="pt-1 pb-1" />
                       <select
+                        ref={this.selCoupon}
                         className="form-control"
                         onChange={(e) =>
                           this.onChangeCoupon(e.target.selectedOptions[0])
@@ -734,9 +761,9 @@ export default inject(
                           className="form-control no-line form-price"
                           id="inputName"
                           placeholder=""
-                          value={Intl.NumberFormat().format(
-                            this.state.discountPrice
-                          )}
+                          value={Intl.NumberFormat()
+                            .format(this.state.discountPrice)
+                            .concat("원")}
                           disabled
                         />
                       </div>

@@ -41,7 +41,7 @@ export default inject()(
         }
         // 마커 표시
         for (let point of this.state.points) {
-          if (this.state.used.includes(point["id"])) continue;
+          if (this.state.used.includes("".concat(point["id"]))) continue;
           const marker = new kakao.maps.Marker({
             position: new kakao.maps.LatLng(
               point["latitude"],

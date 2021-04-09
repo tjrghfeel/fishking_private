@@ -23,6 +23,7 @@ export default inject(
         this.ifrmAddress = React.createRef(null);
         this.zonecode = React.createRef(null);
         this.textAddr = React.createRef(null);
+        this.textAddrDet = React.createRef(null);
         this.shipType3 = React.createRef(null);
         this.shipType5 = React.createRef(null);
         this.shipType9 = React.createRef(null);
@@ -37,6 +38,7 @@ export default inject(
           notice: null,
           profileImage: null, // 선박사진
           videoId: null, // 녹화영상
+          address: null,
           sido: null,
           sigungu: null,
           latitude: null,
@@ -53,13 +55,17 @@ export default inject(
           arr_facilities: [],
           arr_adtCameras: [],
           arr_nhnCameras: [],
+          isUpdate: false,
         };
       }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
       async componentDidMount() {
-        const { DataStore, APIStore } = this.props;
+        this.loadPageData();
+      }
+      loadPageData = async () => {
+        const { DataStore, APIStore, PageStore } = this.props;
         // 주요어종
         const arr_fishSpecies = await DataStore.getCodes("80", 3);
         this.setState({ arr_fishSpecies });
@@ -71,13 +77,134 @@ export default inject(
         this.setState({ arr_facilities });
         // 카메라 리스트
         const cameras = await APIStore._get(`/v2/api/ship/cameras`);
-        this.setState({
+        await this.setState({
           arr_adtCameras: cameras["adt"] || [],
           adtCameras: cameras["adt"] || [],
           arr_nhnCameras: cameras["nhn"] || [],
           nhnCameras: cameras["nhn"] || [],
         });
-      }
+        // 수정인경우 데이터 불러오기
+        const { id } = PageStore.getQueryParams();
+        if (id) {
+          const resolve = await APIStore._get(`/v2/api/ship/detail/${id}`);
+          await this.setState({ ...resolve });
+          // 선상위치 선택
+          if (this.state.weight === 3) {
+            this.shipType3.current.onSetSelected(this.state.positions);
+          } else if (this.state.weight === 5) {
+            this.shipType5.current.onSetSelected(this.state.positions);
+          } else if (this.state.weight === 9) {
+            this.shipType9.current.onSetSelected(this.state.positions);
+          }
+          // 구분 선택
+          document
+            .querySelector(
+              `[name="checkFishingType"][value="${this.state.fishingType}"]`
+            )
+            .click();
+          // 갯바위시 지도 그리기
+          if (this.state.fishingType === "seaRocks") {
+            for (let item of this.state.positions) {
+              const rockData = await APIStore._get(`/v2/api/searocks/id`, {
+                seaRockId: [item],
+              });
+              if (rockData && rockData["data"]) {
+                for (let index = 0; index < rockData["data"].length; index++) {
+                  // 지도 그리기
+                  const data = rockData["data"][index];
+                  const latitude = data["points"][0]["latitude"];
+                  const longitude = data["points"][0]["longitude"];
+                  const container = document.querySelector(`#map-${index}`);
+                  const tmpMap = new daum.maps.Map(container, {
+                    center: new daum.maps.LatLng(latitude, longitude),
+                    level: 7,
+                  });
+                  // 마커 그리기
+                  for (let point of data["points"]) {
+                    const marker = new kakao.maps.Marker({
+                      position: new kakao.maps.LatLng(
+                        point["latitude"],
+                        point["longitude"]
+                      ),
+                    });
+                    marker.setMap(tmpMap);
+                  }
+                  setTimeout(() => {
+                    tmpMap.relayout();
+                  }, 100);
+                }
+              }
+            }
+          }
+          // 주요어종 선택
+          const {
+            fishSpecies,
+            services,
+            facilities,
+            adtCameras,
+            nhnCameras,
+          } = resolve;
+          for (let item of fishSpecies) {
+            document.querySelector(
+              `[name="checkbox-fishSpecies"][value="${item}"]`
+            ).checked = true;
+          }
+          // 서비스제공 선택
+          for (let item of services) {
+            document.querySelector(
+              `[name="checkbox-services"][value="${item}"]`
+            ).checked = true;
+          }
+          // 편의시설 선택
+          for (let item of facilities) {
+            document.querySelector(
+              `[name="checkbox-facilities"][value="${item}"]`
+            ).checked = true;
+          }
+          // ADT카메라 선택
+          for (let item of this.state.arr_adtCameras) {
+            const serial = item["serial"];
+            if (adtCameras && adtCameras.length > 0) {
+              for (let camera of adtCameras) {
+                const cserial = camera["serial"];
+                if (serial == cserial) {
+                  document.querySelector(
+                    `[name="adt-camera-${serial}"]`
+                  ).value = "Y";
+                } else {
+                  document.querySelector(
+                    `[name="adt-camera-${serial}"]`
+                  ).value = "N";
+                }
+              }
+            } else {
+              document.querySelector(`[name="adt-camera-${serial}"]`).value =
+                "N";
+            }
+          }
+          // NHN카메라 선택
+          for (let item of this.state.arr_nhnCameras) {
+            const serial = item["serial"];
+            if (nhnCameras && nhnCameras.length > 0) {
+              for (let camera of nhnCameras) {
+                const cserial = camera["serial"];
+                if (serial == cserial) {
+                  document.querySelector(
+                    `[name="nhn-camera-${serial}"]`
+                  ).value = "Y";
+                } else {
+                  document.querySelector(
+                    `[name="nhn-camera-${serial}"]`
+                  ).value = "N";
+                }
+              }
+            } else {
+              document.querySelector(`[name="nhn-camera-${serial}"]`).value =
+                "N";
+            }
+          }
+        }
+      };
       uploadFile = async (uploadType) => {
         const { APIStore } = this.props;
         if (uploadType === "profileImage") {
@@ -139,7 +266,7 @@ export default inject(
               if (status === kakao.maps.services.Status.OK) {
                 const x = result[0].x;
                 const y = result[0].y;
-                this.setState({ latitude: x, longitude: y });
+                this.setState({ latitude: y, longitude: x });
               }
             });
           },
@@ -147,7 +274,6 @@ export default inject(
         this.ifrmAddress.current.style.display = "block";
       };
       submit = async () => {
-        console.log(JSON.stringify(this.state));
         const {
           name,
           fishingType,
@@ -182,6 +308,9 @@ export default inject(
           notice,
           profileImage,
           videoId,
+          addr: this.textAddr.current.value.concat(
+            this.textAddrDet.current.value
+          ),
           sido,
           sigungu,
           latitude,
@@ -193,10 +322,8 @@ export default inject(
           boardingPerson,
           positions,
         };
-        console.log(JSON.stringify(params));
         const { APIStore, ModalStore, PageStore } = this.props;
         const resolve = APIStore._post(`/v2/api/ship/add`, params);
-        console.log(JSON.stringify(resolve));
         if (resolve) {
           ModalStore.openModal("Alert", {
             body: "등록되었습니다.",
@@ -240,6 +367,7 @@ export default inject(
                     <input
                       name={"checkFishingType"}
                       type="radio"
+                      value={"ship"}
                       className="add-contrast"
                       data-role="collar"
                       defaultChecked={this.state.fishingType}
@@ -261,6 +389,7 @@ export default inject(
                     <input
                       name={"checkFishingType"}
                       type="radio"
+                      value={"seaRocks"}
                       className="add-contrast"
                       data-role="collar"
                       onChange={(e) => {
@@ -294,6 +423,7 @@ export default inject(
                     <div className="form-group">
                       <div className="input-group">
                         <select
+                          value={this.state.weight}
                           className="form-control"
                           onChange={(e) => {
                             const selectedValue =
@@ -431,7 +561,7 @@ export default inject(
                         갯바위 선택
                       </a>
                     </div>
-                    {this.state.positions.map((data, index) => (
+                    {this.state.positions?.map((data, index) => (
                       <React.Fragment>
                         <div className="mapwrap">
                           <div
@@ -475,6 +605,7 @@ export default inject(
                             <label className="control checkbox">
                               <input
                                 name={"checkbox-fishSpecies"}
+                                value={item["code"]}
                                 type="checkbox"
                                 className="add-contrast"
                                 data-role="collar"
@@ -537,6 +668,7 @@ export default inject(
                             <label className="control checkbox">
                               <input
                                 name={"checkbox-services"}
+                                value={item["code"]}
                                 type="checkbox"
                                 className="add-contrast"
                                 data-role="collar"
@@ -599,6 +731,7 @@ export default inject(
                             <label className="control checkbox">
                               <input
                                 name={"checkbox-facilities"}
+                                value={item["code"]}
                                 type="checkbox"
                                 className="add-contrast"
                                 data-role="collar"
@@ -718,6 +851,8 @@ export default inject(
                     placeholder="선박사진을 등록하세요."
                     onChange={() => this.uploadFile("profileImage")}
                   />
+                  <br />
+                  {this.state.profileImage}
                 </div>
                 <div className="space mt-0 mb-4"></div>
                 <div className="form-group">
@@ -731,6 +866,8 @@ export default inject(
                     placeholder="녹화영상을 등록하세요."
                     onChange={() => this.uploadFile("videoId")}
                   />
+                  <br />
+                  {this.state.video}
                 </div>
                 <div className="space mt-0 mb-4"></div>
                 <div className="form-group">
@@ -789,6 +926,7 @@ export default inject(
                     readOnly
                   />
                   <input
+                    ref={this.textAddrDet}
                     type="text"
                     className="form-control mt-2"
                     placeholder="상세주소"
@@ -841,6 +979,7 @@ export default inject(
                     {this.state.arr_adtCameras?.map((data, index) => (
                       <div className="input-group mb-2" key={index}>
                         <select
+                          name={`adt-camera-${data["serial"]}`}
                           className="form-control"
                           onChange={(e) => {
                             if (e.target.selectedOptions[0].value === "N") {
@@ -879,6 +1018,7 @@ export default inject(
                   {this.state.arr_nhnCameras?.map((data, index) => (
                     <div className="input-group mb-2" key={index}>
                       <select
+                        name={`nhn-camera-${data["serial"]}`}
                         className="form-control"
                         onChange={(e) => {
                           if (e.target.selectedOptions[0].value === "N") {

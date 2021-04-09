@@ -4,7 +4,14 @@ import { inject, observer } from "mobx-react";
 export default inject()(
   observer(
     ({
-      data: { fishingType, shipName, createDate, hasCamera },
+      data: {
+        fishingType,
+        profileImage,
+        shipName,
+        address,
+        createDate,
+        hasCamera,
+      },
       data,
       onClick,
     }) => {
@@ -14,11 +21,7 @@ export default inject()(
             <div className="card card-sm">
               <div className="row no-gutters">
                 <div className="cardimgWrap">
-                  <img
-                    src="/assets/smartfishing/img/sample/boat1.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
+                  <img src={profileImage} className="img-fluid" alt="" />
                 </div>
                 <div className="cardInfoWrap">
                   <div className="card-body pt-0">
@@ -28,9 +31,7 @@ export default inject()(
                           <span className="tag">{fishingType}</span> {shipName}
                         </h6>
                         <p>
-                          출조점: 어복레저
-                          <br />
-                          선주: 홍길동
+                          {address}
                           <br />
                           등록일: {createDate?.substr(0, 10)}
                         </p>

@@ -2,11 +2,14 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../components";
 const {
-  LAYOUT: { NavigationLayout, SmartfishingCsTab },
-  VIEW: { NoticeListView },
+  LAYOUT: { NavigationLayout, SmartfishingCsTab, QnaTab },
+  VIEW: { QnaDetailView },
 } = Components;
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "APIStore"
+)(
   observer(
     class extends React.Component {
       /********** ********** ********** ********** **********/
@@ -17,17 +20,15 @@ export default inject("PageStore")(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { PageStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout title={"고객센터"} showBackIcon={true} />
 
-            <SmartfishingCsTab activeIndex={0} />
+            <SmartfishingCsTab activeIndex={2} />
 
-            <NoticeListView
-              role={"shipowner"}
-              detailPathname={`/cust/cs/notice/detail`}
-            />
+            <QnaTab activeIndex={1} />
+
+            <QnaDetailView />
           </React.Fragment>
         );
       }

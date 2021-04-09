@@ -21,7 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/v2/api")
-@Api(tags = {"예약 및 주문 (스마트출조)"})
+@Api(tags = {"스마트출조 예약 및 주문"})
 @RequiredArgsConstructor
 public class SmartOrderController {
 

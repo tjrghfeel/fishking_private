@@ -28,7 +28,7 @@ export default inject(
 
             <QnaTab activeIndex={1} />
 
-            <QnaListView detailPathname={`/cust/cs/qna/detail`} />
+            <QnaListView detailPathname={`/cs/qna/detail`} />
           </React.Fragment>
         );
       }

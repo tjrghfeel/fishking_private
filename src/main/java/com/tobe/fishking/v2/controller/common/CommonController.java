@@ -129,6 +129,7 @@ public class CommonController {
             "87     : 편의시설 \n" +
             "89     : 미끼 종류 \n" +
             "153    : 보유장비 \n" +
+            "164    : 은행 \n" +
             "- 지역 codegroup안에 지역들은 level 1, 2로 분류되며, level1 지역은 level2지역을 포함한다. level1은 '수도권','충청남도'와 같은" +
             "   넓은 범위의 지역, level2는 그 안의 '시/군/구'단위의 지역을 말한다. \n" +
             "- level2 지역들은 extraValue1필드 안에 상위 level1 지역의 code를 가지고 있다. " +

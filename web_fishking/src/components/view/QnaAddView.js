@@ -101,13 +101,13 @@ export default inject(
           });
           return;
         }
-        if (fileList.length === 0) {
-          ModalStore.openModal("Alert", {
-            title: "알림",
-            body: "첨부파일을 선택해주세요.",
-          });
-          return;
-        }
+        // if (fileList.length === 0) {
+        //   ModalStore.openModal("Alert", {
+        //     title: "알림",
+        //     body: "첨부파일을 선택해주세요.",
+        //   });
+        //   return;
+        // }
         const resolve = await APIStore._post("/v2/api/post/one2one", {
           questionType,
           contents,
@@ -250,7 +250,7 @@ export default inject(
                           className="input-group-addon"
                           htmlFor="inputBizName"
                         >
-                          첨부파일<strong className="required"></strong>
+                          첨부파일
                         </label>
                         <input
                           ref={this.file}

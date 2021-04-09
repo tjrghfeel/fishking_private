@@ -42,7 +42,7 @@ export default inject(
           // },
         } = this.props;
         const qp = PageStore.getQueryParams();
-        const keyword = qp.keyword || null;
+        const keyword = PageStore.state.keyword || qp.keyword || null;
         let activeIndex = 0;
         if (tab === "ship") activeIndex = 1;
         else if (tab === "diary") activeIndex = 2;
@@ -130,7 +130,13 @@ export default inject(
         const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <SearchNavigationLayout text={PageStore.state.keyword} />
+            <SearchNavigationLayout
+              text={PageStore.state.keyword}
+              onSubmit={(text) => {
+                PageStore.setState({ keyword: text });
+                this.initPageData(this.state.tab);
+              }}
+            />
             <SearchTab
               activeIndex={this.state.activeIndex}
               keyword={PageStore.state.keyword}
@@ -283,7 +289,7 @@ export default inject(
             <div className="container nopadding mt-3 mb-0">
               <h5>
                 {this.state.tab === "ship"
-                  ? "업체"
+                  ? "선박"
                   : this.state.tab === "diary"
                   ? "조황일지"
                   : this.state.tab === "live"

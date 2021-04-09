@@ -58,10 +58,19 @@ export default inject(
 
             {/** 검색 */}
             <div className="container nopadding mt-3 mb-0">
-              <form className="form-search">
+              <form
+                className="form-search"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (this.keyword.current?.value == "") return;
+                  PageStore.push(
+                    `/search/keyword/all?keyword=${this.keyword.current?.value}`
+                  );
+                }}
+              >
                 <a>
                   <img
-                    src="/assets/img/svg/form-search.svg"
+                    src="/assets/cust/img/svg/form-search.svg"
                     alt=""
                     className="icon-search"
                   />
@@ -81,7 +90,10 @@ export default inject(
                     );
                   }}
                 >
-                  <img src="/assets/img/svg/navbar-search.svg" alt="Search" />
+                  <img
+                    src="/assets/cust/img/svg/navbar-search.svg"
+                    alt="Search"
+                  />
                 </a>
               </form>
             </div>

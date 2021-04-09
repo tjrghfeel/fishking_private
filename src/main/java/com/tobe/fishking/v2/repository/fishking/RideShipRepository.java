@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RideShipRepository extends BaseRepository<RideShip, Long> {
+public interface RideShipRepository extends BaseRepository<RideShip, Long>, RideShipRepositoryCustom {
 
    // List<RideShip> findAll(Specification<RideShip> rideShipSpecification);
     @Query("select r from RideShip r where r.ordersDetail.orders.id = :orderId")

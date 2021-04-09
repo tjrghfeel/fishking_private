@@ -15,6 +15,14 @@ export default (() => {
   const request = (url, method, headers = {}, params, data) => {
     return new Promise((resolve, reject) => {
       const startTime = new Date().getTime();
+      if (process.env.NODE_ENV === "development") {
+        if (params) {
+          console.log(`PARAMS :\n${JSON.stringify(params)}`);
+        }
+        if (data) {
+          console.log(`DATA :\n${JSON.stringify(data)}`);
+        }
+      }
       http
         .request({
           url,
@@ -28,7 +36,7 @@ export default (() => {
         })
         .then((response, xhr) => {
           console.log(
-            `${method} : ${Intl.NumberFormat().format(
+            `RESPONSE : ${method} : ${Intl.NumberFormat().format(
               new Date().getTime() - startTime
             )}ms\n${url}`
           );

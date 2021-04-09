@@ -61,5 +61,14 @@ public class OrderDetails extends BaseTime {
     @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    public void minusPersonnel(Member member) {
+        this.personnel -= 1;
+        this.modifiedBy = member;
+    }
+
+    public void plusPersonnel(Member member) {
+        this.personnel += 1;
+        this.modifiedBy = member;
+    }
 }
 

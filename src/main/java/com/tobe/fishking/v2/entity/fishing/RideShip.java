@@ -110,4 +110,8 @@ public class RideShip extends BaseTime {
         this.modifiedBy = member;
     }
 
+    public void setRide() {
+        this.isRide = true;
+        this.bFingerPrint = true;
+    }
 }
