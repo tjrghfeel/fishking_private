@@ -139,12 +139,9 @@ export default inject(
           longitude: PageStore.state.longitude,
         });
 
-        const { ad, list } = resolve;
+        const { ad, list } = resolve || {};
         const { normal = [], premium = [] } = ad || {};
-        const {
-          content = [],
-          pageable: { pageSize = 0 },
-        } = list || {};
+        const { content = [], pageable: { pageSize = 0 } = {} } = list || {};
 
         if (page === 0) {
           PageStore.setState({ list: content, premium, normal });
@@ -348,16 +345,6 @@ export default inject(
                   },
                 },
                 {
-                  text: this.state.filterSortText,
-                  isActive: this.state.filterSortActive,
-                  modalTarget: "selSortModal",
-                  onClickClear: () => {
-                    PageStore.setState({ orderBy: "popular" });
-                    this.selFishModal.current?.onInit();
-                    this.loadPageData(0);
-                  },
-                },
-                {
                   text: this.state.filterOptionText,
                   isActive: this.state.filterOptionActive,
                   modalTarget: "selOptionModal",
@@ -365,6 +352,16 @@ export default inject(
                     this.setState({ filterOptionActive: false });
                     PageStore.setState({ services: null, facilities: null });
                     this.selOptionModal.current?.onInit();
+                    this.loadPageData(0);
+                  },
+                },
+                {
+                  text: this.state.filterSortText,
+                  isActive: this.state.filterSortActive,
+                  modalTarget: "selSortModal",
+                  onClickClear: () => {
+                    PageStore.setState({ orderBy: "popular" });
+                    this.selFishModal.current?.onInit();
                     this.loadPageData(0);
                   },
                 },

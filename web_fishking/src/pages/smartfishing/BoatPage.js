@@ -79,8 +79,6 @@ export default inject(
             cameraActive,
           })) || {};
 
-        console.log(JSON.stringify(content));
-
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {
@@ -105,6 +103,11 @@ export default inject(
         const { PageStore } = this.props;
         PageStore.storeState();
         PageStore.push(`/boat/add`);
+      };
+      onClick = (item) => {
+        const { PageStore } = this.props;
+        PageStore.storeState();
+        PageStore.push(`/boat/add?id=${item.id}`);
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -187,7 +190,11 @@ export default inject(
             <p className="clearfix"></p>
 
             {PageStore.state.list?.map((data, index) => (
-              <SmartfishingBoatListItemView key={index} data={data} />
+              <SmartfishingBoatListItemView
+                key={index}
+                data={data}
+                onClick={this.onClick}
+              />
             ))}
 
             <a onClick={this.onClickAdd} className="add-circle">

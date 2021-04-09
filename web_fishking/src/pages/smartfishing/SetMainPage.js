@@ -23,6 +23,7 @@ export default inject(
           pathname: "/cust/policy/main",
         },
         // { text: "탈퇴하기", loggedIn: true, pathname: "/cust/member/signout" },
+        { text: "로그아웃", loggedIn: true, pathname: "/member/logout" },
       ];
       constructor(props) {
         super(props);

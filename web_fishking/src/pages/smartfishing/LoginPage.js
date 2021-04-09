@@ -85,6 +85,7 @@ export default inject(
                       이메일
                     </label>
                     <input
+                      ref={this.memberId}
                       type="email"
                       class="form-control"
                       placeholder="이메일"
@@ -99,6 +100,7 @@ export default inject(
                       비밀번호
                     </label>
                     <input
+                      ref={this.password}
                       type="password"
                       class="form-control"
                       placeholder="비밀번호 (영문/숫자/특수문자 조합, 8~15자 이내)"

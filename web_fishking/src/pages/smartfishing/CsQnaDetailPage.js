@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import Components from "../../components";
 const {
   LAYOUT: { NavigationLayout, SmartfishingCsTab, QnaTab },
-  VIEW: { QnaListView },
+  VIEW: { QnaDetailView },
 } = Components;
 
 export default inject(
@@ -28,7 +28,7 @@ export default inject(
 
             <QnaTab activeIndex={1} />
 
-            <QnaListView detailPathname={`/cs/qna/detail`} />
+            <QnaDetailView />
           </React.Fragment>
         );
       }
