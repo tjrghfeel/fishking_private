@@ -42,7 +42,7 @@ public class UpdateShipDTO {
     @ApiParam(value = "경도")
     private @Valid Double longitude;
     @ApiParam(value = "선박 사진")
-    private @Valid String profileImage;
+    private @Valid String profileImage = "";
     @ApiParam(value = "선박 영상 id")
     private @Valid Long videoId;
     @ApiParam(value = "어종 리스트", name = "fishSpecies[]")
@@ -77,6 +77,12 @@ public class UpdateShipDTO {
                 .sorted(Comparator.comparing(e -> e.distanceFrom(loc)))
                 .collect(Collectors.toList())
                 .get(0);
+        String profile;
+        if (profileImage.equals("")) {
+            profile = "/ship/defaultship.png";
+        } else {
+            profile = profileImage.split("resource")[1];
+        }
         return Ship.builder()
                 .name(name)
                 .fishingType(FishingType.valueOf(fishingType))
@@ -91,7 +97,7 @@ public class UpdateShipDTO {
                 .noticeTitle(noticeTitle)
                 .notice(notice)
                 .location(loc)
-                .profileImage(profileImage.split("resource")[1])
+                .profileImage(profile)
                 .company(company)
                 .createdBy(member)
                 .positions(String.join(",", positions))
