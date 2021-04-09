@@ -63,5 +63,6 @@ public interface FishingDiaryDtoForPage {
     String getMemberNickName();
     Boolean getIsActive();
     Boolean getIsHidden();
+    Integer getAccuseCount();
 
 }

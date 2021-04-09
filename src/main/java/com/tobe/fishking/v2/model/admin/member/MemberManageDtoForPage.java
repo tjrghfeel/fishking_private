@@ -19,7 +19,8 @@ public interface MemberManageDtoForPage {
     String getCertifiedNo();
     Boolean getIsCertified();
     String getJoinDt();
-    Integer getSnsType();
+    @Value("#{@mapperUtility.transEnumSnsType(target.snsType)}")
+    String getSnsType();
 //    @Value("#{@mapperUtility.decodeString(target.snsId)}")
     String getSnsId();
     String getStatusMessage();

@@ -19,9 +19,11 @@ public class CompanyDTO {
     private Long member;  //name이 없을 경우 member_id, fk
     private String companyName;//
     private String memberName;//
+    private String shipowner;
     private String sido;
     private String gungu;
     private String tel;//
+    private String phoneNumber;
     private String bizNo;
     private String harbor;//
     private String bank ;
@@ -32,11 +34,16 @@ public class CompanyDTO {
 //    private String skbPassword;
     private String companyAddress;//
     private Boolean isRegistered;
+    private String adtId;
+    private String nhnId;
     private Long createdBy;//not null, fk
     private Long modifiedBy;//not null, fk
     private String bizNoFilesUrl ;
     private String representFilesUrl ;
     private String accountFileUrl;
+    private Long bizNoFileId;
+    private Long representFileId;
+    private Long accountFileId;
     private LocalDateTime createdDate;
     //private Long bizNoFile;//not null
     //private Long representFile;//not null
@@ -65,7 +72,11 @@ public class CompanyDTO {
         bizNoFilesUrl = url + company.getBizNoFileDownloadUrl();
         representFilesUrl = url + company.getRepresentFileDownloadUrl();
         accountFileUrl = url + company.getAccountFileDownloadUrl();
+        bizNoFileId = company.getBizNoFileId().getId();
+        representFileId = company.getRepresentFileId().getId();
+        accountFileId = company.getAccountFileId().getId();
         createdDate = company.getCreatedDate();
+
     }
 
 }

@@ -57,58 +57,44 @@ public class CompanyManageController {
     * */
     @ApiOperation(value = "업체 생성", notes = "넘어온 데이터들로 업체를 생성하고 생성된 업체의 id반환. ")
     @PostMapping("/manage/company")
-    public Long createCompany(MultipartHttpServletRequest request/*@RequestBody CompanyCreateDtoForManage dto*//*, @RequestPart("files") MultipartFile[] files*/) throws Exception {
-        CompanyCreateDtoForManage dto = CompanyCreateDtoForManage.builder()
-                .memberId(Long.parseLong(request.getParameter("memberId")))
-                .companyName(request.getParameter("companyName"))
-                .memberName(request.getParameter("memberName"))
-                .sido(request.getParameter("sido"))
-                .gungu(request.getParameter("gungu"))
-                .tel(request.getParameter("tel"))
-                .bizNo(request.getParameter("bizNo"))
-                .harbor(request.getParameter("harbor"))
-                .bank(request.getParameter("bank"))
-                .accountNo(request.getParameter("accountNo"))
-                .ownerWording(request.getParameter("ownerWording"))
-                .isOpen(Boolean.parseBoolean(request.getParameter("isOpen")))
-                .skbAccount(request.getParameter("skbAccount"))
-                .skbPassword(request.getParameter("skbPassword"))
-                .companyAddress(request.getParameter("companyAddress"))
-                .isRegistered(Boolean.parseBoolean(request.getParameter("isRegistered")))
-                .bizNoFile(request.getFile("bizNoFile"))
-                .representFile(request.getFile("representFile"))
-                .accountFile(request.getFile("accountFile"))
-                .build();
-        return companymanageService.createCompany(dto);
+    public Long createCompany(
+            /*MultipartHttpServletRequest request*/
+            @RequestBody CompanyCreateDtoForManage dto,
+            @RequestHeader("Authorization") String token
+    ) throws Exception {
+        return companymanageService.createCompany(dto, token);
     }
 
     /*업체 수정*/
     @ApiOperation(value="업체 수정",notes = "")
     @PutMapping("/manage/company")
-    public Boolean modifyCompany(MultipartHttpServletRequest request/*@RequestBody CompanyCreateDtoForManage dto*//*, @RequestPart("files") MultipartFile[] files*/) throws Exception {
-        CompanyModifyDtoForManage dto = CompanyModifyDtoForManage.builder()
-                .id(Long.parseLong(request.getParameter("id")))
-                .memberId(Long.parseLong(request.getParameter("memberId")))
-                .companyName(request.getParameter("companyName"))
-                .memberName(request.getParameter("memberName"))
-                .sido(request.getParameter("sido"))
-                .gungu(request.getParameter("gungu"))
-                .tel(request.getParameter("tel"))
-                .bizNo(request.getParameter("bizNo"))
-                .harbor(request.getParameter("harbor"))
-                .bank(request.getParameter("bank"))
-                .accountNo(request.getParameter("accountNo"))
-                .ownerWording(request.getParameter("ownerWording"))
-                .isOpen(Boolean.parseBoolean(request.getParameter("isOpen")))
-                .skbAccount(request.getParameter("skbAccount"))
-                .skbPassword(request.getParameter("skbPassword"))
-                .companyAddress(request.getParameter("companyAddress"))
-                .isRegistered(Boolean.parseBoolean(request.getParameter("isRegistered")))
-                .bizNoFile(request.getFile("bizNoFile"))
-                .representFile(request.getFile("representFile"))
-                .accountFile(request.getFile("accountFile"))
-                .build();
-        return companymanageService.modifyCompany(dto);
+    public Boolean modifyCompany(
+            /*MultipartHttpServletRequest request*/
+            @RequestBody CompanyModifyDtoForManage dto,
+            @RequestHeader("Authorization") String token) throws Exception {
+        return companymanageService.modifyCompany(dto, token);
+    }
+
+    //업체 등록 요청 승인
+    @ApiOperation(value = "업체 등록 요청 승인")
+    @PutMapping("/manage/company/acceptRequest/{companyId}")
+    public Boolean requestAccept(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("companyId") Long companyId
+    ) throws ResourceNotFoundException {
+        return companymanageService.acceptRequest(token, companyId);
+    }
+
+    //영업 상태 수정
+    @ApiOperation(value = "영업 상태 수정")
+    @PutMapping("/manage/company/isOpen/{companyId}/{isOpen}")
+    public Boolean setIsOpen(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("companyId") Long companyId,
+            @PathVariable("isOpen") String isOpen
+    ) throws ResourceNotFoundException {
+        if(!isOpen.equals("true") && !isOpen.equals("false")){throw new RuntimeException("isOpen값은 'true' 또는 'false'이어야 합니다.");}
+        return companymanageService.setIsOpen(token, companyId, isOpen);
     }
 
 

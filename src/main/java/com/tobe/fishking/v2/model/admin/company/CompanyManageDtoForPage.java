@@ -6,12 +6,12 @@ public interface CompanyManageDtoForPage {
 
     Long getCompanyId();
     Long getMemberId();
-    String getMemberName();
-    String getCompanyName();
+    String getMemberName();//
+    String getCompanyName();//
     String getSido();
     String getGungu();
-    String getTel();
-    String getBizNo();
+    String getTel();//
+    String getBizNo();//
     String getBank();
     String getAccountNum();
     String getHarbor();
@@ -19,10 +19,11 @@ public interface CompanyManageDtoForPage {
     String getRepresentFileDownloadUrl();
     String getAccountFileDownloadUrl();
     String getOwnerWording();
-    Boolean getIsOpen();
+    Boolean getIsOpen();//
     String getSkbAccount();
     String getCompanyAddress();
     Boolean getIsRegistered();
-    String getCreatedDate();
-
+    @Value("#{@mapperUtility.transDateString(target.createdDate)}")
+    String getCreatedDate();//
+    String getShipNameList();
 }

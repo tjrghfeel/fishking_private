@@ -193,7 +193,7 @@ public class FishingDiaryController {
             "선택된 지역에 해당하면서 직접입력한 검색어에 해당하는 글들을 검색.\n" +
             "아무 지역 선택하지 않으면, 모든 지역을 선택한것으로 간주.\n" +
             "요청 필드 ) \n" +
-            "- category : String / 필수 / 검색하려는 글이 조항일지인지 유저조행기인지. / fishingDiary(조항일지), fishingBlog(유저조행기) 중 택 1.\n" +
+            "- category : String / 선택 / 검색하려는 글이 조항일지인지 유저조행기인지. / fishingDiary(조항일지), fishingBlog(유저조행기) 중 택 1.\n" +
             "- district1 : String / 선택(district2List입력시 필수) / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. 행정구역1단계(code group id 152)에 해당하는 코드값들임.\n" +
             "- district2List : String[] / 선택 / 팝업창에서 선택한 지역에 해당하는 common code의 code값들의 배열. 행정구역2단계(code group id 156)에 해당하는 코드값들임.\n" +
             "   ex) 팝업창에서 '전라남도'선택시, common code에서 '전라남도'의 code값인 '전남'  \n" +
@@ -227,7 +227,7 @@ public class FishingDiaryController {
     @GetMapping("/fishingDiary/list/{page}")
     public Page<FishingDiaryDtoForPage> getFishingDiaryList(
             @PathVariable("page") int page,
-            @RequestParam("category") String category,
+            @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "district1",required = false) String district1,
             @RequestParam(value = "district2List", required = false) String[] district2List,
             @RequestParam(value = "searchKey", required = false, defaultValue = "") String districtSearchKey,
@@ -247,11 +247,13 @@ public class FishingDiaryController {
             @RequestParam(value = "hasShipData",required = false) Boolean hasShipData,
             @RequestParam(value = "pageCount",required = false,defaultValue = "20") Integer pageCount
     ) throws ResourceNotFoundException, EmptyListException {
-        if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount"))){
+        if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount") || sort.equals("accuseCount"))){
             throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
         }
-        if(!(category.equals("fishingDiary") || category.equals("fishingBlog"))){
-            throw new RuntimeException("category값에는 'fishingDiary', 'fishingBlog' 중 하나만 가능합니다.");
+        if(category!=null) {
+            if (  !(category.equals("fishingDiary") || category.equals("fishingBlog"))) {
+                throw new RuntimeException("category값에는 'fishingDiary', 'fishingBlog' 중 하나만 가능합니다.");
+            }
         }
 
         if(token == null){}
