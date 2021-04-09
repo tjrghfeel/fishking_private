@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.entity.fishing;
 
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.enums.fishing.FingerType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +24,8 @@ public class RiderFingerPrint extends BaseTime {
     private String phone;
 
     @Column(columnDefinition = "int comment '지문 손가락 ' ")
-    private Integer finger;
+    @Enumerated(EnumType.ORDINAL)
+    private FingerType finger;
 
     @Column(columnDefinition = "varchar(300) comment '지문정보' ")
     private String fingerprint;
@@ -42,14 +44,14 @@ public class RiderFingerPrint extends BaseTime {
     @Builder
     public RiderFingerPrint(String name,
                             String phone,
-                            Integer finger,
+                            FingerType finger,
                             String fingerprint,
                             Member member) {
         this.name = name;
         this.phone = phone;
         this.finger = finger;
         this.fingerprint = fingerprint;
-        this.count = 0;
+        this.count = 1;
         this.modifiedBy = member;
         this.createdBy = member;
     }
@@ -59,7 +61,7 @@ public class RiderFingerPrint extends BaseTime {
         this.modifiedBy = member;
     }
 
-    public void updateFingerprint(Integer finger, String fingerprint, Member member) {
+    public void updateFingerprint(FingerType finger, String fingerprint, Member member) {
         this.finger = finger;
         this.fingerprint = fingerprint;
         this.modifiedBy = member;

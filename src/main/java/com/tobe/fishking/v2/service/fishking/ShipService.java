@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.service.fishking;
 
+import com.tobe.fishking.v2.addon.CommonAddon;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
@@ -467,20 +468,12 @@ public class ShipService {
             if (phones[idx].contains("-")) {
                 phone = phones[idx];
             } else {
-                if (phones[idx].length() == 11) {
-                    phone = phones[idx].substring(0,3) + "-" + phones[idx].substring(3,6) + "-" + phones[idx].substring(6);
-                } else {
-                    phone = phones[idx].substring(0,3) + "-" + phones[idx].substring(3,7) + "-" + phones[idx].substring(7);
-                }
+                phone = CommonAddon.addDashToPhoneNum(phones[idx]);
             }
             if (emergencyPhones[idx].contains("-")) {
                 emergencyPhone = emergencyPhones[idx];
             } else {
-                if (emergencyPhones[idx].length() == 11) {
-                    emergencyPhone = emergencyPhones[idx].substring(0,3) + "-" + emergencyPhones[idx].substring(3,6) + "-" + emergencyPhones[idx].substring(6);
-                } else {
-                    emergencyPhone = emergencyPhones[idx].substring(0,3) + "-" + emergencyPhones[idx].substring(3,7) + "-" + emergencyPhones[idx].substring(7);
-                }
+                emergencyPhone = CommonAddon.addDashToPhoneNum(phones[idx]);
             }
             RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, emergencyPhone, member);
             rideShipRepository.save(rideShip);

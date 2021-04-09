@@ -20,6 +20,9 @@ public interface OrderDetailsRepository extends BaseRepository<OrderDetails, Lon
 
     OrderDetails findByOrders(Orders orders);
 
+    @Query("select o from OrderDetails o where o.orders.id = :orderId")
+    OrderDetails findByOrders(Long orderId);
+
 
     @Query(value = "SELECT sum(s.personnel), sum(s.ridePersonnel)" +
               "FROM OrderDetails s  " +
