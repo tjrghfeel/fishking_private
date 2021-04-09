@@ -13,34 +13,30 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CompanyModifyDtoForManage {
-    private String token;
     @NotNull
     private Long id;//not null, pk
-    @NotNull
-    private Long memberId;  //name이 없을 경우 member_id, fk
     @Size(min=4,max = 10)
     private String companyName;//
-    @Size(min=2,max=5)
-    private String memberName;//
-    @Size(min=2,max=15)
+    private String shipowner;
     private String sido;//
-    @Size(min=2,max=15)
     private String gungu;//
 
     private String tel;//
+    private String phoneNumber;
 
     private String bizNo;//
-    @Size(min=2,max=15)
     private String harbor;//
-    @Size(min=2,max=15)
     private String bank ;//
 
     private String accountNo ;//
-    @NotNull
     private String ownerWording;//not null//
     private Boolean isOpen;//
     private String  skbAccount;//
     private String skbPassword;//
+    private String adtId;
+    private String adtPw;
+    private String nhnId;
+    private String nhnPw;
     @Size(min=10,max=50)
     private String companyAddress;//
     private Boolean isRegistered;//
@@ -52,9 +48,9 @@ public class CompanyModifyDtoForManage {
 //    private String representFilesUrl ;
 //    private String accountFileUrl;
     @NotNull
-    private MultipartFile bizNoFile;
+    private Long bizNoFile;
     @NotNull
-    private MultipartFile representFile;
+    private Long representFile;
     @NotNull
-    private MultipartFile accountFile;
+    private Long accountFile;
 }

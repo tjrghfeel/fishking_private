@@ -39,6 +39,7 @@ public class CompanySearchConditionDto {
     private LocalDate createdDateStart;//
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate createdDateEnd;//
+    private String shipName;
 
     private Integer pageCount = 10;
     private String sort;

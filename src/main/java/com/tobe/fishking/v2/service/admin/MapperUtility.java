@@ -7,10 +7,7 @@ import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.enums.common.CouponType;
-import com.tobe.fishking.v2.enums.fishing.DependentType;
-import com.tobe.fishking.v2.enums.fishing.FishingType;
-import com.tobe.fishking.v2.enums.fishing.Meridiem;
-import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.enums.fishing.*;
 import com.tobe.fishking.v2.service.AES;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +117,9 @@ public class MapperUtility {
     public String transEnumMeridiem(Integer ordinal){if(ordinal!=null){return Meridiem.values()[ordinal].getValue();}else return null;}
     public String transEnumReturnType(Integer ordinal){ if(ordinal!=null){ return ReturnType.values()[ordinal].getValue();} else return null; }
     public String transEnumRoles(Integer ordinal){if(ordinal!=null){ return Role.values()[ordinal].getValue();} else return null;}
+    public String transEnumPayMethod(Integer ordinal){if(ordinal != null) { return PayMethod.values()[ordinal].getValue();} else return null; }
+    public String transEnumSnsType(Integer ordinal){if(ordinal != null) {return SNSType.values()[ordinal].getValue();} else return null; }
+
 
     public String transEnumChannelTypeKey(Integer ordinal){if(ordinal!=null){return ChannelType.values()[ordinal].getKey();}else return null;}
     public String transEnumQuestionTypeKey(Integer ordinal){if(ordinal!=null){return QuestionType.values()[ordinal].getKey();}else return null;}
@@ -140,6 +140,10 @@ public class MapperUtility {
 
     public String transDateString(LocalDateTime date) {
         if (date != null) {return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
+        else return null;
+    }
+    public String transDateTimeString(LocalDateTime dateTime){
+        if(dateTime != null) { return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));}
         else return null;
     }
 

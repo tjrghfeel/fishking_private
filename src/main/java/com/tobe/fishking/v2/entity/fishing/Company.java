@@ -216,4 +216,7 @@ public class Company extends BaseTime {  //선상
         this.accountName = accountName;
         this.modifiedBy = member;
     }
+
+    public void acceptRequest(){this.isRegistered = true;}
+    public void setIsOpen(Boolean isOpen){this.isOpen = isOpen;}
 }

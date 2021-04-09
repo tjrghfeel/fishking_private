@@ -94,7 +94,7 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
     /*관리자용 업체 목록 검색 메소드 */
     @Query(value = "" +
             "select " +
-            "   c.id id, " +
+            "   c.id companyId, " +
             "   m.id memberId, " +
             "   m.member_name memberName, " +
             "   m.nick_name memberNickName, " +
@@ -124,8 +124,10 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   c.adt_id adtId, " +
             "   c.nhn_id nhnId, " +
             "   c.created_by createdBy, " +
-            "   c.created_date createdDate " +
-            "from company c join member m on (c.member_id = m.id)  " +
+            "   c.created_date createdDate, " +
+            "   (select group_concat(s2.ship_name separator ', ') from company c2 left join ship s2 on c2.id = s2.company_id " +
+            "       where c2.id = c.id group by c2.id) shipNameList " +
+            "from company c join member m on (c.member_id = m.id) left join ship s on c.id = s.company_id " +
             "where " +
             "   if(:companyId is null, true, (c.id = :companyId)) " +
             "   and if(:memberId is null, true, (m.id = :memberId)) " +
@@ -152,9 +154,10 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   and if(:createdBy is null, true, (c.created_by = :createdBy)) " +
             "   and if(:createdDayStart is null, true, (c.created_date > :createdDayStart)) " +
             "   and if(:createdDayEnd is null, true, (c.created_date < :createdDayEnd)) " +
-            " ",
-            countQuery = "select m.id " +
-                    "from company c join member m on (c.member_id = m.id)  " +
+            "   and if(:shipName is null, true, (s.ship_name like %:shipName%)) " +
+            "group by c.id ",
+            countQuery = "select c.id " +
+                    "from company c join member m on (c.member_id = m.id) left join ship s on c.id = s.company_id " +
                     "where " +
                     "   if(:companyId is null, true, (c.id = :companyId)) " +
                     "   and if(:memberId is null, true, (m.id = :memberId)) " +
@@ -181,7 +184,8 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
                     "   and if(:createdBy is null, true, (c.created_by = :createdBy)) " +
                     "   and if(:createdDayStart is null, true, (c.created_date > :createdDayStart)) " +
                     "   and if(:createdDayEnd is null, true, (c.created_date < :createdDayEnd)) " +
-                    " ",
+                    "   and if(:shipName is null, true, (s.ship_name like %:shipName%)) " +
+                    "group by c.id ",
             nativeQuery = true
     )
     Page<CompanyManageDtoForPage> findCompanyListByConditions(
@@ -210,6 +214,7 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             @Param("createdBy") Long createdBy,
             @Param("createdDayStart") LocalDate createdDayStart,
             @Param("createdDayEnd") LocalDate createdDayEnd,
+            @Param("shipName") String shipName,
 //            @Param("sort") String sort,
             Pageable pageable
     );

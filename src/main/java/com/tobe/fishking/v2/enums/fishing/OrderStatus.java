@@ -5,12 +5,12 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 public enum OrderStatus   implements IEnumModel   {
 
     book("예약 대기"),
-    bookRunning("예약 진행중"),
-    waitBook("대기자 예약"),
-    bookFix("예약 확정"),
-    bookCancel("예약 취소"),
-    fishingComplete("출조 완료"),
-    bookConfirm("예약 완료");
+    bookRunning("예약 진행중"),//1
+    waitBook("대기자 예약"),//2
+    bookFix("예약 확정"),//3
+    bookCancel("예약 취소"),//4
+    fishingComplete("출조 완료"),//5
+    bookConfirm("예약 완료");//6
 
 
     private String value;

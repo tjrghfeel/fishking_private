@@ -4,6 +4,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.model.admin.OrderManageDtoForPage;
 import com.tobe.fishking.v2.model.fishing.OrdersDetailDto;
 import com.tobe.fishking.v2.model.fishing.OrdersDtoForPage;
 import org.springframework.data.domain.Page;
@@ -109,4 +110,105 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
 
     @Query("select o from Orders o where o.orderNumber = :orderNumber")
     Orders getOrdersByOrderNumber(String orderNumber);
+
+    //관리자 - 주문 목록 검색
+    @Query(
+            value = "select " +
+                    "   o.id orderId, " +
+                    "   od.id orderDetailId, " +
+                    "   o.created_date orderDate, " +
+                    "   o.fishing_date fishingDate, " +
+                    "   o.total_amount totalAmount, " +
+                    "   o.discount_amount discountAmount, " +
+                    "   o.payment_amount paymentAmount, " +
+                    "   o.is_pay isPay, " +
+                    "   o.pay_method payMethod, " +
+                    "   o.order_status orderStatus, " +
+                    "   o.order_number orderNumber, " +
+                    "   o.trade_number tradeNumber, " +
+//                    "   o.confirm_number confirmNumber, " +
+                    "   g.id goodsId, " +
+                    "   g.name goodsName, " +
+                    "   o.cancel_date cancelDate, " +
+                    "   o.cancel_number cancelNumber, " +
+                    "   m.id memberId, " +
+                    "   m.member_name memberName, " +
+                    "   s.id shipId, " +
+                    "   s.ship_name shipName, " +
+                    "   c.id companyId, " +
+                    "   c.company_name companyName " +
+                    "from orders o join orders_details od on o.id = od.order_detail_orders_id join goods g on o.goods=g.id " +
+                    "   join member m on o.created_by=m.id join ship s on g.goods_ship_id = s.id join company c on s.company_id=c.id " +
+                    "where " +
+                    "   if(:orderId is null, true, o.id=:orderId) " +
+                    "   and if(:orderDetailId is null, true, od.id=:orderDetailId) " +
+                    "   and if(:orderDateStart is null, true, o.order_date >= :orderDateStart) " +
+                    "   and if(:orderDateEnd is null, true, o.order_date <= :orderDateEnd) " +
+                    "   and if(:fishingDateStart is null, true, o.fishing_date >= :fishingDateStart) " +
+                    "   and if(:fishingDateEnd is null, true, o.fishing_date <= :fishingDateEnd) " +
+                    "   and if(:totalAmountStart is null, true, o.total_amount >= :totalAmountStart) " +
+                    "   and if(:totalAmountEnd is null, true, o.total_amount <= :totalAmountEnd) " +
+                    "   and if(:discountAmountStart is null, true, o.discount_amount >= :discountAmountStart) " +
+                    "   and if(:discountAmountEnd is null, true, o.discount_amount <= :discountAmountEnd) " +
+                    "   and if(:paymentAmountStart is null, true, o.payment_amount >= :paymentAmountStart) " +
+                    "   and if(:paymentAmountEnd is null, true, o.payment_amount <= :paymentAmountEnd) " +
+                    "   and if(:isPay is null, true, o.is_pay = :isPay) " +
+                    "   and if(:payMethod is null, true, o.pay_method = :payMethod) " +
+                    "   and if(:orderStatus is null, true, o.order_status = :orderStatus) " +
+                    "   and if(:goodsName is null, true, g.name like %:goodsName%) " +
+                    "   and if(:memberName is null, true, m.member_name like %:memberName%) " +
+                    "   and if(:memberAreaCode is null, true, m.areacode like %:memberAreaCode%) " +
+                    "   and if(:memberLocalNumber is null, true, m.localnumber like %:memberLocalNumber%) " +
+                    "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "order by o.created_date desc",
+            countQuery = "select o.id " +
+                    "from orders o join orders_details od on o.id = od.order_detail_orders_id join goods g on o.goods=g.id " +
+                    "   join member m on o.created_by=m.id join ship s on g.goods_ship_id = s.id join company c on s.company_id=c.id " +
+                    "where " +
+                    "   if(:orderId is null, true, o.id=:orderId) " +
+                    "   and if(:orderDetailId is null, true, od.id=:orderDetailId) " +
+                    "   and if(:orderDateStart is null, true, o.order_date >= :orderDateStart) " +
+                    "   and if(:orderDateEnd is null, true, o.order_date <= :orderDateEnd) " +
+                    "   and if(:fishingDateStart is null, true, o.fishing_date >= :fishingDateStart) " +
+                    "   and if(:fishingDateEnd is null, true, o.fishing_date <= :fishingDateEnd) " +
+                    "   and if(:totalAmountStart is null, true, o.total_amount >= :totalAmountStart) " +
+                    "   and if(:totalAmountEnd is null, true, o.total_amount <= :totalAmountEnd) " +
+                    "   and if(:discountAmountStart is null, true, o.discount_amount >= :discountAmountStart) " +
+                    "   and if(:discountAmountEnd is null, true, o.discount_amount <= :discountAmountEnd) " +
+                    "   and if(:paymentAmountStart is null, true, o.payment_amount >= :paymentAmountStart) " +
+                    "   and if(:paymentAmountEnd is null, true, o.payment_amount <= :paymentAmountEnd) " +
+                    "   and if(:isPay is null, true, o.is_pay = :isPay) " +
+                    "   and if(:payMethod is null, true, o.pay_method = :payMethod) " +
+                    "   and if(:orderStatus is null, true, o.order_status = :orderStatus) " +
+                    "   and if(:goodsName is null, true, g.name like %:goodsName%) " +
+                    "   and if(:memberName is null, true, m.member_name like %:memberName%) " +
+                    "   and if(:memberAreaCode is null, true, m.areacode like %:memberAreaCode%) " +
+                    "   and if(:memberLocalNumber is null, true, m.localnumber like %:memberLocalNumber%) " +
+                    "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "order by o.created_date desc",
+            nativeQuery = true
+    )
+    Page<OrderManageDtoForPage> getOrderList(
+        @Param("orderId") Long orderId,
+        @Param("orderDetailId") Long orderDetailId,
+        @Param("orderDateStart") String orderDateStart,
+        @Param("orderDateEnd") String orderDateEnd,
+        @Param("fishingDateStart") String fishingDateStart,
+        @Param("fishingDateEnd") String fishingDateEnd,
+        @Param("totalAmountStart") Integer totalAmountStart,
+        @Param("totalAmountEnd") Integer totalAmountEnd,
+        @Param("discountAmountStart") Integer discountAmountStart,
+        @Param("discountAmountEnd") Integer discountAmountEnd,
+        @Param("paymentAmountStart") Integer paymentAmountStart,
+        @Param("paymentAmountEnd") Integer paymentAmountEnd,
+        @Param("isPay") Boolean isPay,
+        @Param("payMethod") Integer payMethod,
+        @Param("orderStatus") Integer orderStatus,
+        @Param("goodsName") String goodsName,
+        @Param("memberName") String memberName,
+        @Param("memberAreaCode") String memberAreaCode,
+        @Param("memberLocalNumber") String memberLocalNumber,
+        @Param("shipName") String shipName,
+        Pageable pageable
+    );
 }
