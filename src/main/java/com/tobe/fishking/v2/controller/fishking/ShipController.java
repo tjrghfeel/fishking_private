@@ -61,11 +61,12 @@ public class ShipController {
             }
         }
         Page<ShipListResponse> ship = shipService.getShips(shipSearchDTO, page);
-        if (ship.getTotalElements() == 0) {
-            throw new EmptyListException("결과리스트가 비어있습니다.");
-        } else {
-            return ship;
-        }
+        return ship;
+//        if (ship.getTotalElements() == 0) {
+//            throw new EmptyListException("결과리스트가 비어있습니다.");
+//        } else {
+//            return ship;
+//        }
     }
 
     @ApiOperation(value = "배 리스트 ad 통합",
