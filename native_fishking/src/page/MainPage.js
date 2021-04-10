@@ -158,6 +158,12 @@ export default inject(
           onMessage={async ({nativeEvent}) => {
             const {process, data} = JSON.parse(nativeEvent.data);
             switch (process) {
+              case 'Refresh': {
+                const enabled = data['enabled'];
+                AppStore.setRefreshEnabled(enabled);
+                console.log(enabled);
+                break;
+              }
               case 'Exit': {
                 // >>>>> 앱 종료
                 BackHandler.exitApp();

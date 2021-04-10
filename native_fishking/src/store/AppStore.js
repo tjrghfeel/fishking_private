@@ -22,6 +22,10 @@ export default new (class {
   /** observable :: 앱 버전 */
   version = 0.1;
 
+  refreshEnabled = 'Y';
+  setRefreshEnabled(refreshEnabled) {
+    this.refreshEnabled = refreshEnabled;
+  }
   /** observable :: permissions 배열 */
   permissions =
     Platform.OS === 'android'

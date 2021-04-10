@@ -10,8 +10,11 @@ import {
 
 import MainPage from './page/MainPage';
 
-export default inject('WebViewStore')(
-  observer(({WebViewStore}) => {
+export default inject(
+  'WebViewStore',
+  'AppStore',
+)(
+  observer(({WebViewStore, AppStore}) => {
     const [refreshing, setRefreshing] = useState(false);
     return (
       <>
@@ -23,20 +26,21 @@ export default inject('WebViewStore')(
           backgroundColor={'#3683d5'}
         />
         <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
-          {/*<ScrollView*/}
-          {/*  contentContainerStyle={{*/}
-          {/*    flex: 1,*/}
-          {/*  }}*/}
-          {/*  refreshControl={*/}
-          {/*    <RefreshControl*/}
-          {/*      refreshing={refreshing}*/}
-          {/*      onRefresh={() => {*/}
-          {/*        WebViewStore.executeJavascript(`window.location.reload();`);*/}
-          {/*      }}*/}
-          {/*    />*/}
-          {/*  }>*/}
-          <MainPage />
-          {/*</ScrollView>*/}
+          <ScrollView
+            contentContainerStyle={{
+              flex: 1,
+            }}
+            refreshControl={
+              <RefreshControl
+                enabled={AppStore.refreshEnabled == 'Y'}
+                refreshing={refreshing}
+                onRefresh={() => {
+                  WebViewStore.executeJavascript(`window.location.reload();`);
+                }}
+              />
+            }>
+            <MainPage />
+          </ScrollView>
         </SafeAreaView>
       </>
     );
