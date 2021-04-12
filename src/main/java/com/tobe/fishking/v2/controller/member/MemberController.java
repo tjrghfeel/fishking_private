@@ -45,6 +45,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -419,9 +420,11 @@ public class MemberController {
     @ApiOperation(value = "로그아웃")
     @PostMapping("/logout")
     @ResponseBody
-    public boolean logout(HttpServletRequest request) throws ResourceNotFoundException {
-        String sessionToken = request.getHeader("Authorization");
-        return memberService.logout(sessionToken);
+    public boolean logout(
+            @RequestHeader("Authorization") String token,
+            @RequestBody LogoutDto dto
+    ) throws ResourceNotFoundException {
+        return memberService.logout(token, dto.getRegistrationToken());
     }
 
     /*pass인증 callback url*/
@@ -800,6 +803,32 @@ public class MemberController {
     public boolean modifyPhoneNumber(@RequestBody @Valid ModifyPhoneNumberDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
         return memberService.modifyPhoneNumber(dto,token);
     }
+
+    //알림설정정보 조회.
+    @ApiOperation(value = "설정 > 알림설정 페이지 조회", notes = "" +
+            "요청필드 ) \n" +
+            "- header : sessionToken\n" +
+            "응답 필드 ) ArrayList<String> / codeGroup id 165번에 해당하는 common code들의 code값. ")
+    @GetMapping("/setting/alertSet")
+    @ResponseBody
+    public List<String> getAlertSet(
+            @RequestHeader("Authorization") String token
+    ){
+        return memberService.getAlertSet(token);
+    }
+
+    //알림 설정
+    @ApiOperation(value = "설정 > 알림설정하기",notes = "" +
+            "허용으로 체크된 알림종류에 해당하는 common code값을 인자로 넘기면됩니다. ")
+    @PutMapping("/setting/alertSet")
+    @ResponseBody
+    public Boolean modifyAlertSet(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ModifyAlertSetDto dto
+    ){
+        return memberService.modifyAlertSet(token, dto);
+    }
+
     
 
 }

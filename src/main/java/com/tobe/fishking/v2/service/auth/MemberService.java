@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.auth.RegistrationToken;
 import com.tobe.fishking.v2.entity.common.*;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.auth.Gender;
@@ -20,6 +21,7 @@ import com.tobe.fishking.v2.exception.*;
 import com.tobe.fishking.v2.model.auth.*;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.auth.RegistrationTokenRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
@@ -82,6 +84,7 @@ public class MemberService {
     private final CodeGroupRepository codeGroupRepository;
     private final TblSubmitQueueRepository tblSubmitQueueRepository;
     private final CompanyRepository companyRepository;
+    private final RegistrationTokenRepository tokenRepository;
 
     public Member getMemberBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -250,12 +253,17 @@ public class MemberService {
         String encodedPw = encoder.encode(signUpDto.getPw());
         System.out.println("================\n test >>> encodedPw : "+encodedPw+"\n================");
 
+        //알림 설정정보
+        CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+        List<CommonCode> alertSet = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+
         /*sns를 통해 가입하는경우.*/
         if(member!=null && member.getIsCertified()==false && member.getSnsId()!=null){
             member.setUid(signUpDto.getEmail());
             member.setNickName(signUpDto.getNickName());
             member.setPassword(encodedPw);
             member.setEmail(signUpDto.getEmail());
+            member.setAlertSet(alertSet);
 
             member = memberRepository.save(member);
         }
@@ -279,6 +287,7 @@ public class MemberService {
                     .isCertified(false)
                     .snsType(null)
                     .snsId(null)
+                    .alertSet(alertSet)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
                     .build();
             member = memberRepository.save(member);
@@ -1291,13 +1300,24 @@ public class MemberService {
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
-            System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
-            /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
+
+            //기기등록토큰 저장.
+            if(loginDTO.getRegistrationToken() != null) {
+                List<RegistrationToken> preTokenList = tokenRepository.findAllByMemberAndToken(member, loginDTO.getRegistrationToken());
+                if (preTokenList.size() < 1) {
+                    RegistrationToken token = RegistrationToken.builder()
+                            .token(loginDTO.getRegistrationToken())
+                            .member(member)
+                            .build();
+                    tokenRepository.save(token);
+                } else {
+                }//이미 해당 회원이 해당 기기에 로그인 되어있는경우,(이런경우가 있을지모르겠지만..) 그냥 넘김.
+            }
+
+            /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
-                System.out.println("token already exists");
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 sessionToken = member.getSessionToken();
             }
             else {
@@ -1307,7 +1327,6 @@ public class MemberService {
                 sessionToken = encoder.encode(rawToken);
 
                 System.out.println("token : "+sessionToken);
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 member.setSessionToken(sessionToken);
             }
         }
@@ -1326,7 +1345,6 @@ public class MemberService {
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
-            System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
             //관리자가 아닌경우
@@ -1334,18 +1352,13 @@ public class MemberService {
 
             /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
-                System.out.println("token already exists");
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 sessionToken = member.getSessionToken();
             }
             else {
-                System.out.println("token not exists");
                 /*세션토큰 생성 및 저장. */
                 String rawToken = member.getUid() + LocalDateTime.now();
                 sessionToken = encoder.encode(rawToken);
 
-                System.out.println("token : "+sessionToken);
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 member.setSessionToken(sessionToken);
             }
         }
@@ -1368,20 +1381,29 @@ public class MemberService {
             System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
+
+            //기기등록토큰 저장.
+            if(loginDTO.getRegistrationToken() != null) {
+                List<RegistrationToken> preTokenList = tokenRepository.findAllByMemberAndToken(member, loginDTO.getRegistrationToken());
+                if (preTokenList.size() < 1) {
+                    RegistrationToken token = RegistrationToken.builder()
+                            .token(loginDTO.getRegistrationToken())
+                            .member(member)
+                            .build();
+                    tokenRepository.save(token);
+                } else {
+                }//이미 해당 회원이 해당 기기에 로그인 되어있는경우,(이런경우가 있을지모르겠지만..) 그냥 넘김.
+            }
+
             /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
-                System.out.println("token already exists");
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 sessionToken = member.getSessionToken();
             }
             else {
-                System.out.println("token not exists");
                 /*세션토큰 생성 및 저장. */
                 String rawToken = member.getUid() + LocalDateTime.now();
                 sessionToken = encoder.encode(rawToken);
 
-                System.out.println("token : "+sessionToken);
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 member.setSessionToken(sessionToken);
             }
         }
@@ -1408,20 +1430,29 @@ public class MemberService {
 //            System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
+
+            //기기등록토큰 저장.
+            if(loginDTO.getRegistrationToken() != null) {
+                List<RegistrationToken> preTokenList = tokenRepository.findAllByMemberAndToken(member, loginDTO.getRegistrationToken());
+                if (preTokenList.size() < 1) {
+                    RegistrationToken token = RegistrationToken.builder()
+                            .token(loginDTO.getRegistrationToken())
+                            .member(member)
+                            .build();
+                    tokenRepository.save(token);
+                } else {
+                }//이미 해당 회원이 해당 기기에 로그인 되어있는경우,(이런경우가 있을지모르겠지만..) 그냥 넘김.
+            }
+
             /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
-//                System.out.println("token already exists");
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 sessionToken = member.getSessionToken();
             }
             else {
-//                System.out.println("token not exists");
                 /*세션토큰 생성 및 저장. */
                 String rawToken = member.getUid() + LocalDateTime.now();
                 sessionToken = encoder.encode(rawToken);
 
-//                System.out.println("token : "+sessionToken);
-                member.setRegistrationToken(loginDTO.getRegistrationToken());
                 member.setSessionToken(sessionToken);
             }
         }
@@ -1436,11 +1467,30 @@ public class MemberService {
     /*로그아웃
      * - 세션토큰에 해당하는 멤버 찾아서 세션토큰필드 비워줌. */
     @Transactional
-    public boolean logout(String sessionToken) throws ResourceNotFoundException {
+    public boolean logout(String sessionToken, String registrationToken) throws ResourceNotFoundException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
 
-//        member.setSessionToken(null);
+        if(registrationToken != null) {
+            //해당 기기가 로그인된 마지막 기기일 경우, 세션토큰을 초기화.
+            List<RegistrationToken> memberSTokenList = tokenRepository.findAllByMember(member);
+            List<RegistrationToken> currentMemberSTokenList = tokenRepository.findAllByMemberAndToken(member, registrationToken);
+            //해당 회원으로로그인된곳이 한곳 이하이고, 현재 로그아웃api에 입력한 토큰이 존재한다면,
+            if (memberSTokenList.size() <= 1 && currentMemberSTokenList.size() > 0) {
+                member.setSessionToken(null);
+            } else {
+            }
+
+            //기기등록 토큰 데이터 제거
+            if (currentMemberSTokenList.size() > 0) {//현재 로그아웃api 입력한 토큰이 존재한다면,
+                tokenRepository.deleteAll(currentMemberSTokenList);
+            } else {
+            } //로그인은 되어있는데 등록토큰테이블에 정보가 없는 경우??
+        }
+        else{//기기등록토큰이 없는경우. 즉, 웹에서 사용하는 경우.
+
+        }
+
         return  true;
     }
 
@@ -1838,6 +1888,32 @@ public class MemberService {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
         return member.getRoles()==Role.marine;
+    }
+
+    //설정 > 알림설정. 알림설정 정보 조회
+    @Transactional
+    public List<String> getAlertSet(String token){
+        Member member = getMemberBySessionToken(token);
+        List<CommonCode> alertSetCommonCodeList = member.getAlertSet();
+        List<String> result = new ArrayList<>();
+
+        for(int i=0; i<alertSetCommonCodeList.size(); i++){
+            result.add(alertSetCommonCodeList.get(i).getCode());
+        }
+
+        return result;
+    }
+    //설정 > 알림 설정하기
+    @Transactional
+    public Boolean modifyAlertSet(String token, ModifyAlertSetDto dto){
+        Member member = getMemberBySessionToken(token);
+        CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+        List<CommonCode> alertSetCommonCodeList =
+                commonCodeRepository.findCommonCodesByCodeGroupAndCodes(alertSetCodeGroup,dto.getAlertSetCodeList());
+
+        member.setAlertSet(alertSetCommonCodeList);
+        memberRepository.save(member);
+        return true;
     }
 
 //    @Transactional

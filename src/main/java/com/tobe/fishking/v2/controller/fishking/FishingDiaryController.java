@@ -104,6 +104,11 @@ public class FishingDiaryController {
         else if(dto.getShipId()!=null && dto.getAddress()!=null){
             throw new RuntimeException("shipId와 address 둘중 하나만 입력하여야 합니다.");
         }
+        Boolean aaa = dto.getShipId() != null;
+        Boolean bbb = (dto.getAddress()!=null && dto.getLongitude()!=null && dto.getLatitude()!=null);
+        if(!((dto.getShipId() != null) ^ (dto.getAddress()!=null && dto.getLongitude()!=null && dto.getLatitude()!=null))){
+            throw new RuntimeException("선박id(shipId) 또는 위치 정보(address, longitude, latitude) 둘 중 하나가 존재해야합니다.");
+        }
 
         return fishingDiaryService.modifyFishingDiary(dto,token);
     }
@@ -261,7 +266,7 @@ public class FishingDiaryController {
 //        return fishingDiaryService.getFishingDiaryList(
 //                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies, sort, token, false);
         Page<FishingDiaryDtoForPage> diaries = fishingDiaryService.getFishingDiaryList(
-                page, category, district1, district2List, districtSearchKey, "address",shipId, fishSpecies,
+                page, category, district1, district2List, districtSearchKey, "none",shipId, fishSpecies,
                 shipName, nickName, title, content, createdDateStart, createdDateEnd, hasShipData, pageCount, sort, token, false);
         if (diaries.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
