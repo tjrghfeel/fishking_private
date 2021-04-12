@@ -1,5 +1,6 @@
 /* global $ */
 import { makeAutoObservable } from "mobx";
+import NativeStore from "./NativeStore";
 
 const ModalStore = new (class {
   constructor(props) {
@@ -51,7 +52,10 @@ const ModalStore = new (class {
     } else if (modalType === "Coupon") {
       $("#couponModal").modal("show");
     } else if (modalType === "SNS") {
-      $("#snsModal").modal("show");
+      NativeStore.postMessage("Share", {
+        message: window.location.href,
+      });
+      // $("#snsModal").modal("show");
     } else if (modalType === "Input") {
       $("#inputModal").modal("show");
     }

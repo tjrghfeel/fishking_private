@@ -215,23 +215,23 @@ export default inject(
           return;
         }
 
-        const params = {
-          shipId,
-          name,
-          amount,
-          minPersonnel,
-          maxPersonnel,
-          fishingStartTime,
-          fishingEndTime,
-          isUse,
-          species,
-          fishingDates,
-          positionSelect,
-          reserveType,
-          extraRun,
-          extraPersonnel,
-          extraShipNumber,
-        };
+        // const params = {
+        //   shipId,
+        //   name,
+        //   amount,
+        //   minPersonnel,
+        //   maxPersonnel,
+        //   fishingStartTime,
+        //   fishingEndTime,
+        //   isUse,
+        //   species,
+        //   fishingDates,
+        //   positionSelect,
+        //   reserveType,
+        //   extraRun,
+        //   extraPersonnel,
+        //   extraShipNumber,
+        // };
 
         let resolve = null;
         if (id !== null) {

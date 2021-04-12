@@ -24,18 +24,24 @@ export default inject("ModalStore")(
               )}
               {selectOptions.length > 0 && (
                 <div className="list-group">
-                  {selectOptions.map((data, index) => (
-                    <a
-                      key={index}
-                      onClick={() =>
-                        onSelect ? onSelect({ selected: data, index }) : null
-                      }
-                      className="list-group-item"
-                      data-dismiss="modal"
-                    >
-                      {data}
-                    </a>
-                  ))}
+                  {selectOptions.map((data, index) => {
+                    if (data) {
+                      return (
+                        <a
+                          key={index}
+                          onClick={() =>
+                            onSelect
+                              ? onSelect({ selected: data, index })
+                              : null
+                          }
+                          className="list-group-item"
+                          data-dismiss="modal"
+                        >
+                          {data}
+                        </a>
+                      );
+                    }
+                  })}
                 </div>
               )}
             </div>

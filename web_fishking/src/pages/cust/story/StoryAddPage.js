@@ -66,6 +66,7 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
+          console.log(JSON.stringify(resolve));
           // 첨부이미지
           const uploaded = [];
           if (resolve.imageUrlList) {
@@ -75,11 +76,12 @@ export default inject(
             }
           }
           await this.setState({
+            fishingDiaryId: resolve.fishingDiaryId,
             isPageUpdate: true,
             title: resolve.title,
             // 어종
             fishingSpeciesName: resolve.fishingSpecies
-              .replace(/[ ]/g, "")
+              ?.replace(/[ ]/g, "")
               .split(","),
             fishingSpecies: resolve.fishingSpeciesCodeList,
             // 날짜
@@ -89,11 +91,11 @@ export default inject(
             tideName: resolve.tide,
             // 낚시기법
             fishingTechnicListName: resolve.fishingTechnic
-              .replace(/[ ]/g, "")
+              ?.replace(/[ ]/g, "")
               .split(","),
             // 미끼
             fishingLureListName: resolve.fishingLure
-              .replace(/[ ]/g, "")
+              ?.replace(/[ ]/g, "")
               .split(","),
             // 낚시장소
             fishingTypeName: resolve.fishingType,
@@ -103,6 +105,17 @@ export default inject(
             // 첨부이미지
             uploaded,
           });
+          if (resolve.shipId === null) {
+            this.setState({
+              shipData: { address: resolve.address },
+              address: resolve.address,
+              latitude: resolve.latitude,
+              longitude: resolve.longitude,
+              showCardMap: true,
+            });
+            this.moveCardMap();
+          } else {
+          }
         }
       }
 
@@ -190,27 +203,71 @@ export default inject(
           return;
         }
 
-        const resolve = await APIStore._post("/v2/api/fishingDiary", {
-          category,
-          title,
-          fishingSpecies,
-          fishingDate,
-          tide,
-          fishingTechnicList,
-          fishingLureList,
-          fishingType,
-          shipId,
-          content,
-          fileList,
-          videoId,
-          address,
-          latitude,
-          longitude,
-        });
+        console.log(JSON.stringify(this.state.shipData));
+        console.log(
+          JSON.stringify({
+            fishingDiaryId: this.state.fishingDiaryId,
+            category,
+            title,
+            fishingSpecies,
+            fishingDate,
+            tide,
+            fishingTechnicList,
+            fishingLureList,
+            fishingType,
+            shipId,
+            content,
+            fileList,
+            videoId,
+            address,
+            latitude,
+            longitude,
+          })
+        );
+        // if (true) return;
+        let resolve = null;
+        if (this.state.fishingDiaryId) {
+          resolve = await APIStore._put("/v2/api/fishingDiary", {
+            fishingDiaryId: this.state.fishingDiaryId,
+            category,
+            title,
+            fishingSpecies,
+            fishingDate,
+            tide,
+            fishingTechnicList,
+            fishingLureList,
+            fishingType,
+            shipId,
+            content,
+            fileList,
+            videoId,
+            address,
+            latitude,
+            longitude,
+          });
+        } else {
+          resolve = await APIStore._post("/v2/api/fishingDiary", {
+            category,
+            title,
+            fishingSpecies,
+            fishingDate,
+            tide,
+            fishingTechnicList,
+            fishingLureList,
+            fishingType,
+            shipId,
+            content,
+            fileList,
+            videoId,
+            address,
+            latitude,
+            longitude,
+          });
+        }
 
         if (resolve) {
           ModalStore.openModal("Alert", {
-            body: "등록되었습니다.",
+            body: "저장되었습니다.",
             onOk: () => {
               PageStore.goBack();
             },
@@ -346,6 +403,9 @@ export default inject(
                   await this.setState({
                     shipId: selected.shipId,
                     shipData: selected,
+                    address: selected.address,
+                    latitude: null,
+                    longitude: null,
                     showCardMap: false,
                   });
                 } else if (selected.itemType === "Location") {
@@ -392,7 +452,7 @@ export default inject(
                   </dt>
                   <a data-toggle="modal" data-target="#selFishModal">
                     <dd>
-                      {this.state.fishingSpeciesName.map((data, index) => (
+                      {this.state.fishingSpeciesName?.map((data, index) => (
                         <React.Fragment key={index}>
                           {data.concat(" ")}
                         </React.Fragment>
@@ -441,7 +501,7 @@ export default inject(
                   <dt>낚시 기법</dt>
                   <a data-toggle="modal" data-target="#selTechnicModal">
                     <dd>
-                      {this.state.fishingTechnicListName.map((data, index) => (
+                      {this.state.fishingTechnicListName?.map((data, index) => (
                         <React.Fragment key={index}>
                           {data.concat(" ")}
                         </React.Fragment>
@@ -456,7 +516,7 @@ export default inject(
                   <dt>미끼</dt>
                   <a data-toggle="modal" data-target="#selLureModal">
                     <dd>
-                      {this.state.fishingLureListName.map((data, index) => (
+                      {this.state.fishingLureListName?.map((data, index) => (
                         <React.Fragment key={index}>
                           {data.concat(" ")}
                         </React.Fragment>
@@ -575,7 +635,7 @@ export default inject(
                     </div>
                   </a>
                 </div>
-                {this.state.uploaded.map((data, index) => (
+                {this.state.uploaded?.map((data, index) => (
                   <div className="col-3" key={index}>
                     <div className="box-round-grey">
                       <a

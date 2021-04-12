@@ -133,7 +133,13 @@ export default inject(
                     <ul className="list-search">
                       {this.state.keywords.splice(5, 10).map((data, index) => (
                         <li key={index}>
-                          <a>
+                          <a
+                            onClick={() => {
+                              PageStore.push(
+                                `/search/keyword/all?keyword=${data["keyword"]}`
+                              );
+                            }}
+                          >
                             <strong>
                               {Intl.NumberFormat().format(index + 6)}
                             </strong>{" "}

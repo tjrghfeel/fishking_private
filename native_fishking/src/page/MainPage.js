@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Linking,
   Alert,
+  Share,
 } from 'react-native';
 import {inject, observer} from 'mobx-react';
 import {WebView} from 'react-native-webview';
@@ -158,6 +159,20 @@ export default inject(
           onMessage={async ({nativeEvent}) => {
             const {process, data} = JSON.parse(nativeEvent.data);
             switch (process) {
+              case 'Share': {
+                const result = await Share.share({
+                  message: data.message,
+                  url: data.message,
+                  title: '어복황제',
+                });
+                break;
+              }
+              case 'Refresh': {
+                const enabled = data['enabled'];
+                AppStore.setRefreshEnabled(enabled);
+                console.log(enabled);
+                break;
+              }
               case 'Exit': {
                 // >>>>> 앱 종료
                 BackHandler.exitApp();
