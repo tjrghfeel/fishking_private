@@ -6,6 +6,10 @@ export default new (class {
     makeAutoObservable(this);
   }
 
+  navigationState = null;
+  setNavigationState(navigationState) {
+    this.navigationState = navigationState;
+  }
   applicationUrl = 'https://fishkingapp.com/cust/main/home';
   setApplicationUrl(url) {
     this.applicationUrl = url;
