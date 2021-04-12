@@ -35,10 +35,12 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
-          if (resolve.fishingDiaryType === '조행기') category = "fishingBlog";
+          if (resolve.fishingDiaryType === "조행기") category = "fishingBlog";
           else category = "fishingDiary";
 
           this.setState({ ...resolve, category });
+
+          console.log(JSON.stringify(resolve));
         };
 
         onClickLike = async () => {
@@ -94,8 +96,18 @@ export default inject(
           }
         };
         onSelectFunction = async (selected) => {
-          const { APIStore, ModalStore } = this.props;
-          if (selected.index === 0) {
+          const { APIStore, ModalStore, PageStore } = this.props;
+          if (selected.selected.includes("수정")) {
+            PageStore.push(`/story/add?put=${this.state.fishingDiaryId}`);
+          } else if (selected.selected.includes("삭제")) {
+            const resolve = await APIStore._delete(`/v2/api/fishingDiary`, {
+              fishingDiaryId: this.state.fishingDiaryId,
+            });
+            if (resolve) {
+              PageStore.push(`/main/story/user`);
+            }
+            console.log(resolve);
+          } else if (selected.selected.includes("스크랩")) {
             // scrap
             let resolve = null;
             if (this.state.isScraped) {
@@ -111,7 +123,7 @@ export default inject(
               ModalStore.openModal("Alert", { body: "처리되었습니다." });
               this.loadPageData();
             }
-          } else if (selected.index === 1) {
+          } else if (selected.selected.includes("신고")) {
             // alert
             const resolve = await APIStore._post("/v2/api/addAccuse", {
               linkId: this.state.fishingDiaryId,
@@ -149,6 +161,8 @@ export default inject(
                       onClick={() =>
                         ModalStore.openModal("Select", {
                           selectOptions: [
+                            // this.state.isMine ? "수정하기" : null,
+                            this.state.isMine ? "삭제하기" : null,
                             this.state.isScraped
                               ? "스크랩 취소하기"
                               : "스크랩하기",
