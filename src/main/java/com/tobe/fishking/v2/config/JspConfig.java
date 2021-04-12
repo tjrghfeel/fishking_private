@@ -1,4 +1,3 @@
-/*
 package com.tobe.fishking.v2.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,7 @@ public class JspConfig {
         viewResolver.setPrefix(prefix);
         viewResolver.setSuffix(suffix);
         viewResolver.setViewClass(JstlView.class);
-//        viewResolver.setViewNames(viewNames);
+        viewResolver.setViewNames(viewNames);
         return viewResolver;
     }
-}*/
+}

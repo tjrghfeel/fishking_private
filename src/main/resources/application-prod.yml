@@ -23,6 +23,11 @@ spring:
     livereload:
       enabled: false
 
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
 file :
   location : /mnt/nfs/files/
   downloadUrl : https://www.fishkingapp.com/resource
