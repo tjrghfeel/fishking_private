@@ -141,7 +141,8 @@ public class CommonController {
         List<CommonCodeDTO> commonCodeDTOList = commonService.getCommonCodeDTOList(groudId);
 
         //ListResult로 만들어주기.
-        return responseService.getListResult(commonCodeDTOList);
+        ListResult<CommonCodeDTO> result = responseService.getListResult(commonCodeDTOList);
+        return result;
     }
 
 

@@ -34,6 +34,7 @@ import com.tobe.fishking.v2.service.common.PopularService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -106,8 +107,8 @@ public class FishkingScheduler {
     }
 
     /*물때 알림. */
-//    @Scheduled(cron = "0 0/1 * * * *")
-    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
+    @Scheduled(cron = "0 0/1 * * * *")
+//    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
     public void checkTideAlert() throws IOException {
         LocalDateTime dateTime = LocalDateTime.now();
         dateTime = dateTime/*.withMinute(0)*/.withSecond(0).withNano(0);
@@ -122,7 +123,7 @@ public class FishkingScheduler {
             Member receiver = alerts.getReceiver();
             CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
             CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
-            if(receiver.getAlertSet().contains(tideAlertSetCommonCode)) {
+            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
                 List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
 //            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
                 String alertTitle = "[" + alerts.getAlertType().getValue() + "]";
@@ -141,6 +142,7 @@ public class FishkingScheduler {
     }
 
     /*조위 알림*/
+    @Transactional
     @Scheduled(cron = "0 0/1 * * * *")
     public void checkTideLevelAlert() throws IOException {
         System.out.println("checkTideLevelAlert()");
@@ -157,7 +159,7 @@ public class FishkingScheduler {
             Member receiver = alerts.getReceiver();
             CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
             CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
-            if(receiver.getAlertSet().contains(tideAlertSetCommonCode)) {
+            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
                 List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
 //            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
                 String alertTitle = "" + alerts.getAlertType().getValue() + "";

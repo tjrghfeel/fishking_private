@@ -255,7 +255,11 @@ public class MemberService {
 
         //알림 설정정보
         CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-        List<CommonCode> alertSet = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+        List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+        Set<CommonCode> alertSet = null;
+        for(int i=0; i<alertSetList.size(); i++){
+            alertSet.add(alertSetList.get(i));
+        }
 
         /*sns를 통해 가입하는경우.*/
         if(member!=null && member.getIsCertified()==false && member.getSnsId()!=null){
@@ -1894,12 +1898,17 @@ public class MemberService {
     @Transactional
     public List<String> getAlertSet(String token){
         Member member = getMemberBySessionToken(token);
-        List<CommonCode> alertSetCommonCodeList = member.getAlertSet();
+        Set<CommonCode> alertSetCommonCodeList = member.getAlertSet();
         List<String> result = new ArrayList<>();
 
-        for(int i=0; i<alertSetCommonCodeList.size(); i++){
-            result.add(alertSetCommonCodeList.get(i).getCode());
+        Iterator<CommonCode> iterator = alertSetCommonCodeList.iterator();
+        while(iterator.hasNext()){
+            result.add(iterator.next().getCode());
         }
+//        for(int i=0; i<alertSetCommonCodeList.size(); i++){
+//            result.add(alertSetCommonCodeList.get(i).getCode());
+//
+//        }
 
         return result;
     }
@@ -1910,8 +1919,11 @@ public class MemberService {
         CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
         List<CommonCode> alertSetCommonCodeList =
                 commonCodeRepository.findCommonCodesByCodeGroupAndCodes(alertSetCodeGroup,dto.getAlertSetCodeList());
-
-        member.setAlertSet(alertSetCommonCodeList);
+        Set<CommonCode> alertSet = new HashSet<>();
+        for(int i=0; i<alertSetCommonCodeList.size(); i++){
+            alertSet.add(alertSetCommonCodeList.get(i));
+        }
+        member.setAlertSet(alertSet);
         memberRepository.save(member);
         return true;
     }

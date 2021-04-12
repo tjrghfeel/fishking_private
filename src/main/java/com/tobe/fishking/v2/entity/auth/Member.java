@@ -11,9 +11,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -95,12 +99,12 @@ public class Member {
     //푸시알림용 기기토큰 목록
 //    @Column(columnDefinition = "varchar(255) comment '푸쉬알림용 등록토큰'")
 //    private String registrationToken;
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",fetch = FetchType.EAGER)
     private List<RegistrationToken> registrationTokenList;
 
-    @ManyToMany(targetEntity = CommonCode.class)
+    @ManyToMany(targetEntity = CommonCode.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "member_alert_set", columnDefinition = " comment  '설정 - 알림 설정'  ")
-    private List<CommonCode> alertSet;
+    private Set<CommonCode> alertSet;
 
     @Builder
     public Member(Long id, String uid,
@@ -109,7 +113,7 @@ public class Member {
                   Role roles, String sessionToken, String profileImage, String profileBackgroundImage,
                   Boolean isActive, String certifiedNo, Boolean isCertified,
                   String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber,
-                  Address address, List<CommonCode> alertSet) {
+                  Address address, Set<CommonCode> alertSet) {
         this.id = id;
         this.uid = uid;
         this.memberName = memberName;
@@ -145,4 +149,12 @@ public class Member {
         isActive = false;
     }
     public void setMemberName(String name){this.memberName = name;}
+    public boolean hasAlertSetCode(String code){
+        Iterator<CommonCode> iterator = this.getAlertSet().iterator();
+        while(iterator.hasNext()){
+            CommonCode commonCode = iterator.next();
+            if(commonCode.getCode() == code){return true; }
+        }
+        return false;
+    }
 }
