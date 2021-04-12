@@ -47,6 +47,8 @@ dependencies {
 
     implementation 'com.nimbusds:nimbus-jose-jwt:3.10'
 
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    implementation 'javax.servlet:jstl'
 /*
     implementation 'net.rakugakibox.util:yaml-resource-bundle:1.1'
 */
