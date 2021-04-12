@@ -546,9 +546,11 @@ public class FishingDiaryService {
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
         Long shipId = null;
         String shipAddress = null;
+        String shipImageUrl = null;
         if(fishingDiary.getShip()!=null){
             shipId = fishingDiary.getShip().getId();
             shipAddress = fishingDiary.getShip().getAddress();
+            shipImageUrl = env.getProperty("file.downloadUrl")+fishingDiary.getShip().getProfileImage();
         }
         Boolean isHidden = false;
         if(fishingDiary.getMember().getIsActive() == false){throw new RuntimeException("탈퇴한 회원의 글입니다.");}
@@ -669,6 +671,7 @@ public class FishingDiaryService {
                 .fishingDiaryType(fishingDiaryType)
                 .shipId(shipId)
                 .shipAddress(shipAddress)
+                .shipImageUrl(shipImageUrl)
                 .address(fishingDiary.getFishingLocation())
                 .latitude(fishingDiary.getWriteLatitude())
                 .longitude(fishingDiary.getWriteLongitude())
