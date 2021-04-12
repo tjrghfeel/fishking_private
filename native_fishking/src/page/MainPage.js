@@ -59,18 +59,29 @@ export default inject(
       initiate();
       if (Platform.OS === 'android') {
         BackHandler.addEventListener('hardwareBackPress', () => {
-          const now = new Date().getTime();
-          if (now - backPressTime < 2000) {
-            BackHandler.exitApp();
+          if (
+            WebViewStore.navigationState?.url.includes(
+              'https://fishkingapp.com',
+            )
+          ) {
+            WebViewStore.postWindowMessage('goBack');
           } else {
-            setBackPressTime(new Date().getTime());
-            ToastAndroid.showWithGravity(
-              '뒤로 가기 버튼을 한번 더 누르시면 앱이 종료됩니다',
-              ToastAndroid.SHORT,
-              ToastAndroid.BOTTOM,
-            );
+            webview.current.goBack();
           }
           return true;
+
+          // const now = new Date().getTime();
+          // if (now - backPressTime < 2000) {
+          //   BackHandler.exitApp();
+          // } else {
+          //   setBackPressTime(new Date().getTime());
+          //   ToastAndroid.showWithGravity(
+          //     '뒤로 가기 버튼을 한번 더 누르시면 앱이 종료됩니다',
+          //     ToastAndroid.SHORT,
+          //     ToastAndroid.BOTTOM,
+          //   );
+          // }
+          // return true;
         });
         return () => {
           BackHandler.removeEventListener('hardwareBackPress');
@@ -132,7 +143,7 @@ export default inject(
           allowsInlineMediaPlayback={true}
           allowsBackForwardNavigationGestures={true}
           onNavigationStateChange={(state) =>
-            console.log(JSON.stringify(state))
+            WebViewStore.setNavigationState(state)
           }
           onShouldStartLoadWithRequest={(request) => {
             if (request.url === 'about:blank') return false;
