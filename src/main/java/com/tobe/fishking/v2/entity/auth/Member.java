@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.entity.auth;
 
 import com.tobe.fishking.v2.entity.common.Address;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -90,8 +92,15 @@ public class Member {
     @Embedded
     private Address address;
 
-    @Column(columnDefinition = "varchar(255) comment '푸쉬알림용 등록토큰'")
-    private String registrationToken;
+    //푸시알림용 기기토큰 목록
+//    @Column(columnDefinition = "varchar(255) comment '푸쉬알림용 등록토큰'")
+//    private String registrationToken;
+    @OneToMany(mappedBy = "member")
+    private List<RegistrationToken> registrationTokenList;
+
+    @ManyToMany(targetEntity = CommonCode.class)
+    @JoinColumn(name = "member_alert_set", columnDefinition = " comment  '설정 - 알림 설정'  ")
+    private List<CommonCode> alertSet;
 
     @Builder
     public Member(Long id, String uid,
@@ -100,7 +109,7 @@ public class Member {
                   Role roles, String sessionToken, String profileImage, String profileBackgroundImage,
                   Boolean isActive, String certifiedNo, Boolean isCertified,
                   String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber,
-                  Address address) {
+                  Address address, List<CommonCode> alertSet) {
         this.id = id;
         this.uid = uid;
         this.memberName = memberName;
@@ -121,6 +130,7 @@ public class Member {
         this.statusMessage = statusMessage;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.alertSet = alertSet;
     }
 
 
@@ -134,6 +144,5 @@ public class Member {
     public void deActivateMember() {
         isActive = false;
     }
-    public void setRegistrationToken(String token){this.registrationToken = token;}
     public void setMemberName(String name){this.memberName = name;}
 }

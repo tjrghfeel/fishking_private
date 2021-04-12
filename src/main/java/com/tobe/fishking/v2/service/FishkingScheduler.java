@@ -1,9 +1,12 @@
 package com.tobe.fishking.v2.service;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.auth.RegistrationToken;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.common.Alerts;
+import com.tobe.fishking.v2.entity.common.CodeGroup;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Calculate;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Orders;
@@ -19,6 +22,8 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.AlertsRepository;
+import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
+import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.repository.fishking.CalculateRepository;
 import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
@@ -54,6 +59,8 @@ public class FishkingScheduler {
     private final OrdersRepository ordersRepository;
     private final CalculateRepository calculateRepository;
     private final PayService payService;
+    private final CodeGroupRepository codeGroupRepository;
+    private final CommonCodeRepository commonCodeRepository;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
@@ -68,26 +75,33 @@ public class FishkingScheduler {
 
             Member receiver = memberRepository.findById(dto.getMember())
                     .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMember()));
-            String registrationToken = receiver.getRegistrationToken();
-            String alertTitle = "쿠폰 만료 알림";
-            String sentence = "보유하고 계신 쿠폰 '"+dto.getCouponName()+"'의 유효기간이 7일 남았습니다."+" 7일 이후에는 자동 소멸됩니다.";
+            //혜택알림 허용 설정되어있으면 푸시알림.
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            CommonCode benefitAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "benefit");
+            if(receiver.getAlertSet().contains(benefitAlertSetCommonCode)) {
+                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+                String alertTitle = "쿠폰 만료 알림";
+                String sentence = "보유하고 계신 쿠폰 '" + dto.getCouponName() + "'의 유효기간이 7일 남았습니다." + " 7일 이후에는 자동 소멸됩니다.";
 
-            Alerts alerts = Alerts.builder()
-                    .alertType(AlertType.couponExpire)
-                    .entityType(EntityType.couponMember)
-                    .pid(dto.getId())
-                    .content(null)
-                    .sentence(sentence)
-                    .isRead(false)
-                    .isSent(false)
-                    .receiver(receiver)
-                    .alertTime(LocalDateTime.now())
-                    .createdBy(manager)
-                    .build();
+                Alerts alerts = Alerts.builder()
+                        .alertType(AlertType.couponExpire)
+                        .entityType(EntityType.couponMember)
+                        .pid(dto.getId())
+                        .content(null)
+                        .sentence(sentence)
+                        .isRead(false)
+                        .isSent(false)
+                        .receiver(receiver)
+                        .alertTime(LocalDateTime.now())
+                        .createdBy(manager)
+                        .build();
 
-            alerts = alertsRepository.save(alerts);
+                alerts = alertsRepository.save(alerts);
 
-            sendPushAlert(alertTitle,sentence,alerts,registrationToken);
+                for (int j = 0; j < registrationTokenList.size(); j++) {
+                    sendPushAlert(alertTitle, sentence, alerts, registrationTokenList.get(j).getToken());
+                }
+            }
         }
     }
 
@@ -106,16 +120,22 @@ public class FishkingScheduler {
             Alerts alerts = alertsList.get(i);
 
             Member receiver = alerts.getReceiver();
-            String registrationToken = receiver.getRegistrationToken();
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
+            if(receiver.getAlertSet().contains(tideAlertSetCommonCode)) {
+                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
 //            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
-            String alertTitle = "["+alerts.getAlertType().getValue()+"]";
+                String alertTitle = "[" + alerts.getAlertType().getValue() + "]";
 
-            /*알림 내용 생성*/
+                /*알림 내용 생성*/
 //            if(alertData[1].equals("15")){alertData[1] = "조금";}
 //            else{alertData[1] += "물";}
 
-            /*푸쉬알림 보내기. */
-            sendPushAlert(alertTitle,alerts.getSentence(),alerts, registrationToken);
+                /*푸쉬알림 보내기. */
+                for (int j = 0; j < registrationTokenList.size(); j++) {
+                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, registrationTokenList.get(j).getToken());
+                }
+            }
         }
 
     }
@@ -135,9 +155,12 @@ public class FishkingScheduler {
             Alerts alerts = alertsList.get(i);
 
             Member receiver = alerts.getReceiver();
-            String registrationToken = receiver.getRegistrationToken();
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
+            if(receiver.getAlertSet().contains(tideAlertSetCommonCode)) {
+                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
 //            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
-            String alertTitle = ""+alerts.getAlertType().getValue()+"";
+                String alertTitle = "" + alerts.getAlertType().getValue() + "";
 //            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
 //            Integer time = Integer.parseInt(alertData[2]);
 //            String timeString = null;
@@ -145,8 +168,11 @@ public class FishkingScheduler {
 //            else if(time>0){timeString = Math.abs(time)+"시간 후";}
 //            else{timeString="";}
 
-            /*푸쉬알림 보내기. */
-            sendPushAlert(alertTitle,alerts.getSentence(),alerts,registrationToken);
+                /*푸쉬알림 보내기. */
+                for (int j = 0; j < registrationTokenList.size(); j++) {
+                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, registrationTokenList.get(i).getToken());
+                }
+            }
         }
     }
 
@@ -205,7 +231,7 @@ public class FishkingScheduler {
             AlertType type = AlertType.reservationComplete;
             Member receiver = o.getCreatedBy();
             Goods goods = o.getGoods();
-            String registrationToken = receiver.getRegistrationToken();
+            List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
             String alertTitle = "예약 확정 알림";
             String sentence = receiver.getMemberName() + "님 \n"
                     + goods.getShip().getShipName() + "의 \n"
@@ -225,7 +251,9 @@ public class FishkingScheduler {
                     .createdBy(manager)
                     .build();
             alerts = alertsRepository.save(alerts);
-            sendPushAlert(alertTitle,sentence,alerts,registrationToken);
+            for(int j=0; j<registrationTokenList.size(); j++){
+                sendPushAlert(alertTitle, sentence, alerts, registrationTokenList.get(j).getToken());
+            }
         }
 
         wait.addAll(running);
@@ -237,7 +265,7 @@ public class FishkingScheduler {
                 AlertType type = AlertType.reservationCancel;
                 Member receiver = o.getCreatedBy();
                 Goods goods = o.getGoods();
-                String registrationToken = receiver.getRegistrationToken();
+                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
                 String alertTitle = "예약 취소 알림";
                 String sentence = receiver.getMemberName() + "님 \n"
                         + goods.getShip().getShipName() + "의 \n"
@@ -257,7 +285,9 @@ public class FishkingScheduler {
                         .createdBy(manager)
                         .build();
                 alerts = alertsRepository.save(alerts);
-                sendPushAlert(alertTitle,sentence,alerts,registrationToken);
+                for(int j=0; j<registrationTokenList.size(); j++){
+                    sendPushAlert(alertTitle, sentence, alerts, registrationTokenList.get(j).getToken());
+                }
             } catch (Exception e) {
                 continue;
             }
