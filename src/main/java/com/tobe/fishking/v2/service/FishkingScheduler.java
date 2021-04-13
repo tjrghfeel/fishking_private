@@ -43,6 +43,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -79,8 +80,8 @@ public class FishkingScheduler {
             //혜택알림 허용 설정되어있으면 푸시알림.
             CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
             CommonCode benefitAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "benefit");
-            if(receiver.getAlertSet().contains(benefitAlertSetCommonCode)) {
-                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+            if(receiver.hasAlertSetCode(benefitAlertSetCommonCode.getCode())) {
+                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
                 String alertTitle = "쿠폰 만료 알림";
                 String sentence = "보유하고 계신 쿠폰 '" + dto.getCouponName() + "'의 유효기간이 7일 남았습니다." + " 7일 이후에는 자동 소멸됩니다.";
 
@@ -99,8 +100,8 @@ public class FishkingScheduler {
 
                 alerts = alertsRepository.save(alerts);
 
-                for (int j = 0; j < registrationTokenList.size(); j++) {
-                    sendPushAlert(alertTitle, sentence, alerts, registrationTokenList.get(j).getToken());
+                for (RegistrationToken item: registrationTokenList) {
+                    sendPushAlert(alertTitle, sentence, alerts, item.getToken());
                 }
             }
         }
@@ -124,7 +125,7 @@ public class FishkingScheduler {
             CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
             CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
             if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
-                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
 //            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
                 String alertTitle = "[" + alerts.getAlertType().getValue() + "]";
 
@@ -133,8 +134,8 @@ public class FishkingScheduler {
 //            else{alertData[1] += "물";}
 
                 /*푸쉬알림 보내기. */
-                for (int j = 0; j < registrationTokenList.size(); j++) {
-                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, registrationTokenList.get(j).getToken());
+                for (RegistrationToken item: registrationTokenList) {
+                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
                 }
             }
         }
@@ -142,7 +143,6 @@ public class FishkingScheduler {
     }
 
     /*조위 알림*/
-    @Transactional
     @Scheduled(cron = "0 0/1 * * * *")
     public void checkTideLevelAlert() throws IOException {
         System.out.println("checkTideLevelAlert()");
@@ -160,7 +160,7 @@ public class FishkingScheduler {
             CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
             CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
             if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
-                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
 //            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
                 String alertTitle = "" + alerts.getAlertType().getValue() + "";
 //            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
@@ -171,8 +171,8 @@ public class FishkingScheduler {
 //            else{timeString="";}
 
                 /*푸쉬알림 보내기. */
-                for (int j = 0; j < registrationTokenList.size(); j++) {
-                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, registrationTokenList.get(i).getToken());
+                for (RegistrationToken item: registrationTokenList) {
+                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
                 }
             }
         }
@@ -233,7 +233,7 @@ public class FishkingScheduler {
             AlertType type = AlertType.reservationComplete;
             Member receiver = o.getCreatedBy();
             Goods goods = o.getGoods();
-            List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+            Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
             String alertTitle = "예약 확정 알림";
             String sentence = receiver.getMemberName() + "님 \n"
                     + goods.getShip().getShipName() + "의 \n"
@@ -253,8 +253,8 @@ public class FishkingScheduler {
                     .createdBy(manager)
                     .build();
             alerts = alertsRepository.save(alerts);
-            for(int j=0; j<registrationTokenList.size(); j++){
-                sendPushAlert(alertTitle, sentence, alerts, registrationTokenList.get(j).getToken());
+            for(RegistrationToken item: registrationTokenList){
+                sendPushAlert(alertTitle, sentence, alerts, item.getToken());
             }
         }
 
@@ -267,7 +267,7 @@ public class FishkingScheduler {
                 AlertType type = AlertType.reservationCancel;
                 Member receiver = o.getCreatedBy();
                 Goods goods = o.getGoods();
-                List<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
                 String alertTitle = "예약 취소 알림";
                 String sentence = receiver.getMemberName() + "님 \n"
                         + goods.getShip().getShipName() + "의 \n"
@@ -287,8 +287,8 @@ public class FishkingScheduler {
                         .createdBy(manager)
                         .build();
                 alerts = alertsRepository.save(alerts);
-                for(int j=0; j<registrationTokenList.size(); j++){
-                    sendPushAlert(alertTitle, sentence, alerts, registrationTokenList.get(j).getToken());
+                for(RegistrationToken item: registrationTokenList){
+                    sendPushAlert(alertTitle, sentence, alerts, item.getToken());
                 }
             } catch (Exception e) {
                 continue;

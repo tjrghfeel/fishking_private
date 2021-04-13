@@ -100,7 +100,7 @@ public class Member {
 //    @Column(columnDefinition = "varchar(255) comment '푸쉬알림용 등록토큰'")
 //    private String registrationToken;
     @OneToMany(mappedBy = "member",fetch = FetchType.EAGER)
-    private List<RegistrationToken> registrationTokenList;
+    private Set<RegistrationToken> registrationTokenList;
 
     @ManyToMany(targetEntity = CommonCode.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "member_alert_set", columnDefinition = " comment  '설정 - 알림 설정'  ")
@@ -153,7 +153,7 @@ public class Member {
         Iterator<CommonCode> iterator = this.getAlertSet().iterator();
         while(iterator.hasNext()){
             CommonCode commonCode = iterator.next();
-            if(commonCode.getCode() == code){return true; }
+            if(commonCode.getCode().equals(code)){return true; }
         }
         return false;
     }

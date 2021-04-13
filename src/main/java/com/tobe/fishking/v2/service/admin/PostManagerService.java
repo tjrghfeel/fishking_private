@@ -53,6 +53,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PostManagerService {
@@ -211,7 +212,7 @@ public class PostManagerService {
         CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
         CommonCode csAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "cs");
         //고객센터 알람 허용 설정되어있으면, 푸시알림.
-        if(parentPost.getAuthor().getAlertSet().contains(csAlertSetCommonCode)) {
+        if(parentPost.getAuthor().hasAlertSetCode(csAlertSetCommonCode.getCode())) {
             String sentence = parentPost.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "일자 문의에 대한 답변이 완료되었습니다.";
 
             Alerts alerts = Alerts.builder()
@@ -229,9 +230,9 @@ public class PostManagerService {
             alertsRepository.save(alerts);
 
             String alertTitle = "1:1문의 답변 완료";
-            List<RegistrationToken> registrationTokenList = parentPost.getAuthor().getRegistrationTokenList();
-            for (int i = 0; i < registrationTokenList.size(); i++) {
-                scheduler.sendPushAlert(alertTitle, sentence, alerts, registrationTokenList.get(i).getToken());
+            Set<RegistrationToken> registrationTokenList = parentPost.getAuthor().getRegistrationTokenList();
+            for(RegistrationToken item : registrationTokenList){
+                scheduler.sendPushAlert(alertTitle, sentence, alerts, item.getToken());
             }
         }
 
