@@ -40,7 +40,9 @@ export default inject(
 
       requestLogout = async () => {
         const { APIStore, PageStore } = this.props;
-        const resolve = APIStore._post("/v2/api/logout");
+        const resolve = APIStore._post("/v2/api/logout", {
+          registrationToken: window.fcm_token || null,
+        });
         if (resolve) {
           PageStore.setAccessToken(null, "cust");
           PageStore.push(`/member/login`);

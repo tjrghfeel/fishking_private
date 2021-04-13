@@ -161,12 +161,14 @@ export default inject(
                       onClick={() =>
                         ModalStore.openModal("Select", {
                           selectOptions: [
-                            // this.state.isMine ? "수정하기" : null,
+                            this.state.isMine ? "수정하기" : null,
                             this.state.isMine ? "삭제하기" : null,
-                            this.state.isScraped
+                            !this.state.isMine && this.state.isScraped
                               ? "스크랩 취소하기"
-                              : "스크랩하기",
-                            "신고하기",
+                              : !this.state.isMine && !this.state.isScraped
+                              ? "스크랩하기"
+                              : null,
+                            !this.state.isMine ? "신고하기" : null,
                             "닫기",
                           ],
                           onSelect: this.onSelectFunction,

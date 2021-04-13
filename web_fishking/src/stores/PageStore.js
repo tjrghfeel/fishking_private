@@ -56,7 +56,11 @@ const PageStore = new (class {
     if (
       window.isNative &&
       (window.location.pathname.indexOf("/cust/main/home") !== -1 ||
-        window.location.pathname.indexOf("/smartfishing/dashboard") !== -1)
+        window.location.pathname.indexOf("/smartfishing/login") !== -1 ||
+        window.location.pathname.indexOf("/smartfishing/dashboard") !== -1 ||
+        window.location.pathname == "/police/" ||
+        window.location.pathname.indexOf("/police/login") !== -1 ||
+        window.location.pathname.indexOf("/police/dashboard") !== -1)
     ) {
       window.ReactNativeWebView.postMessage(
         JSON.stringify({

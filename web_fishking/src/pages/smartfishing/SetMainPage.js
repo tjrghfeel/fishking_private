@@ -7,7 +7,8 @@ const {
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "ModalStore"
 )(
   observer(
     class extends React.Component {

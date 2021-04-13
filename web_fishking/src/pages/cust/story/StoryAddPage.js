@@ -72,7 +72,8 @@ export default inject(
           if (resolve.imageUrlList) {
             for (let i = 0; i < resolve.imageUrlList.length; i++) {
               const downloadUrl = resolve.imageUrlList[i];
-              uploaded.push({ fileId: null, downloadUrl });
+              const fileId = resolve.imageIdList[i];
+              uploaded.push({ fileId, downloadUrl });
             }
           }
           await this.setState({
@@ -115,6 +116,22 @@ export default inject(
             });
             this.moveCardMap();
           } else {
+            this.setState({
+              shipId: resolve.shipId,
+              shipData: {
+                itemType: "Company",
+                name: "",
+                address: resolve.shipAddress,
+                distance: null,
+                thumbnailUrl: resolve.shipImageUrl,
+                fishingType: null,
+                shipId: resolve.shipId,
+              },
+              address: null,
+              latitude: null,
+              longitude: null,
+              showCardMap: false,
+            });
           }
         }
       }
@@ -157,11 +174,11 @@ export default inject(
         const {
           category,
           title,
-          fishingSpecies,
+          fishingSpecies = [],
           fishingDate,
           tide,
-          fishingTechnicList,
-          fishingLureList,
+          fishingTechnicList = [],
+          fishingLureList = [],
           fishingType,
           shipId,
           content,
@@ -173,6 +190,7 @@ export default inject(
           longitude,
         } = this.state;
         for (let file of uploaded) {
+          console.log("file -> " + JSON.stringify(file));
           fileList.push(file.fileId);
         }
 
@@ -400,10 +418,11 @@ export default inject(
               id={"selLocationModal"}
               onSelected={async (selected) => {
                 if (selected.itemType === "Company") {
+                  console.log(JSON.stringify(selected));
                   await this.setState({
                     shipId: selected.shipId,
                     shipData: selected,
-                    address: selected.address,
+                    address: null,
                     latitude: null,
                     longitude: null,
                     showCardMap: false,
