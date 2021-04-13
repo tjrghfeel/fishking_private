@@ -1,12 +1,6 @@
 package com.tobe.fishking.v2.controller.member;
 
 import NiceID.Check.CPClient;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.BufferRecycler;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.tobe.fishking.v2.entity.common.PhoneNumber;
-import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.auth.*;
@@ -14,40 +8,26 @@ import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.RegEx;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.persistence.AttributeConverter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import java.io.*;
-import java.net.*;
-import java.nio.Buffer;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
 
 @Api(tags={"프로필"})
 @Controller
@@ -178,7 +158,7 @@ public class MemberController {
         model.addAttribute("sMessage",sMessage);
         model.addAttribute("sEncData",sEncData);
 
-        return "niceRequest";
+        return "jsp/niceRequest";
     }
 
     /*nice 본인인증 성공시*/

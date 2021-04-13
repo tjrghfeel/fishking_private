@@ -21,9 +21,9 @@ import java.util.Date;
 @RestControllerAdvice
 public class ExceptionAdvice {
 
-    private ResponseService responseService;
+    private final ResponseService responseService;
 
-    private  MessageSource messageSource;
+    private final MessageSource messageSource;
 
 //    @ExceptionHandler(ResourceNotFoundException.class)
 //    public ResponseEntity<?> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
@@ -31,11 +31,18 @@ public class ExceptionAdvice {
 //        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 //    }
 
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult defaultException(HttpServletRequest request, Exception e) {
         // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
         return responseService.getFailResult(Integer.valueOf(getMessage("unKnown.code")), getMessage("unKnown.msg") + "(" + e.getMessage() + ")");
+    }
+
+    @ExceptionHandler(ServiceLogicException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult serviceLogicException(HttpServletRequest request, Exception e){
+        return responseService.getFailResult(000,e.getMessage());
     }
 
     @ExceptionHandler(CMemberNotFoundException.class)

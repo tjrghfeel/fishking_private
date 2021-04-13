@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
@@ -131,11 +132,11 @@ public class FishingDiaryController {
             @RequestParam(value = "keyword", required = false) String keyword,
 //            @RequestParam(value = "sortBy", required = false, defaultValue = "name") String sortBy,
             @PathVariable("page") int page
-    ) throws EmptyListException {
+    ) throws EmptyListException, ServiceLogicException {
         /*검색 키워드 검증*/
         if(keyword!=null) {
             if (!(Pattern.matches("^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣\\s]{2,}$", keyword))) {
-                throw new RuntimeException("검색어는 한글, 영어, 숫자만 2자 이상이어야합니다.");
+                throw new ServiceLogicException("검색어는 한글, 영어, 숫자만 2자 이상이어야합니다.");
             }
         }
         else{keyword="";}
