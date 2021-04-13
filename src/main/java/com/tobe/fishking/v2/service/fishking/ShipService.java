@@ -301,7 +301,7 @@ public class ShipService {
                     if (sessionToken.equals("")) {
                         sessionToken = LocalTime.now().toString();
                     }
-                    token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), sessionToken);
+                    token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), sessionToken).replaceAll("\"", "");
                     String videoUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
                     if (videoUrl != null) {
                         response.setLiveVideo(videoUrl);
