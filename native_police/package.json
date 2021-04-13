@@ -10,6 +10,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "mobx": "^6.2.0",
+    "mobx-react": "^7.1.0",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-send-intent": "^1.2.3",
