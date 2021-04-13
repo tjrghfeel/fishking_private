@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.enums.Constants;
+import com.tobe.fishking.v2.enums.board.BoardType;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.FileImageOnlyException;
@@ -129,9 +130,6 @@ public class UploadService {
 
         Board board  = boardRepo.findBoardByFilePublish(filePublish);
 
-        String fileLocation = env.getProperty("file.location") + File.separator + board.getUploadPath();/*filePublish.toString();*/
-        String filePath = board.getUploadPath();
-
             /* 파일 타입에 대해 체크해주는 부분인듯하다. 처음부터있었던 로직인데 당장필요없을듯하여 일단 주석처리. by석호
             FileType currentFileType = FileType.image;
             if (!file.getContentType().startsWith("image/")) {
@@ -142,7 +140,7 @@ public class UploadService {
             }*/
 
         List<String> fileResult = new ArrayList<>();
-        fileResult = this.saveUploadFile(file, /*memberId*/"seok ho", fileLocation, filePath, true);
+        fileResult = this.saveUploadFile(file, /*memberId*/"seok ho", board, true);
         /*위에 memberId인자 주석풀어줘야함. by 석호. */
         if (fileResult.isEmpty()) {
             throw new FileUploadFailException();
@@ -218,9 +216,11 @@ public class UploadService {
      */
     public List<String> saveUploadFile(MultipartFile file,
                                        String userID,
-                                       String fileLocation,
-                                       String filePath,
+                                       Board board,
                                        boolean thumbnail) throws IOException, JCodecException {
+        String fileLocation = env.getProperty("file.location") + File.separator + board.getUploadPath();/*filePublish.toString();*/
+        String filePath = board.getUploadPath();
+
         Map<String, Object> fileData = new HashMap<String, Object>();
         List<String> fileNames = new ArrayList<>();
 
@@ -253,7 +253,7 @@ public class UploadService {
         fileNames.add(uploadFilePath);
 
         if (thumbnail && file.getContentType().startsWith("image/")) {
-            File thumbs = makeThumbnail(uploadFile, fileLocation, fileName)
+            File thumbs = makeThumbnail(uploadFile, fileLocation, fileName, board.getBoardType())
                     .orElseThrow(FileUploadFailException::new);
 
 /*
@@ -348,15 +348,22 @@ public class UploadService {
     }
 
 
-    private Optional<File> makeThumbnail(File originalFile, String fileLocation, String fileName) {
+    private Optional<File> makeThumbnail(File originalFile, String fileLocation, String fileName, BoardType boardType) {
         String tFileName = "";
 
         try {
+            int width = 0;
+            int height = 0;
+            if(boardType == BoardType.ship){
+                width = Integer.parseInt(Constants.shipThumbnailWidth);
+                height = Integer.parseInt(Constants.shipThumbnailHeight);
+            }
+            else{
+                width = Integer.parseInt(Constants.thumbnailWidth);
+                height = Integer.parseInt(Constants.thumbnailHeight);
+            }
 
             tFileName = fileLocation + File.separator + "thumb_" + fileName;
-
-            int width = Integer.parseInt(Constants.thumbnailWidth);
-            int height = Integer.parseInt(Constants.thumbnailHeight);
 
             /*Image inImage = ImageIO.read(originalFile);
             double scale = (double) width / (double) inImage.getWidth(null);
@@ -364,12 +371,13 @@ public class UploadService {
             int scaledH = (int) (scale * inImage.getHeight(null));*/
 
             Image inImage = new ImageIcon(tFileName).getImage();
-            double scale = (double) width / (double) inImage.getHeight(null);
-            if (inImage.getWidth(null) > inImage.getHeight(null)) {
-                scale = (double) height / (double) inImage.getWidth(null);
-            }
-            int scaledW = (int) (scale * inImage.getWidth(null));
-            int scaledH = (int) (scale * inImage.getHeight(null));
+            double scaleW = (double) width / (double) inImage.getHeight(null);
+//            if (inImage.getWidth(null) > inImage.getHeight(null)) {
+//                scale = (double) height / (double) inImage.getWidth(null);
+//            }
+            double scaleH = (double) height / (double) inImage.getHeight(null);
+            int scaledW = (int) (scaleW * inImage.getWidth(null));
+            int scaledH = (int) (scaleH * inImage.getHeight(null));
 
             File tFile = new File(tFileName);
 

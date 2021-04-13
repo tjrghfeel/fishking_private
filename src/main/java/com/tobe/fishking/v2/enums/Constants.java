@@ -23,6 +23,10 @@ public class Constants {
     public static final String thumbnailWidth               = "300";
     public static final String thumbnailHeight              = "300";
 
+    //선박 대표이미지용 섬네일 사이즈
+    public static final String shipThumbnailWidth           ="767";
+    public static final String shipThumbnailHeight          ="426";
+
     //파일 업로드 위치
     public static final String PREPEND_FILE_BOARD = "/board/";
 }

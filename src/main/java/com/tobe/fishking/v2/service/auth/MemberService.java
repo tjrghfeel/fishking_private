@@ -256,7 +256,7 @@ public class MemberService {
         //알림 설정정보
         CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
         List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
-        Set<CommonCode> alertSet = null;
+        Set<CommonCode> alertSet = new HashSet<>();
         for(int i=0; i<alertSetList.size(); i++){
             alertSet.add(alertSetList.get(i));
         }

@@ -9,7 +9,7 @@ public interface ShipListForWriteFishingDiary {
     String getFishingType();
     String getAddress();
     String getDistance();
-    @Value("#{@mapperUtility.transDownLoadUrl(target.fileUrl, target.fileName)}")
+    @Value("#{@mapperUtility.transDownloadUrl(target.thumbnailUrl)}")
     String getThumbnailUrl();
     @Value("#{@mapperUtility.transIntToBoolean(target.isVideo)}")
     Boolean getIsVideo();

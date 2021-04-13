@@ -39,8 +39,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   s.fishing_type fishingType, " +
                     "   s.address address, " +
                     "   s.distance distance, " +
-                    "   f.file_url fileUrl, " +
-                    "   f.thumbnail_file fileName," +
+                    "   s.profile_image thumbnailUrl, " +
                     "   if(f.file_type=3, true, false) isVideo " +
                     "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
                     "where " +
@@ -70,8 +69,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   s.fishing_type fishingType, " +
                     "   s.address address, " +
                     "   s.distance distance, " +
-                    "   f.file_url fileUrl, " +
-                    "   f.thumbnail_file fileName," +
+                    "   s.profile_image thumbnailUrl, " +
                     "   if(f.file_type=3, true, false) isVideo " +
                     "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
                     "       left join company c on s.company_id = c.id " +
