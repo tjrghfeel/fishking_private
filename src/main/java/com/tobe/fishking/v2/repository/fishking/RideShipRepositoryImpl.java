@@ -136,8 +136,13 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
         response.put("waitCount", waitCount);
         response.put("confirmCount", confirmCount);
         response.put("cancelCount", cancelCount);
-        response.put("confirmPercentage", confirmCount * 100.0 / (confirmCount + failCount));
-        response.put("failPercentage", failCount * 100.0 / (confirmCount + failCount));
+        if (confirmCount + failCount == 0) {
+            response.put("confirmPercentage", 0);
+            response.put("failPercentage", 0);
+        } else {
+            response.put("confirmPercentage", confirmCount * 100.0 / (confirmCount + failCount));
+            response.put("failPercentage", failCount * 100.0 / (confirmCount + failCount));
+        }
         return response;
     }
 
