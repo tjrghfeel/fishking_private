@@ -16,22 +16,14 @@ import java.util.Map;
 public class JspController {
 
     @GetMapping("/index")
-    public ModelAndView index() {
-        System.out.println("index");
-        ModelAndView mnv = new ModelAndView("jsp/index");
+    public ModelAndView index(ModelAndView mnv) {
+        mnv.setViewName("jsp/index");
+        return mnv;
+    }
 
-        Map<String, Object> results = new HashMap<>();
-        Map<String, Object> maps = new HashMap<>();
-        List<String> lists = new ArrayList<>();
-        lists.add("a");
-        lists.add("b");
-        maps.put("test", "test");
-        maps.put("list", lists);
-
-        mnv.addObject("name", "테스트");
-        mnv.addObject("maps", maps);
-        mnv.addObject("lists", lists);
-
+    @GetMapping("/dashboard")
+    public ModelAndView dashboard(ModelAndView mnv) {
+        mnv.setViewName("jsp/dashboard");
         return mnv;
     }
 
