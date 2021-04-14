@@ -6,8 +6,27 @@
     <title>Title</title>
 </head>
 <body>
-    <form action="/payresult" method="post">
-        <button>버튼</button>
-    </form>
+    <div>
+        <span id="t">non click</span>
+    </div>
+    <input type="button" value="test" onclick="callAndroid('called!')" />
+    <div>
+        <span id="t3"> called? </span>
+        <span id="t2"> empty </span>
+    </div>
+<!--    <form action="/payresult" method="post">-->
+<!--        <button>버튼</button>-->
+<!--    </form>-->
 </body>
 </html>
+<script>
+    function callAndroid(msg) {
+        Fishking.getFingerprints();
+        document.getElementById("t").innerText = msg;
+    }
+
+    function setFingerprintData(fingerprint) {
+        document.getElementById("t3").innerText = "called";
+        document.getElementById("t2").innerText = fingerprint;
+    }
+</script>
