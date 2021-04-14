@@ -61,6 +61,7 @@ export default inject(
           });
         }
       }
+      loadPageData = async (dayType) => {};
       onSelectedTideArea = async (item) => {
         await this.setState({
           arr_150: [],

@@ -127,8 +127,8 @@
 <script>
     // ----- > 지문 입력
     function fn_fingerprint (item, index) {
-        var item = pageData['boardingPeople'][index];
-        console.log(JSON.stringify(item))
+        var data = pageData['boardingPeople'][index];
+        console.log(JSON.stringify(data));
     }
     var pageData = null;
     // ----- > 데이터 로드

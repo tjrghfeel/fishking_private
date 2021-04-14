@@ -4708,6 +4708,9 @@ body.full {
 	padding-top:0 !important;
 	padding-bottom:0px !important;
 }
+body.full.bgintro {
+	background-color:#67a9e5;
+}
 .fullwrap {
 	padding:0;
 	margin:0;
@@ -4764,7 +4767,7 @@ body.full {
   background-color: #fff;
 }
 #carousel-about .carousel-indicators {
-	top:20px !important;
+	top:30px !important;
 	height:auto;
 	top:auto;
 }

@@ -140,6 +140,14 @@ export default inject(
       selectAllSpecies = () => {
         const eles = document.querySelectorAll('[name="check-species"]');
         for (let ele of eles) ele.checked = true;
+        const species = [];
+        for (let row of this.state.arr_species) {
+          for (let item of row) {
+            if (item["code"] === null) continue;
+            species.push(item["code"]);
+          }
+        }
+        this.setState({ species });
       };
       selectSpecies = (code, checked) => {
         const { DataStore } = this.props;
@@ -215,64 +223,34 @@ export default inject(
           return;
         }
 
-        // const params = {
-        //   shipId,
-        //   name,
-        //   amount,
-        //   minPersonnel,
-        //   maxPersonnel,
-        //   fishingStartTime,
-        //   fishingEndTime,
-        //   isUse,
-        //   species,
-        //   fishingDates,
-        //   positionSelect,
-        //   reserveType,
-        //   extraRun,
-        //   extraPersonnel,
-        //   extraShipNumber,
-        // };
-
+        const params = {
+          shipId,
+          name,
+          amount,
+          minPersonnel,
+          maxPersonnel,
+          fishingStartTime,
+          fishingEndTime,
+          isUse,
+          species,
+          fishingDates,
+          positionSelect,
+          reserveType,
+          extraRun,
+          extraPersonnel,
+          extraShipNumber,
+        };
+        console.log(JSON.stringify(params));
+        if (true) return;
         let resolve = null;
         if (id !== null) {
           // 수정
-          resolve = await APIStore._put(`/v2/api/goods/update/${id}`, {
-            shipId,
-            name,
-            amount,
-            minPersonnel,
-            maxPersonnel,
-            fishingStartTime,
-            fishingEndTime,
-            isUse,
-            species,
-            fishingDates,
-            positionSelect,
-            reserveType,
-            extraRun,
-            extraPersonnel,
-            extraShipNumber,
-          });
+          resolve = await APIStore._put(`/v2/api/goods/update/${id}`, params);
         } else {
           // 등록
-          resolve = await APIStore._post(`/v2/api/goods/add`, {
-            shipId,
-            name,
-            amount,
-            minPersonnel,
-            maxPersonnel,
-            fishingStartTime,
-            fishingEndTime,
-            isUse,
-            species,
-            fishingDates,
-            positionSelect,
-            reserveType,
-            extraRun,
-            extraPersonnel,
-            extraShipNumber,
-          });
+          resolve = await APIStore._post(`/v2/api/goods/add`, params);
         }
+
         if (resolve && resolve["result"] === "success") {
           ModalStore.openModal("Alert", {
             body: "저장되었습니다.",
@@ -336,7 +314,7 @@ export default inject(
                     type="number"
                     className="form-control"
                     placeholder="상품가격을 입력하세요"
-                    value={this.state.amount}
+                    value={Math.abs(this.state.amount)}
                     onChange={(e) => this.setState({ amount: e.target.value })}
                   />
                 </div>
@@ -444,7 +422,7 @@ export default inject(
                       className="add-contrast"
                       data-role="collar"
                       defaultChecked={this.state.isUse}
-                      onChange={(e) => {
+                      onClick={(e) => {
                         if (e.target.checked) this.setState({ isUse: true });
                       }}
                     />
@@ -460,7 +438,7 @@ export default inject(
                       className="add-contrast"
                       data-role="collar"
                       defaultChecked={!this.state.isUse}
-                      onChange={(e) => {
+                      onClick={(e) => {
                         if (e.target.checked) this.setState({ isUse: false });
                       }}
                     />
@@ -491,7 +469,7 @@ export default inject(
                                 className="add-contrast"
                                 data-role="collar"
                                 data-value={item["code"]}
-                                onChange={(e) =>
+                                onClick={(e) =>
                                   this.selectSpecies(
                                     item["code"],
                                     e.target.checked
