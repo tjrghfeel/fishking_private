@@ -242,8 +242,8 @@ export default inject(
           latitude,
           longitude,
         };
-        console.log(JSON.stringify(params));
-        if (true) return;
+        // console.log(JSON.stringify(params));
+        // if (true) return;
         let resolve = null;
         if (this.state.fishingDiaryId) {
           resolve = await APIStore._put("/v2/api/fishingDiary", {
