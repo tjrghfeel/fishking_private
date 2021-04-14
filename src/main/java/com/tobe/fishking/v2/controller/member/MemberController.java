@@ -97,6 +97,7 @@ public class MemberController {
             @RequestParam("email") String email,
             @RequestParam("pw") String pw,
             @RequestParam("nickName") String nickName,
+            @RequestParam("registrationToken") String registrationToken,
             ModelMap model,
             HttpSession session
     ) throws ResourceNotFoundException, IOException {
@@ -105,6 +106,7 @@ public class MemberController {
                 .email(email)
                 .pw(pw)
                 .nickName(nickName)
+                .registrationToken(registrationToken)
                 .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
@@ -791,7 +793,7 @@ public class MemberController {
             "응답 필드 ) ArrayList<String> / codeGroup id 165번에 해당하는 common code들의 code값. ")
     @GetMapping("/setting/alertSet")
     @ResponseBody
-    public List<String> getAlertSet(
+    public List<AlertSetDtoForPage> getAlertSet(
             @RequestHeader("Authorization") String token
     ){
         return memberService.getAlertSet(token);
@@ -800,13 +802,14 @@ public class MemberController {
     //알림 설정
     @ApiOperation(value = "설정 > 알림설정하기",notes = "" +
             "허용으로 체크된 알림종류에 해당하는 common code값을 인자로 넘기면됩니다. ")
-    @PutMapping("/setting/alertSet")
+    @PutMapping("/setting/alertSet/{code}/{isSet}")
     @ResponseBody
     public Boolean modifyAlertSet(
             @RequestHeader("Authorization") String token,
-            @RequestBody ModifyAlertSetDto dto
+            @PathVariable("code") String code,
+            @PathVariable("isSet") Boolean isSet
     ){
-        return memberService.modifyAlertSet(token, dto);
+        return memberService.modifyAlertSet(token, code, isSet);
     }
 
     

@@ -296,6 +296,20 @@ public class MemberService {
                     .build();
             member = memberRepository.save(member);
         }
+
+        //기기등록토큰 저장.
+        if(signUpDto.getRegistrationToken() != null) {
+            List<RegistrationToken> preTokenList = tokenRepository.findAllByMemberAndToken(member, signUpDto.getRegistrationToken());
+            if (preTokenList.size() < 1) {
+                RegistrationToken token = RegistrationToken.builder()
+                        .token(signUpDto.getRegistrationToken())
+                        .member(member)
+                        .build();
+                tokenRepository.save(token);
+            } else {
+            }//이미 해당 회원이 해당 기기에 로그인 되어있는경우,(이런경우가 있을지모르겠지만..) 그냥 넘김.
+        }
+
         System.out.println("================\n test >>> memberId : "+member.getId()+"\n================");
         return member.getId();
     }
@@ -1896,15 +1910,38 @@ public class MemberService {
 
     //설정 > 알림설정. 알림설정 정보 조회
     @Transactional
-    public List<String> getAlertSet(String token){
+    public List<AlertSetDtoForPage> getAlertSet(String token){
         Member member = getMemberBySessionToken(token);
-        Set<CommonCode> alertSetCommonCodeList = member.getAlertSet();
-        List<String> result = new ArrayList<>();
+//        Set<CommonCode> memberSAlertSetCodeList = member.getAlertSet();
+        List<AlertSetDtoForPage> result = new ArrayList<>();
 
-        Iterator<CommonCode> iterator = alertSetCommonCodeList.iterator();
-        while(iterator.hasNext()){
-            result.add(iterator.next().getCode());
+        CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+        List<CommonCode> alertSetCodeList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+
+        for(int i=0; i<alertSetCodeList.size(); i++){
+            CommonCode alertSet = alertSetCodeList.get(i);
+            if(member.hasAlertSetCode(alertSet.getCode())){
+                AlertSetDtoForPage dto = AlertSetDtoForPage.builder()
+                        .code(alertSet.getCode())
+                        .codeName(alertSet.getCodeName())
+                        .isSet(true)
+                        .build();
+                result.add(dto);
+            }
+            else{
+                AlertSetDtoForPage dto = AlertSetDtoForPage.builder()
+                        .code(alertSet.getCode())
+                        .codeName(alertSet.getCodeName())
+                        .isSet(false)
+                        .build();
+                result.add(dto);
+            }
         }
+
+//        Iterator<CommonCode> iterator = alertSetCommonCodeList.iterator();
+//        while(iterator.hasNext()){
+//            result.add(iterator.next().getCode());
+//        }
 //        for(int i=0; i<alertSetCommonCodeList.size(); i++){
 //            result.add(alertSetCommonCodeList.get(i).getCode());
 //
@@ -1914,17 +1951,24 @@ public class MemberService {
     }
     //설정 > 알림 설정하기
     @Transactional
-    public Boolean modifyAlertSet(String token, ModifyAlertSetDto dto){
+    public Boolean modifyAlertSet(String token, String code, Boolean isSet){
         Member member = getMemberBySessionToken(token);
         CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-        List<CommonCode> alertSetCommonCodeList =
-                commonCodeRepository.findCommonCodesByCodeGroupAndCodes(alertSetCodeGroup,dto.getAlertSetCodeList());
-        Set<CommonCode> alertSet = new HashSet<>();
-        for(int i=0; i<alertSetCommonCodeList.size(); i++){
-            alertSet.add(alertSetCommonCodeList.get(i));
+        //이미
+        if(member.hasAlertSetCode(code)){
+
         }
-        member.setAlertSet(alertSet);
-        memberRepository.save(member);
+        CommonCode alertSet = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup,code);
+
+
+//        List<CommonCode> alertSetCommonCodeList =
+//                commonCodeRepository.findCommonCodesByCodeGroupAndCodes(alertSetCodeGroup,dto.getAlertSetCodeList());
+//        Set<CommonCode> alertSet = new HashSet<>();
+//        for(int i=0; i<alertSetCommonCodeList.size(); i++){
+//            alertSet.add(alertSetCommonCodeList.get(i));
+//        }
+//        member.setAlertSet(alertSet);
+//        memberRepository.save(member);
         return true;
     }
 

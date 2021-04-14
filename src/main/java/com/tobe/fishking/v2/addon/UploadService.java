@@ -240,9 +240,6 @@ public class UploadService {
 
         File uploadFile = convert(file, fileLocation, fileName).orElseThrow(FileUploadFailException::new);
 
-        /*파일 크기가 4MB이상일 경우 용량줄이기. */
-        uploadFile = resize(uploadFile, fileLocation, fileName);
-
     /*    amazonS3Client.putObject(new PutObjectRequest(
                 bucket, uploadFilePath, uploadFile
         ).withCannedAcl(CannedAccessControlList.PublicRead));
@@ -253,6 +250,9 @@ public class UploadService {
         fileNames.add(uploadFilePath);
 
         if (thumbnail && file.getContentType().startsWith("image/")) {
+            /*파일 크기가 4MB이상일 경우 용량줄이기. */
+            uploadFile = resize(uploadFile, fileLocation, fileName);
+
             File thumbs = makeThumbnail(uploadFile, fileLocation, fileName, board.getBoardType())
                     .orElseThrow(FileUploadFailException::new);
 

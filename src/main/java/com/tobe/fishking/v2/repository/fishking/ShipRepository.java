@@ -178,7 +178,8 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   c.company_name companyName, " +
                     "   s.total_avg_by_review totalAvgByReview, " +
                     "   s.is_active isActive, " +
-                    "   s.depart_status departStatus " +
+                    "   s.depart_status departStatus, " +
+                    "   c.member_id memberId " +
                     "from ship s left join ship_fish_species sfs on sfs.ship_id = s.id left join ship_facilities sf on sf.ship_id = s.id " +
                     "   left join ship_services ss on ss.ship_id = s.id left join ship_devices sd on sd.ship_id = s.id " +
                     "   left join realtime_video rv on rv.rtvideos_ship_id = s.id " +

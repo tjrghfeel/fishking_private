@@ -29,6 +29,8 @@ public class SignUpDto {
     @Size(min = 4, max = 10, message = "닉네임은 4~10자이어야 합니다.")
     private String nickName;
 
+    private String registrationToken;
+
     /*@NotNull(message = "휴대폰 인증 id가 없습니다")
     private Long phoneAuthId;*/
 

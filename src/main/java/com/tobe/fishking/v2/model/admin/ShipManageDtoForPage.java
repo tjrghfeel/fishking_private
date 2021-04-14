@@ -19,4 +19,5 @@ public interface ShipManageDtoForPage {
     Double getTotalAvgByReview();
     Boolean getIsActive();
     Boolean getDepartStatus();
+    Long getMemberId();
 }
