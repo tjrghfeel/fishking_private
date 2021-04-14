@@ -32,4 +32,5 @@ public interface OrderManageDtoForPage {
     String getShipName();//
     Long getCompanyId();//
     String getCompanyName();//
+    Long getShipownerId();
 }

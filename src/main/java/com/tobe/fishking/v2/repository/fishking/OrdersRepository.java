@@ -136,7 +136,8 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
                     "   s.id shipId, " +
                     "   s.ship_name shipName, " +
                     "   c.id companyId, " +
-                    "   c.company_name companyName " +
+                    "   c.company_name companyName, " +
+                    "   c.member_id shipownerId " +
                     "from orders o join orders_details od on o.id = od.order_detail_orders_id join goods g on o.goods=g.id " +
                     "   join member m on o.created_by=m.id join ship s on g.goods_ship_id = s.id join company c on s.company_id=c.id " +
                     "where " +
