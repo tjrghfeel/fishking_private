@@ -1951,24 +1951,21 @@ public class MemberService {
     }
     //설정 > 알림 설정하기
     @Transactional
-    public Boolean modifyAlertSet(String token, String code, Boolean isSet){
+    public Boolean modifyAlertSet(String token, String code, String isSet){
         Member member = getMemberBySessionToken(token);
         CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-        //이미
-        if(member.hasAlertSetCode(code)){
-
-        }
         CommonCode alertSet = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup,code);
 
+        if(isSet.equals("true")){
+            if(member.hasAlertSetCode(code)){      }
+            else{ member.addAlertSet(alertSet);   }
+        }
+        else{
+            if(member.hasAlertSetCode(code)){ member.deleteAlertSet(code);}
+            else{}
+        }
+        memberRepository.save(member);
 
-//        List<CommonCode> alertSetCommonCodeList =
-//                commonCodeRepository.findCommonCodesByCodeGroupAndCodes(alertSetCodeGroup,dto.getAlertSetCodeList());
-//        Set<CommonCode> alertSet = new HashSet<>();
-//        for(int i=0; i<alertSetCommonCodeList.size(); i++){
-//            alertSet.add(alertSetCommonCodeList.get(i));
-//        }
-//        member.setAlertSet(alertSet);
-//        memberRepository.save(member);
         return true;
     }
 

@@ -356,12 +356,14 @@ public class FishingDiaryService {
         /*fishingSpecies 문자열로 만들기*/
         String fishSpecies =null;
         if(dto.getFishingSpecies()!=null) {
-            CodeGroup fishSpeciesCodeGroup = codeGroupRepo.findByCode("mainfishspecies");
-            String[] fishSpeciesCommonCodeList = commonCodeRepo.findCodeNameByCodeList(dto.getFishingSpecies(), fishSpeciesCodeGroup);
-            fishSpecies = fishSpeciesCommonCodeList[0];
-            for (int i = 1; i < fishSpeciesCommonCodeList.length; i++) {
-                fishSpecies += ", " + fishSpeciesCommonCodeList[i];
+            List<CommonCode> fishSpeciesCommonCodeList = commonCodeRepo.findFishSpeciesCodeByCodeList(dto.getFishingSpecies());
+//            CodeGroup fishSpeciesCodeGroup = codeGroupRepo.findByCode("mainfishspecies");
+//            String[] fishSpeciesCommonCodeList = commonCodeRepo.findCodeNameByCodeList(dto.getFishingSpecies(), fishSpeciesCodeGroup);
+            fishSpecies = fishSpeciesCommonCodeList.get(0).getCodeName();
+            for (int i = 1; i < fishSpeciesCommonCodeList.size(); i++) {
+                fishSpecies += ", " + fishSpeciesCommonCodeList.get(i).getCodeName();
             }
+
         }
         /*물때*/
         String tideTime=null;

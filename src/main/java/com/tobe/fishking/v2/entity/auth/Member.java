@@ -137,10 +137,6 @@ public class Member {
         this.alertSet = alertSet;
     }
 
-
-
-
-
     //Getters and setters ommitted for brevity
 //    @ManyToMany(mappedBy = "coupons")
     //   private List<Coupon> coupons = new ArrayList<>();
@@ -156,5 +152,13 @@ public class Member {
             if(commonCode.getCode().equals(code)){return true; }
         }
         return false;
+    }
+    public void addAlertSet(CommonCode alertSet){ this.alertSet.add(alertSet); }
+    public void deleteAlertSet(String alertSetCode){
+        Iterator<CommonCode> iterator = this.getAlertSet().iterator();
+        while(iterator.hasNext()){
+            CommonCode commonCode = iterator.next();
+            if(commonCode.getCode().equals(alertSetCode)){ this.alertSet.remove(commonCode); }
+        }
     }
 }

@@ -790,7 +790,10 @@ public class MemberController {
     @ApiOperation(value = "설정 > 알림설정 페이지 조회", notes = "" +
             "요청필드 ) \n" +
             "- header : sessionToken\n" +
-            "응답 필드 ) ArrayList<String> / codeGroup id 165번에 해당하는 common code들의 code값. ")
+            "응답 필드 ) \n" +
+            "- code : String / codeGroup id 165번에 해당하는 common code들의 code값. \n" +
+            "- codeName : String / code의 code name\n" +
+            "- isSet : Boolean / 현재 해당 알림이 설정되었는지 여부")
     @GetMapping("/setting/alertSet")
     @ResponseBody
     public List<AlertSetDtoForPage> getAlertSet(
@@ -801,13 +804,15 @@ public class MemberController {
 
     //알림 설정
     @ApiOperation(value = "설정 > 알림설정하기",notes = "" +
-            "허용으로 체크된 알림종류에 해당하는 common code값을 인자로 넘기면됩니다. ")
+            "요청필드 ) \n" +
+            "- code : String / 필수 / 설정하려는 알림의 code값. codeGroup id 165번에 해당하는 common code의 code값. \n" +
+            "- isSet : String / 필수 / 알림을 설정할지 해제할지. 'true' 또는 'false'값을 입력. ")
     @PutMapping("/setting/alertSet/{code}/{isSet}")
     @ResponseBody
     public Boolean modifyAlertSet(
             @RequestHeader("Authorization") String token,
             @PathVariable("code") String code,
-            @PathVariable("isSet") Boolean isSet
+            @PathVariable("isSet") String isSet
     ){
         return memberService.modifyAlertSet(token, code, isSet);
     }

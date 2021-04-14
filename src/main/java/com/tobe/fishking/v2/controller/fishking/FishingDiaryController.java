@@ -69,6 +69,14 @@ public class FishingDiaryController {
             throw new RuntimeException("shipId와 address 둘중 하나만 입력하여야 합니다.");
         }
 
+        //배열타입 입력값들 비어있을경우 null로 수정.
+        if(dto.getFishingSpecies()==null){}
+        else if(dto.getFishingSpecies().length ==0){dto.setFishingSpecies(null);}
+        if(dto.getFishingLureList()==null){}
+        else if(dto.getFishingLureList().length ==0){dto.setFishingLureList(null);}
+        if(dto.getFishingTechnicList()==null){}
+        else if(dto.getFishingTechnicList().length ==0){dto.setFishingTechnicList(null);}
+
         return fishingDiaryService.writeFishingDiary(dto,token);
     }
 
@@ -110,6 +118,14 @@ public class FishingDiaryController {
         if(!((dto.getShipId() != null) ^ (dto.getAddress()!=null && dto.getLongitude()!=null && dto.getLatitude()!=null))){
             throw new RuntimeException("선박id(shipId) 또는 위치 정보(address, longitude, latitude) 둘 중 하나가 존재해야합니다.");
         }
+
+        //배열타입 입력값들 비어있을경우 null로 수정.
+        if(dto.getFishingSpecies()==null){}
+        else if(dto.getFishingSpecies().length ==0){dto.setFishingSpecies(null);}
+        if(dto.getFishingLureList()==null){}
+        else if(dto.getFishingLureList().length ==0){dto.setFishingLureList(null);}
+        if(dto.getFishingTechnicList()==null){}
+        else if(dto.getFishingTechnicList().length ==0){dto.setFishingTechnicList(null);}
 
         return fishingDiaryService.modifyFishingDiary(dto,token);
     }
