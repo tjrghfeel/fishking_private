@@ -25,10 +25,10 @@ export default inject(
         this.loadPageData();
       }
 
-      loadPageData = async () => {
+      loadPageData = async (keyword) => {
         const { APIStore, PageStore, NativeStore } = this.props;
         const qp = PageStore.getQueryParams();
-        this.keyword = qp.keyword || "";
+        this.keyword = keyword || qp.keyword || "";
 
         const { lat, lng } = await NativeStore.getCurrentPosition();
         const resolve = await APIStore._get(`/v2/api/search/all`, {
@@ -45,7 +45,10 @@ export default inject(
         const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <SearchNavigationLayout text={this.keyword} />
+            <SearchNavigationLayout
+              text={this.keyword}
+              onSubmit={(keyword) => this.loadPageData(keyword)}
+            />
             <SearchTab activeIndex={0} keyword={this.keyword} />
 
             {/** 업체 */}

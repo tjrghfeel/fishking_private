@@ -13,7 +13,7 @@ export default inject()(
           {/** 물때 > 오늘의물때정보 */}
           <Route exact path={`${match.url}/today`} component={TidePage} />
           {/** 물때 > 날짜별물때정보 */}
-          <Route exact path={`${match.url}/daily`} component={TidePage} />
+          <Route exact path={`${match.url}/daily`} component={TideDailyPage} />
         </Switch>
       );
     })

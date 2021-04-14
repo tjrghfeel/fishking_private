@@ -12,19 +12,14 @@
 <body>
 <!-- Navigation -->
 <nav class="navbar fixed-top navbar-dark bg-primary">
-    <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
+<%--    <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>--%>
     <span class="navbar-title"><img src="/assets/smartsail/img/svg/navbar-logo-smartship.svg" alt="스마트승선"/></span>
     <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
 </nav>
 <!-- // Navigation -->
 
 <!-- 탭메뉴 -->
-<nav class="nav nav-pills nav-bar nav-justified">
-    <a class="nav-link active" href="dashboard.html"><figure class="dashboard"></figure>대시보드</a>
-    <a class="nav-link" href="sail.html"><figure class="sail"></figure>승선관리</a>
-    <a class="nav-link" href="camera.html"><figure class="camera"></figure>카메라관리</a>
-    <a class="nav-link" href="cs-notice.html"><figure class="cs"></figure>고객센터</a>
-</nav>
+<jsp:include page="cmm_tab.jsp" />
 <!--// 탭메뉴 -->
 
 <!-- 안내 -->
@@ -39,10 +34,10 @@
                 </p>
             </div>
             <div class="col-6 text-left">
-                <p><a href="sail.html"><small class="grey">승선대기</small> : <strong class="large" id="data-waitCount">13</strong></a></p>
-                <p><a href="sail.html"><small class="grey">승선확인</small> : <strong class="large text-primary" id="data-confirmCount">87</strong></a></p>
-                <p><a href="sail.html"><small class="grey">확인실패</small> : <strong class="large orange" id="data-failCount">87</strong></a></p>
-                <p><a href="sail.html"><small class="grey">승선취소</small> : <strong class="large text-danger" id="data-cancelCount">13</strong></a></p>
+                <p><a href="sail.html"><small class="grey">승선대기</small> : <strong class="large" id="data-waitCount">0</strong></a></p>
+                <p><a href="sail.html"><small class="grey">승선확인</small> : <strong class="large text-primary" id="data-confirmCount">0</strong></a></p>
+                <p><a href="sail.html"><small class="grey">확인실패</small> : <strong class="large orange" id="data-failCount">0</strong></a></p>
+                <p><a href="sail.html"><small class="grey">승선취소</small> : <strong class="large text-danger" id="data-cancelCount">0</strong></a></p>
             </div>
         </div>
     </div>
@@ -57,15 +52,15 @@
         <div class="col-8 text-right">
             <div class="custom-control custom-radio custom-control-inline">
                 <input checked type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input" onclick="javascript:loadPageData('new');">
-                <label class="custom-control-label" for="customRadioInline1">최신순</label>
+                <label class="custom-control-label" for="customRadioInline1">최신</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
                 <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input" onclick="javascript:loadPageData('shipName');">
-                <label class="custom-control-label" for="customRadioInline2">선상명순</label>
+                <label class="custom-control-label" for="customRadioInline2">선명</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
                 <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input" onclick="javascript:loadPageData('username');">
-                <label class="custom-control-label" for="customRadioInline3">승선자순</label>
+                <label class="custom-control-label" for="customRadioInline3">승선자</label>
             </div>
         </div>
     </div>
@@ -127,8 +122,8 @@
 <script>
     // ----- > 지문 입력
     function fn_fingerprint (item, index) {
-        var item = pageData['boardingPeople'][index];
-        console.log(JSON.stringify(item))
+        var data = pageData['boardingPeople'][index];
+        console.log(JSON.stringify(data));
     }
     var pageData = null;
     // ----- > 데이터 로드
@@ -143,6 +138,7 @@
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
             },
             success: function (response) {
+                console.log(JSON.stringify(response));
                 pageData = response;
 
                 document.querySelector('#data-waitCount').textContent = response['status']['waitCount'];
@@ -152,28 +148,28 @@
 
                 var failPercentage = 10; //response['status']['failPercentage'];
                 var confirmPercentage = 20;// response['status']['confirmPercentage'];
-                var ctx = document.getElementById('chart').getContext('2d');
-                var chart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        display: false,
-                        labels: ['확인비율', '실패비율'],
-                        datasets: [{
-                            label: '',
-                            data: [confirmPercentage, failPercentage],
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)'
-                            ],
-                            hoverOffset: 4
-                        }],
-                        display:false
-                    }
-                });
+                // var ctx = document.getElementById('chart').getContext('2d');
+                // var chart = new Chart(ctx, {
+                //     type: 'pie',
+                //     data: {
+                //         display: false,
+                //         labels: ['확인비율', '실패비율'],
+                //         datasets: [{
+                //             label: '',
+                //             data: [confirmPercentage, failPercentage],
+                //             backgroundColor: [
+                //                 'rgba(255, 99, 132, 0.2)',
+                //                 'rgba(54, 162, 235, 0.2)'
+                //             ],
+                //             borderColor: [
+                //                 'rgba(255, 99, 132, 1)',
+                //                 'rgba(54, 162, 235, 1)'
+                //             ],
+                //             hoverOffset: 4
+                //         }],
+                //         display:false
+                //     }
+                // });
 
                 for (var i = 0; i < response['boardingPeople'].length; i++) {
                     var item = response['boardingPeople'][i] || {};

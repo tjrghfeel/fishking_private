@@ -41,9 +41,9 @@ export default inject(
           fishingDate: null,
           tide: null,
           tideName: "",
-          fishingTechnicList: null,
+          fishingTechnicList: [],
           fishingTechnicListName: [],
-          fishingLureList: null,
+          fishingLureList: [],
           fishingLureListName: [],
           fishingType: null,
           fishingTypeName: "",
@@ -61,7 +61,8 @@ export default inject(
       /********** ********** ********** ********** **********/
       async componentDidMount() {
         const { PageStore, APIStore } = this.props;
-        const { put: fishingDiaryId } = PageStore.getQueryParams();
+        const { put: fishingDiaryId, iscompany } = PageStore.getQueryParams();
+        if (iscompany == "Y") await this.setState({ category: "fishingDiary" });
         if (fishingDiaryId) {
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
@@ -78,6 +79,7 @@ export default inject(
           }
           await this.setState({
             fishingDiaryId: resolve.fishingDiaryId,
+            category: resolve.category,
             isPageUpdate: true,
             title: resolve.title,
             // 어종
@@ -88,13 +90,15 @@ export default inject(
             // 날짜
             fishingDate: resolve.fishingDate,
             // 물때
-            tide: resolve.tide,
+            tide: resolve.tideCode,
             tideName: resolve.tide,
             // 낚시기법
+            fishingTechnicList: resolve.fishingTechnicCodeList,
             fishingTechnicListName: resolve.fishingTechnic
               ?.replace(/[ ]/g, "")
               .split(","),
             // 미끼
+            fishingLureList: resolve.fishingLureCodeList,
             fishingLureListName: resolve.fishingLure
               ?.replace(/[ ]/g, "")
               .split(","),
@@ -221,66 +225,33 @@ export default inject(
           return;
         }
 
-        console.log(JSON.stringify(this.state.shipData));
-        console.log(
-          JSON.stringify({
-            fishingDiaryId: this.state.fishingDiaryId,
-            category,
-            title,
-            fishingSpecies,
-            fishingDate,
-            tide,
-            fishingTechnicList,
-            fishingLureList,
-            fishingType,
-            shipId,
-            content,
-            fileList,
-            videoId,
-            address,
-            latitude,
-            longitude,
-          })
-        );
-        // if (true) return;
+        const params = {
+          category,
+          title,
+          fishingSpecies,
+          fishingDate,
+          tide,
+          fishingTechnicList,
+          fishingLureList,
+          fishingType,
+          shipId,
+          content,
+          fileList,
+          videoId,
+          address,
+          latitude,
+          longitude,
+        };
+        console.log(JSON.stringify(params));
+        if (true) return;
         let resolve = null;
         if (this.state.fishingDiaryId) {
           resolve = await APIStore._put("/v2/api/fishingDiary", {
             fishingDiaryId: this.state.fishingDiaryId,
-            category,
-            title,
-            fishingSpecies,
-            fishingDate,
-            tide,
-            fishingTechnicList,
-            fishingLureList,
-            fishingType,
-            shipId,
-            content,
-            fileList,
-            videoId,
-            address,
-            latitude,
-            longitude,
+            ...params,
           });
         } else {
-          resolve = await APIStore._post("/v2/api/fishingDiary", {
-            category,
-            title,
-            fishingSpecies,
-            fishingDate,
-            tide,
-            fishingTechnicList,
-            fishingLureList,
-            fishingType,
-            shipId,
-            content,
-            fileList,
-            videoId,
-            address,
-            latitude,
-            longitude,
-          });
+          resolve = await APIStore._post("/v2/api/fishingDiary", params);
         }
 
         if (resolve) {
@@ -305,7 +276,7 @@ export default inject(
 
           const form = new FormData();
           form.append("file", file);
-          form.append("filePublish", "fishingBlog");
+          form.append("filePublish", this.state.category);
 
           const { APIStore } = this.props;
           const upload = await APIStore._post_upload(
