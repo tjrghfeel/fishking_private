@@ -1307,7 +1307,8 @@ public class MemberService {
     /*로그인
      * - 아디, 비번확인하고 아니면 예외처리??, 맞으면 세션토큰생성하여 저장하고 반환. */
     @Transactional
-    public String login(LoginDTO loginDTO) throws ResourceNotFoundException {
+    public LoginResultDto login(LoginDTO loginDTO) throws ResourceNotFoundException {
+        LoginResultDto result = new LoginResultDto();
         System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
@@ -1318,6 +1319,7 @@ public class MemberService {
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
+            result.setMemberId(member.getId());
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
 
@@ -1334,22 +1336,29 @@ public class MemberService {
                 }//이미 해당 회원이 해당 기기에 로그인 되어있는경우,(이런경우가 있을지모르겠지만..) 그냥 넘김.
             }
 
-            /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
-            if(member.getSessionToken()!=null){
-                sessionToken = member.getSessionToken();
+            //임시 가입처리되어있는 회원이라면,
+            if(member.getIsCertified() == false){
+                result.setIsCertified(false);
+                return result;
             }
-            else {
-                System.out.println("token not exists");
-                /*세션토큰 생성 및 저장. */
-                String rawToken = member.getUid() + LocalDateTime.now();
-                sessionToken = encoder.encode(rawToken);
+            else {//인증을 마친 회원이라면,
+                result.setIsCertified(true);
 
-                System.out.println("token : "+sessionToken);
-                member.setSessionToken(sessionToken);
+                /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
+                if (member.getSessionToken() != null) {
+                    result.setSessionToken(member.getSessionToken());
+                } else {
+                    /*세션토큰 생성 및 저장. */
+                    String rawToken = member.getUid() + LocalDateTime.now();
+                    sessionToken = encoder.encode(rawToken);
+
+                    member.setSessionToken(sessionToken);
+                    result.setSessionToken(sessionToken);
+                }
             }
         }
         else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
-        return sessionToken;
+        return result;
     }
     @Transactional
     public String adminLogin(LoginDTO loginDTO) throws ResourceNotFoundException {

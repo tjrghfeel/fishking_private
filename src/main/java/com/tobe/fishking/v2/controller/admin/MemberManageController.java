@@ -1,10 +1,7 @@
 package com.tobe.fishking.v2.controller.admin;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.admin.member.DeletingMemberDtoForManage;
-import com.tobe.fishking.v2.model.admin.member.MemberDetailDtoForManager;
-import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
-import com.tobe.fishking.v2.model.admin.member.MemberSearchConditionDto;
+import com.tobe.fishking.v2.model.admin.member.*;
 import com.tobe.fishking.v2.service.admin.MemberManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -83,5 +80,15 @@ public class MemberManageController {
             @PathVariable("memberId") Long memberId
     ){
         return memberManageService.getSessionToken(token,memberId);
+    }
+
+    //임시 회원 생성
+    @ApiOperation(value = "임시 회원 생성")
+    @PostMapping("/manage/member/tempCreate")
+    public Long makeTempMember(
+            @RequestBody MakeTempMemberDto dto,
+            @RequestHeader("Authorization") String token
+    ){
+        return memberManageService.makeTempMember(dto,token);
     }
 }

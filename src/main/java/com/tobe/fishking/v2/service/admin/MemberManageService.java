@@ -8,6 +8,7 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.EmailDupException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.model.admin.member.MakeTempMemberDto;
 import com.tobe.fishking.v2.model.admin.member.MemberDetailDtoForManager;
 import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.member.MemberSearchConditionDto;
@@ -215,5 +216,11 @@ public class MemberManageService {
         }
 
         return sessionToken;
+    }
+
+    //임시 회원 생성
+    @Transactional
+    public Long makeTempMember(MakeTempMemberDto dto, String token){
+        return 1L;
     }
 }

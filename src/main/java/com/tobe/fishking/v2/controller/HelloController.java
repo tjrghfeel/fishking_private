@@ -50,10 +50,15 @@ public class HelloController {
         return "kakaoStoryShare";
     }
 
-    @GetMapping("/noName")
+    @PostMapping("/noName")
     public String noName() throws ResourceNotFoundException, IOException, JCodecException {
-        return "noName";
+        return "redirect:/v2/api/noName3?aaa=hello";
 
+    }
+    @PostMapping("/noName3")
+    @ResponseBody
+    public String noName3(@RequestParam("aaa") String aaa){
+        return aaa;
     }
 
     @GetMapping("/naver")
