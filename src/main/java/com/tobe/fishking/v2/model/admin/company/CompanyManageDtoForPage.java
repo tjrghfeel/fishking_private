@@ -11,6 +11,7 @@ public interface CompanyManageDtoForPage {
     String getSido();
     String getGungu();
     String getTel();//
+    String getPhoneNumber();
     String getBizNo();//
     String getBank();
     String getAccountNum();

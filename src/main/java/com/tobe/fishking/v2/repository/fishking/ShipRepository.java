@@ -165,7 +165,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   s.ship_name shipName, " +
                     "   s.fishing_type fishingType, " +
                     "   s.address address, " +
-                    "   s.tel tel, " +
+                    "   c.phone_number companyPhoneNumber, " +
                     "   (select group_concat(cc.code_name separator ',') from ship_fish_species sfs2, common_code cc " +
                     "       where sfs2.ship_id = s.id and sfs2.fish_species_id = cc.id group by sfs2.ship_id ) fishSpecies, " +
                     "   (select group_concat(cc.code_name separator ',') from ship_facilities sf2, common_code cc " +
@@ -179,7 +179,8 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   s.total_avg_by_review totalAvgByReview, " +
                     "   s.is_active isActive, " +
                     "   s.depart_status departStatus, " +
-                    "   c.member_id memberId " +
+                    "   c.member_id memberId, " +
+                    "   s.created_date createdDate " +
                     "from ship s left join ship_fish_species sfs on sfs.ship_id = s.id left join ship_facilities sf on sf.ship_id = s.id " +
                     "   left join ship_services ss on ss.ship_id = s.id left join ship_devices sd on sd.ship_id = s.id " +
                     "   left join realtime_video rv on rv.rtvideos_ship_id = s.id " +
@@ -188,7 +189,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   if(:shipName is null, true, s.ship_name like %:shipName%) " +
                     "   and if(:fishingType is null, true, s.fishing_type = :fishingType) " +
                     "   and if(:address is null, true, s.address like %:address%) " +
-                    "   and if(:tel is null, true, s.tel like %:tel%) " +
+                    "   and if(:companyPhoneNumber is null, true, c.phone_number like %:companyPhoneNumber%) " +
                     "   and if(:seaDirection is null, true, s.sea_direction = :seaDirection) " +
                     "   and if(:searchFishSpecies, (sfs.fish_species_id in :fishSpecies), true) " +
                     "   and if(:searchServices, (ss.services_id in :services), true) " +
@@ -210,7 +211,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   if(:shipName is null, true, s.ship_name like %:shipName%) " +
                     "   and if(:fishingType is null, true, s.fishing_type = :fishingType) " +
                     "   and if(:address is null, true, s.address like %:address%) " +
-                    "   and if(:tel is null, true, s.tel like %:tel%) " +
+                    "   and if(:companyPhoneNumber is null, true, c.phone_number like %:companyPhoneNumber%) " +
                     "   and if(:seaDirection is null, true, s.sea_direction = :seaDirection) " +
                     "   and if(:searchFishSpecies, (sfs.fish_species_id in :fishSpecies), true) " +
                     "   and if(:searchServices, (ss.services_id in :services), true) " +
@@ -228,7 +229,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
         @Param("shipName") String shipName,
         @Param("fishingType") Integer fishingType,
         @Param("address") String address,
-        @Param("tel") String tel,
+        @Param("companyPhoneNumber") String companyPhoneNumber,
         @Param("seaDirection") Integer seaDirection,
         @Param("searchFishSpecies") Boolean searchFishSpecies,
         @Param("fishSpecies") Long[] fishSpecies,

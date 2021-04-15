@@ -40,6 +40,7 @@ public class CommonCodeRepositoryImpl implements CommonCodeRepositoryCustom {
                             .from(ship)
                             .where(ship.fishSpecies.contains(commonCode)
                                     .and(ship.isActive.eq(true))
+                                    .and(ship.company.isOpen.eq(true))
                             ), aliasCount)
                 ))
                 .from(commonCode)

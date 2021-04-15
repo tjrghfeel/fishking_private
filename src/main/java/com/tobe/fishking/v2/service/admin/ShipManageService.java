@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,11 +100,11 @@ public class ShipManageService {
             searchDevices = true;
         }
 
-        Pageable pageable = PageRequest.of(page, dto.getPageCount());
+        Pageable pageable = PageRequest.of(page, dto.getPageCount(), JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
 
         return shipRepository.getShipList(
                 dto.getShipName(),
-                fishingType, dto.getAddress(), dto.getTel(), seaDirection, searchFishSpecies, fishSpeciesIdList,
+                fishingType, dto.getAddress(), dto.getCompanyPhoneNumber(), seaDirection, searchFishSpecies, fishSpeciesIdList,
                 searchServices, services, searchFacilities, facilities, searchDevices, devices,
                 dto.getIsLive(), dto.getCompanyName(), dto.getTotalAvgByReview(), dto.getIsActive(), dto.getDepartStatus(),
                 pageable
