@@ -32,7 +32,7 @@ public class AdRepositoryImpl implements AdRepositoryCustom {
 
         QueryResults<SmallShipResponse> results = queryFactory
                 .select(Projections.constructor(SmallShipResponse.class,
-                        ExpressionUtils.as(JPAExpressions.select(goods.totalAmount.min()).from(goods).where(goods.ship.id.eq(ad.ship.id)), aliasPrice),
+                        ship.cheapestGoodsCost,
                         ship
                 ))
                 .from(ad)

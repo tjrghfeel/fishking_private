@@ -408,16 +408,14 @@ export default inject(
               {/** 조황일지 */}
               <div className="container nopadding">
                 <h5>
-                  {this.state.fishingDiaryCount > 0 && (
-                    <a
-                      onClick={() =>
-                        PageStore.push(`/main/story/diary?shipId=${id}`)
-                      }
-                      className="float-right-more"
-                    >
-                      전체보기
-                    </a>
-                  )}
+                  <a
+                    onClick={() =>
+                      PageStore.push(`/main/story/diary?shipId=${id}`)
+                    }
+                    className="float-right-more"
+                  >
+                    전체보기
+                  </a>
                   조황일지{" "}
                   <span className="text-primary">
                     {Intl.NumberFormat().format(
@@ -439,16 +437,14 @@ export default inject(
               {/** 유저조행기 */}
               <div className="container nopadding">
                 <h5>
-                  {this.state.fishingBlogCount > 0 && (
-                    <a
-                      onClick={() =>
-                        PageStore.push(`/main/story/user?shipId=${id}`)
-                      }
-                      className="float-right-more"
-                    >
-                      전체보기
-                    </a>
-                  )}
+                  <a
+                    onClick={() =>
+                      PageStore.push(`/main/story/user?shipId=${id}`)
+                    }
+                    className="float-right-more"
+                  >
+                    전체보기
+                  </a>
                   유저조행기{" "}
                   <span className="text-primary">
                     {this.state.fishingBlogCount || 0}
@@ -468,16 +464,14 @@ export default inject(
               {/** 리뷰 */}
               <div className="container nopadding">
                 <h5>
-                  {this.state.reviewCount > 0 && (
-                    <a
-                      onClick={() =>
-                        PageStore.push(`/company/review/${this.state.id}`)
-                      }
-                      className="float-right-more"
-                    >
-                      전체보기
-                    </a>
-                  )}
+                  <a
+                    onClick={() =>
+                      PageStore.push(`/company/review/${this.state.id}`)
+                    }
+                    className="float-right-more"
+                  >
+                    전체보기
+                  </a>
                   리뷰{" "}
                   <span className="text-primary">
                     {Intl.NumberFormat().format(this.state.reviewCount || 0)}

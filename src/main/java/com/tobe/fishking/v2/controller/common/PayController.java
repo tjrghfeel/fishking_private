@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.common;
 
 import com.tobe.fishking.v2.service.common.PayService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,11 @@ public class PayController {
 //        return "redirect:https://fishkingapp.com/cust/reservation/my/detail/2";
     }
 
+    @ApiOperation(value = "주문 취소", notes= "주문 취소 " +
+            "\n {" +
+            "\n     orderId: 주문id" +
+            "\n }" +
+            "\n 방문횟수는 어복황제 이용 횟수 로 변경해주세요")
     @ResponseBody
     @PostMapping("/v2/api/cancel")
     public Map<String, Object> cancel(
@@ -39,11 +45,11 @@ public class PayController {
     ) {
         Map<String, Object> result = new HashMap<>();
         try {
-        Long orderId = Long.valueOf((Integer) body.get("orderId"));
-        String msg = payService.cancelOrder(orderId, token);
-//        System.out.println(msg);
-        result.put("status", "success");
-        result.put("message", msg);
+            Long orderId = Long.valueOf(body.get("orderId").toString());
+            String msg = payService.cancelOrder(orderId, token);
+    //        System.out.println(msg);
+            result.put("status", "success");
+            result.put("message", msg);
         } catch (Exception e) {
             result.put("status", "fail");
             result.put("message", "취소결제가 실패했습니다.");

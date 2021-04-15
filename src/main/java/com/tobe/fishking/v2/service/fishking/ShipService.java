@@ -324,6 +324,7 @@ public class ShipService {
         return goodsRepository.getShipGoods(ship_id, DateUtils.getDateFromString(date));
     }
 
+    // 선상 상품의 해당 날짜 위치
     @Transactional
     public Map<String, Object> getGoodsDatePositions(Long goods_id, String date) {
         Goods goods = goodsRepository.getOne(goods_id);
@@ -346,6 +347,7 @@ public class ShipService {
         }
     }
 
+    // 갯바위 상품의 해당 날짜 위치
     @Transactional
     public Map<String, Object> getGoodsDatePositionsSeaRock(Long goods_id, String date) {
         Map<String, Object> result = new HashMap<>();
@@ -384,6 +386,7 @@ public class ShipService {
         return result;
     }
 
+    // 상품 상세
     @Transactional
     public GoodsResponse getGoodsDetail(Long goods_id) {
         Goods goods = goodsRepository.getOne(goods_id);
@@ -501,6 +504,7 @@ public class ShipService {
                 reserveDTO.getPayMethod());
     }
 
+    // 선박 상세페이지의 조행기, 일지 리스트 매핑
     private FishingDiarySmallResponse getDiarySmallResponse(FishingDiary diary) {
         ArrayList<String> imageUrlList = new ArrayList<>();
         String path = env.getProperty("file.downloadUrl");
@@ -520,6 +524,7 @@ public class ShipService {
 //        List<String> positions = Arrays.stream(ship.getPositions().split(",")).collect(Collectors.toList());
 //    }
 
+    // 거리계산
     public void calcDistance() {
         List<Ship> ships = shipRepo.findAll();
         for (Ship ship : ships) {
@@ -543,6 +548,7 @@ public class ShipService {
 //
 //    }
 
+    // 선박별 리뷰
     @Transactional
     public Map<String, Object> getReviewByShip(Long shipId, Integer page, Integer size) throws EmptyListException {
         Pageable pageable = PageRequest.of(page, size);
@@ -564,11 +570,13 @@ public class ShipService {
         return result;
     }
 
+    // 선박 위치에서 가까운 해상 관측소 찾기
     @Transactional
     public ObserverCode getObserverCodeFromShip(Long shipId) {
         return observerCodeRepository.getObserverCodeByCode(shipRepo.getOne(shipId).getObserverCode());
     }
 
+    // 어복 티비 리스트
     @Transactional
     public Page<TvListResponse> getTvList(ShipSearchDTO shipSearchDTO, int page) {
         Pageable pageable;
@@ -580,6 +588,7 @@ public class ShipService {
         return shipRepo.searchTvList(shipSearchDTO, pageable);
     }
 
+    // 라이브 상세
     @Transactional
     public Map<String, Object> getLiveDetail(Long shipId, Long cameraId) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(shipId);

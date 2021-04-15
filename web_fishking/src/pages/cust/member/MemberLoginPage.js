@@ -9,7 +9,8 @@ const {
 export default inject(
   "DataStore",
   "APIStore",
-  "PageStore"
+  "PageStore",
+  "ModalStore"
 )(
   observer(
     class extends React.Component {
@@ -31,7 +32,7 @@ export default inject(
       }
 
       onLogin = async () => {
-        const { DataStore, APIStore, PageStore } = this.props;
+        const { DataStore, APIStore, PageStore, ModalStore } = this.props;
         const { memberId, password } = this.state;
 
         if (!DataStore.isEmail(memberId)) {
@@ -47,23 +48,30 @@ export default inject(
           this.password.current?.classList.remove("is-invalid");
         }
 
-        const response = await APIStore._post("/v2/api/login", {
-          memberId,
-          password,
-          registrationToken: window.fcm_token || null,
-        });
-        if (response) {
-          PageStore.setAccessToken(response, "cust", "Y");
-          const url = sessionStorage.getItem("@redirect-url");
-          if (url === null) {
-            PageStore.push(`/main/my`);
-          } else {
-            sessionStorage.removeItem("@redirect-url");
-            window.location.href = url;
-            return;
+        try {
+          const response = await APIStore._post("/v2/api/login", {
+            memberId,
+            password,
+            registrationToken: window.fcm_token || null,
+          });
+          if (response) {
+            const {token, auth, memberId} = response;
+            if (!auth) {
+              window.location.href = `/v2/api/niceRequest?memberId=${memberId}`;
+            }else{
+              PageStore.setAccessToken(token, "cust", "Y");
+              const url = sessionStorage.getItem("@redirect-url");
+              if (url === null) {
+                PageStore.push(`/main/my`);
+              } else {
+                sessionStorage.removeItem("@redirect-url");
+                window.location.href = url;
+                return;
+              }
+            }
           }
-        } else {
-          this.password.current?.classList.add("is-invalid");
+        } catch (err) {
+          ModalStore.openModal("Alert", { body: "ID/PW를 확인해주세요." });
         }
       };
 

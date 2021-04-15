@@ -300,8 +300,10 @@ public class FishingShipService {
         ship.setFacilities(facilityList);
 
         List<CommonCode> deviceList = new ArrayList<>();
-        for (String device : updateShipDTO.getDevices()) {
-            deviceList.add(codeRepository.getByCode(device));
+        if (updateShipDTO.getDevices() != null) {
+            for (String device : updateShipDTO.getDevices()) {
+                deviceList.add(codeRepository.getByCode(device));
+            }
         }
         ship.setDevices(deviceList);
 
@@ -340,7 +342,13 @@ public class FishingShipService {
         } else {
             String serial = allVideos.get(0).getSerial();
             List<AddShipCamera> newCameras = updateShipDTO.getNhnCameras();
-            List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            List<String> newSerials;
+            if (newCameras == null) {
+                newCameras = new ArrayList<>();
+                newSerials = new ArrayList<>();
+            } else {
+                newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            }
             for (RealTimeVideo v : videos) {
                 boolean use = newSerials.contains(v.getSerial());
                 if (use) {
@@ -387,7 +395,13 @@ public class FishingShipService {
             }
         } else {
             List<AddShipCamera> newCameras = updateShipDTO.getAdtCameras();
-            List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            List<String> newSerials;
+            if (newCameras == null) {
+                newCameras = new ArrayList<>();
+                newSerials = new ArrayList<>();
+            } else {
+                newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            }
             for (RealTimeVideo v : videos) {
                 boolean use = newSerials.contains(v.getSerial());
                 if (use) {
