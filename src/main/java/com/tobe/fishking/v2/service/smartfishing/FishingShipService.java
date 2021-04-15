@@ -166,7 +166,7 @@ public class FishingShipService {
 
         List<CommonCode> speciesList = new ArrayList<>();
         for (String species : addShipDTO.getFishSpecies()) {
-            speciesList.add(codeRepository.getByCode(species));
+            speciesList.add(codeRepository.getSpeciesByCode(species));
         }
         ship.setFishSpecies(speciesList);
 
@@ -285,7 +285,7 @@ public class FishingShipService {
 
         List<CommonCode> speciesList = new ArrayList<>();
         for (String species : updateShipDTO.getFishSpecies()) {
-            speciesList.add(codeRepository.getByCode(species));
+            speciesList.add(codeRepository.getSpeciesByCode(species));
         }
         ship.setFishSpecies(speciesList);
 
