@@ -381,19 +381,21 @@ public class FishingShipService {
 
         List<RealTimeVideo> adtVideos = realTimeVideoRepository.getADTByShipsId(shipId);
         if (adtVideos.isEmpty()) {
-            for (AddShipCamera addShipCamera : updateShipDTO.getAdtCameras()) {
-                cameraNum += 1;
-                RealTimeVideo video = RealTimeVideo.builder()
-                        .rNo(cameraNum)
-                        .member(member)
-                        .ship(ship)
-                        .name(addShipCamera.getName())
-                        .serial(addShipCamera.getSerial())
-                        .token("")
-                        .expireTime("")
-                        .type("caps")
-                        .build();
-                realTimeVideoRepository.save(video);
+            if (updateShipDTO.getAdtCameras() != null) {
+                for (AddShipCamera addShipCamera : updateShipDTO.getAdtCameras()) {
+                    cameraNum += 1;
+                    RealTimeVideo video = RealTimeVideo.builder()
+                            .rNo(cameraNum)
+                            .member(member)
+                            .ship(ship)
+                            .name(addShipCamera.getName())
+                            .serial(addShipCamera.getSerial())
+                            .token("")
+                            .expireTime("")
+                            .type("caps")
+                            .build();
+                    realTimeVideoRepository.save(video);
+                }
             }
         } else {
             List<AddShipCamera> newCameras = updateShipDTO.getAdtCameras();
