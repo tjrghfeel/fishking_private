@@ -13,7 +13,8 @@ export default inject(
   "PageStore",
   "DataStore",
   "APIStore",
-  "ModalStore"
+  "ModalStore",
+  "NativeStore"
 )(
   observer(
     class extends React.Component {
@@ -76,8 +77,10 @@ export default inject(
         PageStore.push(`/reservation/my/detail/${item.id}`);
       };
       onClickMap = (item) => {
-        const { PageStore } = this.props;
-        PageStore.storeState();
+        const { NativeStore } = this.props;
+        NativeStore.openMap({
+          address: item.sigungu.replace(/[\n]/g, "").replace(/[\r]/g, ""),
+        });
       };
       onClickReservation = (item) => {
         const { PageStore } = this.props;

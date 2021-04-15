@@ -57,7 +57,7 @@ export default (() => {
           );
           if (err.message?.indexOf("500") !== -1) {
             ModalStore.openModal("Alert", {
-              body: "요청 중 에러가 발생하였습니다.",
+              body: "데이터 수신 중입니다.",
             });
           }
           console.error(`message:${err.message}`);

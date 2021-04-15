@@ -100,13 +100,17 @@ export default inject(
           if (selected.selected.includes("수정")) {
             PageStore.push(`/story/add?put=${this.state.fishingDiaryId}`);
           } else if (selected.selected.includes("삭제")) {
-            const resolve = await APIStore._delete(`/v2/api/fishingDiary`, {
-              fishingDiaryId: this.state.fishingDiaryId,
+            ModalStore.openModal("Confirm", {
+              body: "삭제하시겠습니까?",
+              onOk: async () => {
+                const resolve = await APIStore._delete(`/v2/api/fishingDiary`, {
+                  fishingDiaryId: this.state.fishingDiaryId,
+                });
+                if (resolve) {
+                  PageStore.push(`/main/story/user`);
+                }
+              },
             });
-            if (resolve) {
-              PageStore.push(`/main/story/user`);
-            }
-            console.log(resolve);
           } else if (selected.selected.includes("스크랩")) {
             // scrap
             let resolve = null;

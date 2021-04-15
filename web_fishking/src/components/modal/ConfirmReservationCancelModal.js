@@ -35,7 +35,7 @@ export default inject()(
                   소멸 처리되며 재발급이 불가합니다.
                 </li>
                 <li className="red">
-                  출항 12시간 이후부터 취소는 불가능합니다.
+                  해당 상품은 출항 2일전까지만 취소 가능합니다.
                 </li>
               </ul>
               <hr />

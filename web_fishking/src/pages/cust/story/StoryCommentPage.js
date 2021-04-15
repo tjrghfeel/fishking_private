@@ -63,7 +63,7 @@ export default inject(
           });
         };
         onCallbackMore = async (item, index) => {
-          const { APIStore } = this.props;
+          const { APIStore, ModalStore } = this.props;
           if (index === 0) {
             // 수정하기
             this.text.current.value = item.content;
@@ -81,13 +81,18 @@ export default inject(
             }
           } else if (index === 1) {
             // 삭제하기
-            const resolve = await APIStore._delete(
-              "/v2/api/fishingDiaryComment",
-              {
-                commentId: item.commentId,
-              }
-            );
-            if (resolve) this.loadPageData();
+            ModalStore.openModal("Confirm", {
+              body: "삭제하시겠습니까?",
+              onOk: async () => {
+                const resolve = await APIStore._delete(
+                  "/v2/api/fishingDiaryComment",
+                  {
+                    commentId: item.commentId,
+                  }
+                );
+                if (resolve) this.loadPageData();
+              },
+            });
           }
         };
         onClickLike = async (item) => {
