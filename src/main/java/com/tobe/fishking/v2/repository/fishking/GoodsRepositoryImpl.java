@@ -268,6 +268,5 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 .where(orders.fishingDate.eq(today), goods.id.eq(goodsId))
                 .fetch();
         return responses;
-
     }
 }
