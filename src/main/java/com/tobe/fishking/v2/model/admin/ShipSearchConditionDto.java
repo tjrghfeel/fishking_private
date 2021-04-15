@@ -11,7 +11,7 @@ public class ShipSearchConditionDto {
     private String shipName;
     private String fishingType;
     private String address;
-    private String tel;
+    private String companyPhoneNumber;
     private String seaDirection;
     private String[] fishSpecies = new String[0];
     private String[] services = new String[0];
@@ -24,4 +24,5 @@ public class ShipSearchConditionDto {
     private Boolean departStatus;
 
     private Integer pageCount=10;
+    private String sort="createdDate";
 }

@@ -8,7 +8,7 @@ public interface ShipManageDtoForPage {
     @Value("#{@mapperUtility.transEnumFishingType(target.fishingType)}")
     String getFishingType();
     String getAddress();
-    String getTel();
+    String getCompanyPhoneNumber();
     String getFishSpecies();
     String getServices();
     String getFacilities();

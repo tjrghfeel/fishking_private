@@ -76,7 +76,12 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
                         fishingDiary
                 ))
                 .from(fishingDiary)
-                .where(fishingDiary.filePublish.eq(FilePublish.fishingDiary))
+                .where(fishingDiary.filePublish.eq(FilePublish.fishingDiary),
+                        fishingDiary.isDeleted.eq(false),
+                        fishingDiary.isActive.eq(true),
+                        fishingDiary.isHidden.eq(false),
+                        fishingDiary.member.isActive.eq(true)
+                )
                 .orderBy(fishingDiary.createdDate.desc())
                 .limit(10)
                 .fetch();

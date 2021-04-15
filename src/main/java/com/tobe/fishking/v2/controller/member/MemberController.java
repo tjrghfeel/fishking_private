@@ -414,11 +414,11 @@ public class MemberController {
             "- memberId : Long / 회원의 id. 미인증회원일시 nice인증 요청보낼때 memberId 파라미터로 추가되어야하는 값. \n")
     @PostMapping("/login")
     @ResponseBody
-    public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
+    public LoginResultDto login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
         LoginResultDto resultDto = memberService.login(loginDTO);
 //        if(resultDto.getAuth() == false){ return "redirect:/v2/api/niceRequest?memberId="+resultDto.getMemberId().toString();}
 //        else return "forward:/v2/api/loginSuccess?sessionToken="+resultDto.getSessionToken();
-        return resultDto.getToken();
+        return resultDto ;
     }
 //    @PostMapping("/loginSuccess")
 //    @ResponseBody
