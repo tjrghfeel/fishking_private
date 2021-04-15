@@ -603,7 +603,7 @@ export default inject(
             <input
               ref={this.file}
               type="file"
-              accept="image/*"
+              accept="video/*,image/*"
               capture="camera"
               style={{ display: "none" }}
               onChange={this.uploadFile}
