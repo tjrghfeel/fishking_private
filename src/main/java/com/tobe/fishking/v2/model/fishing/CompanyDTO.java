@@ -34,7 +34,6 @@ public class CompanyDTO {
 //    private String skbPassword;
     private String companyAddress;//
     private Boolean isRegistered;
-    private String adtId;
     private String nhnId;
     private Long createdBy;//not null, fk
     private Long modifiedBy;//not null, fk
@@ -54,9 +53,11 @@ public class CompanyDTO {
         this.member = company.getMember().getId();
         companyName = company.getCompanyName();
         memberName = member.getMemberName();
+        shipowner = company.getShipOwner();
         sido = company.getSido();
         gungu = company.getGungu();
         tel = company.getTel();
+        phoneNumber = company.getPhoneNumber();
         bizNo = company.getBizNo();
         harbor = company.getHarbor();
         bank = company.getBank();
@@ -67,6 +68,7 @@ public class CompanyDTO {
 //        skbPassword = company.getSkbPassword();
         companyAddress = company.getCompanyAddress();
         isRegistered = company.getIsRegistered();
+        nhnId = company.getNhnId();
         createdBy = company.getCreatedBy().getId();
         modifiedBy = company.getModifiedBy().getId();
         bizNoFilesUrl = url + company.getBizNoFileDownloadUrl();

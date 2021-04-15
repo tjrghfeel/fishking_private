@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.admin;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.member.*;
 import com.tobe.fishking.v2.service.admin.MemberManageService;
 import io.swagger.annotations.Api;
@@ -88,7 +89,7 @@ public class MemberManageController {
     public Long makeTempMember(
             @RequestBody MakeTempMemberDto dto,
             @RequestHeader("Authorization") String token
-    ){
+    ) throws ServiceLogicException {
         return memberManageService.makeTempMember(dto,token);
     }
 }

@@ -339,4 +339,5 @@ public class Ship extends BaseTime {  //선상
         modifiedBy = member;
     }
 
+    public void setIsActive(Boolean isActive){this.isActive = isActive;}
 }

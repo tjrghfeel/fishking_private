@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class LoginResultDto {
-    private Boolean isCertified;
-    private String sessionToken;
+    private Boolean auth;
+    private String token;
     private Long memberId;
 }

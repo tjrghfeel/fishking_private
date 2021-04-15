@@ -1307,21 +1307,21 @@ public class MemberService {
     /*로그인
      * - 아디, 비번확인하고 아니면 예외처리??, 맞으면 세션토큰생성하여 저장하고 반환. */
     @Transactional
-    public LoginResultDto login(LoginDTO loginDTO) throws ResourceNotFoundException {
+    public LoginResultDto login(LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
         LoginResultDto result = new LoginResultDto();
         System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
         Member member = memberRepository.findByUid(loginDTO.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("아이디가 존재하지 않습니다"));
+                .orElseThrow(()->new ServiceLogicException("아이디가 존재하지 않습니다"));
         System.out.println("memberId : "+member.getId());
         if(member==null){
-            throw new IncorrectIdException("아이디가 존재하지 않습니다");
+            throw new ServiceLogicException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
             result.setMemberId(member.getId());
             /*탈퇴한 회원인 경우*/
-            if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
+            if(member.getIsActive() == false){throw new ServiceLogicException("회원정보가 존재하지 않습니다.");}
 
             //기기등록토큰 저장.
             if(loginDTO.getRegistrationToken() != null) {
@@ -1338,26 +1338,25 @@ public class MemberService {
 
             //임시 가입처리되어있는 회원이라면,
             if(member.getIsCertified() == false){
-                result.setIsCertified(false);
-                return result;
+                result.setAuth(false);
             }
             else {//인증을 마친 회원이라면,
-                result.setIsCertified(true);
+                result.setAuth(true);
 
                 /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
                 if (member.getSessionToken() != null) {
-                    result.setSessionToken(member.getSessionToken());
+                    result.setToken(member.getSessionToken());
                 } else {
                     /*세션토큰 생성 및 저장. */
                     String rawToken = member.getUid() + LocalDateTime.now();
                     sessionToken = encoder.encode(rawToken);
 
                     member.setSessionToken(sessionToken);
-                    result.setSessionToken(sessionToken);
+                    result.setToken(sessionToken);
                 }
             }
         }
-        else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
+        else{throw new ServiceLogicException("비밀번호가 잘못되었습니다");}
         return result;
     }
     @Transactional
@@ -1394,7 +1393,8 @@ public class MemberService {
     }
 
     @Transactional
-    public String smartfishingLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+    public LoginResultDto smartfishingLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+        LoginResultDto result = new LoginResultDto();
         System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
@@ -1405,6 +1405,7 @@ public class MemberService {
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
+            result.setMemberId(member.getId());
             System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
@@ -1422,16 +1423,24 @@ public class MemberService {
                 }//이미 해당 회원이 해당 기기에 로그인 되어있는경우,(이런경우가 있을지모르겠지만..) 그냥 넘김.
             }
 
-            /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
-            if(member.getSessionToken()!=null){
-                sessionToken = member.getSessionToken();
+            //임시 가입처리되어있는 회원이라면,
+            if(member.getIsCertified() == false){
+                result.setAuth(false);
             }
-            else {
-                /*세션토큰 생성 및 저장. */
-                String rawToken = member.getUid() + LocalDateTime.now();
-                sessionToken = encoder.encode(rawToken);
+            else {//인증을 마친 회원이라면,
+                result.setAuth(true);
 
-                member.setSessionToken(sessionToken);
+                /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
+                if (member.getSessionToken() != null) {
+                    result.setToken(member.getSessionToken());
+                } else {
+                    /*세션토큰 생성 및 저장. */
+                    String rawToken = member.getUid() + LocalDateTime.now();
+                    sessionToken = encoder.encode(rawToken);
+
+                    member.setSessionToken(sessionToken);
+                    result.setToken(sessionToken);
+                }
             }
         }
         else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
@@ -1439,11 +1448,12 @@ public class MemberService {
         if (role==Role.member || role==Role.guest) {
             throw new NotAuthException("권한이 없는 아이디 입니다.");
         }
-        return sessionToken;
+        return result;
     }
 
     @Transactional
-    public String policeLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+    public LoginResultDto policeLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+        LoginResultDto result = new LoginResultDto();
 //        System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
@@ -1454,6 +1464,7 @@ public class MemberService {
             throw new IncorrectIdException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
+            result.setMemberId(member.getId());
 //            System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
@@ -1471,16 +1482,24 @@ public class MemberService {
                 }//이미 해당 회원이 해당 기기에 로그인 되어있는경우,(이런경우가 있을지모르겠지만..) 그냥 넘김.
             }
 
-            /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
-            if(member.getSessionToken()!=null){
-                sessionToken = member.getSessionToken();
+            //임시 가입처리되어있는 회원이라면,
+            if(member.getIsCertified() == false){
+                result.setAuth(false);
             }
-            else {
-                /*세션토큰 생성 및 저장. */
-                String rawToken = member.getUid() + LocalDateTime.now();
-                sessionToken = encoder.encode(rawToken);
+            else {//인증을 마친 회원이라면,
+                result.setAuth(true);
 
-                member.setSessionToken(sessionToken);
+                /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
+                if (member.getSessionToken() != null) {
+                    result.setToken(member.getSessionToken());
+                } else {
+                    /*세션토큰 생성 및 저장. */
+                    String rawToken = member.getUid() + LocalDateTime.now();
+                    sessionToken = encoder.encode(rawToken);
+
+                    member.setSessionToken(sessionToken);
+                    result.setToken(sessionToken);
+                }
             }
         }
         else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
@@ -1488,7 +1507,7 @@ public class MemberService {
         if (role!=Role.marine) {
             throw new NotAuthException("권한이 없는 아이디 입니다.");
         }
-        return sessionToken;
+        return result;
     }
 
     /*로그아웃

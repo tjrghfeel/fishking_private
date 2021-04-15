@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.controller.member;
 import NiceID.Check.CPClient;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.auth.*;
 import com.tobe.fishking.v2.model.fishing.FishingDiaryDtoForPage;
 import com.tobe.fishking.v2.service.auth.MemberService;
@@ -163,7 +164,7 @@ public class MemberController {
         return "jsp/niceRequest";
     }
     //nice인증 컨트롤러메소드
-    @PostMapping("/niceRequest")
+    @GetMapping("/niceRequest")
     public String niceRequest(@RequestParam("memberId") Long memberId, ModelMap model, HttpSession session){
         /*nice 본인인증 호출. */
         NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
@@ -406,16 +407,22 @@ public class MemberController {
             "요청 필드 ) \n" +
             "- memberId : String / 필수 / 회원 아이디\n" +
             "- password : String / 필수 / 비밀번호\n" +
-            "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
+            "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n" +
+            "응답 필드 ) \n" +
+            "- auth : Boolean / 인증된 회원인지 여부\n" +
+            "- token : String / 인증된 회원이고, 로그인 성공시 세션토큰\n" +
+            "- memberId : Long / 회원의 id. 미인증회원일시 nice인증 요청보낼때 memberId 파라미터로 추가되어야하는 값. \n")
     @PostMapping("/login")
-    public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException {
-        LoginResultDto resultDto = memberService.login(loginDTO);
-        if(resultDto.getIsCertified() == false){ return "forward:/v2/api/niceRequest?memberId="+resultDto.getMemberId().toString();}
-        else return "forward:/v2/api/loginSuccess?sessionToken="+resultDto.getSessionToken();
-    }
-    @PostMapping("/loginSuccess")
     @ResponseBody
-    public String loginSuccess(@RequestParam("sessionToken") String token){return token;}
+    public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
+        LoginResultDto resultDto = memberService.login(loginDTO);
+//        if(resultDto.getAuth() == false){ return "redirect:/v2/api/niceRequest?memberId="+resultDto.getMemberId().toString();}
+//        else return "forward:/v2/api/loginSuccess?sessionToken="+resultDto.getSessionToken();
+        return resultDto.getToken();
+    }
+//    @PostMapping("/loginSuccess")
+//    @ResponseBody
+//    public String loginSuccess(@RequestParam("sessionToken") String token){return token;}
 
     @ApiOperation(value = "관리자 로그인")
     @PostMapping("/admin/login")
@@ -432,7 +439,7 @@ public class MemberController {
     @PostMapping("/smartfishing/login")
     @ResponseBody
     public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
-        return memberService.smartfishingLogin(loginDTO);
+        return memberService.smartfishingLogin(loginDTO).getToken();
     }
 
     @ApiOperation(value = "스마트승선 로그인",notes = "" +
@@ -443,7 +450,7 @@ public class MemberController {
     @PostMapping("/smartsail/login")
     @ResponseBody
     public String smartsailLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
-        return memberService.smartfishingLogin(loginDTO);
+        return memberService.smartfishingLogin(loginDTO).getToken();
     }
 
     @ApiOperation(value = "해경 로그인",notes = "" +
@@ -454,7 +461,7 @@ public class MemberController {
     @PostMapping("/police/login")
     @ResponseBody
     public String policeLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
-        return memberService.policeLogin(loginDTO);
+        return memberService.policeLogin(loginDTO).getToken();
     }
 
 

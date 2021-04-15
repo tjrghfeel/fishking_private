@@ -1,14 +1,19 @@
 package com.tobe.fishking.v2.service.admin;
 
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.ShipManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.ShipSearchConditionDto;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +30,7 @@ public class ShipManageService {
     private final ShipRepository shipRepository;
     private final CodeGroupRepository codeGroupRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final MemberService memberService;
 
     //선박 검색
     @Transactional
@@ -101,5 +107,19 @@ public class ShipManageService {
                 dto.getIsLive(), dto.getCompanyName(), dto.getTotalAvgByReview(), dto.getIsActive(), dto.getDepartStatus(),
                 pageable
         );
+    }
+
+    //선박 활성화/비활성화
+    @Transactional
+    public Boolean setIsActive(Long shipId, String inputIsActive, String token) throws ServiceLogicException {
+        Member manager = memberService.getMemberBySessionToken(token);
+        if(manager.getRoles() != Role.admin){throw new ServiceLogicException("관리자 권한이 없습니다.");}
+
+        Ship ship = shipRepository.findById(shipId)
+                .orElseThrow(()->new ServiceLogicException("해당 선박이 존재하지 않습니다."));
+
+        Boolean isActive = (inputIsActive.equals("true"))? true:false;
+        ship.setIsActive(isActive);
+        return true;
     }
 }

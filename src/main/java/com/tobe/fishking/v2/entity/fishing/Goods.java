@@ -311,4 +311,5 @@ public class Goods extends BaseTime {
         this.modifiedBy = member;
     }
 
+    public void setIsUse(Boolean isUse){this.isUse = isUse;}
 }
