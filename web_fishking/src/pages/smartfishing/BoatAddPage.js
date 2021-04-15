@@ -67,8 +67,12 @@ export default inject(
       loadPageData = async () => {
         const { DataStore, APIStore, PageStore } = this.props;
         // 주요어종
-        const arr_fishSpecies = await DataStore.getCodes("80", 3);
-        this.setState({ arr_fishSpecies });
+        const arr80 = await DataStore.getCodes("80", 3);
+        const arr161 = await DataStore.getCodes("161", 3);
+        const arr162 = await DataStore.getCodes("162", 3);
+
+        // const arr_fishSpecies = await DataStore.getCodes("80", 3);
+        this.setState({ arr_fishSpecies: [...arr80, ...arr161, ...arr162] });
         // 서비스제공
         const arr_services = await DataStore.getCodes("85", 3);
         this.setState({ arr_services });
@@ -330,7 +334,7 @@ export default inject(
             let resolve = null;
             if (id) {
               resolve = APIStore._put(`/v2/api/ship/update/${id}`, params);
-            }else{
+            } else {
               resolve = APIStore._post(`/v2/api/ship/add`, params);
             }
             if (resolve) {
@@ -597,8 +601,11 @@ export default inject(
                         ele.checked = true;
                       }
                       const fishSpecies = [];
-                      for (let item of this.state.arr_fishSpecies) {
-                        fishSpecies.push(item["code"]);
+                      for (let row of this.state.arr_fishSpecies) {
+                        for (let item of row) {
+                          if (item["code"] === null) continue;
+                          fishSpecies.push(item["code"]);
+                        }
                       }
                       this.setState({ fishSpecies });
                     }}
@@ -971,7 +978,7 @@ export default inject(
                   </div>
                 </div>
                 <div className="space mt-0 mb-4"></div>
-                <h6 className="mb-3 mt-3">ADT캡스 카메라등록</h6>
+                <h6 className="mb-3 mt-3">SKB캡스 카메라등록</h6>
 
                 <div className="form-group">
                   <label htmlFor="InputLTE">LTE 라우터 IMEI </label>
