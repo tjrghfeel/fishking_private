@@ -413,16 +413,24 @@ public class MemberController {
             "- token : String / 인증된 회원이고, 로그인 성공시 세션토큰\n" +
             "- memberId : Long / 회원의 id. 미인증회원일시 nice인증 요청보낼때 memberId 파라미터로 추가되어야하는 값. \n")
     @PostMapping("/login")
-    @ResponseBody
-    public LoginResultDto login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
-        LoginResultDto resultDto = memberService.login(loginDTO);
-//        if(resultDto.getAuth() == false){ return "redirect:/v2/api/niceRequest?memberId="+resultDto.getMemberId().toString();}
-//        else return "forward:/v2/api/loginSuccess?sessionToken="+resultDto.getSessionToken();
-        return resultDto ;
-    }
-//    @PostMapping("/loginSuccess")
 //    @ResponseBody
-//    public String loginSuccess(@RequestParam("sessionToken") String token){return token;}
+    public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
+        LoginResultDto resultDto = memberService.login(loginDTO);
+        if(resultDto.getAuth() == false){ return "forward:/v2/api/notCertified?memberId="+resultDto.getMemberId();}
+        else return "forward:/v2/api/loginSuccess?sessionToken="+resultDto.getToken();
+//        return resultDto ;
+    }
+    @PostMapping("/loginSuccess")
+    @ResponseBody
+    public String loginSuccess(@RequestParam("sessionToken") String token){return token;}
+    @PostMapping("/notCertified")
+    @ResponseBody
+    public LoginResultDto loginSuccess( @RequestParam("memberId") Long memberId){
+        LoginResultDto result = new LoginResultDto();
+        result.setMemberId(memberId);
+        result.setAuth(false);
+        return result;
+    }
 
     @ApiOperation(value = "관리자 로그인")
     @PostMapping("/admin/login")
