@@ -1,20 +1,27 @@
 package com.tobe.fishking.v2.service.admin;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.auth.RegistrationToken;
 import com.tobe.fishking.v2.entity.common.Address;
+import com.tobe.fishking.v2.entity.common.CodeGroup;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.EmailDupException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.member.MakeTempMemberDto;
 import com.tobe.fishking.v2.model.admin.member.MemberDetailDtoForManager;
 import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.member.MemberSearchConditionDto;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
+import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.service.AES;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -34,17 +41,19 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class MemberManageService {
-    @Autowired
-    MemberService memberService;
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired
-    Environment env;
-    @Autowired
-    PasswordEncoder encoder;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final Environment env;
+    private final PasswordEncoder encoder;
+    private final CodeGroupRepository codeGroupRepository;
+    private final CommonCodeRepository commonCodeRepository;
 
     /*회원 목록 검색 메소드
     * - MemberSearchConditionDto에 있는 필드들을 리포지토리의 메소드인자로 넘기고 Page를 반환받는다. */
@@ -220,7 +229,55 @@ public class MemberManageService {
 
     //임시 회원 생성
     @Transactional
-    public Long makeTempMember(MakeTempMemberDto dto, String token){
-        return 1L;
+    public Long makeTempMember(MakeTempMemberDto dto, String token) throws ServiceLogicException {
+        Member member = null;
+
+        /*uid 중복 확인*/
+        int checkUid = memberService.checkUidDup(dto.getUid());
+        if(checkUid==1){            throw new ServiceLogicException("이메일이 중복됩니다");        }
+        else if(checkUid==2){throw new ServiceLogicException("이메일 형식이 맞지 않습니다.");}
+        /*닉네임 중복 확인*/
+        int checkNickName = memberService.checkNickNameDup(dto.getNickName());
+        if(checkNickName==1){ throw new ServiceLogicException("닉네임이 중복됩니다"); }
+        else if(checkNickName==2){throw new ServiceLogicException("닉네임은 4자 이상 10자 이하이어야 합니다.");}
+
+        /*회원 정보 저장*/
+        /*비밀번호 자바 암호화*/
+        String encodedPw = encoder.encode(dto.getPw());
+
+        //알림 설정정보
+        CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+        List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+        Set<CommonCode> alertSet = new HashSet<>();
+        for(int i=0; i<alertSetList.size(); i++){
+            alertSet.add(alertSetList.get(i));
+        }
+
+        CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+        CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup, "noImg");
+        CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup, "noBackImg");
+
+        Role role = Role.valueOf(dto.getRole());
+
+        member = Member.builder()
+                .uid(dto.getUid())
+                .memberName(null)//임시값. 수정필요.
+                .nickName(dto.getNickName())
+                .password(encodedPw)
+                .email(dto.getUid())
+//                    .gender(gender)
+                .roles(role)
+                .profileImage(noProfileImage.getExtraValue1())
+                .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+                .isActive(true)
+                .isCertified(false)
+                .snsType(null)
+                .snsId(null)
+                .alertSet(alertSet)
+//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                .build();
+        member = memberRepository.save(member);
+
+        return member.getId();
     }
 }

@@ -42,5 +42,5 @@ public class CompanySearchConditionDto {
     private String shipName;
 
     private Integer pageCount = 10;
-    private String sort;
+    private String sort="createdDate";
 }
