@@ -21,6 +21,21 @@ export default inject()(
       onClickReservation, // 다시예약
       onClickMap, // 길찾기
     }) => {
+      // 취소가능일자
+      let cancelable = true;
+      if (fishingDate) {
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() + 2);
+        const goDate = new Date(
+          fishingDate.substr(0, 4),
+          new Number(fishingDate.substr(4, 2)) - 1,
+          fishingDate.substr(6, 2)
+        );
+        if (minDate.getTime() <= goDate.getTime()) {
+          cancelable = true;
+        }
+      }
+
       let ordersStatusClassName = "status";
       if (ordersStatus === "예약 대기") ordersStatusClassName += " status2";
       else if (ordersStatus === "대기자 예약")
@@ -70,8 +85,9 @@ export default inject()(
                     <small>
                       {fishingDate && (
                         <React.Fragment>
-                          {fishingDate.substr(0, 4)}년 {fishingDate.substr(4, 2)}
-                          월 {fishingDate.substr(6, 2)}일{" "}
+                          {fishingDate.substr(0, 4)}년{" "}
+                          {fishingDate.substr(4, 2)}월{" "}
+                          {fishingDate.substr(6, 2)}일{" "}
                           {fishingDate.substr(9, 2)}:{fishingDate.substr(11, 2)}{" "}
                           ~<br />
                         </React.Fragment>
@@ -82,17 +98,18 @@ export default inject()(
                 </div>
               </div>
             </a>
-            {(ordersStatus === "대기자 예약" ||
-              ordersStatus === "예약 대기" ||
-              ordersStatus === "예약 진행중" ||
-              ordersStatus === "예약 완료") && (
-              <a
-                onClick={() => (onClickCancel ? onClickCancel(data) : null)}
-                className="btn btn-third btn-block btn-sm mt-1 mb-1"
-              >
-                취소하기
-              </a>
-            )}
+            {cancelable &&
+              (ordersStatus === "대기자 예약" ||
+                ordersStatus === "예약 대기" ||
+                ordersStatus === "예약 진행중" ||
+                ordersStatus === "예약 완료") && (
+                <a
+                  onClick={() => (onClickCancel ? onClickCancel(data) : null)}
+                  className="btn btn-third btn-block btn-sm mt-1 mb-1"
+                >
+                  취소하기
+                </a>
+              )}
             {ordersStatus === "취소 완료" && (
               <a
                 onClick={() =>

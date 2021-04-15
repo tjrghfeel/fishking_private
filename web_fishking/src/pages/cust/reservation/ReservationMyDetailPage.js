@@ -43,7 +43,7 @@ export default inject(
           const shipData = await APIStore._get(
             `/v2/api/ship/${resolve.shipId}`
           );
-          // this.setState({ shipData });
+          this.setState({ shipData });
 
           // 예약상태
           let ordersStatusClassName = "status";
@@ -80,6 +80,20 @@ export default inject(
           // 출항
           let startHour = new Number(resolve.shipStartTime.substr(0, 2));
           this.setState({ ampm: startHour < 12 ? "AM" : "PM" });
+
+          // 취소가능일자
+          const minDate = new Date();
+          minDate.setDate(minDate.getDate() + 2);
+          const goDate = new Date(
+            resolve["fishingDate"].substr(0, 4),
+            new Number(resolve["fishingDate"].substr(4, 2)) - 1,
+            resolve["fishingDate"].substr(6, 2)
+          );
+          if (minDate.getTime() <= goDate.getTime()) {
+            this.setState({ cancelable: true });
+          } else {
+            this.setState({ cancelable: false });
+          }
         };
 
         requestSNS = async (type) => {
@@ -427,32 +441,33 @@ export default inject(
               </div>
               <p className="space mt-2"></p>
 
-              {(this.state.orderStatus === "대기자 예약" ||
-                this.state.orderStatus === "예약 대기" ||
-                this.state.orderStatus === "예약 진행중" ||
-                this.state.orderStatus === "예약 완료") && (
-                <div className="container nopadding mb-2">
-                  <div className="float-right">
-                    <a onClick={this.onClickCancelInfo}>
-                      <img src="/assets/cust/img/svg/icon-noti.svg" alt="" />
-                    </a>
+              {this.state.cancelable &&
+                (this.state.orderStatus === "대기자 예약" ||
+                  this.state.orderStatus === "예약 대기" ||
+                  this.state.orderStatus === "예약 진행중" ||
+                  this.state.orderStatus === "예약 완료") && (
+                  <div className="container nopadding mb-2">
+                    <div className="float-right">
+                      <a onClick={this.onClickCancelInfo}>
+                        <img src="/assets/cust/img/svg/icon-noti.svg" alt="" />
+                      </a>
+                    </div>
+                    <p className="mt-1">
+                      <small className="red">
+                        해당 상품은 출항 2일전까지만 취소 가능합니다.{" "}
+                      </small>
+                    </p>
+                    <br />
+                    <p>
+                      <a
+                        onClick={this.onClickCancel1}
+                        className="btn btn-third btn-block btn-sm mt-1 mb-1"
+                      >
+                        취소하기
+                      </a>
+                    </p>
                   </div>
-                  <p className="mt-1">
-                    <small className="red">
-                      해당 상품은 출항 12시간 이후부터 취소는 불가능합니다.{" "}
-                    </small>
-                  </p>
-                  <br />
-                  <p>
-                    <a
-                      onClick={this.onClickCancel1}
-                      className="btn btn-third btn-block btn-sm mt-1 mb-1"
-                    >
-                      취소하기
-                    </a>
-                  </p>
-                </div>
-              )}
+                )}
 
               {(this.state.orderStatus === "출조 완료" ||
                 this.state.orderStatus === "취소 완료") && (

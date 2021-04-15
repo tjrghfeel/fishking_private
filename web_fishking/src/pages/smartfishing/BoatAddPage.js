@@ -323,15 +323,20 @@ export default inject(
           positions,
         };
         const { APIStore, ModalStore, PageStore } = this.props;
-        const resolve = APIStore._post(`/v2/api/ship/add`, params);
-        if (resolve) {
-          ModalStore.openModal("Alert", {
-            body: "등록되었습니다.",
-            onOk: () => {
-              PageStore.push(`/boat`);
-            },
-          });
-        }
+        ModalStore.openModal("Confirm", {
+          body: "저장하시겠습니까?",
+          onOk: async () => {
+            const resolve = APIStore._post(`/v2/api/ship/add`, params);
+            if (resolve) {
+              ModalStore.openModal("Alert", {
+                body: "저장되었습니다.",
+                onOk: () => {
+                  PageStore.push(`/boat`);
+                },
+              });
+            }
+          },
+        });
       };
       /********** ********** ********** ********** **********/
       /** render */

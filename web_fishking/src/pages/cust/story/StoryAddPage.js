@@ -67,7 +67,6 @@ export default inject(
           const resolve = await APIStore._get("/v2/api/fishingDiary/detail", {
             fishingDiaryId,
           });
-          console.log(JSON.stringify(resolve));
           // 첨부이미지
           const uploaded = [];
           if (resolve.imageUrlList) {
@@ -242,8 +241,6 @@ export default inject(
           latitude,
           longitude,
         };
-        // console.log(JSON.stringify(params));
-        // if (true) return;
         let resolve = null;
         if (this.state.fishingDiaryId) {
           resolve = await APIStore._put("/v2/api/fishingDiary", {
@@ -389,7 +386,6 @@ export default inject(
               id={"selLocationModal"}
               onSelected={async (selected) => {
                 if (selected.itemType === "Company") {
-                  console.log(JSON.stringify(selected));
                   await this.setState({
                     shipId: selected.shipId,
                     shipData: selected,
@@ -607,7 +603,7 @@ export default inject(
             <input
               ref={this.file}
               type="file"
-              accept="image/*"
+              accept="video/*,image/*"
               capture="camera"
               style={{ display: "none" }}
               onChange={this.uploadFile}

@@ -16,7 +16,6 @@ export default inject(
         super(props);
         this.state = {
           list: [],
-          alerted: [],
         };
       }
       /********** ********** ********** ********** **********/
@@ -26,15 +25,15 @@ export default inject(
         this.loadPageData();
       }
       loadPageData = async () => {
-        const { APIStore, DataStore } = this.props;
-        const code165 = await DataStore.getCodes("165");
-        this.setState({ list: code165 });
-        console.log(JSON.stringify(code165));
+        const { APIStore } = this.props;
         const resolve = await APIStore._get(`/v2/api/setting/alertSet`);
-        console.log(JSON.stringify(resolve));
+        this.setState({ list: resolve });
       };
       setAlarm = async (data, alerted) => {
-        console.log(`${JSON.stringify(data)} : ${alerted}`);
+        const { APIStore } = this.props;
+        const resolve = await APIStore._put(
+          `/v2/api/setting/alertSet/${data["code"]}/${alerted}`
+        );
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -65,7 +64,9 @@ export default inject(
                             role="tablist"
                           >
                             <a
-                              className="nav-link active btn btn-on"
+                              className={`nav-link ${
+                                data["isSet"] ? "active" : ""
+                              } btn btn-on`}
                               id="nav-home-tab"
                               data-toggle="tab"
                               role="tab"
@@ -76,7 +77,9 @@ export default inject(
                               ON
                             </a>
                             <a
-                              className="nav-link btn btn-off"
+                              className={`nav-link ${
+                                !data["isSet"] ? "active" : ""
+                              } btn btn-off`}
                               id="nav-profile-tab"
                               data-toggle="tab"
                               role="tab"
@@ -112,7 +115,9 @@ export default inject(
                             role="tablist"
                           >
                             <a
-                              className="nav-link active btn btn-on"
+                              className={`nav-link ${
+                                data["isSet"] ? "active" : ""
+                              } btn btn-on`}
                               id="nav-home-tab"
                               data-toggle="tab"
                               role="tab"
@@ -123,7 +128,9 @@ export default inject(
                               ON
                             </a>
                             <a
-                              className="nav-link btn btn-off"
+                              className={`nav-link ${
+                                !data["isSet"] ? "active" : ""
+                              } btn btn-off`}
                               id="nav-profile-tab"
                               data-toggle="tab"
                               role="tab"

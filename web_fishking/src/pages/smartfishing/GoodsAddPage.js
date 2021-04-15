@@ -240,8 +240,6 @@ export default inject(
           extraPersonnel,
           extraShipNumber,
         };
-        console.log(JSON.stringify(params));
-        if (true) return;
         let resolve = null;
         if (id !== null) {
           // 수정

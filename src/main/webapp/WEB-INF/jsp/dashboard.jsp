@@ -123,7 +123,7 @@
     // ----- > 지문 입력
     function fn_fingerprint (item, index) {
         var data = pageData['boardingPeople'][index];
-        console.log(JSON.stringify(data));
+        window.location.href = '/boarding/fingerprint?data=' + encodeURIComponent(JSON.stringify(data));
     }
     var pageData = null;
     // ----- > 데이터 로드

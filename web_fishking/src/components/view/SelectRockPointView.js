@@ -53,9 +53,10 @@ export default inject()(
             content: `선택됨`,
             removable: false,
           });
-          const { onClick } = this.props;
+          const { onClick, count = -1 } = this.props;
           kakao.maps.event.addListener(marker, "click", () => {
             if (this.selected.includes(infoWindow)) {
+              // 포인트 제거
               infoWindow.close();
               const index = this.selected.indexOf(infoWindow);
               const bef = this.selected.slice(0, index);
@@ -63,6 +64,8 @@ export default inject()(
               this.selected = bef.concat(aft);
               if (onClick) onClick("remove", point["id"]);
             } else {
+              if (count > -1 && this.selected.length >= count) return;
+              // 포인트 추가
               infoWindow.open(this.map, marker);
               this.selected.push(infoWindow);
               if (onClick) onClick("add", point["id"]);

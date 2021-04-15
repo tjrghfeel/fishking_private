@@ -659,6 +659,7 @@ export default inject(
                     <SelectRockPointView
                       key={index}
                       data={data}
+                      count={this.state.personCount}
                       used={this.state.boat.used || []}
                       onClick={(what, id) => {
                         if (what === "add") {

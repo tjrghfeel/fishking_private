@@ -22,7 +22,7 @@ export default inject()(
             <div className="modal-body">
               <label className="control radio">
                 <input
-                  type="radio"
+                  type="checkbox"
                   className="add-contrast"
                   data-role="collar"
                 />
@@ -32,7 +32,7 @@ export default inject()(
               <br />
               <label className="control radio">
                 <input
-                  type="radio"
+                  type="checkbox"
                   className="add-contrast"
                   data-role="collar"
                 />
@@ -42,7 +42,7 @@ export default inject()(
               <br />
               <label className="control radio">
                 <input
-                  type="radio"
+                  type="checkbox"
                   className="add-contrast"
                   data-role="collar"
                 />
@@ -52,7 +52,7 @@ export default inject()(
               <br />
               <label className="control radio">
                 <input
-                  type="radio"
+                  type="checkbox"
                   className="add-contrast"
                   data-role="collar"
                 />
@@ -62,22 +62,12 @@ export default inject()(
               <br />
               <label className="control radio">
                 <input
-                  type="radio"
+                  type="checkbox"
                   className="add-contrast"
                   data-role="collar"
                 />
                 <span className="control-indicator"></span>
                 <span className="control-text">날짜 잘못 선택</span>
-              </label>
-              <br />
-              <label className="control radio">
-                <input
-                  type="radio"
-                  className="add-contrast"
-                  data-role="collar"
-                />
-                <span className="control-indicator"></span>
-                <span className="control-text">현장에서 결제 예정</span>
               </label>
               <br />
             </div>
