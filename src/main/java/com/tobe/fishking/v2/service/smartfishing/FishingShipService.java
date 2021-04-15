@@ -300,8 +300,10 @@ public class FishingShipService {
         ship.setFacilities(facilityList);
 
         List<CommonCode> deviceList = new ArrayList<>();
-        for (String device : updateShipDTO.getDevices()) {
-            deviceList.add(codeRepository.getByCode(device));
+        if (updateShipDTO.getDevices() != null) {
+            for (String device : updateShipDTO.getDevices()) {
+                deviceList.add(codeRepository.getByCode(device));
+            }
         }
         ship.setDevices(deviceList);
 
