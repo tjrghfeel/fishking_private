@@ -36,7 +36,10 @@ public class AdRepositoryImpl implements AdRepositoryCustom {
                         ship
                 ))
                 .from(ad)
-                .where(ad.adType.eq(type))
+                .where(ad.adType.eq(type),
+                        ad.ship.isActive.eq(true),
+                        ad.ship.company.isOpen.eq(true)
+                )
                 .fetchResults();
         return results.getResults();
     }

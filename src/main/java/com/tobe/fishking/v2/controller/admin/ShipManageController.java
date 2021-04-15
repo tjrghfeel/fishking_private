@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.admin;
 
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.ShipManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.ShipSearchConditionDto;
 import com.tobe.fishking.v2.service.admin.ShipManageService;
@@ -25,5 +26,18 @@ public class ShipManageController {
             ShipSearchConditionDto dto
     ){
         return shipManageService.getShipList(dto, token,page);
+    }
+
+    //선박 활성화/비활성화
+    @PutMapping("/manage/ship/isActive/{shipId}/{isActive}")
+    public Boolean setIsActive(
+            @PathVariable("shipId") Long shipId,
+            @PathVariable("isActive") String isActive,
+            @RequestHeader("Authorization") String token
+    ) throws ServiceLogicException {
+        if(!isActive.equals("true") && !isActive.equals("false")){
+            throw new ServiceLogicException("isActive의 값으로는 'true' 또는 'false'만 가능합니다.");
+        }
+        return shipManageService.setIsActive(shipId, isActive, token);
     }
 }

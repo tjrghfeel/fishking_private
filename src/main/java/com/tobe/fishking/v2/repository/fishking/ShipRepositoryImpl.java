@@ -123,7 +123,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         inServices(shipSearchDTO.getServicesList()),
                         inFacilities(shipSearchDTO.getFacilitiesList()),
                         hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo()),
-                        ship.isActive.eq(true)
+                        ship.isActive.eq(true),
+                        ship.company.isOpen.eq(true)
                 )
                 .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -155,7 +156,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         inServices(shipSearchDTO.getServicesList()),
                         inFacilities(shipSearchDTO.getFacilitiesList()),
                         hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo()),
-                        ship.isActive.eq(true)
+                        ship.isActive.eq(true),
+                        ship.company.isOpen.eq(true)
                 )
                 .limit(100)
                 .fetchResults();
@@ -432,7 +434,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ship
                 ))
                 .from(ship)
-                .where(ship.id.eq(ship_id))
+                .where(ship.id.eq(ship_id) )
                 .fetchOne();
         return result;
     }

@@ -8,4 +8,5 @@ public interface GoodsManageDtoForPage {
     String getShipName();
     String getFishSpecies();
     Long getMemberId();
+    Boolean getIsUse();
 }
