@@ -342,7 +342,13 @@ public class FishingShipService {
         } else {
             String serial = allVideos.get(0).getSerial();
             List<AddShipCamera> newCameras = updateShipDTO.getNhnCameras();
-            List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            List<String> newSerials;
+            if (newCameras == null) {
+                newCameras = new ArrayList<>();
+                newSerials = new ArrayList<>();
+            } else {
+                newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            }
             for (RealTimeVideo v : videos) {
                 boolean use = newSerials.contains(v.getSerial());
                 if (use) {
@@ -389,7 +395,13 @@ public class FishingShipService {
             }
         } else {
             List<AddShipCamera> newCameras = updateShipDTO.getAdtCameras();
-            List<String> newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            List<String> newSerials;
+            if (newCameras == null) {
+                newCameras = new ArrayList<>();
+                newSerials = new ArrayList<>();
+            } else {
+                newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+            }
             for (RealTimeVideo v : videos) {
                 boolean use = newSerials.contains(v.getSerial());
                 if (use) {
