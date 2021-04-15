@@ -423,11 +423,12 @@ public class MemberController {
     @PostMapping("/loginSuccess")
     @ResponseBody
     public String loginSuccess(@RequestParam("sessionToken") String token){return token;}
+
     @PostMapping("/notCertified")
     @ResponseBody
-    public LoginResultDto loginSuccess( @RequestParam("memberId") Long memberId){
+    public LoginResultDto notCertified( @RequestParam("memberId") String memberId){
         LoginResultDto result = new LoginResultDto();
-        result.setMemberId(memberId);
+        result.setMemberId(Long.parseLong(memberId));
         result.setAuth(false);
         return result;
     }
