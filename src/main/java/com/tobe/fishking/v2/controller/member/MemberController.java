@@ -414,11 +414,11 @@ public class MemberController {
             "- memberId : Long / 회원의 id. 미인증회원일시 nice인증 요청보낼때 memberId 파라미터로 추가되어야하는 값. \n")
     @PostMapping("/login")
     @ResponseBody
-    public LoginResultDto login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
+    public String login(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
         LoginResultDto resultDto = memberService.login(loginDTO);
 //        if(resultDto.getAuth() == false){ return "redirect:/v2/api/niceRequest?memberId="+resultDto.getMemberId().toString();}
 //        else return "forward:/v2/api/loginSuccess?sessionToken="+resultDto.getSessionToken();
-        return resultDto;
+        return resultDto.getToken();
     }
 //    @PostMapping("/loginSuccess")
 //    @ResponseBody
@@ -438,8 +438,8 @@ public class MemberController {
             "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
     @PostMapping("/smartfishing/login")
     @ResponseBody
-    public LoginResultDto smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
-        return memberService.smartfishingLogin(loginDTO);
+    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+        return memberService.smartfishingLogin(loginDTO).getToken();
     }
 
     @ApiOperation(value = "스마트승선 로그인",notes = "" +
@@ -449,8 +449,8 @@ public class MemberController {
             "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
     @PostMapping("/smartsail/login")
     @ResponseBody
-    public LoginResultDto smartsailLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
-        return memberService.smartfishingLogin(loginDTO);
+    public String smartsailLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+        return memberService.smartfishingLogin(loginDTO).getToken();
     }
 
     @ApiOperation(value = "해경 로그인",notes = "" +
@@ -460,8 +460,8 @@ public class MemberController {
             "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
     @PostMapping("/police/login")
     @ResponseBody
-    public LoginResultDto policeLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
-        return memberService.policeLogin(loginDTO);
+    public String policeLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+        return memberService.policeLogin(loginDTO).getToken();
     }
 
 
