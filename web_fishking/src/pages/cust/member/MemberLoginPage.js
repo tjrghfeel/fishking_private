@@ -55,14 +55,19 @@ export default inject(
             registrationToken: window.fcm_token || null,
           });
           if (response) {
-            PageStore.setAccessToken(response, "cust", "Y");
-            const url = sessionStorage.getItem("@redirect-url");
-            if (url === null) {
-              PageStore.push(`/main/my`);
-            } else {
-              sessionStorage.removeItem("@redirect-url");
-              window.location.href = url;
-              return;
+            const {token, auth, memberId} = response;
+            if (!auth) {
+              window.location.href = `/v2/api/niceRequest?memberId=${memberId}`;
+            }else{
+              PageStore.setAccessToken(token, "cust", "Y");
+              const url = sessionStorage.getItem("@redirect-url");
+              if (url === null) {
+                PageStore.push(`/main/my`);
+              } else {
+                sessionStorage.removeItem("@redirect-url");
+                window.location.href = url;
+                return;
+              }
             }
           }
         } catch (err) {
