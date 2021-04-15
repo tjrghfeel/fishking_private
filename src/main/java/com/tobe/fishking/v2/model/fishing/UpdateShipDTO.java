@@ -26,7 +26,7 @@ public class UpdateShipDTO {
     @ApiParam(value = "선박 구분")
     private @Valid String fishingType;
     @ApiParam(value = "선박 주소")
-    private @Valid String address;
+    private @Valid String addr;
     @ApiParam(value = "시도")
     private @Valid String sido;
     @ApiParam(value = "시군구")
@@ -86,7 +86,7 @@ public class UpdateShipDTO {
         return Ship.builder()
                 .name(name)
                 .fishingType(FishingType.valueOf(fishingType))
-                .address(address == null ? "" : address)
+                .address(addr == null ? "" : addr)
                 .sido(sido)
                 .sigungu(sigungu)
                 .tel(company.getTel())

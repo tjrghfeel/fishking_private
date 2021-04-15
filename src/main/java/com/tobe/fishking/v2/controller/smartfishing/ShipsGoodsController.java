@@ -253,21 +253,21 @@ public class ShipsGoodsController {
             @RequestHeader(name = "Authorization") String token,
             @RequestBody UpdateShipDTO addShipDTO) throws ResourceNotFoundException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException {
         Map<String, Object> result = new HashMap<>();
-        Long shipId = fishingShipService.addShip(addShipDTO, token);
-        result.put("result", "success");
-        result.put("id", shipId);
-        return result;
-//        try {
-////            Long shipId = fishingShipService.addShip(addShipDTO, token, fishSpecies, services, facilities, devices, events, positions, adtCameras, nhnCameras);
-//            Long shipId = fishingShipService.addShip(addShipDTO, token);
-//            result.put("result", "success");
-//            result.put("id", shipId);
-//            return result;
-//        } catch (ResourceNotFoundException e) {
-//            throw e;
-//        } catch (Exception e) {
-//            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
-//        }
+//        Long shipId = fishingShipService.addShip(addShipDTO, token);
+//        result.put("result", "success");
+//        result.put("id", shipId);
+//        return result;
+        try {
+//            Long shipId = fishingShipService.addShip(addShipDTO, token, fishSpecies, services, facilities, devices, events, positions, adtCameras, nhnCameras);
+            Long shipId = fishingShipService.addShip(addShipDTO, token);
+            result.put("result", "success");
+            result.put("id", shipId);
+            return result;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
+        }
     }
 
     @ApiOperation(value = "선박수정", notes = "선박수정")

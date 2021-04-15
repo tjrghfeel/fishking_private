@@ -192,7 +192,6 @@ public class FishingShipService {
 
         shipRepository.save(ship);
 
-
         int cameraNum = 0;
         List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
         String cameraToken;
@@ -279,7 +278,10 @@ public class FishingShipService {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
         Company company = companyRepository.findByMember(member);
+        List<ObserverCode> codes = observerCodeRepository.findAll();
         Ship ship = shipRepository.getOne(shipId);
+
+        ship.updateShip(updateShipDTO, codes, member);
 
         List<CommonCode> speciesList = new ArrayList<>();
         for (String species : updateShipDTO.getFishSpecies()) {
