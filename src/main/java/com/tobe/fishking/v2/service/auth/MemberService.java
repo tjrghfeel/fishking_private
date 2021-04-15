@@ -1445,7 +1445,7 @@ public class MemberService {
         }
         else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
         Role role = member.getRoles();
-        if (role==Role.member || role==Role.guest) {
+        if (!(role==Role.admin || role==Role.shipowner)) {
             throw new NotAuthException("권한이 없는 아이디 입니다.");
         }
         return result;
