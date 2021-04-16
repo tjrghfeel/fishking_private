@@ -276,7 +276,7 @@ public class CommonService {
             List<FileEntity> fileEntityList = fileRepo.findByPidAndFilePublishAndFileTypeAndIsDelete(
                     diary.getId(), FilePublish.fishingDiary, FileType.image, false);
             if (fileEntityList.size() > 0) {
-                diary.setImageUrl(path + "/" + fileEntityList.get(0).getFileUrl() + "/" + fileEntityList.get(0).getStoredFile());
+                diary.setImageUrl(path + "/" + fileEntityList.get(0).getFileUrl() + "/" + fileEntityList.get(0).getThumbnailFile());
             }
         }
         result.put("fishingDiaries", diaries);

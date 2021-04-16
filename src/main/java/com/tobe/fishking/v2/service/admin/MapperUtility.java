@@ -147,6 +147,11 @@ public class MapperUtility {
         else return null;
     }
 
+    public String transShipThumbnailImg(String fileUrl){
+        if(fileUrl != null){return env.getProperty("file.downloadUrl")+"/" + fileUrl.split("/")[1] + "/thumb_" + fileUrl.split("/")[2];}
+        else{return null;}
+    }
+
 
 
     public String noName(String value1,String value2){
