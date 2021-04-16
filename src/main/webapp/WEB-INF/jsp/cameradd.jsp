@@ -28,74 +28,23 @@
 <!--// 상품타이틀 -->
 <p class="space mt-2"></p>
 
-
-<!-- 리스트 -->
-<div class="container nopadding mt-3 card card-sm">
-    <div class="row no-gutters mt-3 mb-2">
-        <div class="col-4 pl-3">
-            <div class="cardimgWrap">
-                <img src="/assets/smartsail/img/sample/boat1.jpg" class="img-fluid" alt="">
-            </div>
-        </div>
-        <div class="col-5">
-            <h6>카메라 좌측</h6>
-            <p><span class="grey">조회수  4,321<br/>27명 시청중</span></p>
-        </div>
-        <div class="col-3 text-center">
-            <nav>
-                <div class="nav nav-tabs btn-set mt-3 mr-3 vam" id="nav-tab" role="tablist">
-                    <a class="nav-link active btn btn-on" id="nav-home-tab" data-toggle="tab" href="#nav-on" role="tab" aria-controls="nav-on" aria-selected="true">ON</a>
-                    <a class="nav-link btn btn-off" id="nav-profile-tab" data-toggle="tab" href="#nav-off" role="tab" aria-controls="nav-off" aria-selected="false">OFF</a>
-                </div>
-            </nav>
-        </div>
-    </div>
-    <hr class="full mt-2 mb-3"/>
-</div>
-<!--// 리스트 -->
-
-<!-- 리스트 -->
-<div class="container nopadding mt-3 card card-sm">
-    <div class="row no-gutters mt-3 mb-2">
-        <div class="col-4 pl-3">
-            <div class="cardimgWrap">
-                <img src="/assets/smartsail/img/sample/boat1.jpg" class="img-fluid" alt="">
-            </div>
-        </div>
-        <div class="col-5">
-            <h6>카메라 좌측</h6>
-            <p><span class="grey">조회수  4,321<br/>27명 시청중</span></p>
-        </div>
-        <div class="col-3 text-center">
-            <nav>
-                <div class="nav nav-tabs btn-set mt-3 mr-3 vam" id="nav-tab" role="tablist">
-                    <a class="nav-link active btn btn-on" id="nav-home-tab" data-toggle="tab" href="#nav-on" role="tab" aria-controls="nav-on" aria-selected="true">ON</a>
-                    <a class="nav-link btn btn-off" id="nav-profile-tab" data-toggle="tab" href="#nav-off" role="tab" aria-controls="nav-off" aria-selected="false" >OFF</a>
-                </div>
-            </nav>
-        </div>
-    </div>
-    <hr class="full mt-2 mb-3"/>
-</div>
-<!--// 리스트 -->
-
 <!-- 리스트 -->
 <div class="container nopadding mt-3 card card-sm" id="list-template" style="display:none;">
     <div class="row no-gutters mt-3 mb-2">
         <div class="col-4 pl-3">
             <div class="cardimgWrap">
-                <img src="/assets/smartsail/img/sample/boat1.jpg" class="img-fluid" alt="">
+                <img src="/assets/smartsail/img/sample/boat1.jpg" class="img-fluid data-image" alt="">
             </div>
         </div>
         <div class="col-5">
-            <h6>카메라 우측</h6>
-            <p><span class="grey">조회수  4,321<br/>27명 시청중</span></p>
+            <h6 class="data-name">카메라 우측</h6>
+<%--            <p><span class="grey">조회수  4,321<br/>27명 시청중</span></p>--%>
         </div>
         <div class="col-3 text-center">
             <nav>
                 <div class="nav nav-tabs btn-set mt-3 mr-3 vam" id="nav-tab" role="tablist">
-                    <a class="nav-link active btn btn-on" id="nav-home-tab" data-toggle="tab" href="#nav-on" role="tab" aria-controls="nav-on" aria-selected="true">ON</a>
-                    <a class="nav-link btn btn-off" id="nav-profile-tab" data-toggle="tab" href="#nav-off" role="tab" aria-controls="nav-off" aria-selected="false">OFF</a>
+                    <a class="nav-link active btn btn-on data-isUse-on" id="nav-home-tab" data-toggle="tab" role="tab" aria-controls="nav-on" aria-selected="true">ON</a>
+                    <a class="nav-link btn btn-off data-isUse-off" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-off" aria-selected="false">OFF</a>
                 </div>
             </nav>
         </div>
@@ -133,6 +82,16 @@
                 console.log(JSON.stringify(response));
 
                 document.querySelector('.data-title').innerHTML = response['shipName'] + ' <br/> <strong class="large orange">' + Intl.NumberFormat().format(response['count'] || 0) + '</strong> <small class="grey">대의 카메라 제어중</small>';
+                for (var i = 0; i < response.content.length; i++) {
+                    var item = response.content[i];
+                    var clone = document.querySelector('#list-template').cloneNode(true);
+                    clone.id = i;
+                    clone.style.display = 'block';
+                    clone.querySelector('.data-image').src = item['image'];
+                    clone.querySelector('.data-name').textContent = item['name'];
+                    document.body.appendChild(clone);
+                    console.log(JSON.stringify(item))
+                }
             }
         })
     });

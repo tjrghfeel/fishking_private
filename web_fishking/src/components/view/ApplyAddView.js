@@ -330,7 +330,7 @@ export default inject(
                           ref={this.adtId}
                           type="text"
                           className="form-control"
-                          placeholder="ADT 캡스 아이디를 입력하세요"
+                          placeholder="SKB 캡스 아이디를 입력하세요"
                           value={this.state.adtId}
                           onChange={(e) =>
                             this.setState({ adtId: e.target.value })
@@ -347,7 +347,7 @@ export default inject(
                           ref={this.adtPw}
                           type="password"
                           className="form-control"
-                          placeholder="ADT 캡스 비밀번호를 입력하세요"
+                          placeholder="SKB 캡스 비밀번호를 입력하세요"
                           value={this.state.adtPw}
                           onChange={(e) =>
                             this.setState({ adtPw: e.target.value })

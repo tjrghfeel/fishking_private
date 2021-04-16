@@ -242,7 +242,9 @@ export default inject(
                     <small>결제 금액</small>
                   </div>
                   <div className="col-6 text-right">
-                    <strong className="large">38,000원</strong>
+                    <strong className="large">
+                      {Intl.NumberFormat().format(this.state.amount || 0)}원
+                    </strong>
                   </div>
                 </div>
               </div>
