@@ -70,11 +70,13 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
 //            "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
 //            "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f.is_delete = false " +
             "       group by f2.pid order by f2.file_no), null) fileNameList, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
-            "       group by f2.pid order by f2.file_no), null) filePathList " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f.is_delete = false " +
+            "       group by f2.pid order by f2.file_no), null) filePathList, " +
+            "   if(m.is_active=true, (select f2.id " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f.is_delete = false), null) videoId " +
             "from fishing_diary as d, ship as s, Member as m  " +
             "where d.fishing_diary_member_id = :user " +
             "   and d.fishing_diary_ship_id = s.id " +
@@ -122,11 +124,13 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
 //            "   (select count(c.id) from fishing_diary_comment c where c.fishing_diary_id = d.id) commentCount, " +
 //            "   (select count(dc.fishing_diary_id) from fishing_diary_scrap_members dc where dc.fishing_diary_id = d.id) scrapCount, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f.is_delete = false " +
             "       group by f2.pid order by f2.file_no), null) fileNameList, " +
             "   if(m.is_active=true, (select GROUP_CONCAT(f2.file_url separator ',') " +
-            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f.is_delete = false " +
-            "       group by f2.pid order by f2.file_no), null) filePathList " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f.is_delete = false " +
+            "       group by f2.pid order by f2.file_no), null) filePathList, " +
+            "   if(m.is_active=true, (select f2.id " +
+            "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f.is_delete = false ), null) videoId " +
             "from fishing_diary as d, ship as s, Member as m, fishing_diary_scrap_members as sm  " +
             "where sm.scrap_members_id = :member " +
             "   and sm.fishing_diary_id = d.id " +
@@ -175,11 +179,13 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.share_count scrapCount, " +
                     "   d.file_publish fishingDiaryType, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no)) fileNameList, " +
                     "   if(m.is_active=false or d.is_deleted=true, null, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
-                    "       group by f2.pid order by f2.file_no)) filePathList " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
+                    "       group by f2.pid order by f2.file_no)) filePathList, " +
+                    "   if(m.is_active=false or d.is_deleted=true, null, (select f2.id " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f2.is_delete = false )) videoId " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m, fishing_diary_scrap_members as sm  " +
                     "where sm.scrap_members_id = :memberId " +
                     "   and sm.fishing_diary_id = d.id " +
@@ -232,11 +238,13 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
                     "   if(:isManager = true or d.is_hidden = false, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) fileNameList, " +
                     "   if(:isManager = true or d.is_hidden = false, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) filePathList, " +
+                    "   if(:isManager = true or d.is_hidden = false, (select f2.id " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f2.is_delete = false ), null) videoId, " +
                     //관리자페이지에서 추가로 사용할 항목들
                     "   d.is_active isActive, " +
                     "   s.ship_name shipName, " +
@@ -355,11 +363,13 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
                     "   if(:isManager = true or d.is_hidden = false, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) fileNameList, " +
                     "   if(:isManager = true or d.is_hidden = false, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) filePathList, " +
+                    "   if(:isManager = true or d.is_hidden = false, (select f2.id " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f2.is_delete = false ), null) videoId, " +
                     //관리자페이지에서 추가로 사용할 항목들
                     "   d.is_active isActive, " +
                     "   s.ship_name shipName, " +
@@ -478,11 +488,13 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
                     "   if(d.is_hidden = false, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) fileNameList, " +
                     "   if(d.is_hidden = false, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) filePathList, " +
+                    "   if(d.is_hidden = false, (select f2.id " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f2.is_delete = false ), null) videoId, " +
                     "   d.is_hidden isHidden " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
@@ -568,11 +580,13 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   d.comment_count commentCount, " +
                     "   d.share_count scrapCount, " +
                     "   if(d.is_hidden = false, (select GROUP_CONCAT(f2.stored_file separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) fileNameList, " +
                     "   if(d.is_hidden = false, (select GROUP_CONCAT(f2.file_url separator ',') " +
-                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and f2.is_delete = false " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
                     "       group by f2.pid order by f2.file_no), null) filePathList, " +
+                    "   if(d.is_hidden = false, (select f2.id " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f2.is_delete = false ), null) videoId, " +
                     "   d.is_hidden isHidden " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +

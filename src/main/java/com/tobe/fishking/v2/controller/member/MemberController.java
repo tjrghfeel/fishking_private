@@ -435,10 +435,18 @@ public class MemberController {
             "요청 필드 ) \n" +
             "- memberId : String / 필수 / 회원 아이디\n" +
             "- password : String / 필수 / 비밀번호\n" +
-            "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
+            "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n" +
+            "응답 필드 ) \n" +
+            "- auth : Boolean / 인증된 회원인지 여부\n" +
+            "- isRegistered : Boolean / 해당 회원" +
+            "- token : String / 인증된 회원이고, 로그인 성공시 세션토큰\n" +
+            "- memberId : Long / 회원의 id. 미인증회원일시 nice인증 요청보낼때 memberId 파라미터로 추가되어야하는 값. \n")
     @PostMapping("/smartfishing/login")
     @ResponseBody
-    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
+//    public LoginResultDtoForSmartFishing smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+//        LoginResultDtoForSmartFishing result = memberService.smartfishingLogin(loginDTO);
+//        return result;
         return memberService.smartfishingLogin(loginDTO).getToken();
     }
 
@@ -449,7 +457,7 @@ public class MemberController {
             "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
     @PostMapping("/smartsail/login")
     @ResponseBody
-    public String smartsailLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+    public String smartsailLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
         return memberService.smartfishingLogin(loginDTO).getToken();
     }
 

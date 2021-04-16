@@ -1393,22 +1393,22 @@ public class MemberService {
     }
 
     @Transactional
-    public LoginResultDto smartfishingLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
-        LoginResultDto result = new LoginResultDto();
+    public LoginResultDtoForSmartFishing smartfishingLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
+        LoginResultDtoForSmartFishing result = new LoginResultDtoForSmartFishing();
         System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
         Member member = memberRepository.findByUid(loginDTO.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("아이디가 존재하지 않습니다"));
+                .orElseThrow(()->new ServiceLogicException("아이디가 존재하지 않습니다"));
         System.out.println("memberId : "+member.getId());
         if(member==null){
-            throw new IncorrectIdException("아이디가 존재하지 않습니다");
+            throw new ServiceLogicException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
             result.setMemberId(member.getId());
             System.out.println("login success");
             /*탈퇴한 회원인 경우*/
-            if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
+            if(member.getIsActive() == false){throw new ServiceLogicException("회원정보가 존재하지 않습니다.");}
 
             //기기등록토큰 저장.
             if(loginDTO.getRegistrationToken() != null) {
@@ -1430,23 +1430,30 @@ public class MemberService {
             else {//인증을 마친 회원이라면,
                 result.setAuth(true);
 
-                /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
-                if (member.getSessionToken() != null) {
-                    result.setToken(member.getSessionToken());
-                } else {
-                    /*세션토큰 생성 및 저장. */
-                    String rawToken = member.getUid() + LocalDateTime.now();
-                    sessionToken = encoder.encode(rawToken);
+                Company company = companyRepository.findByMember(member);
+                if(company.getIsRegistered() == false){
+                    result.setIsRegistered(false);
+                }
+                else{
+                    result.setIsRegistered(true);
+                    /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
+                    if (member.getSessionToken() != null) {
+                        result.setToken(member.getSessionToken());
+                    } else {
+                        /*세션토큰 생성 및 저장. */
+                        String rawToken = member.getUid() + LocalDateTime.now();
+                        sessionToken = encoder.encode(rawToken);
 
-                    member.setSessionToken(sessionToken);
-                    result.setToken(sessionToken);
+                        member.setSessionToken(sessionToken);
+                        result.setToken(sessionToken);
+                    }
                 }
             }
         }
-        else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
+        else{throw new ServiceLogicException("비밀번호가 잘못되었습니다");}
         Role role = member.getRoles();
         if (!(role==Role.admin || role==Role.shipowner)) {
-            throw new NotAuthException("권한이 없는 아이디 입니다.");
+            throw new ServiceLogicException("권한이 없는 아이디 입니다.");
         }
         return result;
     }

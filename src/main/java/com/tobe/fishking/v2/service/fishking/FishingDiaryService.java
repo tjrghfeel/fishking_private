@@ -24,6 +24,7 @@ import com.tobe.fishking.v2.enums.fishing.FishingTechnic;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.TideTime;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.common.MapInfoDTO;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -48,8 +49,10 @@ import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.persistence.Tuple;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -803,7 +806,27 @@ public class FishingDiaryService {
         else{ return false;}
     }
 
+    //비디오
+    @Transactional
+    public StreamingResponseBody getVideoStream(Long fileId) throws ResourceNotFoundException, FileNotFoundException, ServiceLogicException {
+        FileEntity fileEntity = fileRepository.findById(fileId)
+                .orElseThrow(()->new ServiceLogicException("file not found for this id :: "+fileId));
 
+        File file = new File(env.getProperty("file.location") + "/"+fileEntity.getFileUrl()+"/"+fileEntity.getStoredFile());
+        final InputStream is = new FileInputStream(file);
+        return os -> {
+            readAndWrite(is, os);
+        };
+    }
+
+    private void readAndWrite(final InputStream is, OutputStream os) throws IOException {
+        byte[] data = new byte[2048];
+        int read = 0;
+        while ((read = is.read(data)) > 0) {
+            os.write(data, 0, read);
+        }
+        os.flush();
+    }
 
 
 /*
