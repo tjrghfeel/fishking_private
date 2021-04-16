@@ -33,6 +33,7 @@ public class GoodsResponse {
     private List<String> positions;
     private List<String> usedPositions;
     private String shipMaxPersonnel;
+    private Boolean positionSelect;
 
     @Builder
     public GoodsResponse(Goods goods, Integer rideMember) {
@@ -50,6 +51,7 @@ public class GoodsResponse {
         this.reservationPersonal = rideMember == null ? 0 : rideMember;
         this.observerCode = goods.getShip().getObserverCode();
         this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
+        this.positionSelect = goods.getPositionSelect();
     }
 
     public GoodsResponse(Goods goods) {
@@ -67,5 +69,6 @@ public class GoodsResponse {
         this.reservationPersonal = 0;
         this.observerCode = goods.getShip().getObserverCode();
         this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
+        this.positionSelect = goods.getPositionSelect();
     }
 }
