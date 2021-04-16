@@ -324,7 +324,7 @@ export default inject(
                     <div className="form-group">
                       <div className="input-group">
                         <label className="input-group-addon">
-                          ADT 캡스 아이디
+                          SKB 캡스 아이디
                         </label>
                         <input
                           ref={this.adtId}
@@ -341,11 +341,11 @@ export default inject(
                     <div className="form-group">
                       <div className="input-group">
                         <label className="input-group-addon">
-                          ADT 캡스 비밀번호
+                          SKB 캡스 비밀번호
                         </label>
                         <input
                           ref={this.adtPw}
-                          type="text"
+                          type="password"
                           className="form-control"
                           placeholder="ADT 캡스 비밀번호를 입력하세요"
                           value={this.state.adtPw}
@@ -379,7 +379,7 @@ export default inject(
                         </label>
                         <input
                           ref={this.nhnPw}
-                          type="text"
+                          type="password"
                           className="form-control"
                           placeholder="NHN 토스트캠 비밀번호를 입력하세요"
                           value={this.state.nhnPw}

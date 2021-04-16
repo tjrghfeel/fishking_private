@@ -295,7 +295,7 @@ public class GoodsService {
         List<CommonCode> species = new ArrayList<>();
         for (String species_code : updateGoods.getSpecies()) {
 //        for (String species_code : speciesList) {
-            CommonCode commonCode = codeRepository.getByCode(species_code);
+            CommonCode commonCode = codeRepository.getSpeciesByCode(species_code);
             species.add(commonCode);
         }
         goods.updateGoods(ship, member, updateGoods, species);

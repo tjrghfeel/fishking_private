@@ -52,87 +52,24 @@
 
 
 <!-- 리스트 -->
-<div class="container nopadding mt-3">
-    <a href="camera-add.html">
+<div class="container nopadding mt-3" id="list-template" style="display:none;">
+    <a>
         <div class="card card-sm">
             <div class="row no-gutters">
                 <div class="cardimgWrap">
-                    <img src="/assets/smartsail/img/sample/boat1.jpg" class="img-fluid" alt="">
+                    <img src="/assets/smartsail/img/sample/boat1.jpg" class="img-fluid data-profileImage" alt="">
                 </div>
                 <div class="cardInfoWrap">
                     <div class="card-body pt-0">
                         <div class="row no-gutters d-flex align-items-center">
                             <div class="col-9">
-                                <h6>어복황제3호</h6>
+                                <h6 class="data-shipName">어복황제3호</h6>
                                 <p>
-                                    엔진실 – 카메라 이름<br/>
-                                    <span class="grey">▷ 707 &nbsp;&nbsp;&nbsp; ♡ 125</span>
+                                    <span class="grey">♡ <span class="data-takes"></span></span>
                                 </p>
                             </div>
                             <div class="col-3 text-right">
-                                <small class="grey">녹화영상:</small> <strong class="large red">유</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </a>
-    <hr class="full mt-2 mb-3"/>
-</div>
-<!--// 리스트 -->
-
-<!-- 리스트 -->
-<div class="container nopadding mt-3">
-    <a href="camera-add.html">
-        <div class="card card-sm">
-            <div class="row no-gutters">
-                <div class="cardimgWrap">
-                    <img src="/assets/smartsail/img/sample/boat2.jpg" class="img-fluid" alt="">
-                </div>
-                <div class="cardInfoWrap">
-                    <div class="card-body pt-0">
-                        <div class="row no-gutters d-flex align-items-center">
-                            <div class="col-9">
-                                <h6>어복호</h6>
-                                <p>
-                                    엔진실 – 카메라 이름<br/>
-                                    <span class="grey">▷ 707 &nbsp;&nbsp;&nbsp; ♡ 125</span>
-                                </p>
-                            </div>
-                            <div class="col-3 text-right">
-                                <small class="grey">녹화영상:</small> <strong class="large red">유</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </a>
-    <hr class="full mt-2 mb-3"/>
-</div>
-<!--// 리스트 -->
-
-<!-- 리스트 -->
-<div class="container nopadding mt-3">
-    <a href="camera-add.html">
-        <div class="card card-sm">
-            <div class="row no-gutters">
-                <div class="cardimgWrap">
-                    <img src="/assets/smartsail/img/sample/boat3.jpg" class="img-fluid" alt="">
-                </div>
-                <div class="cardInfoWrap">
-                    <div class="card-body pt-0">
-                        <div class="row no-gutters d-flex align-items-center">
-                            <div class="col-9">
-                                <h6>어복황제7호</h6>
-                                <p>
-                                    엔진실 – 카메라 이름<br/>
-                                    <span class="grey">▷ 707 &nbsp;&nbsp;&nbsp; ♡ 125</span>
-                                </p>
-                            </div>
-                            <div class="col-3 text-right">
-                                <small class="grey">녹화영상:</small> <strong class="large">무</strong>
+                                <small class="grey">녹화영상:</small> <strong class="large red data-hasVideo">유</strong>
                             </div>
                         </div>
                     </div>
@@ -147,9 +84,14 @@
 
 <jsp:include page="cmm_foot.jsp" />
 <script>
+    var data = [];
     function fn_init() {
         document.querySelector('#keyword').value = '';
         document.querySelector('#hasVideo').value = '';
+    }
+    function moveToDetail (item, index) {
+        var detail = data[index];
+        window.location.href = '/boarding/cameradd?shipId=' + detail['shipId'];
     }
     function fn_loadPageData() {
         var keyword = document.getElementById('keyword').value;
@@ -169,9 +111,33 @@
             },
             success: function (response) {
                 console.log(JSON.stringify(response));
+                data = response;
+                for (var i = 0; i < response.length; i++) {
+                    var item = response[i] || {};
+                    var clone = document.querySelector('#list-template').cloneNode(true);
+                    clone.id = i;
+                    clone.style.display = 'block';
+                    clone.querySelector('.data-profileImage').src = item['profileImage'];
+                    clone.querySelector('.data-shipName').textContent = item['shipName'];
+                    clone.querySelector('.data-takes').textContent = Intl.NumberFormat().format(item['takes'] || 0);
+                    if (item['hasVideo']) {
+                        clone.querySelector('.data-hasVideo').textContent = '유';
+                    }else{
+                        clone.querySelector('.data-hasVideo').textContent = '무';
+                        clone.querySelector('.data-hasVideo').classList.remove('red');
+                    }
+                    clone.querySelector('a').setAttribute('data-index', i);
+                    clone.querySelector('a').addEventListener('click', function () {
+                        moveToDetail(item, this.getAttribute('data-index'));
+                    });
+                    document.body.appendChild(clone);
+                }
             }
-        })
+        });
     }
+    $(document).ready(function () {
+        fn_loadPageData();
+    });
 </script>
 </body>
 </html>

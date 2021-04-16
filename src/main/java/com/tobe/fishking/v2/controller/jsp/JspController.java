@@ -27,6 +27,12 @@ public class JspController {
         return mnv;
     }
 
+    @GetMapping("/fingerprintregist")
+    public ModelAndView fingerprintregist(ModelAndView mnv) {
+        mnv.setViewName("jsp/fingerprintregist");
+        return mnv;
+    }
+
     @GetMapping("/fingerprintother")
     public ModelAndView fingerprintother(ModelAndView mnv) {
         mnv.setViewName("jsp/fingerprintother");
@@ -36,6 +42,12 @@ public class JspController {
     @GetMapping("/camera")
     public ModelAndView camera(ModelAndView mnv) {
         mnv.setViewName("jsp/camera");
+        return mnv;
+    }
+
+    @GetMapping("/cameradd")
+    public ModelAndView cameradd(ModelAndView mnv) {
+        mnv.setViewName("jsp/cameradd");
         return mnv;
     }
 

@@ -166,7 +166,7 @@ public class FishingShipService {
 
         List<CommonCode> speciesList = new ArrayList<>();
         for (String species : addShipDTO.getFishSpecies()) {
-            speciesList.add(codeRepository.getByCode(species));
+            speciesList.add(codeRepository.getSpeciesByCode(species));
         }
         ship.setFishSpecies(speciesList);
 
@@ -191,7 +191,6 @@ public class FishingShipService {
         ship.setDevices(deviceList);
 
         shipRepository.save(ship);
-
 
         int cameraNum = 0;
         List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
@@ -279,11 +278,14 @@ public class FishingShipService {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
         Company company = companyRepository.findByMember(member);
+        List<ObserverCode> codes = observerCodeRepository.findAll();
         Ship ship = shipRepository.getOne(shipId);
+
+        ship.updateShip(updateShipDTO, codes, member);
 
         List<CommonCode> speciesList = new ArrayList<>();
         for (String species : updateShipDTO.getFishSpecies()) {
-            speciesList.add(codeRepository.getByCode(species));
+            speciesList.add(codeRepository.getSpeciesByCode(species));
         }
         ship.setFishSpecies(speciesList);
 
@@ -379,19 +381,21 @@ public class FishingShipService {
 
         List<RealTimeVideo> adtVideos = realTimeVideoRepository.getADTByShipsId(shipId);
         if (adtVideos.isEmpty()) {
-            for (AddShipCamera addShipCamera : updateShipDTO.getAdtCameras()) {
-                cameraNum += 1;
-                RealTimeVideo video = RealTimeVideo.builder()
-                        .rNo(cameraNum)
-                        .member(member)
-                        .ship(ship)
-                        .name(addShipCamera.getName())
-                        .serial(addShipCamera.getSerial())
-                        .token("")
-                        .expireTime("")
-                        .type("caps")
-                        .build();
-                realTimeVideoRepository.save(video);
+            if (updateShipDTO.getAdtCameras() != null) {
+                for (AddShipCamera addShipCamera : updateShipDTO.getAdtCameras()) {
+                    cameraNum += 1;
+                    RealTimeVideo video = RealTimeVideo.builder()
+                            .rNo(cameraNum)
+                            .member(member)
+                            .ship(ship)
+                            .name(addShipCamera.getName())
+                            .serial(addShipCamera.getSerial())
+                            .token("")
+                            .expireTime("")
+                            .type("caps")
+                            .build();
+                    realTimeVideoRepository.save(video);
+                }
             }
         } else {
             List<AddShipCamera> newCameras = updateShipDTO.getAdtCameras();

@@ -22,8 +22,8 @@
 
 <!-- 안내 -->
 <div class="container nopadding mt-3">
-<%--    <h2><small>잠깐!!!</small><br/>--%>
-        <strong class="red" id="txt-finger-type">오른손 엄지</strong><small>를 이용해 주십시오.</small></h2>
+    <h2><small>잠깐!!!</small><br/>
+        <strong class="red">오른손 엄지</strong><small>를 이용해 등록해 주세요.</small></h2>
     <div class="card-round-grey mt-4">
         <div class="card card-sm">
             <div class="row no-gutters mt-5 mb-5 text-center">
@@ -42,7 +42,8 @@
 <!-- 하단버튼 -->
 <div class="fixed-bottom">
     <div class="row no-gutters">
-        <div class="col-12"><a onclick="javascript:start();" class="btn btn-primary btn-lg btn-block">지문 인식 시작</a></div>
+        <div class="col-6"><a onclick="javascript:start();" class="btn btn-primary btn-lg btn-block">지문 등록 시작</a></div>
+        <div class="col-6"><a onclick="javascript:moveToRegistOther();" class="btn btn-secondary btn-lg btn-block">다른 손가락으로 등록</a></div>
     </div>
 </div>
 <!--// 하단버튼 -->
@@ -50,6 +51,9 @@
 <jsp:include page="cmm_foot.jsp" />
 <script>
     var data = null;
+    function moveToRegistOther () {
+        window.location.href = '/boarding/fingerprintother?data=' + encodeURIComponent(JSON.stringify(data));
+    }
     // ----- > 지문 인식 시작
     function start () {
         console.log('----- > 지문 인식 시작');
@@ -59,34 +63,33 @@
     function setFingerprintData(fingerprint) {
         console.log('----- > 지문 인식 결과 : ' + fingerprint);
         if ((fingerprint || '').length == 0) {
-            alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
-        }else{
-            $.ajax('/v2/api/sail/fingerprint/check', {
+            alert('지문인식 등록이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
+        }else {
+            $.ajax('/v2/api/sail/fingerprint/add', {
                 method: 'POST',
                 dataType: 'json',
                 data: {
-                    riderId : data['riderId'],
                     username: data['username'],
                     phone: data['phone'],
-                    fingerprint: fingerprint
+                    fingerprint: fingerprint,
+                    fingerTypeNum: 2
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
                 },
                 error: function () {
-                    alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
+                    alert('지문인식 등록이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
                 },
                 success: function (response) {
                     console.log(JSON.stringify(response));
-                    alert('승선확인이 완료되었습니다.');
+                    alert('지문등록이 완료되었습니다.');
                     window.location.href = '/boarding/dashboard';
                 }
-            })
+            });
         }
     }
     $(document).ready(function () {
         data = JSON.parse(decodeURIComponent(location.search.substr(6,location.search.length)));
-        document.getElementById('txt-finger-type').textContent = data['fingerType'];
     });
 </script>
 

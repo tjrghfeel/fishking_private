@@ -71,9 +71,6 @@
     <div class="card-round-grey">
         <div class="card card-sm">
             <div class="row no-gutters d-flex align-items-center">
-                <div class="col-2 cardProfileWrap text-center">
-                    <img src="/assets/smartsail/img/sample/profile5.jpg" class="profile-thumb-md align-self-center mb-1" alt="profile"><br/><strong name="data-username">김새론</strong>
-                </div>
                 <div class="col-6">
                     <a href="sail-detail.html">
                         <p>
@@ -84,7 +81,8 @@
                     </a>
                 </div>
                 <div class="col-4 text-right">
-                    <a name="data-click" class="btn btn-round btn-dark"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">지문입력</a>
+                    <a name="data-click" class="btn btn-round btn-dark data-finger-confirm"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">승선확인</a>
+                    <a name="data-click" class="btn btn-round btn-dark data-finger-regist"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">지문등록</a>
                 </div>
             </div>
             <hr class="mt-1 mb-1"/>
@@ -120,10 +118,15 @@
 
 <jsp:include page="cmm_foot.jsp" />
 <script>
-    // ----- > 지문 입력
-    function fn_fingerprint (item, index) {
+    // ----- > 승선 확인
+    function fn_fingerprint_confirm (item, index) {
         var data = pageData['boardingPeople'][index];
         window.location.href = '/boarding/fingerprint?data=' + encodeURIComponent(JSON.stringify(data));
+    }
+    // ----- > 지문 등록
+    function fn_fingerprint_regist (item, index) {
+        var data = pageData['boardingPeople'][index];
+        window.location.href = '/boarding/fingerprintregist?data=' + encodeURIComponent(JSON.stringify(data));
     }
     var pageData = null;
     // ----- > 데이터 로드
@@ -182,10 +185,23 @@
                     clone.querySelector('[name="data-phone"]').textContent = item['phone'];
                     clone.querySelector('[name="data-visitCount"]').textContent = item['visitCount'] || 0;
                     clone.querySelector('[name="data-fingerType"]').textContent = '지문 : ' + (item['fingerType'] || '');
-                    clone.querySelector('[name="data-click"]').setAttribute('data-index', i);
-                    clone.querySelector('[name="data-click"]').addEventListener('click', function () {
-                        fn_fingerprint(item, this.getAttribute('data-index'));
+                    // ----- > 승선확인 이벤트
+                    clone.querySelector('.data-finger-confirm').setAttribute('data-index', i);
+                    clone.querySelector('.data-finger-confirm').addEventListener('click', function () {
+                        fn_fingerprint_confirm(item, this.getAttribute('data-index'));
                     });
+                    // ----- > 지문등록 이벤트
+                    clone.querySelector('.data-finger-regist').setAttribute('data-index', i);
+                    clone.querySelector('.data-finger-regist').addEventListener('click', function () {
+                        fn_fingerprint_confirm(item, this.getAttribute('data-index'));
+                    });
+                    clone.querySelector('[name="data-click"]').addEventListener('click', function () {
+                        fn_fingerprint_regist(item, this.getAttribute('data-index'));
+                    });
+                    // ----- > 최초 방문은 지문등록 버튼만 표시
+                    if ((item['visitCount'] || 0) == 0) {
+                        clone.querySelector('.data-finger-confirm').style.display = 'none';
+                    }
                     document.body.appendChild(clone);
                 }
             }

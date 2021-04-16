@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.model.common.ShareStatus;
+import com.tobe.fishking.v2.model.fishing.UpdateShipDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
@@ -15,8 +17,10 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -256,7 +260,7 @@ public class Ship extends BaseTime {  //선상
                 String profileImage,
                 Company company,
                 Member createdBy,
-                 String code,
+                String code,
                 String positions,
                 String router,
                 Long videoId) {
@@ -340,4 +344,30 @@ public class Ship extends BaseTime {  //선상
     }
 
     public void setIsActive(Boolean isActive){this.isActive = isActive;}
+
+    public void updateShip(UpdateShipDTO dto, List<ObserverCode> codes, Member member) {
+        Location loc = Location.builder().latitude(dto.getLatitude()).longitude(dto.getLongitude()).build();
+        ObserverCode code = codes.stream()
+                .sorted(Comparator.comparing(e -> e.distanceFrom(loc)))
+                .collect(Collectors.toList())
+                .get(0);
+
+        this.shipName = dto.getName();
+        this.fishingType = FishingType.valueOf(dto.getFishingType());
+        this.address = dto.getAddr() == null ? "" : dto.getAddr();
+        this.sido = dto.getSido();
+        this.sigungu = dto.getSigungu();
+        this.weight = dto.getWeight();
+        this.boardingPerson = dto.getBoardingPerson();
+        this.ownerWordingTitle = dto.getOwnerWordingTitle();
+        this.ownerWording = dto.getOwnerWording();
+        this.noticeTitle = dto.getNoticeTitle();
+        this.notice = dto.getNotice();
+        this.location = loc;
+        this.profileImage = dto.getProfileImage().equals("") ? "/ship/defaultship.png" : dto.getProfileImage().contains("resource") ? dto.getProfileImage().split("resource")[1] : dto.getProfileImage();
+        this.modifiedBy = member;
+        this.positions = String.join(",", dto.getPositions());
+        this.routerIMEI = dto.getRouter();
+        this.observerCode = code.getCode();
+    }
 }

@@ -19,6 +19,7 @@ export default inject(
           tube_isPending: false,
           tube_list: [],
           tube_nextPageToken: null,
+          item: null,
         };
       }
       /********** ********** ********** ********** **********/
@@ -31,27 +32,38 @@ export default inject(
           },
           PageStore,
         } = this.props;
-        // > 영상 설정
         const { data } = PageStore.getQueryParams();
         const parsed = JSON.parse(data.replace(/[ ]/g, "+").decrypt());
         this.setState({ ...parsed });
-        setTimeout(() => {
-          this.player = new YT.Player("player", {
-            height: "360",
-            width: "640",
-            videoId: id,
-            events: {
-              onReady: () => console.log("onReady"),
-              onStateChange: () => console.log("onStateChange"),
-            },
-          });
-        }, 800);
+        this.init(id);
+      }
+      init = async (id, item) => {
+        const { PageStore } = this.props;
+        // > 영상 설정
+        if (item) {
+          this.setState({ ...item });
+        }
+        if (this.player === null) {
+          setTimeout(() => {
+            this.player = new YT.Player("player", {
+              height: "360",
+              width: "640",
+              videoId: id,
+              events: {
+                onReady: () => console.log("onReady"),
+                onStateChange: () => console.log("onStateChange"),
+              },
+            });
+          }, 800);
+        } else {
+          this.player.loadVideoById(id, 5, "large");
+        }
         // 추가 영상 조회
         PageStore.setScrollEvent(() => {
           this.loadPageDataForTube(true);
         });
         this.loadPageDataForTube(false);
-      }
+      };
       loadPageDataForTube = async (nextPage = false) => {
         const { APIStore } = this.props;
 
@@ -88,10 +100,11 @@ export default inject(
         });
       };
       onClickTube = async (item) => {
-        const { PageStore } = this.props;
-        PageStore.push(
-          `/story/tv/${item.id}?data=${JSON.stringify(item).encrypt()}`
-        );
+        this.init(item.id, item);
+        // const { PageStore } = this.props;
+        // PageStore.push(
+        //   `/story/tv/${item.id}?data=${JSON.stringify(item).encrypt()}`
+        // );
       };
       /********** ********** ********** ********** **********/
       /** render */

@@ -26,7 +26,7 @@ public class UpdateShipDTO {
     @ApiParam(value = "선박 구분")
     private @Valid String fishingType;
     @ApiParam(value = "선박 주소")
-    private @Valid String address;
+    private @Valid String addr;
     @ApiParam(value = "시도")
     private @Valid String sido;
     @ApiParam(value = "시군구")
@@ -42,7 +42,7 @@ public class UpdateShipDTO {
     @ApiParam(value = "경도")
     private @Valid Double longitude;
     @ApiParam(value = "선박 사진")
-    private @Valid String profileImage = "";
+    private @Valid String profileImage;
     @ApiParam(value = "선박 영상 id")
     private @Valid Long videoId;
     @ApiParam(value = "어종 리스트", name = "fishSpecies[]")
@@ -78,15 +78,19 @@ public class UpdateShipDTO {
                 .collect(Collectors.toList())
                 .get(0);
         String profile;
-        if (profileImage.equals("")) {
-            profile = "/ship/defaultship.png";
+        if (profileImage != null) {
+            if (profileImage.equals("")) {
+                profile = "/ship/defaultship.png";
+            } else {
+                profile = profileImage.split("resource")[1];
+            }
         } else {
-            profile = profileImage.split("resource")[1];
+            profile = "/ship/defaultship.png";
         }
         return Ship.builder()
                 .name(name)
                 .fishingType(FishingType.valueOf(fishingType))
-                .address(address == null ? "" : address)
+                .address(addr == null ? "" : addr)
                 .sido(sido)
                 .sigungu(sigungu)
                 .tel(company.getTel())
