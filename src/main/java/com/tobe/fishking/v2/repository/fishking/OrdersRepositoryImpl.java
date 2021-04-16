@@ -7,6 +7,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tobe.fishking.v2.entity.fishing.Goods;
+import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
@@ -232,5 +234,28 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                 .where(orders.fishingDate.eq(date),
                         orders.orderStatus.eq(status))
                 .fetch();
+    }
+
+    @Override
+    public List<OrderDetails> getNextOrders(Integer personnel, Goods good, String fishingDate) {
+        return queryFactory
+                .select(orderDetails)
+                .from(orders).join(orderDetails).on(orders.eq(orderDetails.orders))
+                .where(orders.orderStatus.eq(OrderStatus.waitBook),
+                        orderDetails.personnel.lt(personnel).or(orderDetails.personnel.eq(personnel)),
+                        orders.goods.eq(good),
+                        orders.fishingDate.eq(fishingDate))
+                .orderBy(orders.createdDate.asc())
+                .fetch();
+    }
+
+    @Override
+    public Integer getPersonnelByFishingDate(Goods good, String fishingDate) {
+        return queryFactory
+                .select(orderDetails.personnel.sum())
+                .from(orders).join(orderDetails).on(orders.eq(orderDetails.orders))
+                .where(orders.goods.eq(good),
+                        orders.fishingDate.eq(fishingDate))
+                .fetchOne();
     }
 }

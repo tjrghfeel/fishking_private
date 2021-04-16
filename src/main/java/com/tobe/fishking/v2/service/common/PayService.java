@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -178,6 +179,25 @@ public class PayService {
         TrNo = orders.getTradeNumber();
 
         try {
+            OrderDetails orderDetails = orderDetailsRepository.findByOrders(orders);
+
+            Integer totalPersonnel = ordersRepository.getPersonnelByFishingDate(orders.getGoods(), orders.getFishingDate());
+            Integer remains = orders.getGoods().getMaxPersonnel() - totalPersonnel + orderDetails.getPersonnel();
+            List<OrderDetails> waits = ordersRepository.getNextOrders(orderDetails.getPersonnel(), orders.getGoods(), orders.getFishingDate());
+            if (waits != null) {
+                for (OrderDetails wait: waits) {
+                    if (remains == 0) {
+                        break;
+                    }
+                    if (wait.getPersonnel() <= remains) {
+                        Orders waitOrder = wait.getOrders();
+                        waitOrder.changeStatus(OrderStatus.bookConfirm);
+                        ordersRepository.save(waitOrder);
+                        remains -= wait.getPersonnel();
+                    }
+                }
+            }
+
             KSPayApprovalCancelBean ipg = new KSPayApprovalCancelBean("175.126.62.209", 29991);
 
             ipg.HeadMessage(EncType, Version, Type, Resend, RequestDate, StoreId, OrderNumber, UserName, IdNum, Email,
@@ -231,6 +251,7 @@ public class PayService {
                         .isCancel(true)
                         .build();
                 calculateRepository.save(calculate);
+
             }
         } catch (Exception e) {
             rMessage2 = "P잠시후재시도(" + e.toString() + ")";    // 메시지2
