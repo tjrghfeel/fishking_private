@@ -76,9 +76,14 @@ export default inject(
               uploaded.push({ fileId, downloadUrl });
             }
           }
-          await this.setState({
+          let category = "";
+          if (resolve["category"]) category = resolve.category;
+          else if (resolve["fishingDiaryType"] == "조행기")
+            category = "fishingBlog";
+          else category = "fishingDiary";
+          category = await this.setState({
             fishingDiaryId: resolve.fishingDiaryId,
-            category: resolve.category,
+            category,
             isPageUpdate: true,
             title: resolve.title,
             // 어종

@@ -49,7 +49,7 @@ const App = inject()(
         this.webview = React.createRef(null);
         this.state = {
           initiated: false,
-          uri: 'https://fishkingapp.com/police',
+          uri: 'https://fishkingapp.com/police/login',
           refreshEnabled: false,
           navigationState: null,
         };
