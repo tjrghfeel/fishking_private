@@ -214,6 +214,7 @@ public class SailController {
             "\n     date: 날짜" +
             "\n     personnel: 승선자 수" +
             "\n     shipName: 선박명" +
+            "\n     shipProfileImage: 선박프로필사진" +
             "\n     riders: 승선자 리스트 [{" +
             "\n         riderId: 승선자 id" +
             "\n         name: 이름" +

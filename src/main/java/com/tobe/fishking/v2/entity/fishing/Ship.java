@@ -204,7 +204,6 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "tinyint(1) default 0  comment '출항여부(출항중 or 정박중)'")
     private boolean departStatus;
 
-
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', ship, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = " bigint not null comment '생성자'")

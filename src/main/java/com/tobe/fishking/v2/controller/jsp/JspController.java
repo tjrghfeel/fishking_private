@@ -9,6 +9,12 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/boarding")
 public class JspController {
 
+    @GetMapping("/share")
+    public ModelAndView share(ModelAndView mnv) {
+        mnv.setViewName("jsp/share");
+        return mnv;
+    }
+
     @GetMapping("/index")
     public ModelAndView index(ModelAndView mnv) {
         mnv.setViewName("jsp/index");

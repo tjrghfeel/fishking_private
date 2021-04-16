@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -178,6 +181,33 @@ public class PayService {
         TrNo = orders.getTradeNumber();
 
         try {
+            if (orders.getGoods().getReserveType().equals(ReserveType.auto)) {
+                OrderDetails orderDetails = orderDetailsRepository.findByOrders(orders);
+                List<String> positions = Arrays.stream(orderDetails.getPositions().split(",")).collect(Collectors.toList());
+                Integer totalPersonnel = ordersRepository.getPersonnelByFishingDate(orders.getGoods(), orders.getFishingDate());
+                Integer remains = orders.getGoods().getMaxPersonnel() - totalPersonnel + orderDetails.getPersonnel();
+                List<OrderDetails> waits = ordersRepository.getNextOrders(orderDetails.getPersonnel(), orders.getGoods(), orders.getFishingDate());
+                if (waits != null) {
+                    for (OrderDetails wait: waits) {
+                        if (remains == 0) {
+                            break;
+                        }
+                        if (wait.getPersonnel() <= remains) {
+                            Orders waitOrder = wait.getOrders();
+                            Integer waitPersonnel = wait.getPersonnel();
+                            waitOrder.changeStatus(OrderStatus.bookConfirm);
+                            String newPosition = positions.subList(0,waitPersonnel).stream().map(Object::toString).collect(Collectors.joining(","));
+                            for (int idx = 0; idx < waitPersonnel ; idx++) {
+                                positions.remove(idx);
+                            }
+                            wait.changePositions(newPosition);
+                            ordersRepository.save(waitOrder);
+                            remains -= waitPersonnel;
+                        }
+                    }
+                }
+            }
+
             KSPayApprovalCancelBean ipg = new KSPayApprovalCancelBean("175.126.62.209", 29991);
 
             ipg.HeadMessage(EncType, Version, Type, Resend, RequestDate, StoreId, OrderNumber, UserName, IdNum, Email,
@@ -231,6 +261,7 @@ public class PayService {
                         .isCancel(true)
                         .build();
                 calculateRepository.save(calculate);
+
             }
         } catch (Exception e) {
             rMessage2 = "P잠시후재시도(" + e.toString() + ")";    // 메시지2

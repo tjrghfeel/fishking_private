@@ -70,5 +70,10 @@ public class OrderDetails extends BaseTime {
         this.personnel += 1;
         this.modifiedBy = member;
     }
+
+    public void changePositions(String positions) {
+        this.positions = positions;
+    }
+
 }
 
