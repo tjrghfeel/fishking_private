@@ -172,8 +172,8 @@ export default inject(
             switch (process) {
               case 'Share': {
                 const result = await Share.share({
-                  message: data.message,
-                  url: data.message,
+                  message: 'https://tiny.one/25r3whkw',
+                  url: 'https://tiny.one/25r3whkw',
                   title: '어복황제',
                 });
                 break;

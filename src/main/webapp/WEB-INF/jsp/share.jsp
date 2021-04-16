@@ -12,6 +12,7 @@
 <jsp:include page="cmm_head.jsp" />
 <body>
 
+<script src="/assets/smartsail/js/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         var ua = navigator.userAgent;
