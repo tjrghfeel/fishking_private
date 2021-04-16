@@ -131,6 +131,7 @@ public class BoardingService {
         LocalDate date = LocalDate.parse(orderDetails.getOrders().getFishingDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         response.put("orderId", orderId);
         response.put("shipName", orderDetails.getGoods().getShip().getShipName());
+        response.put("shipProfileImage", "/resource" + orderDetails.getGoods().getShip().getProfileImage());
         response.put("personnel", orderDetails.getPersonnel());
         response.put("date", date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd (EEE)")));
         List<Map<String, Object>> list = new ArrayList<>();

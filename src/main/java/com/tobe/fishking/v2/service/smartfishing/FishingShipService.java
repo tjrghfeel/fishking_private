@@ -652,10 +652,17 @@ public class FishingShipService {
         List<Map<String, Object>> shipsRes = new ArrayList<>();
         for (Tuple s : ships) {
             Map<String, Object> r = new HashMap<>();
+            String profile = s.get(3, String.class);
+            if (profile == null) {
+                profile = "/ship/defaultship.png";
+            } else {
+                profile = "/resource" + profile.split("/")[1] + "/thumb_" + profile.split("/")[2];
+            }
+
             r.put("shipId", s.get(0, Long.class));
             r.put("shipName", s.get(1, String.class));
             r.put("hasVideo", s.get(2, Boolean.class));
-            r.put("profileImage", "/resource" + s.get(3, String.class));
+            r.put("profileImage", profile);
             r.put("takes", s.get(4, Long.class));
             shipsRes.add(r);
         }
