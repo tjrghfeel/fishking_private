@@ -170,8 +170,11 @@
             success: function (response) {
                 console.log(JSON.stringify(response));
             }
-        })
+        });
     }
+    $(document).ready(function () {
+        fn_loadPageData();
+    });
 </script>
 </body>
 </html>
