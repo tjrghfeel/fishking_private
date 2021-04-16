@@ -370,7 +370,7 @@ public class CommonService {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
             result.put("keyword", keyword);
-            result.put("blog", diaries);
+            result.put("ship", diaries);
             return result;
         }
 //        result.put("keyword", keyword);
