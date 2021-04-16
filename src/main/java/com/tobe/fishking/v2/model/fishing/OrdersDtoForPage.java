@@ -8,7 +8,7 @@ public interface OrdersDtoForPage {
     Long getId();
     Long getGoodsId();
     Long getShipId();
-//    @Value("#{@mapperUtility.transDownLoadUrl(target.shipImageFileUrl, target.shipImageFileName)}")
+    @Value("#{@mapperUtility.transShipThumbnailImg(target.shipImageUrl)}")
     String getShipImageUrl();
     String getShipName();
     @Value("#{@mapperUtility.transEnumFishingType(target.fishingType)}")

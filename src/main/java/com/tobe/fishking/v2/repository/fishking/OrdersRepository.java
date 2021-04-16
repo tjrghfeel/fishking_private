@@ -37,7 +37,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
             "   o.id id, " +
             "   g.id goodsId, " +
             "   s.id shipId, " +
-            "   if(s.profile_image is null, '', concat('/resource', s.profile_image)) shipImageUrl , " +
+            "   s.profile_image shipImageUrl, " +
 //            "   (select f.file_url from files f " +
 //            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
 //            "   (select f.thumbnail_file from files f " +
@@ -77,7 +77,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
             "   o.id id, " +
             "   g.id goodsId, " +
             "   s.id shipId, " +
-            "   if(s.profile_image is null, '',concat('/resource', s.profile_image)) shipImageUrl , " +
+            "   s.profile_image shipImageUrl , " +
 //            "   (select f.file_url from files f " +
 //            "   where f.file_publish = 0 and f.pid = s.id and f.is_represent = 1) shipImageFileUrl, " +
 //            "   (select f.thumbnail_file from files f " +

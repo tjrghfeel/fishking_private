@@ -213,7 +213,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   m.profile_image profileImage, " +
                     "   (select case " +
                     "       when d.file_publish = 5 then m.nick_name " +
-                    "       when d.file_publish = 6 then s.ship_name " +
+                    "       when d.file_publish = 6 then if(d.fishing_diary_ship_id is null, m.nick_name, s.ship_name) " +
+                    "       else m.nick_name " +
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
@@ -335,7 +336,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   m.profile_image profileImage, " +
                     "   (select case " +
                     "       when d.file_publish = 5 then m.nick_name " +
-                    "       when d.file_publish = 6 then s.ship_name " +
+                    "       when d.file_publish = 6 then if(d.fishing_diary_ship_id is null, m.nick_name, s.ship_name)  " +
+                    "       else m.nick_name " +
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
@@ -457,7 +459,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   m.profile_image profileImage, " +
                     "   (select case " +
                     "       when d.file_publish = 5 then m.nick_name " +
-                    "       when d.file_publish = 6 then s.ship_name " +
+                    "       when d.file_publish = 6 then if(d.fishing_diary_ship_id is null, m.nick_name, s.ship_name) " +
+                    "       else m.nick_name " +
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
@@ -546,7 +549,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   m.profile_image profileImage, " +
                     "   (select case " +
                     "       when d.file_publish = 5 then if(m.is_active=true, m.nick_name, '탈퇴한 회원입니다') " +
-                    "       when d.file_publish = 6 then s.ship_name " +
+                    "       when d.file_publish = 6 then if(d.fishing_diary_ship_id is null, m.nick_name, s.ship_name) " +
+                    "       else m.nick_name " +
                     "       end " +
                     "   ) nickName, " +
                     "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +

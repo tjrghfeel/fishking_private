@@ -548,10 +548,12 @@ public class FishingDiaryService {
         FishingDiary fishingDiary  = fishingDiaryRepo.findById(fishingDiaryId)
                 .orElseThrow(()->new ResourceNotFoundException("fishingDiary not found for this id :: "+fishingDiaryId));
         Long shipId = null;
+        String shipName = null;
         String shipAddress = null;
         String shipImageUrl = null;
         if(fishingDiary.getShip()!=null){
             shipId = fishingDiary.getShip().getId();
+            shipName = fishingDiary.getShip().getShipName();
             shipAddress = fishingDiary.getShip().getAddress();
             shipImageUrl = env.getProperty("file.downloadUrl")+fishingDiary.getShip().getProfileImage();
         }
@@ -673,6 +675,7 @@ public class FishingDiaryService {
                 .fishingDiaryId(fishingDiary.getId())
                 .fishingDiaryType(fishingDiaryType)
                 .shipId(shipId)
+                .shipName(shipName)
                 .shipAddress(shipAddress)
                 .shipImageUrl(shipImageUrl)
                 .address(fishingDiary.getFishingLocation())

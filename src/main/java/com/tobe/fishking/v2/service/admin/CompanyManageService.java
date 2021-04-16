@@ -263,6 +263,7 @@ public class CompanyManageService {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(()->new ResourceNotFoundException("company not found for this id :: "+companyId));
         company.acceptRequest();
+        company.setIsOpen(true);
         companyRepository.save(company);
 
         //회원 등급 수정

@@ -571,7 +571,7 @@ export default inject(
                       className="add-contrast"
                       data-role="collar"
                       defaultChecked={this.state.reserveType === "auto"}
-                      onChange={(e) => {
+                      onClick={(e) => {
                         if (e.target.checked)
                           this.setState({ reserveType: "auto" });
                       }}
@@ -587,7 +587,7 @@ export default inject(
                       type="radio"
                       className="add-contrast"
                       data-role="collar"
-                      onChange={(e) => {
+                      onClick={(e) => {
                         if (e.target.checked)
                           this.setState({ reserveType: "approval" });
                       }}

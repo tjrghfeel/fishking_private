@@ -15,6 +15,7 @@ public class FishingDiaryDetailDto {
     private Long fishingDiaryId;
     private String fishingDiaryType;
     private Long shipId;
+    private String shipName;
     private String shipAddress;
     private String shipImageUrl;
     private String address;

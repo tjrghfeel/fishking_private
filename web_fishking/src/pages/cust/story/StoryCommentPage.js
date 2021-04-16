@@ -272,7 +272,11 @@ export default inject(
                   </h6>
                 )}
                 <div className="container nopadding">
-                  <form className="form-line" style={{ marginTop: "1px" }}>
+                  <form
+                    className="form-line"
+                    style={{ marginTop: "1px" }}
+                    onSubmit={(e) => e.preventDefault()}
+                  >
                     <div className="form-group row">
                       <div className="col-10">
                         <input
@@ -297,6 +301,11 @@ export default inject(
                           type="text"
                           className="form-control no-line ml-4"
                           placeholder="댓글을 입력해주세요."
+                          onKeyDown={(e) => {
+                            if (e.keyCode == 13) {
+                              this.onSubmit();
+                            }
+                          }}
                         />
                       </div>
                       <div className="col-2 text-right">
