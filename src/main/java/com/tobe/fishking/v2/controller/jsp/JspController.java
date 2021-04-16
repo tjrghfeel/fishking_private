@@ -45,9 +45,9 @@ public class JspController {
         return mnv;
     }
 
-    @GetMapping("/cameraadd")
-    public ModelAndView cameraadd(ModelAndView mnv) {
-        mnv.setViewName("jsp/cameraadd");
+    @GetMapping("/cameradd")
+    public ModelAndView cameradd(ModelAndView mnv) {
+        mnv.setViewName("jsp/cameradd");
         return mnv;
     }
 
