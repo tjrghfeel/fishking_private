@@ -57,6 +57,7 @@ public interface FishingDiaryDtoForPage {
     /*파일들*/
     @Value("#{@mapperUtility.transFileUrlArray(target.fileNameList, target.filePathList)}")
     ArrayList<String> getFileList();
+    Long getVideoId();
 
     //관리자에서 추가로 사용할 항목들
     String getShipName();

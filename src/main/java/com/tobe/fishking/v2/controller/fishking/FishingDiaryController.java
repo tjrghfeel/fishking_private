@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
@@ -9,17 +10,22 @@ import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
+import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 
@@ -34,6 +40,10 @@ public class FishingDiaryController {
     CodeGroupRepository codeGroupRepository;
     @Autowired
     CommonCodeRepository commonCodeRepository;
+    @Autowired
+    FileRepository fileRepository;
+    @Autowired
+    Environment env;
 
     /*조항일지, 유저조행기 글쓰기*/
     @ApiOperation(value = "조항일지, 유저조행기 글쓰기",notes = "" +
@@ -457,5 +467,30 @@ public class FishingDiaryController {
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         return fishingDiaryService.deleteScrap(dto,token);
+    }
+
+    //비디오
+    @ApiOperation(value = "비디오 재생",notes = "" +
+            "요청필드 ) \n" +
+            "- fileId : Long / 비디오파일의 id")
+    @GetMapping("/getVideo")
+    public StreamingResponseBody stream( @RequestParam("fileId") Long fileId) throws Exception {
+        FileEntity fileEntity = fileRepository.findById(fileId)
+                .orElseThrow(()->new ServiceLogicException("file not found for this id :: "+fileId));
+
+        File file = new File(env.getProperty("file.location") + "/"+fileEntity.getFileUrl()+"/"+fileEntity.getStoredFile());
+        final InputStream is = new FileInputStream(file);
+        return os -> {
+            readAndWrite(is, os);
+        };
+    }
+
+    private void readAndWrite(final InputStream is, OutputStream os) throws IOException {
+        byte[] data = new byte[2048];
+        int read = 0;
+        while ((read = is.read(data)) > 0) {
+            os.write(data, 0, read);
+        }
+        os.flush();
     }
 }
