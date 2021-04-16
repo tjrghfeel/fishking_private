@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -181,7 +183,7 @@ public class PayService {
         try {
             if (orders.getGoods().getReserveType().equals(ReserveType.auto)) {
                 OrderDetails orderDetails = orderDetailsRepository.findByOrders(orders);
-
+                List<String> positions = Arrays.stream(orderDetails.getPositions().split(",")).collect(Collectors.toList());
                 Integer totalPersonnel = ordersRepository.getPersonnelByFishingDate(orders.getGoods(), orders.getFishingDate());
                 Integer remains = orders.getGoods().getMaxPersonnel() - totalPersonnel + orderDetails.getPersonnel();
                 List<OrderDetails> waits = ordersRepository.getNextOrders(orderDetails.getPersonnel(), orders.getGoods(), orders.getFishingDate());
@@ -192,9 +194,15 @@ public class PayService {
                         }
                         if (wait.getPersonnel() <= remains) {
                             Orders waitOrder = wait.getOrders();
+                            Integer waitPersonnel = wait.getPersonnel();
                             waitOrder.changeStatus(OrderStatus.bookConfirm);
+                            String newPosition = positions.subList(0,waitPersonnel).stream().map(Object::toString).collect(Collectors.joining(","));
+                            for (int idx = 0; idx < waitPersonnel ; idx++) {
+                                positions.remove(idx);
+                            }
+                            wait.changePositions(newPosition);
                             ordersRepository.save(waitOrder);
-                            remains -= wait.getPersonnel();
+                            remains -= waitPersonnel;
                         }
                     }
                 }
