@@ -395,6 +395,7 @@ public class MemberService {
         return result;
     }
 
+
     /*비번 변경을 위한 문자인증 요청 메소드*/
     @Transactional
     public Long sendSmsForPwReset(PhoneAuthDto dto){
@@ -1431,10 +1432,13 @@ public class MemberService {
                 result.setAuth(true);
 
                 Company company = companyRepository.findByMember(member);
-                if(company.getIsRegistered() == false){
+                if(company == null){//업체등록 요청도 하지 않은경우,
+                    throw new ServiceLogicException("권한이 없습니다.");
+                }
+                else if(company.getIsRegistered() == false){//등록 요청은 하였으나 승인이 되지 않은경우,
                     result.setIsRegistered(false);
                 }
-                else{
+                else{//등록요청을 하고 승인도 된경우,
                     result.setIsRegistered(true);
                     /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
                     if (member.getSessionToken() != null) {
@@ -1451,10 +1455,10 @@ public class MemberService {
             }
         }
         else{throw new ServiceLogicException("비밀번호가 잘못되었습니다");}
-        Role role = member.getRoles();
-        if (!(role==Role.admin || role==Role.shipowner)) {
-            throw new ServiceLogicException("권한이 없는 아이디 입니다.");
-        }
+//        Role role = member.getRoles();
+//        if (!(role==Role.admin || role==Role.shipowner)) {
+//            throw new ServiceLogicException("권한이 없는 아이디 입니다.");
+//        }
         return result;
     }
 
