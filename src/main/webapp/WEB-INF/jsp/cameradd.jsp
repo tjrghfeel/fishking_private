@@ -72,12 +72,13 @@
         $.ajax('/v2/api/sail/camera/update', {
             method: 'POST',
             dataType: 'json',
-            data: {
+            data: JSON.stringify({
                 cameraId: cameraId,
                 isUse: isUse
-            },
+            }),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
+                xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
             },
             success: function (response) {
                 console.log(JSON.stringify(response));
