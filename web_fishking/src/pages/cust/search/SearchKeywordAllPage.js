@@ -141,7 +141,7 @@ export default inject(
             {/** 조행기 */}
             {(this.state.blog?.totalElements || 0) > 0 && (
               <div className="container nopadding mt-3 mb-0">
-                <h5>조황일지</h5>
+                <h5>조행기</h5>
                 {this.state.blog.content.map((data, index) => (
                   <SearchDiaryListItemView
                     key={index}

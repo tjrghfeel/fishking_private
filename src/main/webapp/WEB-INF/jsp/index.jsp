@@ -84,6 +84,12 @@
             }
         )
     }
+    $(document).ready(function () {
+        var accessToken = localStorage.getItem('@accessToken') || null;
+        if (accessToken != null) {
+            window.location.href = '/boarding/dashboard';
+        }
+    });
 </script>
 </body>
 </html>

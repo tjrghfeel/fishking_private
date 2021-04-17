@@ -131,6 +131,7 @@ public class PoliceController {
             "\n         name: 이름" +
             "\n         birthdate: 생년월일" +
             "\n         phone: 연락처" +
+            "\n         emergencyPhone: 비상연락처" +
             "\n         fingerPrint: 지문인식" +
             "\n     }, ... ]" +
             "\n 성별, 지역은 빼주세요")

@@ -124,6 +124,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         List<OrderStatus> statuses = new ArrayList<>();
         statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.bookFix);
         statuses.add(OrderStatus.fishingComplete);
         return queryFactory
                 .selectFrom(goods).join(orderDetails).on(goods.eq(orderDetails.goods))
@@ -138,14 +139,14 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
         List<OrderStatus> statuses = new ArrayList<>();
         statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.bookFix);
         statuses.add(OrderStatus.fishingComplete);
         return queryFactory
                 .selectFrom(goods).join(orderDetails).on(goods.eq(orderDetails.goods))
                 .where(goods.fishingDates.any().fishingDateString.eq(today),
                         Expressions.asTime(goods.fishingStartTime).before(time),
                         Expressions.asTime(goods.fishingEndTime).after(time),
-                        goods.isUse.eq(true),
-                        orderDetails.orders.orderStatus.in(statuses))
+                        goods.isUse.eq(true))
                 .groupBy(goods)
                 .fetchCount();
     }
@@ -155,14 +156,17 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         List<OrderStatus> statuses = new ArrayList<>();
         statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.bookFix);
         statuses.add(OrderStatus.fishingComplete);
         return queryFactory
                 .select(rideShip)
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(goods).on(orderDetails.goods.eq(goods))
+                .join(orders).on(orderDetails.orders.eq(orders))
                 .where(goods.isUse.eq(true),
                         goods.fishingDates.any().fishingDateString.eq(today),
                         rideShip.isRide.eq(false),
-                        orderDetails.orders.orderStatus.in(statuses))
+                        orderDetails.orders.orderStatus.in(statuses),
+                        orders.fishingDate.eq(today))
                 .fetchCount();
     }
 
@@ -171,14 +175,17 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         List<OrderStatus> statuses = new ArrayList<>();
         statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.bookFix);
         statuses.add(OrderStatus.fishingComplete);
         return queryFactory
                 .select(rideShip)
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(goods).on(orderDetails.goods.eq(goods))
+                .join(orders).on(orderDetails.orders.eq(orders))
                 .where(goods.isUse.eq(true),
                         goods.fishingDates.any().fishingDateString.eq(today),
                         rideShip.isRide.eq(true),
-                        orderDetails.orders.orderStatus.in(statuses))
+                        orderDetails.orders.orderStatus.in(statuses),
+                        orders.fishingDate.eq(today))
                 .fetchCount();
     }
 
@@ -257,15 +264,22 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
     @Override
     public List<RiderResponse> getRiderData(Long goodsId) {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<OrderStatus> statuses = new ArrayList<>();
+        statuses.add(OrderStatus.bookConfirm);
+        statuses.add(OrderStatus.bookFix);
+        statuses.add(OrderStatus.fishingComplete);
         List<RiderResponse> responses = queryFactory
                 .select(new QRiderResponse(
                         rideShip.name,
                         rideShip.birthday,
                         rideShip.phoneNumber,
+                        rideShip.emergencyPhone,
                         rideShip.bFingerPrint
                 ))
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(orders).on(orderDetails.orders.eq(orders)).join(goods).on(orders.goods.eq(goods))
-                .where(orders.fishingDate.eq(today), goods.id.eq(goodsId))
+                .where(orders.fishingDate.eq(today),
+                        goods.id.eq(goodsId),
+                        orders.orderStatus.in(statuses))
                 .fetch();
         return responses;
     }

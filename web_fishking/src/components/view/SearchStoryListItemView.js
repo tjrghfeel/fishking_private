@@ -39,7 +39,7 @@ export default inject()(
                       />
                       <div className="media-body">
                         <p className="mb-0 text-secondary">
-                          {nickName} | {createdDate && createdDate.format("-")}
+                          {nickName} | {createdDate}
                         </p>
                       </div>
                     </div>
