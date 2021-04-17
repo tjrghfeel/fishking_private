@@ -892,6 +892,4 @@ public class MemberController {
         return memberService.modifyAlertSet(token, code, isSet);
     }
 
-    
-
 }

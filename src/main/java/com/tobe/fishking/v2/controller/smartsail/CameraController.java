@@ -41,7 +41,7 @@ public class CameraController {
             result.put("id", dto.getCameraId());
             return result;
         } catch (Exception e) {
-            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 등록에 실패했습니다.");
+            throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "카메라 사용설정에 실패했습니다.");
         }
     }
 
