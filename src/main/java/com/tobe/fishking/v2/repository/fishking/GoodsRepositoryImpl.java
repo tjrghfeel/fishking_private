@@ -146,8 +146,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 .where(goods.fishingDates.any().fishingDateString.eq(today),
                         Expressions.asTime(goods.fishingStartTime).before(time),
                         Expressions.asTime(goods.fishingEndTime).after(time),
-                        goods.isUse.eq(true),
-                        orderDetails.orders.orderStatus.in(statuses))
+                        goods.isUse.eq(true))
                 .groupBy(goods)
                 .fetchCount();
     }
@@ -162,10 +161,12 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         return queryFactory
                 .select(rideShip)
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(goods).on(orderDetails.goods.eq(goods))
+                .join(orders).on(orderDetails.orders.eq(orders))
                 .where(goods.isUse.eq(true),
                         goods.fishingDates.any().fishingDateString.eq(today),
                         rideShip.isRide.eq(false),
-                        orderDetails.orders.orderStatus.in(statuses))
+                        orderDetails.orders.orderStatus.in(statuses),
+                        orders.fishingDate.eq(today))
                 .fetchCount();
     }
 
@@ -179,10 +180,12 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         return queryFactory
                 .select(rideShip)
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(goods).on(orderDetails.goods.eq(goods))
+                .join(orders).on(orderDetails.orders.eq(orders))
                 .where(goods.isUse.eq(true),
                         goods.fishingDates.any().fishingDateString.eq(today),
                         rideShip.isRide.eq(true),
-                        orderDetails.orders.orderStatus.in(statuses))
+                        orderDetails.orders.orderStatus.in(statuses),
+                        orders.fishingDate.eq(today))
                 .fetchCount();
     }
 
@@ -270,6 +273,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                         rideShip.name,
                         rideShip.birthday,
                         rideShip.phoneNumber,
+                        rideShip.emergencyPhone,
                         rideShip.bFingerPrint
                 ))
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails)).join(orders).on(orderDetails.orders.eq(orders)).join(goods).on(orders.goods.eq(goods))
