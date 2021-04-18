@@ -124,7 +124,7 @@ public class BoardingService {
 
     @Transactional
     public Map<String, Object> detailRiders(Long orderId) {
-        OrderDetails orderDetails = orderDetailsRepository.getOne(orderId);
+        OrderDetails orderDetails = orderDetailsRepository.findByOrders(orderId);
         List<Tuple> riders = rideShipRepository.getDetailRiders(orderId);
 
         Map<String, Object> response = new HashMap<>();

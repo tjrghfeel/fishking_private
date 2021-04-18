@@ -232,7 +232,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
         return queryFactory
                 .select(rideShip.id, rideShip.name, rideShip.phoneNumber, rideShip.emergencyPhone, rideShip.isRide, rideShip.bFingerPrint)
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
-                .where(orderDetails.id.eq(orderId))
+                .where(orderDetails.orders.id.eq(orderId))
                 .fetch();
     }
 }
