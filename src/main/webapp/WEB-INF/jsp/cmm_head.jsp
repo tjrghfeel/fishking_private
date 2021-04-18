@@ -16,6 +16,7 @@
     <title>스마트승선 :: 어복황제 선장님</title>
 
     <!-- CSS -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="/assets/smartsail/css/bootstrap.css" rel="stylesheet">
     <link href="/assets/smartsail/css/style.css" rel="stylesheet">
 

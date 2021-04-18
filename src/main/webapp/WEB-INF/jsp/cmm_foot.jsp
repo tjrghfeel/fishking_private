@@ -7,6 +7,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <script src="/assets/smartsail/js/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="/assets/smartsail/js/jquery-datepicker-ko.js"></script>
 <script src="/assets/smartsail/js/bootstrap.min.js"></script>
 <script src="/assets/smartsail/js/jquery.touchSwipe.min.js"></script>
 <script src="/assets/smartsail/js/default.js"></script>

@@ -4,14 +4,12 @@ import com.tobe.fishking.v2.enums.IEnumModel;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.EnumValueDTO;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.board.PostService;
 import com.tobe.fishking.v2.service.smartfishing.FishingShipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
@@ -25,9 +23,14 @@ public class JspController {
 
     @Autowired private FishingShipService fishingShipService;
     @Autowired private PostService postService;
+    @Autowired private MemberService memberService;
 
     @GetMapping("/{viewName}")
-    public ModelAndView view(ModelAndView mnv, @PathVariable("viewName") String viewName, @RequestParam Map<String, String> params) throws ResourceNotFoundException {
+    public ModelAndView view(
+            ModelAndView mnv,
+            @PathVariable("viewName") String viewName,
+            @RequestParam Map<String, String> params
+    ) throws ResourceNotFoundException {
         if ("cameradd".equals(viewName)) {
             String shipId = params.get("shipId");
             mnv.addObject("result", fishingShipService.getShipCamera(Long.valueOf(shipId)));
