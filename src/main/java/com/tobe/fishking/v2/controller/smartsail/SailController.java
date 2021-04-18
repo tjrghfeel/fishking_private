@@ -198,7 +198,7 @@ public class SailController {
         Member member = memberService.getMemberBySessionToken(token);
         Map<String, Object> response = new HashMap<>();
         try {
-            boardingService.delRider(member, (Long) body.get("riderId"));
+            boardingService.delRider(member, Long.parseLong(body.get("riderId").toString()));
             response.put("status", "success");
             response.put("message", "삭제되었습니다.");
         } catch (Exception e) {
