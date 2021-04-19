@@ -656,7 +656,7 @@ public class FishingShipService {
             if (profile == null) {
                 profile = "/ship/defaultship.png";
             } else {
-                profile = "/resource" + profile.split("/")[1] + "/thumb_" + profile.split("/")[2];
+                profile = "/resource/" + profile.split("/")[1] + "/thumb_" + profile.split("/")[2];
             }
 
             r.put("shipId", s.get(0, Long.class));

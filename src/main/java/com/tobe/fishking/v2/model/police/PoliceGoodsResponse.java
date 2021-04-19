@@ -37,6 +37,8 @@ public class PoliceGoodsResponse {
                                Double longitude,
                                Long cameraCount) {
         LocalTime now = LocalTime.now();
+        fishingStartTime = fishingStartTime.replaceAll("24:", "00:");
+        fishingEndTime = fishingEndTime.replaceAll("24:", "00:");
         LocalTime from = LocalTime.of(Integer.parseInt(fishingStartTime.split(":")[0]), Integer.parseInt(fishingStartTime.split(":")[1]));
         LocalTime to = LocalTime.of(Integer.parseInt(fishingEndTime.split(":")[0]), Integer.parseInt(fishingEndTime.split(":")[1]));
         this.shipId = shipId;

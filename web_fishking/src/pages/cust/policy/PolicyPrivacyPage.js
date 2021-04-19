@@ -464,7 +464,8 @@ export default inject(
                 <p>
                   - 개인정보침해신고센터 (
                   <a
-                    onClick={() => NativeStore.linking("http://www.1336.or.kr")}
+                    href="http://www.1336.or.kr"
+                    target="_blank"
                     className="point"
                   >
                     www.1336.or.kr
@@ -472,9 +473,8 @@ export default inject(
                   / 국번없이 118)
                   <br />- 정보보호마크인증위원회 (
                   <a
-                    onClick={() =>
-                      NativeStore.linking("http://www.eprivacy.or.kr")
-                    }
+                    href="http://www.eprivacy.or.kr"
+                    target="_blank"
                     className="point"
                   >
                     www.eprivacy.or.kr
@@ -482,7 +482,8 @@ export default inject(
                   / 02-580-0533~4)
                   <br />- 대검찰청 인터넷범죄수사센터 (
                   <a
-                    onClick={() => NativeStore.linking("http://www.spo.go.kr")}
+                    href="http://www.spo.go.kr"
+                    target="_blank"
                     className="point"
                   >
                     www.spo.go.kr
@@ -490,7 +491,8 @@ export default inject(
                   / 02-3480-3600)
                   <br />- 경찰청 사이버테러대응센터 (
                   <a
-                    onClick={() => NativeStore.linking("http://www.ctrc.go.kr")}
+                    href="http://www.ctrc.go.kr"
+                    target="_blank"
                     className="point"
                   >
                     www.ctrc.go.kr

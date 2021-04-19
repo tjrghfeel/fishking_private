@@ -22,8 +22,8 @@ export default inject("PageStore")(
             <NavigationLayout title={"이용약관"} showBackIcon={true} />
 
             {/** 데이터 */}
-            <div className="container nopadding mt-0">
-              <div className="padding policy">
+            <div class="container nopadding mt-0">
+              <div class="padding policy">
                 <h4>제 1 조 (목적)</h4>
                 <p>
                   이 약관은 주식회사 투비 (이하 "회사”라 합니다)가 제공하는
@@ -33,7 +33,7 @@ export default inject("PageStore")(
                   PC통신, 스마트폰(안드로이드폰, 아이폰 등) 앱 등을 이용하는
                   전자상거래에 대해서도 그 성질에 반하지 않는 한 준용됩니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 2 조 (용어의 정의)</h4>
                 <p>
@@ -65,7 +65,7 @@ export default inject("PageStore")(
                   7. “오픈마켓”이란 “회사”에서 제공하는 “결제 서비스”를 말하며
                   일반결제 등으로 나누어집니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 3 조 (약관의 명시와 개정)</h4>
                 <p>
@@ -101,7 +101,7 @@ export default inject("PageStore")(
                   등에 관한 법률』, 공정거래위원회가 정하는 『전자상거래
                   등에서의 소비자보호지침』 및 관계 법령 또는 상관례에 따릅니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 4 조 (관련법령과의 관계)</h4>
                 <p>
@@ -110,13 +110,13 @@ export default inject("PageStore")(
                   관한 법률, 개인정보보호법 등 관련 법령의 규정과 일반적인
                   상관례에 의합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 5 조 (서비스의 제공 및 변경)</h4>
                 <p>
                   1. “회사”는 다음과 같은 서비스를 제공합니다.
                   <br />
-                  <div className="indent">
+                  <div class="indent">
                     1) “재화 등”에 대한 광고플랫폼 서비스
                     <br />
                     2) “재화 등”에 대한 예약중계 등 통신판매중개서비스
@@ -137,7 +137,7 @@ export default inject("PageStore")(
                   "공지사항" 화면 등 “회원”이 충분이 인지할 수 있는 방법으로
                   사전에 공지합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 6 조 (서비스 이용시간 및 중단)</h4>
                 <p>
@@ -155,7 +155,7 @@ export default inject("PageStore")(
                   통신의 두절 등의 사유가 발생한 경우에는 “서비스”의 제공을
                   일시적으로 중단할 수 있습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 7 조 (이용계약의 성립)</h4>
                 <p>
@@ -167,7 +167,7 @@ export default inject("PageStore")(
                   2. “회사”는 다음 각 호에 해당하는 신청에 대하여는 승인을 하지
                   않거나 사후에 이용계약을 해지할 수 있습니다.
                   <br />
-                  <div className="indent">
+                  <div class="indent">
                     1) 가입신청자가 이 약관에 의하여 이전에 회원자격을 상실한
                     적이 있는 경우
                     <br />
@@ -199,12 +199,12 @@ export default inject("PageStore")(
                   기간 이내에 “회사”에 대하여 회원정보 수정 등의 방법으로 그
                   변경사항을 알려야 합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 8 조 (이용계약의 종료)</h4>
                 <p>
                   1. “회원”의 해지
-                  <div className="indent">
+                  <div class="indent">
                     1) “회원”은 언제든지 “회사”에게 해지의사를 통지함으로써
                     이용계약을 해지할 수 있습니다.
                     <br />
@@ -217,7 +217,7 @@ export default inject("PageStore")(
                   </div>
                   2. “회사”의 해지
                   <br />
-                  <div className="indent">
+                  <div class="indent">
                     1) “회사”는 다음과 같은 사유가 있는 경우, 이용계약을 해지할
                     수 있습니다. 이 경우 “회사”는 “회원”에게 전자우편, 전화,
                     팩스 기타의 방법을 통하여 해지 사유를 밝혀 해지의사를
@@ -239,7 +239,7 @@ export default inject("PageStore")(
                     통지에 갈음합니다.
                   </div>
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 9 조 (회원의 ID 및 비밀번호에 대한 의무)</h4>
                 <p>
@@ -256,7 +256,7 @@ export default inject("PageStore")(
                   응하지 아니하여 발생하는 모든 불이익에 대한 책임은 “회원”에게
                   있습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제10조 (저작권)</h4>
                 <p>
@@ -285,7 +285,7 @@ export default inject("PageStore")(
                   필요한 사항을 서면으로 확인 요청할 수 있고, 이에 대해 회원은
                   적극 협조하여야 합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 11 조 (회원 및 이용자의 의무)</h4>
                 <p>
@@ -296,7 +296,7 @@ export default inject("PageStore")(
                   2. “회원”은 서비스 이용과 관련하여 다음 각 호의 행위를
                   하여서는 안됩니다.
                   <br />
-                  <div className="indent">
+                  <div class="indent">
                     1) 서비스 신청 또는 변경 시 허위내용의 등록
                     <br />
                     2) “회사”에 게시된 정보의 허가 받지 않은 변경
@@ -326,7 +326,7 @@ export default inject("PageStore")(
                     등의 선정 시에는 다음 각 호에 해당하는 내용을 사용하여서는
                     안됩니다.
                     <br />
-                    <div className="indent">
+                    <div class="indent">
                       ① 회사가 제공하는 서비스의 공식 운영자를 사칭하거나 유사한
                       명칭을 사용하여 다른 이용고객에게 혼란을 초래하는 행위
                       <br />
@@ -360,7 +360,7 @@ export default inject("PageStore")(
                   본 약관 제14조에 따라 서비스 이용 제한 조치를 취할 수
                   있습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 12 조 (회원의 게시물)</h4>
                 <p>
@@ -370,7 +370,7 @@ export default inject("PageStore")(
                   해당 게시물을 사전통지 없이 삭제 또는 임시조치(블라인드)할 수
                   있습니다.
                   <br />
-                  <div className="indent">
+                  <div class="indent">
                     1) 다른 회원 또는 제3자를 비방하거나 명예를 손상시키는
                     내용인 경우
                     <br />
@@ -409,7 +409,7 @@ export default inject("PageStore")(
                     14) 기타 관계법령에 위반된다고 판단되는 경우
                   </div>
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 13 조 (회원게시물의 관리)</h4>
                 <p>
@@ -426,7 +426,7 @@ export default inject("PageStore")(
                   3. 본 조에 따른 세부 절차는 정보통신망법 및 저작권법이 규정한
                   범위 내에서 회사가 정한 게시중단요청서비스에 따릅니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 14 조 (이용제한 등)</h4>
                 <p>
@@ -459,7 +459,7 @@ export default inject("PageStore")(
                   혜택 등도 모두 이용중단, 또는 소멸되며, “회사”는 이에 대해
                   별도로 보상하지 않습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 15 조 (권리의 귀속)</h4>
                 <p>
@@ -491,7 +491,7 @@ export default inject("PageStore")(
                   방법에 의하여 영리 목적으로 이용하거나 제3자에게 이용, 양도,
                   판매, 담보목적으로 제공하여서는 안됩니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 16 조 (회원에 대한 통지)</h4>
                 <p>
@@ -502,7 +502,7 @@ export default inject("PageStore")(
                   2. “회사”는 불특정다수 “회원”에 대한 통지의 경우, 1주일 이상
                   사이트에 게시함으로써 개별 통지에 갈음할 수 있습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 17 조 (회사의 의무)</h4>
                 <p>
@@ -516,7 +516,7 @@ export default inject("PageStore")(
                   <br />
                   3. 회사는 관계 법령이 정한 의무사항을 준수합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 18 조 (개별 서비스에 대한 약관 및 이용조건)</h4>
                 <p>
@@ -530,7 +530,7 @@ export default inject("PageStore")(
                   대해서는 “서비스”를 통해 공지할 수 있으며, “이용자”는 이용
                   정책을 숙지하고 준수하여야 합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 19 조 (오픈마켓 서비스 이용)</h4>
                 <p>
@@ -569,7 +569,7 @@ export default inject("PageStore")(
                   경우에도 구매자의 구매결정에 대하여 책임을 부담하지 아니
                   합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 20 조 (포인트)</h4>
                 <p>
@@ -605,7 +605,7 @@ export default inject("PageStore")(
                   8. “회사”는 포인트 적립기준, 사용조건 및 제한 등에 관한 사항을
                   서비스 화면에 별도로 게시하거나 통지합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 21 조 (할인쿠폰)</h4>
                 <p>
@@ -625,7 +625,7 @@ export default inject("PageStore")(
                   4. 할인쿠폰의 제공내용 및 운영방침은 “회사”의 정책에 따라
                   달라질 수 있습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 22조 (티켓)</h4>
                 <p>
@@ -668,7 +668,7 @@ export default inject("PageStore")(
                   일시정지, 영구이용정지 등으로 "서비스"의 이용을 제한할 수
                   있습니다.
                   <br />
-                  <div className="indent">
+                  <div class="indent">
                     1) "회원"이 "사이트"를 통하여 "티켓"을 구입한 후 이를 다시
                     "회사"에 환불 처리를 요청한 후 이를 마치 환불하지 않은 듯한
                     태도를 보이며 제휴업체에서 "상품 등"을 받는 행위 또는
@@ -680,7 +680,7 @@ export default inject("PageStore")(
                   </div>
                 </p>
 
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 23 조 (정보의 제공, 광고의 게재)</h4>
                 <p>
@@ -696,7 +696,7 @@ export default inject("PageStore")(
                   3. 회원은 회사에서 제공하는 사이트 광고에 대한 임의의 삭제,
                   비방 기타 사이트 광고 방해 행위 등을 할 수 없습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 24 조 (개인정보보호)</h4>
                 <p>
@@ -759,7 +759,7 @@ export default inject("PageStore")(
                   “회사”는 보관하고 있는 “회원” 정보를 그 보관의 목적으로만
                   이용합니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 25 조 (결제수단)</h4>
                 <p>
@@ -782,7 +782,7 @@ export default inject("PageStore")(
                   <br />
                   8. 기타 전자적 지급 방법에 의한 대금 지급 등
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 26 조 (예약 및 결제)</h4>
                 <p>
@@ -794,7 +794,7 @@ export default inject("PageStore")(
                   2. “회원”은 다음 또는 이와 유사한 방법에 의한 구매를 신청할 수
                   있습니다.
                   <br />
-                  <div className="indent">
+                  <div class="indent">
                     (1) 상품예약서비스
                     <br />
                   </div>
@@ -821,7 +821,7 @@ export default inject("PageStore")(
                   등에 대해 수집 및 관여하며, 개인정보취급방침에 준하여 수집된
                   정보 중 일부를 “업주”에게 제공할 수 있습니다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <h4>제 27 조 (환급)</h4>
                 <p>
@@ -847,7 +847,7 @@ export default inject("PageStore")(
                   <br />
                   4. “회사”의 예약서비스 취소, 환불 규정은 아래와 같습니다.
                 </p>
-                <div className="indent">
+                <div class="indent">
                   (1) 업체 사정에 의해 취소 발생 시 100% 환불이 가능합니다.
                   <br />
                   (2) 예약 상품 별 예약정보에 기재된 취소, 환불 규정을 반드시
@@ -896,18 +896,18 @@ export default inject("PageStore")(
                   <br />
                   (14) 취소/환불 규정 상세
                 </div>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
-                <table className="table table-bordered">
+                <table class="table table-bordered">
                   <colgroup>
                     <col style={{ width: "10%" }} />
                     <col style={{ width: "10%" }} />
-                    <col style={{ width: "80%" }} />
+                    <col style={{ widht: "80%" }} />
                   </colgroup>
                   <tbody>
                     <tr>
-                      <th rowSpan="4">고객 변심에 의한 환불</th>
-                      <th rowSpan="3">일반결제상품</th>
+                      <th rowspan="4">고객 변심에 의한 환불</th>
+                      <th rowspan="3">일반결제상품</th>
                       <td>1) 이용일 기준 7일~3일 전 : 100% 환불</td>
                     </tr>
                     <tr>
@@ -926,7 +926,7 @@ export default inject("PageStore")(
                       </td>
                     </tr>
                     <tr>
-                      <th rowSpan="3" colSpan="2">
+                      <th rowspan="3" colspan="2">
                         천재지변에 의한 환불 - 해상
                       </th>
                       <td>1) 적용업체 - 선상, 갯바위, 좌대낚시, 해상콘도</td>
@@ -943,8 +943,8 @@ export default inject("PageStore")(
                       </td>
                     </tr>
                     <tr>
-                      <th rowSpan="3">기타</th>
-                      <th rowSpan="3">일반·티켓 결제상품</th>
+                      <th rowspan="3">기타</th>
+                      <th rowspan="3">일반·티켓 결제상품</th>
                       <td>
                         1) 업체의 사정에 의해 환불이 필요할 경우 “회사”에게
                         요청한다.
@@ -977,7 +977,7 @@ export default inject("PageStore")(
                   티켓결제상품 1) 구매일 기준 7일 이내 : 100% 환불. 단, 7일 이내
                   부분 취소 환불 및 7일 이후 환불 처리는 회사에 요청
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <p>
                   <strong>천재지변에 의한 환불 - 해상</strong>
@@ -990,7 +990,7 @@ export default inject("PageStore")(
                   <br />
                   3) 이용 시작 이후에는 환불 조항이 적용되지 않는다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <p>
                   <strong>기타 일반·티켓 결제상품</strong>{" "}
@@ -1001,7 +1001,7 @@ export default inject("PageStore")(
                   2) 일부상황에서 부분 취소가 불가한 경우, 당사의 환불 규정에
                   의거하여 적용된다.
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
 
                 <p>
                   <strong>※ 부분 취소 불가 케이스</strong>
@@ -1009,7 +1009,7 @@ export default inject("PageStore")(
                   이용, 기타 카드 (기프트, 포인트, 선불, 법인, 해외), 최초
                   결제일로부터 3개월 경과 시
                 </p>
-                <p className="clearfix"></p>
+                <p class="clearfix"></p>
               </div>
 
               <h4>제 29 조 (책임제한)</h4>
@@ -1056,7 +1056,7 @@ export default inject("PageStore")(
                 과실이 없는 한 다음과 같은 사항으로부터 발생하는 손해에 대해
                 책임을 지지 아니합니다.
                 <br />
-                <div className="indent">
+                <div class="indent">
                   1) 회원 정보의 허위 또는 부정확성에 기인하는 손해
                   <br />
                   2) 서비스에 대한 접속 및 서비스의 이용과정에서 “회원”의
@@ -1071,7 +1071,7 @@ export default inject("PageStore")(
                   프로그램으로 인한 손해
                 </div>
               </p>
-              <p className="clearfix"></p>
+              <p class="clearfix"></p>
 
               <h4>제 30 조 (분쟁해결)</h4>
               <p>
@@ -1087,7 +1087,7 @@ export default inject("PageStore")(
                 이용자의 피해구제신청이 있는 경우에는 공정거래위원회 또는
                 시·도지사가 의뢰하는 분쟁조정기관의 조정에 따를 수 있습니다.
               </p>
-              <p className="clearfix"></p>
+              <p class="clearfix"></p>
 
               <h4>제 31 조 (준거법 및 관할법원)</h4>
               <p>
@@ -1103,15 +1103,15 @@ export default inject("PageStore")(
                 4. 회사는 이용자간에 제기된 전자상거래 소송에는 한국 법을
                 적용합니다.
               </p>
-              <p className="clearfix"></p>
+              <p class="clearfix"></p>
 
-              <h4>&lt;부칙&gt;</h4>
+              <h4>부칙</h4>
               <p>1. 이 약관은 0000년 00월 00일부터 시행됩니다.</p>
 
-              <p className="clearfix">
+              <p class="clearfix">
                 <br />
               </p>
-              <p className="clearfix">
+              <p class="clearfix">
                 <br />
               </p>
             </div>

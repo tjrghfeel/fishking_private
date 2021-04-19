@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.server.ServerCloneException;
 import java.util.*;
 
 @Service
@@ -57,7 +58,7 @@ public class CompanyService {
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
 
         /*이미 등록 또는 등록대기중인 company가 있는지 확인*/
-        if(companyRepository.existsByMember(member)){throw new RuntimeException("해당 회원은 이미 업체등록을 하였습니다");}
+        if(companyRepository.existsByMember(member)){throw new ServiceLogicException("해당 회원은 이미 업체등록을 하였습니다");}
 
         FileEntity bizNoFileEntity = fileRepository.findById(dto.getBizNoFile())
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getBizNoFile()));

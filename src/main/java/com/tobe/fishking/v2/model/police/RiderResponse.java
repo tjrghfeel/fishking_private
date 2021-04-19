@@ -14,16 +14,19 @@ public class RiderResponse {
     private String name;
     private String birthdate;
     private String phone;
+    private String emergencyPhone;
     private String fingerPrint;
 
     @QueryProjection
     public RiderResponse(String name,
                          String birthdate,
                          String phone,
+                         String emergencyPhone,
                          Boolean fingerprint) {
         this.name = name;
         this.birthdate = birthdate;
         this.phone = phone;
+        this.emergencyPhone = emergencyPhone;
         this.fingerPrint = fingerprint ? "지문완료" : "지문미등록";
     }
 }

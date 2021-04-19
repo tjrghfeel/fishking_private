@@ -34,10 +34,10 @@
                 </p>
             </div>
             <div class="col-6 text-left">
-                <p><a href="sail.html"><small class="grey">승선대기</small> : <strong class="large" id="data-waitCount">0</strong></a></p>
-                <p><a href="sail.html"><small class="grey">승선확인</small> : <strong class="large text-primary" id="data-confirmCount">0</strong></a></p>
-                <p><a href="sail.html"><small class="grey">확인실패</small> : <strong class="large orange" id="data-failCount">0</strong></a></p>
-                <p><a href="sail.html"><small class="grey">승선취소</small> : <strong class="large text-danger" id="data-cancelCount">0</strong></a></p>
+                <p><a ><small class="grey">승선대기</small> : <strong class="large" id="data-waitCount">0</strong></a></p>
+                <p><a ><small class="grey">승선확인</small> : <strong class="large text-primary" id="data-confirmCount">0</strong></a></p>
+                <p><a ><small class="grey">확인실패</small> : <strong class="large orange" id="data-failCount">0</strong></a></p>
+                <p><a ><small class="grey">승선취소</small> : <strong class="large text-danger" id="data-cancelCount">0</strong></a></p>
             </div>
         </div>
     </div>
@@ -51,15 +51,15 @@
         </div>
         <div class="col-8 text-right">
             <div class="custom-control custom-radio custom-control-inline">
-                <input checked type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input" onclick="javascript:loadPageData('new');">
+                <input checked type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input" onclick="javascript:fn_loadPageData('new');">
                 <label class="custom-control-label" for="customRadioInline1">최신</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input" onclick="javascript:loadPageData('shipName');">
+                <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input" onclick="javascript:fn_loadPageData('shipName');">
                 <label class="custom-control-label" for="customRadioInline2">선명</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input" onclick="javascript:loadPageData('username');">
+                <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input" onclick="javascript:fn_loadPageData('username');">
                 <label class="custom-control-label" for="customRadioInline3">승선자</label>
             </div>
         </div>
@@ -72,15 +72,16 @@
         <div class="card card-sm">
             <div class="row no-gutters d-flex align-items-center">
                 <div class="col-6">
-                    <a href="sail-detail.html">
+                    <a >
                         <p>
+                            예약자:    <strong class="large" name="data-username">챔피언 1호</strong><br/>
                             선상명:    <strong class="large" name="data-shipName">챔피언 1호</strong><br/>
                             상품명:    <strong class="large text-info" name="data-goodsName">우럭(오전)</strong><br/>
                             연락처:    <span name="data-phone">010-1234-5678</span>
                         </p>
                     </a>
                 </div>
-                <div class="col-4 text-right">
+                <div class="col-6 text-right">
                     <a name="data-click" class="btn btn-round btn-dark data-finger-confirm"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">승선확인</a>
                     <a name="data-click" class="btn btn-round btn-dark data-finger-regist"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">지문등록</a>
                 </div>
@@ -107,8 +108,8 @@
             </div>
             <div class="modal-footer-btm">
                 <div class="row no-gutters">
-                    <div class="col-6"><a href="#none" class="btn btn-primary btn-lg btn-block" data-dismiss="modal">확인</a></div>
-                    <div class="col-6"><a href="#none" class="btn btn-third btn-lg btn-block" data-dismiss="modal">닫기</a></div>
+                    <div class="col-6"><a class="btn btn-primary btn-lg btn-block" data-dismiss="modal">확인</a></div>
+                    <div class="col-6"><a class="btn btn-third btn-lg btn-block" data-dismiss="modal">닫기</a></div>
                 </div>
             </div>
         </div>
@@ -141,7 +142,6 @@
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
             },
             success: function (response) {
-                console.log(JSON.stringify(response));
                 pageData = response;
 
                 document.querySelector('#data-waitCount').textContent = response['status']['waitCount'];
@@ -174,12 +174,16 @@
                 //     }
                 // });
 
+                var items = document.querySelectorAll('[id^="list-item-"]');
+                for (var i = 0; i < items.length; i++) {
+                    items[i].remove();
+                }
                 for (var i = 0; i < response['boardingPeople'].length; i++) {
                     var item = response['boardingPeople'][i] || {};
                     var clone = document.querySelector('#list-template').cloneNode(true);
-                    clone.id = i;
+                    clone.id = 'list-item-' + i;
                     clone.style.display = 'block';
-                    clone.querySelector('[name="data-username"]').textContent = item['username'];
+                    // clone.querySelector('[name="data-username"]').textContent = item['username'];
                     clone.querySelector('[name="data-shipName"]').textContent = item['shipName'];
                     clone.querySelector('[name="data-goodsName"]').textContent = item['goodsName'];
                     clone.querySelector('[name="data-phone"]').textContent = item['phone'];
@@ -193,9 +197,6 @@
                     // ----- > 지문등록 이벤트
                     clone.querySelector('.data-finger-regist').setAttribute('data-index', i);
                     clone.querySelector('.data-finger-regist').addEventListener('click', function () {
-                        fn_fingerprint_confirm(item, this.getAttribute('data-index'));
-                    });
-                    clone.querySelector('[name="data-click"]').addEventListener('click', function () {
                         fn_fingerprint_regist(item, this.getAttribute('data-index'));
                     });
                     // ----- > 최초 방문은 지문등록 버튼만 표시

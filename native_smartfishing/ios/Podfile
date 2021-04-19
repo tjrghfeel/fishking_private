@@ -4,6 +4,14 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '10.0'
 
 target 'native_smartfishing' do
+  permissions_path = '../node_modules/react-native-permissions/ios'
+
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Permission-Contacts', :path => "#{permissions_path}/Contacts"
+  pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+  pod 'Permission-PhotoLibraryAddOnly', :path => "#{permissions_path}/PhotoLibraryAddOnly"
+
   config = use_native_modules!
 
   use_react_native!(
@@ -26,4 +34,5 @@ target 'native_smartfishing' do
   post_install do |installer|
     react_native_post_install(installer)
   end
+
 end
