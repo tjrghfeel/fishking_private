@@ -438,9 +438,11 @@ export default inject(
             <div className="container nopadding">
               <div className="card-box-grey">
                 <dl className="dl-horizontal-round dl-line">
-                  <dt>
-                    어종 <span className="red">*</span>
-                  </dt>
+                  <a data-toggle="modal" data-target="#selFishModal">
+                    <dt>
+                      어종 <span className="red">*</span>
+                    </dt>
+                  </a>
                   <a data-toggle="modal" data-target="#selFishModal">
                     <dd>
                       {this.state.fishingSpeciesName?.map((data, index) => (
@@ -455,9 +457,12 @@ export default inject(
                       />
                     </dd>
                   </a>
-                  <dt>
-                    날짜 <span className="red">*</span>
-                  </dt>
+
+                  <a data-toggle="modal" data-target="#selDateModal">
+                    <dt>
+                      날짜 <span className="red">*</span>
+                    </dt>
+                  </a>
                   <a data-toggle="modal" data-target="#selDateModal">
                     <dd>
                       {this.state.fishingDate && (
@@ -478,7 +483,10 @@ export default inject(
                       />
                     </dd>
                   </a>
-                  <dt>물때</dt>
+
+                  <a data-toggle="modal" data-target="#selTideModal">
+                    <dt>물때</dt>
+                  </a>
                   <a data-toggle="modal" data-target="#selTideModal">
                     <dd>
                       {this.state.tideName}
@@ -489,7 +497,10 @@ export default inject(
                       />
                     </dd>
                   </a>
-                  <dt>낚시 기법</dt>
+
+                  <a data-toggle="modal" data-target="#selTechnicModal">
+                    <dt>낚시 기법</dt>
+                  </a>
                   <a data-toggle="modal" data-target="#selTechnicModal">
                     <dd>
                       {this.state.fishingTechnicListName?.map((data, index) => (
@@ -504,7 +515,10 @@ export default inject(
                       />
                     </dd>
                   </a>
-                  <dt>미끼</dt>
+
+                  <a data-toggle="modal" data-target="#selLureModal">
+                    <dt>미끼</dt>
+                  </a>
                   <a data-toggle="modal" data-target="#selLureModal">
                     <dd>
                       {this.state.fishingLureListName?.map((data, index) => (
@@ -519,7 +533,10 @@ export default inject(
                       />
                     </dd>
                   </a>
-                  <dt>낚시 장소</dt>
+
+                  <a data-toggle="modal" data-target="#selPlaceModal">
+                    <dt>낚시 장소</dt>
+                  </a>
                   <a data-toggle="modal" data-target="#selPlaceModal">
                     <dd>
                       {this.state.fishingTypeName}
