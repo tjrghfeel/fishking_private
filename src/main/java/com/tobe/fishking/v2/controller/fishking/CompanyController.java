@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
 import com.tobe.fishking.v2.model.admin.company.CompanyCreateDtoForManage;
 import com.tobe.fishking.v2.model.admin.company.CompanyModifyDtoForManage;
@@ -153,11 +154,11 @@ public class CompanyController {
     }
 
     /*업체 삭제*/
-    @ApiOperation(value = "업체 삭제",notes = "관리자용 api.")
-    @DeleteMapping("/company")
-    public Long deleteCompanyRegisterRequest(@RequestBody DeletingCompanyDto dto) throws ResourceNotFoundException {
-        return companyService.deleteCompanyRegisterRequest(dto.getCompanyId());
-    }
+//    @ApiOperation(value = "업체 삭제",notes = "관리자용 api.")
+//    @DeleteMapping("/company")
+//    public Long deleteCompanyRegisterRequest(@RequestBody DeletingCompanyDto dto) throws ResourceNotFoundException {
+//        return companyService.deleteCompanyRegisterRequest(dto.getCompanyId());
+//    }
 
     /*업체 등록 취소*/
     @ApiOperation(value="업체 등록 취소",notes = "" +
@@ -167,8 +168,18 @@ public class CompanyController {
             "- 응답 필드 )\n" +
             "   성공시 true. ")
     @DeleteMapping("/cancelCompanyRigster")
-    public Boolean cancelCompanyRegister(@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+    public Boolean cancelCompanyRegister(@RequestHeader("Authorization") String token) throws ResourceNotFoundException, ServiceLogicException {
         return companyService.cancelCompanyRegister(token);
+    }
+
+    //해당 회원이 이미 업체등록요청을 했는지 여부
+    @ApiOperation(value = "업체등록요청 여부",notes = "" +
+            "해당 회원이 업체등록 요청을 했는지 여부를 확인")
+    @GetMapping("/company/checkRequestExist")
+    public Boolean checkRequestExist(
+            @RequestHeader("Authorization") String token
+    ){
+        return companyService.checkRequestExist(token);
     }
 
 

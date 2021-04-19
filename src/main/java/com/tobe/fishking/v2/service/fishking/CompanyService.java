@@ -9,6 +9,7 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.CompanyDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyListDTO;
 import com.tobe.fishking.v2.model.fishing.CompanyUpdateDTO;
@@ -18,6 +19,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.CompanyRepository;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.utils.HashUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,7 @@ public class CompanyService {
     private final Environment env;
     private final PasswordEncoder encoder;
     private final CommonCodeRepository codeRepository;
-
+    private final MemberService memberService;
 
     /*업체 등록 요청 처리 메소드. */
     @Transactional
@@ -350,10 +352,14 @@ public class CompanyService {
 
     /*업체등록 삭제 메소드.*/
     @Transactional
-    public Long deleteCompanyRegisterRequest(Long companyId) throws ResourceNotFoundException {
+    public Long deleteCompanyRegisterRequest(Long companyId, String token) throws ResourceNotFoundException, ServiceLogicException {
+        Member member = memberService.getMemberBySessionToken(token);
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(()->new ResourceNotFoundException("company not found for this id ::"+companyId));
 
+        if(member.getRoles() != Role.admin && member.getId() != company.getMember().getId()){
+            throw new ServiceLogicException("권한이 없습니다.");
+        }
         Long[] fileIdList = new Long[3];
         fileIdList[0] = company.getBizNoFileId().getId();
         fileIdList[1] = company.getAccountFileId().getId();
@@ -370,13 +376,23 @@ public class CompanyService {
 
     /*업체 등록 취소 */
     @Transactional
-    public Boolean cancelCompanyRegister(String token) throws ResourceNotFoundException {
+    public Boolean cancelCompanyRegister(String token) throws ResourceNotFoundException, ServiceLogicException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()-> new ResourceNotFoundException("member not found for this token ::"+token));
         Company company = companyRepository.findByMember(member);
 
-        deleteCompanyRegisterRequest(company.getId());
+        deleteCompanyRegisterRequest(company.getId(), token);
         return true;
+    }
+
+    //업체등록 요청 여부 확인
+    @Transactional
+    public Boolean checkRequestExist(String token){
+        Member member = memberService.getMemberBySessionToken(token);
+        Company company = companyRepository.findByMember(member);
+
+        if(company != null){return true;}
+        else return false;
     }
 
     public Long findAllByIsRegistered() {

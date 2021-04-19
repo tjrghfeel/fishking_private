@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.admin;
 
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.company.CompanyCreateDtoForManage;
 import com.tobe.fishking.v2.model.admin.company.CompanyManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.company.CompanyModifyDtoForManage;
@@ -84,6 +85,15 @@ public class CompanyManageController {
     ) throws ResourceNotFoundException {
         return companymanageService.acceptRequest(token, companyId);
     }
+    //업체 등록 요청 반려
+    @ApiOperation(value = "업체 등록 요청 반려")
+    @DeleteMapping("/manage/company/rejectRequest/{companyId}")
+    public Boolean rejectRequest(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("companyId") Long companyId
+    ) throws ResourceNotFoundException, ServiceLogicException {
+        return companymanageService.rejectRequest(token, companyId);
+    }
 
     //영업 상태 수정
     @ApiOperation(value = "영업 상태 수정")
@@ -96,6 +106,8 @@ public class CompanyManageController {
         if(!isOpen.equals("true") && !isOpen.equals("false")){throw new RuntimeException("isOpen값은 'true' 또는 'false'이어야 합니다.");}
         return companymanageService.setIsOpen(token, companyId, isOpen);
     }
+
+    //
 
 
 }

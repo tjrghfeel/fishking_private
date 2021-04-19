@@ -1431,7 +1431,8 @@ public class MemberService {
                 result.setAuth(true);
 
                 Company company = companyRepository.findByMember(member);
-                if(company.getIsRegistered() == false){
+                if(company == null){throw new ServiceLogicException("권한이 없습니다.");}
+                else if(company.getIsRegistered() == false){
                     result.setIsRegistered(false);
                 }
                 else{

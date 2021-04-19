@@ -9,6 +9,7 @@ import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.company.CompanyCreateDtoForManage;
 import com.tobe.fishking.v2.model.admin.company.CompanyManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.company.CompanyModifyDtoForManage;
@@ -273,6 +274,19 @@ public class CompanyManageService {
             memberRepository.save(member);
         }
 
+        return true;
+    }
+    //업체 등록 요청 반려
+    @Transactional
+    public Boolean rejectRequest(String token, Long companyId) throws ResourceNotFoundException, ServiceLogicException {
+        Member member = memberService.getMemberBySessionToken(token);
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(()->new ResourceNotFoundException("company not found for this id :: "+companyId));
+
+        if(member.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다.");}
+        if(company.getIsRegistered() == true) { return false; }//이미 승인이 된 업체이면 반려처리가 안되도록.
+
+        companyService.deleteCompanyRegisterRequest(companyId, token);
         return true;
     }
 
