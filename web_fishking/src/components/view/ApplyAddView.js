@@ -1,5 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
+import APIStore from "../../stores/APIStore";
+import ModalStore from "../../stores/ModalStore";
 
 export default inject(
   "PageStore",
@@ -42,6 +44,45 @@ export default inject(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        const { PageStore } = this.props;
+        const canApply = this.checkCanApply();
+        if (canApply) {
+          ModalStore.openModal("Alert", {
+            body: (
+                <React.Fragment>
+                  <p>
+                    기신청 상태입니다.
+                    <br />
+                    처리 후 연락드리겠습니다.
+                  </p>
+                </React.Fragment>
+            ),
+            onOk: () => {
+              PageStore.goBack();
+            },
+          });
+        }
+      }
+
+      openAlert = () => {
+        ModalStore.openModal("Alert", {
+          body: (
+              <React.Fragment>
+                <p>
+                  필수 입력값을 확인해주세요.
+                </p>
+              </React.Fragment>
+          ),
+        });
+      }
+
+      checkCanApply = async () => {
+        const { APIStore } = this.props;
+        const canApply = await APIStore._get("/v2/api/company/checkRequestExist");
+        console.log(canApply);
+      }
+
       requestSubmit = async () => {
         const { PageStore, APIStore, DataStore, successPathname } = this.props;
         const {
@@ -52,49 +93,62 @@ export default inject(
           representFile,
           accountFile,
         } = this.state;
+        let needInput = false;
 
         if (companyName === "") {
           this.companyName.current?.classList.add("is-invalid");
-          return;
+          needInput = true;
         } else {
           this.companyName.current?.classList.remove("is-invalid");
+          needInput = false;
         }
         if (phoneNumber === "" || !DataStore.isMobile(phoneNumber)) {
           this.phoneNumber.current?.classList.add("is-invalid");
-          return;
+          needInput = true;
         } else {
           this.phoneNumber.current?.classList.remove("is-invalid");
+          needInput = false;
         }
         if (companyAddress === "") {
           this.companyAddress.current?.classList.add("is-invalid");
-          return;
+          needInput = true;
         } else {
           this.companyAddress.current?.classList.remove("is-invalid");
+          needInput = false;
         }
         if (bizNoFile === -1) {
           this.bizNoFile.current?.classList.add("is-invalid");
-          return;
+          needInput = true;
         } else {
           this.bizNoFile.current?.classList.remove("is-invalid");
+          needInput = false;
         }
         if (representFile === -1) {
           this.representFile.current?.classList.add("is-invalid");
-          return;
+          needInput = true;
         } else {
           this.representFile.current?.classList.remove("is-invalid");
+          needInput = false;
         }
         if (accountFile === -1) {
           this.accountFile.current?.classList.add("is-invalid");
-          return;
+          needInput = true;
         } else {
           this.accountFile.current?.classList.remove("is-invalid");
+          needInput = false;
         }
 
-        const resolve = await APIStore._post("/v2/api/company", this.state);
-        if ((resolve || 0) !== 0) {
-          PageStore.push(successPathname);
+        if (needInput) {
+          this.openAlert();
+          return;
+        } else {
+          const resolve = await APIStore._post("/v2/api/company", this.state);
+          if ((resolve || 0) !== 0) {
+            PageStore.push(successPathname);
+          }
         }
       };
+
       uploadFile = async (type) => {
         let file = null;
         if (type === "bizNo" && this.bizNoFile.current?.files.length > 0) {
