@@ -179,7 +179,11 @@ public class CompanyController {
     public Boolean checkRequestExist(
             @RequestHeader("Authorization") String token
     ){
-        return companyService.checkRequestExist(token);
+        try {
+            return companyService.checkRequestExist(token);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

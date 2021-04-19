@@ -1,5 +1,5 @@
 import React from "react";
-import { inject, observer } from "mobx-react";
+import {inject, observer} from "mobx-react";
 import APIStore from "../../stores/APIStore";
 import ModalStore from "../../stores/ModalStore";
 
@@ -46,23 +46,37 @@ export default inject(
       /********** ********** ********** ********** **********/
       componentDidMount() {
         const { PageStore } = this.props;
-        const canApply = this.checkCanApply();
-        if (canApply) {
-          ModalStore.openModal("Alert", {
-            body: (
-                <React.Fragment>
-                  <p>
-                    기신청 상태입니다.
-                    <br />
-                    처리 후 연락드리겠습니다.
-                  </p>
-                </React.Fragment>
-            ),
-            onOk: () => {
-              PageStore.goBack();
-            },
-          });
-        }
+        this.checkCanApply()
+        // console.log(canApply)
+        // if (canApply == null) {
+        //   ModalStore.openModal("Alert", {
+        //     body: (
+        //         <React.Fragment>
+        //           <p>
+        //             로그인 후 신청가능합니다.
+        //           </p>
+        //         </React.Fragment>
+        //     ),
+        //     onOk: () => {
+        //       PageStore.goBack();
+        //     },
+        //   });
+        // } else if (canApply) {
+        //   ModalStore.openModal("Alert", {
+        //     body: (
+        //         <React.Fragment>
+        //           <p>
+        //             기신청 상태입니다.
+        //             <br />
+        //             처리 후 연락드리겠습니다.
+        //           </p>
+        //         </React.Fragment>
+        //     ),
+        //     onOk: () => {
+        //       PageStore.goBack();
+        //     },
+        //   });
+        // }
       }
 
       openAlert = () => {
@@ -78,9 +92,41 @@ export default inject(
       }
 
       checkCanApply = async () => {
-        const { APIStore } = this.props;
-        const canApply = await APIStore._get("/v2/api/company/checkRequestExist");
-        console.log(canApply);
+        const { APIStore, PageStore } = this.props;
+        await APIStore._get("/v2/api/company/checkRequestExist")
+            .then((result) => {
+              console.log(result)
+              if (result == "") {
+                ModalStore.openModal("Alert", {
+                  body: (
+                      <React.Fragment>
+                        <p>
+                          로그인 후 신청가능합니다.
+                        </p>
+                      </React.Fragment>
+                  ),
+                  onOk: () => {
+                    PageStore.goBack();
+                  },
+                });
+              } else if (result) {
+                ModalStore.openModal("Alert", {
+                  body: (
+                      <React.Fragment>
+                        <p>
+                          기신청 상태입니다.
+                          <br />
+                          처리 후 연락드리겠습니다.
+                        </p>
+                      </React.Fragment>
+                  ),
+                  onOk: () => {
+                    PageStore.goBack();
+                  },
+                });
+              }
+            })
+        ;
       }
 
       requestSubmit = async () => {
