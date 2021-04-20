@@ -32,6 +32,7 @@ public interface MemberManageDtoForPage {
     String getDong();
     String getAreaCode();
     String getLocalNumber();
+    Boolean getIsSuspended();
 
 
 }

@@ -97,7 +97,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "   m.dong dong, " +
             "   m.areacode areaCode, " +
             "   m.localnumber localNumber, " +
-            "   m.created_date createdDate " +
+            "   m.created_date createdDate, " +
+            "   m.is_suspended isSuspended " +
             "from member m " +
             "where " +
             "   m.is_certified =true " +
@@ -117,7 +118,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //            "   and if(:gu is null,true,(m.gu = :gu)) " +
 //            "   and if(:dong is null,true,(m.dong = :dong)) " +
             "   and if(:areaCode is null,true,(m.areacode like %:areaCode%)) " +
-            "   and if(:localNumber is null,true,(m.localnumber like %:localNumber%)) ",
+            "   and if(:localNumber is null,true,(m.localnumber like %:localNumber%)) "+
+            "   and if(:isSuspended is null, true, (m.is_suspended = :isSuspended)) ",
 //            "   and if(:joinDtStart  is null, true, (m.created_date > :joinDtStart)) " +
 //            "   and if(:joinDtEnd is null, true, (m.created_date < :joinDtEnd)) ",
             countQuery = "select m.id from member m " +
@@ -139,7 +141,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //                    "   and if(:gu is null,true,(m.gu = :gu)) " +
 //                    "   and if(:dong is null,true,(m.dong = :dong)) " +
                     "   and if(:areaCode is null,true,(m.areacode like %:areaCode%)) " +
-                    "   and if(:localNumber is null,true,(m.localnumber like %:localNumber%)) ",
+                    "   and if(:localNumber is null,true,(m.localnumber like %:localNumber%)) " +
+                    "   and if(:isSuspended is null, true, (m.is_suspended = :isSuspended)) ",
 //                    "   and if(:joinDtStart  is null, true, (m.created_date > :joinDtStart)) " +
 //                    "   and if(:joinDtEnd is null, true, (m.created_date < :joinDtEnd)) ",
             nativeQuery = true
@@ -164,6 +167,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             @Param("localNumber") String localNumber,
 //            @Param("joinDtStart") LocalDate joinDtStart,
 //            @Param("joinDtEnd") LocalDate joinDtEnd,
+            @Param("isSuspended") Boolean isSuspended,
             Pageable pageable
     );
 

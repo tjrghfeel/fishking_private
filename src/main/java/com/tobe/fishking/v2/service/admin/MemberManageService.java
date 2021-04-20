@@ -93,6 +93,7 @@ public class MemberManageService {
                 dto.getLocalNumber(),
 //                dto.getJoinDtStart(),
 //                dto.getJoinDtEnd(),
+                dto.getIsSuspended(),
                 pageable
         );
     }
@@ -279,5 +280,21 @@ public class MemberManageService {
         member = memberRepository.save(member);
 
         return member.getId();
+    }
+
+    //계정 정지
+    @Transactional
+    public Boolean setIsSuspended(String token, Long memberId, String suspend) throws ServiceLogicException {
+        Member manager = memberService.getMemberBySessionToken(token);
+        if(manager.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다.");}
+
+        Boolean suspendValue = null;
+        if(suspend.equals("false")){suspendValue = false;}
+        else suspendValue = true;
+        Member member = memberService.getMemberById(memberId);
+        member.setIsSuspended(suspendValue);
+        memberRepository.save(member);
+
+        return true;
     }
 }

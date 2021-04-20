@@ -70,7 +70,14 @@ export default inject(
                     />
                   ))}
                 </div>
-                <p className="space mt-1"></p>
+                <p style={{textAlign="center", height=130}} className="space mt-1">
+                    <br>(주)투비<br>
+                    대표 조옥수 | 대표번호 1566-2996<br>
+                    전남 목포시 연산백련로 1번길 8-11<br>
+                    사업자 등록번호 : 337-87-02139<br>
+                    통신판매업 신고번호 : 제2021-전남목포-0022호<br>
+                    개인정보담당자 : help@to-be.kr
+                </p>
               </div>
             )}
           </React.Fragment>

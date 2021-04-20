@@ -1323,6 +1323,7 @@ public class MemberService {
             result.setMemberId(member.getId());
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new ServiceLogicException("회원정보가 존재하지 않습니다.");}
+            if(member.getIsSuspended() == true){throw new ServiceLogicException("정지된 계정입니다.");}
 
             //기기등록토큰 저장.
             if(loginDTO.getRegistrationToken() != null) {
@@ -1410,6 +1411,7 @@ public class MemberService {
             System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new ServiceLogicException("회원정보가 존재하지 않습니다.");}
+            if(member.getIsSuspended() == true){throw new ServiceLogicException("정지된 계정입니다.");}
 
             //기기등록토큰 저장.
             if(loginDTO.getRegistrationToken() != null) {
@@ -1463,7 +1465,7 @@ public class MemberService {
     }
 
     @Transactional
-    public LoginResultDto policeLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+    public LoginResultDto policeLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
         LoginResultDto result = new LoginResultDto();
 //        System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
@@ -1479,6 +1481,7 @@ public class MemberService {
 //            System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
+            if(member.getIsSuspended() == true){throw new ServiceLogicException("정지된 계정입니다.");}
 
             //기기등록토큰 저장.
             if(loginDTO.getRegistrationToken() != null) {

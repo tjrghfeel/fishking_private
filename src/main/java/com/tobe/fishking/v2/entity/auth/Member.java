@@ -96,6 +96,9 @@ public class Member {
     @Embedded
     private Address address;
 
+    @Column(columnDefinition = "bit default 0 comment '회원 계정 정지 여부'")
+    private Boolean isSuspended = false;
+
     //푸시알림용 기기토큰 목록
 //    @Column(columnDefinition = "varchar(255) comment '푸쉬알림용 등록토큰'")
 //    private String registrationToken;
@@ -113,7 +116,7 @@ public class Member {
                   Role roles, String sessionToken, String profileImage, String profileBackgroundImage,
                   Boolean isActive, String certifiedNo, Boolean isCertified,
                   String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber,
-                  Address address, Set<CommonCode> alertSet) {
+                  Address address, Set<CommonCode> alertSet ) {
         this.id = id;
         this.uid = uid;
         this.memberName = memberName;
@@ -161,4 +164,5 @@ public class Member {
             if(commonCode.getCode().equals(alertSetCode)){ this.alertSet.remove(commonCode); }
         }
     }
+    public void setIsSuspended(Boolean isSuspended){this.isSuspended = isSuspended;}
 }

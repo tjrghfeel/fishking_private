@@ -87,9 +87,21 @@ public class MemberManageController {
     @ApiOperation(value = "임시 회원 생성")
     @PostMapping("/manage/member/tempCreate")
     public Long makeTempMember(
-            @RequestBody MakeTempMemberDto dto,
+            @RequestBody @Valid MakeTempMemberDto dto,
             @RequestHeader("Authorization") String token
     ) throws ServiceLogicException {
         return memberManageService.makeTempMember(dto,token);
+    }
+
+    //계정 정지
+    @ApiOperation(value = "계정 정지")
+    @PutMapping("/manage/member/suspend/{memberId}/{suspend}")
+    public Boolean setIsSuspended(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("memberId") Long memberId,
+            @PathVariable("suspend") String suspend
+    ) throws ServiceLogicException {
+        if(!suspend.equals("true") && !suspend.equals("false")){throw new ServiceLogicException("suspend의 값으로는 'true' 또는 'false'만 가능합니다.");}
+        return memberManageService.setIsSuspended(token, memberId, suspend);
     }
 }

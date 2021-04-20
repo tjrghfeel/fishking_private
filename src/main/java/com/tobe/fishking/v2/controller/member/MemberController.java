@@ -763,7 +763,7 @@ public class MemberController {
             "- registrationToken : String / 선택 / 푸쉬알림을 위한 기기의 등록 토큰\n")
     @PostMapping("/police/login")
     @ResponseBody
-    public String policeLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+    public String policeLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
         return memberService.policeLogin(loginDTO).getToken();
     }
 

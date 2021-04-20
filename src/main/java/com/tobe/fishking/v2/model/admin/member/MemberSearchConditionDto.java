@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class MemberSearchConditionDto {
 //    private Long id;
@@ -34,7 +35,8 @@ public class MemberSearchConditionDto {
 //    private String dong;//암호화필요
     private String areaCode;//암호화필요
     private String localNumber;//암호화필요
+    private Boolean isSuspended;
 
-    private String sort;
+    private String sort="createdDate";
     private Integer pageCount=10;
 }
