@@ -25,7 +25,7 @@ export default inject(
           <React.Fragment>
             <NavigationLayout title={"업체등록"} showBackIcon={true} />
 
-            <ApplyAddView successPathname={"/login"} />
+            <ApplyAddView successPathname={"/login"} pass={true} />
           </React.Fragment>
         );
       }

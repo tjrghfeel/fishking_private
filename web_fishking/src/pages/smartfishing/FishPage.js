@@ -128,7 +128,7 @@ export default inject(
       onClick = async (item) => {
         const { PageStore } = this.props;
         PageStore.storeState();
-        PageStore.push(`/cust/story/diary/detail/${item.id}`);
+        PageStore.push(`/cust/story/diary/detail/${item.id}?from=smartfishing`);
       };
       onClickProfile = async (item) => {
         const { PageStore } = this.props;

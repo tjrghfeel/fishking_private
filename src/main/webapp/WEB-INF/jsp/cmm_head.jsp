@@ -32,4 +32,12 @@
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+
+    <script>
+        var accessToken = localStorage.getItem('@accessToken') || null;
+        var pathname = location.pathname;
+        if (!pathname.includes('/index') && accessToken === null) {
+            window.location.href = '/boarding/index';
+        }
+    </script>
 </head>

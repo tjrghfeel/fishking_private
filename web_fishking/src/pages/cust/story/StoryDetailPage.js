@@ -107,7 +107,12 @@ export default inject(
                   fishingDiaryId: this.state.fishingDiaryId,
                 });
                 if (resolve) {
-                  PageStore.push(`/main/story/user`);
+                  const { from = null } = PageStore.getQueryParams();
+                  if (from == "smartfishing") {
+                    PageStore.push(`/smartfishing/fish`);
+                  } else {
+                    PageStore.push(`/main/story/user`);
+                  }
                 }
               },
             });

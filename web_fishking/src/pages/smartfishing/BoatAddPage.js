@@ -92,6 +92,8 @@ export default inject(
         if (id) {
           const resolve = await APIStore._get(`/v2/api/ship/detail/${id}`);
           await this.setState({ ...resolve });
+          // 주소 설정
+          this.textAddr.current.value = resolve["address"];
           // 선상위치 선택
           if (this.state.weight === 3) {
             this.shipType3.current.onSetSelected(this.state.positions);

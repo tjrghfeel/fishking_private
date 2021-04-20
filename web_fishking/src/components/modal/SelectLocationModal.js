@@ -3,10 +3,15 @@ import { inject, observer } from "mobx-react";
 import SearchCompanyListView from "../view/SearchCompanyListView";
 import SelectLocationByMapView from "../view/SelectLocationByMapView";
 
-export default inject("DataStore")(
-  observer(({ id, onSelected }) => {
+export default inject(
+  "DataStore",
+  "PageStore"
+)(
+  observer(({ id, onSelected, PageStore }) => {
     const [active, setActive] = useState(0);
     const dismiss = useRef(null);
+    const { iscompany = null } = PageStore.getQueryParams();
+
     return (
       <div
         className="modal fade modal-full"
@@ -36,12 +41,14 @@ export default inject("DataStore")(
                 >
                   선박 선택
                 </a>
-                <a
-                  className={"nav-link" + (active === 1 ? " active" : "")}
-                  onClick={() => setActive(1)}
-                >
-                  위치 선택
-                </a>
+                {iscompany != "Y" && (
+                  <a
+                    className={"nav-link" + (active === 1 ? " active" : "")}
+                    onClick={() => setActive(1)}
+                  >
+                    위치 선택
+                  </a>
+                )}
               </nav>
               {active === 0 && (
                 <SearchCompanyListView
@@ -54,7 +61,7 @@ export default inject("DataStore")(
                   }}
                 />
               )}
-              {active === 1 && (
+              {iscompany != "Y" && active === 1 && (
                 <SelectLocationByMapView
                   onSelected={({ address, lat, lng }) => {
                     if (onSelected) {

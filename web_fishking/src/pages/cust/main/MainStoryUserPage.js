@@ -71,17 +71,15 @@ export default inject(
         ) {
           district2List = PageStore.state.district2List.join(",");
         }
-        const {
-          content,
-          pageable: { pageSize = 0 },
-        } = await APIStore._get("/v2/api/fishingDiary/list/" + page, {
-          category: PageStore.state.category,
-          district1: PageStore.state.district1,
-          district2List,
-          fishSpeciesList: PageStore.state.fishSpeciesList,
-          sort: PageStore.state.sort,
-          shipId: PageStore.state.shipId,
-        });
+        const { content = [], pageable: { pageSize = 0 } = {} } =
+          (await APIStore._get("/v2/api/fishingDiary/list/" + page, {
+            category: PageStore.state.category,
+            district1: PageStore.state.district1,
+            district2List,
+            fishSpeciesList: PageStore.state.fishSpeciesList,
+            sort: PageStore.state.sort,
+            shipId: PageStore.state.shipId,
+          })) || {};
 
         if (page === 0) {
           PageStore.setState({ list: content });
