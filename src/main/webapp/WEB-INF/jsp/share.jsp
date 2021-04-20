@@ -29,9 +29,9 @@
 
     <!-- Facebook -->
     <meta property="og:url" content="">
-    <meta property="og:title" content="스마트승선">
-    <meta property="og:description" content="어복황제 선장님">
-    <meta property="og:image" content="/assets/cust/brand/social-logo.png">
+    <meta property="og:title" content="어복황제">
+    <meta property="og:description" content="어복황제 - 똑똑한 바다낚시">
+    <meta property="og:image" content="/assets/brand/fishking-social.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
