@@ -498,6 +498,19 @@ export default inject(
                     </dd>
                   </a>
 
+                  <a data-toggle="modal" data-target="#selPlaceModal">
+                    <dt>낚시 장소</dt>
+                  </a>
+                  <a data-toggle="modal" data-target="#selPlaceModal">
+                    <dd>
+                      {this.state.fishingTypeName}
+                      <img
+                        src="/assets/cust/img/svg/arrow-right.svg"
+                        alt=""
+                        className="add"
+                      />
+                    </dd>
+                  </a>
                   <a data-toggle="modal" data-target="#selTechnicModal">
                     <dt>낚시 기법</dt>
                   </a>
@@ -526,20 +539,6 @@ export default inject(
                           {data.concat(" ")}
                         </React.Fragment>
                       ))}
-                      <img
-                        src="/assets/cust/img/svg/arrow-right.svg"
-                        alt=""
-                        className="add"
-                      />
-                    </dd>
-                  </a>
-
-                  <a data-toggle="modal" data-target="#selPlaceModal">
-                    <dt>낚시 장소</dt>
-                  </a>
-                  <a data-toggle="modal" data-target="#selPlaceModal">
-                    <dd>
-                      {this.state.fishingTypeName}
                       <img
                         src="/assets/cust/img/svg/arrow-right.svg"
                         alt=""
@@ -589,9 +588,9 @@ export default inject(
                           className="float-right-arrow"
                         />
                         {this.state.shipData.itemType === "Company" && (
-                          <h6>{this.state.shipData.name}</h6>
+                          <h6>{this.state.shipData.name || "선박 또는 위치선택"}</h6>
                         )}
-                        <p>{this.state.shipData.address}</p>
+                        <p>{this.state.shipData.address || "선박 또는 위치선택"}</p>
                       </div>
                     </div>
                   </div>

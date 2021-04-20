@@ -12,7 +12,7 @@ import "./SelectDateModal.css";
 
 export default inject("DataStore")(
   observer(
-    forwardRef(({ id, onSelected, until = null }, ref) => {
+    forwardRef(({ id, onSelected, until = null, inputDate = null }, ref) => {
       const [selected, setSelected] = useState(new Date());
       const [dateString, setDateString] = useState("");
       const formatDateString = (item) => {
@@ -25,8 +25,13 @@ export default inject("DataStore")(
           item.getDate() < 10 ? "0".concat(item.getDate()) : item.getDate();
         return year + "년 " + month + "월 " + date + "일";
       };
-      const onInit = useCallback(() => {
-        const item = new Date();
+      const onInit = useCallback((init) => {
+        let item = new Date();
+        if (!init) {
+          if (inputDate != null) {
+            item = new Date(inputDate)
+          }
+        }
         setSelected(item);
         setDateString(formatDateString(item));
       }, [setSelected, setDateString]);
