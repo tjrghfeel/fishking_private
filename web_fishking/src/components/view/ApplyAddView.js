@@ -47,36 +47,6 @@ export default inject(
       componentDidMount() {
         const { PageStore, pass = false } = this.props;
         if (!pass) this.checkCanApply();
-        // console.log(canApply)
-        // if (canApply == null) {
-        //   ModalStore.openModal("Alert", {
-        //     body: (
-        //         <React.Fragment>
-        //           <p>
-        //             로그인 후 신청가능합니다.
-        //           </p>
-        //         </React.Fragment>
-        //     ),
-        //     onOk: () => {
-        //       PageStore.goBack();
-        //     },
-        //   });
-        // } else if (canApply) {
-        //   ModalStore.openModal("Alert", {
-        //     body: (
-        //         <React.Fragment>
-        //           <p>
-        //             기신청 상태입니다.
-        //             <br />
-        //             처리 후 연락드리겠습니다.
-        //           </p>
-        //         </React.Fragment>
-        //     ),
-        //     onOk: () => {
-        //       PageStore.goBack();
-        //     },
-        //   });
-        // }
       }
 
       openAlert = () => {
@@ -93,7 +63,6 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         await APIStore._get("/v2/api/company/checkRequestExist").then(
           (result) => {
-            console.log(result);
             if (result == "") {
               ModalStore.openModal("Alert", {
                 body: (
