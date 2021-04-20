@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.service.StringConverter;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -142,6 +143,9 @@ public class Company extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 비번'")
     private String nhnPw;
 
+    @Column(columnDefinition = "date null comment '등록 승인일'")
+    private LocalDate registeredDate;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', company, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by", updatable= false , columnDefinition  = " bigint not null  comment '생성자'")
@@ -221,6 +225,9 @@ public class Company extends BaseTime {  //선상
         this.modifiedBy = member;
     }
 
-    public void acceptRequest(){this.isRegistered = true;}
+    public void acceptRequest(){
+        this.isRegistered = true;
+        this.registeredDate = LocalDate.now();
+    }
     public void setIsOpen(Boolean isOpen){this.isOpen = isOpen;}
 }

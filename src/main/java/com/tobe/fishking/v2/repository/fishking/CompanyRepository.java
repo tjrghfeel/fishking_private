@@ -124,7 +124,7 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   c.adt_id adtId, " +
             "   c.nhn_id nhnId, " +
             "   c.created_by createdBy, " +
-            "   c.created_date createdDate, " +
+            "   c.registered_date createdDate, " +
             "   (select group_concat(s2.ship_name separator ', ') from company c2 left join ship s2 on c2.id = s2.company_id " +
             "       where c2.id = c.id group by c2.id) shipNameList " +
             "from company c join member m on (c.member_id = m.id) left join ship s on c.id = s.company_id " +
