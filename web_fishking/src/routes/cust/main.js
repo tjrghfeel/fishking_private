@@ -4,7 +4,7 @@ import { Switch, Route, withRouter } from "react-router-dom";
 
 import MainHomePage from "../../pages/cust/main/MainHomePage";
 import MainCompanyBoatPage from "../../pages/cust/main/MainCompanyBoatPage";
-import MainCompanyRockPage from "../../pages/cust/main/MainCompanyRockPage";
+import MainCompanyRockPage from "../../pages/cust/main/MainCompanyRockPage"
 import MainRockPage from "../../pages/cust/main/MainRockPage";
 import MainStoryDiaryPage from "../../pages/cust/main/MainStoryDiaryPage";
 import MainStoryTvPage from "../../pages/cust/main/MainStoryTvPage";

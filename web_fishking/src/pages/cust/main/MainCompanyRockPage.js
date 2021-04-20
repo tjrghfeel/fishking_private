@@ -420,6 +420,13 @@ export default inject(
                     ))}
                 </React.Fragment>
               )}
+
+              {(!PageStore.state.list || PageStore.state.list.length < 1) && (
+                <React.Fragment>
+                  <p className="clearfix"></p>
+                  <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
+                </React.Fragment>
+              )}
             </div>
 
             {/** Toggle Menu */}

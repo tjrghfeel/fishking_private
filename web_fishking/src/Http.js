@@ -61,6 +61,11 @@ export default (() => {
               body: "데이터 수신 중입니다.",
             });
           }
+          if (err.message?.indexOf("403") !== -1) {
+            ModalStore.openModal("Alert", {
+              body: "권한이 없습니다.",
+            });
+          }
           console.error(`message:${err.message}`);
           console.error(`stack:${err.stack}`);
           reject(err);

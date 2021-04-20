@@ -21,6 +21,7 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
+  "ModalStore",
   "NativeStore"
 )(
   observer(
@@ -416,7 +417,6 @@ export default inject(
                     ))}
                 </React.Fragment>
               )}
-
               {PageStore.state.list && PageStore.state.list.length > 0 && (
                 <React.Fragment>
                   <p className="clearfix"></p>
@@ -429,6 +429,12 @@ export default inject(
                         onClick={this.onClick}
                       />
                     ))}
+                </React.Fragment>
+              )}
+              {(!PageStore.state.list || PageStore.state.list.length < 1) && (
+                <React.Fragment>
+                  <p className="clearfix"></p>
+                  <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
                 </React.Fragment>
               )}
             </div>

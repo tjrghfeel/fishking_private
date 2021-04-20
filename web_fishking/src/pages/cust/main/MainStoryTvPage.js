@@ -281,6 +281,13 @@ export default inject(
                       </a>
                     </li>
                   )}
+
+                  {(!PageStore.state.live_list || PageStore.state.live_list.length < 1) && (
+                    <React.Fragment>
+                      <p className="clearfix"></p>
+                      <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
+                    </React.Fragment>
+                  )}
                 </ul>
               </div>
             </div>
@@ -329,6 +336,13 @@ export default inject(
                   onClick={this.onClickTube}
                 />
               ))}
+
+            {(!PageStore.state.tube_list || PageStore.state.tube_list.length < 1) && (
+              <React.Fragment>
+                <p className="clearfix"></p>
+                <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
+              </React.Fragment>
+            )}
             <MainTab activeIndex={3} />
           </React.Fragment>
         );
