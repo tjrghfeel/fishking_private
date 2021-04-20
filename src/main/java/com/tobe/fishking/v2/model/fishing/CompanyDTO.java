@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public class CompanyDTO {
     private Long id;//not null, pk
     private Long member;  //name이 없을 경우 member_id, fk
+    private String memberUid;
     private String companyName;//
     private String memberName;//
     private String shipowner;
@@ -43,7 +45,8 @@ public class CompanyDTO {
     private Long bizNoFileId;
     private Long representFileId;
     private Long accountFileId;
-    private LocalDateTime createdDate;
+    private String createdDate;
+    private String registeredDate;
     //private Long bizNoFile;//not null
     //private Long representFile;//not null
     //private Long accountFile;//not null
@@ -51,6 +54,7 @@ public class CompanyDTO {
     public CompanyDTO(Company company, Member member, String url){
         id = company.getId();
         this.member = company.getMember().getId();
+        memberUid = member.getUid();
         companyName = company.getCompanyName();
         memberName = member.getMemberName();
         shipowner = company.getShipOwner();
@@ -77,7 +81,8 @@ public class CompanyDTO {
         bizNoFileId = company.getBizNoFileId().getId();
         representFileId = company.getRepresentFileId().getId();
         accountFileId = company.getAccountFileId().getId();
-        createdDate = company.getCreatedDate();
+        createdDate = company.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if(company.getRegisteredDate()!=null){  registeredDate = company.getRegisteredDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
 
     }
 

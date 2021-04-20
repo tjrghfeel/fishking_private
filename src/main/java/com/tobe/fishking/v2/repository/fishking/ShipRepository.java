@@ -43,20 +43,22 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   if(f.file_type=3, true, false) isVideo " +
                     "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
                     "where " +
-                    "   s.ship_name like %:keyword% " +
+                    "   (s.ship_name like %:keyword% " +
                     "   or s.address like %:keyword% " +
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
-                    "   or s.sigungu like %:keyword% " +
+                    "   or s.sigungu like %:keyword%) " +
+//                    "   and s.is_active = true " +
                     "order by s.ship_name ",
             countQuery = "select s.id " +
                     "from ship s join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
                     "where " +
-                    "   s.ship_name like %:keyword% " +
+                    "   (s.ship_name like %:keyword% " +
                     "   or s.address like %:keyword% " +
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
-                    "   or s.sigungu like %:keyword% " +
+                    "   or s.sigungu like %:keyword%) " +
+//                    "   and s.is_active = true " +
                     "order by s.ship_name  ",
             nativeQuery = true
     )
@@ -76,6 +78,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "       left join member m on c.member_id = m.id " +
                     "where " +
                     "   m.session_token = :token " +
+//                    "   and s.is_active = true " +
                     "   and  (s.ship_name like %:keyword% " +
                     "   or s.address like %:keyword% " +
                     "   or s.tel like %:keyword% " +
@@ -88,6 +91,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "       left join member m on c.member_id = m.id " +
                     "where " +
                     "   m.session_token = :token " +
+//                    "   and s.is_active =true " +
                     "   and  (s.ship_name like %:keyword% " +
                     "   or s.address like %:keyword% " +
                     "   or s.tel like %:keyword% " +

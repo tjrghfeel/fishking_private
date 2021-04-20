@@ -26,7 +26,7 @@ public class TvListResponse {
             Ship ship) {
         this.id = ship.getId();
         this.shipName = ship.getShipName();
-        this.thumbnailUrl = "/resource" + ship.getProfileImage();
+        this.thumbnailUrl = "/resource/" + ship.getProfileImage().split("/")[1]+"/thumb_"+ship.getProfileImage().split("/")[2];
         List<RealTimeVideo> video = ship.getShiipRealTimeVideos();
         this.cameraId = video.size() > 0 ? video.get(0).getId() : null;
     }

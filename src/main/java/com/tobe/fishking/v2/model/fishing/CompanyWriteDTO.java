@@ -16,16 +16,16 @@ import javax.validation.constraints.Size;
 public class CompanyWriteDTO {
     //    private Long id;//not null, pk
     @Size(min=4,max = 10)
-    private String companyName;//
+    private String companyName;//업체명
     @Size(min=2,max=5)
-    private String memberName;//
+    private String memberName;//대표자명?
 //    @Size(min=2,max=15)
 //    private String sido;
 //    @Size(min=2,max=15)
 //    private String gungu;
 
-    private String tel;//
-    private String phoneNumber;
+    private String tel;//전화번호
+    private String phoneNumber;//휴대폰번호
 
     private String bizNo;
     @Size(min=2,max=15)
@@ -40,7 +40,7 @@ public class CompanyWriteDTO {
 //    private String  skbAccount;
 //    private String skbPassword;
     @Size(min=10,max=50)
-    private String companyAddress;//
+    private String companyAddress;//지역명?
 //    private Boolean isRegistered;
     /* @NotNull
      private Long createdBy;//not null, fk
