@@ -26,6 +26,20 @@ const ModalStore = new (class {
       ...state,
     };
   };
+  history = [];
+  closeModal = (length = 1) => {
+    if (length === 0) {
+      // -> 모두 닫기
+      for (let modalType of this.history) {
+        $(`#${modalType}`).modal("hide");
+      }
+    } else {
+      for (let i = 0; i < length; i++) {
+        const modalType = this.history.pop();
+        $(`#${modalType}`).modal("hide");
+      }
+    }
+  };
   /********** ********** ********** ********** **********/
   /** action */
   /********** ********** ********** ********** **********/
@@ -42,6 +56,8 @@ const ModalStore = new (class {
     this.onOk = options.onOk || null;
     this.onClose = options.onClose || null;
     this.onSelect = options.onSelect || null;
+
+    if (modalType !== "SNS") this.history.push(modalType);
 
     if (modalType === "Alert") {
       $("#alertModal").modal("show");

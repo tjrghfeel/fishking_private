@@ -1,24 +1,32 @@
 ##### 어복황제 Web Application
 
 ---
-
-##### react-router-dom
+##### 로그인 관련
 ```
-> yarn add react-router-dom
+로그인/로그아웃 처리 :: PageStore.js > setAccessToken(token:토큰, service:서비스, auto:자동로그인여부)
+토큰 처리 :: PageStore.js > loadAccessToken(service:서비스)
 ```
-##### mobx
+##### 모달 관련
 ```
-> yarn add mobx mobx-react
+공통 모달 :: ModalStore.js > openModal(modalType:모달유형,options:옵션객체)
+개별 모달 :: /components/modal/**Modal.js (공통 제외)
 ```
-##### axios
+##### 스크롤 페이징
 ```
-> yarn add axios
+스크롤 이벤트 설정 :: PageStore.js > setScrollEvent(onScroll:콜백, element:타겟엘리먼트)
+스크롤 이벤트 해제 :: PageStore.js > removeScrollEvent()
 ```
-##### qs
+##### 네이티브 관련
 ```
-> yarn add qs
+NativeStore.js
 ```
-##### react-calendar
+##### API 요청 관련
 ```
-> yarn add react-calendar
+APIStore.js
+* Enums, Code 데이터는 APIStore 쓰지않고, DataStore.js > getEnums(), getCodes() 활용
+```
+##### 데이터 처리
+```
+1 ) App.js > prototype functions
+2 ) DataStore.js
 ```

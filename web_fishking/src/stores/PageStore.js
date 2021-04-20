@@ -1,7 +1,7 @@
 /* global $, kakao */
 import { makeAutoObservable } from "mobx";
 import qs from "qs";
-import * as path from "path";
+import ModalStore from "./ModalStore";
 
 const PageStore = new (class {
   constructor(props) {
@@ -69,13 +69,17 @@ const PageStore = new (class {
         })
       );
     } else {
-      const redirectUrl = sessionStorage.getItem("@redirect-url");
-      sessionStorage.removeItem("@redirect-url");
-      sessionStorage.setItem("@goBack", "Y");
-      if (redirectUrl === null) {
-        window.history.back();
+      if ($(".modal.show").length > 0) {
+        $(".modal.show").modal("hide");
       } else {
-        window.history.go(-2);
+        const redirectUrl = sessionStorage.getItem("@redirect-url");
+        sessionStorage.removeItem("@redirect-url");
+        sessionStorage.setItem("@goBack", "Y");
+        if (redirectUrl === null) {
+          window.history.back();
+        } else {
+          window.history.go(-2);
+        }
       }
     }
   };

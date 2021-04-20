@@ -29,19 +29,27 @@ const {
   LAYOUT: { LoadingLayout },
 } = Components;
 
-export default inject("PageStore")(
+export default inject(
+  "PageStore",
+  "ModalStore"
+)(
   observer(
-    withRouter(({ PageStore }) => {
+    withRouter(({ PageStore, ModalStore }) => {
       useEffect(() => {
-        window.deploymessage = 'Refresh를 위한 스크롤 이벤트 추가';
-        window.addEventListener('scroll', () => {
+        window.deploymessage = "Refresh를 위한 스크롤 이벤트 추가";
+        window.addEventListener("scroll", () => {
           if (window.pageYOffset === 0) {
-            window.ReactNativeWebView?.postMessage(JSON.stringify({ process:'Refresh', data: {enabled:'Y'} }));
-          }else{
-            window.ReactNativeWebView?.postMessage(JSON.stringify({ process:'Refresh', data: {enabled:'N'} }));
+            window.ReactNativeWebView?.postMessage(
+              JSON.stringify({ process: "Refresh", data: { enabled: "Y" } })
+            );
+          } else {
+            window.ReactNativeWebView?.postMessage(
+              JSON.stringify({ process: "Refresh", data: { enabled: "N" } })
+            );
           }
-        })
+        });
         window.addEventListener("message", (message) => {
+          console.log("history length -> " + ModalStore.history.length);
           const data = message.data;
           if (data === "goBack") {
             PageStore.goBack();
