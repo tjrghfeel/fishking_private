@@ -26,5 +26,7 @@ public interface CompanyManageDtoForPage {
     Boolean getIsRegistered();
     @Value("#{@mapperUtility.transDateString(target.createdDate)}")
     String getCreatedDate();//
+    @Value("#{@mapperUtility.transDateString(target.registeredDate)}")
+    String getRegisteredDate();
     String getShipNameList();
 }

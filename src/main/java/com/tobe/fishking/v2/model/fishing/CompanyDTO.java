@@ -46,6 +46,7 @@ public class CompanyDTO {
     private Long representFileId;
     private Long accountFileId;
     private String createdDate;
+    private String registeredDate;
     //private Long bizNoFile;//not null
     //private Long representFile;//not null
     //private Long accountFile;//not null
@@ -80,7 +81,8 @@ public class CompanyDTO {
         bizNoFileId = company.getBizNoFileId().getId();
         representFileId = company.getRepresentFileId().getId();
         accountFileId = company.getAccountFileId().getId();
-        createdDate = company.getRegisteredDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        createdDate = company.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if(company.getRegisteredDate()!=null){  registeredDate = company.getRegisteredDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
 
     }
 
