@@ -70,7 +70,7 @@ export default inject(
                     />
                   ))}
                 </div>
-                <p style={{textAlign="center", height=130}} className="space mt-1">
+                <p style={{textAlign:"center", height:130}} className="space mt-1">
                     <br>(주)투비<br>
                     대표 조옥수 | 대표번호 1566-2996<br>
                     전남 목포시 연산백련로 1번길 8-11<br>
