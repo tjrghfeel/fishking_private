@@ -45,8 +45,22 @@ export default inject(
             registrationToken: window.fcm_token || null,
           });
           if (response) {
-            PageStore.setAccessToken(response, "smartfishing", "Y");
-            PageStore.push(`/dashboard`);
+            const {
+              token,
+              auth = false,
+              memberId,
+              isRegistered = false,
+            } = response;
+            if (!auth) {
+              window.location.href = `/v2/api/niceRequest/smartfishing?memberId=${memberId}`;
+            } else if (auth && !isRegistered) {
+              ModalStore.openModal("Alert", {
+                body: "업체 등록 요청 승인 대기중입니다",
+              });
+            } else {
+              PageStore.setAccessToken(token, "smartfishing", "Y");
+              PageStore.push(`/dashboard`);
+            }
           } else {
             this.password.current?.classList.add("is-invalid");
           }
@@ -126,7 +140,10 @@ export default inject(
                 </p>
                 <a
                   class="btn btn-grey btn-lg btn-block mt-4"
-                  onClick={() => PageStore.push(`/apply`)}
+                  // onClick={() => PageStore.push(`/apply`)}
+                  onClick={() =>
+                    PageStore.push(`/cust/member/signup?iscompany=Y`)
+                  }
                 >
                   업체등록
                 </a>
