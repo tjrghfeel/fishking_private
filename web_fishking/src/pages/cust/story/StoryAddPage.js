@@ -198,7 +198,6 @@ export default inject(
           longitude,
         } = this.state;
         for (let file of uploaded) {
-          console.log("file -> " + JSON.stringify(file));
           fileList.push(file.fileId);
         }
 
@@ -267,32 +266,55 @@ export default inject(
       };
       uploadFile = async () => {
         const { ModalStore } = this.props;
-        if (this.state.uploaded.length >= 20) {
-          ModalStore.openModal("Alert", { body: "최대 20장까지 가능합니다." });
-          this.file.current.value = null;
-          return;
-        }
 
         if (this.file.current?.files.length > 0) {
           const file = this.file.current?.files[0];
+
+          if (!file.type?.includes("video")) {
+            let imageCount = 0;
+            for (let item of this.state.uploaded) {
+              if (item.downloadUrl.endsWith(".mp4")) continue;
+              else imageCount = imageCount + 1;
+            }
+
+            if (imageCount >= 20) {
+              ModalStore.openModal("Alert", {
+                body: "최대 20장까지 가능합니다.",
+              });
+              this.file.current.value = null;
+              return;
+            }
+          } else if (
+            file.type?.includes("video") &&
+            this.state.videoId !== null
+          ) {
+            ModalStore.openModal("Alert", {
+              body: "비디오는 1개만 업로드 가능합니다.",
+            });
+            this.file.current.value = null;
+            return;
+          }
 
           const form = new FormData();
           form.append("file", file);
           form.append("filePublish", this.state.category);
 
           const { APIStore } = this.props;
-          const upload = await APIStore._post_upload(
+          let upload = await APIStore._post_upload(
             "/v2/api/filePreUpload",
             form
           );
 
           if (upload) {
             this.setState({ uploaded: this.state.uploaded.concat(upload) });
+            if (file.type?.includes("video")) {
+              this.setState({ videoId: upload["fileId"] });
+            }
           }
           this.file.current.value = null;
         }
       };
-      removeUploadFile = (fileId) => {
+      removeUploadFile = (fileId, isVideo = false) => {
         const { DataStore } = this.props;
         const uploaded = DataStore.removeItemOfArrayByKey(
           this.state.uploaded,
@@ -300,6 +322,7 @@ export default inject(
           fileId
         );
         this.setState({ uploaded });
+        if (isVideo) this.setState({ videoId: null });
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -588,9 +611,13 @@ export default inject(
                           className="float-right-arrow"
                         />
                         {this.state.shipData.itemType === "Company" && (
-                          <h6>{this.state.shipData.name || "선박 또는 위치선택"}</h6>
+                          <h6>
+                            {this.state.shipData.name || "선박 또는 위치선택"}
+                          </h6>
                         )}
-                        <p>{this.state.shipData.address || "선박 또는 위치선택"}</p>
+                        <p>
+                          {this.state.shipData.address || "선박 또는 위치선택"}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -642,23 +669,43 @@ export default inject(
                     </div>
                   </a>
                 </div>
-                {this.state.uploaded?.map((data, index) => (
-                  <div className="col-3" key={index}>
-                    <div className="box-round-grey">
-                      <a
-                        onClick={() => this.removeUploadFile(data.fileId)}
-                        className="del"
-                      >
-                        <img src="/assets/cust/img/svg/icon_close_white.svg" />
-                      </a>
-                      <img
-                        src={data.downloadUrl}
-                        className="d-block w-100 photo-img"
-                        alt=""
-                      />
-                    </div>
-                  </div>
-                ))}
+                {this.state.uploaded?.map((data, index) => {
+                  if (data["downloadUrl"].includes("mp4")) {
+                    return (
+                      <div className="col-3" key={index}>
+                        <div className="box-round-grey">
+                          <a
+                            onClick={() =>
+                              this.removeUploadFile(data.fileId, true)
+                            }
+                            className="del"
+                          >
+                            <img src="/assets/cust/img/svg/icon_close_white.svg" />
+                          </a>
+                          비디오
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="col-3" key={index}>
+                        <div className="box-round-grey">
+                          <a
+                            onClick={() => this.removeUploadFile(data.fileId)}
+                            className="del"
+                          >
+                            <img src="/assets/cust/img/svg/icon_close_white.svg" />
+                          </a>
+                          <img
+                            src={data.downloadUrl}
+                            className="d-block w-100 photo-img"
+                            alt=""
+                          />
+                        </div>
+                      </div>
+                    );
+                  }
+                })}
               </div>
             </div>
             {/** 안내 */}

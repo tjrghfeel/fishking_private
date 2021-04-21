@@ -49,7 +49,6 @@ export default inject(
           }
         });
         window.addEventListener("message", (message) => {
-          console.log("history length -> " + ModalStore.history.length);
           const data = message.data;
           if (data === "goBack") {
             PageStore.goBack();
