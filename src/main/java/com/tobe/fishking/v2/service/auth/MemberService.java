@@ -338,7 +338,6 @@ public class MemberService {
         member.setIsCertified(true);
         member.setCertifiedNo(certifiedNo);
         member.setIsActive(true);
-        memberRepository.save(member);
 
         /*세션토큰생성.*/
         String rawToken = member.getUid() + LocalDateTime.now();
@@ -346,6 +345,7 @@ public class MemberService {
 
         encodedSessionToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
         member.setSessionToken(sessionToken);
+        memberRepository.save(member);
         return encodedSessionToken;
     }
     /*nice 실패*/

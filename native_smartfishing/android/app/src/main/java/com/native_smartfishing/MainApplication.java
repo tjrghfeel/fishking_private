@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.webkit.WebView;
+import com.burnweb.rnsendintent.RNSendIntentPackage;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;

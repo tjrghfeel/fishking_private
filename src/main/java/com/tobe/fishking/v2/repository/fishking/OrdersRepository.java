@@ -4,6 +4,8 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.model.NoNameDTO;
+import com.tobe.fishking.v2.model.admin.DashBoardManageDto;
 import com.tobe.fishking.v2.model.admin.OrderManageDtoForPage;
 import com.tobe.fishking.v2.model.fishing.OrdersDetailDto;
 import com.tobe.fishking.v2.model.fishing.OrdersDtoForPage;
@@ -15,6 +17,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRepositoryCustom {
@@ -212,4 +215,17 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
         @Param("shipName") String shipName,
         Pageable pageable
     );
+
+    //관리자 - 대시보드 - 예약현황
+    @Query("select " +
+            "(select count(o.id) from Orders o where o.orderStatus=0) as book, " +
+            "(select count(o.id) from Orders o where o.orderStatus=1) as bookRunning, " +
+            "(select count(o.id) from Orders o where o.orderStatus=2) as waitBook, " +
+            "(select count(o.id) from Orders o where o.orderStatus=3) as bookFix, " +
+            "(select count(o.id) from Orders o where o.orderStatus=4) as bookCancel, " +
+            "(select count(o.id) from Orders o where o.orderStatus=5) as fishingComplete, " +
+            "(select count(o.id) from Orders o where o.orderStatus=6) as bookConfirm " +
+            "from Orders o2 ")
+    List<Map<String, Long>> countByOrderStatus(Pageable pageable);
+
 }

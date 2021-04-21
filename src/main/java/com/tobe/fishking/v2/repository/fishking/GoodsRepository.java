@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepositoryCustom {
@@ -139,4 +140,11 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
         @Param("speciesList") String[] speciesList,
         Pageable pageable
     );
+
+    //관리자 - 대시보드 - 상품현황
+    @Query("select " +
+            "(select count(g.id) from Goods g where g.isUse = true and g.isClose = false and g.ship.fishingType=0) as ship, " +
+            "(select count(g.id) from Goods g where g.isUse =true and g.isClose = false and g.ship.fishingType=1) as searock " +
+            "from Goods g2 ")
+    List<Map<String, Long>> getDashBoardGoods(Pageable pageable);
 }

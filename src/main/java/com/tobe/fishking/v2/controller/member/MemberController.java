@@ -570,21 +570,22 @@ public class MemberController {
 
         if(!sMessage.equals("")){
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("본인인증 결과데이터 파싱 실패시 보낼 페이지."); return;
+            response.sendRedirect("/smartfishing/login?msg=niceResultParsingError"); return;
         }
         /*데이터 저장*/
         String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
         if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("이미 가입한 번호 존재시 보낼 페이지."); return;
+            response.sendRedirect("/smartfishing/login?msg=dupPhone"); return;
         }
         else{//번호중복이 없는 경우
             String sessionToken = AES.aesDecode(encodedSessionToken,env.getProperty("encrypKey.key"));
             Member member = memberService.getMemberBySessionToken(sessionToken);
             Company company = companyRepository.findByMember(member);
-            if(company == null){response.sendRedirect("업체등록요청 페이지. 토큰과같이보냄");}
-            else if(company.getIsRegistered() == true){response.sendRedirect("로그인후 메인페이지. 토큰과 같이보냄.");}
-            else{response.sendRedirect("이 경우일 시나리오는 없으나 일단 보험용.");}
+            if(company == null){response.sendRedirect("/smartfishing/apply?loggedIn=true&accesstoken="+encodedSessionToken);}
+            else if(company.getIsRegistered() == true){response.sendRedirect("/smartfishing/dashboard?loggedIn=true&accesstoken="+encodedSessionToken);}
+            else if(company.getIsRegistered() == false){response.sendRedirect("/smartfishing/login?msg=standByApproval");}
+            else{response.sendRedirect("/smartfishing/login?msg=error");}
         }
 //        System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
 //        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
@@ -637,7 +638,7 @@ public class MemberController {
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
 
 //        response.sendRedirect("/cust/member/signup?restore=Y&memberId="+sRequestNumber);
-        response.sendRedirect("인증 실패시 보낼 페이지. ");
+        response.sendRedirect("/smartfishing/login?msg=certificationFail");
     }
 
     /*비밀번호 찾기(재설정) 인증.
@@ -738,11 +739,11 @@ public class MemberController {
             "- memberId : Long / 회원의 id. 미인증회원일시 nice인증 요청보낼때 memberId 파라미터로 추가되어야하는 값. \n")
     @PostMapping("/smartfishing/login")
     @ResponseBody
-    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
-//    public LoginResultDtoForSmartFishing smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+//    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
+    public LoginResultDtoForSmartFishing smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
         LoginResultDtoForSmartFishing result = memberService.smartfishingLogin(loginDTO);
-//        return result;
-        return result.getToken();
+        return result;
+//        return result.getToken();
     }
 
     @ApiOperation(value = "스마트승선 로그인",notes = "" +

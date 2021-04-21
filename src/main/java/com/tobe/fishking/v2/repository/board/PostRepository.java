@@ -3,9 +3,11 @@ package com.tobe.fishking.v2.repository.board;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Board;
 import com.tobe.fishking.v2.entity.board.Post;
+import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.QuestionType;
 import com.tobe.fishking.v2.enums.board.ReturnType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
+import com.tobe.fishking.v2.model.admin.DashBoardManageDto;
 import com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.post.PostManageDtoForPage2;
 import com.tobe.fishking.v2.model.board.*;
@@ -425,4 +427,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
 
     @Query("select coalesce(1, (select 'hello' from Post p2)) from Post p ")
     String noName(@Param("aaa") String aaa);
+
+    @Query("select p from Post p where p.isDeleted=false and p.board.filePublish=:filePublish and p.parent_id is null order by p.createdDate desc")
+    List<Post> getDashBoardPost(@Param("filePublish") FilePublish filePublish, Pageable pageable);
 }

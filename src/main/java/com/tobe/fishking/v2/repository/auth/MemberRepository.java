@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.model.NoNameDTO;
+import com.tobe.fishking.v2.model.admin.DashBoardManageDto;
 import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -174,4 +176,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m where m.id in :list")
     ArrayList<Member> findList(@Param("list") ArrayList<Long> list);
 
+
+    @Query("select " +
+            "(select count(m.id) from Member m where m.isActive=true and m.isCertified=true and m.roles=2) as member, " +
+            "(select count(m.id) from Member m where m.isActive=true and m.isCertified=true and m.roles=1) as shipowner, " +
+            "(select count(m.id) from Member m where m.isActive=true and m.isCertified=true and m.roles=4) as police " +
+            "from Member m2")
+    List<Map<String, Long>> getDashBoardMember(Pageable pageable);
 }
