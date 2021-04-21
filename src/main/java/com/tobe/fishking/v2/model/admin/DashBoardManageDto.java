@@ -70,12 +70,14 @@ public class DashBoardManageDto {
     @AllArgsConstructor
     @Setter
     public class NoticeData{
+        public Long postId;
         public String targetRole;
         public String channelType;
         public String title;
         public String createdDate;
 
         public NoticeData(Post post){
+            this.postId=post.getId();
             this.targetRole = (post.getTargetRole())? "member":"shipowner";
             this.channelType = post.getChannelType().getValue();
             this.title = post.getTitle();
@@ -88,12 +90,14 @@ public class DashBoardManageDto {
     @AllArgsConstructor
     @Setter
     public class OneToOneData{
+        public Long postId;
         public String targetRole;
         public Boolean isReplied;
         public String content;
         public String createdDate;
 
         public OneToOneData(Post post){
+            this.postId = post.getId();
             this.targetRole = (post.getTargetRole())? "member":"shipowner";
             this.isReplied = post.getIsReplied();
             this.content = post.getContents();
