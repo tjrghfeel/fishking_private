@@ -23,54 +23,54 @@ export default inject("PageStore")(
 
             {/** 리스트 */}
             <div className="container nopadding bg-grey">
-              <div className="row no-gutters mt-4">
-                <div className="col-6">
-                  <a onClick={() => PageStore.push(`/guide/time`)}>
-                    <div className="card-rect">
-                      <h6>
-                        <img
-                          src="/assets/cust/img/svg/icon-guide-time.svg"
-                          alt=""
-                          className="icon-md"
-                        />
-                      </h6>
-                      <h6>시간·체험</h6>
-                      <hr />
-                      <small>
-                        자세히 보기&nbsp;
-                        <img
-                          src="/assets/cust/img/svg/icon-arrow.svg"
-                          alt=""
-                          className="vam"
-                        />
-                      </small>
-                    </div>
-                  </a>
-                </div>
-                <div className="col-6">
-                  <a onClick={() => PageStore.push(`/guide/all`)}>
-                    <div className="card-rect">
-                      <h6>
-                        <img
-                          src="/assets/cust/img/svg/icon-guide-time-all.svg"
-                          alt=""
-                          className="icon-md"
-                        />
-                      </h6>
-                      <h6>종일·생활</h6>
-                      <hr />
-                      <small>
-                        자세히 보기&nbsp;
-                        <img
-                          src="/assets/cust/img/svg/icon-arrow.svg"
-                          alt=""
-                          className="vam"
-                        />
-                      </small>
-                    </div>
-                  </a>
-                </div>
-              </div>
+              {/*<div className="row no-gutters mt-4">*/}
+              {/*  <div className="col-6">*/}
+              {/*    <a onClick={() => PageStore.push(`/guide/time`)}>*/}
+              {/*      <div className="card-rect">*/}
+              {/*        <h6>*/}
+              {/*          <img*/}
+              {/*            src="/assets/cust/img/svg/icon-guide-time.svg"*/}
+              {/*            alt=""*/}
+              {/*            className="icon-md"*/}
+              {/*          />*/}
+              {/*        </h6>*/}
+              {/*        <h6>시간·체험</h6>*/}
+              {/*        <hr />*/}
+              {/*        <small>*/}
+              {/*          자세히 보기&nbsp;*/}
+              {/*          <img*/}
+              {/*            src="/assets/cust/img/svg/icon-arrow.svg"*/}
+              {/*            alt=""*/}
+              {/*            className="vam"*/}
+              {/*          />*/}
+              {/*        </small>*/}
+              {/*      </div>*/}
+              {/*    </a>*/}
+              {/*  </div>*/}
+              {/*  <div className="col-6">*/}
+              {/*    <a onClick={() => PageStore.push(`/guide/all`)}>*/}
+              {/*      <div className="card-rect">*/}
+              {/*        <h6>*/}
+              {/*          <img*/}
+              {/*            src="/assets/cust/img/svg/icon-guide-time-all.svg"*/}
+              {/*            alt=""*/}
+              {/*            className="icon-md"*/}
+              {/*          />*/}
+              {/*        </h6>*/}
+              {/*        <h6>종일·생활</h6>*/}
+              {/*        <hr />*/}
+              {/*        <small>*/}
+              {/*          자세히 보기&nbsp;*/}
+              {/*          <img*/}
+              {/*            src="/assets/cust/img/svg/icon-arrow.svg"*/}
+              {/*            alt=""*/}
+              {/*            className="vam"*/}
+              {/*          />*/}
+              {/*        </small>*/}
+              {/*      </div>*/}
+              {/*    </a>*/}
+              {/*  </div>*/}
+              {/*</div>*/}
               <div className="row no-gutters">
                 <div className="col-6">
                   <a onClick={() => PageStore.push(`/guide/boat`)}>

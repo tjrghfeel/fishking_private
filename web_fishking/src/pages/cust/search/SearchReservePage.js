@@ -16,6 +16,13 @@ export default inject("PageStore")(
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
+      componentDidMount() {
+        const { PageStore } = this.props;
+        const qp = PageStore.getQueryParams();
+        let fishingType = qp.fishingType || "ship"
+        this.setState({fishingType});
+      }
+
       search = () => {
         const { PageStore } = this.props;
         const fishingType = this.state.fishingType === "ship" ? "boat" : "rock";

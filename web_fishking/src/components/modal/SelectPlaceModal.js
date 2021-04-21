@@ -71,7 +71,7 @@ export default inject("DataStore")(
               </div>
               <div className="modal-body">
                 <div className="container nopaddingy">
-                  <ul className="col-two mt-3">
+                  <ul className="col-three mt-3">
                     {list.length > 0 &&
                       list.map((data, index) => (
                         <a

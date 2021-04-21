@@ -42,7 +42,12 @@ export default inject(
         /********** ********** ********** ********** **********/
         componentDidMount() {
           const { PageStore } = this.props;
-          const { memberId = null, restore } = PageStore.getQueryParams();
+          const {
+            memberId = null,
+            restore,
+            iscompany = null,
+          } = PageStore.getQueryParams();
+          this.setState({ iscompany });
           const saved = localStorage.getItem("@signup-save") || null;
           if (memberId !== null) this.setState({ memberId });
 
@@ -151,7 +156,11 @@ export default inject(
               <form
                 method={"POST"}
                 ref={this.form}
-                action={process.env.REACT_APP_PASS_REDIRECT_URI}
+                action={
+                  this.state.iscompany == null
+                    ? process.env.REACT_APP_PASS_REDIRECT_URI
+                    : process.env.REACT_APP_SMARTFISHING_PASS_REDIRECT_URI
+                }
               >
                 <input
                   type={"hidden"}
@@ -181,7 +190,14 @@ export default inject(
               {/** 정보 */}
               <div className="container nopadding mt-1">
                 <h5 className="text-center">
-                  <img src="/assets/cust/img/svg/logo.svg" alt="" />
+                  <img
+                    src={
+                      this.state.iscompany == null
+                        ? "/assets/cust/img/svg/logo.svg"
+                        : "/assets/smartfishing/img/svg/logo.svg"
+                    }
+                    alt=""
+                  />
                 </h5>
                 <div className="text-right">
                   <div className="pay-bg">

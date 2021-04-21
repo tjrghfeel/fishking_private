@@ -44,6 +44,7 @@ export default inject(
           filterFishActive: false,
           filterSortActive: false,
           filterOptionActive: false,
+          fishingDate: null
         };
       }
       /********** ********** ********** ********** **********/
@@ -70,6 +71,8 @@ export default inject(
         let fishingDate = null;
         if ((qp.fishingDate || null) !== null) {
           fishingDate = new Date(qp.fishingDate).format("-");
+          this.setState({filterDateActive: true})
+          this.setState({fishingDate: qp.fishingDate})
         }
         let species = null;
         if ((qp.species || null) !== null) {
@@ -182,7 +185,7 @@ export default inject(
         } else if (text === "지도보기") {
           PageStore.push(`/common/mapsearch?fishingType=${fishingType}`);
         } else if (text === "예약검색") {
-          PageStore.push(`/search/reserve`);
+          PageStore.push(`/search/reserve?fishingType=seaRocks`);
         }
       };
       /********** ********** ********** ********** **********/
@@ -205,6 +208,7 @@ export default inject(
                 this.setState({ filterDateActive: true });
                 this.loadPageData(0);
               }}
+              inputDate={this.state.fishingDate}
             />
             <SelectAreaModal
               ref={this.selAreaModal}
@@ -317,8 +321,9 @@ export default inject(
                   modalTarget: "selDateModal",
                   onClickClear: () => {
                     this.setState({ filterDateActive: false });
+                    this.setState({ fishingDate: null });
                     PageStore.setState({ fishingDate: null });
-                    this.selDateModal.current?.onInit();
+                    this.selDateModal.current?.onInit(true);
                     this.loadPageData(0);
                   },
                 },
@@ -413,6 +418,13 @@ export default inject(
                         onClick={this.onClick}
                       />
                     ))}
+                </React.Fragment>
+              )}
+
+              {(!PageStore.state.list || PageStore.state.list.length < 1) && (
+                <React.Fragment>
+                  <p className="clearfix"></p>
+                  <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
                 </React.Fragment>
               )}
             </div>

@@ -3,6 +3,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
+import ModalStore from "../../../stores/ModalStore";
 const {
   VIEW: { CompanyGoodListItemView, GoodsBlogListItemView },
   MODAL: { CompanyGoodsDetailModal },
@@ -134,19 +135,33 @@ export default inject(
           }
         };
         requestLike = async () => {
-          const { APIStore } = this.props;
+          const { APIStore, ModalStore } = this.props;
           if (this.state.liked) {
             await APIStore._delete("/v2/api/take", {
               // takeType: "ship",
               linkId: this.state.id,
             });
             this.setState({ liked: false });
+            ModalStore.openModal("Alert", { body: "찜 목록에서 해제되었습니다." });
           } else {
             await APIStore._post("/v2/api/take", {
               // takeType: "ship",
               linkId: this.state.id,
             });
             this.setState({ liked: true });
+            ModalStore.openModal("Alert", {
+              body: (
+                <React.Fragment>
+                  <p>
+                    찜되었습니다.
+                    <br />
+                    찜 목록은 마이메뉴의 찜한 업체에서
+                    <br />
+                    확인하실 수 있습니다.
+                  </p>
+                </React.Fragment>
+              ),
+            });
           }
         };
         modalSNS = () => {

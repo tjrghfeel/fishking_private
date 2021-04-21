@@ -240,13 +240,18 @@ export default inject(
                     <dt>미끼</dt>
                     <dd>{this.state.fishingLure}</dd>
                     <dt>낚시기법</dt>
-                    <dd>{this.state.fishingTechnic}</dd>
+                    <dd>
+                      {this.state.fishingType} - {this.state.fishingTechnic}
+                    </dd>
                   </dl>
                   <hr />
                 </div>
                 <div className="container nopadding mt-3">
                   <p>{this.state.content}</p>
                   <br />
+                  {this.state.videoUrl !== null && (
+                    <video width={"100%"} controls src={this.state.videoUrl} />
+                  )}
                   {this.state.imageUrlList &&
                     this.state.imageUrlList.map((data, index) => (
                       <React.Fragment key={index}>

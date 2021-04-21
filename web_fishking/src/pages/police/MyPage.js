@@ -40,7 +40,7 @@ export default inject(
               <p>
                 고객센터로 전화연결 하시겠습니까?
                 <br />
-                365일 10시 ~ 18시
+                평일 10시 ~ 18시
                 <br />
                 (점심시간 12시 ~ 13시 30분)
               </p>
@@ -87,7 +87,7 @@ export default inject(
               <h6 className="text-center mt-3">고객센터</h6>
               <p className="text-center">
                 <small className="grey">
-                  365일 10시~18시 운영 (점심시간 12시 ~ 13시 30분)
+                  평일 10시~18시 운영 (점심시간 12시 ~ 13시 30분)
                 </small>
               </p>
               <div className="row no-gutters no-gutters-cs d-flex align-items-center mt-4">
