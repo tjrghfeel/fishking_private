@@ -15,7 +15,7 @@
 <nav class="navbar fixed-top navbar-dark bg-primary">
 <%--    <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>--%>
     <span class="navbar-title">상품관리</span>
-    <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
+    <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
 
@@ -36,7 +36,7 @@
         </li>
         <li>
             <label for="hasVideo" class="sr-only">녹화영상</label>
-            <select class="form-control" id="hasVideo">
+            <select class="form-control custom-select" id="hasVideo" style="padding-top: 10px !important; padding-bottom: 6px !important; height:32px !important;">
                 <option value="">녹화영상전체</option>
                 <option value="Y">유</option>
                 <option value="N">무</option>
@@ -62,14 +62,14 @@
                 <div class="cardInfoWrap">
                     <div class="card-body pt-0">
                         <div class="row no-gutters d-flex align-items-center">
-                            <div class="col-9">
+                            <div class="col-7">
                                 <h6 class="data-shipName">어복황제3호</h6>
                                 <p>
                                     <span class="grey">♡ <span class="data-takes"></span></span>
                                 </p>
                             </div>
-                            <div class="col-3 text-right">
-                                <small class="grey">녹화영상:</small> <strong class="large red data-hasVideo">유</strong>
+                            <div class="col-5 text-right">
+                                <small class="grey">녹화영상:</small> <strong class="red data-hasVideo">유</strong>
                             </div>
                         </div>
                     </div>

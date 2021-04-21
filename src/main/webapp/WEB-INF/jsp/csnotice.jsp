@@ -14,7 +14,7 @@
 <nav class="navbar fixed-top navbar-dark bg-primary">
     <a href="javascript:location.href = '/boarding/dashboard';" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
     <span class="navbar-title">공지사항</span>
-    <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
+<%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
 
@@ -62,13 +62,13 @@
                     var container = document.getElementById('list-container');
                     for (var i = 0; i < response['content'].length; i++) {
                         var item = response['content'][i];
-                        var tags = `
-                                <a href="/boarding/csnoticedetail?postId=` + item['id'] + `">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col-11 pl-2"><strong class="text-primary">[` + item['channelType'] + ` ]</strong> ` + item['title'] + `<br/><small class="grey">` + item['date'].substr(0,10).replace(/[-]/g,'.') + `</small></div>
-                                        <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
-                                    </div>
-                                </a>`;
+                        var tags = ' \
+                                <a href="/boarding/csnoticedetail?postId=' + item['id'] + '"> \
+                                    <div class="row no-gutters align-items-center"> \
+                                        <div class="col-11 pl-2"><strong class="text-primary">[' + item['channelType'] + '] </strong>' + item['title'] + '<br/><small class="grey">' + item['date'].substr(0,10).replace(/[-]/g,'.') + '</small></div> \
+                                        <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div> \
+                                    </div> \
+                                </a>';
                         $(container).append(tags);
                         $(container).append('<hr class="full mt-3 mb-3"/>');
                     }

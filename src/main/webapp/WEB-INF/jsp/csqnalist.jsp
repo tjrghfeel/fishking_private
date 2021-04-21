@@ -15,7 +15,7 @@
 <nav class="navbar fixed-top navbar-dark bg-primary">
     <a href="javascript:location.href = '/boarding/dashboard';" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
     <span class="navbar-title">고객센터</span>
-    <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
+    <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
 
@@ -60,22 +60,22 @@
                     var container = document.body;
                     for (var i = 0; i < response['content'].length; i++) {
                         var item = response['content'][i];
-                        var tags = `
-                                    <div class="container nopadding ` + (page == 0 && i == 0? 'mt-3' : '') + `">
-                                        <a href="/boarding/csqnadetail?postId=` + item['id'] + `">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-6 text-left">
-                                                    <strong>` + item['questionType'] + `</strong><br/>
-                                                    <small class="grey">` + item['createdDate'].substr(0, 10) + `</small>
-                                                </div>
-                                                <div class="col-6 text-right">
-                                                    <span class="status-icon ` + (item['replied']? 'status3' : 'status2') + `">` + (item['replied']? '답변완료' : '답변대기') + `</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <hr/>
-                        `;
+                        var tags = ' \
+                                    <div class="container nopadding ' + (page == 0 && i == 0? 'mt-3' : '') + '"> \
+                                        <a href="/boarding/csqnadetail?postId=' + item['id'] + '"> \
+                                            <div class="row no-gutters align-items-center"> \
+                                                <div class="col-9 text-left"> \
+                                                    <strong>' + item['questionType'] + '</strong><br/> \
+                                                    <small class="grey">' + item['createdDate'].substr(0, 10) + '</small> \
+                                                </div> \
+                                                <div class="col-3 text-right"> \
+                                                    <span class="status-icon ' + (item['replied']? 'status3' : 'status2') + '">' + (item['replied']? '답변완료' : '답변대기') + '</span> \
+                                                </div> \
+                                            </div> \
+                                        </a> \
+                                    </div> \
+                                    <hr/> \
+                        ';
                         $(container).append(tags);
                     }
                 }

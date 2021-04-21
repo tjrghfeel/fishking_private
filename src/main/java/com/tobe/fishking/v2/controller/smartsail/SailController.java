@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public class SailController {
             "\n     fingerprint: 지문데이터" +
             "\n     fingerTypeNum: 손가락 숫자 (오른쪽 엄지~새끼 : 1~5, 왼쪽 엄지~새끼 : 6~10)" +
             "\n }")
-    @PostMapping("/sail/fingerprint/add")
+    @PostMapping(value = "/sail/fingerprint/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> addFingerprint(@RequestHeader(name = "Authorization") String token,
                                               @RequestBody Map<String, Object> body) throws NotAuthException, ResourceNotFoundException {
         if (!memberService.checkAuth(token)) {
@@ -88,8 +89,9 @@ public class SailController {
             response.put("status", "success");
             response.put("message", "등록되었습니다.");
         } catch (Exception e) {
-            response.put("status", "fail");
-            response.put("message", "등록에 실패했습니다.");
+//            response.put("status", "fail");
+//            response.put("message", "등록에 실패했습니다.");
+            throw new RuntimeException("지문등록에 실패했습니다.");
         }
         return response;
     }
@@ -101,7 +103,7 @@ public class SailController {
             "\n     phone: 등록자 연락처" +
             "\n     fingerprint: 지문데이터" +
             "\n }")
-    @PostMapping("/sail/fingerprint/check")
+    @PostMapping(value = "/sail/fingerprint/check", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> checkFingerprint(@RequestHeader(name = "Authorization") String token,
                                                 @RequestBody Map<String, Object> body) throws ResourceNotFoundException, NotAuthException {
         if (!memberService.checkAuth(token)) {
@@ -114,12 +116,14 @@ public class SailController {
                 response.put("status", "success");
                 response.put("message", "확인되었습니다.");
             } else {
-                response.put("status", "fail");
-                response.put("message", "일치하지 않습니다.");
+//                response.put("status", "fail");
+//                response.put("message", "일치하지 않습니다.");
+                throw new RuntimeException("지문등록에 실패했습니다.");
             }
         } catch (Exception e) {
-            response.put("status", "fail");
-            response.put("message", "확인에 실패했습니다.");
+//            response.put("status", "fail");
+//            response.put("message", "확인에 실패했습니다.");
+            throw new RuntimeException("지문등록에 실패했습니다.");
         }
         return response;
     }

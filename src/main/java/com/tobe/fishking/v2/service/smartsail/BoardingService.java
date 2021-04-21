@@ -86,7 +86,7 @@ public class BoardingService {
 
     @Transactional
     public boolean checkFingerprint(Map<String, Object> body) {
-        RideShip rider = rideShipRepository.getOne((Long) body.get("riderId"));
+        RideShip rider = rideShipRepository.getOne(Long.parseLong(body.get("riderId").toString()));
         rider.setRide();
         rideShipRepository.save(rider);
         return true;

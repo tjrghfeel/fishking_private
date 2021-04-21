@@ -86,7 +86,7 @@
 <div class="fixed-bottom">
     <div class="row no-gutters">
         <!-- <div class="col-12"><a href="#none" class="btn btn-grey btn-lg btn-block">확인</a></div> 비활성버튼 -->
-        <div class="col-12"><a onclick="javascript:fn_submit();" class="btn btn-primary btn-lg btn-block">확인</a></div>
+        <div class="col-12"><a onclick="fn_submit();" class="btn btn-primary btn-lg btn-block">확인</a></div>
     </div>
 </div>
 <!--// 하단버튼 -->
@@ -94,7 +94,8 @@
 <jsp:include page="cmm_foot.jsp" />
 <script>
     function fn_submit () {
-        var orderId = new URLSearchParams(location.search).get('orderId');
+        // var orderId = new URLSearchParams(location.search).get('orderId');
+        var orderId = location.search.split('=')[1]
         var name = $('#name').val();
         var phone = $('#phone').val();
         var emergencyPhone = $('#emergencyPhone').val();
@@ -141,7 +142,8 @@
         });
     }
     function fn_loadPageData () {
-        var orderId = new URLSearchParams(location.search).get('orderId');
+        // var orderId = new URLSearchParams(location.search).get('orderId');
+        var orderId = location.search.split('=')[1]
         $.ajax('/v2/api/sail/riders/detail/' + orderId, {
             method: 'GET',
             dataType: 'json',
@@ -149,7 +151,7 @@
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
             },
             success: function (response) {
-                document.getElementById('pageHead').innerHTML = response['shipName'] + `<br/><small class="red">` + response['date'] + `</small>`;
+                document.getElementById('pageHead').innerHTML = response['shipName'] + '<br/><small class="red">' + response['date'] + '</small>';
             }
         });
     }

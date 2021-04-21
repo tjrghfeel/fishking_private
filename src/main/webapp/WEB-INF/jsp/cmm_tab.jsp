@@ -13,5 +13,5 @@
     <a class="nav-link <%=uri.contains("dashboard")? "active" : ""%>" href="/boarding/dashboard"><figure class="dashboard"></figure>대시보드</a>
     <a class="nav-link <%=uri.contains("sail")? "active" : ""%>" href="/boarding/sail"><figure class="sail"></figure>승선관리</a>
     <a class="nav-link <%=uri.contains("camera")? "active" : ""%>" href="/boarding/camera"><figure class="camera"></figure>카메라관리</a>
-    <a class="nav-link <%=uri.contains("csnotice")? "active" : ""%>" href="/boarding/csnotice"><figure class="camera"></figure>고객센터</a>
+    <a class="nav-link <%=uri.contains("csnotice")? "active" : ""%>" href="/boarding/csnotice"><figure class="cs"></figure>고객센터</a>
 </nav>

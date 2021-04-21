@@ -43,8 +43,13 @@
                 for (var i = 0; i < response.length; i++) {
                     var item = response[i];
                     var container = document.body;
-                    var tags = `
-                                <div class="container nopadding mt-3">
+                    var tags
+                    if (i == 0) {
+                      tags = `<div class="container nopadding mt-3">`
+                    } else {
+                      tags = `<div class="container nopadding">`
+                    }
+                    tags += `
                                     <div class="row no-gutters mt-3 mb-2">
                                         <div class="col">
                                             <strong>` + item['codeName'] + `</strong><br/>

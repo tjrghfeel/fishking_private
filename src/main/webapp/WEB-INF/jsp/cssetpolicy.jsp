@@ -22,40 +22,40 @@
         <hr class="full mt-0 mb-3"/>
         <a href="/boarding/cssetpolicyterms">
             <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">이용약관</div>
-                <div class="col-8 text-right"></div>
+                <div class="col-6 pl-2">이용약관</div>
+                <div class="col-5 text-right"></div>
                 <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
             </div>
         </a>
         <hr class="full mt-3 mb-3"/>
         <a href="/boarding/cssetpolicyprivacy">
             <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">개인정보처리방침</div>
-                <div class="col-8 text-right"></div>
+                <div class="col-6 pl-2">개인정보처리방침</div>
+                <div class="col-5 text-right"></div>
                 <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
             </div>
         </a>
         <hr class="full mt-3 mb-3"/>
         <a href="/boarding/cssetpolicycancel">
             <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">취소 및 환불 규정</div>
-                <div class="col-8 text-right"></div>
+                <div class="col-6 pl-2">취소 및 환불 규정</div>
+                <div class="col-5 text-right"></div>
                 <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
             </div>
         </a>
         <hr class="full mt-3 mb-3"/>
         <a href="/boarding/cssetpolicylbs">
             <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">위치기반 서비스 이용약관</div>
-                <div class="col-8 text-right"></div>
+                <div class="col-6 pl-2">위치기반 서비스 이용약관</div>
+                <div class="col-5 text-right"></div>
                 <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
             </div>
         </a>
         <hr class="full mt-3 mb-3"/>
         <a href="/boarding/cssetpolicyagree">
             <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">개인정보 제 3자 제공 동의</div>
-                <div class="col-8 text-right"></div>
+                <div class="col-6 pl-2">개인정보 제 3자 제공 동의</div>
+                <div class="col-5 text-right"></div>
                 <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
             </div>
         </a>

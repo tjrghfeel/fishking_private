@@ -14,7 +14,7 @@
 <nav class="navbar fixed-top navbar-dark bg-primary">
     <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
     <span class="navbar-title">지문인식</span>
-    <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
+    <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
 <p class="clearfix"></p>
@@ -64,14 +64,15 @@
             $.ajax('/v2/api/sail/fingerprint/check', {
                 method: 'POST',
                 dataType: 'json',
-                data: {
+                data: JSON.stringify({
                     riderId : data['riderId'],
                     username: data['username'],
                     phone: data['phone'],
                     fingerprint: fingerprint
-                },
+                }),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
+                    xhr.setRequestHeader('Content-Type', 'application/json');
                 },
                 error: function () {
                     alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');

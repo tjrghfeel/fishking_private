@@ -27,7 +27,7 @@ public class RiderFingerPrint extends BaseTime {
     @Enumerated(EnumType.ORDINAL)
     private FingerType finger;
 
-    @Column(columnDefinition = "varchar(300) comment '지문정보' ")
+    @Column(columnDefinition = "varchar(1000) comment '지문정보' ")
     private String fingerprint;
 
     @Column(columnDefinition = "int comment '승선횟수' ")
