@@ -738,11 +738,11 @@ public class MemberController {
             "- memberId : Long / 회원의 id. 미인증회원일시 nice인증 요청보낼때 memberId 파라미터로 추가되어야하는 값. \n")
     @PostMapping("/smartfishing/login")
     @ResponseBody
-    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
-//    public LoginResultDtoForSmartFishing smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException {
+//    public String smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
+    public LoginResultDtoForSmartFishing smartfishingLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
         LoginResultDtoForSmartFishing result = memberService.smartfishingLogin(loginDTO);
-//        return result;
-        return result.getToken();
+        return result;
+//        return result.getToken();
     }
 
     @ApiOperation(value = "스마트승선 로그인",notes = "" +

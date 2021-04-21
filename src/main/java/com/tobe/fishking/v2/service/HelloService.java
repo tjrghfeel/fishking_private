@@ -38,7 +38,6 @@ public class HelloService {
 
     @Transactional
     public void noName() throws ResourceNotFoundException, IOException, JCodecException {
-        fishingDiaryCommentRepository.noName();
 
 
 

@@ -100,15 +100,15 @@ public interface FishingDiaryCommentRepository extends BaseRepository<FishingDia
             @Param("path") String path
     );
 
-    @Query("select new com.tobe.fishking.v2.model.NoNameDTO(" +
-            "   c.id, " +
-            "   c.contents, " +
-            "   c.contents, " +
-            "   case when c.parentId is null then true else false end " +
-            ") " +
-            "from FishingDiaryComment c "
-//            "where case when 1 = 1 then true else false end "
-    )
-    List<NoNameDTO> noName();
+//    @Query("select new com.tobe.fishking.v2.model.NoNameDTO(" +
+//            "   c.id, " +
+//            "   c.contents, " +
+//            "   c.contents, " +
+//            "   case when c.parentId is null then true else false end " +
+//            ") " +
+//            "from FishingDiaryComment c "
+////            "where case when 1 = 1 then true else false end "
+//    )
+//    List<NoNameDTO> noName();
 }
 

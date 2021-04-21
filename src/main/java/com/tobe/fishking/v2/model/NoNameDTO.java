@@ -14,15 +14,23 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Builder
 public class NoNameDTO {
-    private Long id;
-    private String stringList;
-
-    private String contents;
-    private Boolean parent;
-    /*public NoNameDTO(Long id, String stringList, String contents){
-        System.out.println("hello");
-    }*/
+    public long book;
+    public long bookRunning;
+    public long waitBook;
+    public long bookFix;
+    public long bookCancel;
+    public long fishingComplete;
+    public long bookConfirm;
+    public NoNameDTO(long book, long bookRunning, long waitBook, long bookFix, long bookCancel, long fishingComplete, long bookConfirm){
+        this.book=book;
+        this.bookRunning = bookRunning;
+        this.waitBook = waitBook;
+        this.bookFix = bookFix;
+        this.bookCancel =bookCancel;
+        this.fishingComplete = fishingComplete;
+        this.bookConfirm = bookConfirm;
+    }
 }
