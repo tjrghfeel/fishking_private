@@ -14,7 +14,7 @@
 <nav class="navbar fixed-top navbar-dark bg-primary">
     <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
     <span class="navbar-title">승선관리</span>
-    <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
+    <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
 
@@ -25,22 +25,24 @@
 <!--  Filter -->
 <div class="filterlinewrap container nopadding">
     <ul class="nav nav-tabs nav-filter">
-        <li>
+        <li style="width: 70% !important;">
             <div class="input-group">
                 <label for="startDate" class="sr-only">예약일자</label>
                 <input readonly type="text" class="form-control" id="startDate" placeholder="" value="">
                 <span class="input-group-btn">
-							<a onclick="javascript:$('#startDate').datepicker('show');" class="btn btn-default"><img src="/assets/smartsail/img/svg/input_cal.svg" alt=""/></a>
-						</span>
+                    <a onclick="$('#startDate').datepicker('show'); $('#ui-datepicker-div').css('z-index', 999)" class="btn btn-default">
+                        <img src="/assets/smartsail/img/svg/input_cal.svg" alt=""/>
+                    </a>
+                </span>
                 <span class="input-group-addon">~</span>
                 <label for="endDate" class="sr-only">예약일자</label>
                 <input readonly type="text" class="form-control" id="endDate" placeholder="" value="">
                 <span class="input-group-btn">
-							<a onclick="javascript:$('#endDate').datepicker('show');" class="btn btn-default"><img src="/assets/smartsail/img/svg/input_cal.svg" alt=""/></a>
-						</span>
+                    <a onclick="javascript:$('#endDate').datepicker('show'); $('#ui-datepicker-div').css('z-index', 999);" class="btn btn-default"><img src="/assets/smartsail/img/svg/input_cal.svg" alt=""/></a>
+                </span>
             </div><!-- /input-group -->
         </li>
-        <li>
+        <li style="width: 30% !important;">
             <label for="status" class="sr-only">결제상태</label>
             <select class="form-control" id="status">
                 <option value="">상태전체</option>
@@ -82,7 +84,7 @@
     function fn_init () {
         $('#startDate').datepicker('setDate', new Date());
         var endDate = new Date();
-        endDate.setMonth(endDate.getMonth() + 1);
+        // endDate.setMonth(endDate.getMonth() + 1);
         $('#endDate').datepicker('setDate', endDate);
         $('#status').val('');
         $('#keywordType').val('username');
@@ -140,39 +142,39 @@
                     var container = document.body;
                     for (var i = 0; i < response['content'].length; i++) {
                         var item = response['content'][i];
-                        var tags = $(`
-                                    <div class="container nopadding mt-2" name="list-item" data-index="` + i + `">
-                                        <div class="card-round-grey">
-                                            <span class="status ` + (item['status'] == '취소완료'? 'status6' : 'status2') + `">` + item['status'] + `</span>
-                                            ` + (item['status'] != '취소완료'? `<span class="dday">D` + item['dateInterval'] + `</span>` : ``) + `
-                                            <a onclick="javascript:onclick_item(this);">
-                                                <div class="card card-sm">
-                                                    <div class="row no-gutters">
-                                                        <div class="cardimgWrap">
-                                                            <img src="/assets/smartsail/img/sample/boat2.jpg" class="img-fluid" alt="">
-                                                        </div>
-                                                        <div class="cardInfoWrap">
-                                                            <div class="card-body">
-                                                                <h6>` + item['shipName'] + `</h6>
-                                                                <p><span class="grey">` + item['goodsName'] + `</span></p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <hr class="mt-1 mb-1"/>
-                                                    <div class="row no-gutters">
-                                                        <div class="col-6 padding-sm"><small class="grey">이용일<br/>예약자</small></div>
-                                                        <div class="col-6 padding-sm"><small>` + item['date'] + ` ~<br/>` + item['orderName'] + ` <span class="grey">|</span> ` + item['orderEmail'] + `</small></div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            ` + (item['status'] != '취소완료'? `
-                                            <div class="row no-gutters">
-                                                <div class="col-12 padding-sm"><a onclick="javascript:onclick_add(this);" class="btn btn-info btn-block btn-sm mt-1 mb-1">승선자 추가  (현재 <strong>` + item['personnel'] + `명</strong>)</a></div>
-                                            </div>
-                                            ` : ``) + `
-                                        </div>
-                                    </div>
-                        `);
+                        var tags = $(' \
+                                    <div class="container nopadding mt-2" name="list-item" data-index="' + i + '"> \
+                                        <div class="card-round-grey"> \
+                                            <span class="status ' + (item['status'] == '취소완료'? 'status6' : 'status2') + '">' + item['status'] + '</span> \
+                                            ' + (item['status'] != '취소완료'? '<span class="dday">D' + item['dateInterval'] + '</span>' : '') + ' \
+                                            <a onclick="javascript:onclick_item(this);"> \
+                                                <div class="card card-sm"> \
+                                                    <div class="row no-gutters"> \
+                                                        <div class="cardimgWrap"> \
+                                                            <img src="/assets/smartsail/img/sample/boat2.jpg" class="img-fluid" alt=""> \
+                                                        </div> \
+                                                        <div class="cardInfoWrap"> \
+                                                            <div class="card-body"> \
+                                                                <h6>' + item['shipName'] + '</h6> \
+                                                                <p><span class="grey">' + item['goodsName'] + '</span></p> \
+                                                            </div> \
+                                                        </div> \
+                                                    </div> \
+                                                    <hr class="mt-1 mb-1"/> \
+                                                    <div class="row no-gutters"> \
+                                                        <div class="col-2 padding-sm"><small class="grey">이용일<br/>예약자</small></div> \
+                                                        <div class="col-10 padding-sm"><small>' + item['date'] + ' ~<br/>' + item['orderName'] + ' <span class="grey">|</span> ' + item['orderEmail'] + '</small></div> \
+                                                    </div> \
+                                                </div> \
+                                            </a> \
+                                            ' + (item['status'] != '취소완료'? ' \
+                                            <div class="row no-gutters"> \
+                                                <div class="col-12 padding-sm"><a onclick="javascript:onclick_add(this);" class="btn btn-info btn-block btn-sm mt-1 mb-1">승선자 추가  (현재 <strong>' + item['personnel'] + '명</strong>)</a></div> \
+                                            </div> \
+                                            ' : '') + ' \
+                                        </div> \
+                                    </div> \
+                        ');
                         $(tags).data('item', item);
                         $(container).append(tags);
                     }
@@ -186,7 +188,7 @@
             onSelect: function (text, inst) { }
         }).datepicker('setDate', new Date());
         var endDate = new Date();
-        endDate.setMonth(endDate.getMonth() + 1);
+        // endDate.setMonth(endDate.getMonth() + 1);
         $("#endDate").datepicker({
             onSelect: function (text, inst) { }
         }).datepicker('setDate', endDate);

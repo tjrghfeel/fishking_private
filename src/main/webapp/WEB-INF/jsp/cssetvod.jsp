@@ -20,11 +20,11 @@
 <!-- 입력 -->
 <div class="container nopadding mt-3">
     <div class="row no-gutters mt-3 mb-2">
-        <div class="col">
+        <div class="col-9">
             <strong>Wi-Fi 에서만 동영상 스트리밍</strong><br/>
             <small class="grey">Wi-Fi 에서만 동영상이 재생됩니다.</small>
         </div>
-        <div class="col">
+        <div class="col-3">
             <nav>
                 <div class="nav nav-tabs btn-set" id="nav-tab" role="tablist">
                     <a class="nav-link active btn btn-on" id="nav-home-tab" data-toggle="tab" href="#nav-on" role="tab" aria-controls="nav-on" aria-selected="true">ON</a>

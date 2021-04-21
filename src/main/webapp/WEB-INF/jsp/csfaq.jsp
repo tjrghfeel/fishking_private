@@ -14,7 +14,7 @@
 <nav class="navbar fixed-top navbar-dark bg-primary">
     <a href="javascript:location.href = '/boarding/dashboard';" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
     <span class="navbar-title">고객센터</span>
-    <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
+    <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
 
@@ -61,23 +61,22 @@
                     var container = document.getElementById('accordionFaq');
                     for (var i = 0; i < response['content'].length; i++) {
                         var item = response['content'][i];
-                        var tags = `
-                                    <div class="card">
-                                        <div class="card-header" id="heading` + page + '-' + i + `">
-                                            <h2 class="mb-0">
-                                                <a class="btn btn-block text-left collapsed" data-toggle="collapse" data-target="#collapse` + page + '-' + i + `" aria-expanded="true" aria-controls="collapse` + page + '-' + i + `">
-                                                    [` + item['questionType'] + `] ` + item['title'] + `
-                                                </a>
-                                            </h2>
-                                        </div>
-
-                                        <div id="collapse` + page + '-' + i + `" class="collapse" aria-labelledby="heading` + page + '-' + i + `" data-parent="#accordionFaq">
-                                            <div class="card-body">
-                                                ` + item['contents'] + `
-                                            </div>
-                                        </div>
-                                    </div>
-                        `;
+                        var tags = ' \
+                                    <div class="card"> \
+                                        <div class="card-header" id="heading' + page + '-' + i + '"> \
+                                            <h2 class="mb-0"> \
+                                                <a class="btn btn-block text-left collapsed" data-toggle="collapse" data-target="#collapse' + page + '-' + i + '" aria-expanded="true" aria-controls="collapse' + page + '-' + i + '"> \
+                                                    [' + item['questionType'] + '] ' + item['title'] + ' \
+                                                </a> \
+                                            </h2> \
+                                        </div> \
+                                        <div id="collapse' + page + '-' + i + '" class="collapse" aria-labelledby="heading' + page + '-' + i + '" data-parent="#accordionFaq"> \
+                                            <div class="card-body"> \
+                                                ' + item['contents'] + ' \
+                                            </div> \
+                                        </div> \
+                                    </div> \
+                        ';
                         $(container).append(tags);
                     }
                 }

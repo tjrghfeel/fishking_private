@@ -41,7 +41,8 @@
 <jsp:include page="cmm_foot.jsp" />
 <script>
     function moveToAdd () {
-        var orderId = new URLSearchParams(location.search).get('orderId');
+        // var orderId = new URLSearchParams(location.search).get('orderId');
+        var orderId = location.search.split("=")[1]
         location.href = '/boarding/sailadd?orderId=' + orderId;
     }
     function fn_delete (riderId) {
@@ -65,7 +66,8 @@
         })
     }
     function fn_loadPageData () {
-        var orderId = new URLSearchParams(location.search).get('orderId');
+        // var orderId = new URLSearchParams(location.search).get('orderId');
+        var orderId = location.search.split("=")[1];
         $.ajax('/v2/api/sail/riders/detail/' + orderId, {
             method: 'GET',
             dataType: 'json',
@@ -74,35 +76,42 @@
             },
             success: function (response) {
                 document.getElementById('shipProfileImage').src = response['shipProfileImage'];
-                document.getElementById('shipHead').innerHTML = response['shipName'] + `  <small class="grey">|</small> <small>현재 <strong class="large orange">` + response['personnel'] + `</strong>명</small><br/><small class="grey">` + response['date'] + `</small>`;
+                document.getElementById('shipHead').innerHTML =
+                  response['shipName'] + ''
+                  + '<small class="grey">|</small> '
+                  + '<small>현재 <strong class="large orange">'
+                  + response['personnel']
+                  + '</strong>명</small><br/><small class="grey">'
+                  + response['date']
+                  + '</small>';
 
                 var container = document.body;
                 for (var i = 0; i < response['riders'].length; i++) {
                     var item = response['riders'][i];
-                    var tags = $(`
-                                    <div class="container nopadding mt-2">
-                                        <div class="card-round-grey">
-                                            <div class="card card-sm">
-                                                <div class="row no-gutters d-flex align-items-center">
-                                                    <div class="col-6">
-                                                        <a>
-                                                            <p>
-                                                                승선자명: <strong class="large">` + item['name'] + `</strong><br/>
-                                                                연락처: ` + item['phone'] + `
-                                                            </p>
-                                                        </a>
-                                                    </div>
-                                                    <div class="col-4 text-right">
-                                                        <span class="status relative ` + (item['isRide'] != '확인실패'? 'status3' : 'status7') + `">` + item['isRide'] + `</span>
-                                                    </div>
-                                                    <div class="col-2 text-right">
-                                                        <a onclick="javascript:fn_delete('` + item['riderId'] + `');" class="btn btn btn-round-grey btn-xs-round">― 삭제</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                    `);
+                    var tags = $(' \
+                                    <div class="container nopadding mt-2"> \
+                                        <div class="card-round-grey"> \
+                                            <div class="card card-sm"> \
+                                                <div class="row no-gutters d-flex align-items-center"> \
+                                                    <div class="col-6"> \
+                                                        <a> \
+                                                            <p> \
+                                                                승선자명: <strong class="large">' + item['name'] + '</strong><br/> \
+                                                                연락처: ' + item['phone'] + ' \
+                                                            </p> \
+                                                        </a> \
+                                                    </div> \
+                                                    <div class="col-4 text-right"> \
+                                                        <span class="status relative ' + (item['isRide'] != '확인실패'? 'status3' : 'status7') + '">' + item['isRide'] + '</span> \
+                                                    </div> \
+                                                    <div class="col-2 text-right"> \
+                                                        <a onclick="javascript:fn_delete(' + item['riderId'] + ');" class="btn btn btn-round-grey btn-xs-round">― 삭제</a> \
+                                                    </div> \
+                                                </div> \
+                                            </div> \
+                                        </div> \
+                                    </div> \
+                    ');
                     $(container).append(tags);
                 }
             }

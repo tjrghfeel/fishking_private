@@ -14,7 +14,7 @@
 <nav class="navbar fixed-top navbar-dark bg-primary">
     <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
     <span class="navbar-title">설정</span>
-    <a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>
+    <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
 <!-- 입력 -->
@@ -32,8 +32,8 @@
         <hr class="full mt-3 mb-3"/>
         <a>
             <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">접근 권한 설정</div>
-                <div class="col-8 text-right"></div>
+                <div class="col-6 pl-2">접근 권한 설정</div>
+                <div class="col-5 text-right"></div>
                 <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
             </div>
         </a>
