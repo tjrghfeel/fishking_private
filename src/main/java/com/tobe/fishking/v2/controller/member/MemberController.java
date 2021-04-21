@@ -570,13 +570,13 @@ public class MemberController {
 
         if(!sMessage.equals("")){
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("/smartfishing/login"); return;
+            response.sendRedirect("/smartfishing/login?msg=본인인증 결과 데이터 오류"); return;
         }
         /*데이터 저장*/
         String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
         if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("/smartfishing/login?msg=휴대폰번호중복"); return;
+            response.sendRedirect("/smartfishing/login?msg=휴대폰 번호가 중복됩니다."); return;
         }
         else{//번호중복이 없는 경우
             String sessionToken = AES.aesDecode(encodedSessionToken,env.getProperty("encrypKey.key"));
@@ -584,7 +584,8 @@ public class MemberController {
             Company company = companyRepository.findByMember(member);
             if(company == null){response.sendRedirect("/smartfishing/apply?loggedIn=true&accesstoken="+encodedSessionToken);}
             else if(company.getIsRegistered() == true){response.sendRedirect("/smartfishing/dashboard?loggedIn=true&accesstoken="+encodedSessionToken);}
-            else{response.sendRedirect("/smartfishing/login");}
+            else if(company.getIsRegistered() == false){response.sendRedirect("/smartfishing/login?msg=업체 등록 요청 승인 대기중입니다.");}
+            else{response.sendRedirect("/smartfishing/login?msg=에러");}
         }
 //        System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
 //        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
@@ -637,7 +638,7 @@ public class MemberController {
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
 
 //        response.sendRedirect("/cust/member/signup?restore=Y&memberId="+sRequestNumber);
-        response.sendRedirect("/smartfishing/login");
+        response.sendRedirect("/smartfishing/login?msg=본인인증 실패");
     }
 
     /*비밀번호 찾기(재설정) 인증.
