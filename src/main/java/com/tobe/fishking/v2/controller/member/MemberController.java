@@ -570,21 +570,21 @@ public class MemberController {
 
         if(!sMessage.equals("")){
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("본인인증 결과데이터 파싱 실패시 보낼 페이지."); return;
+            response.sendRedirect("/smartfishing/login"); return;
         }
         /*데이터 저장*/
         String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
         if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("이미 가입한 번호 존재시 보낼 페이지."); return;
+            response.sendRedirect("/smartfishing/login?msg=휴대폰번호중복"); return;
         }
         else{//번호중복이 없는 경우
             String sessionToken = AES.aesDecode(encodedSessionToken,env.getProperty("encrypKey.key"));
             Member member = memberService.getMemberBySessionToken(sessionToken);
             Company company = companyRepository.findByMember(member);
-            if(company == null){response.sendRedirect("업체등록요청 페이지. 토큰과같이보냄");}
-            else if(company.getIsRegistered() == true){response.sendRedirect("로그인후 메인페이지. 토큰과 같이보냄.");}
-            else{response.sendRedirect("이 경우일 시나리오는 없으나 일단 보험용.");}
+            if(company == null){response.sendRedirect("/smartfishing/apply?loggedIn=true&accesstoken="+encodedSessionToken);}
+            else if(company.getIsRegistered() == true){response.sendRedirect("/smartfishing/dashboard?loggedIn=true&accesstoken="+encodedSessionToken);}
+            else{response.sendRedirect("/smartfishing/login");}
         }
 //        System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
 //        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
@@ -637,7 +637,7 @@ public class MemberController {
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
 
 //        response.sendRedirect("/cust/member/signup?restore=Y&memberId="+sRequestNumber);
-        response.sendRedirect("인증 실패시 보낼 페이지. ");
+        response.sendRedirect("/smartfishing/login");
     }
 
     /*비밀번호 찾기(재설정) 인증.
