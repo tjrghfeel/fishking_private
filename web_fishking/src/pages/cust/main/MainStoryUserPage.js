@@ -26,6 +26,7 @@ export default inject(
           textArea: "지역",
           textFish: "어종",
           textSort: "정렬",
+          loaded: false
         };
       }
       /********** ********** ********** ********** **********/
@@ -95,6 +96,7 @@ export default inject(
           PageStore.setState({ isEnd: false });
         }
         PageStore.reloadSwipe();
+        this.setState({loaded: true});
       };
 
       onClick = (item) => {
@@ -301,10 +303,15 @@ export default inject(
                 />
               ))}
 
-            {(!PageStore.state.list || PageStore.state.list.length < 1) && (
+            {((!PageStore.state.list || PageStore.state.list.length < 1) && this.state.loaded) && (
               <React.Fragment>
                 <p className="clearfix"></p>
-                <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
+                <div className="text-center">
+                    <span className="mb-3"
+                          style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>
+                      조건에 맞는 항목이 없습니다.
+                    </span>
+                </div>
               </React.Fragment>
             )}
 

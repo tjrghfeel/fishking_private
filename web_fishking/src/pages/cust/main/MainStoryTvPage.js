@@ -31,6 +31,8 @@ export default inject(
           selAreaActive: false,
           selFishActive: false,
           selSortActive: false,
+          live_loaded: false,
+          tube_loaded: false,
         };
       }
       /********** ********** ********** ********** **********/
@@ -90,6 +92,7 @@ export default inject(
         });
         PageStore.setState({ live_list: live?.content || [] });
         PageStore.reloadSwipe();
+        this.setState({live_loaded: true});
       };
       loadPageDataForTube = async (nextPage = false) => {
         const { APIStore, PageStore } = this.props;
@@ -125,6 +128,7 @@ export default inject(
           tube_isPending: false,
           tube_nextPageToken: nextPageToken,
         });
+        this.setState({tube_loaded: true});
       };
       onClickLive = async (item) => {
         const { PageStore } = this.props;
@@ -282,10 +286,16 @@ export default inject(
                     </li>
                   )}
 
-                  {(!PageStore.state.live_list || PageStore.state.live_list.length < 1) && (
+                  {((!PageStore.state.live_list || PageStore.state.live_list.length < 1) && this.state.live_loaded) && (
                     <React.Fragment>
                       <p className="clearfix"></p>
-                      <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
+                      <div className="text-center w-100">
+                        <span className="mb-3"
+                              style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>
+                          조건에 맞는 항목이 없습니다.
+                        </span>
+                      </div>
+                      {/*<h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>*/}
                     </React.Fragment>
                   )}
                 </ul>
@@ -337,10 +347,15 @@ export default inject(
                 />
               ))}
 
-            {(!PageStore.state.tube_list || PageStore.state.tube_list.length < 1) && (
+            {((!PageStore.state.tube_list || PageStore.state.tube_list.length < 1) && this.state.tube_loaded) && (
               <React.Fragment>
                 <p className="clearfix"></p>
-                <h6 className="text-center mb-3">조건에 맞는 항목이 없습니다.</h6>
+                <div className="text-center">
+                    <span className="mb-3"
+                          style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>
+                      조건에 맞는 항목이 없습니다.
+                    </span>
+                </div>
               </React.Fragment>
             )}
             <MainTab activeIndex={3} />
