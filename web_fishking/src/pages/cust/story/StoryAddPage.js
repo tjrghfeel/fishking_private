@@ -526,6 +526,9 @@ export default inject(
                   </a>
                   <a data-toggle="modal" data-target="#selPlaceModal">
                     <dd>
+                      {!this.state.fishingTypeName && (
+                        <span style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>선상, 갯바위, 방파제 선택</span>
+                      )}
                       {this.state.fishingTypeName}
                       <img
                         src="/assets/cust/img/svg/arrow-right.svg"

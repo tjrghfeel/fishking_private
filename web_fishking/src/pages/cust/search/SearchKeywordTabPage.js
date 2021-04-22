@@ -26,7 +26,8 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       componentDidMount() {
-        this.initPageData();
+        const { match } = this.props;
+        this.initPageData(match.params.tab);
       }
       componentWillUnmount() {
         const { PageStore } = this.props;

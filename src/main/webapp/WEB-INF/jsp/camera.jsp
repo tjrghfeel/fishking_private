@@ -14,7 +14,7 @@
 <!-- Navigation -->
 <nav class="navbar fixed-top navbar-dark bg-primary">
 <%--    <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>--%>
-    <span class="navbar-title">상품관리</span>
+    <span class="navbar-title">카메라관리</span>
     <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
 <!-- // Navigation -->
@@ -38,8 +38,8 @@
             <label for="hasVideo" class="sr-only">녹화영상</label>
             <select class="form-control custom-select" id="hasVideo" style="padding-top: 10px !important; padding-bottom: 6px !important; height:32px !important;">
                 <option value="">녹화영상전체</option>
-                <option value="Y">유</option>
-                <option value="N">무</option>
+                <option value="true">유</option>
+                <option value="false">무</option>
             </select>
         </li>
         <li class="full">
@@ -80,6 +80,9 @@
     <hr class="full mt-2 mb-3"/>
 </div>
 <!--// 리스트 -->
+<div id="contents_list">
+
+</div>
 
 
 <jsp:include page="cmm_foot.jsp" />
@@ -111,6 +114,7 @@
             },
             success: function (response) {
                 console.log(JSON.stringify(response));
+                document.getElementById('contents_list').innerHTML = '';
                 data = response;
                 for (var i = 0; i < response.length; i++) {
                     var item = response[i] || {};
@@ -130,7 +134,7 @@
                     clone.querySelector('a').addEventListener('click', function () {
                         moveToDetail(item, this.getAttribute('data-index'));
                     });
-                    document.body.appendChild(clone);
+                    document.getElementById('contents_list').appendChild(clone);
                 }
             }
         });

@@ -153,14 +153,15 @@ public class FishingDiaryRepositoryImpl implements FishingDiaryCustom {
                         fishingDiary.createdDate,
                         ExpressionUtils.as(JPAExpressions.select(loveTo.count()).from(loveTo).where(loveTo.linkId.eq(fishingDiary.id), loveTo.takeType.eq(getTakeType(type))), aliasLoves),
                         ExpressionUtils.as(JPAExpressions.select(comment.count()).from(comment).where(comment.linkId.eq(fishingDiary.id), comment.dependentType.eq(getDependentType(type))), aliasComments),
-                        fishingDiary.ship.fishingType,
+                        fishingDiary.fishingType,
                         fishingDiary.fishingSpeciesName
                 ))
                 .from(fishingDiary)
-                .where(typeCheck(type)
-                        .and(fishingDiary.title.containsIgnoreCase(keyword)
-                                .or(fishingDiary.contents.containsIgnoreCase(keyword)))
-                        .and(fishingDiary.isDeleted.eq(false))
+                .where(typeCheck(type),
+                        fishingDiary.title.containsIgnoreCase(keyword).or(fishingDiary.contents.containsIgnoreCase(keyword)),
+                        fishingDiary.isDeleted.eq(false),
+                        fishingDiary.isActive.eq(true),
+                        fishingDiary.isHidden.eq(false)
                 )
                 .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())

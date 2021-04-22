@@ -116,20 +116,26 @@ public class FishingShipService {
                 expireTime = video.getExpireTime();
             }
         } else {
-            token = ((String) httpRequestService.getToken(company.getNhnId()).get("token")).replaceAll("\"", "");
+            if (company.getNhnId() != null) {
+                if (!company.getNhnId().equals("")) {
+                    token = ((String) httpRequestService.getToken(company.getNhnId()).get("token")).replaceAll("\"", "");
+                }
+            }
         }
 
-        List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
-        for (Map<String, Object> camera : cameras) {
-            Map<String, Object> c = new HashMap<>();
-            String serial = camera.get("serialNo").toString();
-            String name = camera.get("labelName").toString();
-            c.put("serial", serial);
-            c.put("name", name);
-            response.add(c);
-        }
-        if (response.isEmpty()) {
-            throw new EmptyListException("결과리스트가 비어있습니다.");
+        if (!token.equals("")) {
+            List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
+            for (Map<String, Object> camera : cameras) {
+                Map<String, Object> c = new HashMap<>();
+                String serial = camera.get("serialNo").toString();
+                String name = camera.get("labelName").toString();
+                c.put("serial", serial);
+                c.put("name", name);
+                response.add(c);
+            }
+//            if (response.isEmpty()) {
+//                throw new EmptyListException("결과리스트가 비어있습니다.");
+//            }
         }
         return response;
     }
@@ -138,19 +144,23 @@ public class FishingShipService {
     public List<Map<String, Object>> getADTCameraList(Member member) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, EmptyListException {
         Company company = companyRepository.findByMember(member);
         List<Map<String, Object>> response =  new ArrayList<>();
-        List<RealTimeVideo> videos = realTimeVideoRepository.getADTByMemberId(member.getId());
-        String token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), member.getId().toString());
-
-        List<Map<String, Object>> cameras = httpRequestService.getADTList(token);
-        for (Map<String, Object> camera : cameras) {
-            Map<String, Object> c = new HashMap<>();
-            c.put("serial", String.valueOf(((Double) camera.get("camId")).intValue()));
-            c.put("name", (String) camera.get("camName"));
-            response.add(c);
+//        List<RealTimeVideo> videos = realTimeVideoRepository.getADTByMemberId(member.getId());
+        String token = "";
+        if (company.getAdtId() != null) {
+            if (!company.getAdtId().equals("")) {
+                token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), member.getId().toString());
+                List<Map<String, Object>> cameras = httpRequestService.getADTList(token);
+                for (Map<String, Object> camera : cameras) {
+                    Map<String, Object> c = new HashMap<>();
+                    c.put("serial", String.valueOf(((Double) camera.get("camId")).intValue()));
+                    c.put("name", (String) camera.get("camName"));
+                    response.add(c);
+                }
+            }
         }
-        if (response.isEmpty()) {
-            throw new EmptyListException("결과리스트가 비어있습니다.");
-        }
+//        if (response.isEmpty()) {
+//            throw new EmptyListException("결과리스트가 비어있습니다.");
+//        }
         return response;
     }
 
