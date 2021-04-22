@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.controller.admin;
 
+import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.member.*;
@@ -36,11 +37,14 @@ public class MemberManageController {
             "- 이름, 전화번호, 주소로 정렬할 경우 내림차순으로 정렬되지않고, 같은 값끼리 연달아서 나온다. ")
     @GetMapping("/manage/member/list/{page}")
     public Page<MemberManageDtoForPage> getMemberList(
-            MemberSearchConditionDto conditionDto,
+            @Valid MemberSearchConditionDto conditionDto,
             @PathVariable("page") int page
     )
             throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException,
-            IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+            IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, ServiceLogicException {
+        try{
+            if(conditionDto.getRoles()!=null){Role.valueOf(conditionDto.getRoles());}
+        }catch (Exception e){throw new ServiceLogicException("roles의 값이 잘못되었습니다.");}
         return memberManageService.getMemberList(conditionDto,page);
     }
 

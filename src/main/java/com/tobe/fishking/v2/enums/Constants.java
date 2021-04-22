@@ -29,4 +29,12 @@ public class Constants {
 
     //파일 업로드 위치
     public static final String PREPEND_FILE_BOARD = "/board/";
+
+    //입력값 검증
+    public static final String NO_SPECIAL_C_STRING = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]*$";
+    public static final String STRING = "^[a-zA-Z0-9가-힣ㄱ-ㅎ.!?\\_-]*$";
+    public static final String NUMBER = "^[0-9]*$";
+    public static final String EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}$";
+    public static final String PW = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$";
+    public static final String BIZ_NO = "^\\d{3}\\-\\d{2}\\-\\d{4}$";
 }

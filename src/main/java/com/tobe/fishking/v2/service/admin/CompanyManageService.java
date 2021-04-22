@@ -157,8 +157,6 @@ public class CompanyManageService {
                 .skbPassword(dto.getSkbPassword())
                 .companyAddress(dto.getCompanyAddress())
                 .isRegistered(false)
-                .adtId(dto.getAdtId())
-                .adtPw(dto.getAdtPw())
                 .nhnId(dto.getNhnId())
                 .nhnPw(dto.getNhnPw())
                 .bizNoFileId(bizNoFileEntity)

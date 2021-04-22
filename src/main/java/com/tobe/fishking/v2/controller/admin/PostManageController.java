@@ -1,6 +1,11 @@
 package com.tobe.fishking.v2.controller.admin;
 
+import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.board.QuestionType;
+import com.tobe.fishking.v2.enums.board.ReturnType;
+import com.tobe.fishking.v2.enums.common.ChannelType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.post.*;
 import com.tobe.fishking.v2.model.board.WritePostDTO;
 import com.tobe.fishking.v2.service.admin.PostManagerService;
@@ -38,12 +43,20 @@ public class PostManageController {
             "- ")
     @GetMapping("/manage/post/{page}")
     public Page<PostManageDtoForPage> getPostList(
-            PostSearchConditionDto dto,
+            @Valid PostSearchConditionDto dto,
             @PathVariable("page") int page,
             @RequestHeader("Authorization") String token
     )
             throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException,
-            IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, ResourceNotFoundException {
+            IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, ResourceNotFoundException, ServiceLogicException {
+        try{
+            if(dto.getChannelType() !=null){ ChannelType.valueOf(dto.getChannelType());}
+            if(dto.getQuestionType() != null) { QuestionType.valueOf(dto.getQuestionType());}
+            if(dto.getReturnType() != null){ ReturnType.valueOf(dto.getReturnType());}
+            if(dto.getTargetRole() != null){ Role.valueOf(dto.getTargetRole());}
+        }
+        catch (Exception e){throw new ServiceLogicException("channelType, questionType, returnType, targetRole 값이 잘못되었습니다.");}
+
         return postManagerService.getPostList(dto,page,token);
     }
 
@@ -89,7 +102,7 @@ public class PostManageController {
             "   fileList : 파일id 배열\n" +
             "- 응답 ) 답변이 달린 1:1문의글의 id\n")
     @PutMapping("/manage/post/one2one/answer")
-    public Long modifyOne2oneAnswer(@RequestBody ModifyOne2oneAnswerDto dto, @RequestHeader("Authorization") String token)
+    public Long modifyOne2oneAnswer(@RequestBody @Valid ModifyOne2oneAnswerDto dto, @RequestHeader("Authorization") String token)
             throws ResourceNotFoundException, IOException {
         return postManagerService.modifyOne2oneAnswer(dto,token);
     }

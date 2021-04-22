@@ -145,7 +145,7 @@ export default inject(
                     PageStore.push(`/cust/member/signup?iscompany=Y`)
                   }
                 >
-                  업체등록
+                  업체등록요청
                 </a>
 
                 <p class="text-center mt-4">

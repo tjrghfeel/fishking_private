@@ -66,6 +66,10 @@ public class MemberManageService {
 //        if(dto.getCity()!=null){dto.setCity(AES.aesEncode(dto.getCity(),key));}
 //        if(dto.getGu()!=null){dto.setGu(AES.aesEncode(dto.getGu(),key));}
 //        if(dto.getDong()!=null){dto.setDong(AES.aesEncode(dto.getDong(),key));}
+        Integer roles = null;
+        if(dto.getRoles() != null){
+            roles = Role.valueOf(dto.getRoles()).ordinal();
+        }
 
         Pageable pageable;
         if(dto.getSort()==null){
@@ -75,7 +79,7 @@ public class MemberManageService {
 
         return memberRepository.findMemberListByConditions(
 //                dto.getId(),
-                dto.getRoles(),
+                roles,
                 dto.getMemberName(),
                 dto.getUid(),
                 dto.getNickName(),

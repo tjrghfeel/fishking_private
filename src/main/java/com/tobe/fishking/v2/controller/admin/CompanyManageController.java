@@ -40,7 +40,7 @@ public class CompanyManageController {
     @GetMapping("/manage/company/list/{page}")
     public Page<CompanyManageDtoForPage> getCompanyList(
             @PathVariable("page") int page,
-            CompanySearchConditionDto dto
+            @Valid CompanySearchConditionDto  dto
     ) throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException,
             IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         return companymanageService.getCompanyList(dto,page);
@@ -60,7 +60,7 @@ public class CompanyManageController {
     @PostMapping("/manage/company")
     public Long createCompany(
             /*MultipartHttpServletRequest request*/
-            @RequestBody CompanyCreateDtoForManage dto,
+            @RequestBody @Valid CompanyCreateDtoForManage dto,
             @RequestHeader("Authorization") String token
     ) throws Exception {
         return companymanageService.createCompany(dto, token);
@@ -71,7 +71,7 @@ public class CompanyManageController {
     @PutMapping("/manage/company")
     public Boolean modifyCompany(
             /*MultipartHttpServletRequest request*/
-            @RequestBody CompanyModifyDtoForManage dto,
+            @RequestBody @Valid CompanyModifyDtoForManage dto,
             @RequestHeader("Authorization") String token) throws Exception {
         return companymanageService.modifyCompany(dto, token);
     }
