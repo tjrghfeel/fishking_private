@@ -45,27 +45,26 @@ export default inject(
           <React.Fragment>
             {/** Navigation */}
             <nav className="navbar fixed-top navbar-dark bg-primary">
-              <a className="navbar-brand">
+              <a className="navbar-brand" style={{marginRight: '5px'}}>
                 <img
                   src="/assets/cust/img/svg/navbar-logo.svg"
                   alt="어복황제"
                 />
               </a>
-              <form className="form-inline">
-                <input
-                  className="form-control mr-sm-2"
-                  type="search"
-                  placeholder=""
-                  aria-label="Search"
-                  disabled
-                />
-                <a onClick={() => PageStore.push(`/search/all`)}>
+              <a onClick={() => PageStore.push(`/search/all`)}>
+                <form className="form-inline">
+                  <input
+                    className="form-control mr-sm-2"
+                    type="search"
+                    placeholder=""
+                    aria-label="Search"
+                  />
                   <img
                     src="/assets/cust/img/svg/navbar-search.svg"
                     alt="Search"
                   />
-                </a>
-              </form>
+                </form>
+              </a>
             </nav>
 
             {/** Carousel */}
