@@ -47,7 +47,7 @@ public class FishingDiarySearchResponse {
         this.createdDate = DateUtils.getDateInFormat(createdDate.toLocalDate());
         this.loves = loves.intValue();
         this.comments = comments.intValue();
-        this.fishingType = fishingType.getValue();
+        this.fishingType = fishingType == null ? "" : fishingType.getValue();
         this.species = species;
     }
 
