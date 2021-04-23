@@ -40,6 +40,7 @@ public class SmallShipResponse {
             FishingType type
     ) {
         this.id = shipId;
+        this.shipImageFileUrl = "/resource/" + profileImage.split("/")[1] + "/thumb_" + profileImage.split("/")[2];
         this.shipName = shipName;
         this.sido = sido;
         this.sigungu = sigungu;
