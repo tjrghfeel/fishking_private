@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.model.fishing;
 
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.common.Location;
 import lombok.Getter;
@@ -29,20 +30,28 @@ public class SmallShipResponse {
 
     public SmallShipResponse(
             Integer lowPrice,
-            Ship ship
+            Long shipId,
+            String profileImage,
+            String shipName,
+            String sido,
+            String sigungu,
+            Location location,
+            String address,
+            FishingType type
     ) {
-        Stream<CommonCode> species = ship.getFishSpecies().stream().filter(CommonCode::getIsActive);
-        this.id = ship.getId();
-        this.shipImageFileUrl = "/resource/" + ship.getProfileImage().split("/")[1] + "/thumb_" + ship.getProfileImage().split("/")[2];
-        this.shipName = ship.getShipName();
-        this.sido = ship.getSido();
-        this.sigungu = ship.getSigungu();
-        this.location = ship.getLocation();
-        this.address = ship.getAddress();
-        this.fishSpecies = species.map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
-        this.fishSpeciesCount = this.fishSpecies.size();
+        this.id = shipId;
+        this.shipImageFileUrl = "/resource/" + profileImage.split("/")[1] + "/thumb_" + profileImage.split("/")[2];
+        this.shipName = shipName;
+        this.sido = sido;
+        this.sigungu = sigungu;
+        this.location = location;
+        this.address = address;
         this.lowPrice = lowPrice==null?0:lowPrice;
     }
 
+    public void setSpecies(List<CommonCode> species) {
+        this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
+        this.fishSpeciesCount = this.fishSpecies.size();
+    }
 
 }

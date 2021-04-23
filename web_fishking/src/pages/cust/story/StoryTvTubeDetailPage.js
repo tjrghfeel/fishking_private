@@ -132,7 +132,7 @@ export default inject(
                     id="player"
                     muted
                     playsInline
-                    controls
+                    // controls
                     style={{ width: "100%" }}
                   ></video>
                 </div>

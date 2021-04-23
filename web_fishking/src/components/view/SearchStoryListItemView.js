@@ -49,7 +49,10 @@ export default inject()(
               <hr className="full mt-2 mb-3" />
               <div className="row no-gutters d-flex align-items-center">
                 <div className="col-4">
-                  <span className="tag">{fishingType}</span> {species}
+                  {fishingType !== "" && (
+                    <span className="tag">{fishingType}</span>
+                  )}
+                  {" "} {species}
                 </div>
                 <div className="col-8 text-right">
                   <ul className="info-num">

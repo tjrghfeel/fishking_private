@@ -301,6 +301,7 @@ export default inject(
                           type="text"
                           className="form-control no-line ml-4"
                           placeholder="댓글을 입력해주세요."
+                          style={{width: '95%'}}
                           onKeyDown={(e) => {
                             if (e.keyCode == 13) {
                               this.onSubmit();
@@ -308,7 +309,7 @@ export default inject(
                           }}
                         />
                       </div>
-                      <div className="col-2 text-right">
+                      <div className="col-2 text-center" style={{padding: '0'}}>
                         <a
                           className="btn btn-primary btn-sm-nav-tab"
                           onClick={this.onSubmit}

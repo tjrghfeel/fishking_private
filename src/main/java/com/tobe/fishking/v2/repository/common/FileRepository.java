@@ -46,7 +46,4 @@ public interface FileRepository extends BaseRepository<FileEntity, Long> {
             countQuery = "SELECT count(a) FROM FileEntity , FishingDiary b  where a.pid = b.id and b.contents like CONCAT('%',:contents,'%')", nativeQuery = true)
     Page<FileEntity> findAllFilesWithPaginationNative(@Param("contents") String  contents, Pageable pageable);
 
-/*
-    @Query("select a from FileEntity a where a. = true ")
-    FileEntity getDefaultProfile();*/
 }

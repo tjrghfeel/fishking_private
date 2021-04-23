@@ -9,8 +9,12 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringExpressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tobe.fishking.v2.entity.QFileEntity;
+import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.common.QCommonCode;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -27,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.querydsl.core.types.dsl.MathExpressions.*;
+import static com.tobe.fishking.v2.entity.QFileEntity.fileEntity;
 import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.common.QObserverCode.observerCode;
 import static com.tobe.fishking.v2.entity.common.QTake.take;
@@ -111,7 +116,14 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                                 .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(shipSearchDTO.getLongitude())))))
                                                 .add(sin(radians(Expressions.constant(shipSearchDTO.getLatitude()))).multiply(sin(radians(ship.location.latitude))))
                                 ).multiply(Expressions.constant(6371)), aliasDistance),
-                        ship
+                        ship.id,
+                        ship.profileImage,
+                        ship.shipName,
+                        ship.sido,
+                        ship.sigungu,
+                        ship.location,
+                        ship.address,
+                        ship.fishingType
                 ))
                 .from(ship)
                 .where(eqFishingType(shipSearchDTO.getFishingType()),
@@ -144,7 +156,14 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ship.cheapestGoodsCost,
                         ship.sellCount,
                         ship.zzimCount,
-                        ship
+                        ship.id,
+                        ship.profileImage,
+                        ship.shipName,
+                        ship.sido,
+                        ship.sigungu,
+                        ship.location,
+                        ship.address,
+                        ship.fishingType
                 ))
                 .from(ship)
                 .where(eqFishingType(shipSearchDTO.getFishingType()),
@@ -200,7 +219,14 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                                 .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(lng)))))
                                                 .add(sin(radians(Expressions.constant(lat))).multiply(sin(radians(ship.location.latitude))))
                                 ).multiply(Expressions.constant(6371)), aliasDistance),
-                        ship
+                        ship.id,
+                        ship.profileImage,
+                        ship.shipName,
+                        ship.sido,
+                        ship.sigungu,
+                        ship.location,
+                        ship.address,
+                        ship.fishingType
                 ))
                 .from(ship)
                 .where(ship.isActive.eq(true).and(
@@ -240,8 +266,9 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
         }
         ORDERS.add(getSortedColumn(Order.DESC, ship, "createdDate"));
 
+        QueryResults<ShipListResponse> results;
         if (type.equals("direction")) {
-            QueryResults<ShipListResponse> results = queryFactory
+            results = queryFactory
                     .select(new QShipListResponse(
                             ship.cheapestGoodsCost,
                             ship.sellCount,
@@ -253,7 +280,14 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                                     .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(lng)))))
                                                     .add(sin(radians(Expressions.constant(lat))).multiply(sin(radians(ship.location.latitude))))
                                     ).multiply(Expressions.constant(6371)), aliasDistance),
-                            ship
+                            ship.id,
+                            ship.profileImage,
+                            ship.shipName,
+                            ship.sido,
+                            ship.sigungu,
+                            ship.location,
+                            ship.address,
+                            ship.fishingType
                     ))
                     .from(ship)
                     .where(ship.isActive.eq(true)
@@ -268,9 +302,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .fetchResults();
-            return new PageImpl<>(results.getResults(), pageable, results.getTotal());
         } else {
-            QueryResults<ShipListResponse> results = queryFactory
+            results = queryFactory
                     .select(new QShipListResponse(
                             ship.cheapestGoodsCost,
                             ship.sellCount,
@@ -282,7 +315,14 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                                     .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(lng)))))
                                                     .add(sin(radians(Expressions.constant(lat))).multiply(sin(radians(ship.location.latitude))))
                                     ).multiply(Expressions.constant(6371)), aliasDistance),
-                            ship
+                            ship.id,
+                            ship.profileImage,
+                            ship.shipName,
+                            ship.sido,
+                            ship.sigungu,
+                            ship.location,
+                            ship.address,
+                            ship.fishingType
                     ))
                     .from(ship)
                     .where(ship.isActive.eq(true)
@@ -292,8 +332,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .fetchResults();
-            return new PageImpl<>(results.getResults(), pageable, results.getTotal());
         }
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     @Override
@@ -350,7 +390,9 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                                 .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(shipSearchDTO.getLongitude())))))
                                                 .add(sin(radians(Expressions.constant(shipSearchDTO.getLatitude()))).multiply(sin(radians(ship.location.latitude))))
                                 ).multiply(Expressions.constant(6371)), aliasDistance),
-                        ship
+                        ship.id,
+                        ship.shipName,
+                        ship.profileImage
                 ))
                 .from(ship)
                 .where(inSpecies(shipSearchDTO.getSpeciesList()),
@@ -434,7 +476,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ship
                 ))
                 .from(ship)
-                .where(ship.id.eq(ship_id) )
+                .where(ship.id.eq(ship_id))
                 .fetchOne();
         return result;
     }

@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.controller.fishking;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.TideException;
 import com.tobe.fishking.v2.model.TakeResponse;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
@@ -342,7 +343,7 @@ public class MyMenuController {
     public Boolean addTideLevelAlert(
             @RequestHeader("Authorization") String token,
             @RequestBody AddTideLevelAlertDto dto
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, TideException {
         return myMenuService.addTideLevelAlert(dto.getAlertTime(), dto.getObserverId(), token);
     }
 

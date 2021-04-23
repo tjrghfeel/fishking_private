@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.TideException;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
@@ -397,7 +398,7 @@ public class MyMenuService {
     @Transactional
     public Boolean addTideLevelAlert(
             ArrayList<String> alertTimeList, Long observerId, String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, TideException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         ObserverCode observer = observerCodeRepository.findById(observerId)
@@ -423,29 +424,30 @@ public class MyMenuService {
         List<TidalLevel> list = tidalLevelRepository.findTop6ByDateTimeGreaterThanAndPeakAndObserverCodeOrderByDateTimeAsc(
                 LocalDateTime.now().minusDays(1), "high", observer
         );
-        if(list.size() < 0){throw new RuntimeException("조위데이터가 없습니다.");}
+        if(list.isEmpty()){throw new TideException("조위데이터가 없습니다.");}
 
-        for(int i=0; i<highTideAlertCodeList.size(); i++){
-            CommonCode commonCode = highTideAlertCodeList.get(i);
+        for (CommonCode commonCode : highTideAlertCodeList) {
             Integer time = Integer.parseInt(commonCode.getExtraValue1());
             LocalDateTime alertTime = list.get(0).getDateTime();
             alertTime = alertTime.plusHours(time);
-            for(int j=1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++){
-                if(list.size() < j){ throw new RuntimeException("알림을 설정할 수 없습니다.");}
+            for (int j = 1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++) {
+                if (list.size() < j) {
+                    throw new TideException("알림을 설정할 수 없습니다.");
+                }
                 alertTime = list.get(j).getDateTime();
                 alertTime = alertTime.plusHours(time);
             }
             List<CommonCode> alertSet = new ArrayList<>();
             alertSet.add(commonCode);
 
-            String sentence = "\'"+observer.getName() + "\' \'" + commonCode.getCodeName() + "\'입니다.";
+            String sentence = "\'" + observer.getName() + "\' \'" + commonCode.getCodeName() + "\'입니다.";
 
             Alerts alerts = Alerts.builder()
                     .alert_sets(alertSet)
                     .alertType(AlertType.tideLevel)
                     .entityType(EntityType.observerCode)
                     .pid(observerId)
-                    .content(observer.getName()+" high "+time)
+                    .content(observer.getName() + " high " + time)
                     .sentence(sentence)
                     .isRead(false)
                     .isSent(false)
