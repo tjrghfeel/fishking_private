@@ -83,7 +83,7 @@ public class ShipResponse {
         this.notice = ship.getNotice();
         this.liked = false;
         this.profileImage = "/resource" + ship.getProfileImage();
-        this.liveVideo = "";
+        this.liveVideo = ship.getVideoId() == null ? "" : "https://fishkingapp.com/v2/api/getVideo?fileId=" + ship.getVideoId();
         this.fishingDiary = new ArrayList<>();
         this.fishingBlog = new ArrayList<>();
         this.eventsList = null;

@@ -175,7 +175,7 @@ export default inject(
           if (resolve) this.onSelectedTideArea();
         } else {
           // > 날짜별 -
-          if (this.state.selected.length === 0) {
+          if (this.state.tide.length === 0 || this.state.day.length === 0 || this.state.time.length === 0) {
             ModalStore.openModal("Alert", {
               body: "알람설정 시점을 선택 하십시오",
             })

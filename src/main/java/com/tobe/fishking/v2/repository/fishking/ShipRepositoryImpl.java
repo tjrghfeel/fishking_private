@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringExpressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tobe.fishking.v2.entity.QFileEntity;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.QCommonCode;
 import com.tobe.fishking.v2.enums.common.TakeType;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.querydsl.core.types.dsl.MathExpressions.*;
+import static com.tobe.fishking.v2.entity.QFileEntity.fileEntity;
 import static com.tobe.fishking.v2.entity.common.QCommonCode.commonCode;
 import static com.tobe.fishking.v2.entity.common.QObserverCode.observerCode;
 import static com.tobe.fishking.v2.entity.common.QTake.take;
@@ -474,7 +476,7 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ship
                 ))
                 .from(ship)
-                .where(ship.id.eq(ship_id) )
+                .where(ship.id.eq(ship_id))
                 .fetchOne();
         return result;
     }

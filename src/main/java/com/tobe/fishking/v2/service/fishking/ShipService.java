@@ -297,12 +297,8 @@ public class ShipService {
                             }
                         }
                     }
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (KeyManagementException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+//                    e.printStackTrace();
                 }
             } else {
                 Company company = companyRepository.getCompanyByShip(ship_id);
@@ -316,12 +312,8 @@ public class ShipService {
                     if (videoUrl != null) {
                         response.setLiveVideo(videoUrl);
                     }
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (KeyManagementException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+//                    e.printStackTrace();
                 }
             }
         }

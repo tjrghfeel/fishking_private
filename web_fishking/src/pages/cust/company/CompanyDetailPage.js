@@ -322,7 +322,7 @@ export default inject(
                           id="video"
                           muted
                           playsInline
-                          controls
+                          // controls
                           autoPlay
                           style={{
                             width: "100%",
