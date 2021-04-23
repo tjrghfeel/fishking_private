@@ -1,6 +1,5 @@
 package com.tobe.fishking.v2.repository.fishking;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -75,4 +74,32 @@ public class CalculateRepositoryImpl implements CalculateRepositoryCustom {
         return response;
     }
 
+//    @Override
+//    public Page<CalculateResponseForManage> searchCalculateForManage(Long memberId, String shipName, String year, String month, Boolean status, Pageable pageable) {
+//        if(month.length() == 1) {
+//            month = "0" + month;
+//        }
+//        QueryResults<CalculateResponseForManage> response = null;
+//        response = queryFactory
+//                .select(new QCalculateResponseForManage(ship.id.as("id"),
+//                        ship.shipName.as("name"),
+//                        new CaseBuilder().when(calculate.isCancel.eq(true)).then(calculate.amount.multiply(-1)).otherwise(calculate.amount).sum().as("total"),
+//                        new CaseBuilder().when(calculate.isCancel.eq(true)).then(calculate.amount.multiply(-1)).otherwise(0L).sum().as("cancel"))
+//                )
+//                .from(calculate).join(ship).on(calculate.ship.eq(ship)).join(company).on(ship.company.eq(company)).join(orders).on(calculate.orders.eq(orders))
+//                .where(company.member.id.eq(memberId),
+//                        calculate.year.eq(year),
+//                        calculate.month.eq(month),
+//                        byStatus(status),
+//                        ship.shipName.containsIgnoreCase(shipName))
+//                .groupBy(ship.id)
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetchResults();
+//
+//        return new PageImpl<>(response.getResults(), pageable, response.getTotal());
+////        return response;
+//
+//    }
+//
 }
