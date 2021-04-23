@@ -20,14 +20,29 @@ public class TvListResponse {
     private String thumbnailUrl;
     private Long cameraId;
 
+//    @QueryProjection
+//    public TvListResponse(
+//            Double distance,
+//            Ship ship) {
+//        this.id = ship.getId();
+//        this.shipName = ship.getShipName();
+//        this.thumbnailUrl = "/resource/" + ship.getProfileImage().split("/")[1]+"/thumb_"+ship.getProfileImage().split("/")[2];
+//        List<RealTimeVideo> video = ship.getShiipRealTimeVideos();
+//        this.cameraId = video.size() > 0 ? video.get(0).getId() : null;
+//    }
+
     @QueryProjection
     public TvListResponse(
             Double distance,
-            Ship ship) {
-        this.id = ship.getId();
-        this.shipName = ship.getShipName();
-        this.thumbnailUrl = "/resource/" + ship.getProfileImage().split("/")[1]+"/thumb_"+ship.getProfileImage().split("/")[2];
-        List<RealTimeVideo> video = ship.getShiipRealTimeVideos();
+            Long shipId,
+            String shipName,
+            String profileImage) {
+        this.id = shipId;
+        this.shipName = shipName;
+        this.thumbnailUrl = "/resource/" + profileImage.split("/")[1] + "/thumb_" + profileImage.split("/")[2];
+    }
+
+    public void setVideoList(List<RealTimeVideo> video) {
         this.cameraId = video.size() > 0 ? video.get(0).getId() : null;
     }
 }

@@ -31,10 +31,7 @@ import com.tobe.fishking.v2.utils.HolidayUtil;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -291,8 +288,22 @@ public class CommonService {
         result.put("keyword", keyword);
         result.put("diary", fishingDiaryRepository.searchDiaryOrBlog(keyword, "diary", pageable));
         result.put("blog", fishingDiaryRepository.searchDiaryOrBlog(keyword, "blog", pageable));
-        result.put("ship", shipRepository.searchMain(keyword, "ship", lat, lng, pageable));
-        result.put("live", shipRepository.searchMain(keyword, "live", lat, lng, pageable));
+        Page<ShipListResponse> shipListResponsePage = shipRepository.searchMain(keyword, "ship", lat, lng, pageable);
+        Page<ShipListResponse> liveListResponsePage = shipRepository.searchMain(keyword, "live", lat, lng, pageable);
+        List<ShipListResponse> newShipList = new ArrayList<>();
+        for(ShipListResponse r : shipListResponsePage.getContent()) {
+            List<CommonCode> fish = commonCodeRepo.getShipSpeciesName(r.getId());
+            r.setSpecies(fish);
+            newShipList.add(r);
+        }
+        List<ShipListResponse> newLiveList = new ArrayList<>();
+        for(ShipListResponse r : liveListResponsePage.getContent()) {
+            List<CommonCode> fish = commonCodeRepo.getShipSpeciesName(r.getId());
+            r.setSpecies(fish);
+            newLiveList.add(r);
+        }
+        result.put("ship", new PageImpl<>(newShipList, pageable, shipListResponsePage.getTotalElements()));
+        result.put("live", new PageImpl<>(newLiveList, pageable, shipListResponsePage.getTotalElements()));
         return result;
     }
 
@@ -320,9 +331,15 @@ public class CommonService {
         if (ship.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
+            List<ShipListResponse> newShipList = new ArrayList<>();
+            for(ShipListResponse r : ship.getContent()) {
+                List<CommonCode> fish = commonCodeRepo.getShipSpeciesName(r.getId());
+                r.setSpecies(fish);
+                newShipList.add(r);
+            }
             result.put("keyword", keyword);
             result.put("type", "ship");
-            result.put("ship", ship);
+            result.put("ship", new PageImpl<>(newShipList, pageable, ship.getTotalElements()));
             return result;
         }
 //        result.put("keyword", keyword);
@@ -339,8 +356,14 @@ public class CommonService {
         if (live.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
+            List<ShipListResponse> newLiveList = new ArrayList<>();
+            for(ShipListResponse r : live.getContent()) {
+                List<CommonCode> fish = commonCodeRepo.getShipSpeciesName(r.getId());
+                r.setSpecies(fish);
+                newLiveList.add(r);
+            }
             result.put("keyword", keyword);
-            result.put("live", live);
+            result.put("live", new PageImpl<>(newLiveList, pageable, live.getTotalElements()));
             return result;
         }
     }

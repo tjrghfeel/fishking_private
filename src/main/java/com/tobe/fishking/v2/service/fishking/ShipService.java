@@ -74,6 +74,7 @@ public class ShipService {
     private final CouponRepository couponRepository;
     private final CouponMemberRepository couponMemberRepository;
     private final CompanyRepository companyRepository;
+    private final CommonCodeRepository commonCodeRepository;
 
 
     /*
@@ -173,18 +174,27 @@ public class ShipService {
     /* 선상, 갯바위 리스트 */
     @Transactional
     public Page<ShipListResponse> getShips(ShipSearchDTO shipSearchDTO, int page) {
-        Pageable pageable;
-        if (shipSearchDTO.getOrderBy().equals("")) {
-            pageable = PageRequest.of(page, 10, Sort.by(shipSearchDTO.getOrderBy()));
-        } else {
-            pageable = PageRequest.of(page, 10, Sort.by(shipSearchDTO.getOrderBy()));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(shipSearchDTO.getOrderBy()));
+        Page<ShipListResponse> p = shipRepo.searchAll(shipSearchDTO, pageable);
+        List<ShipListResponse> newList = new ArrayList<>();
+        for(ShipListResponse r : p.getContent()) {
+            List<CommonCode> fish = commonCodeRepository.getShipSpeciesName(r.getId());
+            r.setSpecies(fish);
+            newList.add(r);
         }
-        return shipRepo.searchAll(shipSearchDTO, pageable);
+        return new PageImpl<>(newList, pageable, p.getTotalElements());
     }
 
     @Transactional
     public List<ShipListResponse> getShipsForMap(ShipSearchDTO  shipSearchDTO) {
-        return shipRepo.searchAllForMap(shipSearchDTO);
+        List<ShipListResponse> p = shipRepo.searchAllForMap(shipSearchDTO);
+        List<ShipListResponse> newList = new ArrayList<>();
+        for(ShipListResponse r : p) {
+            List<CommonCode> fish = commonCodeRepository.getShipSpeciesName(r.getId());
+            r.setSpecies(fish);
+            newList.add(r);
+        }
+        return newList;
     }
 
     /* 선상, 갯바위 배 정보 */
@@ -585,7 +595,14 @@ public class ShipService {
         } else {
             pageable = PageRequest.of(page, shipSearchDTO.getSize(), Sort.by(shipSearchDTO.getOrderBy()));
         }
-        return shipRepo.searchTvList(shipSearchDTO, pageable);
+        Page<TvListResponse> p = shipRepo.searchTvList(shipSearchDTO, pageable);
+        List<TvListResponse> newList = new ArrayList<>();
+        for (TvListResponse r : p.getContent()) {
+            List<RealTimeVideo> v = realTimeVideoRepository.getRealTimeVideoByShipsId(r.getId());
+            r.setVideoList(v);
+            newList.add(r);
+        }
+        return new PageImpl<>(newList, pageable, p.getTotalElements());
     }
 
     // 라이브 상세
