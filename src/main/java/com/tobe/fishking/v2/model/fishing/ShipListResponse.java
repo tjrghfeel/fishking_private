@@ -31,31 +31,31 @@ public class ShipListResponse {
     private int sold;
     private String type;
 
-    public ShipListResponse(
-            Integer lowPrice,
-            Integer sold,
-            Long liked,
-            Double distance,
-            Ship ship,
-            List<CommonCode> speciesList
-    ) {
-        List<CommonCode> species = ship.getFishSpecies();
-        this.id = ship.getId();
-        this.shipImageFileUrl = "/resource/" + ship.getProfileImage().split("/")[1] + "/thumb_" + ship.getProfileImage().split("/")[2];
-        this.shipName = ship.getShipName();
-        this.sido = ship.getSido();
-        this.sigungu = ship.getSigungu();
-//        this.distance = ship.getDistance();
-        this.location = ship.getLocation();
-        this.address = ship.getAddress();
-        this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
-        this.fishSpeciesCount = species.size();
-        this.lowPrice = lowPrice==null?0:lowPrice;
-        this.sold = sold==null?0:sold;
-        this.type = ship.getFishingType().getValue();
-//        this.distance = CalcUtils.round(distance, 3);
-        this.distance = (int) Math.round(distance);
-    }
+//    public ShipListResponse(
+//            Integer lowPrice,
+//            Integer sold,
+//            Long liked,
+//            Double distance,
+//            Ship ship,
+//            List<CommonCode> speciesList
+//    ) {
+//        List<CommonCode> species = ship.getFishSpecies();
+//        this.id = ship.getId();
+//        this.shipImageFileUrl = "/resource/" + ship.getProfileImage().split("/")[1] + "/thumb_" + ship.getProfileImage().split("/")[2];
+//        this.shipName = ship.getShipName();
+//        this.sido = ship.getSido();
+//        this.sigungu = ship.getSigungu();
+////        this.distance = ship.getDistance();
+//        this.location = ship.getLocation();
+//        this.address = ship.getAddress();
+//        this.fishSpecies = species.stream().map(CommonCodeDTO::fromEntity).collect(Collectors.toList());
+//        this.fishSpeciesCount = species.size();
+//        this.lowPrice = lowPrice==null?0:lowPrice;
+//        this.sold = sold==null?0:sold;
+//        this.type = ship.getFishingType().getValue();
+////        this.distance = CalcUtils.round(distance, 3);
+//        this.distance = (int) Math.round(distance);
+//    }
 
 //    @QueryProjection
 //    public ShipListResponse(

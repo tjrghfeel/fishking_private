@@ -255,9 +255,28 @@ public class CommonService {
         String path = env.getProperty("file.downloadUrl");
 
         Map<String, Object> result = new HashMap<>();
-        result.put("live", adRepository.getAdByType(AdType.MAIN_LIVE));
-        result.put("ship", adRepository.getAdByType(AdType.MAIN_SHIP));
-        result.put("ad", adRepository.getAdByType(AdType.MAIN_AD));
+        List<SmallShipResponse> live = adRepository.getAdByType(AdType.MAIN_LIVE);
+        List<SmallShipResponse> ship = adRepository.getAdByType(AdType.MAIN_SHIP);
+        List<SmallShipResponse> ad = adRepository.getAdByType(AdType.MAIN_AD);
+
+        for (SmallShipResponse r : live) {
+            List<CommonCode> s = commonCodeRepo.getShipSpeciesName(r.getId());
+            r.setSpecies(s);
+        }
+
+        for (SmallShipResponse r : ship) {
+            List<CommonCode> s = commonCodeRepo.getShipSpeciesName(r.getId());
+            r.setSpecies(s);
+        }
+
+        for (SmallShipResponse r : ad) {
+            List<CommonCode> s = commonCodeRepo.getShipSpeciesName(r.getId());
+            r.setSpecies(s);
+        }
+
+        result.put("live", live);
+        result.put("ship", ship);
+        result.put("ad", ad);
         result.put("species", commonCodeRepo.getMainSpeciesCount());
         List<MainSpeciesResponse> directions = commonCodeRepo.getMainDistrictCount();
         List<String> d = directions.stream().map(MainSpeciesResponse::getCode).collect(Collectors.toList());
@@ -435,11 +454,15 @@ public class CommonService {
             if (lat != 0) {
                 p.setDistance(p.getLocation().getDistance(lat, lng));
             }
+            List<CommonCode> s = commonCodeRepo.getShipSpeciesName(p.getId());
+            p.setSpecies(s);
         }
         for (SmallShipResponse p : normal) {
             if (lat != 0) {
                 p.setDistance(p.getLocation().getDistance(lat, lng));
             }
+            List<CommonCode> s = commonCodeRepo.getShipSpeciesName(p.getId());
+            p.setSpecies(s);
         }
         result.put("premium", premium);
         result.put("normal", normal);
