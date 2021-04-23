@@ -1,5 +1,7 @@
 package com.tobe.fishking.v2.controller.admin;
 
+import com.tobe.fishking.v2.enums.fishing.FishingType;
+import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.ShipManageDtoForPage;
 import com.tobe.fishking.v2.model.admin.ShipSearchConditionDto;
@@ -9,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Api(tags={"선박 관리"})
 @RequiredArgsConstructor
@@ -23,8 +27,15 @@ public class ShipManageController {
     public Page<ShipManageDtoForPage> getShipList(
             @RequestHeader("Authorization") String token,
             @PathVariable("page") int page,
-            ShipSearchConditionDto dto
-    ){
+            @Valid ShipSearchConditionDto dto
+    ) throws ServiceLogicException {
+        try{
+            if(dto.getFishingType() != null){
+                FishingType.valueOf(dto.getFishingType());}
+            if(dto.getSeaDirection() != null){
+                SeaDirection.valueOf(dto.getSeaDirection());}
+        }catch (Exception e){throw new ServiceLogicException("fishingType, seaDirection의 값이 잘못되었습니다.");}
+
         return shipManageService.getShipList(dto, token,page);
     }
 

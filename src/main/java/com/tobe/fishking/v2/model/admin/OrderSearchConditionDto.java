@@ -1,8 +1,11 @@
 package com.tobe.fishking.v2.model.admin;
 
+import com.tobe.fishking.v2.enums.Constants;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Getter
@@ -30,10 +33,20 @@ public class OrderSearchConditionDto {
     private Boolean isPay;//
     private String payMethod;//
     private String orderStatus;//
+    @Size(max = 100)
+    @Pattern(regexp = Constants.STRING)
     private String goodsName;//
+    @Size(max = 100)
+    @Pattern(regexp = Constants.STRING)
     private String memberName;//
+    @Size(max = 100)
+    @Pattern(regexp = Constants.NUMBER)
     private String memberAreaCode;//
+    @Size(max = 100)
+    @Pattern(regexp = Constants.NUMBER)
     private String memberLocalNumber;//
+    @Size(max = 100)
+    @Pattern(regexp = Constants.STRING)
     private String shipName;//
 
     private Integer pageCount = 10;

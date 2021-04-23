@@ -43,7 +43,7 @@ public class FishingDiarySearchResponse {
         this.contents = contents;
         this.imageUrl = imageUrl.split("\\^")[0];
         this.nickName = nickName;
-        this.profileImageUrl = profileImageUrl;
+        this.profileImageUrl = "https://www.fishkingapp.com/resource"+profileImageUrl;
         this.createdDate = DateUtils.getDateInFormat(createdDate.toLocalDate());
         this.loves = loves.intValue();
         this.comments = comments.intValue();
