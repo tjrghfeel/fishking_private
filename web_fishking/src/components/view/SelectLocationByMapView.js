@@ -77,15 +77,15 @@ export default inject("PageStore")(
               <div className="mapwrap-sm">
                 <div className="info-btm-round pt-2">
                   <div className="row no-gutters d-flex align-items-center pt-0">
-                    <div className="col-7 text-center">
+                    <div className="col-8 text-center">
                       {this.state.address}
                     </div>
-                    <div className="col-4 text-right">
+                    <div className="col-4 text-center">
                       <a
                         className="btn btn-primary btn-sm-nav-tab"
                         onClick={this.onSelected}
                       >
-                        내 위치 선택하기
+                        위치적용
                       </a>
                     </div>
                   </div>
