@@ -1,5 +1,6 @@
 import axios from "axios";
 import ModalStore from "./stores/ModalStore";
+import React from "react";
 
 /** 공통 설정 */
 const http = axios.create({
@@ -45,6 +46,19 @@ export default (() => {
             // ModalStore.openModal("Alert", {
             //   body: "요청하신 검색 결과가 없습니다.",
             // });
+            resolve(null);
+          } else if (response && response["status"] == "206") {
+            ModalStore.openModal("Alert", {
+              body: (
+                <React.Fragment>
+                  <p>
+                    선택하신 알람시간에 해당하는
+                    <br />
+                    조위 정보가 없습니다.
+                  </p>
+                </React.Fragment>
+              ),
+            });
             resolve(null);
           } else {
             resolve(response.data);

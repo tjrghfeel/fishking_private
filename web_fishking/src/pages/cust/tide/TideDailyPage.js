@@ -10,7 +10,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+  "ModalStore"
 )(
   observer(
     class extends React.Component {
@@ -152,9 +153,15 @@ export default inject(
       };
       save = async () => {
         if (this.state.location === null) return;
-        const { APIStore } = this.props;
+        const { APIStore, ModalStore } = this.props;
         if (this.state.tabActive === 0) {
           // > 오늘의 -
+          if (this.state.selected.length === 0) {
+            ModalStore.openModal("Alert", {
+              body: "알람설정 시점을 선택 하십시오",
+            })
+            return;
+          }
           const resolve = await APIStore._post(`/v2/api/addTideLevelAlert`, {
             observerId: this.state.location.observerId,
             alertTime: this.state.selected,
@@ -162,6 +169,12 @@ export default inject(
           if (resolve) this.onSelectedTideArea();
         } else {
           // > 날짜별 -
+          if (this.state.selected.length === 0) {
+            ModalStore.openModal("Alert", {
+              body: "알람설정 시점을 선택 하십시오",
+            })
+            return;
+          }
           const resolve = await APIStore._post(`/v2/api/addTideAlert`, {
             observerId: this.state.location.observerId,
             tide: this.state.tide,
@@ -205,6 +218,9 @@ export default inject(
                   >
                     위치선택
                   </a>
+                  {!this.state.location && (
+                    <span className="red" style={{fontSize: '12px'}}> ← 위치를 선택해 주세요 </span>
+                  )}
                 </div>
                 <div className="col-3 text-right pr-2">
                   <a className="active">
@@ -492,7 +508,7 @@ export default inject(
                 </div>
               </React.Fragment>
             )}
-            <div className="fixed-bottom">
+            {this.state.location && (<div className="fixed-bottom">
               <div className="row no-gutters">
                 <div className="col-12">
                   <a
@@ -503,7 +519,7 @@ export default inject(
                   </a>
                 </div>
               </div>
-            </div>
+            </div>)}
           </React.Fragment>
         );
       }
