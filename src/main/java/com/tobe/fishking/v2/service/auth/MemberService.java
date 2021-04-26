@@ -260,6 +260,13 @@ public class MemberService {
         for(int i=0; i<alertSetList.size(); i++){
             alertSet.add(alertSetList.get(i));
         }
+        //동영상 설정정보
+        CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+        List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+        Set<CommonCode> videoSetting = new HashSet<>();
+        for(int i=0; i<videoSettingList.size(); i++){
+            videoSetting.add(videoSettingList.get(i));
+        }
 
         /*sns를 통해 가입하는경우.*/
         if(member!=null && member.getIsCertified()==false && member.getSnsId()!=null){
@@ -268,6 +275,7 @@ public class MemberService {
             member.setPassword(encodedPw);
             member.setEmail(signUpDto.getEmail());
             member.setAlertSet(alertSet);
+            member.setVideoSetting(videoSetting);
 
             member = memberRepository.save(member);
         }
@@ -292,6 +300,7 @@ public class MemberService {
                     .snsType(null)
                     .snsId(null)
                     .alertSet(alertSet)
+                    .videoSetting(videoSetting)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
                     .build();
             member = memberRepository.save(member);
@@ -2004,6 +2013,52 @@ public class MemberService {
         }
         else{
             if(member.hasAlertSetCode(code)){ member.deleteAlertSet(code);}
+            else{}
+        }
+        memberRepository.save(member);
+
+        return true;
+    }
+
+    //설정 > 동영상설정. 동영상설정 정보 조회
+    @Transactional
+    public List<VideoSettingDtoForPage> getVideoSetting(String token){
+        Member member = getMemberBySessionToken(token);
+//        Set<CommonCode> memberSAlertSetCodeList = member.getAlertSet();
+        List<VideoSettingDtoForPage> result = new ArrayList<>();
+
+        CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+        List<CommonCode> videoSettingCodeList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+
+        for(int i=0; i<videoSettingCodeList.size(); i++){
+            CommonCode videoSetting = videoSettingCodeList.get(i);
+            Boolean isSet = null;
+            if(member.hasVideoSettingCode(videoSetting.getCode())){ isSet = true;}
+            else{isSet = false;}
+
+            VideoSettingDtoForPage dto = VideoSettingDtoForPage.builder()
+                    .code(videoSetting.getCode())
+                    .codeName(videoSetting.getCodeName())
+                    .isSet(isSet)
+                    .build();
+            result.add(dto);
+        }
+
+        return result;
+    }
+    //설정 > 동영상 설정하기
+    @Transactional
+    public Boolean modifyVideoSetting(String token, String code, String isSet){
+        Member member = getMemberBySessionToken(token);
+        CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+        CommonCode videoSetting = commonCodeRepository.findByCodeGroupAndCode(videoSettingCodeGroup,code);
+
+        if(isSet.equals("true")){
+            if(member.hasVideoSettingCode(code)){      }
+            else{ member.addVideoSetting(videoSetting);   }
+        }
+        else{
+            if(member.hasVideoSettingCode(code)){ member.deleteVideoSetting(code);}
             else{}
         }
         memberRepository.save(member);

@@ -32,7 +32,7 @@ export default inject(
         },
         {
           text: "찜한업체",
-          pathname: "/zzim/main",
+          pathname: "/zzim/boat",
           img: "/assets/cust/img/svg/mymenu-zzim.svg",
           requiredLoggedIn: true,
         },

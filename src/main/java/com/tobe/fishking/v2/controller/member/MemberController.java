@@ -1079,7 +1079,7 @@ public class MemberController {
     @PutMapping("/profileManage/statusMessage")
     @ResponseBody
     public String modifyProfileStatusMessage(
-            @RequestBody ModifyingStatusMessageDto statusMessage,
+            @RequestBody @Valid ModifyingStatusMessageDto statusMessage,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -1092,7 +1092,7 @@ public class MemberController {
     @PutMapping("/profileManage/email")
     @ResponseBody
     public String modifyProfileEmail(
-            @RequestBody ModifyingEmailDto email,
+            @RequestBody @Valid ModifyingEmailDto email,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -1105,7 +1105,7 @@ public class MemberController {
     @PutMapping("/profileManage/password")
     @ResponseBody
     public boolean modifyProfilePassword(
-            @RequestBody ModifyProfilePwDto dto,
+            @RequestBody @Valid ModifyProfilePwDto dto,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -1186,6 +1186,37 @@ public class MemberController {
             @PathVariable("isSet") String isSet
     ){
         return memberService.modifyAlertSet(token, code, isSet);
+    }
+
+    //동영상설정정보 조회.
+    @ApiOperation(value = "설정 > 동영상설정 페이지 조회", notes = "" +
+            "요청필드 ) \n" +
+            "- header : sessionToken\n" +
+            "응답 필드 ) \n" +
+            "- code : String / codeGroup id 166번에 해당하는 common code들의 code값. \n" +
+            "- codeName : String / code의 code name\n" +
+            "- isSet : Boolean / 현재 해당 동영상설정 항목의 설정되었는지 여부")
+    @GetMapping("/setting/videoSetting")
+    @ResponseBody
+    public List<VideoSettingDtoForPage> getVideoSetting(
+            @RequestHeader("Authorization") String token
+    ){
+        return memberService.getVideoSetting(token);
+    }
+
+    //동영상 설정
+    @ApiOperation(value = "설정 > 동영상설정하기",notes = "" +
+            "요청필드 ) \n" +
+            "- code : String / 필수 / 설정하려는 동영상설정의 code값. codeGroup id 166번에 해당하는 common code의 code값. \n" +
+            "- isSet : String / 필수 / 해당 동영상 설정 항목을 설정할지 해제할지. 'true' 또는 'false'값을 입력. ")
+    @PutMapping("/setting/videoSetting/{code}/{isSet}")
+    @ResponseBody
+    public Boolean modifyVideoSetting(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("code") String code,
+            @PathVariable("isSet") String isSet
+    ){
+        return memberService.modifyVideoSetting(token, code, isSet);
     }
 
 }

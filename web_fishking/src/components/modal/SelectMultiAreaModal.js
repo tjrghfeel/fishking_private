@@ -48,7 +48,7 @@ export default inject("DataStore")(
           if (resolve.length > 0) {
             const areas = DataStore.makeArrayToColumns(resolve, 2);
             setAreaList(areas);
-            setSelected([]);
+            setSelected([data]);
           } else {
             setAreaList([]);
             setSelected([data]);

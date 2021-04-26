@@ -4,6 +4,7 @@ package com.tobe.fishking.v2.controller.fishking;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryCommentService;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -37,7 +39,7 @@ public class FishingDiaryCommentController {
     public Long makeFishingDiaryComment(
             @RequestBody @Valid MakeFishingDiaryCommentDto dto,
             @RequestHeader("Authorization") String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, IOException, ServiceLogicException {
         if(!(dto.getDependentType().equals("fishingDiary") || dto.getDependentType().equals("fishingBlog"))){
             throw new RuntimeException("dependentType의 값에는 'fishingDiary', 'fishingBlog' 중 하나만 가능합니다.");
         }

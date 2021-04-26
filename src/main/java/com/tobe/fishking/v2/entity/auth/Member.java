@@ -109,6 +109,10 @@ public class Member {
     @JoinColumn(name = "member_alert_set", columnDefinition = " comment  '설정 - 알림 설정'  ")
     private Set<CommonCode> alertSet;
 
+    @ManyToMany(targetEntity = CommonCode.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "member_video_setting", columnDefinition = "comment '설정 - 동영상 설정")
+    private Set<CommonCode> videoSetting;
+
     @Builder
     public Member(Long id, String uid,
                   String memberName, String nickName,
@@ -116,7 +120,7 @@ public class Member {
                   Role roles, String sessionToken, String profileImage, String profileBackgroundImage,
                   Boolean isActive, String certifiedNo, Boolean isCertified,
                   String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber,
-                  Address address, Set<CommonCode> alertSet ) {
+                  Address address, Set<CommonCode> alertSet, Set<CommonCode> videoSetting ) {
         this.id = id;
         this.uid = uid;
         this.memberName = memberName;
@@ -138,6 +142,7 @@ public class Member {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.alertSet = alertSet;
+        this.videoSetting = videoSetting;
     }
 
     //Getters and setters ommitted for brevity
@@ -159,10 +164,31 @@ public class Member {
     public void addAlertSet(CommonCode alertSet){ this.alertSet.add(alertSet); }
     public void deleteAlertSet(String alertSetCode){
         Iterator<CommonCode> iterator = this.getAlertSet().iterator();
+        CommonCode alert = null;
         while(iterator.hasNext()){
             CommonCode commonCode = iterator.next();
-            if(commonCode.getCode().equals(alertSetCode)){ this.alertSet.remove(commonCode); }
+            if(commonCode.getCode().equals(alertSetCode)){ alert = commonCode; }
         }
+        this.alertSet.remove(alert);
+    }
+
+    public boolean hasVideoSettingCode(String code){
+        Iterator<CommonCode> iterator = this.getVideoSetting().iterator();
+        while(iterator.hasNext()){
+            CommonCode commonCode = iterator.next();
+            if(commonCode.getCode().equals(code)){return true; }
+        }
+        return false;
+    }
+    public void addVideoSetting(CommonCode videoSetting){ this.videoSetting.add(videoSetting); }
+    public void deleteVideoSetting(String videoSetting){
+        Iterator<CommonCode> iterator = this.getVideoSetting().iterator();
+        CommonCode alert = null;
+        while(iterator.hasNext()){
+            CommonCode commonCode = iterator.next();
+            if(commonCode.getCode().equals(videoSetting)){ alert = commonCode; }
+        }
+        this.videoSetting.remove(alert);
     }
     public void setIsSuspended(Boolean isSuspended){this.isSuspended = isSuspended;}
 }

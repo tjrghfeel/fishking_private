@@ -3,26 +3,41 @@ package com.tobe.fishking.v2.service.fishking;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.auth.RegistrationToken;
 import com.tobe.fishking.v2.entity.board.Comment;
+import com.tobe.fishking.v2.entity.common.Alerts;
+import com.tobe.fishking.v2.entity.common.CodeGroup;
+import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.FishingDiary;
 import com.tobe.fishking.v2.entity.fishing.FishingDiaryComment;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.fishing.DependentType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.common.AlertsRepository;
+import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
+import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryCommentRepository;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
+import com.tobe.fishking.v2.service.FishkingScheduler;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class FishingDiaryCommentService {
@@ -41,12 +56,20 @@ public class FishingDiaryCommentService {
     UploadService uploadService;
     @Autowired
     MemberService memberService;
+    @Autowired
+    CommonCodeRepository commonCodeRepository;
+    @Autowired
+    CodeGroupRepository codeGroupRepository;
+    @Autowired
+    AlertsRepository alertsRepository;
+    @Autowired
+    FishkingScheduler fishkingScheduler;
 
     /*댓글 작성*/
     @Transactional
     public Long makeFishingDiaryComment(
             DependentType dependentType, Long linkId, Long parentId, String content, Long fileId, String token
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, IOException, ServiceLogicException {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         if(dependentType==DependentType.fishingBlog || dependentType==DependentType.fishingDiary){
@@ -55,7 +78,7 @@ public class FishingDiaryCommentService {
 
             if(parentId!=0) {
                 if (!commentRepository.existsById(parentId)) {
-                    throw new RuntimeException("parentId에 해당하는 댓글이 존재하지 않습니다.");
+                    throw new ServiceLogicException("parentId에 해당하는 댓글이 존재하지 않습니다.");
                 }
             }
 
@@ -80,10 +103,41 @@ public class FishingDiaryCommentService {
 
             fishingDiary.getStatus().plusCommentCount();
 
+            //원글의 작성자에게 푸시알림 보내기.
+            Member receiver = fishingDiary.getMember();
+            //혜택알림 허용 설정되어있으면 푸시알림.
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            CommonCode fishingDiaryAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "fishingDiary");
+            if(receiver.hasAlertSetCode(fishingDiaryAlertSetCommonCode.getCode())) {
+                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+                String alertTitle = "작성글 댓글 알림";
+                String fishingDiaryTitle = (fishingDiary.getTitle().length() > 10)? fishingDiary.getTitle().substring(0,10)+"..." : fishingDiary.getTitle();
+                String sentence = "고객님이 작성한 글 '제목 : "+fishingDiaryTitle+"'에 댓글이 추가되었습니다.";
+
+                Alerts alerts = Alerts.builder()
+                        .alertType(AlertType.fishingDiary)
+                        .entityType(EntityType.fishingDiary)
+                        .pid(comment.getId())
+                        .content(null)
+                        .sentence(sentence)
+                        .isRead(false)
+                        .isSent(false)
+                        .receiver(receiver)
+                        .alertTime(LocalDateTime.now())
+                        .createdBy(receiver)
+                        .build();
+
+                alerts = alertsRepository.save(alerts);
+
+                for (RegistrationToken item: registrationTokenList) {
+                    fishkingScheduler.sendPushAlert(alertTitle, sentence, alerts, item.getToken());
+                }
+            }
+
             return comment.getId();
         }
         else{
-            throw new RuntimeException("조항일지와 유저조행기에 대한 댓글만 가능합니다");
+            throw new ServiceLogicException("조항일지와 유저조행기에 대한 댓글만 가능합니다");
         }
     }
 

@@ -257,6 +257,13 @@ public class MemberManageService {
         for(int i=0; i<alertSetList.size(); i++){
             alertSet.add(alertSetList.get(i));
         }
+        //동영상 설정정보
+        CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+        List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+        Set<CommonCode> videoSetting = new HashSet<>();
+        for(int i=0; i<videoSettingList.size(); i++){
+            videoSetting.add(videoSettingList.get(i));
+        }
 
         CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
         CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup, "noImg");
@@ -279,6 +286,7 @@ public class MemberManageService {
                 .snsType(null)
                 .snsId(null)
                 .alertSet(alertSet)
+                .videoSetting(videoSetting)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
                 .build();
         member = memberRepository.save(member);
