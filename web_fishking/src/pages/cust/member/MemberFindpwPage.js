@@ -41,18 +41,19 @@ export default inject(
         if (!DataStore.isMobile(mobile)) return;
 
         try {
+            //인증번호 발송.
           const codeId = await APIStore._post("/v2/api/findPw/smsAuthReq", {
             areaCode: mobile.substr(0, 3),
             localNumber: mobile.substr(3, mobile.length),
           });
           this.setState({ codeId });
-          const findInfo = await APIStore._put("/v2/api/findPw/uid", {
-            phoneAuthId: codeId,
-          });
-          this.setState({
-            userName: findInfo.memberName,
-            userId: findInfo.uid,
-          });
+          // const findInfo = await APIStore._put("/v2/api/findPw/uid", {
+          //   phoneAuthId: codeId,
+          // });
+          // this.setState({
+          //   userName: findInfo.memberName,
+          //   userId: findInfo.uid,
+          // });
         } catch (err) {
           ModalStore.openModal("Alert", { body: "휴대폰번호를 확인해주세요." });
           return;
@@ -74,7 +75,17 @@ export default inject(
           authNum,
           phoneAuthId,
         });
-        if (response) this.setState({ valid: true });
+        if (response) {
+            this.setState({ valid: true });
+
+            const findInfo = await APIStore._put("/v2/api/findPw/uid", {
+                phoneAuthId: phoneAuthId,
+            });
+            this.setState({
+                userName: findInfo.memberName,
+                userId: findInfo.uid,
+            });
+        }
       };
 
       onChangePassword = async () => {

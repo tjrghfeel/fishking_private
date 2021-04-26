@@ -85,7 +85,7 @@ const APIStore = new (class {
   _post = (url, data, headers) => {
     return new Promise((resolve, reject) => {
       if (
-        url.indexOf("/login") === -1 &&
+        url.indexOf("/login") === -1 && url.indexOf('/findPw') === -1 && url.indexOf('/checkSmsAuth') === -1 &&
         (localStorage.getItem("@accessToken") || null) === null
       ) {
         ModalStore.openModal("Alert", { body: "로그인이 필요합니다." });
@@ -114,7 +114,7 @@ const APIStore = new (class {
 
   _put = (url, data, headers) => {
     return new Promise((resolve, reject) => {
-      if ((localStorage.getItem("@accessToken") || null) === null) {
+      if (url.indexOf('/findPw') === -1 && (localStorage.getItem("@accessToken") || null) === null) {
         ModalStore.openModal("Alert", { body: "로그인이 필요합니다." });
         reject("NOT FOUND ACCESS TOKEN");
       } else {

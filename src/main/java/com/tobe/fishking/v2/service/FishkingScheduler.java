@@ -108,8 +108,8 @@ public class FishkingScheduler {
     }
 
     /*물때 알림. */
-    @Scheduled(cron = "0 0/1 * * * *")
-//    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
+//    @Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
     public void checkTideAlert() throws IOException {
         LocalDateTime dateTime = LocalDateTime.now();
         dateTime = dateTime/*.withMinute(0)*/.withSecond(0).withNano(0);
