@@ -108,7 +108,8 @@ export default inject(
               0
             ) {
               ModalStore.openModal("Alert", {
-                body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+                // body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+                body: "상품가격을 초과하는 쿠폰 사용은 지원하지 않습니다.",
               });
               this.selCoupon.current.value = "-1";
               return;
@@ -124,7 +125,8 @@ export default inject(
               0
             ) {
               ModalStore.openModal("Alert", {
-                body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+                // body: "선택하신 쿠폰으로 결제하실 수 없습니다.",
+                body: "상품가격을 초과하는 쿠폰 사용은 지원하지 않습니다.",
               });
               this.selCoupon.current.value = "-1";
               return;

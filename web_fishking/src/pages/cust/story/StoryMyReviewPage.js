@@ -25,12 +25,12 @@ export default inject("PageStore")(
               showBackIcon={true}
               customButton={
                 <React.Fragment>
-                  <a
-                    onClick={() => PageStore.push(`/story/add`)}
-                    className="fixed-top-right text-white"
-                  >
-                    글쓰기
-                  </a>
+                  {/*<a*/}
+                  {/*  onClick={() => PageStore.push(`/story/add`)}*/}
+                  {/*  className="fixed-top-right text-white"*/}
+                  {/*>*/}
+                  {/*  글쓰기*/}
+                  {/*</a>*/}
                 </React.Fragment>
               }
             />

@@ -63,8 +63,10 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                         rideShip.name,
                         ship.shipName,
                         goods.name,
+                        goods.fishingStartTime,
                         rideShip.phoneNumber,
-                        rideShip.emergencyPhone
+                        rideShip.emergencyPhone,
+                        rideShip.isRide
                 ))
                 .from(rideShip)
                     .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))

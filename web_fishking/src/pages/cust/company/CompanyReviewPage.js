@@ -102,14 +102,14 @@ export default inject(
               <NavigationLayout
                 title={"리뷰"}
                 showBackIcon={true}
-                customButton={
-                  <a
-                    onClick={() => PageStore.push(`/story/add`)}
-                    className="fixed-top-right text-white"
-                  >
-                    글쓰기
-                  </a>
-                }
+                // customButton={
+                //   <a
+                //     onClick={() => PageStore.push(`/story/add`)}
+                //     className="fixed-top-right text-white"
+                //   >
+                //     글쓰기
+                //   </a>
+                // }
               />
 
               {/** 리뷰 */}

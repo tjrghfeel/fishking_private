@@ -46,24 +46,26 @@
         location.href = '/boarding/sailadd?orderId=' + orderId;
     }
     function fn_delete (riderId) {
+      if (confirm("정말 삭제하시겠습니까?")) {
         $.ajax('/v2/api/sail/riders/del', {
-            method: 'POST',
-            dataType: 'json',
-            data: JSON.stringify({
-                riderId: riderId
-            }),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
-                xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
-            },
-            success: function (response, status, xhr) {
-                if (response.status != 'fail') {
-                    location.reload();
-                }else{
-                    alert(response.message);
-                }
+          method: 'POST',
+          dataType: 'json',
+          data: JSON.stringify({
+            riderId: riderId
+          }),
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+          },
+          success: function (response, status, xhr) {
+            if (response.status != 'fail') {
+              location.reload();
+            }else{
+              alert(response.message);
             }
+          }
         })
+      }
     }
     function fn_loadPageData () {
         // var orderId = new URLSearchParams(location.search).get('orderId');
@@ -98,6 +100,7 @@
                                                             <p> \
                                                                 승선자명: <strong class="large">' + item['name'] + '</strong><br/> \
                                                                 연락처: ' + item['phone'] + ' \
+                                                                비상시: ' + item['emergencyPhone'] + ' \
                                                             </p> \
                                                         </a> \
                                                     </div> \

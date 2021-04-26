@@ -255,10 +255,10 @@ export default inject(
                       {(state.areaCode || "").concat(state.localNumber || "")}
                     </div>
                     <div className="col-1 text-right pl-1">
-                      <img
-                        src="/assets/cust/img/svg/cal-arrow-right.svg"
-                        alt=""
-                      />
+                      {/*<img*/}
+                      {/*  src="/assets/cust/img/svg/cal-arrow-right.svg"*/}
+                      {/*  alt=""*/}
+                      {/*/>*/}
                     </div>
                   </div>
                 </a>

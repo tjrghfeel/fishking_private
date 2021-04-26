@@ -15,6 +15,12 @@ export default inject(
 )(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          loaded: false
+        }
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
@@ -62,6 +68,7 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
+        this.setState({ loaded: true })
       };
 
       downloadCoupon = async (item) => {
@@ -119,6 +126,17 @@ export default inject(
                     />
                   </React.Fragment>
                 ))}
+                {((!PageStore.state.list || PageStore.state.list.length < 1) && this.state.loaded) && (
+                  <React.Fragment>
+                    <p className="clearfix"></p>
+                    <div className="text-center">
+                      <span className="mb-3"
+                            style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>
+                        받을 수 있는 쿠폰이 없습니다.
+                      </span>
+                    </div>
+                  </React.Fragment>
+                )}
             </div>
 
             {PageStore.state.list && PageStore.state.list.length > 0 && (

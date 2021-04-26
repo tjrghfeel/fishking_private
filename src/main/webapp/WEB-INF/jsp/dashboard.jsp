@@ -67,7 +67,7 @@
 </div>
 
 <!-- 예약 -->
-<div class="container nopadding mt-2" id="list-template" style="display:none;">
+<div class="container nopadding mt-2" id="list-template" style="display: none;">
     <div class="card-round-grey">
         <div class="card card-sm"  style="margin-top: 0">
             <div class="row no-gutters d-flex align-items-center">
@@ -77,7 +77,9 @@
                             승선자:    <strong class="" name="data-username">챔피언 1호</strong><br/>
                             선상명:    <strong class="" name="data-shipName">챔피언 1호</strong><br/>
                             상품명:    <strong class="text-info" name="data-goodsName">우럭(오전)</strong><br/>
-                            연락처:    <span name="data-phone">010-1234-5678</span>
+                            연락처:    <span name="data-phone">010-1234-5678</span><br/>
+                            비상시:    <span name="data-emergency">010-1234-5678</span><br/>
+                            상태:     <span name="data-st">010-1234-5678</span>
                         </p>
                     </a>
                 </div>
@@ -185,8 +187,10 @@
                     clone.style.display = 'block';
                     clone.querySelector('[name="data-username"]').textContent = item['username'];
                     clone.querySelector('[name="data-shipName"]').textContent = item['shipName'];
-                    clone.querySelector('[name="data-goodsName"]').textContent = item['goodsName'];
+                    clone.querySelector('[name="data-goodsName"]').textContent = item['goodsName'] + ' (' + item['fishingStartTime'] + '~)';
                     clone.querySelector('[name="data-phone"]').textContent = item['phone'];
+                    clone.querySelector('[name="data-emergency"]').textContent = item['emergencyPhone'];
+                    clone.querySelector('[name="data-st"]').textContent = item['status'];
                     clone.querySelector('[name="data-visitCount"]').textContent = item['visitCount'] || 0;
                     clone.querySelector('[name="data-fingerType"]').textContent = '지문 : ' + (item['fingerType'] || '');
                     // ----- > 승선확인 이벤트

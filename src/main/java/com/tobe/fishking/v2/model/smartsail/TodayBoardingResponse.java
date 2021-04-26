@@ -14,10 +14,12 @@ public class TodayBoardingResponse {
     private String username;
     private String shipName;
     private String goodsName;
+    private String fishingStartTime;
     private String phone;
     private String emergencyPhone;
     private Integer visitCount;
     private String fingerType;
+    private String status;
 
     @QueryProjection
     public TodayBoardingResponse(
@@ -25,15 +27,19 @@ public class TodayBoardingResponse {
             String username,
             String shipName,
             String goodsName,
+            String fishingStartTime,
             String phone,
-            String emergencyPhone
+            String emergencyPhone,
+            Boolean isRide
     ) {
         this.riderId = riderId;
         this.username = username;
         this.shipName = shipName;
         this.goodsName = goodsName;
+        this.fishingStartTime = fishingStartTime.substring(0,2) + ":" + fishingStartTime.substring(2,4);
         this.phone = phone;
         this.emergencyPhone = emergencyPhone;
+        this.status = isRide ? "금일 승선 확인" : "확인 전";
     }
 
 }

@@ -9,6 +9,12 @@ export default inject(
 )(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          loaded: false
+        }
+      }
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
@@ -51,6 +57,7 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
+        this.setState({ loaded: true })
       };
 
       onClick = (item) => {
@@ -111,7 +118,7 @@ export default inject(
                   }}
                 />
               ))}
-            {(!PageStore.state.list || PageStore.state.list.length === 0) && (
+            {((!PageStore.state.list || PageStore.state.list.length === 0) && this.state.loaded) && (
               <div className="container nopadding mt-3 mb-0 text-center">
                 <p className="mt-5 mb-3">
                   <img
@@ -121,19 +128,19 @@ export default inject(
                   />
                 </p>
                 <h6>내가 스크랩한 게시글이 없습니다.</h6>
-                <p className="mt-3">
-                  <small className="grey">
-                    낚시인들의 소중한 경험을 저장해 보세요.
-                  </small>
-                </p>
-                <p className="mt-5">
-                  <a
-                    onClick={() => PageStore.push(addPathname)}
-                    className="btn btn-primary btn-round"
-                  >
-                    어복스토리 보러 가기
-                  </a>
-                </p>
+                {/*<p className="mt-3">*/}
+                {/*  <small className="grey">*/}
+                {/*    낚시인들의 소중한 경험을 저장해 보세요.*/}
+                {/*  </small>*/}
+                {/*</p>*/}
+                {/*<p className="mt-5">*/}
+                {/*  <a*/}
+                {/*    onClick={() => PageStore.push(addPathname)}*/}
+                {/*    className="btn btn-primary btn-round"*/}
+                {/*  >*/}
+                {/*    어복스토리 보러 가기*/}
+                {/*  </a>*/}
+                {/*</p>*/}
               </div>
             )}
           </React.Fragment>
