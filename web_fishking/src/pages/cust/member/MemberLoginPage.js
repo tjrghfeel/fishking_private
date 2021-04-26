@@ -2,6 +2,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
+import ModalStore from "../../../stores/ModalStore";
 const {
   LAYOUT: { NavigationLayout },
 } = Components;
@@ -71,7 +72,12 @@ export default inject(
             }
           }
         } catch (err) {
-          ModalStore.openModal("Alert", { body: "ID/PW를 확인해주세요." });
+          if(err.response.data.msg !== undefined){
+            ModalStore.openModal("Alert", { body: err.response.data.msg })
+          }
+          else {
+            ModalStore.openModal("Alert", {body: "ID/PW를 확인해주세요."});
+          }
         }
       };
 

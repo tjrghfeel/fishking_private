@@ -48,8 +48,8 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult methodArgumentValidException(Exception e){
-        return responseService.getFailResult(000, e.getMessage());
+    protected CommonResult methodArgumentValidException(MethodArgumentNotValidException e){
+        return responseService.getFailResult(000, e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
     }
 
     @ExceptionHandler(CMemberNotFoundException.class)
