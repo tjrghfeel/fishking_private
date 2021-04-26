@@ -335,8 +335,14 @@ public class CommonService {
         if (ship.getTotalElements() == 0) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
+            List<ShipListResponse> newList = new ArrayList<>();
+            for(ShipListResponse r : ship.getContent()) {
+                List<CommonCode> fish = commonCodeRepo.getShipSpeciesName(r.getId());
+                r.setSpecies(fish);
+                newList.add(r);
+            }
             result.put("keyword", keyword);
-            result.put("ship", ship);
+            result.put("ship", new PageImpl<>(newList, pageable, ship.getTotalElements()));
             return result;
         }
     }

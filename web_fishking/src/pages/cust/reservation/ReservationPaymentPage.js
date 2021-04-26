@@ -28,7 +28,7 @@ export default inject(
           date: "", // 예약날짜
           reservePersonName: "", // 예약자 이름
           reservePersonPhone: "", // 예약자 전화번호
-          personCount: 0, // 승선자 수
+          personCount: 1, // 승선자 수
           personsName: [], // 승선자 정보
           personsPhone: [], // 승선자 정보
           emergencyPhone: [], // 승선자 정보
@@ -47,6 +47,9 @@ export default inject(
           coupons: [], // 쿠폰 목록
           persons: [],
           payAgree: false,
+
+          firstName: '',
+          firstPhone: ''
         };
         this.reservePersonName = React.createRef(null);
         this.reservePersonPhone = React.createRef(null);
@@ -73,6 +76,8 @@ export default inject(
         this.setState({
           reservePersonName: profile.memberName || profile.nickName,
           reservePersonPhone: profile.areaCode.concat(profile.localNumber),
+          firstName: profile.memberName || profile.nickName,
+          firstPhone: profile.areaCode.concat(profile.localNumber),
         });
 
         // >>>>> 상품정보
@@ -140,6 +145,14 @@ export default inject(
           });
         }
       };
+
+      onFistNameChange = (e) => {
+        this.setState({ firstName: e.target.value })
+      }
+
+      onFistPhoneChange = (e) => {
+        this.setState({ firstPhone: e.target.value })
+      }
 
       onSubmit = async () => {
         if (this.state.step === 1) {
@@ -348,7 +361,7 @@ export default inject(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { DataStore } = this.props;
+        const { DataStore, PageStore } = this.props;
         return (
           <React.Fragment>
             <NavigationLayout title={"예약하기"} showBackIcon={true} />
@@ -461,7 +474,7 @@ export default inject(
                             <li>
                               <a
                                 onClick={() => {
-                                  if (this.state.personCount === 0) return;
+                                  if (this.state.personCount === 1) return;
                                   else
                                     this.setState({
                                       personCount: this.state.personCount - 1,
@@ -563,30 +576,66 @@ export default inject(
                   {this.state.persons.map((data, index) => (
                     <div className="card-round-box-grey" key={index}>
                       <form className="form-line mt-3">
-                        <div className="form-group">
-                          <label htmlFor="inputName" className="sr-only">
-                            홍길동
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id={`person-name-${index}`}
-                            placeholder="이름을 입력하세요."
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="inputPhone" className="sr-only">
-                            휴대폰 번호
-                          </label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            minLength={10}
-                            maxLength={11}
-                            id={`person-phone-${index}`}
-                            placeholder="휴대폰 번호를 입력해 주세요."
-                          />
-                        </div>
+                        {index === 0 && (
+                          <div>
+                            <div className="form-group">
+                              <label htmlFor="inputName" className="sr-only">
+                                홍길동
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                id={`person-name-${index}`}
+                                placeholder="이름을 입력하세요."
+                                value={this.state.firstName}
+                                onChange={this.onFistNameChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputPhone" className="sr-only">
+                                휴대폰 번호
+                              </label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                minLength={10}
+                                maxLength={11}
+                                id={`person-phone-${index}`}
+                                placeholder="휴대폰 번호를 입력해 주세요."
+                                value={this.state.firstPhone}
+                                onChange={this.onFistPhoneChange}
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {index > 0 && (
+                          <div>
+                            <div className="form-group">
+                              <label htmlFor="inputName" className="sr-only">
+                                홍길동
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                id={`person-name-${index}`}
+                                placeholder="이름을 입력하세요."
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputPhone" className="sr-only">
+                                휴대폰 번호
+                              </label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                minLength={10}
+                                maxLength={11}
+                                id={`person-phone-${index}`}
+                                placeholder="휴대폰 번호를 입력해 주세요."
+                              />
+                            </div>
+                          </div>
+                        )}
                         <div className="form-group">
                           <label htmlFor="inputPhone" className="sr-only">
                             비상연락처
@@ -851,18 +900,24 @@ export default inject(
                   </h6>
                   <ul className="list mt-3">
                     <li>
-                      <a href="policy_terms.html">이용약관</a>
+                      <a onClick={() => PageStore.push(`/policy/terms`)}>
+                        이용약관
+                      </a>
                     </li>
                     <li>
-                      <a href="policy_privacy.html">
+                      <a onClick={() => PageStore.push(`/policy/privacy`)}>
                         개인정보 수집 및 이용동의
                       </a>
                     </li>
                     <li>
-                      <a href="policy_cancel.html">취소 및 환불 규정</a>
+                      <a onClick={() => PageStore.push(`/policy/cancel`)}>
+                        취소 및 환불 규정
+                      </a>
                     </li>
                     <li>
-                      <a href="policy_agree.html">개인정보 제 3자 제공</a>
+                      <a onClick={() => PageStore.push(`/policy/agree`)}>
+                        개인정보 제 3자 제공
+                      </a>
                     </li>
                   </ul>
                   <hr className="mt-3" />

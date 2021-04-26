@@ -12,6 +12,7 @@ http.defaults.headers.common["Authorization"] =
   localStorage.getItem("@accessToken") || "";
 http.defaults.headers.common["Accept"] = "application/json";
 http.defaults.timeout = 10000;
+// http.defaults.timeout = 1000000;
 
 export default (() => {
   const request = (url, method, headers = {}, params, data) => {

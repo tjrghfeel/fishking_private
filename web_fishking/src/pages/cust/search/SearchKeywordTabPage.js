@@ -43,7 +43,8 @@ export default inject(
           // },
         } = this.props;
         const qp = PageStore.getQueryParams();
-        const keyword = PageStore.state.keyword || qp.keyword || null;
+        // const keyword = PageStore.state.keyword || qp.keyword || null;
+        const keyword = qp.keyword || null;
         let activeIndex = 0;
         if (tab === "ship") activeIndex = 1;
         else if (tab === "diary") activeIndex = 2;
@@ -78,7 +79,6 @@ export default inject(
         if ((page > 0 && PageStore.state.isEnd) || APIStore.isLoading) return;
 
         await PageStore.setState({ page, isPending: true });
-
         const resolve =
           (await APIStore._get(`/v2/api/search/${this.state.tab}/${page}`, {
             keyword: PageStore.state.keyword,
