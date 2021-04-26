@@ -8,6 +8,13 @@ export default inject(
 )(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          loaded: false
+        }
+      }
+
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
@@ -49,6 +56,7 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
+        this.setState({ loaded: true })
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -61,7 +69,7 @@ export default inject(
               PageStore.state.list.map((data, index) => (
                 <StoryReviewListItemView key={index} data={data} />
               ))}
-            {(!PageStore.state.list || PageStore.state.list.length === 0) && (
+            {((!PageStore.state.list || PageStore.state.list.length === 0) && this.state.loaded) && (
               <div className="container nopadding mt-3 mb-0 text-center">
                 <p className="mt-5 mb-3">
                   <img
@@ -71,19 +79,19 @@ export default inject(
                   />
                 </p>
                 <h6>내가 작성한 리뷰가 없습니다.</h6>
-                <p className="mt-3">
-                  <small className="grey">
-                    나에게 맞는 실시간 낚시 찾아보기
-                  </small>
-                </p>
-                <p className="mt-5">
-                  <a
-                    onClick={() => PageStore.push(addPathname)}
-                    className="btn btn-primary btn-round"
-                  >
-                    낚시 예약해 보기
-                  </a>
-                </p>
+                {/*<p className="mt-3">*/}
+                {/*  <small className="grey">*/}
+                {/*    나에게 맞는 실시간 낚시 찾아보기*/}
+                {/*  </small>*/}
+                {/*</p>*/}
+                {/*<p className="mt-5">*/}
+                {/*  <a*/}
+                {/*    onClick={() => PageStore.push(addPathname)}*/}
+                {/*    className="btn btn-primary btn-round"*/}
+                {/*  >*/}
+                {/*    낚시 예약해 보기*/}
+                {/*  </a>*/}
+                {/*</p>*/}
               </div>
             )}
           </React.Fragment>

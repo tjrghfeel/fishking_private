@@ -95,6 +95,7 @@ export default inject(
           PageStore.setState({ isEnd: false });
         }
         PageStore.reloadSwipe();
+        this.setState({ loaded: true })
       };
 
       onClick = (item) => {

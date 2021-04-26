@@ -26,7 +26,7 @@ export default inject("PageStore")(
               <h6>{shipName}</h6>
               <p>
                 <strong className="text-primary">
-                  {fishSpecies.length > 0 && fishSpecies[0]["codeName"]}
+                  {(fishSpecies && fishSpecies.length > 0) && fishSpecies[0]["codeName"]}
                 </strong>
                 {sido.concat(" ").concat(sigungu)}
               </p>
