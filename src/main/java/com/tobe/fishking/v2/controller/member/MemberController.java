@@ -1079,7 +1079,7 @@ public class MemberController {
     @PutMapping("/profileManage/statusMessage")
     @ResponseBody
     public String modifyProfileStatusMessage(
-            @RequestBody ModifyingStatusMessageDto statusMessage,
+            @RequestBody @Valid ModifyingStatusMessageDto statusMessage,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -1092,7 +1092,7 @@ public class MemberController {
     @PutMapping("/profileManage/email")
     @ResponseBody
     public String modifyProfileEmail(
-            @RequestBody ModifyingEmailDto email,
+            @RequestBody @Valid ModifyingEmailDto email,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -1105,7 +1105,7 @@ public class MemberController {
     @PutMapping("/profileManage/password")
     @ResponseBody
     public boolean modifyProfilePassword(
-            @RequestBody ModifyProfilePwDto dto,
+            @RequestBody @Valid ModifyProfilePwDto dto,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");

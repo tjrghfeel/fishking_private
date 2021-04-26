@@ -186,11 +186,14 @@ export default inject(
           let district1 = null;
           let district2List = null;
           if (selected[0]["extraValue1"] !== null) {
-            district1 = selected[0]["extraValue1"];
+            district1 = selected[0]["code"];
             district2List = [];
-            for (let item of selected) {
-              district2List.push(item.code);
+            for(let i=1; i<selected.length; i++){
+                district2List.push(selected[i].code);
             }
+            // for (let item of selected) {
+            //   district2List.push(item.code);
+            // }
           } else district1 = selected[0]["code"];
 
           PageStore.setState({ district1, district2List });
