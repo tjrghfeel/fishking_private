@@ -280,7 +280,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:hasShipData is null, true, " +
                     "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
                     " group by d.id " +
-                    "order by createdDate desc ",
+                    "order by d.created_date desc ",
             countQuery = "select d.id " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
@@ -309,7 +309,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
                     "   and if(:hasShipData is null, true, " +
                     "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
-                    " group by d.id ",
+                    " group by d.id "+
+                    "order by d.created_date desc ",
             nativeQuery = true
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByCreatedDate(
@@ -405,7 +406,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:hasShipData is null, true, " +
                     "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
                     " group by d.id " +
-                    "order by accuseCount desc ",
+                    "order by d.created_date desc ",
             countQuery = "select d.id " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
@@ -434,7 +435,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
                     "   and if(:hasShipData is null, true, " +
                     "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
-                    " group by d.id ",
+                    " group by d.id " +
+                    "order by d.created_date desc ",
             nativeQuery = true
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByAccuseCount(
@@ -515,7 +517,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and m.is_active = true " +
                     "   and d.is_active = true " +
                     " group by d.id " +
-                    "order by likeCount desc ",
+                    "order by d.like_count desc ",
             countQuery = "select d.id " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
@@ -535,7 +537,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and d.is_deleted = false " +
                     "   and m.is_active = true " +
                     "   and d.is_active = true " +
-                    " group by d.id ",
+                    " group by d.id "+
+                    "order by d.like_count desc ",
             nativeQuery = true
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByLikeCount(
@@ -607,7 +610,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and m.is_active = true " +
                     "   and d.is_active = true " +
                     " group by d.id " +
-                    "order by commentCount desc ",
+                    "order by d.comment_count desc ",
             countQuery = "select d.id " +
                     "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
                     "where  " +
@@ -628,7 +631,8 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and m.is_active = true " +
                     "   and d.is_active = true " +
                     "" +
-                    " group by d.id ",
+                    " group by d.id " +
+                    "order by d.comment_count desc ",
             nativeQuery = true
     )
     Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByCommentCount(

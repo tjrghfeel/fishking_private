@@ -55,12 +55,12 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
             value = "select count(a.id) " +
                     "from alerts a " +
                     "where " +
-                    "   (a.is_sent = true or a.alert_time < NOW()) " +
+                    "   (a.is_sent = true or a.alert_time < :today) " +
                     "   and a.receiver_id = :memberId " +
                     "   and a.is_read = false ",
             nativeQuery = true
     )
-    int countByMember(@Param("memberId") Long memberId);
+    int countByMember(@Param("memberId") Long memberId, @Param("today") LocalDateTime today);
 
     List<Alerts> findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
             LocalDateTime alertTime, Member receiver, AlertType alertType, Long pid, Boolean isSent);

@@ -92,6 +92,11 @@ public class MemberService {
         return optionalMember.get();
 //        return optionalMember.isEmpty() ? null : optionalMember.get();
     }
+    @Transactional
+    public String getToken(Long memberId){
+        Member member = getMemberById(memberId);
+        return member.getSessionToken();
+    }
 
     public long getMemberSeqBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
@@ -1938,6 +1943,24 @@ public class MemberService {
         else{
             throw new RuntimeException("문자 인증을 받은 번호가 아닙니다.");
         }
+    }
+
+    //폰번호 변경
+    @Transactional
+    public Boolean modifyPhoneNum(Long memberId, String phoneNum){
+        String areaCode = phoneNum.substring(0,3);
+        String localNumber = phoneNum.substring(3);
+
+        Member member = getMemberById(memberId);
+
+        Member preNumOwner = memberRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
+        preNumOwner.setPhoneNumber(new PhoneNumber("***","****"));
+        memberRepository.save(preNumOwner);
+
+        member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
+        memberRepository.save(member);
+
+        return true;
     }
 
     @Transactional
