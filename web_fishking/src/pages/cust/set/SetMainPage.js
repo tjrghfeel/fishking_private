@@ -14,7 +14,7 @@ export default inject(
       menus = [
         { text: "프로필 관리", loggedIn: true, pathname: "/set/profile" },
         { text: "알림설정", loggedIn: false, pathname: "/set/alarm" },
-        // { text: "접근 권한 설정", loggedIn: false, pathname: "" },
+        { text: "접근 권한 설정", loggedIn: false, pathname: "" },
         { text: "동영상 설정", loggedIn: false, pathname: "/set/vod" },
         { text: "약관 및 정책", loggedIn: false, pathname: "/policy/main" },
         { text: "탈퇴하기", loggedIn: true, pathname: "/member/signout" },
