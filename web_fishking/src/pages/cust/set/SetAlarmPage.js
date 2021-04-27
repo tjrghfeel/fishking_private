@@ -34,6 +34,7 @@ export default inject(
         const resolve = await APIStore._put(
           `/v2/api/setting/alertSet/${data["code"]}/${alerted}`
         );
+        this.loadPageData();
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -89,6 +90,7 @@ export default inject(
                             className="nav nav-tabs btn-set"
                             id="nav-tab"
                             role="tablist"
+                            onClick={() => this.setAlarm(data, data['isSet']?false:true)}
                           >
                             <a
                               className={`nav-link ${
@@ -99,7 +101,6 @@ export default inject(
                               role="tab"
                               aria-controls="nav-on"
                               aria-selected="true"
-                              onClick={() => this.setAlarm(data, true)}
                             >
                               ON
                             </a>
@@ -112,7 +113,6 @@ export default inject(
                               role="tab"
                               aria-controls="nav-off"
                               aria-selected="false"
-                              onClick={() => this.setAlarm(data, false)}
                             >
                               OFF
                             </a>
@@ -162,6 +162,7 @@ export default inject(
                             className="nav nav-tabs btn-set"
                             id="nav-tab"
                             role="tablist"
+                            onClick={() => this.setAlarm(data, data['isSet']?false:true)}
                           >
                             <a
                               className={`nav-link ${
@@ -172,7 +173,7 @@ export default inject(
                               role="tab"
                               aria-controls="nav-on"
                               aria-selected="true"
-                              onClick={() => this.setAlarm(data, true)}
+
                             >
                               ON
                             </a>
@@ -185,7 +186,6 @@ export default inject(
                               role="tab"
                               aria-controls="nav-off"
                               aria-selected="false"
-                              onClick={() => this.setAlarm(data, false)}
                             >
                               OFF
                             </a>
