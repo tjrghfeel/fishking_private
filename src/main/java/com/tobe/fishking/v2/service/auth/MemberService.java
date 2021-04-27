@@ -92,6 +92,7 @@ public class MemberService {
         return optionalMember.get();
 //        return optionalMember.isEmpty() ? null : optionalMember.get();
     }
+    @Transactional
     public String getToken(Long memberId){
         Member member = getMemberById(memberId);
         return member.getSessionToken();
