@@ -95,7 +95,7 @@ public class MyMenuService {
         //쿠폰 수 가져옴.
         Integer couponCount = couponMemberRepository.countByMemberAndIsUseAndDays(member,false, LocalDateTime.now());
         //알림 개수 가져옴.
-        Integer alertCount = alertsRepository.countByMember(member.getId());
+        Integer alertCount = alertsRepository.countByMember(member.getId(), LocalDateTime.now());
 
         /*dto에 값 넣어줌. */
         myMenuPageDTO = MyMenuPageDTO.builder()

@@ -1940,6 +1940,24 @@ public class MemberService {
         }
     }
 
+    //폰번호 변경
+    @Transactional
+    public Boolean modifyPhoneNum(Long memberId, String phoneNum){
+        String areaCode = phoneNum.substring(0,3);
+        String localNumber = phoneNum.substring(3);
+
+        Member member = getMemberById(memberId);
+
+        Member preNumOwner = memberRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
+        preNumOwner.setPhoneNumber(new PhoneNumber(null,null));
+        memberRepository.save(preNumOwner);
+
+        member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
+        memberRepository.save(member);
+
+        return true;
+    }
+
     @Transactional
     public Member getMemberById(Long member_id) {
         return memberRepository.getOne(member_id);
