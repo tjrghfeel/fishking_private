@@ -102,22 +102,22 @@ public class MemberController {
             "" )
     @PostMapping("/signUp/infoAndPassRequest")
     public String insertMemberInfo(
-            @RequestBody @Valid SignUpDto dto,
-//            @RequestParam(value = "memberId",required = false) Long Id,
-//            @RequestParam("email") String email,
-//            @RequestParam("pw") String pw,
-//            @RequestParam("nickName") String nickName,
-//            @RequestParam(value = "registrationToken",required = false) String registrationToken,
+//            @RequestBody SignUpDto dto,
+            @RequestParam(value = "memberId",required = false) Long Id,
+            @RequestParam("email") String email,
+            @RequestParam("pw") String pw,
+            @RequestParam("nickName") String nickName,
+            @RequestParam(value = "registrationToken",required = false) String registrationToken,
             ModelMap model,
             HttpSession session
-    ) throws ResourceNotFoundException, IOException {
-//        SignUpDto dto = SignUpDto.builder()
-//                .memberId(Id)
-//                .email(email)
-//                .pw(pw)
-//                .nickName(nickName)
-//                .registrationToken(registrationToken)
-//                .build();
+    ) throws ResourceNotFoundException, IOException, ServiceLogicException {
+        SignUpDto dto = SignUpDto.builder()
+                .memberId(Id)
+                .email(email)
+                .pw(pw)
+                .nickName(nickName)
+                .registrationToken(registrationToken)
+                .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
@@ -372,22 +372,22 @@ public class MemberController {
             "" )
     @PostMapping("/signUp/infoAndPassRequest/smartfishing")
     public String insertMemberInfoForSmartfishing(
-            @RequestBody @Valid SignUpDto dto,
-//            @RequestParam(value = "memberId",required = false) Long Id,
-//            @RequestParam("email") String email,
-//            @RequestParam("pw") String pw,
-//            @RequestParam("nickName") String nickName,
-//            @RequestParam(value = "registrationToken",required = false) String registrationToken,
+//            @RequestBody SignUpDto dto,
+            @RequestParam(value = "memberId",required = false) Long Id,
+            @RequestParam("email") String email,
+            @RequestParam("pw") String pw,
+            @RequestParam("nickName") String nickName,
+            @RequestParam(value = "registrationToken",required = false) String registrationToken,
             ModelMap model,
             HttpSession session
-    ) throws ResourceNotFoundException, IOException {
-//        SignUpDto dto = SignUpDto.builder()
-//                .memberId(Id)
-//                .email(email)
-//                .pw(pw)
-//                .nickName(nickName)
-//                .registrationToken(registrationToken)
-//                .build();
+    ) throws ResourceNotFoundException, IOException, ServiceLogicException {
+        SignUpDto dto = SignUpDto.builder()
+                .memberId(Id)
+                .email(email)
+                .pw(pw)
+                .nickName(nickName)
+                .registrationToken(registrationToken)
+                .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
