@@ -3,7 +3,6 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
-import ModalStore from "../../../stores/ModalStore";
 const {
   VIEW: { CompanyGoodListItemView, GoodsBlogListItemView },
   MODAL: { CompanyGoodsDetailModal },
@@ -164,13 +163,18 @@ export default inject(
             });
           }
         };
-        modalSNS = () => {
+        modalSNS = (type) => {
           // >>>>> 업체 공유하기
           const { ModalStore } = this.props;
+          let msg = null;
+          if (type === 'map') {
+            msg = this.state.address
+          }
           ModalStore.openModal("SNS", {
             onSelect: (selected) => {
               console.log(selected);
             },
+            address: msg
           });
         };
         copyAddress = () => {
@@ -383,7 +387,7 @@ export default inject(
                         }
                       ></span>
                     </a>
-                    <a onClick={this.modalSNS}>
+                    <a onClick={() => this.modalSNS('ship')}>
                       <img src="/assets/cust/img/svg/icon-share.svg" alt="" />
                     </a>
                   </div>
@@ -590,7 +594,7 @@ export default inject(
                 ></div>
                 <div className="row no-gutters align-items-center border-round-btm">
                   <div className="col-4 text-center align-self-center border-right">
-                    <a onClick={() => this.findWay()}>
+                    <a onClick={this.findWay}>
                       <div className="padding">
                         <img
                           src="/assets/cust/img/svg/icon-map.svg"
@@ -614,7 +618,8 @@ export default inject(
                     </a>
                   </div>
                   <div className="col-4 text-center align-self-center">
-                    <a data-toggle="modal" data-target="#snsModal">
+                    {/*<a data-toggle="modal" data-target="#snsModal">*/}
+                    <a onClick={() => this.modalSNS('map')}>
                       <div className="padding">
                         <img
                           src="/assets/cust/img/svg/icon-share.svg"

@@ -56,6 +56,7 @@ const ModalStore = new (class {
     this.onOk = options.onOk || null;
     this.onClose = options.onClose || null;
     this.onSelect = options.onSelect || null;
+    this.address = options.address || null;
 
     if (modalType !== "SNS") this.history.push(modalType);
 
@@ -68,6 +69,11 @@ const ModalStore = new (class {
     } else if (modalType === "Coupon") {
       $("#couponModal").modal("show");
     } else if (modalType === "SNS") {
+      if (this.address != null) {
+        NativeStore.postMessage("Share", {
+          message: this.address,
+        });
+      }
       NativeStore.postMessage("Share", {
         message: window.location.href,
       });
