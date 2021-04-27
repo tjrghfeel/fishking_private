@@ -1371,9 +1371,9 @@ public class MemberController {
         if(!sMessage.equals("")){response.sendRedirect("/cust/set/profile?msg=niceResultParsingError"); return;}
 //        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;}
         /*데이터 저장*/
-        Member member = memberService.getMemberById(Long.parseLong(session_sRequestNumber));
         Boolean result = memberService.modifyPhoneNum(Long.parseLong(session_sRequestNumber), sMobileNo);
-        if(result){ response.sendRedirect("/cust/set/profile?msg=success&token="+member.getSessionToken());}
+        String token = memberService.getToken(Long.parseLong(session_sRequestNumber));
+        if(result){ response.sendRedirect("/cust/set/profile?msg=success&token="+token );}
 
 //        if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
@@ -1427,8 +1427,8 @@ public class MemberController {
 
         /*인증 실패시 데이터 삭제*/
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
-        Member member = memberService.getMemberById(Long.parseLong(sRequestNumber));
-        response.sendRedirect("/cust/set/profile?msg=niceCertificationFail&token="+member.getSessionToken());
+        String token = memberService.getToken(Long.parseLong(sRequestNumber));
+        response.sendRedirect("/cust/set/profile?msg=niceCertificationFail&token="+token);
     }
 
 }

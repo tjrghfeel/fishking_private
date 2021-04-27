@@ -92,6 +92,10 @@ public class MemberService {
         return optionalMember.get();
 //        return optionalMember.isEmpty() ? null : optionalMember.get();
     }
+    public String getToken(Long memberId){
+        Member member = getMemberById(memberId);
+        return member.getSessionToken();
+    }
 
     public long getMemberSeqBySessionToken(final String sessionToken) {
         final Optional<Member> optionalMember =  memberRepository.findBySessionToken(sessionToken);
