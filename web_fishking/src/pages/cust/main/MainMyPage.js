@@ -71,6 +71,25 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       componentDidMount() {
+        const { PageStore, ModalStore } = this.props;
+        const {
+          msg = null,
+          token = null,
+        } = PageStore.getQueryParams();
+        if(msg === 'niceResultParsingError'){
+          ModalStore.openModal("Alert", { body: "오류" });
+        }
+        else if(msg === 'success'){
+          localStorage.setItem("@accessToken_cust", token);
+          localStorage.setItem("@accessToken", token);
+          ModalStore.openModal("Alert", { body: "휴대폰 번호가 수정되었습니다." });
+        }
+        else if(msg === 'niceCertificationFail'){
+          localStorage.setItem("@accessToken_cust", token);
+          localStorage.setItem("@accessToken", token);
+          ModalStore.openModal("Alert", { body: "본인인증에 실패하였습니다." });
+        }
+
         this.loadPageData();
       }
 
