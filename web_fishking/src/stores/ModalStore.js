@@ -56,6 +56,7 @@ const ModalStore = new (class {
     this.onOk = options.onOk || null;
     this.onClose = options.onClose || null;
     this.onSelect = options.onSelect || null;
+    this.address = options.address || null;
 
     if (modalType !== "SNS") this.history.push(modalType);
 
@@ -68,9 +69,15 @@ const ModalStore = new (class {
     } else if (modalType === "Coupon") {
       $("#couponModal").modal("show");
     } else if (modalType === "SNS") {
-      NativeStore.postMessage("Share", {
-        message: window.location.href,
-      });
+      if (this.address != null) {
+        NativeStore.postMessage("Share", {
+          message: this.address,
+        });
+      } else {
+        NativeStore.postMessage("Share", {
+          message: window.location.href,
+        });
+      }
       // $("#snsModal").modal("show");
     } else if (modalType === "Input") {
       $("#inputModal").modal("show");
