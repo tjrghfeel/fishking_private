@@ -1106,7 +1106,7 @@ export default inject("PageStore")(
               <p class="clearfix"></p>
 
               <h4>부칙</h4>
-              <p>1. 이 약관은 0000년 00월 00일부터 시행됩니다.</p>
+              <p>1. 이 약관은 2021년 04월 01일부터 시행됩니다.</p>
 
               <p class="clearfix">
                 <br />

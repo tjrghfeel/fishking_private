@@ -147,4 +147,7 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
             "(select count(g.id) from Goods g where g.isUse =true and g.isClose = false and g.ship.fishingType=1) as searock " +
             "from Goods g2 ")
     List<Map<String, Long>> getDashBoardGoods(Pageable pageable);
+
+    @Query("select min(g.totalAmount) from Goods g where g.isUse = true and g.ship.id = :shipId")
+    Integer getCheapestGoods(Long shipId);
 }
