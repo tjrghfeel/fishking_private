@@ -27,8 +27,8 @@ export default inject("PageStore")(
                 <hr className="full mt-0 mb-3" />
                 <a onClick={() => PageStore.push(`/policy/terms`)}>
                   <div className="row no-gutters align-items-center">
-                    <div className="col-3 pl-2">이용약관</div>
-                    <div className="col-8 text-right"></div>
+                    <div className="col-7 pl-2">이용약관</div>
+                    <div className="col-4 text-right"></div>
                     <div className="col-1 text-right pl-1">
                       <img
                         src="/assets/cust/img/svg/cal-arrow-right.svg"
@@ -40,8 +40,8 @@ export default inject("PageStore")(
                 <hr className="full mt-3 mb-3" />
                 <a onClick={() => PageStore.push(`/policy/privacy`)}>
                   <div className="row no-gutters align-items-center">
-                    <div className="col-3 pl-2">개인정보처리방침</div>
-                    <div className="col-8 text-right"></div>
+                    <div className="col-7 pl-2">개인정보처리방침</div>
+                    <div className="col-4 text-right"></div>
                     <div className="col-1 text-right pl-1">
                       <img
                         src="/assets/cust/img/svg/cal-arrow-right.svg"
@@ -53,8 +53,8 @@ export default inject("PageStore")(
                 <hr className="full mt-3 mb-3" />
                 <a onClick={() => PageStore.push(`/policy/cancel`)}>
                   <div className="row no-gutters align-items-center">
-                    <div className="col-3 pl-2">취소 및 환불 규정</div>
-                    <div className="col-8 text-right"></div>
+                    <div className="col-7 pl-2">취소 및 환불 규정</div>
+                    <div className="col-4 text-right"></div>
                     <div className="col-1 text-right pl-1">
                       <img
                         src="/assets/cust/img/svg/cal-arrow-right.svg"
@@ -66,8 +66,8 @@ export default inject("PageStore")(
                 <hr className="full mt-3 mb-3" />
                 <a onClick={() => PageStore.push(`/policy/lbs`)}>
                   <div className="row no-gutters align-items-center">
-                    <div className="col-3 pl-2">위치기반 서비스 이용약관</div>
-                    <div className="col-8 text-right"></div>
+                    <div className="col-7 pl-2">위치기반 서비스 이용약관</div>
+                    <div className="col-4 text-right"></div>
                     <div className="col-1 text-right pl-1">
                       <img
                         src="/assets/cust/img/svg/cal-arrow-right.svg"
@@ -79,8 +79,8 @@ export default inject("PageStore")(
                 <hr className="full mt-3 mb-3" />
                 <a onClick={() => PageStore.push(`/policy/agree`)}>
                   <div className="row no-gutters align-items-center">
-                    <div className="col-3 pl-2">개인정보 제 3자 제공 동의</div>
-                    <div className="col-8 text-right"></div>
+                    <div className="col-7 pl-2">개인정보 제 3자 제공 동의</div>
+                    <div className="col-4 text-right"></div>
                     <div className="col-1 text-right pl-1">
                       <img
                         src="/assets/cust/img/svg/cal-arrow-right.svg"

@@ -321,6 +321,17 @@ public class GoodsService {
             goodsFishingDateRepository.save(goodsFishingDate);
         }
 
+        if (!updateGoods.getIsUse() && ship.getCheapestGoodsCost() > updateGoods.getAmount()) {
+            Integer c = goodsRepo.getCheapestGoods(ship.getId());
+            ship.changeCheapest(member, c);
+            shipRepo.save(ship);
+        }
+
+        if (updateGoods.getIsUse() && ship.getCheapestGoodsCost() > updateGoods.getAmount()) {
+            ship.changeCheapest(member, updateGoods.getAmount());
+            shipRepo.save(ship);
+        }
+
         return true;
     }
 

@@ -82,8 +82,8 @@ export default inject(
                       }}
                     >
                       <div className="row no-gutters align-items-center">
-                        <div className="col-3 pl-2">{data.text}</div>
-                        <div className="col-8 text-right"></div>
+                        <div className="col-7 pl-2">{data.text}</div>
+                        <div className="col-4 text-right"></div>
                         <div className="col-1 text-right pl-1">
                           <img
                             src="/assets/cust/img/svg/cal-arrow-right.svg"
