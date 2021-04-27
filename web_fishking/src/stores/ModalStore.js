@@ -75,7 +75,7 @@ const ModalStore = new (class {
         });
       } else {
         NativeStore.postMessage("Share", {
-          message: window.location.href,
+          message: 'https://tiny.one/25r3whkw?action=' + window.location.href.split('cust')[1],
         });
       }
       // $("#snsModal").modal("show");

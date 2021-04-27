@@ -54,6 +54,25 @@ export default inject(
         setInitiated(true);
       }, 1800);
     }, [setUri, setInitiated, AppStore, WebViewStore]);
+    const wokeUp = useCallback((e) => {
+      if (e.url && e.url.split('?')[1]) {
+        console.log('https://fishkingapp.com/cust' + e.url.split('?')[1]);
+        setUri('https://fishkingapp.com/cust' + e.url.split('?')[1]);
+        // Alert.alert('Url: ' + e.url.split('?')[1]);
+      }
+    }, []);
+    useEffect(() => {
+      Linking.getInitialURL()
+        .then((url) => {
+          if (url && url.split('?')[1]) {
+            console.log('https://fishkingapp.com/cust' + url.split('?')[1]);
+            setUri('https://fishkingapp.com/cust' + url.split('?')[1]);
+            // Alert.alert('Init Url: ' + url.split('?')[1]);
+          }
+        })
+        .catch((e) => {});
+      Linking.addEventListener('url', wokeUp);
+    }, [wokeUp]);
     useEffect(() => {
       WebViewStore.setWebView(webview);
       initiate();
@@ -171,11 +190,23 @@ export default inject(
             const {process, data} = JSON.parse(nativeEvent.data);
             switch (process) {
               case 'Share': {
-                const result = await Share.share({
-                  message: 'https://tiny.one/25r3whkw',
-                  url: 'https://tiny.one/25r3whkw',
-                  title: '어복황제',
-                });
+                if (data.message.includes('map.kakao.com')) {
+                  const result = await Share.share({
+                    message: data.message,
+                    url: data.message,
+                    title: '어복황제 위치정보 공유',
+                  });
+                } else {
+                  const result = await Share.share({
+                    // message:
+                    //   'https://tiny.one/25r3whkw?action=/company/undefined/detail/19',
+                    // url:
+                    //   'https://tiny.one/25r3whkw?action=/company/undefined/detail/19',
+                    message: data.message,
+                    url: data.message,
+                    title: '어복황제',
+                  });
+                }
                 break;
               }
               case 'Refresh': {
@@ -211,9 +242,10 @@ export default inject(
               case 'Clipboard': {
                 // >>>>> 클립보드 복사
                 Clipboard.setString(data);
-                if (Platform.OS !== 'android') {
-                  Alert.alert(null, '복사되었습니다.');
-                }
+                Alert.alert(null, '복사되었습니다.');
+                // if (Platform.OS !== 'android') {
+                //   Alert.alert(null, '복사되었습니다.');
+                // }
                 break;
               }
               case 'Initiate': {
