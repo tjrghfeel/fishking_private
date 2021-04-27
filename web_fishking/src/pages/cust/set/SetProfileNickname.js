@@ -8,7 +8,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+    "ModalStore"
 )(
   observer(
     class extends React.Component {
@@ -30,20 +31,31 @@ export default inject(
         this.setState({ text: resolve.nickName });
       };
       onChange = async () => {
-        const { APIStore, DataStore, PageStore } = this.props;
+        const { APIStore, DataStore, PageStore, ModalStore } = this.props;
         const { text } = this.state;
         if (text === "" || !DataStore.isNickName(text)) {
           this.text.current?.classList.add("is-invalid");
           return;
         } else {
           this.text.current?.classList.remove("is-invalid");
-          const resolve = await APIStore._put(
-            "/v2/api/profileManage/nickName",
-            { nickName: text }
-          );
-          if (resolve) {
-            PageStore.goBack();
+          try{
+              const resolve = await APIStore._put(
+                  "/v2/api/profileManage/nickName",
+                  { nickName: text }
+              );
+              if (resolve) {
+                  PageStore.goBack();
+              }
           }
+          catch(err){
+              if(err.response.data.msg !== undefined){
+                  ModalStore.openModal("Alert", { body: err.response.data.msg })
+              }
+              else {
+                  ModalStore.openModal("Alert", {body: "닉네임 변경에 실패하였습니다."});
+              }
+          }
+
         }
       };
       /********** ********** ********** ********** **********/

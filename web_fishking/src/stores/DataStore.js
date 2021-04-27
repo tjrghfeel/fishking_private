@@ -17,9 +17,9 @@ const ModalStore = new (class {
     return regex.test(text);
   };
   isPassword = (text) => {
-    const regex1 = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,15}$/;
-    const regex2 = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,15}$/;
-    const regex3 = /^(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{10,12}$/;
+    const regex1 = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{8,15}$/;
+    const regex2 = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])(?=.*[$@$!%*#?&]).{8,15}$/;
+    const regex3 = /^(?=.*[^a-zA-Z0-9])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,12}$/;
 
     if (
       text.length >= 8 &&
@@ -33,7 +33,10 @@ const ModalStore = new (class {
     return regex.test(text);
   };
   isNickName = (text) => {
-    if (text.length >= 2 && text.length <= 7) return true;
+    const regex = /^[0-9a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ]*$/;
+    if (text.length >= 2 && text.length <= 7 &&
+        regex.test(text)
+    ) return true;
     else return false;
   };
   removeItemOfArrayByItem = (list = [], item = null) => {

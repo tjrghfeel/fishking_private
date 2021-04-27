@@ -110,7 +110,7 @@ public class MemberController {
             @RequestParam(value = "registrationToken",required = false) String registrationToken,
             ModelMap model,
             HttpSession session
-    ) throws ResourceNotFoundException, IOException {
+    ) throws ResourceNotFoundException, IOException, ServiceLogicException {
         SignUpDto dto = SignUpDto.builder()
                 .memberId(Id)
                 .email(email)
@@ -380,7 +380,7 @@ public class MemberController {
             @RequestParam(value = "registrationToken",required = false) String registrationToken,
             ModelMap model,
             HttpSession session
-    ) throws ResourceNotFoundException, IOException {
+    ) throws ResourceNotFoundException, IOException, ServiceLogicException {
         SignUpDto dto = SignUpDto.builder()
                 .memberId(Id)
                 .email(email)
@@ -1067,7 +1067,7 @@ public class MemberController {
     @PutMapping("/profileManage/nickName")
     @ResponseBody
     public String modifyProfileNickName(
-            @RequestBody ModifyingNickNameDto nickName,
+            @RequestBody @Valid ModifyingNickNameDto nickName,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -1107,7 +1107,7 @@ public class MemberController {
     public boolean modifyProfilePassword(
             @RequestBody @Valid ModifyProfilePwDto dto,
             HttpServletRequest request
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, ServiceLogicException {
         String sessionToken = request.getHeader("Authorization");
         return memberService.modifyProfilePassword(sessionToken, dto.getCurrentPw(),dto.getNewPw());
     }

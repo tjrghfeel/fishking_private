@@ -225,7 +225,7 @@ public class MemberService {
 
     /*회원가입 중간단계 - 회원정보입력*/
     @Transactional
-    public Long insertMemberInfo(SignUpDto signUpDto) throws ResourceNotFoundException {
+    public Long insertMemberInfo(SignUpDto signUpDto) throws ResourceNotFoundException, ServiceLogicException {
         Member member = null;
         System.out.println("================\n test >>> in insertMemberInfo()  \n================");
 
@@ -241,12 +241,12 @@ public class MemberService {
 
         /*uid 중복 확인*/
         int checkUid = checkUidDup(signUpDto.getEmail());
-        if(checkUid==1){            throw new EmailDupException("이메일이 중복됩니다");        }
-        else if(checkUid==2){throw new RuntimeException("이메일 형식이 맞지 않습니다.");}
+        if(checkUid==1){            throw new ServiceLogicException("이메일이 중복됩니다");        }
+        else if(checkUid==2){throw new ServiceLogicException("이메일 형식이 맞지 않습니다.");}
         /*닉네임 중복 확인*/
         int checkNickName = checkNickNameDup(signUpDto.getNickName());
-        if(checkNickName==1){ throw new RuntimeException("닉네임이 중복됩니다"); }
-        else if(checkNickName==2){throw new RuntimeException("닉네임은 4자 이상 10자 이하이어야 합니다.");}
+        if(checkNickName==1){ throw new ServiceLogicException("닉네임이 중복됩니다"); }
+        else if(checkNickName==2){throw new ServiceLogicException("닉네임은 4자 이상 10자 이하이어야 합니다.");}
 
         /*회원 정보 저장*/
         /*비밀번호 자바 암호화*/
@@ -1858,7 +1858,7 @@ public class MemberService {
 
     /*비번 변경*/
     @Transactional
-    public boolean modifyProfilePassword(String sessionToken, String currentPw, String newPw) throws ResourceNotFoundException {
+    public boolean modifyProfilePassword(String sessionToken, String currentPw, String newPw) throws ResourceNotFoundException, ServiceLogicException {
         /*currentPw가 맞는지 확인. 맞으면 pw변경, 아니면 false반환. */
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
@@ -1868,7 +1868,7 @@ public class MemberService {
             member.setPassword(encoder.encode(newPw));
             return true;
         }
-        else return false;
+        else { throw new ServiceLogicException("비밀번호가 일치하지 않습니다.");}
     }
 
     /*탈퇴하기
