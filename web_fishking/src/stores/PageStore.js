@@ -72,13 +72,22 @@ const PageStore = new (class {
       if ($(".modal.show").length > 0) {
         $(".modal.show").modal("hide");
       } else {
-        const redirectUrl = sessionStorage.getItem("@redirect-url");
-        sessionStorage.removeItem("@redirect-url");
-        sessionStorage.setItem("@goBack", "Y");
-        if (redirectUrl === null) {
-          window.history.back();
+        if (window.history.length === 1) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              process: "Exit",
+              data: "",
+            })
+          );
         } else {
-          window.history.go(-2);
+          const redirectUrl = sessionStorage.getItem("@redirect-url");
+          sessionStorage.removeItem("@redirect-url");
+          sessionStorage.setItem("@goBack", "Y");
+          if (redirectUrl === null) {
+            window.history.back();
+          } else {
+            window.history.go(-2);
+          }
         }
       }
     }
