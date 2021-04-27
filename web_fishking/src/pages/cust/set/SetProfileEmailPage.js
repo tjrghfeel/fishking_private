@@ -8,7 +8,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+    "ModalStore"
 )(
   observer(
     class extends React.Component {
@@ -30,7 +31,7 @@ export default inject(
         this.setState({ text: resolve.email });
       };
       onChange = async () => {
-        const { APIStore, PageStore, DataStore } = this.props;
+        const { APIStore, PageStore, DataStore, ModalStore } = this.props;
         const { text } = this.state;
         if (text !== "" && !DataStore.isEmail(text)) {
           this.text.current?.classList.add("is-invalid");
@@ -38,12 +39,23 @@ export default inject(
         } else {
           this.text.current?.classList.remove("is-invalid");
         }
-        const resolve = await APIStore._put("/v2/api/profileManage/email", {
-          email: text,
-        });
-        if (resolve) {
-          PageStore.goBack();
+        try{
+            const resolve = await APIStore._put("/v2/api/profileManage/email", {
+                email: text,
+            });
+            if (resolve) {
+                PageStore.goBack();
+            }
         }
+        catch(err){
+            if(err.response.data.msg !== undefined){
+                ModalStore.openModal("Alert", { body: err.response.data.msg })
+            }
+            else {
+                ModalStore.openModal("Alert", {body: "이메일 변경에 실패하였습니다."});
+            }
+        }
+
       };
       /********** ********** ********** ********** **********/
       /** render */

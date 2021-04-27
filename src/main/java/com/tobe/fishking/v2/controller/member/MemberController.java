@@ -102,22 +102,22 @@ public class MemberController {
             "" )
     @PostMapping("/signUp/infoAndPassRequest")
     public String insertMemberInfo(
-//            @RequestBody SignUpDto dto,
-            @RequestParam(value = "memberId",required = false) Long Id,
-            @RequestParam("email") String email,
-            @RequestParam("pw") String pw,
-            @RequestParam("nickName") String nickName,
-            @RequestParam(value = "registrationToken",required = false) String registrationToken,
+            @RequestBody @Valid SignUpDto dto,
+//            @RequestParam(value = "memberId",required = false) Long Id,
+//            @RequestParam("email") String email,
+//            @RequestParam("pw") String pw,
+//            @RequestParam("nickName") String nickName,
+//            @RequestParam(value = "registrationToken",required = false) String registrationToken,
             ModelMap model,
             HttpSession session
     ) throws ResourceNotFoundException, IOException {
-        SignUpDto dto = SignUpDto.builder()
-                .memberId(Id)
-                .email(email)
-                .pw(pw)
-                .nickName(nickName)
-                .registrationToken(registrationToken)
-                .build();
+//        SignUpDto dto = SignUpDto.builder()
+//                .memberId(Id)
+//                .email(email)
+//                .pw(pw)
+//                .nickName(nickName)
+//                .registrationToken(registrationToken)
+//                .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
@@ -372,22 +372,22 @@ public class MemberController {
             "" )
     @PostMapping("/signUp/infoAndPassRequest/smartfishing")
     public String insertMemberInfoForSmartfishing(
-//            @RequestBody SignUpDto dto,
-            @RequestParam(value = "memberId",required = false) Long Id,
-            @RequestParam("email") String email,
-            @RequestParam("pw") String pw,
-            @RequestParam("nickName") String nickName,
-            @RequestParam(value = "registrationToken",required = false) String registrationToken,
+            @RequestBody @Valid SignUpDto dto,
+//            @RequestParam(value = "memberId",required = false) Long Id,
+//            @RequestParam("email") String email,
+//            @RequestParam("pw") String pw,
+//            @RequestParam("nickName") String nickName,
+//            @RequestParam(value = "registrationToken",required = false) String registrationToken,
             ModelMap model,
             HttpSession session
     ) throws ResourceNotFoundException, IOException {
-        SignUpDto dto = SignUpDto.builder()
-                .memberId(Id)
-                .email(email)
-                .pw(pw)
-                .nickName(nickName)
-                .registrationToken(registrationToken)
-                .build();
+//        SignUpDto dto = SignUpDto.builder()
+//                .memberId(Id)
+//                .email(email)
+//                .pw(pw)
+//                .nickName(nickName)
+//                .registrationToken(registrationToken)
+//                .build();
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
@@ -1067,7 +1067,7 @@ public class MemberController {
     @PutMapping("/profileManage/nickName")
     @ResponseBody
     public String modifyProfileNickName(
-            @RequestBody ModifyingNickNameDto nickName,
+            @RequestBody @Valid ModifyingNickNameDto nickName,
             HttpServletRequest request
     ) throws ResourceNotFoundException {
         String sessionToken = request.getHeader("Authorization");
@@ -1107,7 +1107,7 @@ public class MemberController {
     public boolean modifyProfilePassword(
             @RequestBody @Valid ModifyProfilePwDto dto,
             HttpServletRequest request
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, ServiceLogicException {
         String sessionToken = request.getHeader("Authorization");
         return memberService.modifyProfilePassword(sessionToken, dto.getCurrentPw(),dto.getNewPw());
     }

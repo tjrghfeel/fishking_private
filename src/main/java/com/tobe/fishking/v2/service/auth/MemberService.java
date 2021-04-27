@@ -1858,7 +1858,7 @@ public class MemberService {
 
     /*비번 변경*/
     @Transactional
-    public boolean modifyProfilePassword(String sessionToken, String currentPw, String newPw) throws ResourceNotFoundException {
+    public boolean modifyProfilePassword(String sessionToken, String currentPw, String newPw) throws ResourceNotFoundException, ServiceLogicException {
         /*currentPw가 맞는지 확인. 맞으면 pw변경, 아니면 false반환. */
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
@@ -1868,7 +1868,7 @@ public class MemberService {
             member.setPassword(encoder.encode(newPw));
             return true;
         }
-        else return false;
+        else { throw new ServiceLogicException("비밀번호가 일치하지 않습니다.");}
     }
 
     /*탈퇴하기

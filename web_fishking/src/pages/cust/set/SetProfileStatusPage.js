@@ -8,7 +8,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+    "ModalStore"
 )(
   observer(
     class extends React.Component {
@@ -30,17 +31,28 @@ export default inject(
         this.setState({ text: resolve.statusMessage });
       };
       onChange = async () => {
-        const { APIStore, PageStore } = this.props;
+        const { APIStore, PageStore, ModalStore } = this.props;
         const { text } = this.state;
-        const resolve = await APIStore._put(
-          "/v2/api/profileManage/statusMessage",
-          {
-            statusMessage: text,
-          }
-        );
-        if (resolve) {
-          PageStore.goBack();
+        try{
+            const resolve = await APIStore._put(
+                "/v2/api/profileManage/statusMessage",
+                {
+                    statusMessage: text,
+                }
+            );
+            if (resolve) {
+                PageStore.goBack();
+            }
         }
+        catch(err){
+            if(err.response.data.msg !== undefined){
+                ModalStore.openModal("Alert", { body: err.response.data.msg })
+            }
+            else {
+                ModalStore.openModal("Alert", {body: "상태메시지 변경에 실패하였습니다."});
+            }
+        }
+
       };
       /********** ********** ********** ********** **********/
       /** render */

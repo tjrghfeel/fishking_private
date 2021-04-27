@@ -13,6 +13,6 @@ import javax.validation.constraints.Size;
 @Builder
 public class ModifyingEmailDto {
     @Pattern(regexp = Constants.EMAIL, message = "이메일 형식이 잘못되었습니다")
-    @Size(max=50)
+    @Size(max=50, message = "이메일은 50자가 넘을 수 없습니다.")
     private String email;
 }
