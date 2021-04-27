@@ -508,18 +508,19 @@ export default inject(
                 </div>
               </React.Fragment>
             )}
-            <div className="fixed-bottom">
-              <div className="row no-gutters">
-                <div className="col-12">
-                  <a
-                    className="btn btn-primary btn-lg btn-block btn-btm"
-                    onClick={this.save}
-                  >
-                    적용하기
-                  </a>
+            {this.state.location && (
+              <div className="fixed-bottom">
+                <div className="row no-gutters">
+                  <div className="col-12">
+                    <a
+                      className="btn btn-primary btn-lg btn-block btn-btm"
+                      onClick={this.save}
+                    >
+                      적용하기
+                    </a>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </div>)}
           </React.Fragment>
         );
       }
