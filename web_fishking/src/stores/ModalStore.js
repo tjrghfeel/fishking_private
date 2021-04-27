@@ -73,10 +73,11 @@ const ModalStore = new (class {
         NativeStore.postMessage("Share", {
           message: this.address,
         });
+      } else {
+        NativeStore.postMessage("Share", {
+          message: window.location.href,
+        });
       }
-      NativeStore.postMessage("Share", {
-        message: window.location.href,
-      });
       // $("#snsModal").modal("show");
     } else if (modalType === "Input") {
       $("#inputModal").modal("show");

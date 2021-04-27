@@ -168,7 +168,7 @@ export default inject(
           const { ModalStore } = this.props;
           let msg = null;
           if (type === 'map') {
-            msg = this.state.address
+            msg = `kakaomap://route?sp=&ep=${this.state.latitude},${this.state.longitude}&by=CAR`
           }
           ModalStore.openModal("SNS", {
             onSelect: (selected) => {
