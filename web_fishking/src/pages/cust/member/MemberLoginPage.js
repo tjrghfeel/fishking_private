@@ -182,6 +182,7 @@ export default inject(
                     <a
                       onClick={() => this.onLoginBySNS("kakao")}
                       class="btn btn-sns-kakao btn-yellow btn-lg btn-block"
+                      style={{padding: '11px 13px'}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-kakao.svg"
@@ -195,6 +196,7 @@ export default inject(
                     <a
                       onClick={() => this.onLoginBySNS("facebook")}
                       class="btn btn-sns-facebook btn-lg btn-block"
+                      style={{padding: '11px 13px'}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-facebook.svg"
@@ -208,6 +210,7 @@ export default inject(
                     <a
                       onClick={() => this.onLoginBySNS("naver")}
                       class="btn btn-sns-naver btn-lg btn-block"
+                      style={{padding: '11px 13px'}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-naver.svg"
@@ -221,6 +224,7 @@ export default inject(
                     <a
                       onClick={() => this.onLoginBySNS("apple")}
                       class="btn btn-sns-apple btn-lg btn-block"
+                      style={{padding: '11px 13px'}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-apple.svg"
