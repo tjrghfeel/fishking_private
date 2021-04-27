@@ -12,7 +12,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "DataStore"
+  "DataStore",
+    "ModalStore"
 )(
   observer(
     withRouter(
@@ -82,7 +83,7 @@ export default inject(
         };
 
         goToActive3 = async () => {
-          const { APIStore, DataStore } = this.props;
+          const { APIStore, DataStore, ModalStore } = this.props;
           const { email, password, rePassword, nickName } = this.state;
 
           if (email === "" || !DataStore.isEmail(email)) {
@@ -118,6 +119,7 @@ export default inject(
           );
           if (checkUidDup !== 0) {
             this.email.current?.classList.add("is-invalid");
+             ModalStore.openModal("Alert", { body: "아이디가 중복됩니다." });
             return;
           }
           const checkNickNameDup = await APIStore._get(
@@ -126,6 +128,7 @@ export default inject(
           );
           if (checkNickNameDup) {
             this.nickName.current?.classList.add("is-invalid");
+              ModalStore.openModal("Alert", { body: "닉네임이 중복됩니다." });
             return;
           }
           this.setState({ active: 3 });

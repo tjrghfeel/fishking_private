@@ -42,12 +42,12 @@ export default inject(
         } else {
           this.memberId.current?.classList.remove("is-invalid");
         }
-        if (!DataStore.isPassword(password)) {
-          this.password.current?.classList.add("is-invalid");
-          return;
-        } else {
-          this.password.current?.classList.remove("is-invalid");
-        }
+        // if (!DataStore.isPassword(password)) {
+        //   this.password.current?.classList.add("is-invalid");
+        //   return;
+        // } else {
+        //   this.password.current?.classList.remove("is-invalid");
+        // }
 
         try {
           const response = await APIStore._post("/v2/api/login", {

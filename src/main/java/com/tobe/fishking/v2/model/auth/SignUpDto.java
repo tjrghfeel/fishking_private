@@ -30,7 +30,7 @@ public class SignUpDto {
 
     @NotNull(message = "닉네임이 비었습니다")
     @Pattern(regexp = Constants.STRING, message = "닉네임은 한글, 영어 또는 숫자로 구성되어야 합니다.")
-    @Size(min = 2, max = 10, message = "닉네임은 4~10자이어야 합니다.")
+    @Size(min = 2, max = 10, message = "닉네임은 2~10자이어야 합니다.")
     private String nickName;
 
     private String registrationToken;

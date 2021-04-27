@@ -9,7 +9,7 @@ public enum AlertType implements IEnumModel {
     member("사용자",""),
     couponExpire("쿠폰 만료 알림","보유하고 계신 쿠폰 사용기간 만료일이 1일 남았습니다. 1일 이후에는 자동 소멸됩니다. "),
     fishingBlog("조행기",""),
-    fishingDiary("조황일지 댓글알림",""),
+    fishingDiary("글알림",""),
     oneToQuery("1:1문의 답변 완료 알림", "작성하신 문의 글에 답변이 완료되었습니다. "),
     reservationComplete("예약확정", "예약 확정되었습니다. 어복황제와 함께 똑똑한 바다낚시를 즐겨보세요!"),
     reservationCancel("예약취소", "예약 취소되었습니다. 다음 기회에 함께하겠습니다. "),

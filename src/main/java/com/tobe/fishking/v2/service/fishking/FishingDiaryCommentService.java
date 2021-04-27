@@ -110,9 +110,9 @@ public class FishingDiaryCommentService {
             CommonCode fishingDiaryAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "fishingDiary");
             if(receiver.hasAlertSetCode(fishingDiaryAlertSetCommonCode.getCode())) {
                 Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-                String alertTitle = "작성글 댓글 알림";
+                String alertTitle = "글 알림";
                 String fishingDiaryTitle = (fishingDiary.getTitle().length() > 10)? fishingDiary.getTitle().substring(0,10)+"..." : fishingDiary.getTitle();
-                String sentence = "고객님이 작성한 글 '제목 : "+fishingDiaryTitle+"'에 댓글이 추가되었습니다.";
+                String sentence = "'제목 : "+fishingDiaryTitle+"'에 글이 추가되었습니다.";
 
                 Alerts alerts = Alerts.builder()
                         .alertType(AlertType.fishingDiary)

@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.controller.member;
 import NiceID.Check.CPClient;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Company;
+import com.tobe.fishking.v2.enums.Constants;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
@@ -118,6 +119,15 @@ public class MemberController {
                 .nickName(nickName)
                 .registrationToken(registrationToken)
                 .build();
+
+        //입력값 검증
+        if(email == null || email.equals("") || !email.matches(Constants.EMAIL)  || email.length() > 50
+                || pw == null || pw.equals("") || !pw.matches(Constants.PW) || pw.length() < 8 || pw.length() > 100
+                || nickName==null || nickName.equals("") || !nickName.matches(Constants.STRING) || nickName.length() < 2 || nickName.length() > 10
+        ){
+            return "redirect:https://www.fishkingapp.com/smartfishing/login?msg=inValidSignUpValue";
+        }
+
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
@@ -379,7 +389,8 @@ public class MemberController {
             @RequestParam("nickName") String nickName,
             @RequestParam(value = "registrationToken",required = false) String registrationToken,
             ModelMap model,
-            HttpSession session
+            HttpSession session,
+            HttpServletResponse response
     ) throws ResourceNotFoundException, IOException, ServiceLogicException {
         SignUpDto dto = SignUpDto.builder()
                 .memberId(Id)
@@ -388,6 +399,14 @@ public class MemberController {
                 .nickName(nickName)
                 .registrationToken(registrationToken)
                 .build();
+        //입력값 검증
+        if(email == null || email.equals("") || !email.matches(Constants.EMAIL)  || email.length() > 50
+                || pw == null || pw.equals("") || !pw.matches(Constants.PW) || pw.length() < 8 || pw.length() > 100
+                || nickName==null || nickName.equals("") || !nickName.matches(Constants.STRING) || nickName.length() < 2 || nickName.length() > 10
+        ){
+            return "redirect:https://www.fishkingapp.com/smartfishing/login?msg=inValidSignUpValue";
+        }
+
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
