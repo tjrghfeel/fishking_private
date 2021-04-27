@@ -1954,7 +1954,7 @@ public class MemberService {
         Member member = getMemberById(memberId);
 
         Member preNumOwner = memberRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
-        preNumOwner.setPhoneNumber(new PhoneNumber(null,null));
+        preNumOwner.setPhoneNumber(new PhoneNumber("***","****"));
         memberRepository.save(preNumOwner);
 
         member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));

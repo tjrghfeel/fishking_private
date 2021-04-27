@@ -28,10 +28,12 @@ export default inject(
         }
         else if(msg === 'success'){
           localStorage.setItem("@accessToken_cust", token);
+          localStorage.setItem("@accessToken", token);
           ModalStore.openModal("Alert", { body: "휴대폰 번호가 수정되었습니다." });
         }
         else if(msg === 'niceCertificationFail'){
           localStorage.setItem("@accessToken_cust", token);
+          localStorage.setItem("@accessToken", token);
           ModalStore.openModal("Alert", { body: "본인인증에 실패하였습니다." });
         }
 
