@@ -56,7 +56,7 @@ export default inject(
                 return (
                   <div className="container nopadding mt-3" key={index}>
                     <div className="row no-gutters mt-3 mb-2">
-                      <div className="col">
+                      <div className="col-9">
                         <strong>{data["codeName"]}</strong>
                         <br/>
                         {data['code'] === 'fishingDiary' && (
@@ -84,7 +84,7 @@ export default inject(
                         {/*  작성한 내글에 대한 댓글 알림 입니다.*/}
                         {/*</small>*/}
                       </div>
-                      <div className="col">
+                      <div className="col-3">
                         <nav>
                           <div
                             className="nav nav-tabs btn-set"
@@ -127,8 +127,9 @@ export default inject(
                 return (
                   <div className="container nopadding mt-1" key={index}>
                     <div className="row no-gutters mt-3 mb-2">
-                      <div className="col">
+                      <div className="col-9">
                         <strong>{data["codeName"]}</strong>
+                        <br/>
                         {data['code'] === 'fishingDiary' && (
                           <small className="grey">
                             내가 작성한 글에 대한 댓글 알림입니다.
@@ -146,7 +147,8 @@ export default inject(
                         )}
                         {data['code'] === 'tide' && (
                           <small className="grey">
-                            마이메뉴 > 물때 메뉴에서 알림을 설정할 수 있으며, ON으로 하셔야 알림기능이 정상 동작합니다.
+                            마이메뉴>물때 메뉴에서 알림을 설정할 수 있으며,<br/>
+                            ON으로 하셔야 알림기능이 정상 동작합니다.
                           </small>
                         )}
                         {/*<br />*/}
@@ -154,7 +156,7 @@ export default inject(
                         {/*  작성한 내글에 대한 댓글 알림 입니다.*/}
                         {/*</small>*/}
                       </div>
-                      <div className="col">
+                      <div className="col-3">
                         <nav>
                           <div
                             className="nav nav-tabs btn-set"
