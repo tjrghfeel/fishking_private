@@ -55,6 +55,7 @@ export default inject(
       }, 1800);
     }, [setUri, setInitiated, AppStore, WebViewStore]);
     const wokeUp = useCallback((e) => {
+      console.log(e.url);
       if (e.url && e.url.split('?')[1]) {
         console.log('https://fishkingapp.com/cust' + e.url.split('?')[1]);
         setUri('https://fishkingapp.com/cust' + e.url.split('?')[1]);
@@ -62,8 +63,11 @@ export default inject(
       }
     }, []);
     useEffect(() => {
+      WebViewStore.setWebView(webview);
+      initiate();
       Linking.getInitialURL()
         .then((url) => {
+          console.log(url);
           if (url && url.split('?')[1]) {
             console.log('https://fishkingapp.com/cust' + url.split('?')[1]);
             setUri('https://fishkingapp.com/cust' + url.split('?')[1]);
@@ -72,10 +76,7 @@ export default inject(
         })
         .catch((e) => {});
       Linking.addEventListener('url', wokeUp);
-    }, [wokeUp]);
-    useEffect(() => {
-      WebViewStore.setWebView(webview);
-      initiate();
+
       if (Platform.OS === 'android') {
         BackHandler.addEventListener('hardwareBackPress', () => {
           if (
@@ -106,7 +107,7 @@ export default inject(
           BackHandler.removeEventListener('hardwareBackPress');
         };
       }
-    }, [backPressTime, setBackPressTime, initiate, WebViewStore]);
+    }, [backPressTime, setBackPressTime, initiate, WebViewStore, wokeUp]);
     /********** ********** **********/
     /********** render
      /********** ********** **********/
