@@ -19,6 +19,7 @@ export default inject(
           page: 0,
           list: [],
           isEnd: false,
+          loaded: false
         });
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
@@ -51,6 +52,7 @@ export default inject(
         } else {
           PageStore.setState({ isEnd: false });
         }
+        this.setState({loaded: true});
       };
 
       onDelete = async (item) => {
@@ -89,6 +91,17 @@ export default inject(
                     onClick={this.onClick}
                   />
                 ))}
+              {((!PageStore.state.list || PageStore.state.list.length < 1) && this.state.loaded) && (
+                <React.Fragment>
+                  <p className="clearfix"></p>
+                  <div className="text-center">
+                    <span className="mb-3"
+                          style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>
+                      찜한 업체가 없습니다.
+                    </span>
+                  </div>
+                </React.Fragment>
+              )}
             </div>
           </React.Fragment>
         );

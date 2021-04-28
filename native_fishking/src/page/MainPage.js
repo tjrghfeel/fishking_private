@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {token} from '../../messaging';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {PERMISSIONS} from 'react-native-permissions';
+import NetInfo from '@react-native-community/netinfo';
 
 export default inject(
   'WebViewStore',
@@ -36,6 +37,7 @@ export default inject(
         setUri('https://fishkingapp.com/cust/init/intro');
       } else {
         setUri('https://fishkingapp.com/cust/main/home');
+        // setUri('http://192.168.0.50:3000/cust/main/home');
       }
       const location = await AppStore.checkLocationPermissions();
       const storage = await AppStore.checkStoragePermissions();
@@ -55,11 +57,21 @@ export default inject(
       }, 1800);
     }, [setUri, setInitiated, AppStore, WebViewStore]);
     const wokeUp = useCallback((e) => {
-      console.log(e.url);
-      if (e.url && e.url.split('?')[1]) {
-        console.log('https://fishkingapp.com/cust' + e.url.split('?')[1]);
-        setUri('https://fishkingapp.com/cust' + e.url.split('?')[1]);
-        // Alert.alert('Url: ' + e.url.split('?')[1]);
+      console.log('wokeUp: ' + e.url);
+      let redirectUrl = e.url;
+      if (redirectUrl && redirectUrl.split('?')[1]) {
+        if (redirectUrl.includes('tiny.one')) {
+          redirectUrl = redirectUrl.replaceAll(
+            '%20https://tiny.one/25r3whkw',
+            '',
+          );
+        }
+        console.log(
+          'redirectUrl : ' +
+            'https://fishkingapp.com/cust' +
+            redirectUrl.split('?')[1],
+        );
+        setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
       }
     }, []);
     useEffect(() => {
@@ -67,11 +79,18 @@ export default inject(
       initiate();
       Linking.getInitialURL()
         .then((url) => {
-          console.log(url);
-          if (url && url.split('?')[1]) {
-            console.log('https://fishkingapp.com/cust' + url.split('?')[1]);
-            setUri('https://fishkingapp.com/cust' + url.split('?')[1]);
-            // Alert.alert('Init Url: ' + url.split('?')[1]);
+          console.log('init: ' + url);
+          let redirectUrl = url;
+          if (redirectUrl && redirectUrl.split('?')[1]) {
+            if (url.includes('tiny.one')) {
+              redirectUrl = url.replaceAll('%20https://tiny.one/25r3whkw', '');
+            }
+            console.log(
+              'redirectUrl : ' +
+                'https://fishkingapp.com/cust' +
+                redirectUrl.split('?')[1],
+            );
+            setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
           }
         })
         .catch((e) => {});
@@ -108,6 +127,7 @@ export default inject(
         };
       }
     }, [backPressTime, setBackPressTime, initiate, WebViewStore, wokeUp]);
+
     /********** ********** **********/
     /********** render
      /********** ********** **********/
@@ -166,8 +186,9 @@ export default inject(
             WebViewStore.setNavigationState(state)
           }
           onShouldStartLoadWithRequest={(request) => {
-            if (request.url === 'about:blank') return false;
-            else if (
+            if (request.url === 'about:blank') {
+              return false;
+            } else if (
               request.url.search('https://') !== -1 ||
               request.url.search('http://') !== -1
             ) {
@@ -190,6 +211,18 @@ export default inject(
           onMessage={async ({nativeEvent}) => {
             const {process, data} = JSON.parse(nativeEvent.data);
             switch (process) {
+              case 'Connections': {
+                NetInfo.fetch().then((state) => {
+                  console.log(state.type);
+                  // webview.current.postMessage(state.type, '*');
+                  webview.current.postMessage('wifi', '*');
+                });
+                break;
+              }
+              case 'SetPermissions': {
+                await Linking.openSettings();
+                break;
+              }
               case 'Share': {
                 if (data.message.includes('map.kakao.com')) {
                   const result = await Share.share({
@@ -199,10 +232,6 @@ export default inject(
                   });
                 } else {
                   const result = await Share.share({
-                    // message:
-                    //   'https://tiny.one/25r3whkw?action=/company/undefined/detail/19',
-                    // url:
-                    //   'https://tiny.one/25r3whkw?action=/company/undefined/detail/19',
                     message: data.message,
                     url: data.message,
                     title: '어복황제',
@@ -211,7 +240,7 @@ export default inject(
                 break;
               }
               case 'Refresh': {
-                const enabled = data['enabled'];
+                const enabled = data.enabled;
                 AppStore.setRefreshEnabled(enabled);
                 console.log(enabled);
                 break;
@@ -265,6 +294,9 @@ export default inject(
                   storage = false,
                   contact = false,
                 } = data;
+                console.log(location);
+                console.log(storage);
+                console.log(contact);
                 if (location) {
                   await AppStore.grantPermissions(
                     Platform.select({

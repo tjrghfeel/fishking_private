@@ -68,6 +68,10 @@ export default class extends React.Component {
   onMessage = async ({nativeEvent}) => {
     const {process, data} = JSON.parse(nativeEvent.data);
     switch (process) {
+      case 'SetPermissions': {
+        await Linking.openSettings();
+        break;
+      }
       case 'Linking': {
         Linking.openURL(data);
         break;
