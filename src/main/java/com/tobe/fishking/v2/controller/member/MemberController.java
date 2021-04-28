@@ -737,7 +737,7 @@ public class MemberController {
     @ApiOperation(value = "관리자 로그인")
     @PostMapping("/admin/login")
     @ResponseBody
-    public String adminLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException {
+    public String adminLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
         return memberService.adminLogin(loginDTO);
     }
 

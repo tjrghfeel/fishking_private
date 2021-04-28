@@ -90,54 +90,29 @@ public class CompanyController {
     }
 
     /*업체 등록 요청 수정*/
-    @ApiOperation(value = "업체 등록 요청 수정",notes = "" +
-            "- 요청 필드 ) \n" +
-            "   세션토큰 필요.\n" +
-            "   companyId : 수정할 업체 id\n" +
-            "   companyName : 업체명\n" +
-            "   memberName : 회원명\n" +
-            "   tel : 전화번호\n" +
-            "   bizNo : 사업자등록번호\n" +
-            "   harbor : 항구명\n" +
-            "   bank : 은행\n" +
-            "   accountNo : 계좌번호\n" +
-            "   companyAddress : 업체 주소\n" +
-            "   bizNoFile : 사업자등록증 이미지 파일\n" +
-            "   representFile : 대표자 신분증 파일\n" +
-            "   accountFile : 정산통장사본 이미지파일\n" +
-            "- 응답 ) 수정성공시 true. ")
-    @PutMapping("/company/modify")
-    public Long updateCompanyRegisterReq(
-            CompanyUpdateDTO dto,
-            @RequestHeader("Authorization") String token
-    ) throws Exception {
-        return companyService.updateCompanyRegisterReq(dto,token);
-
-        /*CompanyModifyDtoForManage dto = CompanyModifyDtoForManage.builder()
-                .token(request.getHeader("Authorization"))
-                .id(Long.parseLong(request.getParameter("id")))
-                .memberId(null)
-                .companyName(request.getParameter("companyName"))
-//                .memberName(request.getParameter("memberName"))
-                .sido(null)
-                .gungu(null)
-                .tel(request.getParameter("tel"))
-                .bizNo(request.getParameter("bizNo"))
-                .harbor(request.getParameter("harbor"))
-                .bank(request.getParameter("bank"))
-                .accountNo(request.getParameter("accountNo"))
-                .ownerWording("")
-                .isOpen(false)
-                .skbAccount(null)
-                .skbPassword(null)
-                .companyAddress(request.getParameter("companyAddress"))
-                .isRegistered(false)
-                .bizNoFile(request.getFile("bizNoFile"))
-                .representFile(request.getFile("representFile"))
-                .accountFile(request.getFile("accountFile"))
-                .build();
-        return companyManageService.modifyCompany(dto);*/
-    }
+//    @ApiOperation(value = "업체 등록 요청 수정",notes = "" +
+//            "- 요청 필드 ) \n" +
+//            "   세션토큰 필요.\n" +
+//            "   companyId : 수정할 업체 id\n" +
+//            "   companyName : 업체명\n" +
+//            "   memberName : 회원명\n" +
+//            "   tel : 전화번호\n" +
+//            "   bizNo : 사업자등록번호\n" +
+//            "   harbor : 항구명\n" +
+//            "   bank : 은행\n" +
+//            "   accountNo : 계좌번호\n" +
+//            "   companyAddress : 업체 주소\n" +
+//            "   bizNoFile : 사업자등록증 이미지 파일\n" +
+//            "   representFile : 대표자 신분증 파일\n" +
+//            "   accountFile : 정산통장사본 이미지파일\n" +
+//            "- 응답 ) 수정성공시 true. ")
+//    @PutMapping("/company/modify")
+//    public Long updateCompanyRegisterReq(
+//            CompanyUpdateDTO dto,
+//            @RequestHeader("Authorization") String token
+//    ) throws Exception {
+//        return companyService.updateCompanyRegisterReq(dto,token);
+//    }
 
     /*업체 조회*/
     @ApiOperation(value = "업체 하나 조회",notes = "관리자용api")

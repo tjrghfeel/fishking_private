@@ -95,7 +95,6 @@ public class CompanyManageService {
                 dto.getSkbAccount(),
                 dto.getCompanyAddress(),
                 dto.getIsRegistered(),
-                dto.getAdtId(),
                 dto.getNhnId(),
                 dto.getCreatedBy(),
                 dto.getCreatedDateStart(),
@@ -198,44 +197,6 @@ public class CompanyManageService {
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getAccountFile()));
         accountFile.saveTemporaryFile(company.getId());
 
-        /*기존 파일엔터티 id들 저장*/
-//        Long preBizNoFileId = company.getBizNoFileId().getId();
-//        Long preRepresentFileId = company.getRepresentFileId().getId();
-//        Long preAccountFileId = company.getAccountFileId().getId();
-//
-//        /*입력받은 파일 세개 저장. null이 들어올수도있음. */
-//        MultipartFile[] fileList = new MultipartFile[3];
-//        MultipartFile inputBizNoFile = dto.getBizNoFile();
-//        MultipartFile inputRepresentFile = dto.getRepresentFile();
-//        MultipartFile inputAccountFile = dto.getAccountFile();
-//
-//        /*최종적으로 저장할 파일 세개의 변수 */
-//        FileEntity bizNoFileEntity = null;
-//        FileEntity representFileEntity = null;
-//        FileEntity accountFileEntity = null;
-//
-//        if(inputBizNoFile!=null) {//새로운 파일이 들어왔으면,
-//            Long bizNoFileId = companyService.saveFile(16L, inputBizNoFile);//저장후
-//            bizNoFileEntity = fileRepository.findById(bizNoFileId)//최종적으로 저장할 파일 변수에 저장.
-//                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+bizNoFileId));
-//        }
-//        else{bizNoFileEntity = fileRepository.findById(preBizNoFileId)//새로운파일이 안들어왔으면, 최종적으로 저장할 파일변수에 기존의 파일 저장.
-//                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+preBizNoFileId));}
-//        if(inputRepresentFile!=null) {
-//            Long representFileId = companyService.saveFile(16L, inputRepresentFile);
-//            representFileEntity = fileRepository.findById(representFileId)
-//                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+representFileId));
-//        }
-//        else{representFileEntity = fileRepository.findById(preRepresentFileId)
-//                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+preRepresentFileId));}
-//        if(inputAccountFile!=null) {
-//            Long accountFileId = companyService.saveFile(16L, inputAccountFile);
-//            accountFileEntity = fileRepository.findById(accountFileId)
-//                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+accountFileId));
-//        }
-//        else{accountFileEntity = fileRepository.findById(preAccountFileId)
-//                .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+preAccountFileId));}
-
         if(dto.getSkbPassword()!=null){dto.setSkbPassword(encoder.encode(dto.getSkbPassword()));}
 
         FileEntity[] fileEntityList = new FileEntity[3];
@@ -244,10 +205,6 @@ public class CompanyManageService {
         fileEntityList[2] = accountFile;
         company.updateCompanyForManage(dto,manager,member,fileEntityList);
         companyRepository.save(company);
-
-//        if(inputBizNoFile!=null)uploadService.removeFileEntity(preBizNoFileId);
-//        if(inputRepresentFile!=null)uploadService.removeFileEntity(preRepresentFileId);
-//        if(inputAccountFile!=null)uploadService.removeFileEntity(preAccountFileId);
 
         return true;
     }

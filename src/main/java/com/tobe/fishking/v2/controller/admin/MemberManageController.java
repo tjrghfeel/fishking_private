@@ -49,19 +49,19 @@ public class MemberManageController {
     }
 
     /*회원 생성*/
-    @ApiOperation(value = "회원 생성 기능",notes = "email,gender,roles,uid,isActive,isCertified,areaCode,localNumber 필수. ")
-    @PostMapping("/manage/member/create")
-    public MemberDetailDtoForManager makeMember(@RequestBody @Valid MemberDetailDtoForManager dto){
-        return memberManageService.makeMember(dto);
-    }
+//    @ApiOperation(value = "회원 생성 기능",notes = "email,gender,roles,uid,isActive,isCertified,areaCode,localNumber 필수. ")
+//    @PostMapping("/manage/member/create")
+//    public MemberDetailDtoForManager makeMember(@RequestBody @Valid MemberDetailDtoForManager dto){
+//        return memberManageService.makeMember(dto);
+//    }
 
     /*회원 삭제
     * - 넘어온 id에 해당하는 회원을 '비활성화'처리 */
-    @ApiOperation(value="회원 삭제(비활성화)")
-    @DeleteMapping("/manage/member/delete")
-    public Long inactivateMemberForManager(@RequestBody DeletingMemberDtoForManage memberId) throws ResourceNotFoundException {
-        return memberManageService.inactivateMemberForManager(memberId.getMemberId());
-    }
+//    @ApiOperation(value="회원 삭제(비활성화)")
+//    @DeleteMapping("/manage/member/delete")
+//    public Long inactivateMemberForManager(@RequestBody DeletingMemberDtoForManage memberId) throws ResourceNotFoundException {
+//        return memberManageService.inactivateMemberForManager(memberId.getMemberId());
+//    }
 
     /*회원 상세보기*/
     @ApiOperation(value = "회원 상세보기")
@@ -71,11 +71,11 @@ public class MemberManageController {
     }
 
     /*회원 수정*/
-    @ApiOperation(value = "회원 수정",notes = "email,gender,roles,uid,isActive,isCertified,areaCode,localNumber 필수")
-    @PutMapping("/manage/member/update")
-    public boolean updateMember(@RequestBody MemberDetailDtoForManager dto) throws ResourceNotFoundException {
-        return memberManageService.modifyMember(dto);
-    }
+//    @ApiOperation(value = "회원 수정",notes = "email,gender,roles,uid,isActive,isCertified,areaCode,localNumber 필수")
+//    @PutMapping("/manage/member/update")
+//    public boolean updateMember(@RequestBody MemberDetailDtoForManager dto) throws ResourceNotFoundException {
+//        return memberManageService.modifyMember(dto);
+//    }
 
     //세션토큰 조회
     @ApiOperation(value = "세션토큰 조회")

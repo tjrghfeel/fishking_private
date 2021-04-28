@@ -202,7 +202,6 @@ public class Company extends BaseTime {  //선상
         ownerWording = (dto.getOwnerWording());
         isOpen=(dto.getIsOpen());
         skbAccount=(dto.getSkbAccount());
-        adtId = dto.getAdtId();
         nhnId = dto.getNhnId();
         if(dto.getSkbPassword()!=null){skbPassword=((dto.getSkbPassword()));}//비번같은경우, 변경안할경우 dto안의 값이 비어있기때문에, 확인후 업데이트해줌.
         if(dto.getNhnPw()!=null){nhnPw=((dto.getNhnPw()));}

@@ -121,7 +121,6 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   c.skb_account skbAccount, " +
             "   c.company_address companyAddress, " +
             "   c.is_registered isRegistered, " +
-            "   c.adt_id adtId, " +
             "   c.nhn_id nhnId, " +
             "   c.created_by createdBy, " +
             "   c.registered_date registeredDate, " +
@@ -150,7 +149,6 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   and if(:skbAccount is null, true,(c.skb_account like %:skbAccount%)) " +
             "   and if(:companyAddress is null, true,(c.company_address like %:companyAddress%)) " +
             "   and if(:isRegistered is null, true, (c.is_registered = :isRegistered)) " +
-            "   and if(:adtId is null, true, (c.adt_id like %:adtId%)) " +
             "   and if(:nhnId is null, true, (c.nhn_id like %:nhnId%)) " +
             "   and if(:createdBy is null, true, (c.created_by = :createdBy)) " +
             "   and if(:createdDayStart is null, true, (c.created_date > :createdDayStart)) " +
@@ -180,7 +178,6 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
                     "   and if(:skbAccount is null, true,(c.skb_account like %:skbAccount%)) " +
                     "   and if(:companyAddress is null, true,(c.company_address like %:companyAddress%)) " +
                     "   and if(:isRegistered is null, true, (c.is_registered = :isRegistered)) " +
-                    "   and if(:adtId is null, true, (c.adt_id like %:adtId%)) " +
                     "   and if(:nhnId is null, true, (c.nhn_id like %:nhnId%)) " +
                     "   and if(:createdBy is null, true, (c.created_by = :createdBy)) " +
                     "   and if(:createdDayStart is null, true, (c.created_date > :createdDayStart)) " +
@@ -210,7 +207,6 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             @Param("skbAccount") String skbAccount,
             @Param("companyAddress") String companyAddress,
             @Param("isRegistered") Boolean isRegistered,
-            @Param("adtId") String adtId,
             @Param("nhnId") String nhnId,
             @Param("createdBy") Long createdBy,
             @Param("createdDayStart") LocalDate createdDayStart,

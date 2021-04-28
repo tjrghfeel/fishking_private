@@ -52,11 +52,11 @@ public class CompanyWriteDTO {
 //    private String bizNoFilesUrl ;
 //    private String representFilesUrl ;
 //    private String accountFileUrl;
-    @NotNull
+    @NotNull(message = "사업자등록증을 입력하세요")
     private Long bizNoFile;
-    @NotNull
+    @NotNull(message = "대표자신분증을 입력하세요")
     private Long representFile;
-    @NotNull
+    @NotNull(message = "정산통장사본을 입력하세요")
     private Long accountFile;
 
     @Size(max=30, message = "ADT 아이디는 20자 이하이어야합니다")

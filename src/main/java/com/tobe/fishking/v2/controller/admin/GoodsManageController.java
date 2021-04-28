@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Api(tags={"상품 관리"})
 @RequiredArgsConstructor
 @RestController
@@ -21,7 +23,7 @@ public class GoodsManageController {
     @ApiOperation(value = "상품 리스트 검색",notes = "")
     @GetMapping("/manage/goods/list/{page}")
     public Page<GoodsManageDtoForPage> getGoodsList(
-        GoodsSearchConditionDto dto,
+        @Valid GoodsSearchConditionDto dto,
         @RequestHeader("Authorization") String token,
         @PathVariable("page") int page
     ){

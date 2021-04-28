@@ -17,58 +17,75 @@ import java.util.List;
 public class CompanyModifyDtoForManage {
     @NotNull
     private Long id;//not null, pk
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.STRING)
+    @NotNull(message = "업체명을 입력하세요")
+    @Size(min=1, message = "업체명을 입력하세요")
+    @Size(max=50, message = "업체명은 50자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "업체명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String companyName;//
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=50, message = "업주명은 50자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "업주명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String shipowner;
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=50, message = "주소(시도)는 50자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "주소(시,도)는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String sido;
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=50, message = "주소(군,구)는 50자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "주소(군,구)는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String gungu;
 
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.NUMBER)
+    @Size(max=30, message = "업체전화번호는 30자 이하이어야합니다")
+    @Pattern(regexp = Constants.NUMBER, message = "업체전화번호는 숫자로 구성되어야합니다")
     private String tel;//
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.NUMBER)
+
+    @NotNull(message = "휴대전화번호를 입력하세요")
+    @Size(min=1, message = "휴대전화번호를 입력하세요")
+    @Size(max=30, message = "휴대전화번호는 30자 이하이어야합니다")
+    @Pattern(regexp = Constants.NUMBER, message = "휴대전화번호는 숫자로 구성되어야합니다")
     private String phoneNumber;
-    @Pattern(regexp = Constants.BIZ_NO)
+
+    @Size(max=30, message = "사업자등록번호는 30자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "사업자등록번호는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String bizNo;
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=30, message = "항구명은 30자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "항구명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String harbor;//
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=10, message = "은행명은 10자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "은행명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String bank ;
 
-    @Size(max=100)
-    @Pattern(regexp = Constants.STRING)
+    @Size(max=20, message = "계좌번호는 20자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "계좌번호는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String accountNo ;
-    @Size(min=2,max = 100)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=500, message = "사장님한마디는 500자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "사장님한마디는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String ownerWording;//not null
+
     private Boolean isOpen;//
-    @Size(max = 100)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=50, message = "SKB아이디는 50자 이하이어야합니다")
     private String  skbAccount;
+    @Size(max=150, message = "SKB비밀번호는 150자 이하이어야합니다")
     private String skbPassword;
-    @Size(max = 100)
-    @Pattern(regexp = Constants.STRING)
-    private String adtId;
-    private String adtPw;
-    @Size(max = 100)
-    @Pattern(regexp = Constants.STRING)
+
+    @Size(max=20, message = "NHN아이디는 20자 이하이어야합니다")
     private String nhnId;
+    @Size(max=20, message = "NHN비밀번호는 20자 이하이어야합니다")
     private String nhnPw;
     //    @Size(min=10,max=50)
-    @Size(min=2,max = 20)
-    @Pattern(regexp = Constants.STRING)
+
+    @NotNull(message = "지역명을 입력하세요")
+    @Size(min=1, message = "지역명을 입력하세요")
+    @Size(max=100, message = "지역명은 100자 이하이어야합니다")
+    @Pattern(regexp = Constants.STRING, message = "지역명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String companyAddress;//
+
     private Boolean isRegistered;//
+
     /*@NotNull
     private Long createdBy;//not null, fk
     @NotNull
@@ -76,10 +93,11 @@ public class CompanyModifyDtoForManage {
     //    private String bizNoFilesUrl ;
 //    private String representFilesUrl ;
 //    private String accountFileUrl;
-    @NotNull
+
+    @NotNull(message = "사업자등록증을 입력하세요")
     private Long bizNoFile;
-    @NotNull
+    @NotNull(message = "대표자신분증을 입력하세요")
     private Long representFile;
-    @NotNull
+    @NotNull(message = "정산 통장사본을 입력하세요")
     private Long accountFile;
 }
