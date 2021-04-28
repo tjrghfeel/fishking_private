@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class CompanyController {
             "- 응답 ) 등록대기중인 업체 id ")
     @PostMapping("/company")
     public Long handleCompanyRegisterReq(
-            @RequestBody CompanyWriteDTO dto,
+            @RequestBody @Valid CompanyWriteDTO dto,
             @RequestHeader("Authorization") String token
     ) throws Exception {
         return companyService.handleCompanyRegisterReq(dto,token);

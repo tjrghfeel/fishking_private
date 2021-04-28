@@ -16,9 +16,11 @@ public class ModifyEventDto {
     @NotNull
     private Long eventId;
 //    @NotNull
-    @Size(min = 1,max = 100)
+    @Size(min = 1, message = "제목을 입력하세요")
+    @Size(max=50, message = "제목은 50자 이하이어야 합니다.")
     private String title;
-    @Size(min = 1,max = 2000)
+    @Size(min = 1,message = "내용을 입력하세요")
+    @Size(max=2000, message = "내용은 2000자 이하이어야 합니다")
     private String content;
 //    private Long shipId;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

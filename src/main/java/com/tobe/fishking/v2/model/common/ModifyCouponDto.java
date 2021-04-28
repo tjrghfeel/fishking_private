@@ -30,6 +30,6 @@ public class ModifyCouponDto {
     private LocalDate effectiveEndDate;
     private Boolean isIssue;
     private Boolean isUse;
-    @Size(max = 200, message = "쿠폰 설명은 200자 이하이어야 합니다.")
+    @Size(max = 4000, message = "쿠폰 설명은 4000자 이하이어야 합니다.")
     private String couponDescription;
 }

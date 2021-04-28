@@ -48,7 +48,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
                     "   or s.sigungu like %:keyword%) " +
-//                    "   and s.is_active = true " +
+                    "   and s.is_active = true " +
                     "order by s.ship_name ",
             countQuery = "select s.id " +
                     "from ship s join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
@@ -58,7 +58,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
                     "   or s.sigungu like %:keyword%) " +
-//                    "   and s.is_active = true " +
+                    "   and s.is_active = true " +
                     "order by s.ship_name  ",
             nativeQuery = true
     )
@@ -84,6 +84,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
                     "   or s.sigungu like %:keyword% ) " +
+                    "   and s.is_active = true " +
                     "order by s.ship_name ",
             countQuery = "select s.id " +
                     "from ship s left join files f on (f.file_publish=0 and f.pid=s.id and f.is_represent=true and f.is_delete = false) " +
@@ -97,6 +98,7 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
                     "   or s.tel like %:keyword% " +
                     "   or s.sido like %:keyword% " +
                     "   or s.sigungu like %:keyword% ) " +
+                    "   and s.is_active = true " +
                     "order by s.ship_name ",
             nativeQuery = true
     )

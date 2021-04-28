@@ -19,7 +19,7 @@ public class MakeFishingDiaryCommentDto {
 //    private Long linkId;
     @NotNull
     private Long parentId = 0L;
-    @Size(min=1,max=50,message = "내용은 1~50자이어야 합니다.")
+    @Size(min=1,max=2000,message = "내용은 1~2000자이어야 합니다.")
     private String content;
     private Long fileId;
 }
