@@ -18,7 +18,8 @@ public class WriteFishingDiaryDto {
     @NotNull(message = "카테고리가 비었습니다.")
     private String category;
     @NotNull(message = "제목이 비었습니다. ")
-    @Size(min=5,max=30,message="제목은 5자~30자 이어야 합니다.")
+    @Size(min=1,message="제목을 입력하세요")
+    @Size(max=200, message = "제목은 200자 이하이어야합니다")
     private String title;
     @Size(min=1,message = "어종 항목이 비었습니다.")
     private String[] fishingSpecies;
@@ -35,7 +36,8 @@ public class WriteFishingDiaryDto {
     private String fishingType;
     private Long shipId;
     @NotNull(message = "내용 항목이 비었습니다. ")
-    @Size(min=5,max=1000,message="내용은 5자~1000자 이어야 합니다.")
+    @Size(min=1,message="내용이 비었습니다.")
+    @Size(max=1000, message = "내용은 1000자 이하이어야합니다")
     private String content;
     @Size(min=1,max = 20, message = "사진 항목이 비었습니다.")
     private Long[] fileList;

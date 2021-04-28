@@ -683,7 +683,7 @@ public class MemberController {
     @PutMapping("/findPw/uid")
     @ResponseBody
     public CheckNameAndUidDto getNameAndUid(
-            @RequestBody CheckUidDto dto
+            @RequestBody @Valid CheckUidDto dto
     ) throws ResourceNotFoundException {
         return memberService.getNameAndUid(dto);
     }
@@ -737,7 +737,7 @@ public class MemberController {
     @ApiOperation(value = "관리자 로그인")
     @PostMapping("/admin/login")
     @ResponseBody
-    public String adminLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException {
+    public String adminLogin(@RequestBody @Valid LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
         return memberService.adminLogin(loginDTO);
     }
 
@@ -1161,20 +1161,20 @@ public class MemberController {
     }*/
 
     /*휴대폰 번호 변경을 위한 문자인증 요청.*/
-    @ApiOperation(value = "휴대폰 번호 변경을 위한 문자인증 요청",notes = "" +
-            "")
-    @PostMapping("/profileManage/phoneNumber/sendSms")
-    @ResponseBody
-    public Long requestSmsAuthForModifyPhoneNum(@RequestBody PhoneAuthDto dto){
-        return memberService.sendSmsAuthForModifyPhoneNum(dto);
-    }
+//    @ApiOperation(value = "휴대폰 번호 변경을 위한 문자인증 요청",notes = "" +
+//            "")
+//    @PostMapping("/profileManage/phoneNumber/sendSms")
+//    @ResponseBody
+//    public Long requestSmsAuthForModifyPhoneNum(@RequestBody PhoneAuthDto dto){
+//        return memberService.sendSmsAuthForModifyPhoneNum(dto);
+//    }
     /*문자인증 후, 휴대폰 번호 변경*/
-    @ApiOperation(value = "문자인증 후, 휴대폰 번호 변경",notes = "")
-    @PutMapping("/profileManage/phoneNumber")
-    @ResponseBody
-    public boolean modifyPhoneNumber(@RequestBody @Valid ModifyPhoneNumberDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
-        return memberService.modifyPhoneNumber(dto,token);
-    }
+//    @ApiOperation(value = "문자인증 후, 휴대폰 번호 변경",notes = "")
+//    @PutMapping("/profileManage/phoneNumber")
+//    @ResponseBody
+//    public boolean modifyPhoneNumber(@RequestBody @Valid ModifyPhoneNumberDto dto, @RequestHeader("Authorization") String token) throws ResourceNotFoundException {
+//        return memberService.modifyPhoneNumber(dto,token);
+//    }
 
     //알림설정정보 조회.
     @ApiOperation(value = "설정 > 알림설정 페이지 조회", notes = "" +

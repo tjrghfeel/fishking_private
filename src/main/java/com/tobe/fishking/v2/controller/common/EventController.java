@@ -99,7 +99,7 @@ public class EventController {
             "")
     @PostMapping("/event")
     public Long makeEvent(
-            @RequestBody MakeEventDto dto,
+            @RequestBody @Valid MakeEventDto dto,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
         /*입력값 검증*/

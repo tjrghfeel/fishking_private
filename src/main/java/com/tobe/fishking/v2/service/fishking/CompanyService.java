@@ -81,8 +81,8 @@ public class CompanyService {
                 .accountNo(dto.getAccountNo())
                 .ownerWording("")
                 .isOpen(false)
-                .skbAccount(null)
-                .skbPassword(null)
+                .skbAccount(dto.getAdtId())
+                .skbPassword(HashUtil.sha256(dto.getAdtPw()))
                 .companyAddress(dto.getCompanyAddress())
                 .isRegistered(false)
                 .bizNoFileId(bizNoFileEntity)
@@ -94,8 +94,8 @@ public class CompanyService {
                 .createdBy(member)
                 .modifiedBy(member)
                 .member(member)
-                .adtId(dto.getAdtId())
-                .adtPw(HashUtil.sha256(dto.getAdtPw()))
+                .adtId(null)
+                .adtPw(null)
                 .nhnId(dto.getNhnId())
                 .nhnPw(dto.getNhnPw())
                 .build();
@@ -154,40 +154,6 @@ public class CompanyService {
                 .member(member)
                 .build();
         return companyRepository.save(company).getId();*/
-    }
-
-    /*MultipartServletRequest를 받아 안에들어잇는 파일저장하는 메소드. */
-    @Transactional
-    public Long saveFile(Long memberId, MultipartFile file) throws Exception {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this id ::"+memberId));
-
-        //List<MultipartFile> fileList = files.getFiles("file");
-        /*파일 저장. */
-        if(uploadService.checkFileType(file)!=FileType.image){
-            throw new Exception();//!!!!!어떤 예외 던져야 할지.
-        }
-        Map<String, Object> fileInfo = uploadService.initialFile(file, FilePublish.companyRequest, "");
-
-        //FileEntity 저장.
-        FileEntity fileEntity = FileEntity.builder()
-                .originalFile(file.getOriginalFilename())
-                .fileName(file.getOriginalFilename())
-                .fileNo(0)
-                .filePublish(FilePublish.companyRequest)
-                .fileType(FileType.image)
-                .fileUrl((String)fileInfo.get("path"))
-//                    .downloadUrl((String)fileInfo.get("fileDownloadUrl"))
-                .thumbnailFile((String)fileInfo.get("thumbnailName"))
-//                    .downloadThumbnailUrl((String)fileInfo.get("thumbDownloadUrl"))
-                .size(file.getSize())
-                .storedFile((String)fileInfo.get("fileName"))
-                .createdBy(member)
-                .modifiedBy(member)
-                .locations("sampleLocation")
-                .build();
-        fileEntity = fileRepository.save(fileEntity);
-        return fileEntity.getId();
     }
 
     /*업체등록 요청 수정 메소드*/

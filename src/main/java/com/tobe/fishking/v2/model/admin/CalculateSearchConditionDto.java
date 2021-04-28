@@ -16,16 +16,16 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 public class CalculateSearchConditionDto {
-    @Size(max=100)
-    @Pattern(regexp = Constants.STRING)
+//    @Size(max=100)
+//    @Pattern(regexp = Constants.STRING)
     private String companyName;
-    @Size(max=100)
-    @Pattern(regexp = Constants.STRING)
+//    @Size(max=100)
+//    @Pattern(regexp = Constants.STRING)
     private String shipName;
-    @Size(max=100)
+//    @Size(max=100)
     @DateTimeFormat(pattern = "yyyy-MM")
     private String dateStart;
-    @Size(max=100)
+//    @Size(max=100)
     @DateTimeFormat(pattern = "yyyy-MM")
     private String dateEnd;
     private Boolean isCalculated;

@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 public class ModifyFishingDiaryCommentDto {
     @NotNull
     private Long commentId;
-    @Size(min=1,max=50,message = "내용은 1~50자이어야 합니다.")
+    @Size(min=1,max=2000,message = "내용은 1~2000자이어야 합니다.")
     private String content;
     private Long fileId;
 }

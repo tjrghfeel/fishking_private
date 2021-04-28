@@ -1376,21 +1376,21 @@ public class MemberService {
         return result;
     }
     @Transactional
-    public String adminLogin(LoginDTO loginDTO) throws ResourceNotFoundException {
+    public String adminLogin(LoginDTO loginDTO) throws ResourceNotFoundException, ServiceLogicException {
         System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
         Member member = memberRepository.findByUid(loginDTO.getMemberId())
-                .orElseThrow(()->new ResourceNotFoundException("아이디가 존재하지 않습니다"));
+                .orElseThrow(()->new ServiceLogicException("아이디가 존재하지 않습니다"));
         System.out.println("memberId : "+member.getId());
         if(member==null){
-            throw new IncorrectIdException("아이디가 존재하지 않습니다");
+            throw new ServiceLogicException("아이디가 존재하지 않습니다");
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
             /*탈퇴한 회원인 경우*/
-            if(member.getIsActive() == false){throw new RuntimeException("회원정보가 존재하지 않습니다.");}
+            if(member.getIsActive() == false){throw new ServiceLogicException("회원정보가 존재하지 않습니다.");}
             //관리자가 아닌경우
-            if(member.getRoles() != Role.admin){throw new RuntimeException("관리자 회원이 아닙니다.");}
+            if(member.getRoles() != Role.admin){throw new ServiceLogicException("관리자 회원이 아닙니다.");}
 
             /*세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
             if(member.getSessionToken()!=null){
@@ -1404,7 +1404,7 @@ public class MemberService {
                 member.setSessionToken(sessionToken);
             }
         }
-        else{throw new IncorrectPwException("비밀번호가 잘못되었습니다");}
+        else{throw new ServiceLogicException("비밀번호가 잘못되었습니다");}
         return sessionToken;
     }
 

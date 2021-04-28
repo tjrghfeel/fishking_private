@@ -253,7 +253,7 @@ export default inject(
                       <small className="grey">휴대폰 번호</small>
                     </div>
                     <div className="col-8 text-right">
-                      {(state.areaCode || "").concat(state.localNumber || "")}
+                      {(state.areaCode === '***')?'재인증 필요':(state.areaCode || "").concat(state.localNumber || "")}
                     </div>
                     <div className="col-1 text-right pl-1">
                       <img

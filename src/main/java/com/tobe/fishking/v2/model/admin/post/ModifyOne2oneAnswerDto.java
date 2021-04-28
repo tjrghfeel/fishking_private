@@ -15,10 +15,11 @@ import javax.validation.constraints.Size;
 public class ModifyOne2oneAnswerDto {
     @NotNull
     private Long answerPostId;
-    @NotNull
-    @Size(min=1, max=2000)
+    @NotNull(message = "내용을 입력하세요")
+    @Size(min=1, message = "내용을 입력하세요")
+    @Size(max=2000, message = "내용은 2000자 이하이어야합니다")
     @Pattern(regexp = Constants.STRING)
     private String content;
-    @Size(min=0, max=20)
+    @Size(min=0, max=20, message = "파일 개수는 20개 이하이어야합니다")
     private Long[] fileList;
 }
