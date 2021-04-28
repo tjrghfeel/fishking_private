@@ -179,7 +179,7 @@ export default inject(
               }}
             />
 
-            <NavigationLayout title={"예약관리"} showBackIcon={true} />
+            <NavigationLayout title={"예약관리"} showBackIcon={false} />
             <SmartFishingMainTab activeIndex={1} />
 
             <div className="filterlinewrap container nopadding">

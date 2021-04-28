@@ -69,7 +69,7 @@ export default inject(
       render() {
         return (
           <React.Fragment>
-            <NavigationLayout title={"정산관리"} showBackIcon={true} />
+            <NavigationLayout title={"정산관리"} showBackIcon={false} />
             <SmartFishingMainTab activeIndex={5} />
 
             <div className="filterlinewrap container nopadding">

@@ -209,7 +209,7 @@ export default inject(
         const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <NavigationLayout title={"조황관리"} showBackIcon={true} />
+            <NavigationLayout title={"조황관리"} showBackIcon={false} />
             <SmartFishingMainTab activeIndex={2} />
 
             <div className="filterlinewrap container nopadding">

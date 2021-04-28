@@ -76,12 +76,12 @@ export default inject(
         return (
           <React.Fragment>
             <nav className="navbar fixed-top navbar-dark">
-              <a onClick={() => PageStore.goBack()} className="nav-left">
-                <img
-                  src="/assets/smartfishing/img/svg/navbar-back-black.svg"
-                  alt="뒤로가기"
-                />
-              </a>
+              {/*<a onClick={() => PageStore.goBack()} className="nav-left">*/}
+              {/*  <img*/}
+              {/*    src="/assets/smartfishing/img/svg/navbar-back-black.svg"*/}
+              {/*    alt="뒤로가기"*/}
+              {/*  />*/}
+              {/*</a>*/}
               <span className="navbar-title"></span>
             </nav>
 
