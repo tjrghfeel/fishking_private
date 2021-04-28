@@ -414,13 +414,13 @@ export default inject(
                       {Intl.NumberFormat().format(this.state.totalAmount || 0)}
                       원
                       <br />
-                      <strong className="red">
-                        -
-                        {Intl.NumberFormat().format(
-                          this.state.discountAmount || 0
-                        )}
-                        원
-                      </strong>
+                      {this.state.discountAmount!=0 && (
+                        <span>-</span>
+                      )}
+                      {Intl.NumberFormat().format(
+                        this.state.discountAmount || 0
+                      )}
+                      원
                     </div>
                   </div>
                   <hr className="full mt-1 mb-2" />
