@@ -227,7 +227,7 @@ public class MyMenuService {
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
             memberId = member.getId();
         }
-        return observerCodeRepository.getObserverList(memberId, searchKey, alertType.ordinal());
+        return observerCodeRepository.getObserverList(memberId, searchKey, alertType.ordinal(), LocalDateTime.now());
     }
 
     /*오늘의 물때정보 반환*/

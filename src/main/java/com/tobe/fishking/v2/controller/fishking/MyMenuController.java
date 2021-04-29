@@ -288,13 +288,13 @@ public class MyMenuController {
     @GetMapping("/searchPointList")
     public List<ObserverDtoList> getSearchPointList(
             @RequestParam("type") String type,
-            @RequestParam("searchKey") String searchKey,
+            @RequestParam(value = "searchKey",required = false) String searchKey,
             @RequestHeader(value = "Authorization",required = false) String token
     ) throws ResourceNotFoundException, EmptyListException, ServiceLogicException {
         if(token == null){}
         else if(token.equals("")){token = null;}
 
-        if(!searchKey.matches(Constants.STRING)){throw new ServiceLogicException("검색키워드는 숫자,한글,영문자로 구성되어야합니다.");}
+//        if(!searchKey.matches(Constants.STRING)){throw new ServiceLogicException("검색키워드는 숫자,한글,영문자로 구성되어야합니다.");}
 
         AlertType alertType = null;
         if(!(type.equals("today") || type.equals("daily"))){throw new RuntimeException("type값으로는 'today'또는 'daily'만 가능합니다.");}
