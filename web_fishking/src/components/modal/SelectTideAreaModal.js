@@ -8,20 +8,30 @@ import { inject, observer } from "mobx-react";
 
 export default inject("APIStore")(
   observer(
-    forwardRef(({ APIStore, id = "", onSelected }, ref) => {
+    forwardRef(({ APIStore, id = "", type, onSelected }, ref) => {
       const [list, setList] = useState([]);
       const [selected, setSelected] = useState(null);
+      const [searchKey, setSearchKey] = useState('');
       const load = useCallback(
         async (type) => {
           setList([]);
           const resolve = await APIStore._get(`/v2/api/searchPointList`, {
-            type,
+            type, searchKey
           });
           setList(resolve);
         },
         [setList]
       );
       useImperativeHandle(ref, () => ({ load }));
+      const search = async (e)=>{
+          e.preventDefault();
+          setList([]);
+          const resolve = await APIStore._get(`/v2/api/searchPointList`, {
+              type,searchKey
+          });
+          setList(resolve);
+      }
+
       return (
         <div
           className="modal fade modal-full"
@@ -45,6 +55,16 @@ export default inject("APIStore")(
               </div>
               <div className="modal-body">
                 <div className="row-region-col-two">
+
+                    <form style={{width:'100%'}} onSubmit={(e)=>search(e)}>
+                        <label style={{width:'20%',textAlign:'center',margin:8, fontSize:15}}>위치선택</label>
+                        <input style={{border:'1px solid #2b79c8',borderRadius:5,width:'50%'}} type="text" onChange={(e)=>{
+                            setSearchKey(e.target.value)
+                        }}/>
+                        <input style={{width:'10%', border:'1px solid #2b79c8', borderRadius:5, backgroundColor:'#2b79c8', color:'white',
+                            margin:8}}type="submit"/>
+                    </form>
+
                   <div className="col">
                     <ul className="region col2">
                       {list.map((data, index) => (
