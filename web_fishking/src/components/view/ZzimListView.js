@@ -88,7 +88,7 @@ export default inject(
         return (
           <React.Fragment>
             <div className="container nopadding mt-3 mb-0">
-              {(PageStore.state.list && PageStore.state.list > 0) &&
+              {PageStore.state.list &&
                 PageStore.state.list.map((data, index) => (
                   <ZzimListItemView
                     key={index}
