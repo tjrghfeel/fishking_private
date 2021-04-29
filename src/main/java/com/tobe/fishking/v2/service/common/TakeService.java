@@ -72,7 +72,7 @@ public class TakeService {
         /*찜 삭제*/
         Long deletedTakeId = take.getId();
         takeRepository.delete(take);
-        Ship ship = shipRepository.getOne(linkId);
+        Ship ship = shipRepository.getOne(take.getLinkId());
         ship.delZzim(member);
         shipRepository.save(ship);
         return deletedTakeId;
