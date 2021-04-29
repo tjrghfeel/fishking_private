@@ -105,7 +105,11 @@ export default inject(
 
       goToMenu = (item) => {
         const { PageStore } = this.props;
-        PageStore.push(item.pathname);
+        if (item.requiredLoggedIn && !PageStore.loggedIn) {
+            PageStore.push(`/member/login`);
+        } else {
+          PageStore.push(item.pathname);
+        }
       };
 
       requestTalk = () => {
@@ -245,7 +249,10 @@ export default inject(
                 <div className="col-1"></div>
                 <div className="col-2">알림</div>
                 <div className="col-3 text-right">
-                  <a onClick={() => PageStore.push(`/cs/alarm`)}>
+                  <a onClick={() => {
+                    if (loggedIn) PageStore.push(`/cs/alarm`);
+                    else PageStore.push(`/member/login`);
+                  }}>
                     <strong className="text-primary large">
                       {Intl.NumberFormat().format(state.alertCount || 0)}
                     </strong>
@@ -259,7 +266,10 @@ export default inject(
                 </div>
               </div>
               <p className="space mt-3 mb-0"></p>
-              <a onClick={() => PageStore.push(`/coupon/available`)}>
+              <a onClick={() => {
+                if (loggedIn) PageStore.push(`/coupon/available`)
+                else PageStore.push(`/member/login`);
+              }}>
                 <div className="row no-gutters d-flex align-items-center mt-2">
                   <div className="col-9">
                     <strong>

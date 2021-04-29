@@ -435,6 +435,7 @@ export default inject(
                       <p className="text-primary pl-0">
                         선상 예약 위치를 설정하시면 고객이 어복황제 예약시 선상
                         위치를 선택가능합니다.
+                        <span className="red"> 설정하지 않으면, 고객 예약 시 위치 선택 없이 예약됩니다.</span>
                       </p>
                     </div>
                     <div className="form-group">
@@ -599,17 +600,26 @@ export default inject(
                       const arr_ele = document.querySelectorAll(
                         '[name="checkbox-fishSpecies"]'
                       );
-                      for (let ele of arr_ele) {
-                        ele.checked = true;
-                      }
-                      const fishSpecies = [];
-                      for (let row of this.state.arr_fishSpecies) {
-                        for (let item of row) {
-                          if (item["code"] === null) continue;
-                          fishSpecies.push(item["code"]);
+                      const counts = arr_ele.length;
+                      console.log(counts, this.state.fishSpecies.length);
+                      if (this.state.fishSpecies.length === counts) {
+                        for (let ele of arr_ele) {
+                          ele.checked = false;
+                          this.setState({ fishSpecies: [] })
                         }
+                      } else {
+                        for (let ele of arr_ele) {
+                          ele.checked = true;
+                        }
+                        const fishSpecies = [];
+                        for (let row of this.state.arr_fishSpecies) {
+                          for (let item of row) {
+                            if (item["code"] === null) continue;
+                            fishSpecies.push(item["code"]);
+                          }
+                        }
+                        this.setState({ fishSpecies });
                       }
-                      this.setState({ fishSpecies });
                     }}
                   >
                     전체선택
@@ -665,14 +675,24 @@ export default inject(
                       const arr_ele = document.querySelectorAll(
                         '[name="checkbox-services"]'
                       );
-                      for (let ele of arr_ele) {
-                        ele.checked = true;
+                      if (this.state.services.length === arr_ele.length) {
+                        for (let ele of arr_ele) {
+                          ele.checked = false;
+                          this.setState({ services: [] });
+                        }
+                      } else {
+                        for (let ele of arr_ele) {
+                          ele.checked = true;
+                        }
+                        const services = [];
+                        for (let row of this.state.arr_services) {
+                          for (let item of row) {
+                            if(item["code"] === null) continue;
+                            services.push(item["code"]);
+                          }
+                        }
+                        this.setState({ services });
                       }
-                      const services = [];
-                      for (let item of this.state.arr_services) {
-                        services.push(item["code"]);
-                      }
-                      this.setState({ services });
                     }}
                   >
                     전체선택
@@ -728,14 +748,24 @@ export default inject(
                       const arr_ele = document.querySelectorAll(
                         '[name="checkbox-facilities"]'
                       );
-                      for (let ele of arr_ele) {
-                        ele.checked = true;
+                      if (this.state.facilities.length === arr_ele.length) {
+                        for (let ele of arr_ele) {
+                          ele.checked = false;
+                        }
+                        this.setState({ facilities: [] });
+                      } else {
+                        for (let ele of arr_ele) {
+                          ele.checked = true;
+                        }
+                        const facilities = [];
+                        for (let row of this.state.arr_facilities) {
+                          for (let item of row) {
+                            if (item["code"] === null) continue;
+                            facilities.push(item["code"]);
+                          }
+                        }
+                        this.setState({ facilities });
                       }
-                      const facilities = [];
-                      for (let item of this.state.arr_facilities) {
-                        facilities.push(item["code"]);
-                      }
-                      this.setState({ facilities });
                     }}
                   >
                     전체선택

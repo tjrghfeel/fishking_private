@@ -139,15 +139,20 @@ export default inject(
       };
       selectAllSpecies = () => {
         const eles = document.querySelectorAll('[name="check-species"]');
-        for (let ele of eles) ele.checked = true;
-        const species = [];
-        for (let row of this.state.arr_species) {
-          for (let item of row) {
-            if (item["code"] === null) continue;
-            species.push(item["code"]);
+        if (this.state.species.length === eles.length) {
+          for (let ele of eles) ele.checked = false;
+          this.setState({ species: [] });
+        } else {
+          for (let ele of eles) ele.checked = true;
+          const species = [];
+          for (let row of this.state.arr_species) {
+            for (let item of row) {
+              if (item["code"] === null) continue;
+              species.push(item["code"]);
+            }
           }
+          this.setState({ species });
         }
-        this.setState({ species });
       };
       selectSpecies = (code, checked) => {
         const { DataStore } = this.props;
