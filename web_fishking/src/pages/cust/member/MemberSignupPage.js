@@ -42,11 +42,12 @@ export default inject(
         /** function */
         /********** ********** ********** ********** **********/
         componentDidMount() {
-          const { PageStore } = this.props;
+          const { PageStore, ModalStore } = this.props;
           const {
             memberId = null,
             restore,
             iscompany = null,
+              msg = null
           } = PageStore.getQueryParams();
           this.setState({ iscompany });
           const saved = localStorage.getItem("@signup-save") || null;
@@ -60,6 +61,13 @@ export default inject(
               rePassword: state.pw,
               active: 3,
             });
+          }
+          
+          if(msg != null){
+              if(msg === 'niceResultParsingError'){ModalStore.openModal("Alert", { body: "본인인증에 실패하였습니다" });}
+              else if(msg === 'inValidSignUpValue'){ModalStore.openModal("Alert", { body: "입력한 회원정보가 유효하지 않습니다" });}
+              else if(msg === 'dupPhone'){ModalStore.openModal("Alert", { body: "이미 가입한 휴대폰 번호입니다" });}
+              else if(msg === 'certificationFail'){ModalStore.openModal("Alert", { body: "본인인증에 실패하였습니다" });}
           }
         }
 
@@ -137,14 +145,15 @@ export default inject(
         requestPass = () => {
           const { PageStore } = this.props;
           const { memberId = null } = PageStore.getQueryParams();
-          localStorage.setItem(
-            "@signup-save",
-            JSON.stringify({
-              memberId,
+          let json = {
+              memberId : memberId,
               email: this.state.email,
               pw: this.state.password,
-              nickName: this.state.nickName,
-            })
+              nickName : this.state.nickName
+          }
+          localStorage.setItem(
+            "@signup-save",
+            JSON.stringify(json)
           );
           this.form.current.submit();
         };

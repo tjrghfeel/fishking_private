@@ -14,7 +14,9 @@ const ModalStore = new (class {
   /********** ********** ********** ********** **********/
   isEmail = (text) => {
     const regex = /^([0-9a-zA-Z_-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
-    return regex.test(text);
+    if(text.length <= 50 && regex.test(text)){ return true;}
+    else return false;
+    // return regex.test(text);
   };
   isPassword = (text) => {
     const regex1 = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{8,15}$/;

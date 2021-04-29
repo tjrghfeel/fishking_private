@@ -35,7 +35,7 @@ public class Constants {
     public static final String STRING = "^[a-zA-Z0-9ㅏ-ㅣ가-힣ㄱ-ㅎ.!?\\_-]*$";
     public static final String NUMBER = "^[0-9]*$";
     public static final String NUMBER2 = "^[0-9-]*$";
-    public static final String EMAIL = "^[a-zA-Z0-9_%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9]{2,6}$";
-    public static final String PW = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$";
+    public static final String EMAIL = "^[a-zA-Z0-9_.%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9]{2,6}$";
+    public static final String PW = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,15}$";
     public static final String BIZ_NO = "^\\d{3}\\-\\d{2}\\-\\d{4}$";
 }

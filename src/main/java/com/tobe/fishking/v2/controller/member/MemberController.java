@@ -122,10 +122,10 @@ public class MemberController {
 
         //입력값 검증
         if(email == null || email.equals("") || !email.matches(Constants.EMAIL)  || email.length() > 50
-                || pw == null || pw.equals("") || !pw.matches(Constants.PW) || pw.length() < 8 || pw.length() > 100
-                || nickName==null || nickName.equals("") || !nickName.matches(Constants.STRING) || nickName.length() < 2 || nickName.length() > 10
+                || pw == null || pw.equals("") || !pw.matches(Constants.PW) || pw.length() < 8 || pw.length() > 15
+                || nickName==null || nickName.equals("") || !nickName.matches(Constants.STRING) || nickName.length() < 2 || nickName.length() > 7
         ){
-            return "redirect:https://www.fishkingapp.com/smartfishing/login?msg=inValidSignUpValue";
+            return "redirect:https://www.fishkingapp.com/cust/member/signup?msg=inValidSignUpValue";
         }
 
         /*회원정보 저장. */
@@ -152,8 +152,8 @@ public class MemberController {
 
         // CheckPlus(본인인증) 처리 후, 결과 데이타를 리턴 받기위해 다음예제와 같이 http부터 입력합니다.
         //리턴url은 인증 전 인증페이지를 호출하기 전 url과 동일해야 합니다. ex) 인증 전 url : http://www.~ 리턴 url : http://www.~
-        String sReturnUrl = "https://www.fishkingapp.com/v2/api/niceSuccess";      // 성공시 이동될 URL
-        String sErrorUrl = "https://www.fishkingapp.com/v2/api/niceFail";          // 실패시 이동될 URL
+        String sReturnUrl = "https://fishkingapp.com/v2/api/niceSuccess";      // 성공시 이동될 URL
+        String sErrorUrl = "https://fishkingapp.com/v2/api/niceFail";          // 실패시 이동될 URL
 
         // 입력될 plain 데이타를 만든다.
         String sPlainData = "7:REQ_SEQ" + sRequestNumber.getBytes().length + ":" + sRequestNumber +
@@ -310,14 +310,14 @@ public class MemberController {
         else if( iReturn == -12)        {            sMessage = "사이트 패스워드 오류입니다.";        }
         else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
 
-        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;}
+        if(!sMessage.equals("")){response.sendRedirect("https://fishkingapp.com/cust/member/signup?restore=Y&memberId="+session_sRequestNumber+"&msg=niceResultParsingError"); return;}
         /*데이터 저장*/
         String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
         if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
-            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
+            response.sendRedirect("https://fishkingapp.com/cust/member/signup?restore=Y&memberId="+session_sRequestNumber+"&msg=dupPhone"); return;
         }
         System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
-        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
+        response.sendRedirect("https://fishkingapp.com/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
     }
     /*nice 인증 실패시*/
     @RequestMapping("/niceFail")
@@ -366,7 +366,7 @@ public class MemberController {
         /*인증 실패시 데이터 삭제*/
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
 
-        response.sendRedirect("/cust/member/signup?restore=Y&memberId="+sRequestNumber);
+        response.sendRedirect("https://fishkingapp.com/cust/member/signup?restore=Y&memberId="+sRequestNumber+"&msg=certificationFail");
     }
 
     /*회원가입 중간단계 - 회원정보입력 - 출조용*/
@@ -404,7 +404,7 @@ public class MemberController {
                 || pw == null || pw.equals("") || !pw.matches(Constants.PW) || pw.length() < 8 || pw.length() > 100
                 || nickName==null || nickName.equals("") || !nickName.matches(Constants.STRING) || nickName.length() < 2 || nickName.length() > 10
         ){
-            return "redirect:https://www.fishkingapp.com/smartfishing/login?msg=inValidSignUpValue";
+            return "redirect:https://fishkingapp.com/cust/member/signup?iscompany=Y&msg=inValidSignUpValue";
         }
 
         /*회원정보 저장. */
@@ -461,6 +461,7 @@ public class MemberController {
 
         return "jsp/niceRequest";
     }
+
     @GetMapping("/niceRequest/smartfishing")
     public String niceRequestForSmartFishing(@RequestParam("memberId") Long memberId, ModelMap model, HttpSession session){
         /*nice 본인인증 호출. */
@@ -514,6 +515,7 @@ public class MemberController {
 
         return "jsp/niceRequest";
     }
+
     /*nice 본인인증 성공시 - 스마트 출조용*/
     @RequestMapping("/niceSuccess/smartfishing")
     @ResponseBody
@@ -589,22 +591,22 @@ public class MemberController {
 
         if(!sMessage.equals("")){
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("/smartfishing/login?msg=niceResultParsingError"); return;
+            response.sendRedirect("https://fishkingapp.com/cust/member/signup?iscompany=Y&restore=Y&memberId="+session_sRequestNumber+"&msg=niceResultParsingError"); return;
         }
         /*데이터 저장*/
         String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
         if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
-            response.sendRedirect("/smartfishing/login?msg=dupPhone"); return;
+            response.sendRedirect("https://fishkingapp.com/cust/member/signup?iscompany=Y&restore=Y&memberId="+session_sRequestNumber+"&msg=dupPhone"); return;
         }
         else{//번호중복이 없는 경우
             String sessionToken = AES.aesDecode(encodedSessionToken,env.getProperty("encrypKey.key"));
             Member member = memberService.getMemberBySessionToken(sessionToken);
             Company company = companyRepository.findByMember(member);
-            if(company == null){response.sendRedirect("/smartfishing/apply?loggedIn=true&accesstoken="+encodedSessionToken);}
-            else if(company.getIsRegistered() == true){response.sendRedirect("/smartfishing/dashboard?loggedIn=true&accesstoken="+encodedSessionToken);}
-            else if(company.getIsRegistered() == false){response.sendRedirect("/smartfishing/login?msg=standByApproval");}
-            else{response.sendRedirect("/smartfishing/login?msg=error");}
+            if(company == null){response.sendRedirect("https://fishkingapp.com/smartfishing/apply?loggedIn=true&accesstoken="+encodedSessionToken);}
+            else if(company.getIsRegistered() == true){response.sendRedirect("https://fishkingapp.com/smartfishing/dashboard?loggedIn=true&accesstoken="+encodedSessionToken);}
+            else if(company.getIsRegistered() == false){response.sendRedirect("https://fishkingapp.com/smartfishing/login?msg=standByApproval");}
+            else{response.sendRedirect("https://fishkingapp.com/smartfishing/login?msg=error");}
         }
 //        System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
 //        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
@@ -657,7 +659,7 @@ public class MemberController {
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
 
 //        response.sendRedirect("/cust/member/signup?restore=Y&memberId="+sRequestNumber);
-        response.sendRedirect("/smartfishing/login?msg=certificationFail");
+        response.sendRedirect("https://fishkingapp.com/cust/member/signup?iscompany=Y&restore=Y&memberId="+sRequestNumber+"&msg=certificationFail");
     }
 
     /*비밀번호 찾기(재설정) 인증.
