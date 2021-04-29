@@ -22,7 +22,7 @@ export default inject()(
     }) => {
       return (
         <>
-          <a onClick={() => (onClick ? onClick(data) : null)}>
+          <a>
             <div className="card card-sm">
               <a
                 className="float-top-right"
@@ -42,7 +42,7 @@ export default inject()(
                     alt=""
                   />
                 </div>
-                <div className="cardInfoWrap">
+                <div  onClick={() => (onClick ? onClick(data) : null)} className="cardInfoWrap">
                   <div className="card-body">
                     <h6>{name}</h6>
                     <p>
