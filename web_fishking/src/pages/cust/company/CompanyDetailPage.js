@@ -188,8 +188,9 @@ export default inject(
           const { ModalStore } = this.props;
           let msg = null;
           if (type === 'map') {
-            msg = `https://m.map.kakao.com/actions/searchView?q=${this.state.address}#!/QOQSMTP,NVWSTR/map/car`
+            msg = `https://m.map.kakao.com/actions/searchView?q=${encodeURI(this.state.address)}#!/QOQSMTP,NVWSTR/map/car`
           }
+          console.log(msg);
           ModalStore.openModal("SNS", {
             onSelect: (selected) => {
               console.log(selected);
@@ -613,43 +614,43 @@ export default inject(
                   style={{ width: "100%", height: "170px" }}
                 ></div>
                 <div className="row no-gutters align-items-center border-round-btm">
-                  <a onClick={() => this.findWay()}>
-                    <div className="col-4 text-center align-self-center border-right">
-                        <div className="padding">
-                          <img
-                            src="/assets/cust/img/svg/icon-map.svg"
-                            alt=""
-                            className="vam"
-                          />{" "}
-                          길찾기
-                        </div>
-                    </div>
-                  </a>
-                  <a onClick={() => this.copyAddress()}>
-                    <div className="col-4 text-center align-self-center border-right">
-                        <div className="padding">
-                          <img
-                            src="/assets/cust/img/svg/icon-copy.svg"
-                            alt=""
-                            className="vam"
-                          />{" "}
-                          주소복사
-                        </div>
-                    </div>
-                  </a>
-                  <a onClick={() => this.modalSNS('map')}>
-                    <div className="col-4 text-center align-self-center">
-                      {/*<a data-toggle="modal" data-target="#snsModal">*/}
-                        <div className="padding">
-                          <img
-                            src="/assets/cust/img/svg/icon-share.svg"
-                            alt=""
-                            className="vam icon-xs"
-                          />{" "}
-                          공유하기
-                        </div>
-                    </div>
-                  </a>
+                  <div className="col-4 text-center align-self-center border-right">
+                    <a onClick={() => this.findWay()}>
+                      <div className="padding">
+                        <img
+                          src="/assets/cust/img/svg/icon-map.svg"
+                          alt=""
+                          className="vam"
+                        />{" "}
+                        길찾기
+                      </div>
+                    </a>
+                  </div>
+                  <div className="col-4 text-center align-self-center border-right">
+                    <a onClick={() => this.copyAddress()}>
+                      <div className="padding">
+                        <img
+                          src="/assets/cust/img/svg/icon-copy.svg"
+                          alt=""
+                          className="vam"
+                        />{" "}
+                        주소복사
+                      </div>
+                    </a>
+                  </div>
+                  <div className="col-4 text-center align-self-center">
+                    <a onClick={() => this.modalSNS('map')}>
+                    {/*<a data-toggle="modal" data-target="#snsModal">*/}
+                      <div className="padding">
+                        <img
+                          src="/assets/cust/img/svg/icon-share.svg"
+                          alt=""
+                          className="vam icon-xs"
+                        />{" "}
+                        공유하기
+                      </div>
+                    </a>
+                  </div>
                 </div>
                 <div className="space"></div>
               </div>
