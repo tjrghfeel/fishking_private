@@ -36,6 +36,7 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "   and cc.code = a.alert_type " +
                     "   and a.receiver_id = :memberId " +
                     "   and a.is_read = false " +
+                    "   and a.type = 'c' " +
                     "order by a.alert_time desc",
             countQuery = "select a.id " +
                     "from alerts a, common_code cc " +
@@ -45,6 +46,7 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "   and cc.code = a.alert_type " +
                     "   and a.receiver_id = :memberId " +
                     "   and a.is_read = false " +
+                    "   and a.type = 'c' " +
                     "order by a.alert_time desc",
             nativeQuery = true
     )
@@ -57,7 +59,8 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
                     "where " +
                     "   (a.is_sent = true or a.alert_time < :today) " +
                     "   and a.receiver_id = :memberId " +
-                    "   and a.is_read = false ",
+                    "   and a.is_read = false " +
+                    "   and a.type = 'c' ",
             nativeQuery = true
     )
     int countByMember(@Param("memberId") Long memberId, @Param("today") LocalDateTime today);
@@ -69,4 +72,48 @@ public interface AlertsRepository extends BaseRepository<Alerts, Long> {
             LocalDateTime alertTime, Member receiver, Long pid, EntityType entityType, AlertType alertType, Boolean isSent);
 
     List<Alerts> findAllByAlertTypeAndIsSentAndAlertTime(AlertType alertType, Boolean isSent, LocalDateTime alertTime);
+
+
+    @Query(
+            value = "select " +
+                    "   a.id alertId, " +
+                    "   a.alert_type alertType, " +
+                    "   a.alert_time createdDate, " +
+                    "   a.sentence content, " +
+                    "   cc.extra_value1 iconDownloadUrl " +
+                    "from alerts a, common_code cc " +
+                    "where " +
+                    "   (a.is_sent = true or a.alert_time < :today) " +
+                    "   and cc.code_group_id = 93 " +
+                    "   and cc.code = a.alert_type " +
+                    "   and a.receiver_id = :memberId " +
+                    "   and a.is_read = false " +
+                    "   and a.type = 'f' " +
+                    "order by a.alert_time desc",
+            countQuery = "select a.id " +
+                    "from alerts a, common_code cc " +
+                    "where " +
+                    "   (a.is_sent = true or a.alert_time < :today) " +
+                    "   and cc.code_group_id = 93 " +
+                    "   and cc.code = a.alert_type " +
+                    "   and a.receiver_id = :memberId " +
+                    "   and a.is_read = false " +
+                    "   and a.type = 'f' " +
+                    "order by a.alert_time desc",
+            nativeQuery = true
+    )
+    Page<AlertListForPage> findAllByCompanyMember(@Param("memberId") Long memberId, @Param("today") LocalDateTime today, Pageable pageable);
+
+    /*세션토큰에 해당하는 회원의 알림 개수 카운트*/
+    @Query(
+            value = "select count(a.id) " +
+                    "from alerts a " +
+                    "where " +
+                    "   (a.is_sent = true or a.alert_time < :today) " +
+                    "   and a.receiver_id = :memberId " +
+                    "   and a.is_read = false " +
+                    "   and a.type = 'f' ",
+            nativeQuery = true
+    )
+    int countByCompanyMember(@Param("memberId") Long memberId, @Param("today") LocalDateTime today);
 }

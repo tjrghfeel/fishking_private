@@ -22,6 +22,7 @@ export default inject(
           isCalculate: null,
           pre: null, // 정산예정금액
           list: null,
+          alertCount: 0,
         };
       }
       /********** ********** ********** ********** **********/
@@ -48,6 +49,13 @@ export default inject(
       };
       loadPageData = async () => {
         const { APIStore } = this.props;
+
+        // >>>>> 알람 수
+        let alertCount = await APIStore._get(
+          `/v2/api/alert/alertCount`
+        );
+        this.setState({ alertCount: alertCount });
+
         // 정산 리스트
         const resolve = await APIStore._get(`/v2/api/calculate`, {
           year: this.state.year,
@@ -67,9 +75,23 @@ export default inject(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
+        const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <NavigationLayout title={"정산관리"} showBackIcon={false} />
+            <NavigationLayout
+              title={"정산관리"}
+              customButton={
+                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alarmType=f')}>
+                  <img
+                    src="/assets/smartfishing/img/svg/icon-alarm.svg"
+                    alt="알림내역"
+                  />
+                  {this.state.alertCount > 0 && <strong>{this.state.alertCount}</strong>}
+                  <span className="sr-only">알림내역</span>
+                </a>
+              }
+              showBackIcon={false}
+            />
             <SmartFishingMainTab activeIndex={5} />
 
             <div className="filterlinewrap container nopadding">

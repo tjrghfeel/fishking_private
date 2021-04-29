@@ -24,6 +24,7 @@ export default inject(
           count: null,
           bookRunning: [],
           bookConfirm: [],
+          alertCount: 0,
         };
       }
       /********** ********** ********** ********** **********/
@@ -34,6 +35,12 @@ export default inject(
       }
       loadPageData = async () => {
         const { APIStore } = this.props;
+        // >>>>> 알람 수
+        let alertCount = await APIStore._get(
+          `/v2/api/alert/alertCount`
+        );
+        this.setState({ alertCount: alertCount });
+
         // >>>>> 결제현황
         let resolve = await APIStore._get(
           `/v2/api/smartfishing/dashboard/count`
@@ -141,6 +148,16 @@ export default inject(
                     alt="스마트출조"
                   />
                 </span>
+              }
+              customButton={
+                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alarmType=f')}>
+                  <img
+                    src="/assets/smartfishing/img/svg/icon-alarm.svg"
+                    alt="알림내역"
+                  />
+                  {this.state.alertCount > 0 && <strong>{this.state.alertCount}</strong>}
+                  <span className="sr-only">알림내역</span>
+                </a>
               }
               showBackIcon={false}
             />
