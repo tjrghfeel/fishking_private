@@ -220,14 +220,14 @@ public class MyMenuService {
 
     /*관측지점 목록 반환*/
     @Transactional
-    public List<ObserverDtoList> getSearchPointList(String token, AlertType alertType) throws ResourceNotFoundException {
+    public List<ObserverDtoList> getSearchPointList(String token, String searchKey, AlertType alertType) throws ResourceNotFoundException {
         Long memberId = null;
         if(token != null) {
             Member member = memberRepository.findBySessionToken(token)
                     .orElseThrow(() -> new ResourceNotFoundException("member not found for this token :: " + token));
             memberId = member.getId();
         }
-        return observerCodeRepository.getObserverList(memberId, alertType.ordinal());
+        return observerCodeRepository.getObserverList(memberId, searchKey, alertType.ordinal(), LocalDateTime.now());
     }
 
     /*오늘의 물때정보 반환*/

@@ -199,6 +199,7 @@ export default inject(
             <SelectTideAreaModal
               ref={this.selTideModal}
               id={"selTideModal"}
+              type={"today"}
               onSelected={(data) => this.onSelectedTideArea(data)}
             />
 
