@@ -1,8 +1,10 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.enums.Constants;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.exception.TideException;
 import com.tobe.fishking.v2.model.TakeResponse;
 import com.tobe.fishking.v2.model.common.ReviewDto;
@@ -286,17 +288,20 @@ public class MyMenuController {
     @GetMapping("/searchPointList")
     public List<ObserverDtoList> getSearchPointList(
             @RequestParam("type") String type,
+            @RequestParam("searchKey") String searchKey,
             @RequestHeader(value = "Authorization",required = false) String token
-    ) throws ResourceNotFoundException, EmptyListException {
+    ) throws ResourceNotFoundException, EmptyListException, ServiceLogicException {
         if(token == null){}
         else if(token.equals("")){token = null;}
+
+        if(!searchKey.matches(Constants.STRING)){throw new ServiceLogicException("검색키워드는 숫자,한글,영문자로 구성되어야합니다.");}
 
         AlertType alertType = null;
         if(!(type.equals("today") || type.equals("daily"))){throw new RuntimeException("type값으로는 'today'또는 'daily'만 가능합니다.");}
         else if(type.equals("today")){ alertType = AlertType.tideLevel; }
         else if(type.equals("daily")){ alertType = AlertType.tide; }
 //        return myMenuService.getSearchPointList( token, alertType);
-        List<ObserverDtoList> observerDtoLists = myMenuService.getSearchPointList( token, alertType);
+        List<ObserverDtoList> observerDtoLists = myMenuService.getSearchPointList( token, searchKey, alertType);
         if (observerDtoLists.isEmpty()) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
