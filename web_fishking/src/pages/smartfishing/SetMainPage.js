@@ -8,7 +8,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "ModalStore"
+  "ModalStore",
+  "NativeStore"
 )(
   observer(
     class extends React.Component {
@@ -56,7 +57,7 @@ export default inject(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { PageStore } = this.props;
+        const { PageStore, NativeStore } = this.props;
         return (
           <React.Fragment>
             {/** Navigation */}
@@ -76,7 +77,10 @@ export default inject(
                       onClick={() => {
                         if (data.text === "로그아웃") {
                           this.requestLogout();
+                        } else if (data.text === "접근 권한 설정") {
+                          NativeStore.postMessage("SetPermissions", {});
                         } else if (data.pathname !== "") {
+                          console.log(data.pathname)
                           PageStore.push(data.pathname);
                         }
                       }}

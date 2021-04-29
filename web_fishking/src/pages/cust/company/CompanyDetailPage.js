@@ -23,7 +23,10 @@ export default inject(
           this.video = React.createRef(null);
           this.map = null;
           this.mediaError = false;
-          this.state = {};
+          this.state = {
+            connectionType: '',
+            loaded: false,
+          };
         }
         /********** ********** ********** ********** **********/
         /** function */
@@ -40,7 +43,17 @@ export default inject(
             },
             APIStore,
             PageStore,
+            NativeStore,
           } = this.props;
+
+          NativeStore.postMessage('Connections', {});
+          document.addEventListener("message", event => {
+            this.setState({ connectionType: event.data });
+          });
+          window.addEventListener("message", event => {
+            this.setState({ connectionType: event.data });
+          });
+
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           await this.setState({
             ...resolve,
@@ -65,7 +78,10 @@ export default inject(
               //   socket:
               //     "ws://116.125.120.90:9000/streams/52fd554cc3ab32e99ed6e29f812cc6e2",
               // });
-              // player.start();
+
+              if (this.state.connectionType === 'wifi') {
+                player.start();
+              }
             } else if (Hls.isSupported()) {
               const hls = new Hls({
                 capLevelToPlayerSize: true,
@@ -97,6 +113,9 @@ export default inject(
                   }
                 });
               });
+              if (this.state.connectionType === 'wifi') {
+                video.play();
+              }
             } else {
               video.src = url;
               video.addEventListener("loadedmetadata", () => {
@@ -112,26 +131,27 @@ export default inject(
           });
 
           // # 지도표시
-          const options = {
-            center: new daum.maps.LatLng(resolve.latitude, resolve.longitude),
-            level: 7,
-          };
-          this.map = new daum.maps.Map(this.container.current, options);
-          const marker = new kakao.maps.Marker({
-            position: new kakao.maps.LatLng(
-              resolve.latitude,
-              resolve.longitude
-            ),
-          });
-          marker.setMap(this.map);
-          if ((resolve.rockData || []).length > 0) {
-            for (let rock of resolve.rockData) {
-              const m = new kakao.maps.Marker({
-                position: new kakao.maps.LatLng(rock.latitude, rock.longitude),
-              });
-              m.setMap(this.map);
-            }
-          }
+          // const options = {
+          //   center: new daum.maps.LatLng(resolve.latitude, resolve.longitude),
+          //   level: 7,
+          // };
+          // this.map = new daum.maps.Map(this.container.current, options);
+          // const marker = new kakao.maps.Marker({
+          //   position: new kakao.maps.LatLng(
+          //     resolve.latitude,
+          //     resolve.longitude
+          //   ),
+          // });
+          // marker.setMap(this.map);
+          // if ((resolve.rockData || []).length > 0) {
+          //   for (let rock of resolve.rockData) {
+          //     const m = new kakao.maps.Marker({
+          //       position: new kakao.maps.LatLng(rock.latitude, rock.longitude),
+          //     });
+          //     m.setMap(this.map);
+          //   }
+          // }
+          // this.setState({ loaded: true });
         };
         requestLike = async () => {
           const { APIStore, ModalStore } = this.props;
@@ -327,7 +347,7 @@ export default inject(
                           muted
                           playsInline
                           // controls
-                          autoPlay
+                          // autoPlay
                           style={{
                             width: "100%",
                             display: !this.state.liveVideo?.startsWith(

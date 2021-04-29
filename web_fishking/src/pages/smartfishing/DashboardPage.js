@@ -142,7 +142,7 @@ export default inject(
                   />
                 </span>
               }
-              showBackIcon={true}
+              showBackIcon={false}
             />
             <SmartFishingMainTab activeIndex={0} />
 
