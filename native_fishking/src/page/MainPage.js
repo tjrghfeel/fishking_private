@@ -31,6 +31,24 @@ export default inject(
     /********** ********** **********/
     /********** functions
     /********** ********** **********/
+    const wokeUp = useCallback((e) => {
+      console.log('wokeUp: ' + e.url);
+      let redirectUrl = e.url;
+      if (redirectUrl && redirectUrl.split('?')[1]) {
+        if (redirectUrl.includes('tiny.one')) {
+          redirectUrl = redirectUrl.replaceAll(
+            '%20https://tiny.one/25r3whkw',
+            '',
+          );
+        }
+        console.log(
+          'redirectUrl : ' +
+            'https://fishkingapp.com/cust' +
+            redirectUrl.split('?')[1],
+        );
+        setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
+      }
+    }, []);
     const initiate = useCallback(async () => {
       const saved = await AsyncStorage.getItem('@initiated');
       if (saved === null) {
@@ -55,28 +73,7 @@ export default inject(
         );
         setInitiated(true);
       }, 1800);
-    }, [setUri, setInitiated, AppStore, WebViewStore]);
-    const wokeUp = useCallback((e) => {
-      console.log('wokeUp: ' + e.url);
-      let redirectUrl = e.url;
-      if (redirectUrl && redirectUrl.split('?')[1]) {
-        if (redirectUrl.includes('tiny.one')) {
-          redirectUrl = redirectUrl.replaceAll(
-            '%20https://tiny.one/25r3whkw',
-            '',
-          );
-        }
-        console.log(
-          'redirectUrl : ' +
-            'https://fishkingapp.com/cust' +
-            redirectUrl.split('?')[1],
-        );
-        setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
-      }
-    }, []);
-    useEffect(() => {
-      WebViewStore.setWebView(webview);
-      initiate();
+
       Linking.getInitialURL()
         .then((url) => {
           console.log('init: ' + url);
@@ -95,6 +92,10 @@ export default inject(
         })
         .catch((e) => {});
       Linking.addEventListener('url', wokeUp);
+    }, [setUri, setInitiated, AppStore, WebViewStore, wokeUp]);
+    useEffect(() => {
+      WebViewStore.setWebView(webview);
+      initiate();
 
       if (Platform.OS === 'android') {
         BackHandler.addEventListener('hardwareBackPress', () => {
@@ -211,11 +212,26 @@ export default inject(
           onMessage={async ({nativeEvent}) => {
             const {process, data} = JSON.parse(nativeEvent.data);
             switch (process) {
+              case 'SetPlayWifi': {
+                // console.log('set setting: ', data);
+                await AsyncStorage.setItem('@playwifi', data);
+                break;
+              }
+              case 'GetPlayWifi': {
+                const playWifi = await AsyncStorage.getItem('@playwifi');
+                // console.log('get setting: ', playWifi);
+                webview.current.postMessage(playWifi, '*');
+                break;
+              }
               case 'Connections': {
+                const playWifi = await AsyncStorage.getItem('@playwifi');
                 NetInfo.fetch().then((state) => {
-                  console.log(state.type);
-                  // webview.current.postMessage(state.type, '*');
-                  webview.current.postMessage('wifi', '*');
+                  // console.log(state.type);
+                  if (playWifi === 'Y') {
+                    webview.current.postMessage(state.type, '*');
+                  } else {
+                    webview.current.postMessage('wifi', '*');
+                  }
                 });
                 break;
               }

@@ -36,12 +36,14 @@ export default inject("PageStore", "NativeStore")(
       onChangeOption1 = async () => {
         const { NativeStore } = this.props;
         const currSetting = this.state.playwifi;
+        let setting = ''
         if (currSetting === 'Y') {
-          this.setState({ playwifi: 'N' })
+          setting = 'N';
         } else {
-          this.setState({ playwifi: 'Y' })
+          setting = 'Y';
         }
-        NativeStore.postMessage('SetPlayWifi', this.state.playwifi);
+        this.setState({ playwifi: setting })
+        NativeStore.postMessage('SetPlayWifi', setting);
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -76,7 +78,6 @@ export default inject("PageStore", "NativeStore")(
                         className={`nav-link ${
                           this.state.playwifi === 'Y' ? "active" : ""
                         } btn btn-on`}
-                        className="nav-link active btn btn-on"
                         id="nav-home-tab"
                         data-toggle="tab"
                         role="tab"
