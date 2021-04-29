@@ -62,12 +62,15 @@ export default inject("APIStore")(
                             setSearchKey(e.target.value)
                         }}/>
                         <input style={{width:'10%', border:'1px solid #2b79c8', borderRadius:5, backgroundColor:'#2b79c8', color:'white',
-                            margin:8}}type="submit"/>
+                            margin:8}} type="submit" value="검색"/>
                     </form>
 
                   <div className="col">
                     <ul className="region col2">
-                      {list.map((data, index) => (
+                      {(list===null || list.length===0)?
+                          (<div style={{textAlign:'center'}}>검색 결과가 없습니다</div>)
+                              :
+                              list.map((data, index) => (
                         <li
                           key={index}
                           onClick={(e) => {
