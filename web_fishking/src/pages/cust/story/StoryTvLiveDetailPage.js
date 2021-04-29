@@ -1,4 +1,4 @@
-/* global Hls */
+/* global Hls, Player */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
@@ -8,14 +8,17 @@ const {
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "NativeStore",
 )(
   observer(
     class extends React.Component {
       constructor(props) {
         super(props);
         this.video = React.createRef(null);
-        this.state = {};
+        this.state = {
+          connectionType: '',
+        };
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -26,10 +29,19 @@ export default inject(
       loadPageData = async () => {
         const {
           APIStore,
+          NativeStore,
           match: {
             params: { shipId, cameraId },
           },
         } = this.props;
+
+        NativeStore.postMessage('Connections', {});
+        document.addEventListener("message", event => {
+          this.setState({ connectionType: event.data });
+        });
+        window.addEventListener("message", event => {
+          this.setState({ connectionType: event.data });
+        });
 
         const resolve = await APIStore._get(`/v2/api/tv/live`, {
           shipId,
@@ -42,7 +54,12 @@ export default inject(
           const video = this.video.current;
           video.setAttribute("poster", cameraData.thumbnailUrl);
           const url = cameraData.liveVideo;
-          if (Hls.isSupported()) {
+          if (url.startsWith("rtsp://")) {
+            const player = new Player({ streamUrl: url });
+            if (this.state.connectionType === 'wifi') {
+              player.start();
+            }
+          } else if (Hls.isSupported()) {
             const hls = new Hls({
               capLevelToPlayerSize: true,
               capLevelOnFPSDrop: true,
@@ -70,6 +87,9 @@ export default inject(
                 }
               });
             });
+            if (this.state.connectionType === 'wifi') {
+              video.play();
+            }
           } else {
             video.src = url;
             video.addEventListener("loadedmetadata", () => {});
@@ -117,8 +137,8 @@ export default inject(
                     id="video"
                     muted
                     playsInline
-                    // controls
-                    autoPlay
+                    controls
+                    // autoPlay
                     style={{ width: "100%" }}
                   ></video>
                   <span

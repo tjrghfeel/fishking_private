@@ -251,7 +251,7 @@ public class ShipsGoodsController {
     @PostMapping("/ship/add")
     public Map<String, Object> addShip(
             @RequestHeader(name = "Authorization") String token,
-            @RequestBody UpdateShipDTO addShipDTO) throws ResourceNotFoundException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException {
+            @RequestBody UpdateShipDTO addShipDTO) throws ResourceNotFoundException {
         Map<String, Object> result = new HashMap<>();
 //        Long shipId = fishingShipService.addShip(addShipDTO, token);
 //        result.put("result", "success");

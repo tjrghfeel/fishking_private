@@ -183,6 +183,7 @@ public class PayService {
         try {
             if (orders.getGoods().getReserveType().equals(ReserveType.auto)) {
                 OrderDetails orderDetails = orderDetailsRepository.findByOrders(orders);
+                GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(orders.getGoods().getId(), orders.getFishingDate());
                 List<String> positions = Arrays.stream(orderDetails.getPositions().split(",")).collect(Collectors.toList());
                 Integer totalPersonnel = ordersRepository.getPersonnelByFishingDate(orders.getGoods(), orders.getFishingDate());
                 Integer remains = orders.getGoods().getMaxPersonnel() - totalPersonnel + orderDetails.getPersonnel();
@@ -203,8 +204,11 @@ public class PayService {
                             wait.changePositions(newPosition);
                             ordersRepository.save(waitOrder);
                             remains -= waitPersonnel;
+                            goodsFishingDate.addWaitNumber(-1 * waitPersonnel);
                         }
                     }
+                    goodsFishingDate.addReservedNumber(-1 * (totalPersonnel - remains));
+                    goodsFishingDateRepository.save(goodsFishingDate);
                 }
             }
 

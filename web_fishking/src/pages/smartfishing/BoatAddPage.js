@@ -907,7 +907,7 @@ export default inject(
                 <div className="space mt-0 mb-4"></div>
                 <div className="form-group">
                   <label htmlFor="InputVodFile">
-                    녹화영상 파일등록 <strong className="required"></strong>
+                    녹화영상 파일등록
                   </label>
                   <input
                     ref={this.videoId}

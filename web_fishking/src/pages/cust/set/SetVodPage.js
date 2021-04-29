@@ -5,13 +5,44 @@ const {
   LAYOUT: { NavigationLayout },
 } = Components;
 
-export default inject("PageStore")(
+export default inject("PageStore", "NativeStore")(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          playwifi: 'N'
+        }
+      }
+
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
-      onChangeOption1 = async (checked) => {};
+      componentDidMount() {
+        this.loadDataPage();
+      }
+
+      loadDataPage = async () => {
+        const { NativeStore } = this.props;
+        NativeStore.postMessage('GetPlayWifi', this.state.playwifi);
+        document.addEventListener("message", event => {
+          this.setState({ playwifi: event.data });
+        });
+        window.addEventListener("message", event => {
+          this.setState({ playwifi: event.data });
+        });
+      }
+
+      onChangeOption1 = async () => {
+        const { NativeStore } = this.props;
+        const currSetting = this.state.playwifi;
+        if (currSetting === 'Y') {
+          this.setState({ playwifi: 'N' })
+        } else {
+          this.setState({ playwifi: 'Y' })
+        }
+        NativeStore.postMessage('SetPlayWifi', this.state.playwifi);
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -39,26 +70,30 @@ export default inject("PageStore")(
                       className="nav nav-tabs btn-set"
                       id="nav-tab"
                       role="tablist"
+                      onClick={() => this.onChangeOption1()}
                     >
                       <a
+                        className={`nav-link ${
+                          this.state.playwifi === 'Y' ? "active" : ""
+                        } btn btn-on`}
                         className="nav-link active btn btn-on"
                         id="nav-home-tab"
                         data-toggle="tab"
                         role="tab"
                         aria-controls="nav-on"
                         aria-selected="true"
-                        onClick={() => this.onChangeOption1(true)}
                       >
                         ON
                       </a>
                       <a
-                        className="nav-link btn btn-off"
+                        className={`nav-link ${
+                          this.state.playwifi === 'Y' ? "" : "active"
+                        } btn btn-off`}
                         id="nav-profile-tab"
                         data-toggle="tab"
                         role="tab"
                         aria-controls="nav-off"
                         aria-selected="false"
-                        onClick={() => this.onChangeOption1(false)}
                       >
                         OFF
                       </a>

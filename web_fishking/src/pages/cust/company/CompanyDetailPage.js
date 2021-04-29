@@ -131,27 +131,27 @@ export default inject(
           });
 
           // # 지도표시
-          // const options = {
-          //   center: new daum.maps.LatLng(resolve.latitude, resolve.longitude),
-          //   level: 7,
-          // };
-          // this.map = new daum.maps.Map(this.container.current, options);
-          // const marker = new kakao.maps.Marker({
-          //   position: new kakao.maps.LatLng(
-          //     resolve.latitude,
-          //     resolve.longitude
-          //   ),
-          // });
-          // marker.setMap(this.map);
-          // if ((resolve.rockData || []).length > 0) {
-          //   for (let rock of resolve.rockData) {
-          //     const m = new kakao.maps.Marker({
-          //       position: new kakao.maps.LatLng(rock.latitude, rock.longitude),
-          //     });
-          //     m.setMap(this.map);
-          //   }
-          // }
-          // this.setState({ loaded: true });
+          const options = {
+            center: new daum.maps.LatLng(resolve.latitude, resolve.longitude),
+            level: 7,
+          };
+          this.map = new daum.maps.Map(this.container.current, options);
+          const marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(
+              resolve.latitude,
+              resolve.longitude
+            ),
+          });
+          marker.setMap(this.map);
+          if ((resolve.rockData || []).length > 0) {
+            for (let rock of resolve.rockData) {
+              const m = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(rock.latitude, rock.longitude),
+              });
+              m.setMap(this.map);
+            }
+          }
+          this.setState({ loaded: true });
         };
         requestLike = async () => {
           const { APIStore, ModalStore } = this.props;
@@ -346,7 +346,7 @@ export default inject(
                           id="video"
                           muted
                           playsInline
-                          // controls
+                          controls
                           // autoPlay
                           style={{
                             width: "100%",
