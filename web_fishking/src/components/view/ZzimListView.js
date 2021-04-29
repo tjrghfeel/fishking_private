@@ -10,6 +10,13 @@ export default inject(
 )(
   observer(
     class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          loaded: false,
+        }
+      }
+
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
@@ -19,7 +26,6 @@ export default inject(
           page: 0,
           list: [],
           isEnd: false,
-          loaded: false
         });
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
@@ -82,7 +88,7 @@ export default inject(
         return (
           <React.Fragment>
             <div className="container nopadding mt-3 mb-0">
-              {PageStore.state.list &&
+              {(PageStore.state.list && PageStore.state.list > 0) &&
                 PageStore.state.list.map((data, index) => (
                   <ZzimListItemView
                     key={index}
