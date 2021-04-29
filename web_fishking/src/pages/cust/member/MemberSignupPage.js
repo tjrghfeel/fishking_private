@@ -145,14 +145,15 @@ export default inject(
         requestPass = () => {
           const { PageStore } = this.props;
           const { memberId = null } = PageStore.getQueryParams();
-          localStorage.setItem(
-            "@signup-save",
-            JSON.stringify({
-              memberId,
+          let json = {
+              memberId : memberId,
               email: this.state.email,
               pw: this.state.password,
-              nickName: this.state.nickName,
-            })
+              nickName : this.state.nickName
+          }
+          localStorage.setItem(
+            "@signup-save",
+            JSON.stringify(json)
           );
           this.form.current.submit();
         };
