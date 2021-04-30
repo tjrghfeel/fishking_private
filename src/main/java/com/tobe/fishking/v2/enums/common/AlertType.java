@@ -14,7 +14,11 @@ public enum AlertType implements IEnumModel {
     reservationComplete("예약확정", "예약 확정되었습니다. 어복황제와 함께 똑똑한 바다낚시를 즐겨보세요!"),
     reservationCancel("예약취소", "예약 취소되었습니다. 다음 기회에 함께하겠습니다. "),
     tideLevel("간조,만조 알림",""),
-    tide("물때 알림","");
+    tide("물때 알림",""),
+    reservationCompleteCompany("고객예약", "고객이 예약하였습니다. "),
+    reservationCancelCompany("고객취소", "고객이 예약 취소했습니다. "),
+    systemConfirm("시스템 예약 확정", "시스템 예약 확정. ")
+    ;
 
 
 

@@ -2,20 +2,28 @@ package com.tobe.fishking.v2.service.common;
 
 import com.tobe.fishking.v2.addon.KSPayApprovalCancelBean;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.auth.RegistrationToken;
+import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.entity.fishing.*;
+import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.auth.RegistrationTokenRepository;
+import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
+import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.utils.KSPayWebHostBean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,8 +36,11 @@ public class PayService {
     private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final CalculateRepository calculateRepository;
     private final ShipRepository shipRepository;
+    private final AlertsRepository alertsRepository;
+    private final MemberService memberService;
+    private final RegistrationTokenRepository registrationTokenRepository;
 
-    public Long payResult(String rcid, String rctype, String rhash, String rcancel) {
+    public Long payResult(String rcid, String rctype, String rhash, String rcancel) throws IOException {
         /* rcid 없으면 결제를 끝까지 진행하지 않고 중간에 결제취소 */
         String	authyn =  "";
         String	trno   =  "";
@@ -101,6 +112,12 @@ public class PayService {
                         Ship ship = goods.getShip();
                         ship.addSell(member);
                         shipRepository.save(ship);
+
+                        String title = "예약알림";
+                        String sentence = ship.getShipName() + "의 " + order.getFishingDate() + " " + goods.getName() + "상품에 \n"
+                                + "예약 접수가 있습니다.";
+                        makeAlert(order, ship, title, sentence, false);
+
                         return order.getId();
 //                        return 0L;
                     } else {
@@ -172,6 +189,8 @@ public class PayService {
 
         Orders orders = ordersRepository.getOne(orderId);
         Member member = orders.getCreatedBy();
+        Goods goods = orders.getGoods();
+        Ship ship = goods.getShip();
 
         OrderNumber = orders.getOrderNumber();
         UserName = member.getMemberName();
@@ -267,10 +286,59 @@ public class PayService {
                 calculateRepository.save(calculate);
 
             }
+
+            String title = "고객 예약취소";
+            String sentence = ship.getShipName() + "의 " + orders.getFishingDate() + " " + goods.getName() + "상품에 \n"
+                    + "고객 예약 취소가 있습니다.";
+            makeAlert(orders, ship, title, sentence, true);
         } catch (Exception e) {
             rMessage2 = "P잠시후재시도(" + e.toString() + ")";    // 메시지2
         } // end of catch
 
         return rMessage1 + rMessage2;
+    }
+
+
+    private void makeAlert(Orders order, Ship ship, String title, String sentence, boolean cancel) throws IOException {
+        Member manager = memberService.getMemberById(16L);
+
+        AlertType type = AlertType.reservationCompleteCompany;
+        if (cancel) {
+            type = AlertType.reservationCancelCompany;
+        }
+        Member receiver = ship.getCompany().getMember();
+        List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
+        Alerts alerts = Alerts.builder()
+                .alertType(type)
+                .entityType(EntityType.orders)
+                .pid(order.getId())
+                .content(null)
+                .sentence(sentence)
+                .isRead(false)
+                .isSent(false)
+                .receiver(receiver)
+                .alertTime(LocalDateTime.now())
+                .createdBy(manager)
+                .type("f")
+                .build();
+        alerts = alertsRepository.save(alerts);
+        for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
+    }
+
+    private void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {
+        String url = "https://fcm.googleapis.com/fcm/send";
+        Map<String,String> parameter = new HashMap<>();
+        parameter.put("json",
+                "{ \"notification\": " +
+                        "{" +
+                        "\"title\": \"["+alertTitle+"]\", " +
+                        "\"body\": \""+alertContent+"\", " +
+                        "\"android_channel_id\": \"notification.native_smartfishing\"" +
+                        "}," +
+                        "\"to\" : \""+registrationToken+"\"" +
+                        "}");
+        memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
+        alerts.sent();
+        alertsRepository.save(alerts);
     }
 }

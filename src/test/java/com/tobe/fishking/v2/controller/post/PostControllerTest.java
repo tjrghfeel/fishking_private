@@ -9,11 +9,10 @@ import com.google.firebase.messaging.Message;*/
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.Coupon;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
-import com.tobe.fishking.v2.entity.fishing.FishingDiary;
-import com.tobe.fishking.v2.entity.fishing.PhoneAuth;
-import com.tobe.fishking.v2.entity.fishing.TblSubmitQueue;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.NoNameDTO;
@@ -54,10 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -68,6 +64,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
@@ -165,6 +162,27 @@ public class PostControllerTest {
     }
 
     @Test
+    public void messaging() {
+        String registrationToken = "f7BmI3-9SzeYbMHRDDYKIF:APA91bGo4z5dC3pfr8H6PT0qUxP0qIq1nBqLeGoRC3Y7IwDvUcWgwCsOnidXHWqKYZ8FG3XlIT0fxKhhqh2w07dbmZ7zrj0xdPS5tI_yFUe3y7MUT5vva5b4Z6EyrWPy3PDviPKhfrLE";
+        String url = "https://fcm.googleapis.com/fcm/send";
+        Map<String,String> parameter = new HashMap<>();
+        parameter.put("json",
+                "{ \"notification\": " +
+                        "{" +
+                        "\"title\": \"[테스트]\", " +
+                        "\"body\": \"테스트\", " +
+                        "\"android_channel_id\": \"notification.native_smartfishing\"" +
+                        "}," +
+                        "\"to\" : \""+registrationToken+"\"" +
+                        "}");
+        try {
+            memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     @Transactional
     public void noName() throws Exception {
         String aaa = AES.aesDecode("H9Q8zROABmLt2zH9SphnHQ==",env.getProperty("encrypKey.key"));
@@ -179,6 +197,30 @@ public class PostControllerTest {
         System.out.println("result >>> " +aaa);
         return;
 
+    }
+
+    @Test
+    public void array() {
+        String now = "2021-04-23";
+
+        List<Orders> confirm = ordersRepository.getOrderByStatus(now, OrderStatus.bookConfirm);
+        List<Orders> wait = ordersRepository.getOrderByStatus(now, OrderStatus.waitBook);
+        List<Orders> running = ordersRepository.getOrderByStatus(now, OrderStatus.bookRunning);
+
+        List<Orders> copied = new ArrayList<>(confirm);
+        copied.addAll(wait);
+        copied.addAll(running);
+        List<Goods> goodsList = copied.stream().map(Orders::getGoods).distinct().collect(Collectors.toList());
+        int[] confirmCounts = new int[goodsList.size()];
+//        int[] cancelCounts = new int[goodsList.size()];
+
+        for (Orders o : confirm) {
+            int goodsIdx = goodsList.indexOf(o.getGoods());
+            confirmCounts[goodsIdx] += 1;
+        }
+        for (int a : confirmCounts) {
+            System.out.println(a);
+        }
     }
 
     @Transactional

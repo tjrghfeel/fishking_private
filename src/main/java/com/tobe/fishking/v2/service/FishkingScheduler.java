@@ -19,6 +19,7 @@ import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.AddAlertDto;
 import com.tobe.fishking.v2.model.common.CouponMemberDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.auth.RegistrationTokenRepository;
 import com.tobe.fishking.v2.repository.board.BoardRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.AlertsRepository;
@@ -40,10 +41,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -63,6 +62,7 @@ public class FishkingScheduler {
     private final PayService payService;
     private final CodeGroupRepository codeGroupRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final RegistrationTokenRepository registrationTokenRepository;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
@@ -226,7 +226,17 @@ public class FishkingScheduler {
         List<Orders> wait = ordersRepository.getOrderByStatus(now, OrderStatus.waitBook);
         List<Orders> running = ordersRepository.getOrderByStatus(now, OrderStatus.bookRunning);
 
+        List<Orders> copied = new ArrayList<>(confirm);
+        copied.addAll(wait);
+        copied.addAll(running);
+        List<Goods> goodsList = copied.stream().map(Orders::getGoods).distinct().collect(Collectors.toList());
+        int[] confirmCounts = new int[goodsList.size()];
+        int[] cancelCounts = new int[goodsList.size()];
+
         for (Orders o : confirm) {
+            int goodsIdx = goodsList.indexOf(o.getGoods());
+            confirmCounts[goodsIdx] += 1;
+
             o.changeStatus(OrderStatus.bookFix);
             ordersRepository.save(o);
 
@@ -260,6 +270,9 @@ public class FishkingScheduler {
 
         wait.addAll(running);
         for (Orders o : wait) {
+            int goodsIdx = goodsList.indexOf(o.getGoods());
+            cancelCounts[goodsIdx] += 1;
+
             try {
                 Thread.sleep(500);
                 payService.cancelOrder(o.getId(), " ");
@@ -293,6 +306,37 @@ public class FishkingScheduler {
             } catch (Exception e) {
                 continue;
             }
+        }
+
+        for (Goods g : goodsList) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int idx = goodsList.indexOf(g);
+            String title = "시스템 예약확정";
+            String sentence = g.getShip().getShipName() + "의 " + now + " " + g.getName() + "상품의 \n"
+                    + "시스템예약확정시점이 도래하여 예약확정 " + confirmCounts[idx] + "건,\n"
+                    + "예약취소 " + cancelCounts[idx] + "건이 발생하였습니다.";
+            AlertType type = AlertType.systemConfirm;
+            Member receiver = g.getShip().getCompany().getMember();
+            List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
+            Alerts alerts = Alerts.builder()
+                    .alertType(type)
+                    .entityType(EntityType.orders)
+                    .pid(g.getId())
+                    .content(null)
+                    .sentence(sentence)
+                    .isRead(false)
+                    .isSent(false)
+                    .receiver(receiver)
+                    .alertTime(LocalDateTime.now())
+                    .createdBy(manager)
+                    .type("f")
+                    .build();
+            alerts = alertsRepository.save(alerts);
+            for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
         }
 
     }

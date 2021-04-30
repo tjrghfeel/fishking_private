@@ -37,7 +37,6 @@ export default inject(
         } else {
           this.password.current?.classList.remove("is-invalid");
         }
-
         try {
           const response = await APIStore._post("/v2/api/smartfishing/login", {
             memberId,

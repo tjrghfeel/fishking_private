@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class PayController {
     private final PayService payService;
 
     @PostMapping("/payresult")
-    public String payResult(HttpServletRequest request) {
+    public String payResult(HttpServletRequest request) throws IOException {
         String rcid		= request.getParameter("reCommConId"		);
         String rctype	= request.getParameter("reCommType"		);
         String rhash	= request.getParameter("reHash"			);
