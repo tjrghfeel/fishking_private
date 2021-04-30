@@ -11,13 +11,15 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.parameters.P;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Api(tags={"정산관리"})
 @RequiredArgsConstructor
-@RestController
+@Controller
 @RequestMapping(value = "/v2/api")
 public class CalculateManageController {
     private final OrdersService ordersService;
@@ -25,6 +27,7 @@ public class CalculateManageController {
 
     @ApiOperation(value = "정산 리스트 검색")
     @GetMapping("/manage/calculate/list/{page}")
+    @ResponseBody
     public Page<CalculateManageDtoForPage> getCalculateList(
             @RequestHeader("Authorization") String token,
             @Valid CalculateSearchConditionDto dto,
@@ -35,6 +38,7 @@ public class CalculateManageController {
 
     @ApiOperation(value = "정산 처리")
     @PutMapping("/manage/calculate/{shipId}/{year}/{month}/{isCalculated}")
+    @ResponseBody
     public Boolean setIsCalculated(
             @RequestHeader("Authorization") String token,
             @PathVariable("shipId") String shipId,
@@ -57,5 +61,25 @@ public class CalculateManageController {
             throw new ServiceLogicException("url입력값이 잘못되었습니다.");
         }
         return paidManageService.setIsCalculated(shipIdLong, token, String.format("%02d",yearInt), String.format("%02d",monthInt), isCalculatedBoolean);
+    }
+
+    @ApiOperation(value = "정산 리스트 엑셀다운로드")
+    @GetMapping("/manage/calculate/list/excel")
+    public String getCalculateListExcel(
+            @RequestHeader("Authorization") String token,
+            @Valid CalculateSearchConditionDto dto
+    ) throws ServiceLogicException, IOException {
+        return "redirect:/" + paidManageService.getCalculateListExcel(token, dto);
+    }
+
+    @ApiOperation(value = "정산 상세 엑셀다운로드")
+    @GetMapping("/manage/calculate/detail/excel")
+    public String getCalculateDetailExcel(
+            @RequestHeader("Authorization") String token,
+            @RequestParam Long shipId,
+            @RequestParam String year,
+            @RequestParam String month
+    ) throws ServiceLogicException, IOException {
+        return "redirect:/" + paidManageService.getCalculateDetailExcel(token, shipId, year, month);
     }
 }

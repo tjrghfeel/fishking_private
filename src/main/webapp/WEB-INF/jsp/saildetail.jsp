@@ -99,7 +99,7 @@
                                                         <a> \
                                                             <p> \
                                                                 승선자명: <strong class="large">' + item['name'] + '</strong><br/> \
-                                                                연락처: ' + item['phone'] + ' \
+                                                                연락처: ' + item['phone'] + '<br/> \
                                                                 비상시: ' + item['emergencyPhone'] + ' \
                                                             </p> \
                                                         </a> \

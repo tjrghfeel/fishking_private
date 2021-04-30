@@ -57,11 +57,16 @@ public class QuerydslTest {
 //            System.out.println(r.get(0, Integer.class) + ", " + r.get(1, Integer.class) + ", " + r.get(2, Long.class) + ", " + r.get(3, Long.class) + ", " + r.get(3, Long.class));
 ////            System.out.println(r.get(0, Integer.class) + ", " + r.get(1, Integer.class));
 //        }
-        List<CommonCode> responses = commonCodeRepository.getShipSpeciesName(20L);
-        responses.forEach(commonCode -> {
-            System.out.println(commonCode.getCodeName());
-        });
+//        List<CommonCode> responses = commonCodeRepository.getShipSpeciesName(20L);
+//        responses.forEach(commonCode -> {
+//            System.out.println(commonCode.getCodeName());
+//        });
 //        Page<ShipListResponse> responses = shipRepository.searchAll()
+
+        List<Map<String, String>> responses = calculateRepository.calculateDetailForExcel(19L, "2021", "02");
+        for(Map<String, String> r : responses) {
+            System.out.println(r);
+        }
 
         //then
         assertThat(responses.size(), is(6));

@@ -77,7 +77,7 @@ export default inject(
 
             <div className="container nopadding mt-2">
               <h5 className="mb-1">
-                선박현황 <small className="grey">(2020.01.01기준)</small>
+                선박현황 <small className="grey">({new Date().toISOString().split('T')[0]}기준)</small>
               </h5>
             </div>
             <div className="container nopadding mt-2">
@@ -112,7 +112,7 @@ export default inject(
 
             <div className="container nopadding mt-2">
               <h5 className="mb-1">
-                승객현황 <small className="grey">(2020.01.01기준)</small>
+                승객현황 <small className="grey">({new Date().toISOString().split('T')[0]}기준)</small>
               </h5>
             </div>
             <div className="container nopadding mt-2">
@@ -156,7 +156,7 @@ export default inject(
 
             <div className="container nopadding mt-2">
               <h5>
-                승선현황 <small className="grey">(2020.01.01기준)</small>
+                승선현황 <small className="grey">({new Date().toISOString().split('T')[0]}기준)</small>
               </h5>
               <div className="card-round-box-grey text-center">
                 <div className="row mt-3 mb-3 d-flex align-items-center">

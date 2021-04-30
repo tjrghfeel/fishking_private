@@ -68,26 +68,31 @@ export default inject(
             </div>
 
             <table className="table text-center">
+              <colgroup>
+                <col  style={{width: '20%'}} />
+                <col  style={{width: '20%'}} />
+                <col  style={{width: '20%'}} />
+                <col  style={{width: '20%'}} />
+                <col  style={{width: '20%'}} />
+              </colgroup>
               <thead className="thead-light">
                 <tr>
                   <th scope="col">이름</th>
-                  <th scope="col">성별</th>
                   <th scope="col">생년월일</th>
-                  <th scope="col">지역</th>
                   <th scope="col">연락처</th>
-                  <th scope="col">지문인식</th>
+                  <th scope="col">비상<br/>연락처</th>
+                  <th scope="col">지문<br/>인식</th>
                 </tr>
               </thead>
               <tbody>
                 {this.state.riders?.map((data, index) => (
                   <tr key={index}>
                     <th scope="row">{data["name"]}</th>
-                    <td></td>
                     <td>
                       {data["birthdate"].substr(2, 8).replace(/[-]/g, ".")}
                     </td>
-                    <td></td>
-                    <td>{data["phone"]}</td>
+                    <td>{data["phone"].split('-')[0]} - <br/> {data["phone"].split('-')[1]} - <br/> {data["phone"].split('-')[2]}</td>
+                    <td>{data["emergencyPhone"].split('-')[0]} - <br/> {data["emergencyPhone"].split('-')[1]} - <br/> {data["emergencyPhone"].split('-')[2]}</td>
                     <td>{data["fingerPrint"]}</td>
                   </tr>
                 ))}

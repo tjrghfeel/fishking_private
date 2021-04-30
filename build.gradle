@@ -91,6 +91,10 @@ dependencies {
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 
+    // excel
+    implementation 'org.apache.poi:poi:4.1.2'     //excel library 추가
+    implementation 'org.apache.poi:poi-ooxml:4.1.2' //excel library 추가
+
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     compile group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4', version: '1.16'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

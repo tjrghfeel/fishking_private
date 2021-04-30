@@ -21,30 +21,30 @@
 <div class="container nopadding mt-0">
     <div class="pt-0">
         <hr class="full mt-0 mb-3"/>
-        <hr class="full mt-3 mb-3"/>
-        <a href="/boarding/cssetalarm">
-            <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">알림설정</div>
-                <div class="col-8 text-right"></div>
-                <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
-            </div>
-        </a>
-        <hr class="full mt-3 mb-3"/>
-        <a>
-            <div class="row no-gutters align-items-center">
-                <div class="col-6 pl-2">접근 권한 설정</div>
-                <div class="col-5 text-right"></div>
-                <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
-            </div>
-        </a>
-        <hr class="full mt-3 mb-3"/>
-        <a href="/boarding/cssetvod">
-            <div class="row no-gutters align-items-center">
-                <div class="col-3 pl-2">동영상 설정</div>
-                <div class="col-8 text-right"></div>
-                <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
-            </div>
-        </a>
+<%--        <hr class="full mt-3 mb-3"/>--%>
+<%--        <a href="/boarding/cssetalarm">--%>
+<%--            <div class="row no-gutters align-items-center">--%>
+<%--                <div class="col-3 pl-2">알림설정</div>--%>
+<%--                <div class="col-8 text-right"></div>--%>
+<%--                <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>--%>
+<%--            </div>--%>
+<%--        </a>--%>
+<%--        <hr class="full mt-3 mb-3"/>--%>
+<%--        <a>--%>
+<%--            <div class="row no-gutters align-items-center">--%>
+<%--                <div class="col-6 pl-2">접근 권한 설정</div>--%>
+<%--                <div class="col-5 text-right"></div>--%>
+<%--                <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>--%>
+<%--            </div>--%>
+<%--        </a>--%>
+<%--        <hr class="full mt-3 mb-3"/>--%>
+<%--        <a href="/boarding/cssetvod">--%>
+<%--            <div class="row no-gutters align-items-center">--%>
+<%--                <div class="col-3 pl-2">동영상 설정</div>--%>
+<%--                <div class="col-8 text-right"></div>--%>
+<%--                <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>--%>
+<%--            </div>--%>
+<%--        </a>--%>
         <hr class="full mt-3 mb-3"/>
         <a href="/boarding/cssetpolicy">
             <div class="row no-gutters align-items-center">
