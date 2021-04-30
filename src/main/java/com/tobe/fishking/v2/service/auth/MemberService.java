@@ -303,6 +303,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(null)
                     .snsId(null)
                     .alertSet(alertSet)
@@ -353,6 +354,7 @@ public class MemberService {
         member.setIsCertified(true);
         member.setCertifiedNo(certifiedNo);
         member.setIsActive(true);
+        member.setIsSignedUp(true);
 
         /*세션토큰생성.*/
         String sessionToken = null;
@@ -686,6 +688,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.kakao)
                     .snsId(usrId.toString())
                     .build();
@@ -717,6 +720,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.kakao)
                     .snsId(usrId.toString())
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -838,6 +842,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.facebook)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -870,6 +875,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.facebook)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -994,6 +1000,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.naver)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -1026,6 +1033,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.naver)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -1137,6 +1145,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.apple)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -1169,6 +1178,7 @@ public class MemberService {
                 .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                 .isActive(false)
                 .isCertified(false)
+                .isSignedUp(false)
                 .snsType(SNSType.apple)
                 .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))

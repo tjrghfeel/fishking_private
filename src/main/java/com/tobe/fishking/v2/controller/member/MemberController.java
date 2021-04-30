@@ -865,27 +865,6 @@ public class MemberController {
         }
         return;
     }
-    /*페이스북 로그인 연동 id받는 메소드 */
-    /*@ApiOperation(value = "페이스북 로그인 연동 id를 받아 로그인 및 회원가입 중간 처리해주는 메소드",notes = "" +
-            "js를 이용해 페북 로그인을 한뒤, 이 api로 로그인 연동id가 넘어오면, 이 id에 대해 회원가입 여부를 판단후, 로그인처리 또는" +
-            " 회원가입 중간처리를 해준다.\n" +
-            "요청 필드  ) \n" +
-            "   snsId : 페북 로그인 연동 id \n")
-    @PostMapping("/facebookLogin")
-    public void facebookLogin(
-            @RequestParam("snsId") String snsId,
-            HttpServletResponse response
-    ) throws IOException {
-        SnsLoginResponseDto dto = memberService.snsLoginForFacebook(snsId);
-
-        if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/member/signup?memberId"+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
-        }
-        else{
-            response.sendRedirect("");//!!!!!sns로그인 완료후 보낼페이지 입력.
-        }
-        return;
-    }*/
 
     /*naver 인증코드받는 메소드
      * - 인증코드를 받고 접근코드 요청을 보냄. */
@@ -1242,6 +1221,7 @@ public class MemberController {
         return memberService.modifyVideoSetting(token, code, isSet);
     }
 
+    //고객앱 > 프로필  >폰번호변경
     @GetMapping("/profileManage/phoneNum/niceRequest")
     public String modifyPhoneNumNiceRequest(@RequestParam("token") String token, ModelMap model, HttpSession session){
         Member member = memberService.getMemberBySessionToken(token);
@@ -1258,7 +1238,7 @@ public class MemberController {
         return "jsp/niceRequest";
     }
 
-    /*nice 본인인증 성공시*/
+    /*고객앱 > 프로필  >폰번호변경 nice 본인인증 성공시*/
     @RequestMapping("/profileManage/phoneNum/niceSuccess")
     @ResponseBody
     public void getNiceSuccessForModifyPhoneNum(
@@ -1346,7 +1326,7 @@ public class MemberController {
 //        System.out.println("================\n test >>> encodedSesstionToken : "+encodedSessionToken+"\n================");
 //        response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+encodedSessionToken);
     }
-    /*nice 인증 실패시*/
+    /*고객앱 > 프로필  >폰번호변경 nice 인증 실패시*/
     @RequestMapping("/profileManage/phoneNum/niceFail")
     public void getNiceFailForModifyPhoneNum(
             HttpServletRequest request,
@@ -1424,11 +1404,11 @@ public class MemberController {
 
         Map<String, String> map = niceSuccessParsing(sEncodeData);
         //nice결과 파싱오류시,
-        if(!map.get("sMessage").equals("")){response.sendRedirect("https://fishkingapp.com/smartfishing/set/main?msg=niceResultParsingError"); return;}
+        if(!map.get("sMessage").equals("")){response.sendRedirect("https://fishkingapp.com/smartfishing/dashboard?msg=niceResultParsingError"); return;}
         /*데이터 저장*/
         Boolean result = memberService.smartFishingNiceAuth(Long.parseLong(map.get("memberId")), map.get("phoneNum"), map.get("name"), map.get("gender"));
         //저장이 성공적이라면 출조앱 대시보드로 리다이렉트.
-        if(result){ response.sendRedirect("https://fishkingapp.com/smartfishing/set/main?msg=authSuccess");}
+        if(result){ response.sendRedirect("https://fishkingapp.com/smartfishing/dashboard?msg=authSuccess");}
     }
 
     @RequestMapping("/smartfishing/setting/niceRequestFail")
@@ -1443,7 +1423,7 @@ public class MemberController {
         /*인증 실패시 데이터 삭제*/
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
         String token = memberService.getToken(Long.parseLong(map.get("memberId")));
-        response.sendRedirect("https://fishkingapp.com/smartfishing/set/main?msg=niceCertificationFail");
+        response.sendRedirect("https://fishkingapp.com/smartfishing/dashboard?msg=niceCertificationFail");
     }
 
     public Map<String, String> niceRequest(Long memberId, String successUrl, String failUrl){

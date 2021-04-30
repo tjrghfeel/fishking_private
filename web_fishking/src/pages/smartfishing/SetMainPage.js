@@ -36,15 +36,7 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       componentDidMount() {
-        const { PageStore, ModalStore } = this.props;
-        const {
-            msg = null
-        } = PageStore.getQueryParams();
-        if(msg === 'niceResultParsingError' || msg === 'niceCertificationFail'){
-            ModalStore.openModal("Alert", { body: "본인인증에 실패하였습니다." });
-        }
-        else if(msg === 'authSuccess'){ModalStore.openModal("Alert", { body: "본인인증이 완료되었습니다" });}
-
+        const { PageStore } = this.props;
         const menus = [];
         for (let menu of this.menus) {
           if ((menu.loggedIn && PageStore.loggedIn) || !menu.loggedIn) {

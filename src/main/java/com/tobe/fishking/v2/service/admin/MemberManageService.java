@@ -283,6 +283,7 @@ public class MemberManageService {
                 .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                 .isActive(true)
                 .isCertified(false)
+                .isSignedUp(true)
                 .snsType(null)
                 .snsId(null)
                 .alertSet(alertSet)
