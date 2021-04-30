@@ -11,10 +11,15 @@ export default inject()(
     }) => {
       let showDateHeader = false;
       if (
-        beforeData === null ||
-        beforeData.createdDate.substr(0, 10) !== createdDate.substr(0, 10)
+        beforeData === null
       ) {
         showDateHeader = true;
+      } else {
+        if (!beforeData.createdDate) {
+          showDateHeader = true;
+        } else if (beforeData.createdDate.substr(0, 10) !== createdDate.substr(0, 10)) {
+          showDateHeader = true;
+        }
       }
       return (
         <>

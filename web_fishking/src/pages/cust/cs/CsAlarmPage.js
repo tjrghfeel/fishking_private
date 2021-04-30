@@ -83,21 +83,9 @@ export default inject(
           <React.Fragment>
             <NavigationLayout title={"알림"} showBackIcon={true} />
 
-            {PageStore.state.list && (
+            {PageStore.state.list && PageStore.state.list.length > 0 && (
               <div className="container nopadding bg-grey">
-                {(PageStore.state.list.length===0)?
-                    <div className="container nopadding mt-3 mb-0 text-center">
-                        <p className="mt-5 mb-3">
-                            <img
-                                src="/assets/cust/img/svg/icon-scrap-no.svg"
-                                alt=""
-                                className="icon-lg"
-                            />
-                        </p>
-                        <h6>확인하실 알림이 없습니다.</h6>
-                    </div>
-                    :
-                    PageStore.state.list.map((data, index) => (
+                {PageStore.state.list.map((data, index) => (
                   <AlarmListItemView
                     key={index}
                     data={data}
@@ -107,6 +95,20 @@ export default inject(
                     onDelete={this.onDelete}
                   />
                 ))}
+              </div>
+            )}
+            {(!PageStore.state.list || PageStore.state.list < 1) && (
+              <div className="container nopadding bg-grey">
+                <div className="container nopadding mt-3 mb-0 text-center">
+                  <p className="mt-5 mb-3">
+                    <img
+                      src="/assets/cust/img/svg/icon-scrap-no.svg"
+                      alt=""
+                      className="icon-lg"
+                    />
+                  </p>
+                  <h6>확인하실 알림이 없습니다.</h6>
+                </div>
               </div>
             )}
           </React.Fragment>
