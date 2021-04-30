@@ -391,4 +391,23 @@ public class CompanyService {
         companyRepository.save(company);
     }
 
+    @Transactional
+    public Map<String, Object> getAlarmSetting(Member member) {
+        Company company = companyRepository.findByMember(member);
+        Map<String, Object> response = new HashMap<>();
+        response.put("alarm", company.getAlarm());
+        return response;
+    }
+
+    @Transactional
+    public void updateAlarmSetting(Member member, Boolean alarm) {
+        Company company = companyRepository.findByMember(member);
+        if (alarm) {
+            company.useAlarm(member);
+        } else {
+            company.notUseAlarm(member);
+        }
+        companyRepository.save(company);
+    }
+
 }

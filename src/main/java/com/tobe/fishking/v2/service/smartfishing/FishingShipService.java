@@ -203,31 +203,33 @@ public class FishingShipService {
         shipRepository.save(ship);
 
         int cameraNum = 0;
-        List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
-        String cameraToken;
-        String expTime;
-        if (allVideos.isEmpty()) {
-            Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
-            cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
-            expTime = (String) nhnCameraToken.get("expireTime");
-        } else {
-            cameraToken = allVideos.get(0).getToken();
-            expTime = allVideos.get(0).getExpireTime();
-        }
+        if (company.getNhnId() != null) {
+            List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
+            String cameraToken;
+            String expTime;
+            if (allVideos.isEmpty()) {
+                Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
+                cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+                expTime = (String) nhnCameraToken.get("expireTime");
+            } else {
+                cameraToken = allVideos.get(0).getToken();
+                expTime = allVideos.get(0).getExpireTime();
+            }
 
-        for (AddShipCamera addShipCamera : addShipDTO.getNhnCameras()) {
-            cameraNum += 1;
-            RealTimeVideo video = RealTimeVideo.builder()
-                    .rNo(cameraNum)
-                    .member(member)
-                    .ship(ship)
-                    .name(addShipCamera.getName())
-                    .serial(addShipCamera.getSerial())
-                    .token(cameraToken)
-                    .expireTime(expTime)
-                    .type("toast")
-                    .build();
-            realTimeVideoRepository.save(video);
+            for (AddShipCamera addShipCamera : addShipDTO.getNhnCameras()) {
+                cameraNum += 1;
+                RealTimeVideo video = RealTimeVideo.builder()
+                        .rNo(cameraNum)
+                        .member(member)
+                        .ship(ship)
+                        .name(addShipCamera.getName())
+                        .serial(addShipCamera.getSerial())
+                        .token(cameraToken)
+                        .expireTime(expTime)
+                        .type("toast")
+                        .build();
+                realTimeVideoRepository.save(video);
+            }
         }
 
         for (AddShipCamera addShipCamera : addShipDTO.getAdtCameras()) {

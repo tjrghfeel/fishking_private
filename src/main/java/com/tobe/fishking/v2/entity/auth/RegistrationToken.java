@@ -26,5 +26,7 @@ public class RegistrationToken extends BaseTime {
     @JoinColumn(name = "member_id", columnDefinition = "bigint not null comment '회원'")
     private Member member;
 
+    @Column(columnDefinition = "varchar(5) default 'c' comment '앱 타입 (고객: c 출조: f)' ")
+    private String type;
 
 }
