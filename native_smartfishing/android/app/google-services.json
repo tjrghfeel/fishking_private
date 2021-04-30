@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "638059917366",
+    "project_id": "fishking-c1753",
+    "storage_bucket": "fishking-c1753.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638059917366:android:98e354c22c6017e8082897",
+        "android_client_info": {
+          "package_name": "com.native_fishking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "638059917366-k5u7skm8jdn681v61eik3adhf6pami15.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrtmMwHtSy7tihnkAcNqumTdHlSLmoBtc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "638059917366-k5u7skm8jdn681v61eik3adhf6pami15.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "638059917366-4kjhv3e43529gt12sqphh2k8pv7bndng.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fishkingapp.nativeFishkingService"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638059917366:android:98b90613245d3260082897",
+        "android_client_info": {
+          "package_name": "com.native_smartfishing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "638059917366-k5u7skm8jdn681v61eik3adhf6pami15.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrtmMwHtSy7tihnkAcNqumTdHlSLmoBtc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "638059917366-k5u7skm8jdn681v61eik3adhf6pami15.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "638059917366-4kjhv3e43529gt12sqphh2k8pv7bndng.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fishkingapp.nativeFishkingService"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

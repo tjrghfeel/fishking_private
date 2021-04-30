@@ -15,6 +15,7 @@ import {
 import {WebView} from 'react-native-webview';
 import * as SendIntentAndroid from 'react-native-send-intent';
 import {inject, observer, Provider} from 'mobx-react';
+import {token} from './messaging';
 
 const SplashScreen = () => {
   return (
@@ -49,7 +50,8 @@ const App = inject()(
         this.webview = React.createRef(null);
         this.state = {
           initiated: false,
-          uri: 'https://fishkingapp.com/smartfishing',
+          // uri: 'https://fishkingapp.com/smartfishing',
+          uri: 'http://192.168.0.50:3000/smartfishing',
           refreshEnabled: false,
           navigationState: null,
         };
@@ -81,7 +83,7 @@ const App = inject()(
       };
       postMessage = data => {
         this.executeJavaScript(
-          `window.postMessage(${JSON.stringify(data)}); true;`,
+          `window.postMessage(${JSON.stringify(data)},'*'); true;`,
         );
       };
       executeJavaScript = script => {
@@ -93,6 +95,10 @@ const App = inject()(
       onMessage = async ({nativeEvent}) => {
         const {process, data} = JSON.parse(nativeEvent.data);
         switch (process) {
+          case 'SetPermissions': {
+            await Linking.openSettings();
+            break;
+          }
           case 'Exit': {
             // ----- > 앱종료
             BackHandler.exitApp();
@@ -165,7 +171,8 @@ const App = inject()(
                   allowsBackForwardNavigationGestures={true}
                   injectedJavaScript={`
                     window.isNative = true;
-                    return true;
+                    window.fcm_token = '${token}';
+                    window.wversion = 2;
                   `}
                   onNavigationStateChange={this.onNavigationStateChange}
                   onMessage={this.onMessage}
