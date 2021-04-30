@@ -99,6 +99,9 @@ public class Member {
     @Column(columnDefinition = "bit default 0 comment '회원 계정 정지 여부'")
     private Boolean isSuspended = false;
 
+    @Column(columnDefinition = "bit default 0 comment '회원 가입 완료 여부")
+    private Boolean isSignedUp = false;
+
     //푸시알림용 기기토큰 목록
 //    @Column(columnDefinition = "varchar(255) comment '푸쉬알림용 등록토큰'")
 //    private String registrationToken;
@@ -120,7 +123,7 @@ public class Member {
                   Role roles, String sessionToken, String profileImage, String profileBackgroundImage,
                   Boolean isActive, String certifiedNo, Boolean isCertified,
                   String joinDt, SNSType snsType, String snsId, String statusMessage, PhoneNumber phoneNumber,
-                  Address address, Set<CommonCode> alertSet, Set<CommonCode> videoSetting ) {
+                  Address address, Set<CommonCode> alertSet, Set<CommonCode> videoSetting, Boolean isSignedUp ) {
         this.id = id;
         this.uid = uid;
         this.memberName = memberName;
@@ -143,6 +146,7 @@ public class Member {
         this.address = address;
         this.alertSet = alertSet;
         this.videoSetting = videoSetting;
+        this.isSignedUp = isSignedUp;
     }
 
     //Getters and setters ommitted for brevity

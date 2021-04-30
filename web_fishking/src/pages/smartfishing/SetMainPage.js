@@ -24,6 +24,7 @@ export default inject(
           loggedIn: false,
           pathname: "/cust/policy/main",
         },
+        { text: "휴대폰 본인인증", loggedIn: true, pathname: ""},
         // { text: "탈퇴하기", loggedIn: true, pathname: "/cust/member/signout" },
         { text: "로그아웃", loggedIn: true, pathname: "/member/logout" },
       ];
@@ -53,6 +54,9 @@ export default inject(
           PageStore.push(`/login`);
         }
       };
+
+      niceRequest = ()=>{window.location.href = '/v2/api/smartfishing/setting/niceRequest?token='+localStorage.getItem("@accessToken")}
+
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -79,6 +83,8 @@ export default inject(
                           this.requestLogout();
                         } else if (data.text === "접근 권한 설정") {
                           NativeStore.postMessage("SetPermissions", {});
+                        } else if (data.text === '휴대폰 본인인증'){
+                            this.niceRequest();
                         } else if (data.pathname !== "") {
                           console.log(data.pathname)
                           PageStore.push(data.pathname);

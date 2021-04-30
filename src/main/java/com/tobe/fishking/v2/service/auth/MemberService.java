@@ -303,6 +303,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(null)
                     .snsId(null)
                     .alertSet(alertSet)
@@ -353,6 +354,7 @@ public class MemberService {
         member.setIsCertified(true);
         member.setCertifiedNo(certifiedNo);
         member.setIsActive(true);
+        member.setIsSignedUp(true);
 
         /*세션토큰생성.*/
         String sessionToken = null;
@@ -686,6 +688,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.kakao)
                     .snsId(usrId.toString())
                     .build();
@@ -717,6 +720,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.kakao)
                     .snsId(usrId.toString())
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -838,6 +842,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.facebook)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -870,6 +875,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.facebook)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -994,6 +1000,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.naver)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -1026,6 +1033,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.naver)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -1137,6 +1145,7 @@ public class MemberService {
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(false)
                     .isCertified(false)
+                    .isSignedUp(false)
                     .snsType(SNSType.apple)
                     .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -1169,6 +1178,7 @@ public class MemberService {
                 .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                 .isActive(false)
                 .isCertified(false)
+                .isSignedUp(false)
                 .snsType(SNSType.apple)
                 .snsId(usrId)
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
@@ -1975,6 +1985,37 @@ public class MemberService {
 
         member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
         memberRepository.save(member);
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean smartFishingNiceAuth(Long memberId, String phoneNum, String name, String inputGender){
+        String areaCode = phoneNum.substring(0,3);
+        String localNumber = phoneNum.substring(3);
+
+        Integer genderInt = Integer.parseInt(inputGender);
+        Gender gender = (genderInt == 0)? Gender.girl : Gender.boy;
+
+        Member member = getMemberById(memberId);
+        //인증한 번호와 동일한 번호가 기존에 있다면 그 번호는 ***********로 덮어씌움.
+        Member preNumOwner = memberRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
+        if(preNumOwner != null) {
+            preNumOwner.setPhoneNumber(new PhoneNumber("***", "********"));
+            memberRepository.save(preNumOwner);
+        }
+
+        if(member.getIsCertified() == false) {//본인인증이 안되었던 회원이라면
+            member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
+            member.setMemberName(name);
+            member.setGender(gender);
+            member.setIsCertified(true);
+            memberRepository.save(member);
+        }
+        else{//본인인증을 이미 한 회원이라면, 고객앱의 번호변경같이 번호만 바꿔줌.
+            member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
+            memberRepository.save(member);
+        }
 
         return true;
     }

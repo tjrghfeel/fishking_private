@@ -103,7 +103,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "   m.is_suspended isSuspended " +
             "from member m " +
             "where " +
-            "   m.is_certified =true " +
+            "   m.is_signed_up =true " +
 //            "   if(:id is null,true,(m.id = :id)) " +
             "   and if(:roles is null,true,(m.roles = :roles)) " +
             "   and if(:memberName is null,true,(m.member_name like %:memberName%)) " +
@@ -126,7 +126,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //            "   and if(:joinDtEnd is null, true, (m.created_date < :joinDtEnd)) ",
             countQuery = "select m.id from member m " +
                     "where " +
-                    "   m.is_certified = true " +
+                    "   m.is_signed_up = true " +
 //                    "   if(:id is null,true,(m.id = :id)) " +
                     "   and if(:roles is null,true,(m.roles = :roles)) " +
                     "   and if(:memberName is null,true,(m.member_name like %:memberName%)) " +

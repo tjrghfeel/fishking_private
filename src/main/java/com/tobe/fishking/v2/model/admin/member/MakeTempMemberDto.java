@@ -19,7 +19,7 @@ public class MakeTempMemberDto {
 
     @NotNull(message = "닉네임이 비었습니다")
     @Size(min=1, message = "닉네임이 비었습니다")
-    @Size(max = 10, message = "닉네임은 100자 이하이어야합니다")
+    @Size(max = 10, message = "닉네임은 10자 이하이어야합니다")
     private String nickName;
 
     @NotNull(message = "비밀번호가 비었습니다")
