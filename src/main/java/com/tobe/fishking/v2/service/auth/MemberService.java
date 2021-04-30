@@ -11,6 +11,7 @@ import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.auth.RegistrationToken;
 import com.tobe.fishking.v2.entity.common.*;
 import com.tobe.fishking.v2.entity.fishing.*;
+import com.tobe.fishking.v2.enums.Constants;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -210,7 +211,7 @@ public class MemberService {
     /*uid중복 확인 메소드*/
     @Transactional
     public int checkUidDup(String uid){
-        if(Pattern.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}$",uid)){
+        if(Pattern.matches(Constants.EMAIL,uid)){
             return 2;
         }
         else{
@@ -221,7 +222,7 @@ public class MemberService {
     /*닉네임 중복 확인 메소드*/
     @Transactional
     public int checkNickNameDup(String nickName){
-        if(nickName.length()<4 && nickName.length() > 10){return 2; }
+        if(nickName.length()<1 && nickName.length() > 10){return 2; }
         else{
             if(memberRepository.existsByNickName(nickName)){return 1;}
             else return 0;
@@ -354,8 +355,15 @@ public class MemberService {
         member.setIsActive(true);
 
         /*세션토큰생성.*/
-        String rawToken = member.getUid() + LocalDateTime.now();
-        String sessionToken = encoder.encode(rawToken);
+        String sessionToken = null;
+
+        if(member.getSessionToken() != null){
+            sessionToken = member.getSessionToken();
+        }
+        else{
+            String rawToken = member.getUid() + LocalDateTime.now();
+            sessionToken = encoder.encode(rawToken);
+        }
 
         encodedSessionToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
         member.setSessionToken(sessionToken);
@@ -412,10 +420,10 @@ public class MemberService {
 
     /*비번 변경을 위한 문자인증 요청 메소드*/
     @Transactional
-    public Long sendSmsForPwReset(PhoneAuthDto dto){
+    public Long sendSmsForPwReset(PhoneAuthDto dto) throws ServiceLogicException {
         /*해당 번호로 가입되어있는 회원이 있는지 확인*/
         if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==false){
-            throw new RuntimeException("가입되지 않은 휴대폰 번호입니다");
+            throw new ServiceLogicException("가입되지 않은 휴대폰 번호입니다");
         }
         /*문자인증 요청*/
         else{
@@ -1353,10 +1361,10 @@ public class MemberService {
             }
 
             //임시 가입처리되어있는 회원이라면,
-            if(member.getIsCertified() == false){
-                result.setAuth(false);
-            }
-            else {//인증을 마친 회원이라면,
+//            if(member.getIsCertified() == false){
+//                result.setAuth(false);
+//            }
+//            else {//인증을 마친 회원이라면,
                 result.setAuth(true);
 
                 /*세션토큰 처리. 세션토큰이 이미존재한다면. 즉, 이미 로그인되어있는 회원이라면 기존의 세션토큰을 반환해줌. */
@@ -1370,7 +1378,7 @@ public class MemberService {
                     member.setSessionToken(sessionToken);
                     result.setToken(sessionToken);
                 }
-            }
+//            }
         }
         else{throw new ServiceLogicException("비밀번호가 잘못되었습니다");}
         return result;
@@ -1441,10 +1449,10 @@ public class MemberService {
             }
 
             //임시 가입처리되어있는 회원이라면,
-            if(member.getIsCertified() == false){
-                result.setAuth(false);
-            }
-            else {//인증을 마친 회원이라면,
+//            if(member.getIsCertified() == false){
+//                result.setAuth(false);
+//            }
+//            else {//인증을 마친 회원이라면,
                 result.setAuth(true);
 
                 Company company = companyRepository.findByMember(member);
@@ -1468,7 +1476,7 @@ public class MemberService {
                         result.setToken(sessionToken);
                     }
                 }
-            }
+//            }
         }
         else{throw new ServiceLogicException("비밀번호가 잘못되었습니다");}
 //        Role role = member.getRoles();
@@ -1691,9 +1699,14 @@ public class MemberService {
                 .profileBackgroundImage(env.getProperty("file.downloadUrl") + member.getProfileBackgroundImage())
                 .statusMessage((member.getStatusMessage()==null)?("없음"):(member.getStatusMessage()))
                 //!!!!!아래 전화번호는 nullable필드이지만 회원가입시 휴대폰인증을 하므로 무조건 있다고 판단.
-                .areaCode(member.getPhoneNumber().getAreaCode())
-                .localNumber(member.getPhoneNumber().getLocalNumber())
+//                .areaCode(member.getPhoneNumber().getAreaCode())
+//                .localNumber(member.getPhoneNumber().getLocalNumber())
                 .build();
+
+        if(member.getPhoneNumber().getAreaCode() != null & member.getPhoneNumber().getLocalNumber() != null){
+            profileManageDTO.setAreaCode(member.getPhoneNumber().getAreaCode());
+            profileManageDTO.setLocalNumber(member.getPhoneNumber().getLocalNumber());
+        }
 
         return profileManageDTO;
     }
@@ -1954,7 +1967,7 @@ public class MemberService {
         Member member = getMemberById(memberId);
 
         Member preNumOwner = memberRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
-        preNumOwner.setPhoneNumber(new PhoneNumber("***","****"));
+        preNumOwner.setPhoneNumber(new PhoneNumber("***","********"));
         memberRepository.save(preNumOwner);
 
         member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));

@@ -287,6 +287,7 @@ public class MemberManageService {
                 .snsId(null)
                 .alertSet(alertSet)
                 .videoSetting(videoSetting)
+                .phoneNumber(new PhoneNumber("***","********"))
 //                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
                 .build();
         member = memberRepository.save(member);

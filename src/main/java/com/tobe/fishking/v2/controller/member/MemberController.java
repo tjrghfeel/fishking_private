@@ -672,7 +672,7 @@ public class MemberController {
             "- 응답 ) 문자인증건의 id ")
     @PostMapping("/findPw/smsAuthReq")
     @ResponseBody
-    public Long requestSmsAuthForPwSearch(@RequestBody @Valid PhoneAuthDto dto){
+    public Long requestSmsAuthForPwSearch(@RequestBody @Valid PhoneAuthDto dto) throws ServiceLogicException {
         return memberService.sendSmsForPwReset(dto);
     }
     /*아이디확인 및 비밀번호 재설정 - 인증번호 통과후 이름과 아이디 알려주는 api. */
