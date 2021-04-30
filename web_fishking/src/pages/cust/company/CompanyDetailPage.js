@@ -188,8 +188,9 @@ export default inject(
           const { ModalStore } = this.props;
           let msg = null;
           if (type === 'map') {
-            msg = `https://map.kakao.com/?${this.state.latitude},${this.state.longitude}`
+            msg = `https://m.map.kakao.com/actions/searchView?q=${encodeURI(this.state.address)}#!/QOQSMTP,NVWSTR/map/car`
           }
+          console.log(msg);
           ModalStore.openModal("SNS", {
             onSelect: (selected) => {
               console.log(selected);
@@ -614,7 +615,7 @@ export default inject(
                 ></div>
                 <div className="row no-gutters align-items-center border-round-btm">
                   <div className="col-4 text-center align-self-center border-right">
-                    <a onClick={this.findWay}>
+                    <a onClick={() => this.findWay()}>
                       <div className="padding">
                         <img
                           src="/assets/cust/img/svg/icon-map.svg"
@@ -626,7 +627,7 @@ export default inject(
                     </a>
                   </div>
                   <div className="col-4 text-center align-self-center border-right">
-                    <a onClick={this.copyAddress}>
+                    <a onClick={() => this.copyAddress()}>
                       <div className="padding">
                         <img
                           src="/assets/cust/img/svg/icon-copy.svg"
@@ -638,8 +639,8 @@ export default inject(
                     </a>
                   </div>
                   <div className="col-4 text-center align-self-center">
-                    {/*<a data-toggle="modal" data-target="#snsModal">*/}
                     <a onClick={() => this.modalSNS('map')}>
+                    {/*<a data-toggle="modal" data-target="#snsModal">*/}
                       <div className="padding">
                         <img
                           src="/assets/cust/img/svg/icon-share.svg"

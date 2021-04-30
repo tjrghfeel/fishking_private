@@ -32,6 +32,7 @@ export default inject(
           ],
           payMethod: [],
           status: [],
+          alertCount: 0,
         };
       }
       /********** ********** ********** ********** **********/
@@ -89,6 +90,12 @@ export default inject(
       };
       loadPageData = async (page = 0) => {
         const { APIStore, PageStore } = this.props;
+
+        // >>>>> 알람 수
+        let alertCount = await APIStore._get(
+          `/v2/api/alert/alertCount`
+        );
+        this.setState({ alertCount: alertCount });
 
         if ((page > 0 && PageStore.state.isEnd) || PageStore.state.isPending)
           return;
@@ -179,7 +186,20 @@ export default inject(
               }}
             />
 
-            <NavigationLayout title={"예약관리"} showBackIcon={false} />
+            <NavigationLayout
+              title={"예약관리"}
+              customButton={
+                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alarmType=f')}>
+                  <img
+                    src="/assets/smartfishing/img/svg/icon-alarm.svg"
+                    alt="알림내역"
+                  />
+                  {this.state.alertCount > 0 && <strong>{this.state.alertCount}</strong>}
+                  <span className="sr-only">알림내역</span>
+                </a>
+              }
+              showBackIcon={false}
+            />
             <SmartFishingMainTab activeIndex={1} />
 
             <div className="filterlinewrap container nopadding">

@@ -26,6 +26,9 @@ export default inject(
         this.keywordType = React.createRef(null);
         this.keyword = React.createRef(null);
         this.status = React.createRef(null);
+        this.state = {
+          alertCount: 0,
+        }
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -70,6 +73,12 @@ export default inject(
           keyword,
           status,
         } = PageStore.state;
+
+        // >>>>> 알람 수
+        let alertCount = await APIStore._get(
+          `/v2/api/alert/alertCount`
+        );
+        this.setState({ alertCount: alertCount });
 
         if (APIStore.isLoading || isPending || (page > 0 && isEnd)) return;
 
@@ -119,7 +128,20 @@ export default inject(
         const { PageStore } = this.props;
         return (
           <React.Fragment>
-            <NavigationLayout title={"상품관리"} showBackIcon={false} />
+            <NavigationLayout
+              title={"상품관리"}
+              customButton={
+                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alarmType=f')}>
+                  <img
+                    src="/assets/smartfishing/img/svg/icon-alarm.svg"
+                    alt="알림내역"
+                  />
+                  {this.state.alertCount > 0 && <strong>{this.state.alertCount}</strong>}
+                  <span className="sr-only">알림내역</span>
+                </a>
+              }
+              showBackIcon={false}
+            />
             <SmartFishingMainTab activeIndex={3} />
 
             <div className="filterlinewrap container nopadding">

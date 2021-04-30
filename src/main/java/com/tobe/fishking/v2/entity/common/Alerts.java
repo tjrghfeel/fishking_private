@@ -73,6 +73,8 @@ public class Alerts extends BaseTime {
     @Column(columnDefinition = "datetime comment '알림 시간'")
     private LocalDateTime alertTime;
 
+    @Column(columnDefinition = "varchar(5) comment '알림 타입 (고객: c, 출조: f) '")
+    private String type;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', alerts, 'COLUMN',  created_by
     @ManyToOne

@@ -54,8 +54,20 @@ public class AlertController {
             "   content : 알림 메세지 내용\n" +
             "   iconDownloadUrl : 알림 아이콘 download url")
     @GetMapping("/alert/alertList")
-    public Page<AlertListForPage> getAlertList(@RequestHeader("Authorization") String token) throws ResourceNotFoundException {
-        return alertService.getAlertList(token);
+    public Page<AlertListForPage> getAlertList(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "type", required = false) String type) throws ResourceNotFoundException {
+        return alertService.getAlertList(token, type);
+    }
+
+    /*현재 회원의 알림 수 출력*/
+    @ApiOperation(value="현재 회원의 알림 수 출력",notes = "" +
+            "   현재 회원의 알림 수 출력")
+    @GetMapping("/alert/alertCount")
+    public int getAlertCount(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "type", required = false) String type) throws ResourceNotFoundException {
+        return alertService.getAlertCount(token, type);
     }
 
 }

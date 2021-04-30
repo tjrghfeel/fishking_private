@@ -77,10 +77,21 @@ public class AlertService {
      * - AlertType에 맞는 알람이미지url을 반환.
      * - */
     @Transactional
-    public Page<AlertListForPage> getAlertList(String token) throws ResourceNotFoundException {
+    public Page<AlertListForPage> getAlertList(String token, String type) throws ResourceNotFoundException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
         Pageable pageable = PageRequest.of(0,50);
-        return alertsRepo.findAllByMember(member.getId(), LocalDateTime.now(), pageable);
+        if (type == null) {
+            return alertsRepo.findAllByMember(member.getId(), LocalDateTime.now(), pageable);
+        } else {
+            return alertsRepo.findAllByCompanyMember(member.getId(), LocalDateTime.now(), pageable);
+        }
+    }
+
+    @Transactional
+    public int getAlertCount(String token, String type) throws ResourceNotFoundException {
+        Member member = memberRepo.findBySessionToken(token)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this token :: "+token));
+        return alertsRepo.countByCompanyMember(member.getId(), LocalDateTime.now());
     }
 }
