@@ -211,7 +211,7 @@ public class MemberService {
     /*uid중복 확인 메소드*/
     @Transactional
     public int checkUidDup(String uid){
-        if(Pattern.matches(Constants.EMAIL,uid)){
+        if(!Pattern.matches(Constants.EMAIL,uid)){
             return 2;
         }
         else{
@@ -1967,8 +1967,10 @@ public class MemberService {
         Member member = getMemberById(memberId);
 
         Member preNumOwner = memberRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
-        preNumOwner.setPhoneNumber(new PhoneNumber("***","********"));
-        memberRepository.save(preNumOwner);
+        if(preNumOwner != null) {
+            preNumOwner.setPhoneNumber(new PhoneNumber("***", "********"));
+            memberRepository.save(preNumOwner);
+        }
 
         member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
         memberRepository.save(member);

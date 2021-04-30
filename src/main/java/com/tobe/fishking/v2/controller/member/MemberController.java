@@ -1370,12 +1370,12 @@ public class MemberController {
         else if( iReturn == -12)        {            sMessage = "사이트 패스워드 오류입니다.";        }
         else        {            sMessage = "알수 없는 에러 입니다. iReturn : " + iReturn;        }
 
-        if(!sMessage.equals("")){response.sendRedirect("/cust/main/my?msg=niceResultParsingError"); return;}
+        if(!sMessage.equals("")){response.sendRedirect("https://fishkingapp.com/cust/main/my?msg=niceResultParsingError"); return;}
 //        if(!sMessage.equals("")){response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;}
         /*데이터 저장*/
         Boolean result = memberService.modifyPhoneNum(Long.parseLong(session_sRequestNumber), sMobileNo);
         String token = memberService.getToken(Long.parseLong(session_sRequestNumber));
-        if(result){ response.sendRedirect("/cust/main/my?msg=success&token="+token );}
+        if(result){ response.sendRedirect("https://fishkingapp.com/cust/main/my?msg=success&token="+token );}
 
 //        if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
@@ -1430,7 +1430,7 @@ public class MemberController {
         /*인증 실패시 데이터 삭제*/
 //        memberService.niceFail(Long.parseLong(sRequestNumber));
         String token = memberService.getToken(Long.parseLong(sRequestNumber));
-        response.sendRedirect("/cust/main/my?msg=niceCertificationFail&token="+token);
+        response.sendRedirect("https://fishkingapp.com/cust/main/my?msg=niceCertificationFail&token="+token);
     }
 
 }
