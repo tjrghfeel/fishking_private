@@ -16,18 +16,16 @@ export default inject(
     class extends React.Component {
       constructor(props) {
         super(props);
-        this.state = {
-          arr_searchTarget: [
-            { text: "내용", value: "content" },
-            { text: "제목", value: "title" },
-          ],
-          arr_shipId: [],
-        };
+        this.arr_searchTarget = [
+          { text: "내용", value: "content" },
+          { text: "제목", value: "title" },
+        ];
         this.searchTarget = React.createRef(null);
         this.searchKey = React.createRef(null);
         this.shipId = React.createRef(null);
         this.state = {
           alertCount: 0,
+          arr_shipId: []
         }
       }
       /********** ********** ********** ********** **********/
@@ -247,7 +245,7 @@ export default inject(
                         })
                       }
                     >
-                      {this.state.arr_searchTarget.map((data, index) => (
+                      {this.arr_searchTarget.map((data, index) => (
                         <option key={index} value={data["value"]}>
                           {data["text"]}
                         </option>
