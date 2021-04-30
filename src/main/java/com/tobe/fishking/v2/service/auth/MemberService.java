@@ -1979,6 +1979,37 @@ public class MemberService {
     }
 
     @Transactional
+    public Boolean smartFishingNiceAuth(Long memberId, String phoneNum, String name, String inputGender){
+        String areaCode = phoneNum.substring(0,3);
+        String localNumber = phoneNum.substring(3);
+
+        Integer genderInt = Integer.parseInt(inputGender);
+        Gender gender = (genderInt == 0)? Gender.girl : Gender.boy;
+
+        Member member = getMemberById(memberId);
+        //인증한 번호와 동일한 번호가 기존에 있다면 그 번호는 ***********로 덮어씌움.
+        Member preNumOwner = memberRepository.findByAreaCodeAndLocalNumber(areaCode,localNumber);
+        if(preNumOwner != null) {
+            preNumOwner.setPhoneNumber(new PhoneNumber("***", "********"));
+            memberRepository.save(preNumOwner);
+        }
+
+        if(member.getIsCertified() == false) {//본인인증이 안되었던 회원이라면
+            member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
+            member.setMemberName(name);
+            member.setGender(gender);
+            member.setIsCertified(true);
+            memberRepository.save(member);
+        }
+        else{//본인인증을 이미 한 회원이라면, 고객앱의 번호변경같이 번호만 바꿔줌.
+            member.setPhoneNumber(new PhoneNumber(areaCode, localNumber));
+            memberRepository.save(member);
+        }
+
+        return true;
+    }
+
+    @Transactional
     public Member getMemberById(Long member_id) {
         return memberRepository.getOne(member_id);
     }
