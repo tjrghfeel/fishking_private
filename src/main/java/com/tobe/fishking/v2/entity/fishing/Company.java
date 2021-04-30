@@ -157,6 +157,9 @@ public class Company extends BaseTime {  //선상
     @JoinColumn(name="modified_by", columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
+    @Column(columnDefinition = "bit default 1 comment '출조앱 알람 받음 여부' ")
+    private Boolean alarm;
+
     public Company(String companyName, Member member) {
         this.companyName = companyName;
         this.createdBy = member;
@@ -229,4 +232,14 @@ public class Company extends BaseTime {  //선상
         this.registeredDate = LocalDate.now();
     }
     public void setIsOpen(Boolean isOpen){this.isOpen = isOpen;}
+
+    public void useAlarm(Member member) {
+        this.alarm = true;
+        this.modifiedBy = member;
+    }
+
+    public void notUseAlarm(Member member) {
+        this.alarm = false;
+        this.modifiedBy = member;
+    }
 }

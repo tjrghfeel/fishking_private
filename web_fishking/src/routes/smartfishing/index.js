@@ -22,6 +22,7 @@ import CsQnaListPage from "../../pages/smartfishing/CsQnaListPage";
 import CsQnaDetailPage from "../../pages/smartfishing/CsQnaDetailPage";
 import SetMainPage from "../../pages/smartfishing/SetMainPage";
 import SetPaidPage from "../../pages/smartfishing/SetPaidPage";
+import SetAlarmPage from "../../pages/smartfishing/SetAlarmPage";
 
 export default inject("PageStore")(
   observer(
@@ -136,6 +137,12 @@ export default inject("PageStore")(
                 exact
                 path={`${match.url}/set/paid`}
                 component={SetPaidPage}
+              />
+              {/** 고객센터 > 알람설정 */}
+              <Route
+                exact
+                path={`${match.url}/set/alarm`}
+                component={SetAlarmPage}
               />
               <Redirect
                 from={`*`}

@@ -1419,7 +1419,7 @@ public class MemberService {
     @Transactional
     public LoginResultDtoForSmartFishing smartfishingLogin(LoginDTO loginDTO) throws ResourceNotFoundException, NotAuthException, ServiceLogicException {
         LoginResultDtoForSmartFishing result = new LoginResultDtoForSmartFishing();
-        System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
+//        System.out.println("memberId : "+loginDTO.getMemberId()+", pw : "+loginDTO.getPassword()+", token : "+loginDTO.getRegistrationToken());
         String sessionToken=null;
         /*아디,비번 확인*/
         Member member = memberRepository.findByUid(loginDTO.getMemberId())
@@ -1430,7 +1430,7 @@ public class MemberService {
         }
         else if(encoder.matches(loginDTO.getPassword(),member.getPassword())){//로그인 성공
             result.setMemberId(member.getId());
-            System.out.println("login success");
+//            System.out.println("login success");
             /*탈퇴한 회원인 경우*/
             if(member.getIsActive() == false){throw new ServiceLogicException("회원정보가 존재하지 않습니다.");}
             if(member.getIsSuspended() == true){throw new ServiceLogicException("정지된 계정입니다.");}
@@ -1442,6 +1442,7 @@ public class MemberService {
                     RegistrationToken token = RegistrationToken.builder()
                             .token(loginDTO.getRegistrationToken())
                             .member(member)
+                            .type("f")
                             .build();
                     tokenRepository.save(token);
                 } else {
@@ -1479,10 +1480,10 @@ public class MemberService {
 //            }
         }
         else{throw new ServiceLogicException("비밀번호가 잘못되었습니다");}
-//        Role role = member.getRoles();
-//        if (!(role==Role.admin || role==Role.shipowner)) {
-//            throw new ServiceLogicException("권한이 없는 아이디 입니다.");
-//        }
+        Role role = member.getRoles();
+        if (!(role==Role.admin || role==Role.shipowner)) {
+            throw new ServiceLogicException("권한이 없는 아이디 입니다.");
+        }
         return result;
     }
 

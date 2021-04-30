@@ -63,4 +63,40 @@ public class SettingController {
         Member member = memberService.getMemberBySessionToken(token);
         return companyService.getAccount(member);
     }
+
+    @ApiOperation(value = "알림 설정 정보", notes= " {" +
+            "\n alarm: 설정 정보  } " +
+            "")
+    @GetMapping("/fishing/alarm")
+    public Map<String, Object> getAlarmSetting(
+            @RequestHeader(name = "Authorization") String token) throws NotAuthException, ResourceNotFoundException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+        return companyService.getAlarmSetting(member);
+    }
+
+    @ApiOperation(value = "알림 설정", notes= "알림 설정 {" +
+            "\n alarm: 설정 정보 } " +
+            "")
+    @PutMapping("/fishing/alarm/update")
+    public Map<String, Object> updateAlarmSetting(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody Map<String, Object> body) throws NotAuthException, ResourceNotFoundException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            companyService.updateAlarmSetting(member, (Boolean) body.get("alarm"));
+            response.put("status", "success");
+            response.put("message", "성공했습니다.");
+        } catch (Exception e) {
+            response.put("status", "fail");
+            response.put("message", "실패했습니다.");
+        }
+        return response;
+    }
 }

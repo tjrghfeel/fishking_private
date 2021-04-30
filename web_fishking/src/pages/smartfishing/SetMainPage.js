@@ -15,7 +15,7 @@ export default inject(
     class extends React.Component {
       menus = [
         // { text: "프로필 관리", loggedIn: true, pathname: "/cust/set/profile" },
-        { text: "알림설정", loggedIn: false, pathname: "/cust/set/alarm" },
+        { text: "알림설정", loggedIn: false, pathname: "/set/alarm" },
         { text: "정산 계좌 설정", loggedIn: false, pathname: "/set/paid" },
         { text: "접근 권한 설정", loggedIn: false, pathname: "" },
         { text: "동영상 설정", loggedIn: false, pathname: "/cust/set/vod" },
