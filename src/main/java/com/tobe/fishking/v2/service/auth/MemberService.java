@@ -121,17 +121,6 @@ public class MemberService {
         }
     }*/
 
-    /*회원가입 - 문자인증
-     * */
-    @Transactional
-    public Long sendSmsForSignup(PhoneAuthDto dto){
-        if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==true){
-            throw new RuntimeException("이미 가입한 휴대폰 번호입니다");
-        }
-        else{
-            return requestSmsAuth(dto);
-        }
-    }
     /*휴대폰 번호로 가입한 회원 존재유무 확인
      * - 존재하면 true반환. */
     @Transactional
@@ -148,10 +137,18 @@ public class MemberService {
      * - pNum과 인증번호를 db에 저장.
      * - 반환 ) 전송 실패시 false. 성공시 true. */
     @Transactional
-    public Long  requestSmsAuth(PhoneAuthDto dto){
+    public Long  requestSmsAuth(PhoneAuthDto dto) throws ServiceLogicException {
         String areaCode = dto.getAreaCode();
         String localNumber = dto.getLocalNumber();
         Long phoneAuthId=null;
+
+        //짧은 시간내에 문자인증 여러개 보내는 경우 예외처리.
+        PhoneAuth lastAuth = phoneAuthRepository.getLastPhoneAuth(dto.getAreaCode(), dto.getLocalNumber());
+        if(lastAuth != null){
+            if(lastAuth.getCreatedDate().plusMinutes(1L).isAfter(LocalDateTime.now())  ){
+                throw new ServiceLogicException("잠시 후 다시 시도해 주세요");
+            }
+        }
 
         /*랜덤으로 인증번호 생성.*/
         String randomNum=null;
@@ -1940,16 +1937,16 @@ public class MemberService {
         return member.getId();
     }
 
-    /*휴대폰번호 변경을 위한 문자인증요청 */
-    @Transactional
-    public Long sendSmsAuthForModifyPhoneNum(PhoneAuthDto dto){
-        if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==true){
-            throw new RuntimeException("이미 가입한 휴대폰 번호입니다");
-        }
-        else{
-            return requestSmsAuth(dto);
-        }
-    }
+//    /*휴대폰번호 변경을 위한 문자인증요청 */
+//    @Transactional
+//    public Long sendSmsAuthForModifyPhoneNum(PhoneAuthDto dto) throws ServiceLogicException {
+//        if(checkExistByPhoneNum(dto.getAreaCode(),dto.getLocalNumber())==true){
+//            throw new RuntimeException("이미 가입한 휴대폰 번호입니다");
+//        }
+//        else{
+//            return requestSmsAuth(dto);
+//        }
+//    }
 
     /*휴대폰 번호 변경
      * - dto에 들은 phoneAuth가 인증이된건지 확인 후, token에 해당하는 멤버의 번호를 변경해준다.*/

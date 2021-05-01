@@ -16,11 +16,17 @@ public interface PhoneAuthRepository extends JpaRepository<PhoneAuth, Long> {
 
     PhoneAuth findByPhoneNumber(PhoneNumber pNum);
 
-    @Query("select a from PhoneAuth a where a.phoneNumber.areaCode = :areaCode and a.phoneNumber.localNumber = :localNumber")
-    PhoneAuth findByAreaCodeAndLocalNumber(@Param("areaCode") String areaCode, @Param("localNumber") String localNumber);
-
-
-
+    @Query(value = "select * from phone_auth a " +
+            "where a.areacode = :areaCode " +
+            "   and a.localnumber = :localNumber " +
+            "   and a.is_certified = false " +
+            "order by a.created_date desc limit 1",
+            nativeQuery = true
+    )
+    PhoneAuth getLastPhoneAuth(
+            @Param("areaCode") String areaCode,
+            @Param("localNumber") String localNumber
+    );
 
 
 }

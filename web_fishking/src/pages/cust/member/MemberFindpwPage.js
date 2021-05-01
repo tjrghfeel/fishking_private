@@ -46,6 +46,7 @@ export default inject(
             areaCode: mobile.substr(0, 3),
             localNumber: mobile.substr(3, mobile.length),
           });
+        ModalStore.openModal("Alert", { body: "인증번호가 발송되었습니다" });
           this.setState({ codeId });
           // const findInfo = await APIStore._put("/v2/api/findPw/uid", {
           //   phoneAuthId: codeId,
@@ -55,13 +56,18 @@ export default inject(
           //   userId: findInfo.uid,
           // });
         } catch (err) {
-          ModalStore.openModal("Alert", { body: "휴대폰번호를 확인해주세요." });
+            if(err.response.data.msg !== undefined){
+                ModalStore.openModal("Alert", { body: err.response.data.msg })
+            }
+            else {
+                ModalStore.openModal("Alert", {body: "등록되어있지 않은 휴대폰 번호입니다"});
+            }
           return;
         }
       };
 
       requestValid = async () => {
-        const { APIStore } = this.props;
+        const { APIStore, ModalStore } = this.props;
         const { code: authNum, codeId: phoneAuthId } = this.state;
 
         if (authNum === "" || phoneAuthId === "") {
@@ -85,6 +91,9 @@ export default inject(
                 userName: findInfo.memberName,
                 userId: findInfo.uid,
             });
+        }
+        else{
+            ModalStore.openModal("Alert", { body: "인증번호를 확인해 주십시오" });
         }
       };
 

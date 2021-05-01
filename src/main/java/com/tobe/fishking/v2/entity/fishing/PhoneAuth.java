@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.entity.fishing;
 
+import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.common.PhoneNumber;
 import com.tobe.fishking.v2.service.StringConverter;
 import lombok.*;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Table(name = "phone_auth")
-public class PhoneAuth {
+public class PhoneAuth extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

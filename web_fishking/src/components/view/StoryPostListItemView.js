@@ -131,7 +131,7 @@ export default inject("DataStore")(
                 className="nav-link"
                 onClick={() => (onClickComment ? onClickComment(data) : null)}
               >
-                <span className="icon icon-comment"></span>댓글쓰기
+                <span className="icon icon-comment"></span>댓글
               </a>
             )}
             {showScrapIcon && (
