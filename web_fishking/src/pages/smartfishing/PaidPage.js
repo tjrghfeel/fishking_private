@@ -86,7 +86,7 @@ export default inject(
                     src="/assets/smartfishing/img/svg/icon-alarm.svg"
                     alt="알림내역"
                   />
-                  {this.state.alertCount > 0 && <strong>{this.state.alertCount}</strong>}
+                  {this.state.alertCount > 0 && <strong>N</strong>}
                   <span className="sr-only">알림내역</span>
                 </a>
               }

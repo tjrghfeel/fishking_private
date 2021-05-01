@@ -81,8 +81,11 @@ public class PayService {
                         OrderDetails orderDetails = orderDetailsRepository.findByOrders(order);
                         Member member = order.getCreatedBy();
                         Goods goods = orderDetails.getGoods();
+                        Ship ship = goods.getShip();
                         GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
                         order.paid(member, trno);
+
+                        String sentence;
                         if (goods.getReserveType() == ReserveType.auto) {
                             if (orderDetails.getPersonnel() <= (goods.getMaxPersonnel() - goodsFishingDate.getReservedNumber())) {
                                 order.changeStatus(OrderStatus.bookConfirm);
@@ -91,8 +94,13 @@ public class PayService {
                                 order.changeStatus(OrderStatus.waitBook);
                                 goodsFishingDate.addWaitNumber(orderDetails.getPersonnel());
                             }
+                            sentence = ship.getShipName() + "의 " + order.getFishingDate() + " " + goods.getName() + "상품에 \n"
+                                    + "예약 접수가 있습니다.";
                         } else {
                             order.changeStatus(OrderStatus.bookRunning);
+                            sentence = ship.getShipName() + "의 " + order.getFishingDate() + " " + goods.getName() + "상품에 \n"
+                                    + "예약 접수가 있습니다."
+                                    + "해당 상품은 선장 확인 후 예약확정되므로 예약내역 확인 후 승인해 주셔야 합니다.";
                         }
                         ordersRepository.save(order);
                         goodsFishingDateRepository.save(goodsFishingDate);
@@ -109,13 +117,10 @@ public class PayService {
                                 .isCancel(false)
                                 .build();
                         calculateRepository.save(calculate);
-                        Ship ship = goods.getShip();
                         ship.addSell(member);
                         shipRepository.save(ship);
 
                         String title = "예약알림";
-                        String sentence = ship.getShipName() + "의 " + order.getFishingDate() + " " + goods.getName() + "상품에 \n"
-                                + "예약 접수가 있습니다.";
                         makeAlert(order, ship, title, sentence, false);
 
                         return order.getId();

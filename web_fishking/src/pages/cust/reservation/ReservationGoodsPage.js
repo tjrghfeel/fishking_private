@@ -250,6 +250,12 @@ export default inject(
               <div className="fixed-bottom">
                 <div className="row no-gutters">
                   <div className="col-12">
+                    <h6>
+                      운행을 위한 취소 인원(정원)이 달성되지 않을 경우<br/>
+                      운행이 취소될 수 있습니다.
+                    </h6>
+                  </div>
+                  <div className="col-12">
                     <a
                       onClick={this.onSubmit}
                       className="btn btn-primary btn-lg btn-block"
