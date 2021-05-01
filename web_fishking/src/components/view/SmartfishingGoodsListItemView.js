@@ -60,6 +60,15 @@ export default inject()(
                         명 ~ 최대
                         {Intl.NumberFormat().format(data["maxPersonnel"] || 0)}
                         명
+                      </span>{" "}
+                      <span className="tag-grey">
+                        위치선정 {data["select"]}
+                      </span>{" "}
+                      <span className="tag-grey">
+                        {data["confirm"]}
+                      </span>{" "}
+                      <span className="tag-grey">
+                        추가운행 {data["extra"]}
                       </span>
                       <h6>{data["name"]}</h6>
                     </div>

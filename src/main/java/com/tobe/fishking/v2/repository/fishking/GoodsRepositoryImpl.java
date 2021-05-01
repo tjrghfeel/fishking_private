@@ -86,7 +86,10 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                         goods.minPersonnel,
                         goods.maxPersonnel,
                         goods.totalAmount,
-                        goods.isUse
+                        goods.isUse,
+                        goods.positionSelect,
+                        goods.reserveType,
+                        goods.extraRun
                 ))
                 .from(goods)
                 .where(goods.ship.id.eq(shipId), goods.name.containsIgnoreCase(keyword), eqStatus(status))
