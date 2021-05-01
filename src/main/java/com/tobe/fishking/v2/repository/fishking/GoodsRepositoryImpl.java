@@ -90,6 +90,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 ))
                 .from(goods)
                 .where(goods.ship.id.eq(shipId), goods.name.containsIgnoreCase(keyword), eqStatus(status))
+                .orderBy(goods.createdDate.desc())
                 .fetch();
         return results;
     }

@@ -329,64 +329,67 @@ public class FishingShipService {
         List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
         String cameraToken;
         String expTime;
-        if (allVideos.isEmpty()) {
-            Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
-            cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
-            expTime = (String) nhnCameraToken.get("expireTime");
-        } else {
-            cameraToken = allVideos.get(0).getToken();
-            expTime = allVideos.get(0).getExpireTime();
-        }
 
-        if (videos.isEmpty()) {
-            for (AddShipCamera addShipCamera : updateShipDTO.getNhnCameras()) {
-                cameraNum += 1;
-                RealTimeVideo video = RealTimeVideo.builder()
-                        .rNo(cameraNum)
-                        .member(member)
-                        .ship(ship)
-                        .name(addShipCamera.getName())
-                        .serial(addShipCamera.getSerial())
-                        .token(cameraToken)
-                        .expireTime(expTime)
-                        .type("toast")
-                        .build();
-                realTimeVideoRepository.save(video);
-            }
-        } else {
-            String serial = allVideos.get(0).getSerial();
-            List<AddShipCamera> newCameras = updateShipDTO.getNhnCameras();
-            List<String> newSerials;
-            if (newCameras == null) {
-                newCameras = new ArrayList<>();
-                newSerials = new ArrayList<>();
+        if (company.getNhnId() != null) {
+            if (allVideos.isEmpty()) {
+                Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
+                cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+                expTime = (String) nhnCameraToken.get("expireTime");
             } else {
-                newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+                cameraToken = allVideos.get(0).getToken();
+                expTime = allVideos.get(0).getExpireTime();
             }
-            for (RealTimeVideo v : videos) {
-                boolean use = newSerials.contains(v.getSerial());
-                if (use) {
-                    newSerials.remove(v.getSerial());
-                } else {
-                    v.setNotUse();
-                    v.updateToken(cameraToken, expTime);
-                    realTimeVideoRepository.save(v);
+
+            if (videos.isEmpty()) {
+                for (AddShipCamera addShipCamera : updateShipDTO.getNhnCameras()) {
+                    cameraNum += 1;
+                    RealTimeVideo video = RealTimeVideo.builder()
+                            .rNo(cameraNum)
+                            .member(member)
+                            .ship(ship)
+                            .name(addShipCamera.getName())
+                            .serial(addShipCamera.getSerial())
+                            .token(cameraToken)
+                            .expireTime(expTime)
+                            .type("toast")
+                            .build();
+                    realTimeVideoRepository.save(video);
                 }
-            }
-            for (AddShipCamera c : newCameras) {
-                if (newSerials.contains(c.getSerial())) {
-                    realTimeVideoRepository.save(
-                            RealTimeVideo.builder()
-                                    .rNo(cameraNum)
-                                    .member(member)
-                                    .ship(ship)
-                                    .name(c.getName())
-                                    .serial(c.getSerial())
-                                    .token(cameraToken)
-                                    .expireTime(expTime)
-                                    .type("toast")
-                                    .build()
-                    );
+            } else {
+                String serial = allVideos.get(0).getSerial();
+                List<AddShipCamera> newCameras = updateShipDTO.getNhnCameras();
+                List<String> newSerials;
+                if (newCameras == null) {
+                    newCameras = new ArrayList<>();
+                    newSerials = new ArrayList<>();
+                } else {
+                    newSerials = newCameras.stream().map(AddShipCamera::getSerial).collect(Collectors.toList());
+                }
+                for (RealTimeVideo v : videos) {
+                    boolean use = newSerials.contains(v.getSerial());
+                    if (use) {
+                        newSerials.remove(v.getSerial());
+                    } else {
+                        v.setNotUse();
+                        v.updateToken(cameraToken, expTime);
+                        realTimeVideoRepository.save(v);
+                    }
+                }
+                for (AddShipCamera c : newCameras) {
+                    if (newSerials.contains(c.getSerial())) {
+                        realTimeVideoRepository.save(
+                                RealTimeVideo.builder()
+                                        .rNo(cameraNum)
+                                        .member(member)
+                                        .ship(ship)
+                                        .name(c.getName())
+                                        .serial(c.getSerial())
+                                        .token(cameraToken)
+                                        .expireTime(expTime)
+                                        .type("toast")
+                                        .build()
+                        );
+                    }
                 }
             }
         }
@@ -424,7 +427,6 @@ public class FishingShipService {
                     newSerials.remove(v.getSerial());
                 } else {
                     v.setNotUse();
-                    v.updateToken(cameraToken, expTime);
                     realTimeVideoRepository.save(v);
                 }
             }
