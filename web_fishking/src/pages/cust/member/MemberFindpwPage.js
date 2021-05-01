@@ -59,7 +59,9 @@ export default inject(
             if(err.response.data.msg !== undefined){
                 ModalStore.openModal("Alert", { body: err.response.data.msg })
             }
-          ModalStore.openModal("Alert", { body: "등록되어있지 않은 휴대폰 번호입니다" });
+            else {
+                ModalStore.openModal("Alert", {body: "등록되어있지 않은 휴대폰 번호입니다"});
+            }
           return;
         }
       };
