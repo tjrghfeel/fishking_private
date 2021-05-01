@@ -177,6 +177,13 @@ export default inject(
             this.loadPageData(true);
           }
         };
+
+        clickWriteComment = ()=>{
+          const {PageStore} = this.props;
+          if (!PageStore.loggedIn) {
+            PageStore.push(`/member/login`);
+          }
+        }
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
@@ -285,6 +292,7 @@ export default inject(
                           accept="image/*"
                           style={{ display: "none" }}
                           onChange={this.uploadImage}
+                          onClick={this.clickWriteComment}
                         />
                         <a
                           className="float-photo"
@@ -307,6 +315,7 @@ export default inject(
                               this.onSubmit();
                             }
                           }}
+                          onClick={this.clickWriteComment}
                         />
                       </div>
                       <div className="col-2 text-center" style={{padding: '0'}}>
