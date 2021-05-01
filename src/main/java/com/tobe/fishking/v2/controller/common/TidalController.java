@@ -60,8 +60,12 @@ public class TidalController {
         if (shipId == null) {
             result.put("weather", "");
         } else {
-            ArrayList<String> weather = myMenuService.getWeather(shipService.getObserverCodeFromShip(shipId), date);
-            result.put("weather",  weather == null ? null : weather );
+            try {
+                ArrayList<String> weather = myMenuService.getWeather(shipService.getObserverCodeFromShip(shipId), date);
+                result.put("weather",  weather == null ? null : weather );
+            } catch (Exception e) {
+                result.put("weather", "");
+            }
         }
          return result;
     }
