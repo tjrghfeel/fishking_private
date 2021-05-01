@@ -242,7 +242,7 @@ export default inject(
               date: this.state.date,
             }
           );
-          console.log(JSON.stringify(resolve));
+          // console.log(JSON.stringify(resolve));
           if (resolve.selectPosition) {
             if (resolve.left < this.state.personCount) {
               const resolve2 = await APIStore._get(`/v2/api/usableCoupons`);
@@ -305,7 +305,10 @@ export default inject(
             ModalStore.openModal("Alert", { body: "위치를 선택해주세요." });
             return;
           }
-          if (this.state.positions.length !== this.state.personCount) {
+          // console.log(positions)
+          // console.log(this.state.personCount)
+          if (positions.length !== this.state.personCount) {
+            console.log("??")
             ModalStore.openModal("Alert", { body: "위치를 선택해주세요." });
             return;
           }
