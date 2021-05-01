@@ -33,6 +33,7 @@ import java.util.List;
 
 import static com.tobe.fishking.v2.entity.common.QLoveTo.loveTo;
 import static com.tobe.fishking.v2.entity.fishing.QGoods.goods;
+import static com.tobe.fishking.v2.entity.fishing.QGoodsFishingDate.goodsFishingDate;
 import static com.tobe.fishking.v2.entity.fishing.QOrderDetails.orderDetails;
 import static com.tobe.fishking.v2.entity.fishing.QRideShip.rideShip;
 import static com.tobe.fishking.v2.entity.fishing.QShip.ship;
@@ -50,15 +51,20 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         QueryResults<GoodsResponse> result = queryFactory
                 .select(Projections.constructor(GoodsResponse.class,
                         goods,
-                        ExpressionUtils.as(
-                                JPAExpressions
-                                        .select(orderDetails.personnel.sum())
-                                        .from(orderDetails)
-                                        .where(orderDetails.goods.id.eq(goods.id), orderDetails.orders.fishingDate.eq(DateUtils.getDateInFormat(date)))
-                                , countAlias)
+//                        ExpressionUtils.as(
+//                                JPAExpressions
+//                                        .select(orderDetails.personnel.sum())
+//                                        .from(orderDetails)
+//                                        .where(orderDetails.goods.id.eq(goods.id), orderDetails.orders.fishingDate.eq(DateUtils.getDateInFormat(date)))
+//                                , countAlias)
+                        goodsFishingDate.reservedNumber
                 ))
-                .from(goods)
-                .where(goods.ship.id.eq(ship_id), goods.isUse.eq(true), goods.fishingDates.any().fishingDate.eq(date))
+                .from(goods).join(goodsFishingDate).on(goods.eq(goodsFishingDate.goods))
+                .where(goods.ship.id.eq(ship_id),
+                        goods.isUse.eq(true),
+                        goods.fishingDates.any().fishingDate.eq(date),
+                        goodsFishingDate.fishingDate.eq(date)
+                )
                 .fetchResults();
         return result.getResults();
     }

@@ -217,14 +217,17 @@ public class FishkingScheduler {
         popularService.updatePopularKeyword();
     }
 
-    @Scheduled(cron = "0 30 0 * * ?")
+    @Scheduled(cron = "0 10 * * * ?")
     public void confirmOrder() throws IOException {
         Member manager = memberService.getMemberById(16L);
-        String now = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDateTime targetDate = LocalDateTime.now().minusHours(12L);
 
-        List<Orders> confirm = ordersRepository.getOrderByStatus(now, OrderStatus.bookConfirm);
-        List<Orders> wait = ordersRepository.getOrderByStatus(now, OrderStatus.waitBook);
-        List<Orders> running = ordersRepository.getOrderByStatus(now, OrderStatus.bookRunning);
+        String now = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
+
+        List<Orders> confirm = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookConfirm);
+        List<Orders> wait = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.waitBook);
+        List<Orders> running = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookRunning);
 
         List<Orders> copied = new ArrayList<>(confirm);
         copied.addAll(wait);
@@ -316,7 +319,9 @@ public class FishkingScheduler {
             }
             int idx = goodsList.indexOf(g);
             String title = "시스템 예약확정";
-            String sentence = g.getShip().getShipName() + "의 " + now + " " + g.getName() + "상품의 \n"
+            String sentence = g.getShip().getShipName() + "의 " + now + " "
+                    + g.getFishingStartTime().substring(0,2) + ":" + g.getFishingStartTime().substring(2,4)
+                    + g.getName() + "상품의 \n"
                     + "시스템예약확정시점이 도래하여 예약확정 " + confirmCounts[idx] + "건,\n"
                     + "예약취소 " + cancelCounts[idx] + "건이 발생하였습니다.";
             AlertType type = AlertType.systemConfirm;

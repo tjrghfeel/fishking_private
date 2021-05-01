@@ -13,6 +13,7 @@ export default inject()(
         distance = 0,
         fishingDate,
         ordersNum,
+        personnel,
       },
       data,
       onClick, // 상세
@@ -53,7 +54,13 @@ export default inject()(
           <div className="card-round-grey">
             <span className={ordersStatusClassName}>{ordersStatus}</span>
             {(ordersStatus === "예약 확정" || ordersStatus === "예약 완료") && (
-              <span className="dday">D{fishingDate.dday()}</span>
+              <React.Fragment>
+                <span className="dday">D{fishingDate.dday()}</span>
+                <span className="dday" style={{top: '54px'}}>{personnel} 명</span>
+              </React.Fragment>
+            )}
+            {!(ordersStatus === "예약 확정" || ordersStatus === "예약 완료") && (
+              <span className="dday">{personnel} 명</span>
             )}
             <a onClick={() => (onClick ? onClick(data) : null)}>
               <div className="card card-sm">
@@ -66,6 +73,7 @@ export default inject()(
                       <h6>{shipName}</h6>
                       <p>
                         <strong>{fishingType}</strong>
+                        <br />
                         <br />
                         <span className="grey">{sigungu}</span>
                       </p>

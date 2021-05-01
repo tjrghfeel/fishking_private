@@ -15,6 +15,7 @@ import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
+import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.FilesDTO;
@@ -75,6 +76,7 @@ public class ShipService {
     private final CouponMemberRepository couponMemberRepository;
     private final CompanyRepository companyRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final GoodsFishingDateRepository goodsFishingDateRepository;
 
 
     /*
@@ -334,6 +336,8 @@ public class ShipService {
             return getGoodsDatePositionsSeaRock(goods_id, date);
         } else {
             List<OrderDetails> orders = orderDetailsRepository.getByGoodsAndDate(goods, date);
+            GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), date);
+
             List<String> availablePositions = new ArrayList<>();
             List<String> usedPositions = new ArrayList<>();
             availablePositions = Arrays.asList(goods.getShip().getPositions().split(",").clone());
@@ -344,6 +348,9 @@ public class ShipService {
             result.put("used", usedPositions);
             result.put("total", availablePositions);
             result.put("type", goods.getShip().getWeight());
+            result.put("selectPosition", goods.getPositionSelect());
+            result.put("left", goods.getMaxPersonnel() - goodsFishingDate.getReservedNumber());
+//            result.put("left", 0);
             result.put("rockData", null);
             return result;
         }

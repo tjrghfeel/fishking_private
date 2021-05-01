@@ -37,9 +37,9 @@ export default inject()(
             <div className="col-7">
               <h6>{name}</h6>
               <span className="tag">
-                남은수{" "}
-                {Intl.NumberFormat().format(maxPersonnel - reservationPersonal)}
-                명
+                { maxPersonnel - reservationPersonal > 0
+                  ? '남은 수 ' + Intl.NumberFormat().format(maxPersonnel - reservationPersonal) +'명'
+                  : "대기자예약"}
               </span>
               <ul className="list">
                 <li>

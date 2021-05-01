@@ -218,6 +218,7 @@ public class MyMenuController {
             "   orderStatus : 예약상태 / book(\"예약 대기\"), waitBook(\"대기자 예약\"), bookFix(\"예약 확정\"), bookCancel(\"예약 취소\")," +
             "    fishingComplete(\"출조 완료\"), bookConfirm(\"예약 완료\")\n" +
             "   fishingDate : 낚시일\n" +
+            "   personnel : 예약인원\n" +
             "   ordersNum : 예약번호")
     @GetMapping("/myOrdersList/{page}")
     public Page<OrdersDtoForPage> getMyOrdersList(

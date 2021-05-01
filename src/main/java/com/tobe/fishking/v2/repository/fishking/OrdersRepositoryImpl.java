@@ -237,6 +237,16 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
     }
 
     @Override
+    public List<Orders> getOrderByStatusForScheduler(String date, String time, OrderStatus status) {
+        return queryFactory
+                .selectFrom(orders)
+                .where(orders.fishingDate.eq(date),
+                        orders.orderStatus.eq(status),
+                        orders.goods.fishingStartTime.substring(0,2).eq(time))
+                .fetch();
+    }
+
+    @Override
     public List<OrderDetails> getNextOrders(Integer personnel, Goods good, String fishingDate) {
         return queryFactory
                 .select(orderDetails)

@@ -223,6 +223,14 @@ public class PostControllerTest {
         }
     }
 
+    @Test
+    public void timeParse() {
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+//        System.out.println(time.substring(0,2) + ":" + time.substring(2,4));
+        List<Orders> orders = ordersRepository.getOrderByStatusForScheduler("2021-04-26", "23", OrderStatus.waitBook);
+        System.out.println(orders);
+    }
+
     @Transactional
     public void updateMember() throws ResourceNotFoundException {
         Member member = memberRepository.findById(20L)

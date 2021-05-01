@@ -243,18 +243,54 @@ export default inject(
             }
           );
           console.log(JSON.stringify(resolve));
-          this.setState({
-            boat: resolve,
-            personsName,
-            personsPhone,
-            emergencyPhone,
-            personsBirthdate,
-            step: 3,
-          });
+          if (resolve.selectPosition) {
+            if (resolve.left < this.state.personCount) {
+              const resolve2 = await APIStore._get(`/v2/api/usableCoupons`);
+              this.setState({
+                boat: resolve,
+                personsName,
+                personsPhone,
+                emergencyPhone,
+                personsBirthdate,
+                step: 4,
+                positions: [],
+                coupons: resolve2,
+                couponId: 0,
+                discountPrice: 0,
+                totalPrice: this.state.goodsPrice * this.state.personCount,
+                paymentPrice: this.state.goodsPrice * this.state.personCount,
+              });
+            } else {
+              this.setState({
+                boat: resolve,
+                personsName,
+                personsPhone,
+                emergencyPhone,
+                personsBirthdate,
+                step: 3,
+              });
+            }
+          } else {
+            const resolve2 = await APIStore._get(`/v2/api/usableCoupons`);
+            this.setState({
+              boat: resolve,
+              personsName,
+              personsPhone,
+              emergencyPhone,
+              personsBirthdate,
+              step: 4,
+              positions: [],
+              coupons: resolve2,
+              couponId: 0,
+              discountPrice: 0,
+              totalPrice: this.state.goodsPrice * this.state.personCount,
+              paymentPrice: this.state.goodsPrice * this.state.personCount,
+            });
+          }
         } else if (this.state.step === 3) {
           // >>>>> Step-3 :: validate
           const { ModalStore } = this.props;
-          const positions = this.state.positions || [];
+          const positions = [];
           // # 선상 위치 선택인 경우
           if (this.state.boat?.type !== null) {
             const selected = this.ship.current?.selected;
@@ -269,6 +305,11 @@ export default inject(
             ModalStore.openModal("Alert", { body: "위치를 선택해주세요." });
             return;
           }
+          if (this.state.positions.length !== this.state.personCount) {
+            ModalStore.openModal("Alert", { body: "위치를 선택해주세요." });
+            return;
+          }
+
           // >>>>> Step-4 :: prepare
           const resolve = await APIStore._get(`/v2/api/usableCoupons`);
           await this.setState({

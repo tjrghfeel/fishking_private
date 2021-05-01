@@ -3,6 +3,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
+import PageStore from "../../../stores/PageStore";
 const {
   LAYOUT: { NavigationLayout },
   MODAL: { ConfirmReservationCancelModal, SelectReservationCancelReasonModal },
@@ -34,7 +35,18 @@ export default inject(
               params: { id: ordersId },
             },
             APIStore,
+            ModalStore,
+            PageStore,
           } = this.props;
+          if (ordersId < 0) {
+            ModalStore.openModal("Alert",
+              {
+                body: "결제가 취소되었습니다."
+              });
+            PageStore.push('/reservation/my');
+            return
+          }
+
           const resolve = await APIStore._get("/v2/api/OrdersDetail", {
             ordersId,
           });
@@ -454,7 +466,7 @@ export default inject(
                     </div>
                     <p className="mt-1">
                       <small className="red">
-                        해당 상품은 출항 2일전까지만 취소 가능합니다.{" "}
+                        해당 상품은 출항 12시간 전까지만 취소 가능합니다.{" "}
                       </small>
                     </p>
                     <br />

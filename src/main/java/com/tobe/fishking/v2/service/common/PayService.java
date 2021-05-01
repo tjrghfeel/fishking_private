@@ -86,7 +86,7 @@ public class PayService {
                         order.paid(member, trno);
 
                         String sentence;
-                        if (goods.getReserveType() == ReserveType.auto) {
+                        if (goods.getReserveType().equals(ReserveType.auto)) {
                             if (orderDetails.getPersonnel() <= (goods.getMaxPersonnel() - goodsFishingDate.getReservedNumber())) {
                                 order.changeStatus(OrderStatus.bookConfirm);
                                 goodsFishingDate.addReservedNumber(orderDetails.getPersonnel());
@@ -99,7 +99,7 @@ public class PayService {
                         } else {
                             order.changeStatus(OrderStatus.bookRunning);
                             sentence = ship.getShipName() + "의 " + order.getFishingDate() + " " + goods.getName() + "상품에 \n"
-                                    + "예약 접수가 있습니다."
+                                    + "예약 접수가 있습니다.\n"
                                     + "해당 상품은 선장 확인 후 예약확정되므로 예약내역 확인 후 승인해 주셔야 합니다.";
                         }
                         ordersRepository.save(order);

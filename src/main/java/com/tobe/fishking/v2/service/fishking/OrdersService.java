@@ -3,10 +3,7 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.fishing.OrderDetails;
-import com.tobe.fishking.v2.entity.fishing.Orders;
-import com.tobe.fishking.v2.entity.fishing.RideShip;
-import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
@@ -51,6 +48,7 @@ public class OrdersService {
     private final RideShipRepository rideShipRepo;
     private final ShipRepository shipRepository;
     private final CalculateRepository calculateRepository;
+    private final GoodsFishingDateRepository goodsFishingDateRepository;
 
 
     private static ModelMapper modelMapper = new ModelMapper();
@@ -112,10 +110,15 @@ public class OrdersService {
     public boolean confirmOrder(Long orderId) {
         try {
             Orders orders = ordersRepository.getOne(orderId);
+            OrderDetails orderDetails = orderDetailsRepo.findByOrders(orders);
             OrderStatus orderStatus = orders.getOrderStatus();
+            Goods goods = orders.getGoods();
+            GoodsFishingDate goodsFishingDate = goodsFishingDateRepository
+                    .findByGoodsIdAndDateString(goods.getId(), orders.getFishingDate());
             if (orderStatus.equals(OrderStatus.bookRunning)) {
                 orders.changeStatus(OrderStatus.bookConfirm);
                 ordersRepository.save(orders);
+                goodsFishingDate.addReservedNumber(orderDetails.getPersonnel());
                 return true;
             } else {
                 return false;
