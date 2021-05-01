@@ -53,13 +53,25 @@ export default inject()(
                     <div className="col-6">
                       <span className="tag-orange">
                         출발 {data["fishingStartTime"]}~
-                      </span>{" "}
+                      </span>
+                      <br/>
                       <span className="tag-grey">
                         최소
                         {Intl.NumberFormat().format(data["minPersonnel"] || 0)}
                         명 ~ 최대
                         {Intl.NumberFormat().format(data["maxPersonnel"] || 0)}
                         명
+                      </span>
+                      <br/>
+                      <span className="tag-grey">
+                        위치선정 {data["select"]}
+                      </span>{" "}
+                      <span className="tag-grey">
+                        {data["confirm"]}
+                      </span>
+                      <br/>
+                      <span className="tag-grey">
+                        추가운행 {data["extra"]}
                       </span>
                       <h6>{data["name"]}</h6>
                     </div>

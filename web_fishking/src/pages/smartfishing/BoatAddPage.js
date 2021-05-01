@@ -846,7 +846,8 @@ export default inject(
                     </a>
                   </span>
                   <label htmlFor="InputGPrice" className="d-block">
-                    이벤트 <strong className="required"></strong>
+                    이벤트
+                    {/*<strong className="required"></strong>*/}
                   </label>
                   {this.state.events.map((data, index) => (
                     <React.Fragment key={index}>

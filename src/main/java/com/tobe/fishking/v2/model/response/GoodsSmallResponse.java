@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.model.response;
 
 import com.querydsl.core.annotations.QueryProjection;
+import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,9 @@ public class GoodsSmallResponse {
     private Integer maxPersonnel;
     private Integer amount;
     private String status;
+    private String select;
+    private String confirm;
+    private String extra;
 
     @QueryProjection
     public GoodsSmallResponse(Long id,
@@ -25,7 +29,10 @@ public class GoodsSmallResponse {
                               Integer minPersonnel,
                               Integer maxPersonnel,
                               Integer amount,
-                              Boolean status) {
+                              Boolean status,
+                              Boolean select,
+                              ReserveType confirm,
+                              Boolean add) {
         this.id = id;
         this.name = name;
         this.fishingStartTime = fishingStartTime;
@@ -33,6 +40,9 @@ public class GoodsSmallResponse {
         this.maxPersonnel = maxPersonnel;
         this.amount = amount;
         this.status = status ? "판매" : "판매중지";
+        this.select = select ? "ON" : "OFF";
+        this.confirm = confirm.getValue();
+        this.extra = add ? "ON" : "OFF";
     }
 
 }

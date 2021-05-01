@@ -376,8 +376,8 @@ export default inject(
                               : "".concat(data).concat("00")
                           }
                         >
-                          {data < 12 ? "오전" : "오후"}
                           {data}시
+                          {data < 12 ? "(오전)" : "(오후)"}
                         </option>
                       ))}
                     </select>
