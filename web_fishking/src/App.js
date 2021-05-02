@@ -21,7 +21,7 @@ Date.prototype.toString = function () {
       ? "0".concat(this.getMonth() + 1)
       : this.getMonth() + 1;
   const date =
-    this.getDate() + 1 < 10 ? "0".concat(this.getDate()) : this.getDate();
+    this.getDate() /*+ 1*/ < 10 ? "0".concat(this.getDate()) : this.getDate();
   let week = this.getDay();
   switch (week) {
     case 0:
