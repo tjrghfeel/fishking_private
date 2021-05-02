@@ -18,10 +18,11 @@ export default inject(
       constructor(props) {
         super(props);
         this.selTideModal = React.createRef(null);
+        let observerId = localStorage.getItem("myMenuTideObserverCode");
         this.state = {
           tabActive: 0,
           date: new Date(),
-          location: null,
+          location: (observerId!== null)? {observerId:observerId} : null,
           arr_150: [], // 오늘의 물때정보 > 알림 목록
           arr_158: [], // 날짜별 물때정보 > 알림 목록
           arr_159: [], // 날짜별 물때정보 > 알림 목록
@@ -61,6 +62,7 @@ export default inject(
             sav_160: arr_160,
           });
         }
+        if(this.state.location !== null){this.onSelectedTideArea(false);}
       }
       onSelectedTideArea = async (item) => {
         await this.setState({
@@ -77,6 +79,9 @@ export default inject(
         let observerId = null;
         if (item) observerId = item.observerId;
         else observerId = this.state.location?.observerId;
+
+        localStorage.setItem("myMenuTideObserverCode", observerId);
+
         if (observerId === null) return;
         if (this.state.tabActive === 0) {
           // 오늘의 -
