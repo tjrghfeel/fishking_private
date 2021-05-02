@@ -159,7 +159,7 @@ export default inject(
                 </span>
               }
               customButton={
-                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alarmType=f')}>
+                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alertType=f')}>
                   <img
                     src="/assets/smartfishing/img/svg/icon-alarm.svg"
                     alt="알림내역"

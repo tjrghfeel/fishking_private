@@ -9,6 +9,7 @@ import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Calculate;
 import com.tobe.fishking.v2.entity.fishing.Goods;
+import com.tobe.fishking.v2.entity.fishing.GoodsFishingDate;
 import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AlertType;
@@ -27,6 +28,7 @@ import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.repository.fishking.CalculateRepository;
+import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
 import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.AlertService;
@@ -63,6 +65,7 @@ public class FishkingScheduler {
     private final CodeGroupRepository codeGroupRepository;
     private final CommonCodeRepository commonCodeRepository;
     private final RegistrationTokenRepository registrationTokenRepository;
+    private final GoodsFishingDateRepository goodsFishingDateRepository;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
@@ -228,6 +231,7 @@ public class FishkingScheduler {
         List<Orders> confirm = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookConfirm);
         List<Orders> wait = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.waitBook);
         List<Orders> running = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookRunning);
+        wait.addAll(running);
 
         List<Orders> copied = new ArrayList<>(confirm);
         copied.addAll(wait);
@@ -246,6 +250,11 @@ public class FishkingScheduler {
             AlertType type = AlertType.reservationComplete;
             Member receiver = o.getCreatedBy();
             Goods goods = o.getGoods();
+            GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), now);
+            if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {
+                wait.add(o);
+                continue;
+            }
             Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
             String alertTitle = "예약 확정 알림";
             String sentence = receiver.getMemberName() + "님 \n"
@@ -271,7 +280,6 @@ public class FishkingScheduler {
             }
         }
 
-        wait.addAll(running);
         for (Orders o : wait) {
             int goodsIdx = goodsList.indexOf(o.getGoods());
             cancelCounts[goodsIdx] += 1;
