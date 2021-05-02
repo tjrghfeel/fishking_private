@@ -114,7 +114,7 @@ public class SmartOrderController {
         return result;
     }
 
-    @ApiOperation(value = "예약 승인", notes = "예약 승인 {" +
+    @ApiOperation(value = "예약 거절", notes = "예약 거절 {" +
             "\n success: 성공여부" +
             "\n message: 메세지" +
             "\n }")
@@ -128,7 +128,7 @@ public class SmartOrderController {
         Map<String, Object> result = new HashMap<>();
         if (ordersService.cancelOrder(orderId, member)) {
             result.put("success", true);
-            result.put("message", "승인되었습니다.");
+            result.put("message", "거절되었습니다.");
         } else {
             result.put("success", false);
             result.put("message", "실패했습니다. 다시 시도해주세요.");

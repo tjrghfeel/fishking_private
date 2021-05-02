@@ -687,7 +687,7 @@ export default inject(
                         </div>
                         <div className="input-group-append">
                           <span className="input-group-text">
-                            2일 전 까지 인원이 차지 않는 경우 해당 선박 운행이
+                            12시간 전 까지 인원이 차지 않는 경우 해당 선박 운행이
                             취소됩니다.{" "}
                           </span>
                         </div>

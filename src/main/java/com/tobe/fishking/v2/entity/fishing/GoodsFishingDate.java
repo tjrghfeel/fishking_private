@@ -32,10 +32,10 @@ public class GoodsFishingDate extends BaseTime {
     @Column(columnDefinition = "varchar(10) comment '조업일 문자열' ")
     private String fishingDateString;
 
-    @Column(columnDefinition = "int comment '예약된 인원'")
+    @Column(columnDefinition = "int default 0 comment '예약된 인원'")
     private Integer reservedNumber;
 
-    @Column(columnDefinition = "int comment '대기중인 인원'")
+    @Column(columnDefinition = "int default 0 comment '대기중인 인원'")
     private Integer waitNumber;
 
 

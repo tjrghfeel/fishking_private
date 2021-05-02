@@ -52,20 +52,23 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
             "   o.order_status ordersStatus, " +
             "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
+            "   d.personnel personnel, " +
             "   o.order_number ordersNum " +
-            "from orders o, ship s, goods g " +
+            "from orders o, ship s, goods g, orders_details d " +
             "where o.created_by = :member " +
             "   and o.goods = g.id " +
             "   and g.goods_ship_id = s.id " +
+            "   and o.id = d.order_detail_orders_id " +
             "   and o.order_status = :orderStatus " +
             "   and o.is_pay = true " +
             "order by g.fishing_date desc ",
             countQuery = "select o.id " +
-                    "from orders o, ship s, goods g " +
+                    "from orders o, ship s, goods g, orders_details d " +
                     "where o.created_by = :member " +
                     "   and o.goods = g.id " +
                     "   and g.goods_ship_id = s.id " +
                     "   and o.order_status = :orderStatus " +
+                    "   and o.id = d.order_detail_orders_id " +
                     "order by g.fishing_date desc ",
             nativeQuery = true
     )
@@ -92,18 +95,21 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
             "   o.order_status ordersStatus, " +
             "   replace(o.fishing_date, '-', '') fishingDate, " +
             "   g.fishing_start_time fishingStartTime, " +
+            "   d.personnel personnel, " +
             "   o.order_number ordersNum " +
-            "from orders o, ship s, goods g " +
+            "from orders o, ship s, goods g, orders_details d " +
             "where o.created_by = :member " +
             "   and o.goods = g.id " +
             "   and g.goods_ship_id = s.id " +
+            "   and o.id = d.order_detail_orders_id " +
             "   and o.is_pay = true " +
             "order by o.order_status asc, g.fishing_date desc ",
             countQuery = "select o.id " +
-                    "from orders o, ship s, goods g " +
+                    "from orders o, ship s, goods g, orders_details d " +
                     "where o.created_by = :member " +
                     "   and o.goods = g.id " +
                     "   and g.goods_ship_id = s.id " +
+                    "   and o.id = d.order_detail_orders_id " +
                     "order by o.order_status asc, g.fishing_date desc ",
             nativeQuery = true
     )

@@ -21,5 +21,6 @@ public interface OrdersDtoForPage {
     @Value("#{@mapperUtility.transFishingDate(target.fishingDate, target.fishingStartTime)}")
     String getFishingDate();
     String getOrdersNum();
+    Integer getPersonnel();
 
 }
