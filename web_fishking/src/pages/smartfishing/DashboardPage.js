@@ -25,6 +25,7 @@ export default inject(
           bookRunning: [],
           bookConfirm: [],
           alertCount: 0,
+          loaded: false,
         };
       }
       /********** ********** ********** ********** **********/
@@ -77,6 +78,7 @@ export default inject(
           `/v2/api/smartfishing/dashboard/bookConfirm`
         );
         this.setState({ bookConfirm: resolve });
+        this.setState({ loaded: true });
       };
       drawChart = (target, chartData = { text: "", value: "" }) => {
         const labels = [];
@@ -130,6 +132,27 @@ export default inject(
           onOk: async () => {
             const resolve = await APIStore._post(
               `/v2/api/order/confirm?orderId=${item.id}`
+            );
+            if (resolve && resolve.success) {
+              this.loadPageData();
+            }
+          },
+        });
+      };
+      onClickReject = async (item) => {
+        const { ModalStore, APIStore, DataStore } = this.props;
+        ModalStore.openModal("Confirm", {
+          title: "예약거부",
+          body: (
+            <React.Fragment>
+              예약거부 하시겠습니까?
+              <br />
+              예약거부시 예약이 취소됩니다.
+            </React.Fragment>
+          ),
+          onOk: async () => {
+            const resolve = await APIStore._post(
+              `/v2/api/order/cancel?orderId=${item.id}`
             );
             if (resolve && resolve.success) {
               this.loadPageData();
@@ -246,6 +269,30 @@ export default inject(
               </div>
             </div>
 
+            {(this.state.bookRunning?.length === 0 && this.state.loaded) && (
+              <React.Fragment>
+                <p className="space mt-2"></p>
+                <div className="container nopadding mt-2">
+                  <h5 className="mb-1">
+                    승인필요
+                    <span
+                      onClick={() =>
+                        PageStore.push(`/reservation?qStatus=bookRunning`)
+                      }
+                      style={{ float: "right" }}
+                    >
+                      더보기
+                    </span>
+                  </h5>
+                </div>
+                <div className="text-center w-100 mb-4">
+                  <span className="mt-5 mb-5"
+                        style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>
+                    승인 필요한 오늘예약이 없습니다.
+                  </span>
+                </div>
+              </React.Fragment>
+            )}
             {this.state.bookRunning?.length > 0 && (
               <React.Fragment>
                 <p className="space mt-2"></p>
@@ -268,8 +315,35 @@ export default inject(
                     data={data}
                     onClick={this.onClickItem1}
                     onClickApprove={this.onClickApproveItem1}
+                    onClickReject={this.onClickReject}
                   />
                 ))}
+              </React.Fragment>
+            )}
+
+            {(this.state.bookConfirm?.length === 0) && this.state.loaded && (
+              <React.Fragment>
+                <p className="space mt-2"></p>
+                <div className="container nopadding mt-2">
+                  <h5 className="mb-1">
+                    예약완료
+                    <span
+                      onClick={() =>
+                        PageStore.push(`/reservation?qStatus=bookConfirm`)
+                      }
+                      style={{ float: "right" }}
+                    >
+                      더보기
+                    </span>
+                  </h5>
+                </div>
+                <div className="text-center w-100 mb-4">
+                  <span className="mt-5 mb-5"
+                        style={{color: 'rgba(116,124,132,0.9)', fontWeight: 'normal'}}>
+                    예약완료된 오늘예약이 없습니다.
+                  </span>
+                </div>
+                <p className="space mt-2"></p>
               </React.Fragment>
             )}
 

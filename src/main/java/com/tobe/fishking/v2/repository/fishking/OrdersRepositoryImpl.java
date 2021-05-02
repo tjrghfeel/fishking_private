@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,8 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                 .where(
                         orders.orderStatus.eq(OrderStatus.bookRunning),
                         orders.isPay.eq(true),
-                        company.member.id.eq(memberId)
+                        company.member.id.eq(memberId),
+                        byTypeInt(1)
                 )
                 .orderBy(Expressions.asDate(orders.fishingDate).asc())
                 .limit(5)
@@ -112,6 +114,7 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
 
     @Override
     public List<OrderListResponse> getBookConfirm(Long memberId) {
+        String today = DateUtils.getDateInFormat(LocalDate.now());
         List<OrderListResponse> response = queryFactory
                 .select(new QOrderListResponse(
                         orders.id,
@@ -132,7 +135,8 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                 .where(
                         orders.orderStatus.eq(OrderStatus.bookConfirm),
                         orders.isPay.eq(true),
-                        company.member.id.eq(memberId)
+                        company.member.id.eq(memberId),
+                        byTypeInt(1)
                 )
                 .orderBy(orders.createdDate.desc())
                 .limit(5)
@@ -141,7 +145,7 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
     }
 
     @Override
-    public List<Tuple> getStatus(Long memberId) {
+    public List<Tuple> getStatus(Long memberId, int type) {
         List<Tuple> response = queryFactory
                 .select(
                         Expressions.as(orders.orderStatus, "status"),
@@ -153,12 +157,26 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                                 JPAExpressions
                                         .select(orders.id)
                                         .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company))
-                                        .where(orders.isPay.eq(true), company.member.id.eq(memberId))
+                                        .where(orders.isPay.eq(true), company.member.id.eq(memberId), byTypeInt(type))
                         )
                 )
                 .groupBy(orders.orderStatus)
                 .fetch();
         return response;
+    }
+
+    // type: 1 오늘 들어온 예약
+    // type: 2 오늘 출조하는 예약
+    private BooleanExpression byTypeInt(int type) {
+        if (type == 1) {
+            return orders.createdDate.between(
+                    LocalDate.now().minusDays(1L).atTime(23,59, 59),
+                    LocalDate.now().plusDays(1L).atTime(0,0));
+        } else if (type == 2) {
+            return orders.fishingDate.eq(DateUtils.getDateInFormat(LocalDate.now()));
+        } else {
+            return null;
+        }
     }
 
     @Override

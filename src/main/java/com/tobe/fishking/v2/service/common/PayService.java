@@ -40,6 +40,8 @@ public class PayService {
     private final MemberService memberService;
     private final RegistrationTokenRepository registrationTokenRepository;
 
+    private final String url = "https://fcm.googleapis.com/fcm/send";
+
     public Long payResult(String rcid, String rctype, String rhash, String rcancel) throws IOException {
         /* rcid 없으면 결제를 끝까지 진행하지 않고 중간에 결제취소 */
         String	authyn =  "";
@@ -310,7 +312,20 @@ public class PayService {
         AlertType type = AlertType.reservationCompleteCompany;
         if (cancel) {
             type = AlertType.reservationCancelCompany;
+
+            // 취소시엔 고객에게도 메세지
+            AlertType ctype = AlertType.reservationCancel;
+            Goods goods = order.getGoods();
+            String ctitle = "예약 접수 알림";
+            String csentence = order.getCreatedBy().getMemberName() + "님 \n"
+                    + ship.getShipName() + "의 \n"
+                    + order.getFishingDate() + " "
+                    + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2)
+                    + "의 출조상품이\n"
+                    + ctype.getMessage();
+            sendPushAlertToCustomer(ctitle, csentence, order.getCreatedBy(), order.getId());
         }
+
         Member receiver = ship.getCompany().getMember();
         List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
         Alerts alerts = Alerts.builder()
@@ -331,7 +346,6 @@ public class PayService {
     }
 
     private void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {
-        String url = "https://fcm.googleapis.com/fcm/send";
         Map<String,String> parameter = new HashMap<>();
         parameter.put("json",
                 "{ \"notification\": " +
@@ -345,5 +359,42 @@ public class PayService {
         memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
         alerts.sent();
         alertsRepository.save(alerts);
+    }
+
+    private void sendPushAlertToCustomer(String alertTitle, String alertContent, Member receiver, Long orderId) throws IOException {
+        Member manager = memberService.getMemberById(16L);
+
+        AlertType type = AlertType.reservationCancel;
+        Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+
+        Alerts alerts = Alerts.builder()
+                .alertType(type)
+                .entityType(EntityType.orders)
+                .pid(orderId)
+                .content(null)
+                .sentence(alertContent)
+                .isRead(false)
+                .isSent(false)
+                .receiver(receiver)
+                .alertTime(LocalDateTime.now())
+                .createdBy(manager)
+                .type("c")
+                .build();
+        alerts = alertsRepository.save(alerts);
+        for (RegistrationToken item: registrationTokenList) {
+            Map<String,String> parameter = new HashMap<>();
+            parameter.put("json",
+                    "{ \"notification\": " +
+                            "{" +
+                            "\"title\": \"["+alertTitle+"]\", " +
+                            "\"body\": \""+alertContent+"\", " +
+                            "\"android_channel_id\": \"notification.native_smartfishing\"" +
+                            "}," +
+                            "\"to\" : \""+item.getToken()+"\"" +
+                            "}");
+            memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
+            alerts.sent();
+            alertsRepository.save(alerts);
+        };
     }
 }
