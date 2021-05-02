@@ -168,6 +168,33 @@ export default inject(
           },
         });
       };
+      onClickReject = async (item) => {
+        const { ModalStore, APIStore, DataStore } = this.props;
+        ModalStore.openModal("Confirm", {
+          title: "예약거부",
+          body: (
+            <React.Fragment>
+              예약거부 하시겠습니까?
+              <br />
+              예약거부시 예약이 취소됩니다.
+            </React.Fragment>
+          ),
+          onOk: async () => {
+            const resolve = await APIStore._post(
+              `/v2/api/order/cancel?orderId=${item.id}`
+            );
+            if (resolve && resolve.success) {
+              const list = DataStore.updateItemOfArrayByKey(
+                PageStore.state.list,
+                "orderNumber",
+                item.orderNumber,
+                { status: "예약 취소" }
+              );
+              PageStore.setState({ list });
+            }
+          },
+        });
+      };
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -189,7 +216,7 @@ export default inject(
             <NavigationLayout
               title={"예약관리"}
               customButton={
-                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alarmType=f')}>
+                <a className="fixed-top-right new" onClick={() => PageStore.push('/cust/cs/alarm?alertType=f')}>
                   <img
                     src="/assets/smartfishing/img/svg/icon-alarm.svg"
                     alt="알림내역"
@@ -354,6 +381,7 @@ export default inject(
                   data={data}
                   onClick={this.onClick}
                   onClickApprove={this.onClickApprove}
+                  onClickReject={this.onClickReject}
                 />
               ))}
           </React.Fragment>

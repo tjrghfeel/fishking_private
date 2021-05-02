@@ -26,7 +26,7 @@ public interface OrdersRepositoryCustom {
     OrderDetailResponse orderDetail(Long orderId);
     List<OrderListResponse> getBookRunning(Long memberId);
     List<OrderListResponse> getBookConfirm(Long memberId);
-    List<Tuple> getStatus(Long memberId);
+    List<Tuple> getStatus(Long memberId, int type);
     List<Orders> getOrderByStatus(String date, OrderStatus status);
     List<Orders> getOrderByStatusForScheduler(String date, String time, OrderStatus status);
     List<OrderDetails> getNextOrders(Integer personnel, Goods good, String fishingDate);

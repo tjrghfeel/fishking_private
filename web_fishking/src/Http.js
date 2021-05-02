@@ -5,7 +5,7 @@ import React from "react";
 /** 공통 설정 */
 const http = axios.create({
   baseURL: process.env.REACT_APP_HTTP_BASE_URL,
-  // baseURL: 'http://127.0.0.1:8082',
+  // baseURL: 'http://127.0.0.1:8083',
 });
 
 http.defaults.headers.common["Authorization"] =

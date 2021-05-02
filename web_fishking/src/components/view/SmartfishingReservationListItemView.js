@@ -19,6 +19,7 @@ export default inject()(
       data,
       onClick,
       onClickApprove,
+       onClickReject,
     }) => {
       return (
         <div className="container nopadding mt-2">
@@ -79,6 +80,14 @@ export default inject()(
                       className="btn btn-primary btn-sm"
                     >
                       예약승인
+                    </a>
+                    <a
+                      onClick={() =>
+                        onClickReject ? onClickReject(data) : null
+                      }
+                      className="btn btn-grey btn-sm mt-4"
+                    >
+                      예약거부
                     </a>
                   </div>
                 )}

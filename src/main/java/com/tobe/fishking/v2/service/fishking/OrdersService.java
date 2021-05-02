@@ -3,7 +3,11 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.auth.RegistrationToken;
+import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.entity.fishing.*;
+import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
@@ -14,7 +18,10 @@ import com.tobe.fishking.v2.model.response.OrderDetailResponse;
 import com.tobe.fishking.v2.model.response.OrderListResponse;
 import com.tobe.fishking.v2.model.smartfishing.CalculateDetailResponse;
 import com.tobe.fishking.v2.model.smartfishing.CalculateResponse;
+import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
+import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.service.common.PayService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
@@ -25,11 +32,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.tobe.fishking.v2.repository.fishking.specs.OrderDetailsSpecs.fishingDate;
@@ -43,12 +52,15 @@ public class OrdersService {
 
     private final Environment env;
 
+    private final MemberService memberService;
+    private final PayService payService;
     private final OrdersRepository ordersRepository;
     private final OrderDetailsRepository orderDetailsRepo;
     private final RideShipRepository rideShipRepo;
     private final ShipRepository shipRepository;
     private final CalculateRepository calculateRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
+    private final AlertsRepository alertsRepository;
 
 
     private static ModelMapper modelMapper = new ModelMapper();
@@ -115,10 +127,19 @@ public class OrdersService {
             Goods goods = orders.getGoods();
             GoodsFishingDate goodsFishingDate = goodsFishingDateRepository
                     .findByGoodsIdAndDateString(goods.getId(), orders.getFishingDate());
+            Member receiver = orders.getCreatedBy();
             if (orderStatus.equals(OrderStatus.bookRunning)) {
                 orders.changeStatus(OrderStatus.bookConfirm);
                 ordersRepository.save(orders);
                 goodsFishingDate.addReservedNumber(orderDetails.getPersonnel());
+
+                AlertType type = AlertType.reservationConfirm;
+                String title = "예약 접수 알림";
+                String sentence = receiver.getMemberName() + "님 \n"
+                        + goods.getShip().getShipName() + "의 \n"
+                        + orders.getFishingDate() + " " + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2) + "의 출조상품 예약이\n"
+                        + type.getMessage();
+                sendPush(type, orderId, receiver, title, sentence);
                 return true;
             } else {
                 return false;
@@ -132,6 +153,7 @@ public class OrdersService {
     public boolean cancelOrder(Long orderId, Member member) {
         try {
             Orders orders = ordersRepository.getOne(orderId);
+            payService.cancelOrder(orderId, " ");
             orders.cancelled(member, "cancel"+ LocalDateTime.now().toString());
             ordersRepository.save(orders);
             return true;
@@ -143,18 +165,18 @@ public class OrdersService {
     @Transactional
     public List<OrderListResponse> getBookRunning(Long memberId) throws EmptyListException {
         List<OrderListResponse> response = ordersRepository.getBookRunning(memberId);
-        if (response.isEmpty()) {
-            throw new EmptyListException("결과리스트가 비어있습니다.");
-        }
+//        if (response.isEmpty()) {
+//            throw new EmptyListException("결과리스트가 비어있습니다.");
+//        }
         return response;
     }
 
     @Transactional
     public List<OrderListResponse> getBookConfirm(Long memberId) throws EmptyListException {
         List<OrderListResponse> response = ordersRepository.getBookConfirm(memberId);
-        if (response.isEmpty()) {
-            throw new EmptyListException("결과리스트가 비어있습니다.");
-        }
+//        if (response.isEmpty()) {
+//            throw new EmptyListException("결과리스트가 비어있습니다.");
+//        }
         return response;
     }
 
@@ -167,7 +189,11 @@ public class OrdersService {
         Long countCancel = 0L;
         Long countComplete = 0L;
 
-        List<Tuple> list = ordersRepository.getStatus(memberId);
+        // type: 1 오늘 들어온 예약
+        // type: 2 오늘 출조하는 예약
+        List<Tuple> list = ordersRepository.getStatus(memberId, 1);
+        List<Tuple> list2 = ordersRepository.getStatus(memberId, 2);
+        list.addAll(list2);
         for (Tuple tuple : list) {
             switch (tuple.get(0, OrderStatus.class)) {
                 case book:
@@ -251,4 +277,39 @@ public class OrdersService {
         return response;
     }
 
+    private void sendPush(AlertType type, Long orderId, Member receiver, String title, String sentence) throws IOException {
+        String url = "https://fcm.googleapis.com/fcm/send";
+        Member manager = memberService.getMemberById(16L);
+
+        Alerts alerts = Alerts.builder()
+                .alertType(type)
+                .entityType(EntityType.orders)
+                .pid(orderId)
+                .content(null)
+                .sentence(sentence)
+                .isRead(false)
+                .isSent(false)
+                .receiver(receiver)
+                .alertTime(LocalDateTime.now())
+                .createdBy(manager)
+                .build();
+        alerts = alertsRepository.save(alerts);
+
+        Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+        for(RegistrationToken item: registrationTokenList){
+            Map<String,String> parameter = new HashMap<>();
+            parameter.put("json",
+                    "{ \"notification\": " +
+                            "{" +
+                            "\"title\": \"["+title+"]\", " +
+                            "\"body\": \""+sentence+"\", " +
+                            "\"android_channel_id\": \"notification.native_fishking\"" +
+                            "}," +
+                            "\"to\" : \""+item.getToken()+"\"" +
+                            "}");
+            memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
+            alerts.sent();
+            alertsRepository.save(alerts);
+        }
+    }
 }

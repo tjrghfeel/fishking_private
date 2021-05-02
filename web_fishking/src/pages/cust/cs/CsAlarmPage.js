@@ -16,17 +16,12 @@ export default inject(
     class extends React.Component {
       constructor(props) {
         super(props);
-        this.state = {
-          alertType: null
-        }
       }
 
       /********** ********** ********** ********** **********/
       /** function */
       /********** ********** ********** ********** **********/
       componentDidMount() {
-        const qp = PageStore.getQueryParams();
-        this.setState({ alertType: qp.alertType })
         this.loadPageData();
       }
 
@@ -34,10 +29,11 @@ export default inject(
         const { APIStore, PageStore } = this.props;
 
         if (page > 0 && PageStore.state.isEnd) return;
-        console.log(this.state.alertType)
         PageStore.setState({ page });
+
+        const qp = PageStore.getQueryParams();
         let url = '/v2/api/alert/alertList'
-        if (this.state.alertType !== null) {
+        if (qp.alertType) {
           url = '/v2/api/alert/alertList?type=f'
         }
         const {

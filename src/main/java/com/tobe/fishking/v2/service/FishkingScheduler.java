@@ -7,9 +7,7 @@ import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.common.Alerts;
 import com.tobe.fishking.v2.entity.common.CodeGroup;
 import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.fishing.Calculate;
-import com.tobe.fishking.v2.entity.fishing.Goods;
-import com.tobe.fishking.v2.entity.fishing.Orders;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.enums.common.ChannelType;
@@ -27,6 +25,8 @@ import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.repository.common.CouponMemberRepository;
 import com.tobe.fishking.v2.repository.fishking.CalculateRepository;
+import com.tobe.fishking.v2.repository.fishking.GoodsFishingDateRepository;
+import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
 import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.AlertService;
@@ -58,11 +58,13 @@ public class FishkingScheduler {
     private final PostRepository postRepository;
     private final BoardRepository boardRepository;
     private final OrdersRepository ordersRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
     private final CalculateRepository calculateRepository;
     private final PayService payService;
     private final CodeGroupRepository codeGroupRepository;
     private final CommonCodeRepository commonCodeRepository;
     private final RegistrationTokenRepository registrationTokenRepository;
+    private final GoodsFishingDateRepository goodsFishingDateRepository;
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
@@ -218,6 +220,7 @@ public class FishkingScheduler {
     }
 
     @Scheduled(cron = "0 10 * * * ?")
+    @Transactional
     public void confirmOrder() throws IOException {
         Member manager = memberService.getMemberById(16L);
         LocalDateTime targetDate = LocalDateTime.now().minusHours(12L);
@@ -228,14 +231,48 @@ public class FishkingScheduler {
         List<Orders> confirm = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookConfirm);
         List<Orders> wait = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.waitBook);
         List<Orders> running = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookRunning);
+        wait.addAll(running);
 
         List<Orders> copied = new ArrayList<>(confirm);
         copied.addAll(wait);
         copied.addAll(running);
         List<Goods> goodsList = copied.stream().map(Orders::getGoods).distinct().collect(Collectors.toList());
+        List<Map<String, Object>> goodsExtraRunData = new ArrayList<>();
         int[] confirmCounts = new int[goodsList.size()];
         int[] cancelCounts = new int[goodsList.size()];
 
+        for (Goods g : goodsList) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("run", g.getExtraRun());
+            data.put("personnel", g.getExtraPersonnel());
+            data.put("ships", g.getExtraShipNumber());
+            data.put("adds", 0);
+            goodsExtraRunData.add(data);
+        }
+
+        for (Orders w : wait) {
+            int gIdx = goodsList.indexOf(w.getGoods());
+            Map<String, Object> extraData = goodsExtraRunData.get(gIdx);
+            Boolean run = (Boolean) extraData.get("run");
+            if (run) {
+                int personnel = (int) extraData.get("personnel");
+                int ships = (int) extraData.get("ships");
+                int adds = (int) extraData.get("adds");
+                OrderDetails details = orderDetailsRepository.findByOrders(w);
+                adds += details.getPersonnel();
+                if (adds < (ships * personnel)) {
+                    confirm.add(w);
+                    wait.remove(w);
+                    GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(w.getGoods().getId(), w.getFishingDate());
+                    goodsFishingDate.addReservedNumber(details.getPersonnel());
+                    goodsFishingDate.addWaitNumber(-1 * details.getPersonnel());
+                    goodsFishingDateRepository.save(goodsFishingDate);
+                }
+                extraData.put("adds", adds);
+            }
+        }
+
+        wait.addAll(running);
         for (Orders o : confirm) {
             int goodsIdx = goodsList.indexOf(o.getGoods());
             confirmCounts[goodsIdx] += 1;
@@ -246,6 +283,11 @@ public class FishkingScheduler {
             AlertType type = AlertType.reservationComplete;
             Member receiver = o.getCreatedBy();
             Goods goods = o.getGoods();
+            GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), now);
+            if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {
+                wait.add(o);
+                continue;
+            }
             Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
             String alertTitle = "예약 확정 알림";
             String sentence = receiver.getMemberName() + "님 \n"
@@ -271,7 +313,6 @@ public class FishkingScheduler {
             }
         }
 
-        wait.addAll(running);
         for (Orders o : wait) {
             int goodsIdx = goodsList.indexOf(o.getGoods());
             cancelCounts[goodsIdx] += 1;

@@ -17,7 +17,8 @@ public enum AlertType implements IEnumModel {
     tide("물때 알림",""),
     reservationCompleteCompany("고객예약", "고객이 예약하였습니다. "),
     reservationCancelCompany("고객취소", "고객이 예약 취소했습니다. "),
-    systemConfirm("시스템 예약 확정", "시스템 예약 확정. ")
+    systemConfirm("시스템 예약 확정", "시스템 예약 확정. "),
+    reservationConfirm("예약 승인", "접수 되었습니다. ")
     ;
 
 
