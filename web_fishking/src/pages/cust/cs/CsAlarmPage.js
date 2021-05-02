@@ -37,7 +37,7 @@ export default inject(
         console.log(this.state.alertType)
         PageStore.setState({ page });
         let url = '/v2/api/alert/alertList'
-        if (this.state.type !== null) {
+        if (this.state.alertType !== null) {
           url = '/v2/api/alert/alertList?type=f'
         }
         const {
