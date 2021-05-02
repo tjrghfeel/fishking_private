@@ -113,6 +113,7 @@ export default inject(
             content: resolve.content,
             // 첨부이미지
             uploaded,
+            videoId : resolve.videoId
           });
           if (resolve.shipId === null) {
             this.setState({
@@ -306,10 +307,10 @@ export default inject(
           );
 
           if (upload) {
-            this.setState({ uploaded: this.state.uploaded.concat(upload) });
             if (file.type?.includes("video")) {
               this.setState({ videoId: upload["fileId"] });
             }
+            else{this.setState({ uploaded: this.state.uploaded.concat(upload) });}
           }
           this.file.current.value = null;
         }
@@ -321,8 +322,9 @@ export default inject(
           "fileId",
           fileId
         );
-        this.setState({ uploaded });
+
         if (isVideo) this.setState({ videoId: null });
+        else{this.setState({ uploaded });}
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -672,24 +674,39 @@ export default inject(
                     </div>
                   </a>
                 </div>
+                { (this.state.videoId !== null) && (
+                    <div className="col-3" >
+                            <div className="box-round-grey">
+                              <a
+                                onClick={() =>
+                                  this.removeUploadFile(this.state.videoId, true)
+                                }
+                                className="del"
+                              >
+                                <img src="/assets/cust/img/svg/icon_close_white.svg" />
+                              </a>
+                              비디오
+                            </div>
+                          </div>
+                )}
                 {this.state.uploaded?.map((data, index) => {
-                  if (data["downloadUrl"].includes("mp4")) {
-                    return (
-                      <div className="col-3" key={index}>
-                        <div className="box-round-grey">
-                          <a
-                            onClick={() =>
-                              this.removeUploadFile(data.fileId, true)
-                            }
-                            className="del"
-                          >
-                            <img src="/assets/cust/img/svg/icon_close_white.svg" />
-                          </a>
-                          비디오
-                        </div>
-                      </div>
-                    );
-                  } else {
+                  // if (data["downloadUrl"].includes("mp4")) {
+                  //   return (
+                  //     <div className="col-3" key={index}>
+                  //       <div className="box-round-grey">
+                  //         <a
+                  //           onClick={() =>
+                  //             this.removeUploadFile(data.fileId, true)
+                  //           }
+                  //           className="del"
+                  //         >
+                  //           <img src="/assets/cust/img/svg/icon_close_white.svg" />
+                  //         </a>
+                  //         비디오
+                  //       </div>
+                  //     </div>
+                  //   );
+                  // } else {
                     return (
                       <div className="col-3" key={index}>
                         <div className="box-round-grey">
@@ -707,7 +724,7 @@ export default inject(
                         </div>
                       </div>
                     );
-                  }
+                  // }
                 })}
               </div>
             </div>

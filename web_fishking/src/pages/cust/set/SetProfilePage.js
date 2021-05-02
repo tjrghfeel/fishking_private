@@ -127,6 +127,20 @@ export default inject(
         }
         this.profile.current.value = null;
       };
+
+      changePhoneNum = ()=>{
+        const {ModalStore} = this.props;
+        ModalStore.openModal("Select", {
+          title:'휴대전화번호 변경은 본인인증이 필요합니다. 진행하시겠습니까?',
+          selectOptions:['예','아니오'],
+          onSelect : ({selected, index})=>{
+            if(selected === '예'){
+              window.location.href = "https://www.fishkingapp.com/v2/api/profileManage/phoneNum/niceRequest?token="+localStorage.getItem("@accessToken_cust")
+            }
+          }
+        })
+
+      }
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -247,7 +261,7 @@ export default inject(
                   </div>
                 </a>
                 <hr className="full mt-3 mb-3" />
-                <a href={"https://www.fishkingapp.com/v2/api/profileManage/phoneNum/niceRequest?token="+localStorage.getItem("@accessToken_cust")}>
+                <a onClick = {()=>this.changePhoneNum()}>
                   <div className="row no-gutters align-items-center">
                     <div className="col-3 pl-2">
                       <small className="grey">휴대폰 번호</small>

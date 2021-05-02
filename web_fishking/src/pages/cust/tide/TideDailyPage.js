@@ -20,7 +20,7 @@ export default inject(
         this.selTideModal = React.createRef(null);
         this.state = {
           tabActive: 0,
-          date: new Date(),
+          date: new Date( new Date().setDate( new Date().getDate() + 1)),
           location: null,
           arr_150: [], // 오늘의 물때정보 > 알림 목록
           arr_158: [], // 날짜별 물때정보 > 알림 목록
@@ -244,7 +244,10 @@ export default inject(
                     <a
                       className="cal-arrow-left float-left"
                       onClick={async () => {
-                        const date = new Date();
+                        const date = new Date( new Date().setDate( new Date().getDate() + 1));
+                        let subdate = new Date(this.state.date);
+                          subdate.setDate( subdate.getDate() - 1);
+                        if(subdate < date){return}
                         date.setDate(this.state.date.getDate() - 1);
                         await this.setState({ date });
                         this.onSelectedTideArea();
@@ -264,7 +267,8 @@ export default inject(
                     <a
                       className="cal-arrow-right float-right"
                       onClick={async () => {
-                        const date = new Date();
+                        // const date = new Date();
+                        const date = this.state.date;
                         date.setDate(this.state.date.getDate() + 1);
                         await this.setState({ date });
                         this.onSelectedTideArea();
