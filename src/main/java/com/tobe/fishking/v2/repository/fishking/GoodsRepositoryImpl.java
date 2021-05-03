@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.enums.common.TakeType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.fishing.GoodsResponse;
@@ -290,6 +291,19 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 .where(orders.fishingDate.eq(today),
                         goods.id.eq(goodsId),
                         orders.orderStatus.in(statuses))
+                .fetch();
+        return responses;
+    }
+
+    @Override
+    public List<Goods> getNeedConfirm(String date, String time) {
+        List<Goods> responses = queryFactory
+                .select(goods)
+                .from(goods).join(ship).on(goods.ship.eq(ship)).join(goodsFishingDate).on(goods.eq(goodsFishingDate.goods))
+                .where(ship.isActive.eq(true),
+                        goods.fishingStartTime.substring(0,2).eq(time),
+                        goodsFishingDate.fishingDateString.eq(date),
+                        goods.isUse.eq(true))
                 .fetch();
         return responses;
     }

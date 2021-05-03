@@ -231,6 +231,25 @@ public class PostControllerTest {
         System.out.println(orders);
     }
 
+    @Test
+    public void removeTest() {
+        List<Map<String, Object>> l = new ArrayList<>();
+        for (int idx=0; idx < 4; idx++) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("name", idx);
+            m.put("list", new ArrayList<Integer>());
+            l.add(m);
+        }
+        System.out.println(l);
+
+        for (Map<String, Object> mm : l) {
+            System.out.println(mm.get("name"));
+            ((List<Integer>) mm.get("list")).add(5 + (int) mm.get("name"));
+        }
+
+        System.out.println(l);
+    }
+
     @Transactional
     public void updateMember() throws ResourceNotFoundException {
         Member member = memberRepository.findById(20L)
