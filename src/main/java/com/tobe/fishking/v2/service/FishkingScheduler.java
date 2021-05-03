@@ -241,36 +241,36 @@ public class FishkingScheduler {
         int[] confirmCounts = new int[goodsList.size()];
         int[] cancelCounts = new int[goodsList.size()];
 
-        for (Goods g : goodsList) {
-            Map<String, Object> data = new HashMap<>();
-            data.put("run", g.getExtraRun());
-            data.put("personnel", g.getExtraPersonnel());
-            data.put("ships", g.getExtraShipNumber());
-            data.put("adds", 0);
-            goodsExtraRunData.add(data);
-        }
-
-        for (Orders w : wait) {
-            int gIdx = goodsList.indexOf(w.getGoods());
-            Map<String, Object> extraData = goodsExtraRunData.get(gIdx);
-            Boolean run = (Boolean) extraData.get("run");
-            if (run) {
-                int personnel = (int) extraData.get("personnel");
-                int ships = (int) extraData.get("ships");
-                int adds = (int) extraData.get("adds");
-                OrderDetails details = orderDetailsRepository.findByOrders(w);
-                adds += details.getPersonnel();
-                if (adds < (ships * personnel)) {
-                    confirm.add(w);
-                    wait.remove(w);
-                    GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(w.getGoods().getId(), w.getFishingDate());
-                    goodsFishingDate.addReservedNumber(details.getPersonnel());
-                    goodsFishingDate.addWaitNumber(-1 * details.getPersonnel());
-                    goodsFishingDateRepository.save(goodsFishingDate);
-                }
-                extraData.put("adds", adds);
-            }
-        }
+//        for (Goods g : goodsList) {
+//            Map<String, Object> data = new HashMap<>();
+//            data.put("run", g.getExtraRun());
+//            data.put("personnel", g.getExtraPersonnel());
+//            data.put("ships", g.getExtraShipNumber());
+//            data.put("adds", 0);
+//            goodsExtraRunData.add(data);
+//        }
+//
+//        for (Orders w : wait) {
+//            int gIdx = goodsList.indexOf(w.getGoods());
+//            Map<String, Object> extraData = goodsExtraRunData.get(gIdx);
+//            Boolean run = (Boolean) extraData.get("run");
+//            if (run) {
+//                int personnel = (int) extraData.get("personnel");
+//                int ships = (int) extraData.get("ships");
+//                int adds = (int) extraData.get("adds");
+//                OrderDetails details = orderDetailsRepository.findByOrders(w);
+//                adds += details.getPersonnel();
+//                if (adds < (ships * personnel)) {
+//                    confirm.add(w);
+//                    wait.remove(w);
+//                    GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(w.getGoods().getId(), w.getFishingDate());
+//                    goodsFishingDate.addReservedNumber(details.getPersonnel());
+//                    goodsFishingDate.addWaitNumber(-1 * details.getPersonnel());
+//                    goodsFishingDateRepository.save(goodsFishingDate);
+//                }
+//                extraData.put("adds", adds);
+//            }
+//        }
 
         wait.addAll(running);
         for (Orders o : confirm) {
