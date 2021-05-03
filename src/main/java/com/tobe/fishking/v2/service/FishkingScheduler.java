@@ -223,7 +223,7 @@ public class FishkingScheduler {
     @Transactional
     public void confirmOrder() throws IOException {
         Member manager = memberService.getMemberById(16L);
-        LocalDateTime targetDate = LocalDateTime.now().minusHours(12L);
+        LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
 
         String now = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
