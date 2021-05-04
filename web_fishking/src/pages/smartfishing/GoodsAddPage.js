@@ -264,6 +264,9 @@ export default inject(
         }
       };
 
+      resetALlFishingDate = ()=>{
+        this.setState({arr_dates:[], fishingDates:[]})
+      }
       choiceAllFishingDate = ()=>{
         let today = new Date( new Date().setHours(0,0,0,0));//시간단위를 초기화한 오늘날짜 Date객체.
         let todayYear = today.getFullYear();//이번년도
@@ -274,7 +277,7 @@ export default inject(
         let fishingDatesTemp = [];
 
         let month = todayMonth;
-        let day = todayDay;
+        let day = todayDay+3;
         for( ; ;  day++){
           //fishingDates, arr_dates에 데이터들 추가
           let targetDay = new Date( new Date().setDate(day) );
@@ -523,7 +526,11 @@ export default inject(
                 <div className="form-group">
                   <label htmlFor="InputGPrice" className="d-block">
                     조업일 선택 <strong className="required"></strong>
-                    <span onClick = {()=>this.choiceAllFishingDate()} style={{float:'right'}}>전체선택</span>
+                    <a className="btn btn btn-round-grey btn-xs-round float-right"
+                        onClick = {()=>this.resetALlFishingDate()}>전체해제 </a>
+                    <a style={{float:'right',width:3}}>&nbsp; &nbsp; &nbsp;</a>
+                    <a className="btn btn btn-round-grey btn-xs-round float-right"
+                        onClick = {()=>this.choiceAllFishingDate()}>전체선택</a>
                   </label>
                   <Calendar
                     style={{ width: "100%" }}
