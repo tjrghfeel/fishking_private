@@ -1,5 +1,5 @@
 spring:
-  profiles: prod
+  profiles: local
 
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
@@ -33,7 +33,7 @@ spring:
 
 file :
   location : /opt/apache-tomcat-9.0.41/files/
-  downloadUrl : http://112.220.72.178:6081/resource
+  downloadUrl : http://112.220.72.178:8083/resource
 
 
 logging:
