@@ -84,10 +84,12 @@ export default inject(
         };
 
         goToActive2 = () => {
+            const {ModalStore} = this.props;
           const checked1 = this.active1_check1.current.checked;
           const checked2 = this.active1_check2.current.checked;
 
-          if (checked1 && checked2) this.setState({ active: 2 });
+          if (checked1 && checked2) {this.setState({ active: 2 }); }
+          else{ ModalStore.openModal("Alert", { body: "필수 약관항목에 동의가 필요합니다" });}
         };
 
         goToActive3 = async () => {

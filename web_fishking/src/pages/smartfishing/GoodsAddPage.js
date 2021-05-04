@@ -263,6 +263,35 @@ export default inject(
           });
         }
       };
+
+      choiceAllFishingDate = ()=>{
+        let today = new Date( new Date().setHours(0,0,0,0));//시간단위를 초기화한 오늘날짜 Date객체.
+        let todayYear = today.getFullYear();//이번년도
+        let todayMonth = today.getMonth()+1;//이번달
+        let todayDay = today.getDate();//오늘 일자.
+
+        let arr_datesTemp = [];
+        let fishingDatesTemp = [];
+
+        let month = todayMonth;
+        let day = todayDay;
+        for( ; ;  day++){
+          //fishingDates, arr_dates에 데이터들 추가
+          let targetDay = new Date( new Date().setDate(day) );
+          month = targetDay.getMonth()+1;
+          if(todayMonth +1 < month){break;}
+
+          arr_datesTemp.push(targetDay);
+
+          let dateString = targetDay.getFullYear()+'-'+this.fillZero(2,''+(targetDay.getMonth()+1))+'-'+this.fillZero(2,''+targetDay.getDate());
+          fishingDatesTemp.push(dateString);
+        }
+
+        this.setState({arr_dates:arr_datesTemp, fishingDates:fishingDatesTemp});
+      }
+      fillZero = (width, str)=>{
+        return str.length >= width ? str:new Array(width-str.length+1).join('0')+str;//남는 길이만큼 0으로 채움
+      }
       /********** ********** ********** ********** **********/
       /** render */
       /********** ********** ********** ********** **********/
@@ -494,6 +523,7 @@ export default inject(
                 <div className="form-group">
                   <label htmlFor="InputGPrice" className="d-block">
                     조업일 선택 <strong className="required"></strong>
+                    <span onClick = {()=>this.choiceAllFishingDate()} style={{float:'right'}}>전체선택</span>
                   </label>
                   <Calendar
                     style={{ width: "100%" }}
