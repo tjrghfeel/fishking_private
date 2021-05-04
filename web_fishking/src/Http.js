@@ -4,15 +4,15 @@ import React from "react";
 
 /** 공통 설정 */
 const http = axios.create({
-  // baseURL: process.env.REACT_APP_HTTP_BASE_URL,
-  baseURL: 'http://127.0.0.1:8083',
+  baseURL: process.env.REACT_APP_HTTP_BASE_URL,
+  // baseURL: 'http://127.0.0.1:8083',
 });
 
 http.defaults.headers.common["Authorization"] =
   localStorage.getItem("@accessToken") || "";
 http.defaults.headers.common["Accept"] = "application/json";
-// http.defaults.timeout = 10000;
-http.defaults.timeout = 1000000;
+http.defaults.timeout = 10000;
+// http.defaults.timeout = 1000000;
 
 export default (() => {
   const request = (url, method, headers = {}, params, data) => {
