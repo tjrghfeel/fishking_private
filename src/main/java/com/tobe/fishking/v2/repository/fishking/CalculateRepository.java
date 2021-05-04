@@ -100,16 +100,19 @@ public interface CalculateRepository extends BaseRepository<Calculate, Long>, Ca
             "      sum( if(c.is_cancel=true, (-1*c.amount), c.amount)) totalAmount, " +
             "      if( sum(c.is_calculate) = count(c.id), '완료', '대기') isCalculated " +
             "   from ship s join company cp on s.company_id = cp.id left join calculate c on c.ship = s.id " +
-            "     " +
+            "   where if(:yearStart is null, true, c.year >= :yearStart)  " +
+            "       and if(:yearEnd is null, true, c.year <= :yearEnd) " +
+            "       and if(:monthStart is null, true, c.month >= :monthStart) " +
+            "       and if(:monthEnd is null, true, c.month <= :monthEnd) " +
             "   group by s.id, c.year, c.month " +
             "   order by c.year desc, c.month desc) v " +
             "where " +
             "   if(:shipName is null, true, v.shipName like %:shipName%) " +
             "   and if(:companyName is null, true, v.companyName like %:companyName%) " +
-            "   and if(:yearStart is null, true, v.year >= :yearStart) " +
-            "   and if(:yearEnd is null, true, v.year <= :yearEnd) " +
-            "   and if(:monthStart is null, true, v.month >= :monthStart) " +
-            "   and if(:monthEnd is null, true, v.month <= :monthEnd) " +
+//            "   and if(:yearStart is null, true, v.year >= :yearStart) " +
+//            "   and if(:yearEnd is null, true, v.year <= :yearEnd) " +
+//            "   and if(:monthStart is null, true, v.month >= :monthStart) " +
+//            "   and if(:monthEnd is null, true, v.month <= :monthEnd) " +
             "   and if(:totalAmountStart is null, true, v.totalAmount >= :totalAmountStart) " +
             "   and if(:totalAmountEnd is null, true, v.totalAmount <= :totalAmountEnd) " +
             "   and if(:isCalculated is null, true, v.isCalculated = :isCalculated) ",

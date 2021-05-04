@@ -96,6 +96,7 @@ public class FishkingScheduler {
                         .receiver(receiver)
                         .alertTime(LocalDateTime.now())
                         .createdBy(manager)
+                        .type("c")
                         .build();
 
                 alerts = alertsRepository.save(alerts);

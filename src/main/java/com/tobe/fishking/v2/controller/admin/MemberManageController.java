@@ -105,7 +105,18 @@ public class MemberManageController {
             @PathVariable("memberId") Long memberId,
             @PathVariable("suspend") String suspend
     ) throws ServiceLogicException {
+
         if(!suspend.equals("true") && !suspend.equals("false")){throw new ServiceLogicException("suspend의 값으로는 'true' 또는 'false'만 가능합니다.");}
         return memberManageService.setIsSuspended(token, memberId, suspend);
     }
+
+    //비밀번호 초기화
+//    @ApiOperation(value="비밀번호 초기화")
+//    @PutMapping("/manage/member/initialPw")
+//    public Boolean initialPw(
+//            @RequestBody @Valid InitialPwDto dto,
+//            @RequestHeader("Authorization") String token
+//    ) throws ServiceLogicException {
+//        return memberManageService.initialPw(dto, token);
+//    }
 }

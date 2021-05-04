@@ -226,6 +226,7 @@ public class PostManagerService {
                     .receiver(parentPost.getAuthor())
                     .alertTime(LocalDateTime.now())
                     .createdBy(manager)
+                    .type("c")
                     .build();
             alertsRepository.save(alerts);
 

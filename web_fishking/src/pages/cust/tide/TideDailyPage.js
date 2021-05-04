@@ -252,8 +252,10 @@ export default inject(
                       onClick={async () => {
                         const date = new Date( new Date().setDate( new Date().getDate() + 1));
                         let subdate = new Date(this.state.date);
-                          subdate.setDate( subdate.getDate() - 1);
-                        if(subdate < date){return}
+                        subdate.setDate( subdate.getDate() - 1);
+                        subdate.setHours(0,0,0,0,);
+                        date.setHours(0,0,0,0);
+                        if(subdate.getTime() < date.getTime()){return}
                         date.setDate(this.state.date.getDate() - 1);
                         await this.setState({ date });
                         this.onSelectedTideArea();

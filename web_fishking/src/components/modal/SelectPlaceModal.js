@@ -17,10 +17,16 @@ export default inject("DataStore")(
           "#".concat(id) + " a.nav-link"
         );
         for (let element of elements) {
-          element.classList.remove("active");
+          // element.classList.remove("active");
+          element.style.border = '1px solid #ccc';
+          element.style.backgroundColor = 'white';
+          element.style.color = 'black';
         }
         if (target) {
-          target.classList.add("active");
+          // target.classList.add("active");
+          target.style.border = '1px solid #8ab9ec';
+          target.style.backgroundColor = '#8ab9ec';
+          target.style.color = 'white';
         }
       };
       const onInit = useCallback(() => {

@@ -12,10 +12,7 @@ import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.EmailDupException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
-import com.tobe.fishking.v2.model.admin.member.MakeTempMemberDto;
-import com.tobe.fishking.v2.model.admin.member.MemberDetailDtoForManager;
-import com.tobe.fishking.v2.model.admin.member.MemberManageDtoForPage;
-import com.tobe.fishking.v2.model.admin.member.MemberSearchConditionDto;
+import com.tobe.fishking.v2.model.admin.member.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
@@ -307,6 +304,23 @@ public class MemberManageService {
         else suspendValue = true;
         Member member = memberService.getMemberById(memberId);
         member.setIsSuspended(suspendValue);
+        memberRepository.save(member);
+
+        return true;
+    }
+
+    //비번 초기화
+    @Transactional
+    public Boolean initialPw(InitialPwDto dto, String token) throws ServiceLogicException {
+        String pw = dto.getPw();
+
+        Member manager = memberService.getMemberBySessionToken(token);
+        if(manager.getRoles() != Role.admin){throw new ServiceLogicException("관리자 권한이 아닙니다");}
+
+        Member member = memberService.getMemberById(dto.getMemberId());
+
+        String encodedPw = encoder.encode(pw);
+        member.setPassword(encodedPw);
         memberRepository.save(member);
 
         return true;

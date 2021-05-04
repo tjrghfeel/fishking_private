@@ -125,6 +125,7 @@ public class FishingDiaryCommentService {
                         .receiver(receiver)
                         .alertTime(LocalDateTime.now())
                         .createdBy(receiver)
+                        .type("c")
                         .build();
 
                 alerts = alertsRepository.save(alerts);
