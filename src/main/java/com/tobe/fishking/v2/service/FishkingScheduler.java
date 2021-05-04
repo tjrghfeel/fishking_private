@@ -484,6 +484,7 @@ public class FishkingScheduler {
                         cancelCount += 1;
                     }
                 }
+                ordersRepository.save(orders);
             }
             for (Map<String, Object> ex : extraData) {
                 int remains = (int) ex.get("remains");
@@ -506,6 +507,8 @@ public class FishkingScheduler {
                         confirmCount += 1;
                         goodsFishingDate.addReservedNumber(od.getPersonnel());
                         goodsFishingDate.addWaitNumber(-1 * od.getPersonnel());
+                        od.setExtraRun(manager);
+                        orderDetailsRepository.save(od);
                     }
                 }
             }
