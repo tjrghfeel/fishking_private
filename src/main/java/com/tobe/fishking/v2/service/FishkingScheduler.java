@@ -397,6 +397,11 @@ public class FishkingScheduler {
         List<Goods> goodsList = goodsRepository.getNeedConfirm(date, time);
 
         for (Goods goods : goodsList) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Ship ship = goods.getShip();
             GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), date);
 
@@ -407,7 +412,6 @@ public class FishkingScheduler {
             int maxPersonnel = goods.getMaxPersonnel();
             int extraShipCount = goods.getExtraShipNumber();
             int extraMinPersonnel = goods.getExtraPersonnel();
-            int waitTempPersonnel = 0;
             List<Map<String, Object>> extraData = new ArrayList<>();
             while (extraShipCount < 1) {
                 Map<String, Object> m = new HashMap<>();
@@ -420,6 +424,11 @@ public class FishkingScheduler {
             List<OrderDetails> orderDetailsList = orderDetailsRepository.getByGoodsAndDate(goods, date);
             if (orderDetailsList.isEmpty()) continue;
             for (OrderDetails details : orderDetailsList) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Orders orders = details.getOrders();
                 if (orders.getOrderStatus().equals(OrderStatus.bookConfirm)) {
                     if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {

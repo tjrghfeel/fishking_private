@@ -178,13 +178,13 @@ public class Goods extends BaseTime {
     @Column(columnDefinition = "bit default 1 comment '예약자 위치선정' ")
     private Boolean positionSelect;
 
-    @Column(columnDefinition = "bit default 1 comment '추가운행여부' ")
+    @Column(columnDefinition = "bit default 0 comment '추가운행여부' ")
     private Boolean extraRun;
 
-    @Column(columnDefinition = "int comment '추가 운항 최소 인원 수 ' ")
+    @Column(columnDefinition = "int default 0 comment '추가 운항 최소 인원 수 ' ")
     private Integer extraPersonnel;
 
-    @Column(columnDefinition = "int comment '최대 선박 수 ' ")
+    @Column(columnDefinition = "int default 0 comment '최대 선박 수 ' ")
     private Integer extraShipNumber;
 
     @Builder
@@ -200,9 +200,9 @@ public class Goods extends BaseTime {
         this.fishSpecies = fishSpecies;
         this.reserveType = addGoods.getReserveType().equals("auto") ? ReserveType.auto : ReserveType.approval;
         this.positionSelect = addGoods.getPositionSelect();
-        this.extraRun = addGoods.getExtraRun();
-        this.extraPersonnel = addGoods.getExtraPersonnel();
-        this.extraShipNumber = addGoods.getExtraShipNumber();
+        this.extraRun = addGoods.getExtraRun() != null;
+        this.extraPersonnel = addGoods.getExtraPersonnel() == null ? 0 : addGoods.getExtraPersonnel();
+        this.extraShipNumber = addGoods.getExtraShipNumber() == null ? 0 : addGoods.getExtraShipNumber();
         this.createdBy = member;
         this.modifiedBy = member;
     }
