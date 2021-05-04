@@ -454,6 +454,7 @@ public class MyMenuService {
                     .receiver(member)
                     .alertTime(alertTime)
                     .createdBy(member)
+                    .type("c")
                     .build();
             alerts = alertsRepository.save(alerts);
         }
@@ -717,6 +718,7 @@ public class MyMenuService {
                             .pid(observerId)
                             .isSent(false)
                             .createdBy(member)
+                            .type("c")
                             .build();
                     alerts = alertsRepository.save(alerts);
                     alerts.getAlertTime();

@@ -108,7 +108,8 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
                     "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
                     "   and if(:fishingDateStart is null, true, DATE(d.fishing_date) >= :fishingDateStart) " +
                     "   and if(:fishingDateEnd is null, true, DATE(d.fishing_date) <= :fishingDateEnd) " +
-                    "group by g.id ",
+                    "group by g.id " +
+                    "order by g.created_date desc ",
             countQuery = "select " +
                     "   g.id " +
                     "from goods g left join goods_fishing_date d on d.goods_id = g.id,ship s, goods_fish_species gs, common_code cc " +
@@ -125,7 +126,8 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
                     "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
                     "   and if(:fishingDateStart is null, true, DATE(d.fishing_date) >= :fishingDateStart) " +
                     "   and if(:fishingDateEnd is null, true, DATE(d.fishing_date) <= :fishingDateEnd) " +
-                    "group by g.id ",
+                    "group by g.id " +
+                    "order by g.created_date desc ",
             nativeQuery = true
     )
     Page<GoodsManageDtoForPage> getGoodsList(
