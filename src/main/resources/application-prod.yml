@@ -40,21 +40,21 @@ logging:
   #output to a temp_folder/file
   file:
     path: /opt/tomcat/logs
-    name: 'fishking.log'
-    max-history: 365
-  pattern:
-    console: "%d %-5level %logger : %msg%n"
-    file: "%d %-5level [%thread] %logger : %msg%n"
-  level:
-    org:
-      hibernate:
-        SQL: info
-        type:
-          descriptor:
-            sql:
-              BasicBinder: error
-      springframework: info
-    com:
-      tobe:
-        fishing:
-          pagination=debug: info
+#    name: 'fishking.log'
+#    max-history: 365
+#  pattern:
+#    console: "%d %-5level %logger : %msg%n"
+#    file: "%d %-5level [%thread] %logger : %msg%n"
+#  level:
+#    org:
+#      hibernate:
+#        SQL: info
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: error
+#      springframework: info
+#    com:
+#      tobe:
+#        fishing:
+#          pagination=debug: info
