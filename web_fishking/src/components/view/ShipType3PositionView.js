@@ -66,7 +66,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("1") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("1") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "100px", left: "60px" }}
                       >
@@ -83,7 +85,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("2") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("2") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "235px", left: "50px" }}
                       >
@@ -100,7 +104,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("3") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("3") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "370px", left: "50px" }}
                       >
@@ -117,7 +123,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("4") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("4") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "505px", left: "50px" }}
                       >
@@ -134,7 +142,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("5") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("5") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "100px", left: "180px" }}
                       >
@@ -151,7 +161,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("6") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("6") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "235px", left: "190px" }}
                       >
@@ -168,7 +180,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("7") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("7") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "370px", left: "190px" }}
                       >
@@ -185,7 +199,9 @@ export default inject()(
                             ? " disabled"
                             : selected.indexOf("8") !== -1
                             ? " active"
-                            : "")
+                                : total.indexOf("8") === -1
+                                  ? " disabled"
+                                  : "")
                         }
                         style={{ top: "505px", left: "190px" }}
                       >

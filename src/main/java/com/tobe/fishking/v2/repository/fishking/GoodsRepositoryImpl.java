@@ -96,7 +96,8 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                         goods.isUse,
                         goods.positionSelect,
                         goods.reserveType,
-                        goods.extraRun
+                        goods.extraRun,
+                        ExpressionUtils.as(JPAExpressions.select(goodsFishingDate.fishingDate.max()).from(goodsFishingDate).where(goodsFishingDate.goods.eq(goods)), Expressions.datePath(LocalDate.class, "endDate"))
                 ))
                 .from(goods)
                 .where(goods.ship.id.eq(shipId), goods.name.containsIgnoreCase(keyword), eqStatus(status))

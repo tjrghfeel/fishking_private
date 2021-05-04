@@ -22,5 +22,7 @@ public interface OrdersDtoForPage {
     String getFishingDate();
     String getOrdersNum();
     Integer getPersonnel();
+    Double getLatitude();
+    Double getLongitude();
 
 }

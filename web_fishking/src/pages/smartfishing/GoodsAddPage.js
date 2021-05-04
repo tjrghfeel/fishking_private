@@ -41,7 +41,7 @@ export default inject(
           isUse: true, // 상태
           species: [], // 주요어종
           fishingDates: [], // 조업일 리스트
-          positionSelect: true, // 예약시 위치선정
+          positionSelect: false, // 예약시 위치선정
           reserveType: "auto", // 예약확정방법
           extraRun: true, // 추가운행여부
           extraPersonnel: 0, // 추가운행최소인원수
@@ -569,7 +569,7 @@ export default inject(
                         >
                           <a
                             ref={this.positionSelectTrue}
-                            className="nav-link active btn btn-on"
+                            className="nav-link btn btn-on"
                             id="nav-home-tab"
                             data-toggle="tab"
                             role="tab"
@@ -583,7 +583,7 @@ export default inject(
                           </a>
                           <a
                             ref={this.positionSelectFalse}
-                            className="nav-link btn btn-off"
+                            className="nav-link active btn btn-off"
                             id="nav-profile-tab"
                             data-toggle="tab"
                             role="tab"
@@ -683,7 +683,7 @@ export default inject(
                   </div>
                   {this.state.extraRun && (
                     <React.Fragment>
-                      <div className="input-group mb-3">
+                      <div className="input-group">
                         <div className="input-group-prepend">
                           <span className="input-group-text">
                             선박당 대기자가
@@ -720,12 +720,9 @@ export default inject(
                       </div>
                       <div className="input-group mb-3">
                         <div className="input-group-prepend">
-                          <span className="input-group-text">출조</span>
-                        </div>
-                        <div className="input-group-append">
-                          <span className="input-group-text">
-                            12시간 전 까지 인원이 차지 않는 경우 해당 선박 운행이
-                            취소됩니다.{" "}
+                          <span className="input-group-text text-left">
+                            출조 12시간 전 까지 인원이 차지 않는 경우
+                            해당 선박 운행이 <br/> 취소됩니다.{" "}
                           </span>
                         </div>
                       </div>

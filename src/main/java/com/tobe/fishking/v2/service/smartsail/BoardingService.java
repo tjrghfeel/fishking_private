@@ -4,14 +4,17 @@ import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.addon.CommonAddon;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
+import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.entity.fishing.RiderFingerPrint;
 import com.tobe.fishking.v2.enums.fishing.FingerType;
+import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.smartsail.AddRiderDTO;
 import com.tobe.fishking.v2.model.smartsail.RiderGoodsListResponse;
 import com.tobe.fishking.v2.model.smartsail.RiderSearchDTO;
 import com.tobe.fishking.v2.model.smartsail.TodayBoardingResponse;
 import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
+import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import com.tobe.fishking.v2.repository.fishking.RideShipRepository;
 import com.tobe.fishking.v2.repository.fishking.RiderFingerPrintRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,7 @@ import static com.tobe.fishking.v2.entity.fishing.QRideShip.rideShip;
 @RequiredArgsConstructor
 public class BoardingService {
 
+    private final OrdersRepository ordersRepository;
     private final OrderDetailsRepository orderDetailsRepository;
     private final RideShipRepository rideShipRepository;
     private final RiderFingerPrintRepository riderFingerPrintRepository;
@@ -87,6 +91,9 @@ public class BoardingService {
     @Transactional
     public boolean checkFingerprint(Map<String, Object> body) {
         RideShip rider = rideShipRepository.getOne(Long.parseLong(body.get("riderId").toString()));
+        Orders orders = rider.getOrdersDetail().getOrders();
+        orders.changeStatus(OrderStatus.fishingComplete);
+        ordersRepository.save(orders);
         rider.setRide();
         rideShipRepository.save(rider);
         return true;

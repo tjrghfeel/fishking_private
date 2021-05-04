@@ -20,7 +20,7 @@ spring:
     view-names: thymeleaf/*
 
 server:
-  port : 8082
+  port : 8083
   error:
     include-exception: true # 오류 응답에 exception의 내용을 포함할지 여부 default: false
     include-stacktrace: always # 오류 응답에 stacktrace 내용을 포함할 지 여부 default: never
@@ -29,6 +29,11 @@ server:
   email: extworld@gmail.com
   ip: 127.0.0.1
   path: /localhost
+
+#logging:
+#  #output to a temp_folder/file
+#  file:
+#    path: /opt/apache-tomcat-9.0.41/logs
 
 #file :
 #    location : C:\Users\kai\Desktop\fishkingV2\src\main\resources\static\files

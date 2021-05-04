@@ -72,6 +72,9 @@ export default inject()(
                       <br/>
                       <span className="tag-grey">
                         추가운행 {data["extra"]}
+                      </span>{" "}
+                      <span className="tag-grey">
+                        ~{data["endDate"]}
                       </span>
                       <h6>{data["name"]}</h6>
                     </div>

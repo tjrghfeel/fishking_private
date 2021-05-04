@@ -433,9 +433,9 @@ export default inject(
                         <strong className="required"></strong>
                       </label>
                       <p className="text-primary pl-0">
-                        선상 예약 위치를 설정하시면 고객이 어복황제 예약시 선상
-                        위치를 선택가능합니다.
-                        <span className="red"> 설정하지 않으면, 고객 예약 시 위치 선택 없이 예약됩니다.</span>
+                        선상 예약 위치를 설정하시면 고객 예약 시
+                        설정한 위치에서만 예약이 가능합니다.
+                        <span className="red"> 상품 등록 시 위치 예약을 ON/OFF 하실 수 있습니다.</span>
                       </p>
                     </div>
                     <div className="form-group">

@@ -62,7 +62,8 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                         orders.totalAmount,
                         orders.orderStatus,
                         orders.createdBy.profileImage,
-                        orders.createdBy.memberName
+                        orders.createdBy.memberName,
+                        orderDetails.isExtraRun
                 ))
                 .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company)).join(orderDetails).on(orderDetails.orders.eq(orders))
                 .where(
@@ -97,7 +98,8 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                         orders.totalAmount,
                         orders.orderStatus,
                         orders.createdBy.profileImage,
-                        orders.createdBy.memberName
+                        orders.createdBy.memberName,
+                        orderDetails.isExtraRun
                 ))
                 .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company)).join(orderDetails).on(orderDetails.orders.eq(orders))
                 .where(
@@ -129,7 +131,8 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                         orders.totalAmount,
                         orders.orderStatus,
                         orders.createdBy.profileImage,
-                        orders.createdBy.memberName
+                        orders.createdBy.memberName,
+                        orderDetails.isExtraRun
                 ))
                 .from(orders).join(goods).on(orders.goods.eq(goods)).join(ship).on(goods.ship.eq(ship)).join(company).on(ship.company.eq(company)).join(orderDetails).on(orderDetails.orders.eq(orders))
                 .where(

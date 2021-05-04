@@ -186,6 +186,8 @@ public class MyMenuService {
 //                .fishingType(goods.getFishingType().getValue())
                 .fishingType(ship.getFishingType().getValue())
                 .sigungu(ship.getAddress())
+                .latitude(ship.getLocation().getLatitude())
+                .longitude(ship.getLocation().getLongitude())
 //                .distance(ship.getDistance())
                 .fishingDate(orders.getFishingDate().replace("-", ""))
                 //.fishSpecies()

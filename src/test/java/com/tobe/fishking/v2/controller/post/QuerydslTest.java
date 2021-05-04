@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.post;
 
 import com.querydsl.core.Tuple;
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.QOrders;
@@ -8,13 +9,13 @@ import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.police.PoliceGoodsResponse;
 import com.tobe.fishking.v2.model.smartfishing.CalculateResponse;
+import com.tobe.fishking.v2.model.smartsail.TodayBoardingResponse;
+import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.board.PostRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
-import com.tobe.fishking.v2.repository.fishking.CalculateRepository;
-import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
-import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
-import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.fishking.GoodsService;
+import com.tobe.fishking.v2.service.smartsail.BoardingService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,12 @@ public class QuerydslTest {
     private CommonCodeRepository commonCodeRepository;
     @Autowired
     private ShipRepository shipRepository;
+    @Autowired
+    private RideShipRepository rideShipRepository;
+    @Autowired
+    private BoardingService boardingService;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     public void querydslCustomTest() {
@@ -63,13 +70,16 @@ public class QuerydslTest {
 //        });
 //        Page<ShipListResponse> responses = shipRepository.searchAll()
 
-        List<Map<String, String>> responses = calculateRepository.calculateDetailForExcel(19L, "2021", "02");
-        for(Map<String, String> r : responses) {
-            System.out.println(r);
-        }
+//        List<Map<String, String>> responses = calculateRepository.calculateDetailForExcel(19L, "2021", "02");
+//        for(Map<String, String> r : responses) {
+//            System.out.println(r);
+//        }
+//        List<TodayBoardingResponse> l = rideShipRepository.getTodayRiders(13L, "shipName");
+        Member member = memberRepository.getOne(memberId);
+        List<TodayBoardingResponse> l = boardingService.getTodayBoarding(member, "shipName");
 
         //then
-        assertThat(responses.size(), is(6));
+        assertThat(l.size(), is(2));
 //        System.out.println(r);
 //        assertThat(r.size(), is(0L));
     }
