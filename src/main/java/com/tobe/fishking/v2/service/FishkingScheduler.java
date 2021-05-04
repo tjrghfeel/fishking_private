@@ -398,7 +398,7 @@ public class FishkingScheduler {
 
         for (Goods goods : goodsList) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(800);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -425,7 +425,7 @@ public class FishkingScheduler {
             if (orderDetailsList.isEmpty()) continue;
             for (OrderDetails details : orderDetailsList) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(800);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
