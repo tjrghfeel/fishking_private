@@ -6,17 +6,21 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.entity.fishing.RiderFingerPrint;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.smartsail.*;
+import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -40,8 +44,8 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
 
     @Override
     public List<TodayBoardingResponse> getTodayRiders(Long memberId, String orderBy) {
-        String now = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+        String fromDate = LocalDateTime.now().minusHours(6L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
+        String toDate = LocalDateTime.now().plusHours(6L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
 
         OrderSpecifier<?> order;
 
@@ -63,7 +67,9 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                         rideShip.name,
                         ship.shipName,
                         goods.name,
+                        orders.fishingDate,
                         goods.fishingStartTime,
+                        goods.fishingEndTime,
                         rideShip.phoneNumber,
                         rideShip.emergencyPhone,
                         rideShip.isRide
@@ -74,9 +80,21 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                     .join(goods).on(orderDetails.goods.eq(goods))
                     .join(ship).on(goods.ship.eq(ship))
                 .where(ship.company.member.id.eq(memberId),
-                        goods.fishingStartTime.gt(time),
-                        orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
-                        orders.fishingDate.eq(now))
+                        orders.orderStatus.eq(OrderStatus.bookFix),
+                        (new CaseBuilder().when(goods.fishingEndTime.eq("2400"))
+                                .then(Expressions.dateTimeTemplate(LocalDateTime.class, "ADDDATE({0}, 1)", (Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d%H%i')",
+                                        orders.fishingDate.concat("0000")
+                                ))))
+                                .otherwise(Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d%H%i')",
+                                        orders.fishingDate.concat(goods.fishingEndTime)
+                                ))
+//                        .goe(fromDate
+                                .after(Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d %H%i')", fromDate)
+                        )),
+                        Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d%H%i')",
+                                orders.fishingDate.concat(goods.fishingStartTime)
+                        ).before(Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d %H%i')", toDate))
+                )
                 .orderBy(order).fetch();
         return responses;
     }

@@ -175,7 +175,7 @@ public class Goods extends BaseTime {
     @Enumerated(EnumType.ORDINAL)
     private ReserveType reserveType;
 
-    @Column(columnDefinition = "bit default 1 comment '예약자 위치선정' ")
+    @Column(columnDefinition = "bit default 0 comment '예약자 위치선정' ")
     private Boolean positionSelect;
 
     @Column(columnDefinition = "bit default 0 comment '추가운행여부' ")

@@ -14,7 +14,9 @@ public class TodayBoardingResponse {
     private String username;
     private String shipName;
     private String goodsName;
+    private String fishingDate;
     private String fishingStartTime;
+    private String fishingEndTime;
     private String phone;
     private String emergencyPhone;
     private Integer visitCount;
@@ -27,7 +29,9 @@ public class TodayBoardingResponse {
             String username,
             String shipName,
             String goodsName,
+            String fishingDate,
             String fishingStartTime,
+            String fishingEndTime,
             String phone,
             String emergencyPhone,
             Boolean isRide
@@ -36,7 +40,9 @@ public class TodayBoardingResponse {
         this.username = username;
         this.shipName = shipName;
         this.goodsName = goodsName;
+        this.fishingDate = fishingDate;
         this.fishingStartTime = fishingStartTime.substring(0,2) + ":" + fishingStartTime.substring(2,4);
+        this.fishingEndTime = fishingEndTime.substring(0,2) + ":" + fishingEndTime.substring(2,4);
         this.phone = phone;
         this.emergencyPhone = emergencyPhone;
         this.status = isRide ? "금일 승선 확인" : "확인 전";

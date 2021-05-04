@@ -47,6 +47,8 @@ public class OrdersDetailDto {
     private Integer paymentAmount;
     private String goodsName;
     private String tradeNumber;
+    private Double latitude;
+    private Double longitude;
 
 }
 /*

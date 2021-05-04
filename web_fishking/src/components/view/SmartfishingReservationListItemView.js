@@ -15,6 +15,7 @@ export default inject()(
         reservePersonnel = 0,
         totalAmount = 0,
         status,
+        isExtra,
       },
       data,
       onClick,
@@ -68,6 +69,16 @@ export default inject()(
                       >
                         {status}
                       </strong>
+                      {isExtra && (
+                        <React.Fragment>
+                          <br/>
+                          <strong
+                            className="text-danger"
+                          >
+                            추가운행
+                          </strong>
+                        </React.Fragment>
+                      )}
                     </p>
                   </div>
                 </div>

@@ -78,7 +78,9 @@ export default inject(
       onClickMap = (item) => {
         const { NativeStore } = this.props;
         NativeStore.openMap({
-          address: item.sigungu.replace(/[\n]/g, "").replace(/[\r]/g, ""),
+          // address: item.sigungu.replace(/[\n]/g, "").replace(/[\r]/g, ""),
+          lat: item.latitude,
+          lng: item.longitude,
         });
       };
       onClickReservation = (item) => {

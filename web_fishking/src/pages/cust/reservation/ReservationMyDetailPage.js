@@ -121,6 +121,7 @@ export default inject(
           const {
             shipData: { latitude: lat, longitude: lng },
           } = this.state;
+          console.log(lat, lng)
           NativeStore.openMap({ lat, lng });
         };
         onClickCopyAddress = () => {
@@ -141,13 +142,13 @@ export default inject(
                 <h6>취소규정</h6>
                 <ul className="list">
                   <li>
-                    해당 상품은 출조 시간 12시간 또는 24시간 전 까지 예약내역
+                    해당 상품은 출조 시간 12시간 전 까지 예약내역
                     하단의 [취소하기] 버튼을 통해 고객님께서 직접 취소가
                     가능하며 사용하신 쿠폰은 소멸되어 복구가 불가합니다.
                   </li>
                   <li className="red">
-                    해당 상품은 출조시간 12시간 또는 24시간 이후부터 취소가
-                    불가능합니다.
+                    해당 상품은 출조시간 12시간 전 까지만 취소가
+                    가능합니다.
                   </li>
                 </ul>
                 <br />
@@ -251,7 +252,7 @@ export default inject(
                   <div className="row no-gutters">
                     <div className="col-4 padding-sm pb-0">
                       <a
-                        onClick={this.onClickCompanyInfo}
+                        onClick={() => this.onClickCompanyInfo()}
                         className="btn btn-third btn-block btn-sm mt-1 mb-1"
                       >
                         <img
@@ -264,7 +265,7 @@ export default inject(
                     </div>
                     <div className="col-4 padding-sm pb-0">
                       <a
-                        onClick={this.onClickFindWay}
+                        onClick={() => this.onClickFindWay()}
                         className="btn btn-third btn-block btn-sm mt-1 mb-1"
                       >
                         <img
@@ -277,7 +278,7 @@ export default inject(
                     </div>
                     <div className="col-4 padding-sm pb-0">
                       <a
-                        onClick={this.onClickCopyAddress}
+                        onClick={() => this.onClickCopyAddress()}
                         className="btn btn-third btn-block btn-sm mt-1 mb-1"
                       >
                         <img

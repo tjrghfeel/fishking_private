@@ -442,13 +442,7 @@ public class FishkingScheduler {
                         confirmOrder(goods, orders, manager, date);
                         confirmCount += 1;
                     }
-                } else if (orders.getOrderStatus().equals(OrderStatus.bookRunning)) {
-                    // 취소에서 메세지도 같이 보냄
-                    orders.changeStatus(OrderStatus.bookCancel);
-                    ordersRepository.save(orders);
-                    payService.cancelOrder(orders.getId(), "autoCancel");
-                    cancelCount += 1;
-                } else if (orders.getOrderStatus().equals(OrderStatus.waitBook)) {
+                } else if (orders.getOrderStatus().equals(OrderStatus.waitBook) || orders.getOrderStatus().equals(OrderStatus.bookRunning)) {
                     if (goods.getExtraRun()) {
                         if (details.getPersonnel() > maxPersonnel) {
                             orders.changeStatus(OrderStatus.bookCancel);

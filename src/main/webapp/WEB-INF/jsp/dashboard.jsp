@@ -71,19 +71,20 @@
     <div class="card-round-grey">
         <div class="card card-sm"  style="margin-top: 0">
             <div class="row no-gutters d-flex align-items-center">
-                <div class="col-6">
+                <div class="col-8">
                     <a>
                         <p>
                             승선자:    <strong class="" name="data-username">챔피언 1호</strong><br/>
                             선상명:    <strong class="" name="data-shipName">챔피언 1호</strong><br/>
                             상품명:    <strong class="text-info" name="data-goodsName">우럭(오전)</strong><br/>
+                            출조일:    <span class="" name="data-date">우럭(오전)</span><br/>
                             연락처:    <span name="data-phone">010-1234-5678</span><br/>
                             비상시:    <span name="data-emergency">010-1234-5678</span><br/>
                             상태:     <span name="data-st">010-1234-5678</span>
                         </p>
                     </a>
                 </div>
-                <div class="col-6 text-right d-flex flex-column align-items-end justify-content-around">
+                <div class="col-4 text-right d-flex flex-column align-items-end justify-content-around">
                     <a name="data-click" class="btn btn-round btn-dark data-finger-confirm" style="padding: 8px 10px; margin: 4px 0;"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">승선확인</a>
                     <a name="data-click" class="btn btn-round btn-dark data-finger-regist" style="padding: 8px 10px; margin: 4px 0;"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">지문등록</a>
                 </div>
@@ -187,7 +188,8 @@
                     clone.style.display = 'block';
                     clone.querySelector('[name="data-username"]').textContent = item['username'];
                     clone.querySelector('[name="data-shipName"]').textContent = item['shipName'];
-                    clone.querySelector('[name="data-goodsName"]').textContent = item['goodsName'] + ' (' + item['fishingStartTime'] + '~)';
+                    clone.querySelector('[name="data-goodsName"]').textContent = item['goodsName'];
+                    clone.querySelector('[name="data-date"]').textContent = item['fishingDate']  + ' ' + item['fishingStartTime'] + '~' + item['fishingEndTime'];
                     clone.querySelector('[name="data-phone"]').textContent = item['phone'];
                     clone.querySelector('[name="data-emergency"]').textContent = item['emergencyPhone'];
                     clone.querySelector('[name="data-st"]').textContent = item['status'];

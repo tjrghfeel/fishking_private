@@ -2,9 +2,12 @@ package com.tobe.fishking.v2.model.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.tobe.fishking.v2.enums.fishing.ReserveType;
+import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -21,6 +24,7 @@ public class GoodsSmallResponse {
     private String select;
     private String confirm;
     private String extra;
+    private String endDate;
 
     @QueryProjection
     public GoodsSmallResponse(Long id,
@@ -32,7 +36,8 @@ public class GoodsSmallResponse {
                               Boolean status,
                               Boolean select,
                               ReserveType confirm,
-                              Boolean add) {
+                              Boolean add,
+                              LocalDate endDate) {
         this.id = id;
         this.name = name;
         this.fishingStartTime = fishingStartTime;
@@ -43,6 +48,7 @@ public class GoodsSmallResponse {
         this.select = select ? "ON" : "OFF";
         this.confirm = confirm.getValue();
         this.extra = add ? "ON" : "OFF";
+        this.endDate = DateUtils.getDateInFormat(endDate);
     }
 
 }
