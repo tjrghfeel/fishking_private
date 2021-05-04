@@ -39,7 +39,7 @@ public interface OrderDetailsRepository extends BaseRepository<OrderDetails, Lon
             " where s.orders.orderDate = :orderDate  "  )
     List<OrderDetails> findAllByOrderStatusAndOrderDate(@Param("orderDate") String orderDate);
 */
-    @Query("select o from OrderDetails o where o.goods = :goods and o.orders.fishingDate = :date and o.orders.isPay = true and o.orders.orderStatus <> 4")
+    @Query("select o from OrderDetails o where o.goods = :goods and o.orders.fishingDate = :date and o.orders.isPay = true and o.orders.orderStatus <> 4 order by o.createdDate asc")
     List<OrderDetails> getByGoodsAndDate(Goods goods, String date);
 
 }

@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.model.fishing.GoodsResponse;
 import com.tobe.fishking.v2.model.police.PoliceGoodsResponse;
 import com.tobe.fishking.v2.model.police.RiderResponse;
@@ -22,4 +23,5 @@ public interface GoodsRepositoryCustom {
     List<PoliceGoodsResponse> getPoliceAllGoods();
     Page<PoliceGoodsResponse> getPoliceGoods(Integer page);
     List<RiderResponse> getRiderData(Long goodsId);
+    List<Goods> getNeedConfirm(String date, String time);
 }

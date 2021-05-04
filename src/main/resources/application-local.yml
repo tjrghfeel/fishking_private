@@ -11,7 +11,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
-    show-sql: true
+    show-sql: false
     hibernate:
       format_sql: true
       use_sql_comments: true
@@ -21,15 +21,40 @@ spring:
 
   devtools:
     livereload:
-      enabled: true
+      enabled: false
 
-server:
-  port: 8083
+  mvc:
+    view:
+      prefix: /WEB-INF/
+      suffix: .jsp
+      view-names: jsp/*
+    thymeleaf:
+      view-names: thymeleaf/*
 
 file :
-  location : C:\Users\kai\IdeaProjects\fishkingV231\src\main\resources\static\files
-  downloadUrl : localhost:8083/files
-#  location: /mnt/nfs/files/
-#  downloadUrl: fishkingapp.com/resource
-#  location : /usr/local/tomcat/webapps/upload/data/file/
-#  downloadUrl : localhost:8083/resource
+  location : /opt/apache-tomcat-9.0.41/files/
+  downloadUrl : http://112.220.72.178:8083/resource
+
+
+logging:
+  #output to a temp_folder/file
+  file:
+    path: /opt/apache-tomcat-9.0.41/logs
+    name: 'fishking.log'
+    max-history: 365
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    org:
+      hibernate:
+        SQL: info
+        type:
+          descriptor:
+            sql:
+              BasicBinder: error
+      springframework: info
+    com:
+      tobe:
+        fishing:
+          pagination=debug: info

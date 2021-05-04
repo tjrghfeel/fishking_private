@@ -123,7 +123,7 @@ public class PayService {
                         shipRepository.save(ship);
 
                         String title = "예약알림";
-                        makeAlert(order, ship, title, sentence, false);
+                        makeAlert(order, ship, title, sentence, false, "");
 
                         return order.getId();
 //                        return 0L;
@@ -297,7 +297,7 @@ public class PayService {
             String title = "고객 예약취소";
             String sentence = ship.getShipName() + "의 " + orders.getFishingDate() + " " + goods.getName() + "상품에 \n"
                     + "고객 예약 취소가 있습니다.";
-            makeAlert(orders, ship, title, sentence, true);
+            makeAlert(orders, ship, title, sentence, true, token);
         } catch (Exception e) {
             rMessage2 = "P잠시후재시도(" + e.toString() + ")";    // 메시지2
         } // end of catch
@@ -306,7 +306,7 @@ public class PayService {
     }
 
 
-    private void makeAlert(Orders order, Ship ship, String title, String sentence, boolean cancel) throws IOException {
+    private void makeAlert(Orders order, Ship ship, String title, String sentence, boolean cancel, String auto) throws IOException {
         Member manager = memberService.getMemberById(16L);
 
         AlertType type = AlertType.reservationCompleteCompany;
@@ -326,23 +326,25 @@ public class PayService {
             sendPushAlertToCustomer(ctitle, csentence, order.getCreatedBy(), order.getId());
         }
 
-        Member receiver = ship.getCompany().getMember();
-        List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
-        Alerts alerts = Alerts.builder()
-                .alertType(type)
-                .entityType(EntityType.orders)
-                .pid(order.getId())
-                .content(null)
-                .sentence(sentence)
-                .isRead(false)
-                .isSent(false)
-                .receiver(receiver)
-                .alertTime(LocalDateTime.now())
-                .createdBy(manager)
-                .type("f")
-                .build();
-        alerts = alertsRepository.save(alerts);
-        for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
+        if (!auto.equals("autoCancel")) {
+            Member receiver = ship.getCompany().getMember();
+            List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
+            Alerts alerts = Alerts.builder()
+                    .alertType(type)
+                    .entityType(EntityType.orders)
+                    .pid(order.getId())
+                    .content(null)
+                    .sentence(sentence)
+                    .isRead(false)
+                    .isSent(false)
+                    .receiver(receiver)
+                    .alertTime(LocalDateTime.now())
+                    .createdBy(manager)
+                    .type("f")
+                    .build();
+            alerts = alertsRepository.save(alerts);
+            for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
+        }
     }
 
     private void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {

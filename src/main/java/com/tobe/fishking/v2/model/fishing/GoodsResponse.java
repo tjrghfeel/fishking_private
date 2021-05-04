@@ -50,7 +50,7 @@ public class GoodsResponse {
         this.maxPersonnel = goods.getMaxPersonnel();
         this.reservationPersonal = rideMember == null ? 0 : rideMember;
         this.observerCode = goods.getShip().getObserverCode();
-        this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
+        this.shipMaxPersonnel = goods.getMaxPersonnel().toString();
         this.positionSelect = goods.getPositionSelect();
     }
 
@@ -68,7 +68,7 @@ public class GoodsResponse {
         this.maxPersonnel = goods.getMaxPersonnel();
         this.reservationPersonal = 0;
         this.observerCode = goods.getShip().getObserverCode();
-        this.shipMaxPersonnel = goods.getShip().getBoardingPerson().toString();
+        this.shipMaxPersonnel = goods.getMaxPersonnel().toString();
         this.positionSelect = goods.getPositionSelect();
     }
 }
