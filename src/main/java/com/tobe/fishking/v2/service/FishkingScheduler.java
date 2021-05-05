@@ -386,154 +386,154 @@ public class FishkingScheduler {
 //    }
 
 
-//    @Scheduled(cron = "0 10 * * * ?")
-//    @Transactional
-//    public void confirm() throws IOException {
-//        Member manager = memberService.getMemberById(16L);
-//        LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
-//
-//        String date = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//        String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
-//
-//        List<Goods> goodsList = goodsRepository.getNeedConfirm(date, time);
-//
-//        for (Goods goods : goodsList) {
-//            try {
-//                Thread.sleep(800);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            Ship ship = goods.getShip();
-//            GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), date);
-//
-//            int confirmCount = 0;
-//            int cancelCount = 0;
-//            List<OrderDetails> waitTempList = new ArrayList<>();
-//
-//            int maxPersonnel = goods.getMaxPersonnel();
-//            int extraShipCount = goods.getExtraShipNumber();
-//            int extraMinPersonnel = goods.getExtraPersonnel();
-//            List<Map<String, Object>> extraData = new ArrayList<>();
-//            while (extraShipCount < 1) {
-//                Map<String, Object> m = new HashMap<>();
-//                m.put("remains", maxPersonnel);
-//                m.put("board", new ArrayList<OrderDetails>());
-//                extraData.add(m);
-//                extraShipCount -= 1;
-//            }
-//
-//            List<OrderDetails> orderDetailsList = orderDetailsRepository.getByGoodsAndDate(goods, date);
-//            if (orderDetailsList.isEmpty()) continue;
-//            for (OrderDetails details : orderDetailsList) {
-//                try {
-//                    Thread.sleep(800);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                Orders orders = details.getOrders();
-//                if (orders.getOrderStatus().equals(OrderStatus.bookConfirm)) {
-//                    if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {
-//                        orders.changeStatus(OrderStatus.bookCancel);
-//                        ordersRepository.save(orders);
-//                        payService.cancelOrder(orders.getId(), "autoCancel");
-//                        cancelCount += 1;
-//                    } else {
-//                        orders.changeStatus(OrderStatus.bookFix);
-//                        ordersRepository.save(orders);
-//                        confirmOrder(goods, orders, manager, date);
-//                        confirmCount += 1;
-//                    }
-//                } else if (orders.getOrderStatus().equals(OrderStatus.waitBook) || orders.getOrderStatus().equals(OrderStatus.bookRunning)) {
-//                    if (goods.getExtraRun()) {
-//                        if (details.getPersonnel() > maxPersonnel) {
-//                            orders.changeStatus(OrderStatus.bookCancel);
-//                            ordersRepository.save(orders);
-//                            // 취소에서 메세지도 같이 보냄
-//                            payService.cancelOrder(orders.getId(), "autoCancel");
-//                            cancelCount += 1;
-//                        } else {
-//                            boolean added = false;
-//                            for (Map<String, Object> e : extraData) {
-//                                int remains = (int) e.get("remains");
-//                                if (details.getPersonnel() <= remains) {
-//                                    remains -= details.getPersonnel();
-//                                    e.put("remains", remains);
-//                                    ((List<OrderDetails>) e.get("board")).add(details);
-//                                    added = true;
-//                                    break;
-//                                }
-//                            }
-//                            if (!added) {
-//                                orders.changeStatus(OrderStatus.bookCancel);
-//                                ordersRepository.save(orders);
-//                                // 취소에서 메세지도 같이 보냄
-//                                payService.cancelOrder(orders.getId(), "autoCancel");
-//                                cancelCount += 1;
-//                            }
-//                        }
-//                    } else {
-//                        orders.changeStatus(OrderStatus.bookCancel);
-//                        ordersRepository.save(orders);
-//                        // 취소에서 메세지도 같이 보냄
-//                        payService.cancelOrder(orders.getId(), "autoCancel");
-//                        cancelCount += 1;
-//                    }
-//                }
-//                ordersRepository.save(orders);
-//            }
-//            for (Map<String, Object> ex : extraData) {
-//                int remains = (int) ex.get("remains");
-//                List<OrderDetails> dl = (List<OrderDetails>) ex.get("board");
-//                if (remains > maxPersonnel - extraMinPersonnel) {
-//                    for (OrderDetails od : dl) {
-//                        Orders o = od.getOrders();
-//                        o.changeStatus(OrderStatus.bookCancel);
-//                        ordersRepository.save(o);
-//                        // 취소에서 메세지도 같이 보냄
-//                        payService.cancelOrder(o.getId(), "autoCancel");
-//                        cancelCount += 1;
-//                    }
-//                } else {
-//                    for (OrderDetails od : dl) {
-//                        Orders o = od.getOrders();
-//                        o.changeStatus(OrderStatus.bookFix);
-//                        ordersRepository.save(o);
-//                        confirmOrder(goods, o, manager, date);
-//                        confirmCount += 1;
-//                        goodsFishingDate.addReservedNumber(od.getPersonnel());
-//                        goodsFishingDate.addWaitNumber(-1 * od.getPersonnel());
-//                        od.setExtraRun(manager);
-//                        orderDetailsRepository.save(od);
-//                    }
-//                }
-//            }
-//            goodsFishingDateRepository.save(goodsFishingDate);
-//            String title = "시스템 예약확정";
-//            String sentence = ship.getShipName() + "의 " + date + " "
-//                    + time + ":" + goods.getFishingStartTime().substring(2,4)
-//                    + goods.getName() + "상품의 \n"
-//                    + "시스템예약확정시점이 도래하여 예약확정 " + confirmCount + "건,\n"
-//                    + "예약취소 " + cancelCount + "건이 발생하였습니다.";
-//            AlertType type = AlertType.systemConfirm;
-//            Member receiver = ship.getCompany().getMember();
-//            List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
-//            Alerts alerts = Alerts.builder()
-//                    .alertType(type)
-//                    .entityType(EntityType.orders)
-//                    .pid(goods.getId())
-//                    .content(null)
-//                    .sentence(sentence)
-//                    .isRead(false)
-//                    .isSent(false)
-//                    .receiver(receiver)
-//                    .alertTime(LocalDateTime.now())
-//                    .createdBy(manager)
-//                    .type("f")
-//                    .build();
-//            alerts = alertsRepository.save(alerts);
-//            for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
-//        }
-//    }
+    @Scheduled(cron = "0 10 * * * ?")
+    @Transactional
+    public void confirm() throws IOException {
+        Member manager = memberService.getMemberById(16L);
+        LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
+
+        String date = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
+
+        List<Goods> goodsList = goodsRepository.getNeedConfirm(date, time);
+
+        for (Goods goods : goodsList) {
+            try {
+                Thread.sleep(800);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Ship ship = goods.getShip();
+            GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), date);
+
+            int confirmCount = 0;
+            int cancelCount = 0;
+            List<OrderDetails> waitTempList = new ArrayList<>();
+
+            int maxPersonnel = goods.getMaxPersonnel();
+            int extraShipCount = goods.getExtraShipNumber();
+            int extraMinPersonnel = goods.getExtraPersonnel();
+            List<Map<String, Object>> extraData = new ArrayList<>();
+            while (extraShipCount < 1) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("remains", maxPersonnel);
+                m.put("board", new ArrayList<OrderDetails>());
+                extraData.add(m);
+                extraShipCount -= 1;
+            }
+
+            List<OrderDetails> orderDetailsList = orderDetailsRepository.getByGoodsAndDate(goods, date);
+            if (orderDetailsList.isEmpty()) continue;
+            for (OrderDetails details : orderDetailsList) {
+                try {
+                    Thread.sleep(800);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Orders orders = details.getOrders();
+                if (orders.getOrderStatus().equals(OrderStatus.bookConfirm)) {
+                    if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {
+                        orders.changeStatus(OrderStatus.bookCancel);
+                        ordersRepository.save(orders);
+                        payService.cancelOrder(orders.getId(), "autoCancel");
+                        cancelCount += 1;
+                    } else {
+                        orders.changeStatus(OrderStatus.bookFix);
+                        ordersRepository.save(orders);
+                        confirmOrder(goods, orders, manager, date);
+                        confirmCount += 1;
+                    }
+                } else if (orders.getOrderStatus().equals(OrderStatus.waitBook) || orders.getOrderStatus().equals(OrderStatus.bookRunning)) {
+                    if (goods.getExtraRun()) {
+                        if (details.getPersonnel() > maxPersonnel) {
+                            orders.changeStatus(OrderStatus.bookCancel);
+                            ordersRepository.save(orders);
+                            // 취소에서 메세지도 같이 보냄
+                            payService.cancelOrder(orders.getId(), "autoCancel");
+                            cancelCount += 1;
+                        } else {
+                            boolean added = false;
+                            for (Map<String, Object> e : extraData) {
+                                int remains = (int) e.get("remains");
+                                if (details.getPersonnel() <= remains) {
+                                    remains -= details.getPersonnel();
+                                    e.put("remains", remains);
+                                    ((List<OrderDetails>) e.get("board")).add(details);
+                                    added = true;
+                                    break;
+                                }
+                            }
+                            if (!added) {
+                                orders.changeStatus(OrderStatus.bookCancel);
+                                ordersRepository.save(orders);
+                                // 취소에서 메세지도 같이 보냄
+                                payService.cancelOrder(orders.getId(), "autoCancel");
+                                cancelCount += 1;
+                            }
+                        }
+                    } else {
+                        orders.changeStatus(OrderStatus.bookCancel);
+                        ordersRepository.save(orders);
+                        // 취소에서 메세지도 같이 보냄
+                        payService.cancelOrder(orders.getId(), "autoCancel");
+                        cancelCount += 1;
+                    }
+                }
+                ordersRepository.save(orders);
+            }
+            for (Map<String, Object> ex : extraData) {
+                int remains = (int) ex.get("remains");
+                List<OrderDetails> dl = (List<OrderDetails>) ex.get("board");
+                if (remains > maxPersonnel - extraMinPersonnel) {
+                    for (OrderDetails od : dl) {
+                        Orders o = od.getOrders();
+                        o.changeStatus(OrderStatus.bookCancel);
+                        ordersRepository.save(o);
+                        // 취소에서 메세지도 같이 보냄
+                        payService.cancelOrder(o.getId(), "autoCancel");
+                        cancelCount += 1;
+                    }
+                } else {
+                    for (OrderDetails od : dl) {
+                        Orders o = od.getOrders();
+                        o.changeStatus(OrderStatus.bookFix);
+                        ordersRepository.save(o);
+                        confirmOrder(goods, o, manager, date);
+                        confirmCount += 1;
+                        goodsFishingDate.addReservedNumber(od.getPersonnel());
+                        goodsFishingDate.addWaitNumber(-1 * od.getPersonnel());
+                        od.setExtraRun(manager);
+                        orderDetailsRepository.save(od);
+                    }
+                }
+            }
+            goodsFishingDateRepository.save(goodsFishingDate);
+            String title = "시스템 예약확정";
+            String sentence = ship.getShipName() + "의 " + date + " "
+                    + time + ":" + goods.getFishingStartTime().substring(2,4)
+                    + goods.getName() + "상품의 \n"
+                    + "시스템예약확정시점이 도래하여 예약확정 " + confirmCount + "건,\n"
+                    + "예약취소 " + cancelCount + "건이 발생하였습니다.";
+            AlertType type = AlertType.systemConfirm;
+            Member receiver = ship.getCompany().getMember();
+            List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
+            Alerts alerts = Alerts.builder()
+                    .alertType(type)
+                    .entityType(EntityType.orders)
+                    .pid(goods.getId())
+                    .content(null)
+                    .sentence(sentence)
+                    .isRead(false)
+                    .isSent(false)
+                    .receiver(receiver)
+                    .alertTime(LocalDateTime.now())
+                    .createdBy(manager)
+                    .type("f")
+                    .build();
+            alerts = alertsRepository.save(alerts);
+            for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
+        }
+    }
 
     private void confirmOrder(Goods goods, Orders orders, Member manager, String date) throws IOException {
         AlertType type = AlertType.reservationComplete;
