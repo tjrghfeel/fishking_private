@@ -7,7 +7,7 @@ export default inject(
   "APIStore",
   "DataStore"
 )(
-  observer(({ id = "", APIStore, DataStore, onSelect }) => {
+  observer(({ id = "", APIStore, DataStore, onSelect, positions }) => {
     const [list, setList] = useState([]); // 갯바위 목록
     const selSido = useRef(null);
     const selSigungu = useRef(null);
@@ -56,6 +56,12 @@ export default inject(
         groupId: 152,
       });
       setArrSido(resolve);
+      if (positions) {
+        for (let p of positions) {
+          setSelected(selected.concat(parseInt(p)));
+          document.querySelector(`#id-${p}`).checked = true;
+        }
+      }
     }, [setList, setArrSido]);
     useEffect(() => {
       loadPageData();
@@ -133,6 +139,7 @@ export default inject(
                     <React.Fragment key={index}>
                       <label className="control checkbox">
                         <input
+                          id={`id-${data["id"]}`}
                           type="checkbox"
                           className="add-contrast"
                           data-role="collar"

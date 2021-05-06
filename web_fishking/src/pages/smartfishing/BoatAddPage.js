@@ -215,7 +215,6 @@ export default inject(
             }
           }
         }
-        console.log(this.state.positions)
       };
       uploadFile = async (uploadType) => {
         const { APIStore } = this.props;
@@ -535,8 +534,10 @@ export default inject(
                   <React.Fragment>
                     <SelectSeaRocksModal
                       id={"selRocksModal"}
+                      positions={this.state.positions}
                       onSelect={async (selected) => {
                         await this.setState({ positions: selected });
+                        console.log(selected)
                         const resolve = await APIStore._get(
                           `/v2/api/searocks/id`,
                           { seaRockId: selected }
