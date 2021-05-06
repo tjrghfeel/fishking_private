@@ -68,7 +68,7 @@ public class ExcelUtil {
         try (FileOutputStream fos = new FileOutputStream(newFileName);
              Workbook workbook = new XSSFWorkbook()) {
 
-            Sheet sheet = null;
+            Sheet sheet = workbook.createSheet(file_name);
 
             // 헤더 라인 입력
             Row row = sheet.createRow(0);
