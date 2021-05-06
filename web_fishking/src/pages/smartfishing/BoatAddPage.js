@@ -49,7 +49,7 @@ export default inject(
           weight: null, // 선박크기
           boardingPerson: 0, // 탑승인원 - 슬롯개수
           positions: [], // 사용위치목록
-
+          seaRocks: [],
           arr_fishSpecies: [],
           arr_services: [],
           arr_facilities: [],
@@ -92,6 +92,7 @@ export default inject(
         if (id) {
           const resolve = await APIStore._get(`/v2/api/ship/detail/${id}`);
           await this.setState({ ...resolve });
+          // console.log(this.state.positions)
           // 주소 설정
           this.textAddr.current.value = resolve["address"];
           // 선상위치 선택
@@ -110,7 +111,8 @@ export default inject(
             .click();
           // 갯바위시 지도 그리기
           if (this.state.fishingType === "seaRocks") {
-            for (let item of this.state.positions) {
+            // console.log(resolve.positions);
+            for (let item of resolve.positions) {
               const rockData = await APIStore._get(`/v2/api/searocks/id`, {
                 seaRockId: [item],
               });
@@ -898,6 +900,7 @@ export default inject(
                   <input
                     ref={this.profileImage}
                     type="file"
+                    accept="image/*"
                     className="form-control"
                     placeholder="선박사진을 등록하세요."
                     onChange={() => this.uploadFile("profileImage")}
@@ -913,6 +916,7 @@ export default inject(
                   <input
                     ref={this.videoId}
                     type="file"
+                    accept="video/*"
                     className="form-control"
                     placeholder="녹화영상을 등록하세요."
                     onChange={() => this.uploadFile("videoId")}

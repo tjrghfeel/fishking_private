@@ -36,11 +36,12 @@ public class FishingShipResponse {
         this.address = ship.getAddress();
         this.fishingType = ship.getFishingType().getValue();
         this.createDate = DateUtils.getDateTimeInFormat(ship.getCreatedDate());
-        if (ship.getShiipRealTimeVideos().size() == 0) {
-            this.hasCamera = false;
-        } else {
-            this.hasCamera = ship.getShiipRealTimeVideos().stream().anyMatch(RealTimeVideo::getIsUse);
-        }
+        this.hasCamera = ship.getVideoId() != null;
+//        if (ship.getShiipRealTimeVideos().size() == 0) {
+//            this.hasCamera = false;
+//        } else {
+//            this.hasCamera = ship.getShiipRealTimeVideos().stream().anyMatch(RealTimeVideo::getIsUse);
+//        }
         this.species = ship.getFishSpecies().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
         this.speciesCount = this.species.size();
     }

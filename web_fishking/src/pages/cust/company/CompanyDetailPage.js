@@ -46,7 +46,7 @@ export default inject(
             NativeStore,
           } = this.props;
 
-          NativeStore.postMessage('Connections', {});
+          // NativeStore.postMessage('Connections', {});
           document.addEventListener("message", event => {
             this.setState({ connectionType: event.data });
           });
@@ -83,36 +83,42 @@ export default inject(
                 player.start();
               }
             } else if (Hls.isSupported()) {
-              const hls = new Hls({
-                capLevelToPlayerSize: true,
-                capLevelOnFPSDrop: true,
-              });
-              hls.attachMedia(video);
-              hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                hls.loadSource(url);
-                hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
-                  this.mediaError = false;
-                  // setTimeout(() => {
-                  //   video.play();
-                  // }, 800);
+              if (url.includes('fishkingapp')) {
+                const liveMark = document.querySelector("#live-mark");
+                liveMark.style.display = 'none';
+                video.src = url;
+              } else {
+                const hls = new Hls({
+                  capLevelToPlayerSize: true,
+                  capLevelOnFPSDrop: true,
                 });
-                hls.on(Hls.Events.ERROR, (e, data) => {
-                  const { type, details, fatal } = data;
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+                  hls.loadSource(url);
+                  hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
+                    this.mediaError = false;
+                    // setTimeout(() => {
+                    //   video.play();
+                    // }, 800);
+                  });
+                  hls.on(Hls.Events.ERROR, (e, data) => {
+                    const { type, details, fatal } = data;
 
-                  if (type === Hls.ErrorTypes.NETWORK_ERROR) {
-                    hls.startLoad();
-                  } else if (type === Hls.ErrorTypes.MEDIA_ERROR) {
-                    hls.detachMedia();
-                    setTimeout(() => {
-                      video.src = url;
-                    }, 800);
-                    this.mediaError = true;
-                  } else {
-                    console.error("MEDIA DESTROY");
-                    hls.destroy();
-                  }
+                    if (type === Hls.ErrorTypes.NETWORK_ERROR) {
+                      hls.startLoad();
+                    } else if (type === Hls.ErrorTypes.MEDIA_ERROR) {
+                      hls.detachMedia();
+                      setTimeout(() => {
+                        video.src = url;
+                      }, 800);
+                      this.mediaError = true;
+                    } else {
+                      console.error("MEDIA DESTROY");
+                      hls.destroy();
+                    }
+                  });
                 });
-              });
+              }
               if (this.state.connectionType === 'wifi') {
                 video.play();
               }
@@ -359,6 +365,7 @@ export default inject(
                           }}
                         ></video>
                         <span
+                          id="live-mark"
                           className="play-live"
                           style={{ marginBottom: "8px", marginRight: "8px" }}
                         >
