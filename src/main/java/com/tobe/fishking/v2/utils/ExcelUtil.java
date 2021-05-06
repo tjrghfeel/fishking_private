@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.utils;
 
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.*;
@@ -63,8 +64,9 @@ public class ExcelUtil {
         return data_list;
     }
 
-    public static String getExcelFromList(List<Map<String, String>> data, String[] headers, String[] headersEn, String file_name) throws IOException {
+    public static String getExcelFromList(List<Map<String, String>> data, String[] headers, String[] headersEn, String file_name) throws IOException, ServiceLogicException {
         String newFileName = "/mnt/nfs/files/manage/" + file_name + ".xlsx";
+//        String newFileName = "C:"+File.separator+File.separator+"Users"+File.separator+"kai"+File.separator+"Desktop"+File.separator+""+file_name+".xlsx";
         try (FileOutputStream fos = new FileOutputStream(newFileName);
              Workbook workbook = new XSSFWorkbook()) {
 
@@ -91,7 +93,17 @@ public class ExcelUtil {
                 for (int idx=0; idx < headers.length; idx++) {
                     Cell cell = row.createCell(idx);
                     // 데이터 입력
-                    cell.setCellValue(d.get(headersEn[idx]));
+                    if(d.get(headersEn[idx])==null){cell.setCellValue("");}
+                    else {
+                        if (headersEn[idx].equals("amount") || headersEn[idx].equals("cancelAmount") || headersEn[idx].equals("totalAmount")) {
+//                        cell.setCellValue(d.get(headersEn[idx]).toString());
+                            Object o = d.get(headersEn[idx]);
+                            o.toString();
+                            cell.setCellValue(o.toString());
+                        } else {
+                            cell.setCellValue(d.get(headersEn[idx]));
+                        }
+                    }
                 }
                 row_idx += 1;
             }
@@ -99,7 +111,12 @@ public class ExcelUtil {
 //                for (int idx=0; idx < 6; idx++) {
 //                    sheet.autoSizeColumn(idx);
 //                }
-
+            workbook.write(fos);
+            fos.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            throw new ServiceLogicException("엑셀파일 다운에 실패하였습니다.");
         }
 
         return file_name;
