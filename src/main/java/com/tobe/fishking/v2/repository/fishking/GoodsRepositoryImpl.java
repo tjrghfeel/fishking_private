@@ -304,7 +304,12 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 .where(ship.isActive.eq(true),
                         goods.fishingStartTime.substring(0,2).eq(time),
                         goodsFishingDate.fishingDateString.eq(date),
-                        goods.isUse.eq(true))
+                        goods.isUse.eq(true),
+                        JPAExpressions
+                                .select(orders.count())
+                                .from(orders)
+                                .where(orders.goods.eq(goods), orders.fishingDate.eq(date)).gt(0L)
+                )
                 .fetch();
         return responses;
     }

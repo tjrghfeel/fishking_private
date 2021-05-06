@@ -368,5 +368,6 @@ public class Ship extends BaseTime {  //선상
         this.positions = String.join(",", dto.getPositions());
         this.routerIMEI = dto.getRouter();
         this.observerCode = code.getCode();
+        this.videoId = dto.getVideoId();
     }
 }

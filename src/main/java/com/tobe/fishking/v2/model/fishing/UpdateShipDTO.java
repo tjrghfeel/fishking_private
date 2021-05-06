@@ -107,6 +107,7 @@ public class UpdateShipDTO {
                 .positions(String.join(",", positions))
                 .code(code.getCode())
                 .router(router)
+                .videoId(videoId)
                 .build();
     }
 }

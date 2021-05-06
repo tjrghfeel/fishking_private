@@ -18,10 +18,12 @@ import com.tobe.fishking.v2.service.fishking.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.InetAddress;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -34,6 +36,8 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/v2/api")
 public class MainController {
+
+    private Environment environment;
 
     private final GoodsService goodsService;
     private final CompanyService companyService;
@@ -471,6 +475,14 @@ public class MainController {
         Map<String, Object> result;
         result = commonService.getMainScreenData();
         return result;
+    }
+
+    @GetMapping("envTest")
+    public String envTest() {
+//        System.out.println(System.getProperty("com.sun.management.jmxremote"));
+        String ip = InetAddress.getLoopbackAddress().getHostAddress();
+        System.out.println(ip);
+        return ip;
     }
 
 }
