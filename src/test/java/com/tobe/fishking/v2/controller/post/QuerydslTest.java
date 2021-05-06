@@ -4,6 +4,7 @@ import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.board.Post;
 import com.tobe.fishking.v2.entity.common.CommonCode;
+import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.QOrders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -75,11 +77,22 @@ public class QuerydslTest {
 //            System.out.println(r);
 //        }
 //        List<TodayBoardingResponse> l = rideShipRepository.getTodayRiders(13L, "shipName");
-        Member member = memberRepository.getOne(memberId);
-        List<TodayBoardingResponse> l = boardingService.getTodayBoarding(member, "shipName");
+//        Member member = memberRepository.getOne(memberId);
+//        List<TodayBoardingResponse> l = boardingService.getTodayBoarding(member, "shipName");
+
+//        List<Goods> goods = goodsRepository.getNeedConfirm("2021-05-06", "14");
+        List<Integer> goods = new ArrayList<>();
+        int idx = 2;
+        while (idx > 0) {
+            goods.add(idx);
+            idx -= 1;
+        }
+        System.out.println(goods.size() + " " + goods.size()/2);
+        goods = goods.subList(goods.size()/2, goods.size());
+        System.out.println(goods.size());
 
         //then
-        assertThat(l.size(), is(2));
+        assertThat(goods.size(), is(2));
 //        System.out.println(r);
 //        assertThat(r.size(), is(0L));
     }

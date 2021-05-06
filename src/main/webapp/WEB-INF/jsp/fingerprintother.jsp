@@ -31,7 +31,7 @@
                     <div class="text-center">
                         <div class="fingerWap">
                             <img src="/assets/smartsail/img/svg/finger.svg" alt=""/>
-                            <a onclick="javascript:setFingerTypeNum(10);"><span id="num-10" class="finger-point active" style="top:31px; left:5px;">10</span></a>
+                            <a onclick="javascript:setFingerTypeNum(10);"><span id="num-10" class="finger-point" style="top:31px; left:5px;">10</span></a>
                             <a onclick="javascript:setFingerTypeNum(9);"><span id="num-9" class="finger-point" style="top:12px; left:26px;">9</span></a>
                             <a onclick="javascript:setFingerTypeNum(8);"><span id="num-8" class="finger-point" style="top:5px; left:53px;">8</span></a>
                             <a onclick="javascript:setFingerTypeNum(7);"><span id="num-7" class="finger-point" style="top:7px; left:81px;">7</span></a>
@@ -40,7 +40,7 @@
                             <a onclick="javascript:setFingerTypeNum(5);"><span id="num-5" class="finger-point" style="top:31px; left:245px;">5</span></a>
                             <a onclick="javascript:setFingerTypeNum(4);"><span id="num-4" class="finger-point" style="top:12px; left:221px;">4</span></a>
                             <a onclick="javascript:setFingerTypeNum(3);"><span id="num-3" class="finger-point" style="top:5px; left:193px;">3</span></a>
-                            <a onclick="javascript:setFingerTypeNum(2);"><span id="num-2" class="finger-point" style="top:7px; left:166px;">2</span></a>
+                            <a onclick="javascript:setFingerTypeNum(2);"><span id="num-2" class="finger-point active" style="top:7px; left:166px;">2</span></a>
                             <a onclick="javascript:setFingerTypeNum(1);"><span id="num-1" class="finger-point" style="top:80px; left:137px;">1</span></a>
                         </div>
                     </div>

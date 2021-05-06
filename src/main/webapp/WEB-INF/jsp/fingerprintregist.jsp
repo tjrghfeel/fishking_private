@@ -23,7 +23,7 @@
 <!-- 안내 -->
 <div class="container nopadding mt-3">
     <h2><small>잠깐!!!</small><br/>
-        <strong class="red">오른손 엄지</strong><small>를 이용해 등록해 주세요.</small></h2>
+        <strong class="red">오른손 엄지</strong><small>를 권장합니다.</small></h2>
     <div class="card-round-grey mt-4">
         <div class="card card-sm">
             <div class="row no-gutters mt-5 mb-5 text-center">
