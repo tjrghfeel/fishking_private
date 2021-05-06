@@ -167,12 +167,12 @@ export default inject(
         const { APIStore, ModalStore } = this.props;
         if (this.state.tabActive === 0) {
           // > 오늘의 -
-          if (this.state.selected.length === 0) {
-            ModalStore.openModal("Alert", {
-              body: "알람설정 시점을 선택 하십시오",
-            })
-            return;
-          }
+          // if (this.state.selected.length === 0) {
+          //   ModalStore.openModal("Alert", {
+          //     body: "알람설정 시점을 선택 하십시오",
+          //   })
+          //   return;
+          // }
           const resolve = await APIStore._post(`/v2/api/addTideLevelAlert`, {
             observerId: this.state.location.observerId,
             alertTime: this.state.selected,

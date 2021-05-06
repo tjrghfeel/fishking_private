@@ -178,9 +178,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 
     @Query("select " +
-            "(select count(m.id) from Member m where m.isActive=true and m.isCertified=true and m.roles=2) as member, " +
-            "(select count(m.id) from Member m where m.isActive=true and m.isCertified=true and m.roles=1) as shipowner, " +
-            "(select count(m.id) from Member m where m.isActive=true and m.isCertified=true and m.roles=4) as police " +
+            "(select count(m.id) from Member m where m.isActive=true and m.isSignedUp=true and m.roles=2) as member, " +
+            "(select count(m.id) from Member m where m.isActive=true and m.isSignedUp=true and m.roles=1) as shipowner, " +
+            "(select count(m.id) from Member m where m.isActive=true and m.isSignedUp=true and m.roles=4) as police " +
             "from Member m2")
     List<Map<String, Long>> getDashBoardMember(Pageable pageable);
 }
