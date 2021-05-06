@@ -56,6 +56,7 @@ export default inject(
           arr_adtCameras: [],
           arr_nhnCameras: [],
           isUpdate: false,
+          rockData: null,
         };
       }
       /********** ********** ********** ********** **********/
@@ -111,7 +112,8 @@ export default inject(
             .click();
           // 갯바위시 지도 그리기
           if (this.state.fishingType === "seaRocks") {
-            // console.log(resolve.positions);
+            await this.setState({ positions: resolve.positions })
+            let i = 0;
             for (let item of resolve.positions) {
               const rockData = await APIStore._get(`/v2/api/searocks/id`, {
                 seaRockId: [item],
@@ -122,7 +124,7 @@ export default inject(
                   const data = rockData["data"][index];
                   const latitude = data["points"][0]["latitude"];
                   const longitude = data["points"][0]["longitude"];
-                  const container = document.querySelector(`#map-${index}`);
+                  const container = document.querySelector(`#map-${i}`);
                   const tmpMap = new daum.maps.Map(container, {
                     center: new daum.maps.LatLng(latitude, longitude),
                     level: 7,
@@ -142,6 +144,7 @@ export default inject(
                   }, 100);
                 }
               }
+              i += 1;
             }
           }
           // 주요어종 선택
@@ -212,6 +215,7 @@ export default inject(
             }
           }
         }
+        console.log(this.state.positions)
       };
       uploadFile = async (uploadType) => {
         const { APIStore } = this.props;
