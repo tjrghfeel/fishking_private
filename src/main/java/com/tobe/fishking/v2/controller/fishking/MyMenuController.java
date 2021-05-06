@@ -400,9 +400,9 @@ public class MyMenuController {
             @RequestBody AddTideAlertDto dto,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {
-        if(dto.getTide().size()<1 && dto.getDay().size()<1 && dto.getTime().size()<1){
-            return false;
-        }
+        if(!((dto.getTide().size()>=1 && dto.getDay().size()>=1 && dto.getTime().size()>=1) ||
+                (dto.getTide().size()==0 && dto.getDay().size()==0 && dto.getTime().size()==0))
+        ){return false;}
         for(int i=0; i<dto.getTide().size(); i++){
             Integer tide = Integer.parseInt(dto.getTide().get(i));
             if(tide < 1 || tide > 15){ return false; }

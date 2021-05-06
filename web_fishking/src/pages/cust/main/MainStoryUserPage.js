@@ -50,7 +50,8 @@ export default inject(
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
         });
-        if (!restored) this.loadPageData();
+        // if (!restored) this.loadPageData();//뒤로가기를 통해 조행기목록페이지로 들어와도 데이터들을 다시 로드하여 댓글수가 바뀐게 보일수있도록.
+        this.loadPageData();
       }
       componentWillUnmount() {
         const { PageStore } = this.props;
@@ -85,7 +86,7 @@ export default inject(
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {
-            window.scrollTo(0, 0);
+            // window.scrollTo(0, 0);
           }, 100);
         } else {
           PageStore.setState({ list: PageStore.state.list.concat(content) });

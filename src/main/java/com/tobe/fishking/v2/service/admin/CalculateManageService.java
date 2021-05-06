@@ -25,10 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +114,9 @@ public class CalculateManageService {
         Member manager = memberService.getMemberBySessionToken(token);
         if(manager.getRoles()!= Role.admin){throw new ServiceLogicException("권한이 없습니다.");}
         Company company = companyRepository.findByMember(manager);
-        String now = DateUtils.getDateTimeInFormat(LocalDateTime.now());
+//        String now = DateUtils.getDateTimeInFormat(LocalDateTime.now());
+        String now  = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+//        now = now.replace(" ","");
 
         String yearStart = null;
         String monthStart = null;
@@ -136,6 +140,7 @@ public class CalculateManageService {
 
         String fileName = ExcelUtil.getExcelFromList(data, headers, headersEn, company.getCompanyName()+"_"+now) + ".xlsx";
         return "/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+//        return "C:"+ File.separator+File.separator+"Users"+File.separator+"kai"+File.separator+"Desktop"+File.separator+""+fileName;
     }
 
     @Transactional
@@ -146,7 +151,8 @@ public class CalculateManageService {
         Member manager = memberService.getMemberBySessionToken(token);
         if(manager.getRoles()!= Role.admin){throw new ServiceLogicException("권한이 없습니다.");}
         Ship ship = shipRepository.getOne(shipId);
-        String now = DateUtils.getDateTimeInFormat(LocalDateTime.now());
+//        String now = DateUtils.getDateTimeInFormat(LocalDateTime.now());
+        String now  = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
         List<Map<String, String>> calcs = calculateRepository.calculateDetailForExcel(shipId, year, month);
 
@@ -155,5 +161,6 @@ public class CalculateManageService {
 
         String fileName = ExcelUtil.getExcelFromList(calcs, headers, headersEn, ship.getShipName() + "_"+ year + "-" + month + "_" + now) + ".xlsx";
         return "/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+//        return "C:"+ File.separator+File.separator+"Users"+File.separator+"kai"+File.separator+"Desktop"+File.separator+""+fileName;
     }
 }

@@ -49,7 +49,8 @@ export default inject(
         PageStore.setScrollEvent(() => {
           this.loadPageData(PageStore.state.page + 1);
         });
-        if (!restored) this.loadPageData();
+        // if (!restored) this.loadPageData();
+        this.loadPageData();
       }
       componentWillUnmount() {
         const { PageStore } = this.props;
@@ -84,7 +85,7 @@ export default inject(
         if (page === 0) {
           PageStore.setState({ list: content });
           setTimeout(() => {
-            window.scrollTo(0, 0);
+            // window.scrollTo(0, 0);
           }, 100);
         } else {
           PageStore.setState({ list: PageStore.state.list.concat(content) });
