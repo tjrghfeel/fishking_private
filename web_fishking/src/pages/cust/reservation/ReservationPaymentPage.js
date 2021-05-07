@@ -479,6 +479,8 @@ export default inject(
                         <input
                           ref={this.reservePersonPhone}
                           type="number"
+                          inputMode="numeric"
+                          pattern="\d*"
                           className="form-control"
                           placeholder="휴대폰 번호"
                           value={this.state.reservePersonPhone}
@@ -641,6 +643,8 @@ export default inject(
                               </label>
                               <input
                                 type="number"
+                                inputMode="numeric"
+                                pattern="\d*"
                                 className="form-control"
                                 minLength={10}
                                 maxLength={11}
@@ -671,6 +675,8 @@ export default inject(
                               </label>
                               <input
                                 type="number"
+                                inputMode="numeric"
+                                pattern="\d*"
                                 className="form-control"
                                 minLength={10}
                                 maxLength={11}
@@ -686,6 +692,8 @@ export default inject(
                           </label>
                           <input
                             type="number"
+                            inputMode="numeric"
+                            pattern="\d*"
                             className="form-control"
                             minLength={10}
                             maxLength={11}
@@ -699,6 +707,8 @@ export default inject(
                           </label>
                           <input
                             type="number"
+                            inputMode="numeric"
+                            pattern="\d*"
                             minLength={6}
                             maxLength={6}
                             className="form-control"

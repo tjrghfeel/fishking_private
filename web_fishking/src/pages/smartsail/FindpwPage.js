@@ -134,6 +134,8 @@ export default inject(
                       <input
                         ref={this.mobile}
                         type="number"
+                        inputMode="numeric"
+                        pattern="\d*"
                         className="form-control"
                         placeholder="휴대폰 번호를 입력해 주세요."
                         value={this.state.mobile}
@@ -155,6 +157,8 @@ export default inject(
                       <input
                         ref={this.code}
                         type="number"
+                        inputMode="numeric"
+                        pattern="\d*"
                         className="form-control"
                         placeholder="인증번호 6자리를 입력해 주세요."
                         value={this.state.code}
