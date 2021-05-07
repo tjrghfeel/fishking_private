@@ -14,7 +14,7 @@ export default inject(
   "PageStore"
 )(
   observer(
-    forwardRef(({ APIStore, PageStore, id = "", onClose }, ref) => {
+    forwardRef(({ APIStore, PageStore, ModalStore, id = "", onClose }, ref) => {
       const [arrSido, setArrSido] = useState([]); // 시/도 리스트
       const [arrSigungu, setArrSigungu] = useState([]); // 시/군/구 리스트
       const [arrDong, setArrDong] = useState([]); // 동/읍/면 리스트
@@ -22,6 +22,7 @@ export default inject(
       const selSigungu = useRef(null);
       const selDong = useRef(null);
       const container = useRef(null);
+      const geocoder = new kakao.maps.services.Geocoder();
       let map = null;
       const [arrMarker, setArrMarker] = useState([]);
       let markers = [];
@@ -41,9 +42,44 @@ export default inject(
         });
         setArrSigungu(resolve);
         selSigungu.current.value = "";
+
+        //select값에 따른 지도 중앙점 이동.
+          geocoder.addressSearch( selSido.current.selectedOptions[0].value, (result, status)=>{
+              if(status === kakao.maps.services.Status.OK){
+                  const resultAddress = result[0];
+                  let x = resultAddress.x;
+                  let y = resultAddress.y;
+
+                  map.setCenter(new kakao.maps.LatLng(y,x));
+              }
+              else if(status === kakao.maps.services.Status.ZERO_RESULT){
+                  ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+              }
+              else{
+                  ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+              }
+          })
       }, [setArrSigungu, selSigungu]);
       // 읍면동 리스트 조회
-      const selectSigungu = useCallback(async () => {}, []);
+      const selectSigungu = useCallback(async () => {
+          //select값에 따른 지도 검색
+          geocoder.addressSearch( selSido.current.selectedOptions[0].value+' '+selSigungu.current.selectedOptions[0].value, (result, status)=>{
+              if(status === kakao.maps.services.Status.OK){
+                  const resultAddress = result[0];
+                  let x = resultAddress.x;
+                  let y = resultAddress.y;
+
+                  map.setCenter(new kakao.maps.LatLng(y,x));
+              }
+              else if(status === kakao.maps.services.Status.ZERO_RESULT){
+                  ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+              }
+              else{
+                  ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+              }
+          })
+      }, []);
+
       // 지도 리로드
       const relayout = useCallback(() => {
         const options = {
@@ -56,6 +92,7 @@ export default inject(
         }, 0);
         kakao.maps.event.addListener(map, "click", addMarker);
       }, [arrMarker, setArrMarker]);
+
       const addMarker = useCallback(
         (e) => {
           const latlng = e.latLng;
@@ -70,6 +107,7 @@ export default inject(
         },
         [arrMarker, setArrMarker]
       );
+
       // 지도 마커 삭제
       const removeMarkers = useCallback(() => {
         for (let marker of arrMarker) {
@@ -77,6 +115,7 @@ export default inject(
         }
         arrMarker.splice(0);
       }, []);
+
       // 신규 갯바위 등록
       const onSubmit = useCallback(async () => {
         const sido = selSido.current.selectedOptions[0].value;
@@ -115,6 +154,7 @@ export default inject(
           onClose();
         }
       });
+
       useImperativeHandle(ref, () => ({ relayout }));
       useEffect(() => {
         loadSido();
