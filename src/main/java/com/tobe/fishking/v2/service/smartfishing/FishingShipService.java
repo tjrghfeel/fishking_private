@@ -323,7 +323,6 @@ public class FishingShipService {
 
         shipRepository.save(ship);
 
-
         int cameraNum = 0;
         List<RealTimeVideo> videos = realTimeVideoRepository.getNHNByShipsId(shipId);
         List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
@@ -570,29 +569,31 @@ public class FishingShipService {
             response.setPositions(Arrays.asList(ship.getPositions().split(",").clone()));
             response.setSeaRocks(null);
         } else {
-            List<Map<String, Object>> rockData = new ArrayList<>();
+//            List<Map<String, Object>> rockData = new ArrayList<>();
             List<Places> places = placesRepository.getPlacesByShipId(shipId);
-            for (Places place : places) {
-                Map<String, Object> placeData = new HashMap<>();
-                placeData.put("id", place.getId());
-                placeData.put("name", place.getPlaceName());
-                placeData.put("address", place.getAddress());
-                placeData.put("latitude", place.getLocation().getLatitude());
-                placeData.put("longitude", place.getLocation().getLatitude());
-                List<PlacePoint> points = placePointRepository.getPlacePointByPlace(place);
-                List<Map<String, Object>> pointList = new ArrayList<>();
-                for (PlacePoint point : points) {
-                    Map<String, Object> pointData = new HashMap<>();
-                    pointData.put("latitude", point.getLocation().getLatitude());
-                    pointData.put("longitude", point.getLocation().getLongitude());
-                    pointData.put("id", point.getId());
-                    pointList.add(pointData);
-                }
-                placeData.put("points", pointList);
-                rockData.add(placeData);
-            }
-            response.setSeaRocks(rockData);
-            response.setPositions(null);
+            response.setSeaRocks(null);
+            response.setPositions(places.stream().map(p -> p.getId().toString()).collect(Collectors.toList()));
+//            for (Places place : places) {
+//                Map<String, Object> placeData = new HashMap<>();
+//                placeData.put("id", place.getId());
+//                placeData.put("name", place.getPlaceName());
+//                placeData.put("address", place.getAddress());
+//                placeData.put("latitude", place.getLocation().getLatitude());
+//                placeData.put("longitude", place.getLocation().getLatitude());
+//                List<PlacePoint> points = placePointRepository.getPlacePointByPlace(place);
+//                List<Map<String, Object>> pointList = new ArrayList<>();
+//                for (PlacePoint point : points) {
+//                    Map<String, Object> pointData = new HashMap<>();
+//                    pointData.put("latitude", point.getLocation().getLatitude());
+//                    pointData.put("longitude", point.getLocation().getLongitude());
+//                    pointData.put("id", point.getId());
+//                    pointList.add(pointData);
+//                }
+//                placeData.put("points", pointList);
+//                rockData.add(placeData);
+//            }
+//            response.setSeaRocks(rockData);
+//            response.setPositions(null);
         }
         List<AddEvent> events = new ArrayList<>();
         List<Event> eventList = eventRepository.getEventByShipActive(shipId);

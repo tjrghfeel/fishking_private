@@ -64,7 +64,7 @@
 
 <jsp:include page="cmm_foot.jsp" />
 <script>
-    var fingerTypeNum = 10;
+    var fingerTypeNum = 2;
     function setFingerTypeNum (num) {
         fingerTypeNum = num;
         var arr = document.querySelectorAll('.finger-point');

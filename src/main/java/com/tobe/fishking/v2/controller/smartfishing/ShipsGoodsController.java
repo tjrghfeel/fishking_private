@@ -285,6 +285,8 @@ public class ShipsGoodsController {
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
+//            e.printStackTrace();
+//            return result;
             throw new ApiException(ErrorCodes.DB_INSERT_ERROR, "선박 수정에 실패했습니다.");
         }
     }
