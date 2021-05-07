@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags={"정산관리"})
 @RequiredArgsConstructor
@@ -65,21 +67,31 @@ public class CalculateManageController {
 
     @ApiOperation(value = "정산 리스트 엑셀다운로드")
     @GetMapping("/manage/calculate/list/excel")
-    public String getCalculateListExcel(
+    @ResponseBody
+    public Map<String,String>/*String*/  getCalculateListExcel(
             @RequestHeader("Authorization") String token,
             @Valid CalculateSearchConditionDto dto
     ) throws ServiceLogicException, IOException {
-        return "redirect:/" + paidManageService.getCalculateListExcel(token, dto);
+//        return "redirect:/" + paidManageService.getCalculateListExcel(token, dto);
+        String result = paidManageService.getCalculateListExcel(token, dto);
+        Map<String, String> map = new HashMap<>();
+        map.put("url",result);
+        return map;
     }
 
     @ApiOperation(value = "정산 상세 엑셀다운로드")
     @GetMapping("/manage/calculate/detail/excel")
-    public String getCalculateDetailExcel(
+    @ResponseBody
+    public Map<String, String> getCalculateDetailExcel(
             @RequestHeader("Authorization") String token,
             @RequestParam Long shipId,
             @RequestParam String year,
             @RequestParam String month
     ) throws ServiceLogicException, IOException {
-        return "redirect:/" + paidManageService.getCalculateDetailExcel(token, shipId, year, month);
+//        return "redirect:/" + paidManageService.getCalculateDetailExcel(token, shipId, year, month);
+        String result = paidManageService.getCalculateDetailExcel(token, shipId, year, month);
+        Map<String, String> map = new HashMap<>();
+        map.put("url",result);
+        return map;
     }
 }

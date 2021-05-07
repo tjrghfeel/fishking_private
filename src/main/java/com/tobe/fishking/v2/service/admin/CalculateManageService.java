@@ -139,8 +139,8 @@ public class CalculateManageService {
         String[] headersEn = {"companyName", "shipName", "yearmonth", "amount", "cancelAmount", "totalAmount", "isCalculated"};
 
         String fileName = ExcelUtil.getExcelFromList(data, headers, headersEn, company.getCompanyName()+"_"+now) + ".xlsx";
-        return "/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
-//        return "C:"+ File.separator+File.separator+"Users"+File.separator+"kai"+File.separator+"Desktop"+File.separator+""+fileName;
+        return "https://fishkingapp.com/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+//        return "localhost:8083/files/calculateExcel/"+URLEncoder.encode(fileName, StandardCharsets.UTF_8);
     }
 
     @Transactional
@@ -160,7 +160,7 @@ public class CalculateManageService {
         String[] headersEn = {"orderDate", "memberName", "name", "personnel", "payAmount"};
 
         String fileName = ExcelUtil.getExcelFromList(calcs, headers, headersEn, ship.getShipName() + "_"+ year + "-" + month + "_" + now) + ".xlsx";
-        return "/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
-//        return "C:"+ File.separator+File.separator+"Users"+File.separator+"kai"+File.separator+"Desktop"+File.separator+""+fileName;
+        return "https://fishkingapp.com/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+//        return "localhost:8083/files/calculateExcel/"+URLEncoder.encode(fileName, StandardCharsets.UTF_8);
     }
 }
