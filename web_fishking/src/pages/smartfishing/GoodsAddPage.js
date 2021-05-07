@@ -347,6 +347,8 @@ export default inject(
                   </label>
                   <input
                     type="number"
+                    inputMode="numeric"
+                    pattern="\d*"
                     className="form-control"
                     placeholder="상품가격을 입력하세요"
                     value={Math.abs(this.state.amount)}
@@ -361,6 +363,8 @@ export default inject(
                   <div className="input-group mb-3">
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="\d*"
                       className="form-control"
                       placeholder="최소"
                       value={this.state.minPersonnel}
@@ -373,6 +377,8 @@ export default inject(
                     </div>
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="\d*"
                       className="form-control"
                       placeholder="최대"
                       value={this.state.maxPersonnel}
@@ -693,6 +699,8 @@ export default inject(
                           <span className="input-group-text">
                             <input
                               type="number"
+                              inputMode="numeric"
+                              pattern="\d*"
                               className="form-control"
                               placeholder=""
                               value={this.state.extraPersonnel}
@@ -705,6 +713,8 @@ export default inject(
                             명 이상 발생할 경우{" "}
                             <input
                               type="number"
+                              inputMode="numeric"
+                              pattern="\d*"
                               className="form-control"
                               placeholder=""
                               value={this.state.extraShipNumber}
