@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Company;
+import com.tobe.fishking.v2.entity.fishing.TblSubmitQueue;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
@@ -18,6 +19,7 @@ import com.tobe.fishking.v2.model.fishing.CompanyDTO;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.fishking.CompanyRepository;
+import com.tobe.fishking.v2.repository.fishking.TblSubmitQueueRepository;
 import com.tobe.fishking.v2.service.AES;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.fishking.CompanyService;
@@ -42,6 +44,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +68,8 @@ public class CompanyManageService {
     PasswordEncoder encoder;
     @Autowired
     MemberService memberService;
+    @Autowired
+    TblSubmitQueueRepository tblSubmitQueueRepository;
 
     /*업체 목록 검색 메소드*/
     @Transactional
@@ -241,6 +247,28 @@ public class CompanyManageService {
         if(member.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다.");}
         if(company.getIsRegistered() == true) { return false; }//이미 승인이 된 업체이면 반려처리가 안되도록.
 
+        /* 문자 전송. */
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String requestDate = company.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String content = "[업체등록반려알림]\n "+requestDate+"일자에 "+company.getCompanyName()+"으로 요청하신 업체등록이 반려되었습니다. \n" +
+                "자세한 사항은 1566-2996으로 문의주십시오";
+        TblSubmitQueue tblSubmitQueue = TblSubmitQueue.builder()
+                .usrId("6328")
+                .smsGb("1")
+                .usedCd("10")
+                .reservedFg("I")
+                .reservedDttm(time)
+                .savedFg("0")
+                .rcvPhnId(company.getPhoneNumber())
+                .sndPhnId("0612778002")
+                .sndMsg(content)
+                .contentCnt(1)
+                .smsStatus("0")
+                .contentMimeType("text/plain")
+                .build();
+        tblSubmitQueueRepository.save(tblSubmitQueue);
+
+        //company데이터 삭제
         companyService.deleteCompanyRegisterRequest(companyId, token);
         return true;
     }
