@@ -139,7 +139,7 @@ public class CalculateManageService {
         String[] headersEn = {"companyName", "shipName", "yearmonth", "amount", "cancelAmount", "totalAmount", "isCalculated"};
 
         String fileName = ExcelUtil.getExcelFromList(data, headers, headersEn, company.getCompanyName()+"_"+now) + ".xlsx";
-        return "https://fishkingapp.com/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        return "https://fishkingapp.com/resource/manage/" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
 //        return "localhost:8083/files/calculateExcel/"+URLEncoder.encode(fileName, StandardCharsets.UTF_8);
     }
 
@@ -160,7 +160,7 @@ public class CalculateManageService {
         String[] headersEn = {"orderDate", "memberName", "name", "personnel", "payAmount"};
 
         String fileName = ExcelUtil.getExcelFromList(calcs, headers, headersEn, ship.getShipName() + "_"+ year + "-" + month + "_" + now) + ".xlsx";
-        return "https://fishkingapp.com/resource/manage" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        return "https://fishkingapp.com/resource/manage/" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
 //        return "localhost:8083/files/calculateExcel/"+URLEncoder.encode(fileName, StandardCharsets.UTF_8);
     }
 }
