@@ -244,12 +244,12 @@ public class MemberService {
 
         /*uid 중복 확인*/
         int checkUid = checkUidDup(signUpDto.getEmail());
-        if(checkUid==1){            throw new ServiceLogicException("이메일이 중복됩니다");        }
-        else if(checkUid==2){throw new ServiceLogicException("이메일 형식이 맞지 않습니다.");}
+        if(checkUid==1){            /*throw new ServiceLogicException("이메일이 중복됩니다");*/ return -1L;        }
+        else if(checkUid==2){/*throw new ServiceLogicException("이메일 형식이 맞지 않습니다.");*/ return -1L;}
         /*닉네임 중복 확인*/
         int checkNickName = checkNickNameDup(signUpDto.getNickName());
-        if(checkNickName==1){ throw new ServiceLogicException("닉네임이 중복됩니다"); }
-        else if(checkNickName==2){throw new ServiceLogicException("닉네임은 4자 이상 10자 이하이어야 합니다.");}
+        if(checkNickName==1){ /*throw new ServiceLogicException("닉네임이 중복됩니다");*/return -1L; }
+        else if(checkNickName==2){/*throw new ServiceLogicException("닉네임은 4자 이상 10자 이하이어야 합니다.");*/ return -1L;}
 
         /*회원 정보 저장*/
         /*비밀번호 자바 암호화*/

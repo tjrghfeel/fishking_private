@@ -133,6 +133,8 @@ public class MemberController {
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
+        if(memberId == -1L){return "redirect:https://www.fishkingapp.com/cust/member/signup?msg=inValidSignUpValue";}
+
         /*nice 본인인증 호출. */
         NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
 
@@ -412,6 +414,7 @@ public class MemberController {
         /*회원정보 저장. */
         Long memberId = memberService.insertMemberInfo(dto);
 
+        if(memberId == -1L){return "redirect:https://fishkingapp.com/cust/member/signup?iscompany=Y&msg=inValidSignUpValue";}
         /*nice 본인인증 호출. */
         NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
 
