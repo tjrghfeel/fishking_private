@@ -54,10 +54,19 @@
             </div>
         </a>
         <hr class="full mt-3 mb-3"/>
+        <a onclick="javascript:fn_logout();">
+            <div class="row no-gutters align-items-center">
+                <div class="col-3 pl-2">로그아웃</div>
+                <div class="col-8 text-right"></div>
+                <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
+            </div>
+        </a>
+        <hr class="full mt-3 mb-3"/>
         <a>
             <div class="row no-gutters align-items-center">
                 <div class="col-3 pl-2">버전정보</div>
-                <div class="col-8 text-right"><strong>1.7.7</strong> &nbsp; <span class="status-icon status6">최신버전</span></div>
+<%--                <div class="col-8 text-right"><strong>1.7.7</strong> &nbsp; <span class="status-icon status6">최신버전</span></div>--%>
+                <div class="col-8 text-right"></div>
                 <div class="col-1 text-right pl-1"><img src="/assets/smartsail/img/svg/cal-arrow-right.svg" alt=""/></div>
             </div>
         </a>
@@ -67,6 +76,15 @@
 <!--// 입력 -->
 
 <jsp:include page="cmm_foot.jsp" />
+<script>
+  // ----- > 스마트승선 로그인
+  function fn_logout() {
+    if (confirm('로그아웃하시겠습니까?')) {
+      localStorage.removeItem('@accessToken');
+      window.location.href = '/boarding/index';
+    }
+  }
+</script>
 
 </body>
 </html>

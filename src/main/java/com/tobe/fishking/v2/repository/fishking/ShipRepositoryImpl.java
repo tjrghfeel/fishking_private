@@ -136,7 +136,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         inFacilities(shipSearchDTO.getFacilitiesList()),
                         hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo()),
                         ship.isActive.eq(true),
-                        ship.company.isOpen.eq(true)
+                        ship.company.isOpen.eq(true),
+                        ship.cheapestGoodsCost.gt(0)
                 )
                 .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -176,7 +177,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         inFacilities(shipSearchDTO.getFacilitiesList()),
                         hasRealTimeVideos(shipSearchDTO.getHasRealTimeVideo()),
                         ship.isActive.eq(true),
-                        ship.company.isOpen.eq(true)
+                        ship.company.isOpen.eq(true),
+                        ship.cheapestGoodsCost.gt(0)
                 )
                 .limit(100)
                 .fetchResults();
@@ -233,7 +235,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                         ship.fishSpecies.any().codeName.containsIgnoreCase(keyword)
                         .or(ship.shipName.containsIgnoreCase(keyword))
                         .or(ship.sido.concat(" ").concat(ship.sigungu).containsIgnoreCase(keyword))
-                    ).and(searchLive(type.equals("live")))
+                    ).and(searchLive(type.equals("live"))),
+                        ship.cheapestGoodsCost.gt(0)
                 )
                 .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -296,7 +299,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                                             .select(observerCode.code)
                                             .from(observerCode).join(commonCode).on(observerCode.forecastCode.eq(commonCode.code))
                                             .where(commonCode.codeName.eq(keyword))
-                            ))
+                            )),
+                            ship.cheapestGoodsCost.gt(0)
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                     .offset(pageable.getOffset())
@@ -326,7 +330,8 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
                     ))
                     .from(ship)
                     .where(ship.isActive.eq(true)
-                            .and(ship.fishSpecies.any().codeName.eq(keyword))
+                            .and(ship.fishSpecies.any().codeName.eq(keyword)),
+                            ship.cheapestGoodsCost.gt(0)
                     )
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                     .offset(pageable.getOffset())

@@ -281,10 +281,24 @@ public class GoodsService {
             goodsFishingDateRepository.save(goodsFishingDate);
         }
 
-        if (addGoods.getAmount() < ship.getCheapestGoodsCost()) {
-            ship.changeCheapest(member, addGoods.getAmount());
+        if (addGoods.getIsUse()) {
+            if (ship.getCheapestGoodsCost() == 0) {
+                ship.changeCheapest(member, addGoods.getAmount());
+                shipRepo.save(ship);
+            } else {
+                if (addGoods.getIsUse() && ship.getCheapestGoodsCost() > addGoods.getAmount()) {
+                    ship.changeCheapest(member, addGoods.getAmount());
+                    shipRepo.save(ship);
+                }
+            }
+        }
+
+        if (!addGoods.getIsUse() && ship.getCheapestGoodsCost() > addGoods.getAmount()) {
+            Integer c = goodsRepo.getCheapestGoods(ship.getId());
+            ship.changeCheapest(member, c);
             shipRepo.save(ship);
         }
+
         return goods.getId();
     }
 
