@@ -832,12 +832,16 @@ public class MemberController {
             @RequestParam(value = "code",required = false) String code,
             @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "error",required = false) String error,
+            @RequestParam(value = "error_description", required = false) String errorDescription,
             Model model,
             HttpServletResponse response
     ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error);
+        SnsLoginResponseDto dto = memberService.snsLoginForKakao(code, state, error, errorDescription);
 
-        if(dto.getResultType().equals("signUp")){
+        if(dto.getIsError()){
+            response.sendRedirect("/cust/member/login?error="+dto.getErrorCode()+"&errorMessage="+dto.getErrorMessage());
+        }
+        else if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{
@@ -852,9 +856,18 @@ public class MemberController {
     @GetMapping("/facebookAuthCode")
     public void getFacebookAuthCode(
 //            @RequestParam("response_type") String responseType,
-            @RequestParam("code") String code,
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "error_reason", required = false) String errorReason,
+            @RequestParam(value = "error_description", required = false) String errorDescription,
             HttpServletResponse response
     ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        if(error != null){
+//            if(errorReason.equals("user_denied")){//사용자가 페북로그인 취소한경우, 로그인페이지로 되돌려보냄.
+            response.sendRedirect("/cust/member/login?error="+errorReason+"&errorMessage="+errorDescription);
+            return;
+//            }
+        }
         SnsLoginResponseDto dto = memberService.snsLoginForFacebook(code);
 
         if(dto.getResultType().equals("signUp")){
@@ -892,7 +905,10 @@ public class MemberController {
     ) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SnsLoginResponseDto dto = memberService.snsLoginForNaver(code,state,error,errorDescription);
 
-        if(dto.getResultType().equals("signUp")){
+        if(dto.getIsError()){
+            response.sendRedirect("/cust/member/login?error="+dto.getErrorCode()+"&errorMessage="+dto.getErrorMessage());
+        }
+        else if(dto.getResultType().equals("signUp")){
             response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
         }
         else{

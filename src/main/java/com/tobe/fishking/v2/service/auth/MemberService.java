@@ -573,8 +573,9 @@ public class MemberService {
 
     /*sns로그인. kakao*/
     @Transactional
-    public SnsLoginResponseDto snsLoginForKakao(String code, String state, String error) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+    public SnsLoginResponseDto snsLoginForKakao(String code, String state, String error, String errorDescription) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
+        resultDto.setIsError(false);
         resultDto.setSnsType("kakao");
         String clientId = "f0685b27f74d3f456d396195ca40796e";
         String redirectUrl = "https://www.fishkingapp.com/v2/api/kakaoAuthCode";
@@ -582,7 +583,10 @@ public class MemberService {
 
         /*받은 응답이 에러가있을경우 예외처리.*/
         if(error!=null){
-            throw new RuntimeException("인증 코드 요청 에러\nerror code : "+ error );
+            resultDto.setIsError(true);
+            resultDto.setErrorCode(error);
+            resultDto.setErrorMessage(errorDescription);
+            return resultDto;
         }
 
         /*접근코드 받아오기. */
@@ -603,8 +607,8 @@ public class MemberService {
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> mapForAccessCode = mapper.readValue(responseForAccessCode, Map.class);
 
-//        String responseError = (String)mapForAccessCode.get("error");//카카오엔 따로 없음.
-//        String responseErrorDescription = (String)mapForAccessCode.get("error_description");//카카오엔 따로 없음.
+        String responseError = (String)mapForAccessCode.get("code");//카카오엔 따로 없음.
+        String responseErrorDescription = (String)mapForAccessCode.get("msg");//카카오엔 따로 없음.
         String accessToken = (String)mapForAccessCode.get("access_token");
 //        String refreshToken = (String)mapForAccessCode.get("refreshToken");
         String tokenType = (String)mapForAccessCode.get("token_type");
@@ -612,9 +616,12 @@ public class MemberService {
 //        Integer expiresIn = null;
 //        if(expiresInString!=null){expiresIn = Integer.parseInt(expiresInString);}
 
-//        if(responseError!=null){
-//            throw new RuntimeException("접근 토큰 요청 에러\nerror code : "+ responseError + "\nerror description : "+responseErrorDescription);
-//        }
+        if(responseError!=null){
+            resultDto.setIsError(true);
+            resultDto.setErrorCode(responseError);
+            resultDto.setErrorMessage(responseErrorDescription);
+            return resultDto;
+        }
         System.out.println("accessToken :: "+accessToken);
 
         /*회원정보 받아오기. */
@@ -639,7 +646,10 @@ public class MemberService {
 
         /*에러응답시 예외처리*/
         if(errorCode!=null){
-            throw new RuntimeException("프로필 조회 에러\ncode : "+errorCode+"\nmsg : "+errorMessage);
+            resultDto.setIsError(true);
+            resultDto.setErrorCode(errorCode);
+            resultDto.setErrorMessage(errorMessage);
+            return resultDto;
         }
 
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
@@ -890,13 +900,17 @@ public class MemberService {
     @Transactional
     public SnsLoginResponseDto snsLoginForNaver(String code, String state, String error, String errorDescription) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         SnsLoginResponseDto resultDto=new SnsLoginResponseDto();
+        resultDto.setIsError(false);
         resultDto.setSnsType("naver");
         String clientId = "xQF6XDWPhMC665JO2kSq";
         String clientSecret = "shKqzGtgR1";
 
         /*받은 응답이 에러가있을경우 예외처리.*/
         if(error!=null){
-            throw new RuntimeException("인증 코드 요청 에러\nerror code : "+ error + "\nerror description : "+errorDescription);
+            resultDto.setIsError(true);
+            resultDto.setErrorCode(error);
+            resultDto.setErrorMessage(errorDescription);
+            return resultDto;
         }
 
         /*접근코드 받아오기. */
@@ -926,7 +940,10 @@ public class MemberService {
 //        if(expiresInString!=null){expiresIn = Integer.parseInt(expiresInString);}
 
         if(responseError!=null){
-            throw new RuntimeException("접근 토큰 요청 에러\nerror code : "+ responseError + "\nerror description : "+responseErrorDescription);
+            resultDto.setIsError(true);
+            resultDto.setErrorCode(responseError);
+            resultDto.setErrorMessage(responseErrorDescription);
+            return resultDto;
         }
 
         /*회원정보 받아오기. */
@@ -950,7 +967,10 @@ public class MemberService {
 
         /*에러응답시 예외처리*/
         if(!resultCode.equals("00")){
-            throw new RuntimeException("프로필 조회 에러\nresultcode : "+resultCode+"\nmessage : "+message);
+            resultDto.setIsError(true);
+            resultDto.setErrorCode(resultCode);
+            resultDto.setErrorMessage(message);
+            return resultDto;
         }
 
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */

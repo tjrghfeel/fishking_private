@@ -12,4 +12,7 @@ public class SnsLoginResponseDto {
     private String resultType;
     private Long memberId;
     private String sessionToken;
+    private Boolean isError;
+    private String errorCode;
+    private String errorMessage;
 }
