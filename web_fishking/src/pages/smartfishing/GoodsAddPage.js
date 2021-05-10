@@ -199,6 +199,20 @@ export default inject(
           });
           return;
         }
+        if (amount === null || amount === "") {
+          console.log(amount)
+          ModalStore.openModal("Alert", {
+            body: "상품가격을 입력해주세요.",
+          });
+          return;
+        }
+        if (new Number(amount) <= 0) {
+          console.log(amount)
+          ModalStore.openModal("Alert", {
+            body: "상품가격을 확인해주세요.",
+          });
+          return;
+        }
         if (new Number(minPersonnel) > new Number(maxPersonnel)) {
           ModalStore.openModal("Alert", {
             body: "정원을 확인해주세요.",
@@ -351,7 +365,8 @@ export default inject(
                     pattern="\d*"
                     className="form-control"
                     placeholder="상품가격을 입력하세요"
-                    value={Math.abs(this.state.amount)}
+                    // value={Math.abs(this.state.amount)}
+                    value={this.state.amount}
                     onChange={(e) => this.setState({ amount: e.target.value })}
                   />
                 </div>
