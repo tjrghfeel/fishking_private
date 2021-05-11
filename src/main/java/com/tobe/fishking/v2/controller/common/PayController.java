@@ -23,8 +23,13 @@ public class PayController {
         Map<String, Object> result = new HashMap<>();
         try {
             String msg = payService.cancelOrder(number, "");
-            result.put("status", "success");
-            result.put("message", msg);
+            if (msg.contains("거절")) {
+                result.put("status", "fail");
+                result.put("message", "취소결제가 실패했습니다.");
+            } else {
+                result.put("status", "success");
+                result.put("message", msg);
+            }
         } catch (Exception e) {
             result.put("status", "fail");
             result.put("message", "취소결제가 실패했습니다.");
