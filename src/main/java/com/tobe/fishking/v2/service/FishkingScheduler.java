@@ -50,8 +50,8 @@ public class FishkingScheduler {
 
 //    private final CouponMemberRepository couponMemberRepository;
 //    private final AlertService alertService;
-//    private final AlertsRepository alertsRepository;
-//    private final MemberService memberService;
+    private final AlertsRepository alertsRepository;
+    private final MemberService memberService;
 //    private final MemberRepository memberRepository;
 //    private final PopularService popularService;
 //    private final PostRepository postRepository;
@@ -183,23 +183,23 @@ public class FishkingScheduler {
 //
 //    /*기상 특보? 알림. */
 //
-//    /*푸쉬알림 보내기*/
-//    public void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {
-//        String url = "https://fcm.googleapis.com/fcm/send";
-//        Map<String,String> parameter = new HashMap<>();
-//        parameter.put("json",
-//                "{ \"notification\": " +
-//                        "{" +
-//                        "\"title\": \"["+alertTitle+"]\", " +
-//                        "\"body\": \""+alertContent+"\", " +
-//                        "\"android_channel_id\": \"notification.native_fishking\"" +
-//                        "}," +
-//                        "\"to\" : \""+registrationToken+"\"" +
-//                        "}");
-//        memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
-//        alerts.sent();
-//        alertsRepository.save(alerts);
-//    }
+    /*푸쉬알림 보내기*/
+    public void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {
+        String url = "https://fcm.googleapis.com/fcm/send";
+        Map<String,String> parameter = new HashMap<>();
+        parameter.put("json",
+                "{ \"notification\": " +
+                        "{" +
+                        "\"title\": \"["+alertTitle+"]\", " +
+                        "\"body\": \""+alertContent+"\", " +
+                        "\"android_channel_id\": \"notification.native_fishking\"" +
+                        "}," +
+                        "\"to\" : \""+registrationToken+"\"" +
+                        "}");
+        memberService.sendRequest(url, "JSON", parameter,"key=AAAAlI9VsDY:APA91bGtlb8VOtuRGVFU4jmWrgdDnNN3-qfKBm-5sz2LZ0MqsSvsDBzqHrLPapE2IALudZvlyB-f94xRCrp7vbGcQURaZon368Uey9HQ4_CtTOQQSEa089H_AbmWNVfToR42qA8JGje5");
+        alerts.sent();
+        alertsRepository.save(alerts);
+    }
 //
 //    @Scheduled(cron = "0 0 0 * * *")
 //    void checkNoticeDate(){
