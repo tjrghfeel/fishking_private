@@ -14,7 +14,8 @@ const {
 
 export default inject(
   "PageStore",
-  "APIStore"
+  "APIStore",
+  "ModalStore",
 )(
   observer(
     class extends React.Component {
@@ -26,7 +27,14 @@ export default inject(
       /** function */
       /********** ********** ********** ********** **********/
       componentDidMount() {
+         const { PageStore, ModalStore } = this.props;
         localStorage.removeItem("@signup-save");
+
+        const qp = PageStore.getQueryParams();
+        if (qp.error) {
+          ModalStore.openModal("Alert", { body: "비정상적인 접근입니다." });
+        }
+
         this.loadPageData();
       }
 
