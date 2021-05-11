@@ -48,141 +48,141 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FishkingScheduler {
 
-    private final CouponMemberRepository couponMemberRepository;
-    private final AlertService alertService;
+//    private final CouponMemberRepository couponMemberRepository;
+//    private final AlertService alertService;
     private final AlertsRepository alertsRepository;
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
-    private final PopularService popularService;
-    private final PostRepository postRepository;
-    private final BoardRepository boardRepository;
-    private final OrdersRepository ordersRepository;
-    private final OrderDetailsRepository orderDetailsRepository;
-    private final CalculateRepository calculateRepository;
-    private final PayService payService;
-    private final CodeGroupRepository codeGroupRepository;
-    private final CommonCodeRepository commonCodeRepository;
-    private final RegistrationTokenRepository registrationTokenRepository;
-    private final GoodsFishingDateRepository goodsFishingDateRepository;
-    private final GoodsRepository goodsRepository;
-
-    /*쿠폰 만료 알림.
-    새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
-    @Scheduled(cron = "0 0 12 * * *")//실서버용
-//    @Scheduled(cron = "0 0/1 * * * *")//테스트용
-    void checkCouponExpire() throws ResourceNotFoundException, IOException {
-        List<CouponMemberDTO> couponList = couponMemberRepository.checkCouponExpire();
-        Member manager = memberService.getMemberById(16L);
-
-        for(int i=0; i<couponList.size(); i++){
-            CouponMemberDTO dto = couponList.get(i);
-
-            Member receiver = memberRepository.findById(dto.getMember())
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMember()));
-            //혜택알림 허용 설정되어있으면 푸시알림.
-            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-            CommonCode benefitAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "benefit");
-            if(receiver.hasAlertSetCode(benefitAlertSetCommonCode.getCode())) {
-                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-                String alertTitle = "쿠폰 만료 알림";
-                String sentence = "보유하고 계신 쿠폰 '" + dto.getCouponName() + "'의 유효기간이 7일 남았습니다." + " 7일 이후에는 자동 소멸됩니다.";
-
-                Alerts alerts = Alerts.builder()
-                        .alertType(AlertType.couponExpire)
-                        .entityType(EntityType.couponMember)
-                        .pid(dto.getId())
-                        .content(null)
-                        .sentence(sentence)
-                        .isRead(false)
-                        .isSent(false)
-                        .receiver(receiver)
-                        .alertTime(LocalDateTime.now())
-                        .createdBy(manager)
-                        .type("c")
-                        .build();
-
-                alerts = alertsRepository.save(alerts);
-
-                for (RegistrationToken item: registrationTokenList) {
-                    sendPushAlert(alertTitle, sentence, alerts, item.getToken());
-                }
-            }
-        }
-    }
-
-    /*물때 알림. */
+//    private final MemberRepository memberRepository;
+//    private final PopularService popularService;
+//    private final PostRepository postRepository;
+//    private final BoardRepository boardRepository;
+//    private final OrdersRepository ordersRepository;
+//    private final OrderDetailsRepository orderDetailsRepository;
+//    private final CalculateRepository calculateRepository;
+//    private final PayService payService;
+//    private final CodeGroupRepository codeGroupRepository;
+//    private final CommonCodeRepository commonCodeRepository;
+//    private final RegistrationTokenRepository registrationTokenRepository;
+//    private final GoodsFishingDateRepository goodsFishingDateRepository;
+//    private final GoodsRepository goodsRepository;
+//
+//    /*쿠폰 만료 알림.
+//    새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
+//    @Scheduled(cron = "0 0 12 * * *")//실서버용
+////    @Scheduled(cron = "0 0/1 * * * *")//테스트용
+//    void checkCouponExpire() throws ResourceNotFoundException, IOException {
+//        List<CouponMemberDTO> couponList = couponMemberRepository.checkCouponExpire();
+//        Member manager = memberService.getMemberById(16L);
+//
+//        for(int i=0; i<couponList.size(); i++){
+//            CouponMemberDTO dto = couponList.get(i);
+//
+//            Member receiver = memberRepository.findById(dto.getMember())
+//                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMember()));
+//            //혜택알림 허용 설정되어있으면 푸시알림.
+//            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+//            CommonCode benefitAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "benefit");
+//            if(receiver.hasAlertSetCode(benefitAlertSetCommonCode.getCode())) {
+//                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+//                String alertTitle = "쿠폰 만료 알림";
+//                String sentence = "보유하고 계신 쿠폰 '" + dto.getCouponName() + "'의 유효기간이 7일 남았습니다." + " 7일 이후에는 자동 소멸됩니다.";
+//
+//                Alerts alerts = Alerts.builder()
+//                        .alertType(AlertType.couponExpire)
+//                        .entityType(EntityType.couponMember)
+//                        .pid(dto.getId())
+//                        .content(null)
+//                        .sentence(sentence)
+//                        .isRead(false)
+//                        .isSent(false)
+//                        .receiver(receiver)
+//                        .alertTime(LocalDateTime.now())
+//                        .createdBy(manager)
+//                        .type("c")
+//                        .build();
+//
+//                alerts = alertsRepository.save(alerts);
+//
+//                for (RegistrationToken item: registrationTokenList) {
+//                    sendPushAlert(alertTitle, sentence, alerts, item.getToken());
+//                }
+//            }
+//        }
+//    }
+//
+//    /*물때 알림. */
+////    @Scheduled(cron = "0 0/1 * * * *")
+//    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
+//    public void checkTideAlert() throws IOException {
+//        LocalDateTime dateTime = LocalDateTime.now();
+//        dateTime = dateTime/*.withMinute(0)*/.withSecond(0).withNano(0);
+//        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
+//                AlertType.tide, false, dateTime
+//        );
+//
+//        /*알림 전송*/
+//        for(int i=0; i<alertsList.size(); i++){
+//            Alerts alerts = alertsList.get(i);
+//
+//            Member receiver = alerts.getReceiver();
+//            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+//            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
+//            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
+//                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+////            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
+//                String alertTitle = "[" + alerts.getAlertType().getValue() + "]";
+//
+//                /*알림 내용 생성*/
+////            if(alertData[1].equals("15")){alertData[1] = "조금";}
+////            else{alertData[1] += "물";}
+//
+//                /*푸쉬알림 보내기. */
+//                for (RegistrationToken item: registrationTokenList) {
+//                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
+//                }
+//            }
+//        }
+//
+//    }
+//
+//    /*조위 알림*/
 //    @Scheduled(cron = "0 0/1 * * * *")
-    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
-    public void checkTideAlert() throws IOException {
-        LocalDateTime dateTime = LocalDateTime.now();
-        dateTime = dateTime/*.withMinute(0)*/.withSecond(0).withNano(0);
-        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
-                AlertType.tide, false, dateTime
-        );
-
-        /*알림 전송*/
-        for(int i=0; i<alertsList.size(); i++){
-            Alerts alerts = alertsList.get(i);
-
-            Member receiver = alerts.getReceiver();
-            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
-            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
-                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-//            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
-                String alertTitle = "[" + alerts.getAlertType().getValue() + "]";
-
-                /*알림 내용 생성*/
-//            if(alertData[1].equals("15")){alertData[1] = "조금";}
-//            else{alertData[1] += "물";}
-
-                /*푸쉬알림 보내기. */
-                for (RegistrationToken item: registrationTokenList) {
-                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
-                }
-            }
-        }
-
-    }
-
-    /*조위 알림*/
-    @Scheduled(cron = "0 0/1 * * * *")
-    public void checkTideLevelAlert() throws IOException {
-        System.out.println("checkTideLevelAlert()");
-        LocalDateTime dateTime = LocalDateTime.now();
-        dateTime = dateTime.withSecond(0).withNano(0);
-        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
-                AlertType.tideLevel, false, dateTime
-        );
-
-        /*알림 전송*/
-        for(int i=0; i<alertsList.size(); i++){
-            Alerts alerts = alertsList.get(i);
-
-            Member receiver = alerts.getReceiver();
-            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
-            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
-                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-//            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
-                String alertTitle = "" + alerts.getAlertType().getValue() + "";
-//            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
-//            Integer time = Integer.parseInt(alertData[2]);
-//            String timeString = null;
-//            if(time<0){timeString = Math.abs(time)+"시간 전";}
-//            else if(time>0){timeString = Math.abs(time)+"시간 후";}
-//            else{timeString="";}
-
-                /*푸쉬알림 보내기. */
-                for (RegistrationToken item: registrationTokenList) {
-                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
-                }
-            }
-        }
-    }
-
-    /*기상 특보? 알림. */
-
+//    public void checkTideLevelAlert() throws IOException {
+//        System.out.println("checkTideLevelAlert()");
+//        LocalDateTime dateTime = LocalDateTime.now();
+//        dateTime = dateTime.withSecond(0).withNano(0);
+//        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
+//                AlertType.tideLevel, false, dateTime
+//        );
+//
+//        /*알림 전송*/
+//        for(int i=0; i<alertsList.size(); i++){
+//            Alerts alerts = alertsList.get(i);
+//
+//            Member receiver = alerts.getReceiver();
+//            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+//            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
+//            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
+//                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+////            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
+//                String alertTitle = "" + alerts.getAlertType().getValue() + "";
+////            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
+////            Integer time = Integer.parseInt(alertData[2]);
+////            String timeString = null;
+////            if(time<0){timeString = Math.abs(time)+"시간 전";}
+////            else if(time>0){timeString = Math.abs(time)+"시간 후";}
+////            else{timeString="";}
+//
+//                /*푸쉬알림 보내기. */
+//                for (RegistrationToken item: registrationTokenList) {
+//                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
+//                }
+//            }
+//        }
+//    }
+//
+//    /*기상 특보? 알림. */
+//
     /*푸쉬알림 보내기*/
     public void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {
         String url = "https://fcm.googleapis.com/fcm/send";
@@ -200,26 +200,26 @@ public class FishkingScheduler {
         alerts.sent();
         alertsRepository.save(alerts);
     }
-
-    @Scheduled(cron = "0 0 0 * * *")
-    void checkNoticeDate(){
-        Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
-        List<Post> noticeList = postRepository.findAllByBoardAndChannelType(board, ChannelType.important);
-
-        for (Post notice : noticeList) {
-            if (notice.getNoticeEndDate() != null) {
-                if (LocalDate.now().isAfter(notice.getNoticeEndDate())) {//공지마지막날이 지났으면,
-                    notice.setChannelType(ChannelType.general);
-                    postRepository.save(notice);
-                }
-            }
-        }
-    }
-
-    @Scheduled(cron = "0 0 1 * * ?")
-    public void updatePopularKeyword() {
-        popularService.updatePopularKeyword();
-    }
+//
+//    @Scheduled(cron = "0 0 0 * * *")
+//    void checkNoticeDate(){
+//        Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
+//        List<Post> noticeList = postRepository.findAllByBoardAndChannelType(board, ChannelType.important);
+//
+//        for (Post notice : noticeList) {
+//            if (notice.getNoticeEndDate() != null) {
+//                if (LocalDate.now().isAfter(notice.getNoticeEndDate())) {//공지마지막날이 지났으면,
+//                    notice.setChannelType(ChannelType.general);
+//                    postRepository.save(notice);
+//                }
+//            }
+//        }
+//    }
+//
+//    @Scheduled(cron = "0 0 1 * * ?")
+//    public void updatePopularKeyword() {
+//        popularService.updatePopularKeyword();
+//    }
 
 //    @Scheduled(cron = "0 10 * * * ?")
 //    @Transactional
@@ -546,32 +546,32 @@ public class FishkingScheduler {
 //        }
 //    }
 
-    private void confirmOrder(Goods goods, Orders orders, Member manager, String date) throws IOException {
-        AlertType type = AlertType.reservationComplete;
-        Member receiver = orders.getCreatedBy();
-        Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-        String alertTitle = "예약 확정 알림";
-        String sentence = receiver.getMemberName() + "님 \n"
-                + goods.getShip().getShipName() + "의 \n"
-                + date + " " + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2) + "의 출조상품이\n"
-                + type.getMessage();
-
-        Alerts alerts = Alerts.builder()
-                .alertType(type)
-                .entityType(EntityType.orders)
-                .pid(orders.getId())
-                .content(null)
-                .sentence(sentence)
-                .isRead(false)
-                .isSent(false)
-                .receiver(receiver)
-                .alertTime(LocalDateTime.now())
-                .createdBy(manager)
-                .build();
-        alerts = alertsRepository.save(alerts);
-        for(RegistrationToken item: registrationTokenList){
-            sendPushAlert(alertTitle, sentence, alerts, item.getToken());
-        }
-    }
+//    private void confirmOrder(Goods goods, Orders orders, Member manager, String date) throws IOException {
+//        AlertType type = AlertType.reservationComplete;
+//        Member receiver = orders.getCreatedBy();
+//        Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+//        String alertTitle = "예약 확정 알림";
+//        String sentence = receiver.getMemberName() + "님 \n"
+//                + goods.getShip().getShipName() + "의 \n"
+//                + date + " " + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2) + "의 출조상품이\n"
+//                + type.getMessage();
+//
+//        Alerts alerts = Alerts.builder()
+//                .alertType(type)
+//                .entityType(EntityType.orders)
+//                .pid(orders.getId())
+//                .content(null)
+//                .sentence(sentence)
+//                .isRead(false)
+//                .isSent(false)
+//                .receiver(receiver)
+//                .alertTime(LocalDateTime.now())
+//                .createdBy(manager)
+//                .build();
+//        alerts = alertsRepository.save(alerts);
+//        for(RegistrationToken item: registrationTokenList){
+//            sendPushAlert(alertTitle, sentence, alerts, item.getToken());
+//        }
+//    }
 
 }
