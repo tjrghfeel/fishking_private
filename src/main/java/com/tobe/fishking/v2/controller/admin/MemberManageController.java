@@ -3,6 +3,7 @@ package com.tobe.fishking.v2.controller.admin;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
+import com.tobe.fishking.v2.model.admin.PushAllDto;
 import com.tobe.fishking.v2.model.admin.member.*;
 import com.tobe.fishking.v2.service.admin.MemberManageService;
 import io.swagger.annotations.Api;
@@ -16,6 +17,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -119,4 +121,15 @@ public class MemberManageController {
 //    ) throws ServiceLogicException {
 //        return memberManageService.initialPw(dto, token);
 //    }
+
+    //전체 푸시알림
+    @ApiOperation(value = "전체 푸시 알림")
+    @PostMapping("/manage/member/pushAll")
+    public Boolean pushAll(
+            @RequestBody @Valid PushAllDto dto,
+            @RequestHeader("Authorization") String token
+    ) throws IOException, ServiceLogicException {
+        return memberManageService.pushAll(dto, token);
+    }
+
 }

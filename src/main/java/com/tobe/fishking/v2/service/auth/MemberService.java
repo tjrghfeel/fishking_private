@@ -1381,6 +1381,7 @@ public class MemberService {
                     RegistrationToken token = RegistrationToken.builder()
                             .token(loginDTO.getRegistrationToken())
                             .member(member)
+                            .type("c")
                             .build();
                     tokenRepository.save(token);
                 } else {

@@ -32,7 +32,7 @@ public class Constants {
 
     //입력값 검증
     public static final String NO_SPECIAL_C_STRING = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]*$";
-    public static final String STRING = "^[a-zA-Z0-9ㅏ-ㅣ가-힣ㄱ-ㅎ.!?\\_-]*$";
+    public static final String STRING = "^[a-zA-Z0-9ㅏ-ㅣ가-힣ㄱ-ㅎ.!?\\s\\_-]*$";
     public static final String NUMBER = "^[0-9]*$";
     public static final String NUMBER2 = "^[0-9-]*$";
     public static final String EMAIL = "^[a-zA-Z0-9_.%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9]{2,6}$";

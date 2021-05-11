@@ -2,21 +2,24 @@ package com.tobe.fishking.v2.service.admin;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.auth.RegistrationToken;
-import com.tobe.fishking.v2.entity.common.Address;
-import com.tobe.fishking.v2.entity.common.CodeGroup;
-import com.tobe.fishking.v2.entity.common.CommonCode;
-import com.tobe.fishking.v2.entity.common.PhoneNumber;
+import com.tobe.fishking.v2.entity.common.*;
 import com.tobe.fishking.v2.enums.auth.Gender;
 import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.enums.common.AlertType;
+import com.tobe.fishking.v2.enums.fishing.EntityType;
 import com.tobe.fishking.v2.enums.fishing.SNSType;
 import com.tobe.fishking.v2.exception.EmailDupException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
+import com.tobe.fishking.v2.model.admin.PushAllDto;
 import com.tobe.fishking.v2.model.admin.member.*;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
+import com.tobe.fishking.v2.repository.auth.RegistrationTokenRepository;
+import com.tobe.fishking.v2.repository.common.AlertsRepository;
 import com.tobe.fishking.v2.repository.common.CodeGroupRepository;
 import com.tobe.fishking.v2.repository.common.CommonCodeRepository;
 import com.tobe.fishking.v2.service.AES;
+import com.tobe.fishking.v2.service.FishkingScheduler;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -51,6 +55,9 @@ public class MemberManageService {
     private final PasswordEncoder encoder;
     private final CodeGroupRepository codeGroupRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final RegistrationTokenRepository tokenRepository;
+    private final AlertsRepository alertsRepository;
+    private final FishkingScheduler scheduler;
 
     /*회원 목록 검색 메소드
     * - MemberSearchConditionDto에 있는 필드들을 리포지토리의 메소드인자로 넘기고 Page를 반환받는다. */
@@ -323,6 +330,38 @@ public class MemberManageService {
         member.setPassword(encodedPw);
         memberRepository.save(member);
 
+        return true;
+    }
+
+    //전체 푸시
+    @Transactional
+    public Boolean pushAll(PushAllDto dto, String token) throws ServiceLogicException, IOException {
+        Member manager = memberService.getMemberBySessionToken(token);
+        if(manager.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다");}
+
+
+
+//        List<RegistrationToken> tokenList = tokenRepository.findAll();
+        Member member = memberService.getMemberById(3710L);
+        List<RegistrationToken> tokenList = tokenRepository.findAllByMember(member);
+        for(RegistrationToken item : tokenList){
+
+            Alerts alerts = Alerts.builder()
+                    .alertType(AlertType.pushAll)
+                    .entityType(EntityType.none)
+                    .content(null)
+                    .sentence(dto.getContent())
+                    .isRead(false)
+                    .isSent(false)
+                    .receiver(item.getMember())
+                    .alertTime(LocalDateTime.now())
+                    .type(item.getType())
+                    .createdBy(manager)
+                    .build();
+            alertsRepository.save(alerts);
+
+            scheduler.sendPushAlert(dto.getTitle(), dto.getContent(), alerts, item.getToken());
+        }
         return true;
     }
 }
