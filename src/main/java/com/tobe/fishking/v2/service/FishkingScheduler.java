@@ -224,7 +224,6 @@ public class FishkingScheduler {
     @Scheduled(cron = "0 10 * * * ?")
     @Transactional
     public void confirm() {
-        String ip = InetAddress.getLoopbackAddress().getHostAddress();
         Member manager = memberService.getMemberById(16L);
         LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
 
@@ -232,18 +231,6 @@ public class FishkingScheduler {
         String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
 
         List<Goods> goodsList = goodsRepository.getNeedConfirm(date, time);
-
-        if (ip.contains("204")) {
-            if (goodsList.size() >= 2) {
-                goodsList = goodsList.subList(0, goodsList.size()/2);
-            }
-        } else {
-            if (goodsList.size() >= 2) {
-                goodsList = goodsList.subList(goodsList.size() / 2, goodsList.size());
-            } else {
-                goodsList = new ArrayList<>();
-            }
-        }
 
         for (Goods goods : goodsList) {
             try {
