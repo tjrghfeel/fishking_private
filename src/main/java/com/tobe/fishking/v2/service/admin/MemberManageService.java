@@ -341,9 +341,9 @@ public class MemberManageService {
 
 
 
-//        List<RegistrationToken> tokenList = tokenRepository.findAll();
-        Member member = memberService.getMemberById(3710L);
-        List<RegistrationToken> tokenList = tokenRepository.findAllByMember(member);
+        List<RegistrationToken> tokenList = tokenRepository.findAll();
+//        Member member = memberService.getMemberById(3710L);
+//        List<RegistrationToken> tokenList = tokenRepository.findAllByMember(member);
         for(RegistrationToken item : tokenList){
 
             Alerts alerts = Alerts.builder()
