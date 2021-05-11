@@ -21,6 +21,9 @@ export default inject(
         document.querySelector("body").classList.add("pofile");
         this.loadPageData();
       }
+      componentWillUnmount() {
+        document.querySelector("body").classList.remove("pofile");
+      }
 
       loadPageData = async () => {
         const {
