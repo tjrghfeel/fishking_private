@@ -68,121 +68,121 @@ public class FishkingScheduler {
 
     /*쿠폰 만료 알림.
     새벽4시마다, 사용기간이 일주일남은 쿠폰들에 대해 alerts를 생성시켜준다. */
-    @Scheduled(cron = "0 0 12 * * *")//실서버용
-//    @Scheduled(cron = "0 0/1 * * * *")//테스트용
-    void checkCouponExpire() throws ResourceNotFoundException, IOException {
-        List<CouponMemberDTO> couponList = couponMemberRepository.checkCouponExpire();
-        Member manager = memberService.getMemberById(16L);
-
-        for(int i=0; i<couponList.size(); i++){
-            CouponMemberDTO dto = couponList.get(i);
-
-            Member receiver = memberRepository.findById(dto.getMember())
-                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMember()));
-            //혜택알림 허용 설정되어있으면 푸시알림.
-            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-            CommonCode benefitAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "benefit");
-            if(receiver.hasAlertSetCode(benefitAlertSetCommonCode.getCode())) {
-                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-                String alertTitle = "쿠폰 만료 알림";
-                String sentence = "보유하고 계신 쿠폰 '" + dto.getCouponName() + "'의 유효기간이 7일 남았습니다." + " 7일 이후에는 자동 소멸됩니다.";
-
-                Alerts alerts = Alerts.builder()
-                        .alertType(AlertType.couponExpire)
-                        .entityType(EntityType.couponMember)
-                        .pid(dto.getId())
-                        .content(null)
-                        .sentence(sentence)
-                        .isRead(false)
-                        .isSent(false)
-                        .receiver(receiver)
-                        .alertTime(LocalDateTime.now())
-                        .createdBy(manager)
-                        .type("c")
-                        .build();
-
-                alerts = alertsRepository.save(alerts);
-
-                for (RegistrationToken item: registrationTokenList) {
-                    sendPushAlert(alertTitle, sentence, alerts, item.getToken());
-                }
-            }
-        }
-    }
-
-    /*물때 알림. */
+//    @Scheduled(cron = "0 0 12 * * *")//실서버용
+////    @Scheduled(cron = "0 0/1 * * * *")//테스트용
+//    void checkCouponExpire() throws ResourceNotFoundException, IOException {
+//        List<CouponMemberDTO> couponList = couponMemberRepository.checkCouponExpire();
+//        Member manager = memberService.getMemberById(16L);
+//
+//        for(int i=0; i<couponList.size(); i++){
+//            CouponMemberDTO dto = couponList.get(i);
+//
+//            Member receiver = memberRepository.findById(dto.getMember())
+//                    .orElseThrow(()->new ResourceNotFoundException("member not found for this id :: "+dto.getMember()));
+//            //혜택알림 허용 설정되어있으면 푸시알림.
+//            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+//            CommonCode benefitAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "benefit");
+//            if(receiver.hasAlertSetCode(benefitAlertSetCommonCode.getCode())) {
+//                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+//                String alertTitle = "쿠폰 만료 알림";
+//                String sentence = "보유하고 계신 쿠폰 '" + dto.getCouponName() + "'의 유효기간이 7일 남았습니다." + " 7일 이후에는 자동 소멸됩니다.";
+//
+//                Alerts alerts = Alerts.builder()
+//                        .alertType(AlertType.couponExpire)
+//                        .entityType(EntityType.couponMember)
+//                        .pid(dto.getId())
+//                        .content(null)
+//                        .sentence(sentence)
+//                        .isRead(false)
+//                        .isSent(false)
+//                        .receiver(receiver)
+//                        .alertTime(LocalDateTime.now())
+//                        .createdBy(manager)
+//                        .type("c")
+//                        .build();
+//
+//                alerts = alertsRepository.save(alerts);
+//
+//                for (RegistrationToken item: registrationTokenList) {
+//                    sendPushAlert(alertTitle, sentence, alerts, item.getToken());
+//                }
+//            }
+//        }
+//    }
+//
+//    /*물때 알림. */
+////    @Scheduled(cron = "0 0/1 * * * *")
+//    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
+//    public void checkTideAlert() throws IOException {
+//        LocalDateTime dateTime = LocalDateTime.now();
+//        dateTime = dateTime/*.withMinute(0)*/.withSecond(0).withNano(0);
+//        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
+//                AlertType.tide, false, dateTime
+//        );
+//
+//        /*알림 전송*/
+//        for(int i=0; i<alertsList.size(); i++){
+//            Alerts alerts = alertsList.get(i);
+//
+//            Member receiver = alerts.getReceiver();
+//            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+//            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
+//            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
+//                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+////            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
+//                String alertTitle = "[" + alerts.getAlertType().getValue() + "]";
+//
+//                /*알림 내용 생성*/
+////            if(alertData[1].equals("15")){alertData[1] = "조금";}
+////            else{alertData[1] += "물";}
+//
+//                /*푸쉬알림 보내기. */
+//                for (RegistrationToken item: registrationTokenList) {
+//                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
+//                }
+//            }
+//        }
+//
+//    }
+//
+//    /*조위 알림*/
 //    @Scheduled(cron = "0 0/1 * * * *")
-    @Scheduled(cron = "0 0 0,3,6,9,12 * * *")
-    public void checkTideAlert() throws IOException {
-        LocalDateTime dateTime = LocalDateTime.now();
-        dateTime = dateTime/*.withMinute(0)*/.withSecond(0).withNano(0);
-        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
-                AlertType.tide, false, dateTime
-        );
-
-        /*알림 전송*/
-        for(int i=0; i<alertsList.size(); i++){
-            Alerts alerts = alertsList.get(i);
-
-            Member receiver = alerts.getReceiver();
-            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
-            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
-                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-//            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명,물때,몇일전,시간.
-                String alertTitle = "[" + alerts.getAlertType().getValue() + "]";
-
-                /*알림 내용 생성*/
-//            if(alertData[1].equals("15")){alertData[1] = "조금";}
-//            else{alertData[1] += "물";}
-
-                /*푸쉬알림 보내기. */
-                for (RegistrationToken item: registrationTokenList) {
-                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
-                }
-            }
-        }
-
-    }
-
-    /*조위 알림*/
-    @Scheduled(cron = "0 0/1 * * * *")
-    public void checkTideLevelAlert() throws IOException {
-        System.out.println("checkTideLevelAlert()");
-        LocalDateTime dateTime = LocalDateTime.now();
-        dateTime = dateTime.withSecond(0).withNano(0);
-        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
-                AlertType.tideLevel, false, dateTime
-        );
-
-        /*알림 전송*/
-        for(int i=0; i<alertsList.size(); i++){
-            Alerts alerts = alertsList.get(i);
-
-            Member receiver = alerts.getReceiver();
-            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
-            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
-            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
-                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-//            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
-                String alertTitle = "" + alerts.getAlertType().getValue() + "";
-//            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
-//            Integer time = Integer.parseInt(alertData[2]);
-//            String timeString = null;
-//            if(time<0){timeString = Math.abs(time)+"시간 전";}
-//            else if(time>0){timeString = Math.abs(time)+"시간 후";}
-//            else{timeString="";}
-
-                /*푸쉬알림 보내기. */
-                for (RegistrationToken item: registrationTokenList) {
-                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
-                }
-            }
-        }
-    }
-
-    /*기상 특보? 알림. */
-
+//    public void checkTideLevelAlert() throws IOException {
+//        System.out.println("checkTideLevelAlert()");
+//        LocalDateTime dateTime = LocalDateTime.now();
+//        dateTime = dateTime.withSecond(0).withNano(0);
+//        List<Alerts> alertsList = alertsRepository.findAllByAlertTypeAndIsSentAndAlertTime(
+//                AlertType.tideLevel, false, dateTime
+//        );
+//
+//        /*알림 전송*/
+//        for(int i=0; i<alertsList.size(); i++){
+//            Alerts alerts = alertsList.get(i);
+//
+//            Member receiver = alerts.getReceiver();
+//            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+//            CommonCode tideAlertSetCommonCode = commonCodeRepository.findByCodeGroupAndCode(alertSetCodeGroup, "tide");
+//            if(receiver.hasAlertSetCode(tideAlertSetCommonCode.getCode())) {
+//                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
+////            String[] alertData = alerts.getContent().split(" ");//index순서대로, 관측소명, 만조/간조, 몇시간전인지.
+//                String alertTitle = "" + alerts.getAlertType().getValue() + "";
+////            String tideHighLow = (alertData[1].equals("high"))? "만조" : "간조";
+////            Integer time = Integer.parseInt(alertData[2]);
+////            String timeString = null;
+////            if(time<0){timeString = Math.abs(time)+"시간 전";}
+////            else if(time>0){timeString = Math.abs(time)+"시간 후";}
+////            else{timeString="";}
+//
+//                /*푸쉬알림 보내기. */
+//                for (RegistrationToken item: registrationTokenList) {
+//                    sendPushAlert(alertTitle, alerts.getSentence(), alerts, item.getToken());
+//                }
+//            }
+//        }
+//    }
+//
+//    /*기상 특보? 알림. */
+//
     /*푸쉬알림 보내기*/
     public void sendPushAlert(String alertTitle, String alertContent, Alerts alerts, String registrationToken) throws IOException {
         String url = "https://fcm.googleapis.com/fcm/send";
@@ -200,351 +200,183 @@ public class FishkingScheduler {
         alerts.sent();
         alertsRepository.save(alerts);
     }
+//
+//    @Scheduled(cron = "0 0 0 * * *")
+//    void checkNoticeDate(){
+//        Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
+//        List<Post> noticeList = postRepository.findAllByBoardAndChannelType(board, ChannelType.important);
+//
+//        for (Post notice : noticeList) {
+//            if (notice.getNoticeEndDate() != null) {
+//                if (LocalDate.now().isAfter(notice.getNoticeEndDate())) {//공지마지막날이 지났으면,
+//                    notice.setChannelType(ChannelType.general);
+//                    postRepository.save(notice);
+//                }
+//            }
+//        }
+//    }
+//
+//    @Scheduled(cron = "0 0 1 * * ?")
+//    public void updatePopularKeyword() {
+//        popularService.updatePopularKeyword();
+//    }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    void checkNoticeDate(){
-        Board board = boardRepository.findBoardByFilePublish(FilePublish.notice);
-        List<Post> noticeList = postRepository.findAllByBoardAndChannelType(board, ChannelType.important);
+    @Scheduled(cron = "0 10 * * * ?")
+    @Transactional
+    public void confirm() {
+        String ip = InetAddress.getLoopbackAddress().getHostAddress();
+        Member manager = memberService.getMemberById(16L);
+        LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
 
-        for (Post notice : noticeList) {
-            if (notice.getNoticeEndDate() != null) {
-                if (LocalDate.now().isAfter(notice.getNoticeEndDate())) {//공지마지막날이 지났으면,
-                    notice.setChannelType(ChannelType.general);
-                    postRepository.save(notice);
+        String date = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
+
+        List<Goods> goodsList = goodsRepository.getNeedConfirm(date, time);
+
+        if (ip.contains("204")) {
+            if (goodsList.size() >= 2) {
+                goodsList = goodsList.subList(0, goodsList.size()/2);
+            }
+        } else {
+            if (goodsList.size() >= 2) {
+                goodsList = goodsList.subList(goodsList.size() / 2, goodsList.size());
+            } else {
+                goodsList = new ArrayList<>();
+            }
+        }
+
+        for (Goods goods : goodsList) {
+            try {
+                Ship ship = goods.getShip();
+                GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), date);
+
+                int confirmCount = 0;
+                int cancelCount = 0;
+                List<OrderDetails> waitTempList = new ArrayList<>();
+
+                int maxPersonnel = goods.getMaxPersonnel();
+                int extraShipCount = goods.getExtraShipNumber();
+                int extraMinPersonnel = goods.getExtraPersonnel();
+                List<Map<String, Object>> extraData = new ArrayList<>();
+                while (extraShipCount > 1) {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("remains", maxPersonnel);
+                    m.put("board", new ArrayList<OrderDetails>());
+                    extraData.add(m);
+                    extraShipCount -= 1;
                 }
+
+                List<OrderDetails> orderDetailsList = orderDetailsRepository.getByGoodsAndDate(goods, date);
+                if (orderDetailsList.isEmpty()) continue;
+                for (OrderDetails details : orderDetailsList) {
+                    Thread.sleep(800);
+                    Orders orders = details.getOrders();
+                    if (orders.getOrderStatus().equals(OrderStatus.bookConfirm)) {
+                        if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {
+                            orders.changeStatus(OrderStatus.bookCancel);
+                            ordersRepository.save(orders);
+                            payService.cancelOrder(orders.getId(), "autoCancel");
+                            cancelCount += 1;
+                        } else {
+                            orders.changeStatus(OrderStatus.bookFix);
+                            ordersRepository.save(orders);
+                            confirmOrder(goods, orders, manager, date);
+                            confirmCount += 1;
+                        }
+                    } else if (orders.getOrderStatus().equals(OrderStatus.waitBook) || orders.getOrderStatus().equals(OrderStatus.bookRunning)) {
+                        if (goods.getExtraRun()) {
+                            if (details.getPersonnel() > maxPersonnel) {
+                                orders.changeStatus(OrderStatus.bookCancel);
+                                ordersRepository.save(orders);
+                                // 취소에서 메세지도 같이 보냄
+                                payService.cancelOrder(orders.getId(), "autoCancel");
+                                cancelCount += 1;
+                            } else {
+                                boolean added = false;
+                                for (Map<String, Object> e : extraData) {
+                                    int remains = (int) e.get("remains");
+                                    if (details.getPersonnel() <= remains) {
+                                        remains -= details.getPersonnel();
+                                        e.put("remains", remains);
+                                        ((List<OrderDetails>) e.get("board")).add(details);
+                                        added = true;
+                                        break;
+                                    }
+                                }
+                                if (!added) {
+                                    orders.changeStatus(OrderStatus.bookCancel);
+                                    ordersRepository.save(orders);
+                                    // 취소에서 메세지도 같이 보냄
+                                    payService.cancelOrder(orders.getId(), "autoCancel");
+                                    cancelCount += 1;
+                                }
+                            }
+                        } else {
+                            orders.changeStatus(OrderStatus.bookCancel);
+                            ordersRepository.save(orders);
+                            // 취소에서 메세지도 같이 보냄
+                            payService.cancelOrder(orders.getId(), "autoCancel");
+                            cancelCount += 1;
+                        }
+                    }
+                    ordersRepository.save(orders);
+                }
+                for (Map<String, Object> ex : extraData) {
+                    int remains = (int) ex.get("remains");
+                    List<OrderDetails> dl = (List<OrderDetails>) ex.get("board");
+                    if (remains > maxPersonnel - extraMinPersonnel) {
+                        for (OrderDetails od : dl) {
+                            Orders o = od.getOrders();
+                            o.changeStatus(OrderStatus.bookCancel);
+                            ordersRepository.save(o);
+                            // 취소에서 메세지도 같이 보냄
+                            payService.cancelOrder(o.getId(), "autoCancel");
+                            cancelCount += 1;
+                        }
+                    } else {
+                        for (OrderDetails od : dl) {
+                            Orders o = od.getOrders();
+                            o.changeStatus(OrderStatus.bookFix);
+                            ordersRepository.save(o);
+                            confirmOrder(goods, o, manager, date);
+                            confirmCount += 1;
+                            goodsFishingDate.addReservedNumber(od.getPersonnel());
+                            goodsFishingDate.addWaitNumber(-1 * od.getPersonnel());
+                            od.setExtraRun(manager);
+                            orderDetailsRepository.save(od);
+                        }
+                    }
+                }
+                goodsFishingDateRepository.save(goodsFishingDate);
+                String title = "시스템 예약확정";
+                String sentence = ship.getShipName() + "의 " + date + " "
+                        + time + ":" + goods.getFishingStartTime().substring(2,4)
+                        + goods.getName() + "상품의 \n"
+                        + "시스템예약확정시점이 도래하여 예약확정 " + confirmCount + "건,\n"
+                        + "예약취소 " + cancelCount + "건이 발생하였습니다.";
+                AlertType type = AlertType.systemConfirm;
+                Member receiver = ship.getCompany().getMember();
+                List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
+                Alerts alerts = Alerts.builder()
+                        .alertType(type)
+                        .entityType(EntityType.orders)
+                        .pid(goods.getId())
+                        .content(null)
+                        .sentence(sentence)
+                        .isRead(false)
+                        .isSent(false)
+                        .receiver(receiver)
+                        .alertTime(LocalDateTime.now())
+                        .createdBy(manager)
+                        .type("f")
+                        .build();
+                alerts = alertsRepository.save(alerts);
+                for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
-
-    @Scheduled(cron = "0 0 1 * * ?")
-    public void updatePopularKeyword() {
-        popularService.updatePopularKeyword();
-    }
-
-//    @Scheduled(cron = "0 10 * * * ?")
-//    @Transactional
-//    public void confirmOrder() throws IOException {
-//        Member manager = memberService.getMemberById(16L);
-//        LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
-//
-//        String now = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//        String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
-//
-//        List<Orders> confirm = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookConfirm);
-//        List<Orders> wait = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.waitBook);
-//        List<Orders> running = ordersRepository.getOrderByStatusForScheduler(now, time, OrderStatus.bookRunning);
-//        wait.addAll(running);
-//
-//        List<Orders> copied = new ArrayList<>(confirm);
-//        copied.addAll(wait);
-//        copied.addAll(running);
-//        List<Goods> goodsList = copied.stream().map(Orders::getGoods).distinct().collect(Collectors.toList());
-//        List<Map<String, Object>> goodsExtraRunData = new ArrayList<>();
-//        int[] confirmCounts = new int[goodsList.size()];
-//        int[] cancelCounts = new int[goodsList.size()];
-//
-////        for (Goods g : goodsList) {
-////            Map<String, Object> data = new HashMap<>();
-////            data.put("run", g.getExtraRun());
-////            data.put("personnel", g.getExtraPersonnel());
-////            data.put("ships", g.getExtraShipNumber());
-////            data.put("adds", 0);
-////            goodsExtraRunData.add(data);
-////        }
-////
-////        for (Orders w : wait) {
-////            int gIdx = goodsList.indexOf(w.getGoods());
-////            Map<String, Object> extraData = goodsExtraRunData.get(gIdx);
-////            Boolean run = (Boolean) extraData.get("run");
-////            if (run) {
-////                int personnel = (int) extraData.get("personnel");
-////                int ships = (int) extraData.get("ships");
-////                int adds = (int) extraData.get("adds");
-////                OrderDetails details = orderDetailsRepository.findByOrders(w);
-////                adds += details.getPersonnel();
-////                if (adds < (ships * personnel)) {
-////                    confirm.add(w);
-////                    wait.remove(w);
-////                    GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(w.getGoods().getId(), w.getFishingDate());
-////                    goodsFishingDate.addReservedNumber(details.getPersonnel());
-////                    goodsFishingDate.addWaitNumber(-1 * details.getPersonnel());
-////                    goodsFishingDateRepository.save(goodsFishingDate);
-////                }
-////                extraData.put("adds", adds);
-////            }
-////        }
-//
-//        wait.addAll(running);
-//        for (Orders o : confirm) {
-//            int goodsIdx = goodsList.indexOf(o.getGoods());
-//            confirmCounts[goodsIdx] += 1;
-//
-//            o.changeStatus(OrderStatus.bookFix);
-//            ordersRepository.save(o);
-//
-//            AlertType type = AlertType.reservationComplete;
-//            Member receiver = o.getCreatedBy();
-//            Goods goods = o.getGoods();
-//            GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), now);
-//            if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {
-//                wait.add(o);
-//                continue;
-//            }
-//            Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-//            String alertTitle = "예약 확정 알림";
-//            String sentence = receiver.getMemberName() + "님 \n"
-//                    + goods.getShip().getShipName() + "의 \n"
-//                    + now + " " + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2) + "의 출조상품이\n"
-//                    + type.getMessage();
-//
-//            Alerts alerts = Alerts.builder()
-//                    .alertType(type)
-//                    .entityType(EntityType.orders)
-//                    .pid(o.getId())
-//                    .content(null)
-//                    .sentence(sentence)
-//                    .isRead(false)
-//                    .isSent(false)
-//                    .receiver(receiver)
-//                    .alertTime(LocalDateTime.now())
-//                    .createdBy(manager)
-//                    .build();
-//            alerts = alertsRepository.save(alerts);
-//            for(RegistrationToken item: registrationTokenList){
-//                sendPushAlert(alertTitle, sentence, alerts, item.getToken());
-//            }
-//        }
-//
-//        for (Orders o : wait) {
-//            int goodsIdx = goodsList.indexOf(o.getGoods());
-//            cancelCounts[goodsIdx] += 1;
-//
-//            try {
-//                Thread.sleep(500);
-//                payService.cancelOrder(o.getId(), " ");
-//
-////                AlertType type = AlertType.reservationCancel;
-////                Member receiver = o.getCreatedBy();
-////                Goods goods = o.getGoods();
-////                Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
-////                String alertTitle = "예약 취소 알림";
-////                String sentence = receiver.getMemberName() + "님 \n"
-////                        + goods.getShip().getShipName() + "의 \n"
-////                        + now + " " + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2) + "의 출조상품이\n"
-////                        + type.getMessage();
-//
-////                Alerts alerts = Alerts.builder()
-////                        .alertType(type)
-////                        .entityType(EntityType.orders)
-////                        .pid(o.getId())
-////                        .content(null)
-////                        .sentence(sentence)
-////                        .isRead(false)
-////                        .isSent(false)
-////                        .receiver(receiver)
-////                        .alertTime(LocalDateTime.now())
-////                        .createdBy(manager)
-////                        .build();
-////                alerts = alertsRepository.save(alerts);
-////                for(RegistrationToken item: registrationTokenList){
-////                    sendPushAlert(alertTitle, sentence, alerts, item.getToken());
-////                }
-//            } catch (Exception e) {
-//                continue;
-//            }
-//        }
-//
-//        for (Goods g : goodsList) {
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            int idx = goodsList.indexOf(g);
-//            String title = "시스템 예약확정";
-//            String sentence = g.getShip().getShipName() + "의 " + now + " "
-//                    + g.getFishingStartTime().substring(0,2) + ":" + g.getFishingStartTime().substring(2,4)
-//                    + g.getName() + "상품의 \n"
-//                    + "시스템예약확정시점이 도래하여 예약확정 " + confirmCounts[idx] + "건,\n"
-//                    + "예약취소 " + cancelCounts[idx] + "건이 발생하였습니다.";
-//            AlertType type = AlertType.systemConfirm;
-//            Member receiver = g.getShip().getCompany().getMember();
-//            List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
-//            Alerts alerts = Alerts.builder()
-//                    .alertType(type)
-//                    .entityType(EntityType.orders)
-//                    .pid(g.getId())
-//                    .content(null)
-//                    .sentence(sentence)
-//                    .isRead(false)
-//                    .isSent(false)
-//                    .receiver(receiver)
-//                    .alertTime(LocalDateTime.now())
-//                    .createdBy(manager)
-//                    .type("f")
-//                    .build();
-//            alerts = alertsRepository.save(alerts);
-//            for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
-//        }
-//    }
-
-
-//    @Scheduled(cron = "0 10 * * * ?")
-//    @Transactional
-//    public void confirm() {
-//        String ip = InetAddress.getLoopbackAddress().getHostAddress();
-//        Member manager = memberService.getMemberById(16L);
-//        LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
-//
-//        String date = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//        String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
-//
-//        List<Goods> goodsList = goodsRepository.getNeedConfirm(date, time);
-//
-//        if (ip.contains("204")) {
-//            if (goodsList.size() >= 2) {
-//                goodsList = goodsList.subList(0, goodsList.size()/2);
-//            }
-//        } else {
-//            if (goodsList.size() >= 2) {
-//                goodsList = goodsList.subList(goodsList.size() / 2, goodsList.size());
-//            } else {
-//                goodsList = new ArrayList<>();
-//            }
-//        }
-//
-//        for (Goods goods : goodsList) {
-//            try {
-//                Ship ship = goods.getShip();
-//                GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), date);
-//
-//                int confirmCount = 0;
-//                int cancelCount = 0;
-//                List<OrderDetails> waitTempList = new ArrayList<>();
-//
-//                int maxPersonnel = goods.getMaxPersonnel();
-//                int extraShipCount = goods.getExtraShipNumber();
-//                int extraMinPersonnel = goods.getExtraPersonnel();
-//                List<Map<String, Object>> extraData = new ArrayList<>();
-//                while (extraShipCount > 1) {
-//                    Map<String, Object> m = new HashMap<>();
-//                    m.put("remains", maxPersonnel);
-//                    m.put("board", new ArrayList<OrderDetails>());
-//                    extraData.add(m);
-//                    extraShipCount -= 1;
-//                }
-//
-//                List<OrderDetails> orderDetailsList = orderDetailsRepository.getByGoodsAndDate(goods, date);
-//                if (orderDetailsList.isEmpty()) continue;
-//                for (OrderDetails details : orderDetailsList) {
-//                    Thread.sleep(800);
-//                    Orders orders = details.getOrders();
-//                    if (orders.getOrderStatus().equals(OrderStatus.bookConfirm)) {
-//                        if (goodsFishingDate.getReservedNumber() < goods.getMinPersonnel()) {
-//                            orders.changeStatus(OrderStatus.bookCancel);
-//                            ordersRepository.save(orders);
-//                            payService.cancelOrder(orders.getId(), "autoCancel");
-//                            cancelCount += 1;
-//                        } else {
-//                            orders.changeStatus(OrderStatus.bookFix);
-//                            ordersRepository.save(orders);
-//                            confirmOrder(goods, orders, manager, date);
-//                            confirmCount += 1;
-//                        }
-//                    } else if (orders.getOrderStatus().equals(OrderStatus.waitBook) || orders.getOrderStatus().equals(OrderStatus.bookRunning)) {
-//                        if (goods.getExtraRun()) {
-//                            if (details.getPersonnel() > maxPersonnel) {
-//                                orders.changeStatus(OrderStatus.bookCancel);
-//                                ordersRepository.save(orders);
-//                                // 취소에서 메세지도 같이 보냄
-//                                payService.cancelOrder(orders.getId(), "autoCancel");
-//                                cancelCount += 1;
-//                            } else {
-//                                boolean added = false;
-//                                for (Map<String, Object> e : extraData) {
-//                                    int remains = (int) e.get("remains");
-//                                    if (details.getPersonnel() <= remains) {
-//                                        remains -= details.getPersonnel();
-//                                        e.put("remains", remains);
-//                                        ((List<OrderDetails>) e.get("board")).add(details);
-//                                        added = true;
-//                                        break;
-//                                    }
-//                                }
-//                                if (!added) {
-//                                    orders.changeStatus(OrderStatus.bookCancel);
-//                                    ordersRepository.save(orders);
-//                                    // 취소에서 메세지도 같이 보냄
-//                                    payService.cancelOrder(orders.getId(), "autoCancel");
-//                                    cancelCount += 1;
-//                                }
-//                            }
-//                        } else {
-//                            orders.changeStatus(OrderStatus.bookCancel);
-//                            ordersRepository.save(orders);
-//                            // 취소에서 메세지도 같이 보냄
-//                            payService.cancelOrder(orders.getId(), "autoCancel");
-//                            cancelCount += 1;
-//                        }
-//                    }
-//                    ordersRepository.save(orders);
-//                }
-//                for (Map<String, Object> ex : extraData) {
-//                    int remains = (int) ex.get("remains");
-//                    List<OrderDetails> dl = (List<OrderDetails>) ex.get("board");
-//                    if (remains > maxPersonnel - extraMinPersonnel) {
-//                        for (OrderDetails od : dl) {
-//                            Orders o = od.getOrders();
-//                            o.changeStatus(OrderStatus.bookCancel);
-//                            ordersRepository.save(o);
-//                            // 취소에서 메세지도 같이 보냄
-//                            payService.cancelOrder(o.getId(), "autoCancel");
-//                            cancelCount += 1;
-//                        }
-//                    } else {
-//                        for (OrderDetails od : dl) {
-//                            Orders o = od.getOrders();
-//                            o.changeStatus(OrderStatus.bookFix);
-//                            ordersRepository.save(o);
-//                            confirmOrder(goods, o, manager, date);
-//                            confirmCount += 1;
-//                            goodsFishingDate.addReservedNumber(od.getPersonnel());
-//                            goodsFishingDate.addWaitNumber(-1 * od.getPersonnel());
-//                            od.setExtraRun(manager);
-//                            orderDetailsRepository.save(od);
-//                        }
-//                    }
-//                }
-//                goodsFishingDateRepository.save(goodsFishingDate);
-//                String title = "시스템 예약확정";
-//                String sentence = ship.getShipName() + "의 " + date + " "
-//                        + time + ":" + goods.getFishingStartTime().substring(2,4)
-//                        + goods.getName() + "상품의 \n"
-//                        + "시스템예약확정시점이 도래하여 예약확정 " + confirmCount + "건,\n"
-//                        + "예약취소 " + cancelCount + "건이 발생하였습니다.";
-//                AlertType type = AlertType.systemConfirm;
-//                Member receiver = ship.getCompany().getMember();
-//                List<RegistrationToken> registrationTokenList = registrationTokenRepository.findAllByCompanyMember(receiver);
-//                Alerts alerts = Alerts.builder()
-//                        .alertType(type)
-//                        .entityType(EntityType.orders)
-//                        .pid(goods.getId())
-//                        .content(null)
-//                        .sentence(sentence)
-//                        .isRead(false)
-//                        .isSent(false)
-//                        .receiver(receiver)
-//                        .alertTime(LocalDateTime.now())
-//                        .createdBy(manager)
-//                        .type("f")
-//                        .build();
-//                alerts = alertsRepository.save(alerts);
-//                for (RegistrationToken item: registrationTokenList) sendPushAlert(title, sentence, alerts, item.getToken());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 
     private void confirmOrder(Goods goods, Orders orders, Member manager, String date) throws IOException {
         AlertType type = AlertType.reservationComplete;
