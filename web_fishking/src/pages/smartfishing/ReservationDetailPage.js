@@ -258,19 +258,19 @@ export default inject(
                 <hr className="full mt-1 mb-2" />
                 {this.state.shipType == 3 && (
                   <ShipType3PositionView
-                    data={{ used: this.state.reservePositions }}
+                    data={{ used: this.state.reservePositions, total: [] }}
                     editable={false}
                   />
                 )}
                 {this.state.shipType == 5 && (
                   <ShipType5PositionView
-                    data={{ used: this.state.reservePositions }}
+                    data={{ used: this.state.reservePositions, total: [] }}
                     editable={false}
                   />
                 )}
                 {this.state.shipType == 9 && (
                   <ShipType9PositionView
-                    data={{ used: this.state.reservePositions }}
+                    data={{ used: this.state.reservePositions, total: [] }}
                     editable={false}
                   />
                 )}
