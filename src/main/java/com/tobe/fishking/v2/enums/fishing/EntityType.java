@@ -23,7 +23,8 @@ public enum EntityType implements IEnumModel {
     ship(""),//17
     fileEntity(""),//18
     tblSubmitQueue(""),//19
-    observerCode("");//20
+    observerCode(""),
+    none("");//20
 
 
     private String value;
