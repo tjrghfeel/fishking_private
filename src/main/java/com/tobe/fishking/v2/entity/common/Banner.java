@@ -56,6 +56,9 @@ public class Banner extends BaseTime {
     @Column(columnDefinition = "varchar(500)   comment '설명'  ")
     private String description;
 
+    @Column(columnDefinition = "int comment '순서' ")
+    private Integer orders;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', banner, 'COLUMN',  created_by
     @ManyToOne
     @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint NOT NULL   comment '생성자'  ")
