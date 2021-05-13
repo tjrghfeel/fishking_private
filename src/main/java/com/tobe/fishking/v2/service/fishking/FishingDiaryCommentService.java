@@ -112,7 +112,7 @@ public class FishingDiaryCommentService {
                 Set<RegistrationToken> registrationTokenList = receiver.getRegistrationTokenList();
                 String alertTitle = "글 알림";
                 String fishingDiaryTitle = (fishingDiary.getTitle().length() > 10)? fishingDiary.getTitle().substring(0,10)+"..." : fishingDiary.getTitle();
-                String sentence = "'제목 : "+fishingDiaryTitle+"'에 글이 추가되었습니다.";
+                String sentence = "'제목 : "+fishingDiaryTitle+"'에 댓글이 추가되었습니다.";
 
                 Alerts alerts = Alerts.builder()
                         .alertType(AlertType.fishingDiary)
