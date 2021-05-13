@@ -94,8 +94,8 @@ export default inject(
                   {this.state.bannerList && this.state.bannerList.map( (item, index)=>(
                       <div className={(index===0)?"carousel-item active":"carousel-item"}>
                           <img
-                              height="460"
-                              width="767"
+                              height="384"
+                              width="640"
                               src={item.imageUrl}
                               className="d-block w-100"
                               alt=""
@@ -103,7 +103,6 @@ export default inject(
                           />
                       </div>
                   ))}
-
               </div>
             </div>
             <div className="clearfix"></div>
