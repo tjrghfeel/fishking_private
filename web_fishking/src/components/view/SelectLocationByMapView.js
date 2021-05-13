@@ -12,6 +12,7 @@ export default inject("PageStore","ModalStore")(
         this.map = null;
         this.markers = [];
         this.geocoder = new kakao.maps.services.Geocoder();
+        this.places = new kakao.maps.services.Places();
         this.state = { address: "", lat: 0, lng: 0, searchKey:'' };
       }
       /********** ********** ********** ********** **********/
@@ -75,7 +76,8 @@ export default inject("PageStore","ModalStore")(
         const {ModalStore} = this.props;
         e.preventDefault();
 
-        this.geocoder.addressSearch( this.state.searchKey, (result, status)=>{
+        this.places.setMap(this.map);
+        this.places.keywordSearch( this.state.searchKey, (result, status)=>{
             if(status === kakao.maps.services.Status.OK){
                 const resultAddress = result[0];
                 let x = resultAddress.x;
@@ -84,12 +86,27 @@ export default inject("PageStore","ModalStore")(
                 this.map.setCenter(new kakao.maps.LatLng(y,x));
             }
             else if(status === kakao.maps.services.Status.ZERO_RESULT){
-                ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+                this.geocoder.addressSearch( this.state.searchKey, (result, status)=>{
+                    if(status === kakao.maps.services.Status.OK){
+                        const resultAddress = result[0];
+                        let x = resultAddress.x;
+                        let y = resultAddress.y;
+                        this.setPosition(y,x);
+                        this.map.setCenter(new kakao.maps.LatLng(y,x));
+                    }
+                    else if(status === kakao.maps.services.Status.ZERO_RESULT){
+                        ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+                    }
+                    else{
+                        ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+                    }
+                })
             }
             else{
                 ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
             }
         })
+
       }
 
       /********** ********** ********** ********** **********/
@@ -102,7 +119,7 @@ export default inject("PageStore","ModalStore")(
               <div className="mapwrap-sm">
                 <div>
                   <form style={{width:'100%'}} onSubmit={(e)=>{this.searchAddress(e)}} >
-                      <label style={{width:'20%',textAlign:'center',margin:8, fontSize:15}}>위치선택</label>
+                      <label style={{width:'20%',textAlign:'center',margin:8, fontSize:15}}>지도이동</label>
                       <input style={{border:'1px solid #2b79c8',borderRadius:5,width:'50%'}} type="text"
                             onChange={(e)=>{this.setState({searchKey:e.target.value})}} />
                       <input style={{width:'10%', border:'1px solid #2b79c8', borderRadius:5, backgroundColor:'#2b79c8', color:'white',

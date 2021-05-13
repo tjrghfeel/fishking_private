@@ -41,7 +41,7 @@ public class ReviewResponse {
         this.memberId = member.getId();
         this.profileImage = "/resource" + member.getProfileImage();
         this.nickName = member.getNickName();
-        this.fishingDate = goods.getFishingDate();
+        this.fishingDate = review.getFishingDate();
         this.goodsName = goods.getName();
         this.fishingTideTime = goods.getFishingTideTime();
         this.avgByReview = review.getTotalAvgByReview();

@@ -73,7 +73,7 @@ export default (() => {
           );
           if (err.message?.indexOf("500") !== -1) {
             ModalStore.openModal("Alert", {
-              body: "데이터 수신 중입니다.",
+              body: "현재 데이터 수신이 불안정합니다. 이 메시지가 계속되면 고객센터 혹은 1:1문의를 남겨주시면 최대한 빨리 해결하겠습니다.",
             });
           }
           if (err.message?.indexOf("403") !== -1) {
