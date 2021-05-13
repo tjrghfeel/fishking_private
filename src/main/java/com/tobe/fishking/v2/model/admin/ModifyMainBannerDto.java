@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.model.admin;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -10,5 +11,8 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class ModifyMainBannerDto {
-    private Map<String, Object>[] bannerList;
+    private Long id;
+    private Long fileId;
+    private String imageUrl;
+    private String linkUrl;
 }

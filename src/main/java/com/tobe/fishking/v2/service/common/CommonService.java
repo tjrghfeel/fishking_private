@@ -13,9 +13,11 @@ import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
+import com.tobe.fishking.v2.model.admin.MainBannerDto;
 import com.tobe.fishking.v2.model.board.FishingDiaryMainResponse;
 import com.tobe.fishking.v2.model.board.FishingDiarySearchResponse;
 import com.tobe.fishking.v2.model.common.*;
@@ -26,6 +28,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import com.tobe.fishking.v2.service.admin.BannerManageService;
 import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +60,7 @@ public class CommonService {
     private final FishingDiaryRepository fishingDiaryRepository;
     private final ShipRepository shipRepository;
     private final SearchKeywordRepository searchKeywordRepository;
+    private final BannerManageService bannerManageService;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -251,7 +255,7 @@ public class CommonService {
     }
 
     @Transactional
-    public Map<String, Object> getMainScreenData() {
+    public Map<String, Object> getMainScreenData()  {
         String path = env.getProperty("file.downloadUrl");
 
         Map<String, Object> result = new HashMap<>();
@@ -296,6 +300,10 @@ public class CommonService {
             }
         }
         result.put("fishingDiaries", diaries);
+
+        //메인 배너 정보 추가
+        List<MainBannerDto> bannerList = bannerManageService.getMainBanner();
+        result.put("bannerList",bannerList);
 
         return result;
     }

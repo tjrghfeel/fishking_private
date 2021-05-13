@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.admin.AdDto;
+import com.tobe.fishking.v2.model.admin.MainBannerDto;
 import com.tobe.fishking.v2.model.admin.ModifyMainBannerDto;
 import com.tobe.fishking.v2.repository.common.AdRepository;
 import com.tobe.fishking.v2.repository.common.BannerRepository;
@@ -109,26 +110,36 @@ public class BannerManageService {
         }
     }
 
+    //메인 배너 조회
+    @Transactional
+    public List<MainBannerDto> getMainBanner()  {
+//        Member manager = memberService.getMemberBySessionToken(token);
+//        if(manager.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다");}
+
+        List<MainBannerDto> result = bannerRepository.getMainBannerList();
+        return result;
+    }
+
     //메인 배너 설정
     @Transactional
-    public Boolean setMainBanner(ModifyMainBannerDto dto, String token) throws ServiceLogicException, ResourceNotFoundException {
+    public Boolean setMainBanner(ModifyMainBannerDto[] dto, String token) throws ServiceLogicException, ResourceNotFoundException {
         Member manager = memberService.getMemberBySessionToken(token);
         if(manager.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다");}
 
         List<Banner> preBannerList = bannerRepository.findAllOrderByOrder();
         bannerRepository.deleteAll(preBannerList);
 
-        Map<String, Object>[] bannerList = dto.getBannerList();
-        for(int i=0; i<bannerList.length; i++){
+//        List<Map<String, Object>> bannerList = dto.getBannerList();
+        for(int i=0; i<dto.length; i++){
             Banner banner = Banner.builder()
-                    .imagePath((String)bannerList[i].get("ImageUrl"))
-                    .linkURL((String)bannerList[i].get("linkUrl"))
+                    .imagePath((String)dto[i].getImageUrl())
+                    .linkURL((String)dto[i].getLinkUrl())
                     .orders(i+1)
                     .createdBy(manager)
                     .build();
             bannerRepository.save(banner);
 
-            Long fileId = new Long((Integer)bannerList[i].get("fileId"));
+            Long fileId = new Long((Long)dto[i].getFileId());
             FileEntity imageFile = fileRepository.findById(fileId)
                     .orElseThrow(()->new ResourceNotFoundException("file not found for this id ::"+fileId));
             imageFile.saveTemporaryFile(banner.getId());

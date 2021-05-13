@@ -21,7 +21,9 @@ public enum FilePublish implements IEnumModel {
     review("리뷰"),//11
     seaRocks("갯바위"),//12
     event("이벤트"),//13
-    commonComment("댓글");//14
+    commonComment("댓글"),//14
+    banner("배너")//15
+    ;
 
 
     private String value;

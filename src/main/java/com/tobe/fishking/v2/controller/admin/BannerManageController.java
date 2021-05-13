@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
+import com.tobe.fishking.v2.model.admin.MainBannerDto;
 import com.tobe.fishking.v2.model.admin.ModifyMainBannerDto;
 import com.tobe.fishking.v2.service.admin.BannerManageService;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @Api(tags={"배너관리"})
@@ -51,6 +53,16 @@ public class BannerManageController {
         return result;
     }
 
+    //메인 배너 조회
+    @ApiOperation(value = "메인 배너 조회")
+    @GetMapping("/manage/banner/main")
+    public List<MainBannerDto> getMainBannerList(
+            @RequestHeader("Authorization") String token
+    ) throws ServiceLogicException {
+        return bannerManageService.getMainBanner();
+    }
+
+
     //메인 배너 설정
     @ApiOperation(value="메인 배너 설정",notes = "" +
             "배열 요소들이 하나의 배너가되며, 기존 배너리스트를 대체한다. 배너 순서는 배열의 index순서이다. \n" +
@@ -64,10 +76,12 @@ public class BannerManageController {
             "...]")
     @PutMapping("/manage/banner/mainBanner")
     public Boolean setMainBanner(
-            @RequestBody @Valid ModifyMainBannerDto dto,
+            @RequestBody @Valid ModifyMainBannerDto[] dto,
             @RequestHeader("Authorization") String token
     ) throws ServiceLogicException, ResourceNotFoundException {
         return bannerManageService.setMainBanner(dto, token);
     }
+
+
 
 }

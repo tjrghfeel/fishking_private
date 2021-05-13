@@ -6,6 +6,7 @@ import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.CNotOwnerException;
 import com.tobe.fishking.v2.exception.EmptyListException;
+import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
 import com.tobe.fishking.v2.model.fishing.RiderShipDTO;
@@ -471,7 +472,7 @@ public class MainController {
             "\n 어종별 조황 클릭시 선상 리스트에서 해당 어종 검색 결과로 이동 " +
             "")
     @GetMapping(value = "/main")
-    public Map<String, Object> getMainScreenData(@RequestHeader(name = "Authorization") String token){
+    public Map<String, Object> getMainScreenData(@RequestHeader(name = "Authorization") String token)  {
         Map<String, Object> result;
         result = commonService.getMainScreenData();
         return result;
