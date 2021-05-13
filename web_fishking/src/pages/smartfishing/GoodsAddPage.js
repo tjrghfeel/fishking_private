@@ -33,9 +33,9 @@ export default inject(
 
           shipId: null, // 선박
           name: null, // 상품명
-          amount: 0, // 상품가격
-          minPersonnel: 0, // 정원 - 최소인원
-          maxPersonnel: 0, // 정원 - 최대인원
+          amount: '', // 상품가격
+          minPersonnel: '', // 정원 - 최소인원
+          maxPersonnel: '', // 정원 - 최대인원
           fishingStartTime: null, // 운항시간 - 시작
           fishingEndTime: null, // 운항시간 - 종료
           isUse: true, // 상태
