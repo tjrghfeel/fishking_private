@@ -82,36 +82,28 @@ export default inject(
               data-ride="carousel"
             >
               <ol className="carousel-indicators">
-                <li
-                  data-target="#carousel-visual"
-                  data-slide-to="0"
-                  className="active"
-                ></li>
-                <li data-target="#carousel-visual" data-slide-to="1"></li>
-                <li data-target="#carousel-visual" data-slide-to="2"></li>
+                  {this.state.bannerList && this.state.bannerList.map( (item, index)=>(
+                      <li
+                          data-target="#carousel-visual"
+                          data-slide-to={index}
+                          className={(index===0)?'active':''}
+                      ></li>
+                  ))}
               </ol>
               <div className="carousel-inner">
-                <div className="carousel-item active">
-                  <img
-                    src="/assets/cust/img/slide1.jpg"
-                    className="d-block w-100"
-                    alt=""
-                  />
-                </div>
-                <div className="carousel-item">
-                  <img
-                    src="/assets/cust/img/slide1.jpg"
-                    className="d-block w-100"
-                    alt=""
-                  />
-                </div>
-                <div className="carousel-item">
-                  <img
-                    src="/assets/cust/img/slide1.jpg"
-                    className="d-block w-100"
-                    alt=""
-                  />
-                </div>
+                  {this.state.bannerList && this.state.bannerList.map( (item, index)=>(
+                      <div className={(index===0)?"carousel-item active":"carousel-item"}>
+                          <img
+                              height="460"
+                              width="767"
+                              src={item.imageUrl}
+                              className="d-block w-100"
+                              alt=""
+                              onClick={()=>{window.location.href = item.linkUrl;}}
+                          />
+                      </div>
+                  ))}
+
               </div>
             </div>
             <div className="clearfix"></div>
