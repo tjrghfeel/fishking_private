@@ -213,6 +213,7 @@ public class PayService {
                     GoodType, GoodName, KeyInType, LineType, PhoneNo, ApprovalCount, HeadFiller);
 
             ipg.CancelDataMessage(ApprovalType, "0", TrNo, "", "", "", "", "");
+
             if (ipg.SendSocket("1")) {
                 rApprovalType = ipg.ApprovalType[0];
                 rTransactionNo = ipg.TransactionNo[0];        // 거래번호
@@ -293,12 +294,13 @@ public class PayService {
                         goodsFishingDate.addReservedNumber(-1 * (totalPersonnel - remains));
                         goodsFishingDateRepository.save(goodsFishingDate);
                     }
-                    String title = "고객 예약취소";
-                    String sentence = ship.getShipName() + "의 " + orders.getFishingDate() + " " + goods.getName() + "상품에 \n"
-                            + "고객 예약 취소가 있습니다.";
-                    makeAlert(orders, ship, title, sentence, true, token);
                 }
             }
+
+            String title = "고객 예약취소";
+            String sentence = ship.getShipName() + "의 " + orders.getFishingDate() + " " + goods.getName() + "상품에 \n"
+                    + "고객 예약 취소가 있습니다.";
+            makeAlert(orders, ship, title, sentence, true, token);
         } catch (Exception e) {
             rMessage2 = "P잠시후재시도(" + e.toString() + ")";    // 메시지2
         } // end of catch
