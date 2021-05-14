@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface RideShipRepositoryCustom {
-    List<TodayBoardingResponse> getTodayRiders(Long memberId, String orderBy);
+    List<TodayBoardingResponse> getTodayRiders(Long memberId, String orderBy, Boolean comp);
     Map<String, Object> dashboard(Long memberId);
     RiderFingerPrint getFingerPrint(String name, String phone);
     Page<RiderGoodsListResponse> searchRiders(Long memberId, RiderSearchDTO dto, Pageable pageable);

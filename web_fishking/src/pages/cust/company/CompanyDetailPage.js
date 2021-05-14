@@ -46,7 +46,7 @@ export default inject(
             NativeStore,
           } = this.props;
 
-          // NativeStore.postMessage('Connections', {});
+          NativeStore.postMessage('Connections', {});
           document.addEventListener("message", event => {
             this.setState({ connectionType: event.data });
           });
@@ -127,6 +127,9 @@ export default inject(
               video.addEventListener("loadedmetadata", () => {
                 // alert("video meta loaded");
                 // video.play();
+                if (this.state.connectionType === 'wifi') {
+                  video.play();
+                }
               });
             }
           }

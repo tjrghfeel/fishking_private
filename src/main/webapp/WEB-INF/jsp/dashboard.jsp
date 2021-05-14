@@ -65,6 +65,9 @@
         </div>
     </div>
 </div>
+<div id="wait-container">
+    <p class="mt-3 mb-4 text-center" id="wait_none">금일 승선대기자가 없습니다</p>
+</div>
 
 <!-- 예약 -->
 <div class="container nopadding mt-2" id="list-template" style="display: none;">
@@ -92,6 +95,48 @@
             <hr class="mt-1 mb-1"/>
             <div class="row no-gutters">
                 <div class="col-12 padding-sm text-center"><small><strong>방문: <strong class="large text-primary" name="data-visitCount">2</strong>회</strong></small> <small class="grey">&nbsp;/&nbsp;</small><small><strong name="data-fingerType">지문 : 오른손 엄지</strong></small></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p class="space mt-2"></p>
+<div class="container nopadding mt-2">
+    <div class="row mt-1 d-flex align-items-center">
+        <div class="col-5">
+            <h5>금일 승선자</h5>
+        </div>
+    </div>
+</div>
+
+
+<div id="comp-container">
+    <p class="mt-3 mb-4 text-center" id="comp_none">금일 승선자가 없습니다</p>
+</div>
+<p class="space mt-2"></p>
+
+<!-- 예약 -->
+<div class="container nopadding mt-2" id="list-template2" style="display: none;">
+    <div class="card-round-grey">
+        <div class="card card-sm"  style="margin-top: 0">
+            <div class="row no-gutters d-flex align-items-center">
+                <div class="col-8">
+                    <a>
+                        <p>
+                            승선자:    <strong class="" name="data-username2">챔피언 1호</strong><br/>
+                            선상명:    <strong class="" name="data-shipName2">챔피언 1호</strong><br/>
+                            상품명:    <strong class="text-info" name="data-goodsName2">우럭(오전)</strong><br/>
+                            출조일:    <span class="" name="data-date2">우럭(오전)</span><br/>
+                            연락처:    <span name="data-phone2">010-1234-5678</span><br/>
+                            비상시:    <span name="data-emergency2">010-1234-5678</span><br/>
+                            상태:     <span name="data-st2">010-1234-5678</span>
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <hr class="mt-1 mb-1"/>
+            <div class="row no-gutters">
+                <div class="col-12 padding-sm text-center"><small><strong>방문: <strong class="large text-primary" name="data-visitCount2">2</strong>회</strong></small> <small class="grey">&nbsp;/&nbsp;</small><small><strong name="data-fingerType2">지문 : 오른손 엄지</strong></small></div>
             </div>
         </div>
     </div>
@@ -179,7 +224,10 @@
 
                 var items = document.querySelectorAll('[id^="list-item-"]');
                 for (var i = 0; i < items.length; i++) {
-                    items[i].remove();
+                  items[i].remove();
+                }
+                if (response['boardingPeople'].length) {
+                    document.getElementById('wait_none').style.display = 'none';
                 }
                 for (var i = 0; i < response['boardingPeople'].length; i++) {
                     var item = response['boardingPeople'][i] || {};
@@ -209,7 +257,34 @@
                     if ((item['visitCount'] || 0) == 0) {
                         clone.querySelector('.data-finger-confirm').style.display = 'none';
                     }
-                    document.body.appendChild(clone);
+                    document.getElementById('wait-container').appendChild(clone);
+                    // document.body.appendChild(clone);
+                }
+
+                var comp_items = document.querySelectorAll('[id^="list-comp-item-"]');
+                for (var i = 0; i < comp_items.length; i++) {
+                    comp_items[i].remove();
+                }
+                if (response['boardingPeopleComplete'].length) {
+                  document.getElementById('comp_none').style.display = 'none';
+                }
+                for (var i = 0; i < response['boardingPeopleComplete'].length; i++) {
+                    var item = response['boardingPeopleComplete'][i] || {};
+                    var clone = document.querySelector('#list-template2').cloneNode(true);
+                    clone.id = 'list-comp-item-' + i;
+                    clone.style.display = 'block';
+                    clone.querySelector('[name="data-username2"]').textContent = item['username'];
+                    clone.querySelector('[name="data-shipName2"]').textContent = item['shipName'];
+                    clone.querySelector('[name="data-goodsName2"]').textContent = item['goodsName'];
+                    clone.querySelector('[name="data-date2"]').textContent = item['fishingDate']  + ' ' + item['fishingStartTime'] + '~' + item['fishingEndTime'];
+                    clone.querySelector('[name="data-phone2"]').textContent = item['phone'];
+                    clone.querySelector('[name="data-emergency2"]').textContent = item['emergencyPhone'];
+                    clone.querySelector('[name="data-st2"]').textContent = item['status'];
+                    clone.querySelector('[name="data-visitCount2"]').textContent = item['visitCount'] || 0;
+                    clone.querySelector('[name="data-fingerType2"]').textContent = '지문 : ' + (item['fingerType'] || '');
+
+                    document.getElementById('comp-container').appendChild(clone);
+                    // document.body.appendChild(clone);
                 }
             }
         });

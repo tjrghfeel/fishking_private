@@ -65,6 +65,7 @@ public class SailController {
         Member member = memberService.getMemberBySessionToken(token);
         Map<String, Object> response = new HashMap<>();
         response.put("boardingPeople", boardingService.getTodayBoarding(member, orderBy));
+        response.put("boardingPeopleComplete", boardingService.getTodayBoardingComplete(member, orderBy));
         response.put("status", boardingService.getDashboard(member));
         return response;
     }

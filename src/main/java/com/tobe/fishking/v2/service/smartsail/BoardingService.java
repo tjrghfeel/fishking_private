@@ -44,7 +44,23 @@ public class BoardingService {
 
     @Transactional
     public List<TodayBoardingResponse> getTodayBoarding(Member member, String orderBy) {
-        List<TodayBoardingResponse> responses = rideShipRepository.getTodayRiders(member.getId(), orderBy);
+        List<TodayBoardingResponse> responses = rideShipRepository.getTodayRiders(member.getId(), orderBy, false);
+        for (TodayBoardingResponse r : responses) {
+            RiderFingerPrint print = rideShipRepository.getFingerPrint(r.getUsername(), r.getPhone());
+            if (print == null) {
+                r.setFingerType(null);
+                r.setVisitCount(null);
+            } else {
+                r.setFingerType(print.getFinger().getValue());
+                r.setVisitCount(print.getCount());
+            }
+        }
+        return responses;
+    }
+
+    @Transactional
+    public List<TodayBoardingResponse> getTodayBoardingComplete(Member member, String orderBy) {
+        List<TodayBoardingResponse> responses = rideShipRepository.getTodayRiders(member.getId(), orderBy, true);
         for (TodayBoardingResponse r : responses) {
             RiderFingerPrint print = rideShipRepository.getFingerPrint(r.getUsername(), r.getPhone());
             if (print == null) {

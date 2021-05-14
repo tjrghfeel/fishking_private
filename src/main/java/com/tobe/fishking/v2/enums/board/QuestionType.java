@@ -10,9 +10,11 @@ public  enum QuestionType implements IEnumModel {
      update board set board_type = 'notice' where id  = 6;
      */
 
-    order("예약결제"),
-    cancel("취소"),
-    accuse("신고/건의");
+    member("회원정보"),
+    use("이용방법"),
+    order("예약/결제"),
+    accuse("신고/건의"),
+    etc("기타");
 
     private String value;
 
