@@ -201,7 +201,7 @@ export default inject(
                   </thead>
                   <tbody>
                     <tr>
-                      <td></td>
+                      <td>케이에스넷</td>
                       <td style={{ textAlign: "center" }}>
                         휴대폰, 신용카드, 계좌이체, 무통장입금(가상계좌) 등을
                         통한 결제처리
@@ -211,13 +211,21 @@ export default inject(
                       </td>
                     </tr>
                     <tr>
-                      <td></td>
+                      <td>케이에스넷</td>
                       <td style={{ textAlign: "center" }}>
-                        계좌이체, 무통장입금(가상계좌), 출금계좌인증 등을 통한
-                        결제처리
+                        실명 확인 및 본인인증 서비스
                       </td>
                       <td style={{ textAlign: "center" }}>
-                        위탁 계약 만료 시 까지 보유
+                        전자상거래 상 소비자보호에 관한 법률에 따라 분쟁처리 기록 3년간 보관
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>SK브로드밴드</td>
+                      <td style={{ textAlign: "center" }}>
+                        예약 정보의 SMS발신 서비스
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        SMS발신 서비스 종료시까지 보유
                       </td>
                     </tr>
                   </tbody>
@@ -321,7 +329,7 @@ export default inject(
                     </tr>
                     <tr>
                       <td style={{ textAlign: "center" }}>
-                        어복황제 상품예약 및 구매 서비스 제공 업체[업체 리스트]
+                        어복황제 상품예약 및 구매 서비스 제공 업체(업주)
                       </td>
                       <td style={{ textAlign: "center" }}>
                         어복황제 상품예약 및 구매 서비스 이용계약 이행
@@ -336,6 +344,37 @@ export default inject(
                       </td>
                       <td style={{ textAlign: "center" }}>
                         상품예약 및 구매 서비스 제공 완료 후 6개월
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: "center" }}>
+                        승선 업체
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        낚시 관리 및 육성법에 따른 승선자 명부 제출
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        승선한 날로부터 3개월
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: "center" }}>
+                        해양수산부
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        낚시어선 출입항 신고 및 승선자명부 제출에관한 업무 및
+                        긴급상황 발생 시 신속한 구조활동에 관한 업무
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        국민의 신분증명 및 의무행정 안전부 고시 제2017-1호, 2017.7.26 타법개정,
+                        표준 개인정보 보호지침, 개인정보 파일 보호기간 책정 기준표에 의한
+                        "낚시海 시스템 연계" 에 관한 기록보관 : 준영구
                       </td>
                     </tr>
                   </tbody>
@@ -428,26 +467,15 @@ export default inject(
                   </colgroup>
                   <tbody>
                     <tr>
-                      <th>개인정보보호책임자</th>
+                      <th>개인정보보호 책임자 및 담당부서</th>
                       <td>
-                        소속: 어복황제 사업총괄
+                        소속: IT사업본부 총괄본부장
                         <br />
-                        성명:
+                        성명: 김준성
                         <br />
-                        연락처:
+                        연락처: 1566-2996
                         <br />
-                        이메일:
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>개인정보보호 전담담당부서</th>
-                      <td>
-                        소속: 어복황제 플랫폼개발팀
-                        <br /> 성명
-                        <br />
-                        연락처:
-                        <br />
-                        이메일:
+                        이메일: help@to-be.kr
                       </td>
                     </tr>
                   </tbody>

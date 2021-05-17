@@ -6,6 +6,7 @@ import {
   Platform,
   ScrollView,
   RefreshControl,
+  View
 } from 'react-native';
 
 import MainPage from './page/MainPage';
@@ -18,29 +19,32 @@ export default inject(
     const [refreshing, setRefreshing] = useState(false);
     return (
       <>
-        <StatusBar
-          barStyle={Platform.select({
-            ios: 'dark-content',
-            android: 'light-content',
-          })}
-          backgroundColor={'#3683d5'}
-        />
         <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
-          <ScrollView
-            contentContainerStyle={{
-              flex: 1,
-            }}
-            refreshControl={
-              <RefreshControl
-                enabled={AppStore.refreshEnabled == 'Y'}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  WebViewStore.executeJavascript(`window.location.reload();`);
-                }}
-              />
-            }>
+          <StatusBar
+            barStyle={Platform.select({
+              ios: 'dark-content',
+              android: 'light-content',
+            })}
+            backgroundColor={'#3683d5'}
+          />
+          <View style={{flex: 1}}>
             <MainPage />
-          </ScrollView>
+          </View>
+          {/*<ScrollView*/}
+          {/*  contentContainerStyle={{*/}
+          {/*    flex: 1,*/}
+          {/*  }}*/}
+          {/*  refreshControl={*/}
+          {/*    <RefreshControl*/}
+          {/*      enabled={AppStore.refreshEnabled == 'Y'}*/}
+          {/*      refreshing={refreshing}*/}
+          {/*      onRefresh={() => {*/}
+          {/*        WebViewStore.executeJavascript(`window.location.reload();`);*/}
+          {/*      }}*/}
+          {/*    />*/}
+          {/*  }>*/}
+          {/*  <MainPage />*/}
+          {/*</ScrollView>*/}
         </SafeAreaView>
       </>
     );

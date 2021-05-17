@@ -6,6 +6,7 @@ import React from "react";
 const http = axios.create({
   baseURL: process.env.REACT_APP_HTTP_BASE_URL,
   // baseURL: 'http://127.0.0.1:8083',
+  // baseURL: 'http://112.220.72.178:8083',
 });
 
 http.defaults.headers.common["Authorization"] =

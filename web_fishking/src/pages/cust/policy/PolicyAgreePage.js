@@ -19,7 +19,7 @@ export default inject("PageStore")(
         return (
           <React.Fragment>
             {/** Navigation */}
-            <NavigationLayout title={"개인정보처리방침"} showBackIcon={true} />
+            <NavigationLayout title={"개인정보 제 3자 제공 동의"} showBackIcon={true} />
 
             {/** 데이터 */}
             <div className="container nopadding mt-0">
@@ -96,35 +96,82 @@ export default inject("PageStore")(
 
                 <table className="table table-bordered">
                   <colgroup>
-                    <col style={{ width: "20%" }} />
-                    <col style={{ width: "80%" }} />
+                    <col style={{ width: "15%" }} />
+                    <col style={{ width: "35%" }} />
+                    <col style={{ width: "35%" }} />
+                    <col style={{ width: "15%" }} />
                   </colgroup>
+                  <thead>
+                    <tr>
+                      <th>제공 받는 자</th>
+                      <th>제공목적</th>
+                      <th>제공정보</th>
+                      <th>보유 및 이용기간</th>
+                    </tr>
+                  </thead>
                   <tbody>
                     <tr>
-                      <th>제공받는 자</th>
-                      <td>어복황제 상품예약 서비스 제공 업체[업체리스트]</td>
-                    </tr>
-                    <tr>
-                      <th>제공 목적</th>
-                      <td>
-                        어복황제 상품예약 서비스 이용계약 이행(서비스 제공,
-                        확인, 이용자 정보 확인)
+                      <td style={{ textAlign: "center" }}>이벤트 제공 업체</td>
+                      <td style={{ textAlign: "center" }}>
+                        이벤트 당첨자 해피콜
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        이름, 전화번호, 주소
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        재화 또는 서비스의
+                        <br /> 제공 목적이 달성 된 후 파기
                       </td>
                     </tr>
                     <tr>
-                      <th>제공하는 정보</th>
-                      <td>
-                        예약한 서비스의 이용자 정보(예약자 이름, 휴대폰번호,
-                        예약자 안심번호, 예약번호, 예약한 업체명, 예약한 상품명,
-                        결제금액)
+                      <td style={{ textAlign: "center" }}>
+                        어복황제 상품예약 및 구매 서비스 제공 업체(업주)
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        어복황제 상품예약 및 구매 서비스 이용계약 이행
+                        <br />
+                        (서비스 제공, 확인, 이용자 정보 확인)
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        예약 또는 구매한 서비스의 이용자 정보
+                        <br />
+                        (예약자 이름, 휴대폰번호, 예약자 안심번호, 예약번호,
+                        예약한 업체명, 예약한 상품명, 결제금액)
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        상품예약 및 구매 서비스 제공 완료 후 6개월
                       </td>
                     </tr>
                     <tr>
-                      <th>
-                        제공받는 자의 <br />
-                        개인정보보유 및 이용기간
-                      </th>
-                      <td>상품예약 서비스 제공 완료 후 6개월</td>
+                      <td style={{ textAlign: "center" }}>
+                        승선 업체
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        낚시 관리 및 육성법에 따른 승선자 명부 제출
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        승선한 날로부터 3개월
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: "center" }}>
+                        해양수산부
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        낚시어선 출입항 신고 및 승선자명부 제출에관한 업무 및
+                        긴급상황 발생 시 신속한 구조활동에 관한 업무
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        국민의 신분증명 및 의무행정 안전부 고시 제2017-1호, 2017.7.26 타법개정,
+                        표준 개인정보 보호지침, 개인정보 파일 보호기간 책정 기준표에 의한
+                        "낚시海 시스템 연계" 에 관한 기록보관 : 준영구
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -133,6 +180,11 @@ export default inject("PageStore")(
                 <p>
                   (3) 상위 (1), (2) 외 사항은 어복황제 이용약관,
                   개인정보처리방침 운영에 따릅니다.
+                </p>
+                <br/>
+                <p>부칙</p>
+                <p>
+                  1. 이 약관은 2021년 4월 1일부터 시행됩니다.
                 </p>
               </div>
             </div>
