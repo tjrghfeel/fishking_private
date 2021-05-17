@@ -11,21 +11,29 @@ import { inject, observer } from "mobx-react";
 
 export default inject(
   "APIStore",
-  "PageStore"
+  "PageStore",
+    "ModalStore"
 )(
   observer(
     forwardRef(({ APIStore, PageStore, ModalStore, id = "", onClose }, ref) => {
       const [arrSido, setArrSido] = useState([]); // 시/도 리스트
       const [arrSigungu, setArrSigungu] = useState([]); // 시/군/구 리스트
       const [arrDong, setArrDong] = useState([]); // 동/읍/면 리스트
+        const [searchKey, setSearchKey] = useState('');//위치 검색 키워드
       const selSido = useRef(null);
       const selSigungu = useRef(null);
       const selDong = useRef(null);
       const container = useRef(null);
       const geocoder = new kakao.maps.services.Geocoder();
+        // const options = {
+        //     center: new daum.maps.LatLng(36.252932, 127.724734),
+        //     level: 7,
+        // };
+       // let map = new daum.maps.Map(container.current, options);
       let map = null;
       const [arrMarker, setArrMarker] = useState([]);
       let markers = [];
+      let addressSearchKey = '';
 
       // 시도 리스트 조회
       const loadSido = useCallback(async () => {
@@ -59,11 +67,18 @@ export default inject(
                   ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
               }
           })
+          setMapCenter(selSido.current.selectedOptions[0].value);
       }, [setArrSigungu, selSigungu]);
       // 읍면동 리스트 조회
       const selectSigungu = useCallback(async () => {
-          //select값에 따른 지도 검색
-          geocoder.addressSearch( selSido.current.selectedOptions[0].value+' '+selSigungu.current.selectedOptions[0].value, (result, status)=>{
+          setMapCenter(selSido.current.selectedOptions[0].value+' '+selSigungu.current.selectedOptions[0].value);
+      }, []);
+
+      const searchAddress = useCallback( async (addressSearchKey) =>{//정확한 이유는 모르겠으나, map을 외부컴포넌트에서 relayout()를 통해 초기화하고있어 useState()를 통해
+                                                //리렌더링을 하면 생성한 map이 사라지게 되어있다. 해서 검색어를 useState()를 사용한변수에 할당하지않고 일반 변수에만 저장한뒤 메소드인자로
+                                                //넘겨주는 방식으로 위치키워드검색 메소드를 만들었다.
+          let places = new kakao.maps.services.Places();
+          places.keywordSearch( addressSearchKey, (result, status)=>{
               if(status === kakao.maps.services.Status.OK){
                   const resultAddress = result[0];
                   let x = resultAddress.x;
@@ -79,6 +94,25 @@ export default inject(
               }
           })
       }, []);
+
+      //키워드로 지도검색하여 중앙점이동.
+      const setMapCenter = (searchKey)=>{
+          geocoder.addressSearch( searchKey, (result, status)=>{
+              if(status === kakao.maps.services.Status.OK){
+                  const resultAddress = result[0];
+                  let x = resultAddress.x;
+                  let y = resultAddress.y;
+
+                  map.setCenter(new kakao.maps.LatLng(y,x));
+              }
+              else if(status === kakao.maps.services.Status.ZERO_RESULT){
+                  ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+              }
+              else{
+                  ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+              }
+          })
+      }
 
       // 지도 리로드
       const relayout = useCallback(() => {
@@ -195,7 +229,7 @@ export default inject(
               </div>
               <div className="modal-body">
                 <div className="padding">
-                  <div className="form-group">
+                  <div className="form-group" style={{marginBottom:0}}>
                     <label className="d-block">
                       지역을 선택하신 후 원하시는 갯바위를 체크하세요.
                     </label>
@@ -236,11 +270,19 @@ export default inject(
                           </option>
                         ))}
                       </select>
-                      <select className="form-control" ref={selDong}>
-                        <option value={""}>읍/면/동</option>
-                      </select>
+                        {/*<select className="form-control" ref={selDong}>*/}
+                          {/*<option value={""}>읍/면/동</option>*/}
+                          {/*</select>}*/}
                     </div>
                   </div>
+
+                    <div style={{width:'100%'}}>
+                            <label style={{width:'20%',textAlign:'center',margin:8, fontSize:15}}>지도이동</label>
+                            <input style={{border:'1px solid #2b79c8',borderRadius:5,width:'50%'}} type="text"
+                                   onChange={(e)=>{ addressSearchKey = e.target.value;     }} />
+                            <button style={{width:'10%', border:'1px solid #2b79c8', borderRadius:5, backgroundColor:'#2b79c8', color:'white',
+                                margin:8}} type="button" onClick={()=>{searchAddress(addressSearchKey)}}>검색</button>
+                    </div>
 
                   <div className="mapwrap">
                     <div
