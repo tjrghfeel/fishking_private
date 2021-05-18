@@ -60,10 +60,10 @@ public class DashBoardManageDto {
     @AllArgsConstructor
     @Setter
     public class RideData{
-        public Integer waitRideCount;
-        public Integer confirmRide;
-        public Integer failConfirm;
-        public Integer cancelRide;
+        public Long waitRideCount;
+        public Long confirmRide;
+        public Long failConfirm;
+        public Long cancelRide;
     }
 
     private List<NoticeData> noticeData;

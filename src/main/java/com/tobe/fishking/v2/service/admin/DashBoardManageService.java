@@ -13,6 +13,7 @@ import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import com.tobe.fishking.v2.repository.fishking.RideShipRepository;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.service.smartsail.BoardingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,9 +30,9 @@ public class DashBoardManageService {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final GoodsRepository goodsRepository;
-    private final RideShipRepository rideShipRepository;
     private final OrdersRepository ordersRepository;
     private final PostRepository postRepository;
+    private final RideShipRepository rideShipRepository;
 
     @Transactional
     public DashBoardManageDto getDashBoard(String token) throws ServiceLogicException {
@@ -61,6 +62,11 @@ public class DashBoardManageService {
         result.setOrderData(orderData);
 
         //승선
+        Map<String, Object> rideCount = rideShipRepository.dashboardForManage();
+        DashBoardManageDto.RideData rideData = result.new RideData(
+                (Long)rideCount.get("waitCount"), (Long)rideCount.get("confirmCount"), (Long)rideCount.get("failCount"), (Long)rideCount.get("cancelCount")
+        );
+        result.setRideData(rideData);
 
         //공지사항
         Pageable pageable4 = PageRequest.of(0,5);

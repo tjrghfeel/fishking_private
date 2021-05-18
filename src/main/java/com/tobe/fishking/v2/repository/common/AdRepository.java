@@ -20,4 +20,6 @@ public interface AdRepository extends BaseRepository<Ad, Long>, AdRepositoryCust
 
     @Query("select new com.tobe.fishking.v2.model.admin.AdDto(a, s) from Ad a join Ship s on a.ship = s order by a.adType")
     List<AdDto> findAllOrderByAdType();
+
+
 }

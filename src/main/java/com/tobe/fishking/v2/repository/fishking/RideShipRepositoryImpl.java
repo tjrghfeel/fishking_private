@@ -267,4 +267,75 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .where(orderDetails.orders.id.eq(orderId))
                 .fetch();
     }
+
+    public Map<String, Object> dashboardForManage() {
+        String now = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+
+        Long cancelCount = queryFactory
+                .selectFrom(rideShip)
+                .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
+                .join(goods).on(orderDetails.goods.eq(goods))
+                .join(ship).on(goods.ship.eq(ship))
+                .where(
+                        orderDetails.orders.orderStatus.eq(OrderStatus.bookCancel),
+                        orderDetails.orders.fishingDate.eq(now))
+                .fetchCount();
+
+        Long failCount = queryFactory
+                .select()
+                .from(rideShip)
+                .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
+                .join(goods).on(orderDetails.goods.eq(goods))
+                .join(ship).on(goods.ship.eq(ship))
+                .where(
+                        goods.fishingStartTime.lt(time),
+                        rideShip.isRide.eq(false),
+//                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
+                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix),
+                        orderDetails.orders.fishingDate.eq(now))
+                .fetchCount();
+
+        Long confirmCount = queryFactory
+                .select()
+                .from(rideShip)
+                .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
+                .join(goods).on(orderDetails.goods.eq(goods))
+                .join(ship).on(goods.ship.eq(ship))
+                .where(
+//                        goods.fishingStartTime.lt(time),
+                        rideShip.isRide.eq(true),
+//                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
+                        orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete),
+                        orderDetails.orders.fishingDate.eq(now))
+                .fetchCount();
+
+        Long waitCount = queryFactory
+                .select()
+                .from(rideShip)
+                .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
+                .join(goods).on(orderDetails.goods.eq(goods))
+                .join(ship).on(goods.ship.eq(ship))
+                .where(
+//                        goods.fishingStartTime.gt(time),
+                        rideShip.isRide.eq(false),
+//                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
+                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix),
+                        orderDetails.orders.fishingDate.eq(now))
+                .fetchCount();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("failCount", failCount);
+        response.put("waitCount", waitCount);
+        response.put("confirmCount", confirmCount);
+        response.put("cancelCount", cancelCount);
+        if (confirmCount + failCount == 0) {
+            response.put("confirmPercentage", 0);
+            response.put("failPercentage", 0);
+        } else {
+            response.put("confirmPercentage", confirmCount * 100.0 / (confirmCount + failCount));
+            response.put("failPercentage", failCount * 100.0 / (confirmCount + failCount));
+        }
+        return response;
+    }
 }
