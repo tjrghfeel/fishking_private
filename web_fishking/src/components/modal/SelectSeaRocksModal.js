@@ -129,9 +129,7 @@ export default inject(
                         </option>
                       ))}
                     </select>
-                    <select className="form-control">
-                      <option>읍/면/동</option>
-                    </select>
+
                   </div>
                 </div>
                 <div className="form-group checklist">
