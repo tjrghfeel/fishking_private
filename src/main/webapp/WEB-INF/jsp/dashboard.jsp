@@ -26,7 +26,7 @@
 <div class="container nopadding mt-2">
     <h5>금일승선현황</h5>
     <div class="card-round-box-grey text-center">
-        <div class="row mt-3 mb-3 d-flex align-items-center justify-content-center">
+        <div class="row mt-1 mb-1 d-flex align-items-center justify-content-center">
 <%--            <div class="col-6">--%>
 <%--                <p class="mt-2 mb-2">--%>
 <%--                    <canvas id="chart" width="164" height="106"></canvas>--%>
@@ -44,10 +44,13 @@
 </div>
 <!--// 안내 -->
 <p class="space mt-2"></p>
+<p class="mt-3 mb-3 text-center">승선확인 명단은 출조시간기준 <br/>-6시간부터 출조시간+6시간까지 표시됩니다.</p>
+
+<p class="space mt-2"></p>
 <div class="container nopadding mt-2">
     <div class="row mt-1 d-flex align-items-center">
         <div class="col-5">
-            <h5>금일 승선 대기자</h5>
+            <h5>승선확인대상</h5>
         </div>
         <div class="col-7 text-right">
             <div class="custom-control custom-radio custom-control-inline mr-0">
@@ -66,7 +69,7 @@
     </div>
 </div>
 <div id="wait-container">
-    <p class="mt-3 mb-4 text-center" id="wait_none">금일 승선대기자가 없습니다</p>
+    <p class="mt-3 mb-4 text-center" id="wait_none">승선확인대상이 없습니다</p>
 </div>
 
 <!-- 예약 -->
@@ -104,14 +107,14 @@
 <div class="container nopadding mt-2">
     <div class="row mt-1 d-flex align-items-center">
         <div class="col-5">
-            <h5>금일 승선자</h5>
+            <h5>승선확인완료</h5>
         </div>
     </div>
 </div>
 
 
 <div id="comp-container">
-    <p class="mt-3 mb-4 text-center" id="comp_none">금일 승선자가 없습니다</p>
+    <p class="mt-3 mb-4 text-center" id="comp_none">승선확인완료가 없습니다</p>
 </div>
 <p class="space mt-2"></p>
 

@@ -52,12 +52,12 @@
     var data = null;
     // ----- > 지문 인식 시작
     function start () {
-        console.log('----- > 지문 인식 시작');
+        // console.log('----- > 지문 인식 시작');
         Fishking.getFingerprints();
     }
     // ----- > 지문 인식 결과
     function setFingerprintData(fingerprint) {
-        console.log('----- > 지문 인식 결과 : ' + fingerprint);
+        // console.log('----- > 지문 인식 결과 : ' + fingerprint);
         if ((fingerprint || '').length == 0) {
             alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
         }else{
