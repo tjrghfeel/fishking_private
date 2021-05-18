@@ -59,6 +59,8 @@ public class PayService {
 
         String	resultcd =  "";
 
+        Long resultId = -1L;
+
         if(rcancel.equals("0")) {
             KSPayWebHostBean ipg = new KSPayWebHostBean(rcid);
             if (ipg.kspay_send_msg("1")) {                  //KSNET 결제결과 중 아래에 나타나지 않은 항목이 필요한 경우 Null 대신 필요한 항목명을 설정할 수 있습니다.
@@ -86,6 +88,8 @@ public class PayService {
                         Ship ship = goods.getShip();
                         GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
                         order.paid(member, trno);
+
+                        resultId = order.getId();
 
                         String sentence;
                         if (goods.getReserveType().equals(ReserveType.auto)) {
@@ -124,21 +128,17 @@ public class PayService {
 
                         String title = "예약알림";
                         makeAlert(order, ship, title, sentence, false, "");
-
-                        return order.getId();
 //                        return 0L;
                     } else {
                         resultcd = authno.trim();
-                        return -1L;
                     }
                 }
             }
         } else {
             authyn="X";
             msg1 = "취소";
-            return -1L;
         }
-        return -1L;
+        return resultId;
     }
 
     @Transactional

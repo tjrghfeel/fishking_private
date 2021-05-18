@@ -1011,8 +1011,8 @@ export default inject(
                                   관한 정보를 게재하고, 제공(낚시배 및 낚시좌대 제공)하는 주체를
                                   말합니다.
                                   <br/>
-                                  7. “오픈마켓”이란 “회사”에서 제공하는 “결제 서비스”를 말하며
-                                  일반결제 등으로 나누어집니다.
+                                  7. “오픈마켓”이란 “회사”에서 제공하는 “결제 서비스”와 관련된
+                                  서비스를 말하며, 일반결제 등의 내용이 포함되어 있습니다.
                                 </p>
                                 <p className="clearfix"></p>
 
@@ -1857,15 +1857,16 @@ export default inject(
                                   <tr>
                                     <th rowSpan="4">고객 변심에 의한 환불</th>
                                     <th rowSpan="3">일반결제상품</th>
-                                    <td>1) 이용일 기준 7일~3일 전 : 100% 환불</td>
                                   </tr>
                                   <tr>
                                     <td>
-                                      2) 이용일 기준 2일 전 : 50% 환불(고객센터 운영시간 내)
+                                      1) 출항(혹은 상품 시작시간) 12시간 전 기준으로 이전에 환불요청 : 100% 환불(결제 취소)
                                     </td>
                                   </tr>
                                   <tr>
-                                    <td>3) 이용일 기준 1일 전~당일, No-show : 환불불가</td>
+                                    <td>
+                                      2) 출항(혹은 상품 시작시간) 12시간 전 기준으로 이후에 환불요청, No-Show : 환불 불가
+                                    </td>
                                   </tr>
                                   <tr>
                                     <th>티켓결제상품</th>
@@ -1917,12 +1918,10 @@ export default inject(
                                   <strong>고객 변심에 의한 환불 일반결제상품</strong>
                                 </p>
                                 <p>
-                                  1) 이용일 기준 7일~3일 전 : 100% 환불
-                                  <br/>
-                                  2) 이용일 기준 2일 전 : 50% 환불(고객센터 운영시간 내)
-                                  <br/>
-                                  3) 이용일 기준 1일 전~당일, No-show : 환불불가
-                                  <br/>
+                                  1) 이용일시 기준 12시간 전 기준으로 이전에 환불요청 : 100% 환불(결제 취소)
+                                  <br />
+                                  2) 이용일시 기준 12시간 전 기준으로 이후에 환불요청, No-Show : 환불 불가
+                                  <br />
                                   티켓결제상품 1) 구매일 기준 7일 이내 : 100% 환불. 단, 7일 이내
                                   부분 취소 환불 및 7일 이후 환불 처리는 회사에 요청
                                 </p>
@@ -2249,33 +2248,41 @@ export default inject(
                                 <col style={{ width: "30%" }} />
                               </colgroup>
                               <thead>
-                              <tr>
-                                <th>수탁자</th>
-                                <th>위탁업무</th>
-                                <th>보유 및 이용기간</th>
-                              </tr>
+                                <tr>
+                                  <th>수탁자</th>
+                                  <th>위탁업무</th>
+                                  <th>보유 및 이용기간</th>
+                                </tr>
                               </thead>
                               <tbody>
-                              <tr>
-                                <td></td>
-                                <td style={{ textAlign: "center" }}>
-                                  휴대폰, 신용카드, 계좌이체, 무통장입금(가상계좌) 등을
-                                  통한 결제처리
-                                </td>
-                                <td style={{ textAlign: "center" }}>
-                                  위탁 계약 만료 시 까지 보유
-                                </td>
-                              </tr>
-                              <tr>
-                                <td></td>
-                                <td style={{ textAlign: "center" }}>
-                                  계좌이체, 무통장입금(가상계좌), 출금계좌인증 등을 통한
-                                  결제처리
-                                </td>
-                                <td style={{ textAlign: "center" }}>
-                                  위탁 계약 만료 시 까지 보유
-                                </td>
-                              </tr>
+                                <tr>
+                                  <td>케이에스넷</td>
+                                  <td style={{ textAlign: "center" }}>
+                                    휴대폰, 신용카드, 계좌이체, 무통장입금(가상계좌) 등을
+                                    통한 결제처리
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    위탁 계약 만료 시 까지 보유
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>케이에스넷</td>
+                                  <td style={{ textAlign: "center" }}>
+                                    실명 확인 및 본인인증 서비스
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    전자상거래 상 소비자보호에 관한 법률에 따라 분쟁처리 기록 3년간 보관
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>SK브로드밴드</td>
+                                  <td style={{ textAlign: "center" }}>
+                                    예약 정보의 SMS발신 서비스
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    SMS발신 서비스 종료시까지 보유
+                                  </td>
+                                </tr>
                               </tbody>
                             </table>
 
@@ -2377,7 +2384,7 @@ export default inject(
                               </tr>
                               <tr>
                                 <td style={{ textAlign: "center" }}>
-                                  어복황제 상품예약 및 구매 서비스 제공 업체[업체 리스트]
+                                  어복황제 상품예약 및 구매 서비스 제공 업체(업주)
                                 </td>
                                 <td style={{ textAlign: "center" }}>
                                   어복황제 상품예약 및 구매 서비스 이용계약 이행
@@ -2393,6 +2400,37 @@ export default inject(
                                 <td style={{ textAlign: "center" }}>
                                   상품예약 및 구매 서비스 제공 완료 후 6개월
                                 </td>
+                                <tr>
+                                  <td style={{ textAlign: "center" }}>
+                                    승선 업체
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    낚시 관리 및 육성법에 따른 승선자 명부 제출
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    승선한 날로부터 3개월
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style={{ textAlign: "center" }}>
+                                    해양수산부
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    낚시어선 출입항 신고 및 승선자명부 제출에관한 업무 및
+                                    긴급상황 발생 시 신속한 구조활동에 관한 업무
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    국민의 신분증명 및 의무행정 안전부 고시 제2017-1호, 2017.7.26 타법개정,
+                                    표준 개인정보 보호지침, 개인정보 파일 보호기간 책정 기준표에 의한
+                                    "낚시海 시스템 연계" 에 관한 기록보관 : 준영구
+                                  </td>
+                                </tr>
                               </tr>
                               </tbody>
                             </table>
@@ -2483,29 +2521,18 @@ export default inject(
                                 <col style={{ width: "65%" }} />
                               </colgroup>
                               <tbody>
-                              <tr>
-                                <th>개인정보보호책임자</th>
-                                <td>
-                                  소속: 어복황제 사업총괄
-                                  <br />
-                                  성명:
-                                  <br />
-                                  연락처:
-                                  <br />
-                                  이메일:
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>개인정보보호 전담담당부서</th>
-                                <td>
-                                  소속: 어복황제 플랫폼개발팀
-                                  <br /> 성명
-                                  <br />
-                                  연락처:
-                                  <br />
-                                  이메일:
-                                </td>
-                              </tr>
+                                <tr>
+                                  <th>개인정보보호 책임자 및 담당부서</th>
+                                  <td>
+                                    소속: IT사업본부 총괄본부장
+                                    <br />
+                                    성명: 김준성
+                                    <br />
+                                    연락처: 1566-2996
+                                    <br />
+                                    이메일: help@to-be.kr
+                                  </td>
+                                </tr>
                               </tbody>
                             </table>
 
@@ -2587,15 +2614,16 @@ export default inject(
                               <tr>
                                 <th rowSpan="4">고객 변심에 의한 환불</th>
                                 <th rowSpan="3">일반결제상품</th>
-                                <td>1) 이용일 기준 7일~3일 전 : 100% 환불</td>
                               </tr>
                               <tr>
                                 <td>
-                                  2) 이용일 기준 2일 전 : 50% 환불(고객센터 운영시간 내)
+                                  1) 출항(혹은 상품 시작시간) 12시간 전 기준으로 이전에 환불요청 : 100% 환불(결제 취소)
                                 </td>
                               </tr>
                               <tr>
-                                <td>3) 이용일 기준 1일 전~당일, No-show : 환불불가</td>
+                                <td>
+                                  2) 출항(혹은 상품 시작시간) 12시간 전 기준으로 이후에 환불요청, No-Show : 환불 불가
+                                </td>
                               </tr>
                               <tr>
                                 <th>티켓결제상품</th>
@@ -2754,43 +2782,43 @@ export default inject(
                                 <col style={{ width: "40%" }} />
                               </colgroup>
                               <thead>
-                              <tr>
-                                <th>수집/이용 목적</th>
-                                <th>위탁 업무 내용</th>
-                                <th>개인 정보의 보유 및 이용 기간</th>
-                              </tr>
+                                <tr>
+                                  <th>수집/이용 목적</th>
+                                  <th>위탁 업무 내용</th>
+                                  <th>개인 정보의 보유 및 이용 기간</th>
+                                </tr>
                               </thead>
                               <tbody>
-                              <tr>
-                                <th>예약 및 구매 서비스 이용</th>
-                                <td>예약자명, 휴대폰 번호, 결제정보</td>
-                                <td>
-                                  전자상거래 상 소비자보호에 관한 법률에 따라 5년 간 보관
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>결제 서비스 이용</th>
-                                <td>
-                                  - 신용카드 결제 : 카드사명, 카드번호, 유효기간, 이메일
-                                  등<br />
-                                  - 휴대폰 결제 : 휴대폰 번호, 통신사, 결제 승인번호 등
-                                  <br />
-                                  - 계좌 이체 시 : 은행명, 계좌번호, 예금주
-                                  <br />- 간편 결제 시: 계좌번호, 결제(통합) 비밀번호
-                                </td>
-                                <td>
-                                  전자상거래 상 소비자보호에 관한 법률에 따라 5년 간 보관
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>서비스 이용 및 부정거래 기록 확인</th>
-                                <td>
-                                  서비스 이용 시간/이용기록, 접속로그, 이용콘텐츠, 쿠키,
-                                  접속IP정보, 주소, 사용된 신용카드 정보, 기기 모델명,
-                                  브라우저 정보
-                                </td>
-                                <td>통신비밀보호법에 따라 3개월간 보관</td>
-                              </tr>
+                                <tr>
+                                  <th>예약 및 구매 서비스 이용</th>
+                                  <td>예약자명, 휴대폰 번호, 결제정보</td>
+                                  <td>
+                                    전자상거래 상 소비자보호에 관한 법률에 따라 5년 간 보관
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>결제 서비스 이용</th>
+                                  <td>
+                                    - 신용카드 결제 : 카드사명, 카드번호, 유효기간, 이메일
+                                    등<br />
+                                    - 휴대폰 결제 : 휴대폰 번호, 통신사, 결제 승인번호 등
+                                    <br />
+                                    - 계좌 이체 시 : 은행명, 계좌번호, 예금주
+                                    <br />- 간편 결제 시: 계좌번호, 결제(통합) 비밀번호
+                                  </td>
+                                  <td>
+                                    전자상거래 상 소비자보호에 관한 법률에 따라 5년 간 보관
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>서비스 이용 및 부정거래 기록 확인</th>
+                                  <td>
+                                    서비스 이용 시간/이용기록, 접속로그, 이용콘텐츠, 쿠키,
+                                    접속IP정보, 주소, 사용된 신용카드 정보, 기기 모델명,
+                                    브라우저 정보
+                                  </td>
+                                  <td>통신비밀보호법에 따라 3개월간 보관</td>
+                                </tr>
                               </tbody>
                             </table>
                             <p className="clearfix"></p>
@@ -2803,36 +2831,83 @@ export default inject(
 
                             <table className="table table-bordered">
                               <colgroup>
-                                <col style={{ width: "20%" }} />
-                                <col style={{ width: "80%" }} />
+                                <col style={{ width: "15%" }} />
+                                <col style={{ width: "35%" }} />
+                                <col style={{ width: "35%" }} />
+                                <col style={{ width: "15%" }} />
                               </colgroup>
+                              <thead>
+                                <tr>
+                                  <th>제공 받는 자</th>
+                                  <th>제공목적</th>
+                                  <th>제공정보</th>
+                                  <th>보유 및 이용기간</th>
+                                </tr>
+                              </thead>
                               <tbody>
-                              <tr>
-                                <th>제공받는 자</th>
-                                <td>어복황제 상품예약 서비스 제공 업체[업체리스트]</td>
-                              </tr>
-                              <tr>
-                                <th>제공 목적</th>
-                                <td>
-                                  어복황제 상품예약 서비스 이용계약 이행(서비스 제공,
-                                  확인, 이용자 정보 확인)
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>제공하는 정보</th>
-                                <td>
-                                  예약한 서비스의 이용자 정보(예약자 이름, 휴대폰번호,
-                                  예약자 안심번호, 예약번호, 예약한 업체명, 예약한 상품명,
-                                  결제금액)
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>
-                                  제공받는 자의 <br />
-                                  개인정보보유 및 이용기간
-                                </th>
-                                <td>상품예약 서비스 제공 완료 후 6개월</td>
-                              </tr>
+                                <tr>
+                                  <td style={{ textAlign: "center" }}>이벤트 제공 업체</td>
+                                  <td style={{ textAlign: "center" }}>
+                                    이벤트 당첨자 해피콜
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    이름, 전화번호, 주소
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    재화 또는 서비스의
+                                    <br /> 제공 목적이 달성 된 후 파기
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style={{ textAlign: "center" }}>
+                                    어복황제 상품예약 및 구매 서비스 제공 업체(업주)
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    어복황제 상품예약 및 구매 서비스 이용계약 이행
+                                    <br />
+                                    (서비스 제공, 확인, 이용자 정보 확인)
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    예약 또는 구매한 서비스의 이용자 정보
+                                    <br />
+                                    (예약자 이름, 휴대폰번호, 예약자 안심번호, 예약번호,
+                                    예약한 업체명, 예약한 상품명, 결제금액)
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    상품예약 및 구매 서비스 제공 완료 후 6개월
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style={{ textAlign: "center" }}>
+                                    승선 업체
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    낚시 관리 및 육성법에 따른 승선자 명부 제출
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    승선한 날로부터 3개월
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style={{ textAlign: "center" }}>
+                                    해양수산부
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    낚시어선 출입항 신고 및 승선자명부 제출에관한 업무 및
+                                    긴급상황 발생 시 신속한 구조활동에 관한 업무
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    이름, 생년월일, 성별, 주소, 전화번호, 비상연락처
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    국민의 신분증명 및 의무행정 안전부 고시 제2017-1호, 2017.7.26 타법개정,
+                                    표준 개인정보 보호지침, 개인정보 파일 보호기간 책정 기준표에 의한
+                                    "낚시海 시스템 연계" 에 관한 기록보관 : 준영구
+                                  </td>
+                                </tr>
                               </tbody>
                             </table>
                             <p className="clearfix"></p>
@@ -2840,6 +2915,11 @@ export default inject(
                             <p>
                               (3) 상위 (1), (2) 외 사항은 어복황제 이용약관,
                               개인정보처리방침 운영에 따릅니다.
+                            </p>
+                            <br/>
+                            <p>부칙</p>
+                            <p>
+                              1. 이 약관은 2021년 4월 1일부터 시행됩니다.
                             </p>
                           </div>
                         </div>

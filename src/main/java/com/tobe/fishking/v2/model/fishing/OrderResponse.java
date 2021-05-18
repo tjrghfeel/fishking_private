@@ -43,7 +43,7 @@ public class OrderResponse {
 //        this.reply = "http://112.220.72.178:8083/payresult";
         this.reply = "https://fishkingapp.com/payresult";
 //        this.shopNumber = "2999199900";
-//        this.shopNumber = "1018400000";
+//        this.shopNumber = "2018400001";
         this.shopNumber = "2040700001";
         this.payMethod = payMethod;
     }
