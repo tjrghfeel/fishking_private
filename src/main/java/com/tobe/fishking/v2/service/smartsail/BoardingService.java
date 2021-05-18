@@ -81,6 +81,7 @@ public class BoardingService {
 
     @Transactional
     public void updateFingerprint(Member member, Map<String, Object> body) {
+        RideShip rider = rideShipRepository.getOne(Long.parseLong(body.get("riderId").toString()));
         String username = body.get("username").toString();
         String phone = body.get("phone").toString();
         String fingerprint = body.get("fingerprint").toString();
@@ -102,6 +103,9 @@ public class BoardingService {
             print.updateFingerprint(fingerType, fingerprint, member);
             riderFingerPrintRepository.save(print);
         }
+
+        rider.setRide();
+        rideShipRepository.save(rider);
     }
 
     @Transactional

@@ -75,16 +75,17 @@
     }
     // ----- > 지문 인식 시작
     function start () {
-        console.log('----- > 지문 인식 시작');
-        Fishking.getFingerprints();
+        // console.log('----- > 지문 인식 시작');
+        if (confirm("지문 등록 시 바로 승선 확인 됩니다.")) Fishking.getFingerprints();
     }
     // ----- > 지문 인식 결과
     function setFingerprintData(fingerprint) {
-        console.log('----- > 지문 인식 결과 : ' + fingerprint);
+        // console.log('----- > 지문 인식 결과 : ' + fingerprint);
         $.ajax('/v2/api/sail/fingerprint/add', {
             method: 'POST',
             dataType: 'json',
             data: JSON.stringify({
+                riderId : data['riderId'],
                 username: data['username'],
                 phone: data['phone'],
                 fingerprint: fingerprint,

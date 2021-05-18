@@ -56,12 +56,12 @@
     }
     // ----- > 지문 인식 시작
     function start () {
-        console.log('----- > 지문 인식 시작');
-        Fishking.getFingerprints();
+        // console.log('----- > 지문 인식 시작');
+        if (confirm("지문 등록 시 바로 승선 확인 됩니다.")) Fishking.getFingerprints();
     }
     // ----- > 지문 인식 결과
     function setFingerprintData(fingerprint) {
-        console.log('----- > 지문 인식 결과 : ' + fingerprint);
+        // console.log('----- > 지문 인식 결과 : ' + fingerprint);
         if ((fingerprint || '').length == 0) {
             alert('지문인식 등록이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
         }else {
@@ -69,10 +69,11 @@
                 method: 'POST',
                 dataType: 'json',
                 data: JSON.stringify({
+                    riderId : data['riderId'],
                     username: data['username'],
                     phone: data['phone'],
                     fingerprint: fingerprint,
-                    fingerTypeNum: 2
+                    fingerTypeNum: 1
                 }),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));

@@ -101,9 +101,9 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
 
     private BooleanExpression isComplete(Boolean comp) {
         if (comp) {
-            return orders.orderStatus.eq(OrderStatus.fishingComplete);
+            return rideShip.isRide.eq(true);
         } else {
-            return orders.orderStatus.eq(OrderStatus.bookFix);
+            return rideShip.isRide.eq(false);
         }
     }
 
