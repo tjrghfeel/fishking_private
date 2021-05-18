@@ -111,6 +111,7 @@ export default inject(
                   src={this.state.backgroundImage}
                   className="d-block w-100"
                   alt=""
+                  style={{height:'40vh'}}
                 />
               </div>
               <figure>
