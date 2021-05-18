@@ -280,7 +280,7 @@ export default inject(
                             <label style={{width:'20%',textAlign:'center',margin:8, fontSize:15}}>지도이동</label>
                             <input style={{border:'1px solid #2b79c8',borderRadius:5,width:'50%'}} type="text"
                                    onChange={(e)=>{ addressSearchKey = e.target.value;     }} />
-                            <button style={{width:'10%', border:'1px solid #2b79c8', borderRadius:5, backgroundColor:'#2b79c8', color:'white',
+                            <button style={{ border:'1px solid #2b79c8', borderRadius:5, backgroundColor:'#2b79c8', color:'white',
                                 margin:8}} type="button" onClick={()=>{searchAddress(addressSearchKey)}}>검색</button>
                     </div>
 

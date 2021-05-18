@@ -63,7 +63,8 @@ export default inject(
         const { APIStore, PageStore } = this.props;
         await APIStore._get("/v2/api/company/checkRequestExist").then(
           (result) => {
-            if (result == "") {
+            if(result === false){return;}
+            else if (result.msg !== undefined) {
               ModalStore.openModal("Alert", {
                 body: (
                   <React.Fragment>
