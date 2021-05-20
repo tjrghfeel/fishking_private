@@ -87,7 +87,21 @@ export default inject(
                   map.setCenter(new kakao.maps.LatLng(y,x));
               }
               else if(status === kakao.maps.services.Status.ZERO_RESULT){
-                  ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+                  geocoder.addressSearch( addressSearchKey, (result2, status2)=>{
+                      if(status2 === kakao.maps.services.Status.OK){
+                          const resultAddress = result2[0];
+                          let x = resultAddress.x;
+                          let y = resultAddress.y;
+
+                          map.setCenter(new kakao.maps.LatLng(y,x));
+                      }
+                      else if(status2 === kakao.maps.services.Status.ZERO_RESULT){
+                          ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+                      }
+                      else{
+                          ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
+                      }
+                  })
               }
               else{
                   ModalStore.openModal("Alert", { body: "일치하는 결과가 없습니다" });
