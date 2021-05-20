@@ -33,11 +33,15 @@
 <%--                    <img src="/assets/smartsail/img/svg/chart-b.svg" alt=""/>--%>
 <%--                </p>--%>
 <%--            </div>--%>
-            <div class="d-flex align-items-center flex-row align-items-center justify-content-around" style="width: 100%">
-                <span ><a ><small class="grey">승선대기</small> : <strong class="large" id="data-waitCount">0</strong></a></span>
-                <span ><a ><small class="grey">승선확인</small> : <strong class="large text-primary" id="data-confirmCount">0</strong></a></span>
-                <span ><a ><small class="grey">확인실패</small> : <strong class="large orange" id="data-failCount">0</strong></a></span>
-                <span ><a ><small class="grey">승선취소</small> : <strong class="large text-danger" id="data-cancelCount">0</strong></a></span>
+            <div class="d-flex flex-column" style="width: 100%">
+                <div class="d-flex flex-row align-items-center justify-content-around">
+                    <span ><a ><small class="grey">금일승선대상</small> : <strong class="large" id="data-waitCount">0</strong></a></span>
+                    <span ><a ><small class="grey">승선지문확인</small> : <strong class="large text-primary" id="data-confirmCount">0</strong></a></span>
+                </div>
+                <div class="d-flex flex-row align-items-center justify-content-around">
+                    <span ><a ><small class="grey">승선시간초과</small> : <strong class="large orange" id="data-failCount">0</strong></a></span>
+                    <span ><a ><small class="grey">금일출조취소</small> : <strong class="large text-danger" id="data-cancelCount">0</strong></a></span>
+                </div>
             </div>
         </div>
     </div>
