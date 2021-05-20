@@ -28,7 +28,7 @@ public class PayController {
         String rcancel  = request.getParameter("reCnclType"			);   // 1 취소응답, 0 정상응답
 
         Long orderId = payService.payResult(rcid, rctype, rhash, rcancel);
-//        return "redirect:/cust/payment/result?orderId="+orderId.toString();
+//        return "redirect:http://112.220.72.178:3000/cust/reservation/my/detail/" + orderId.toString();
         return "redirect:https://fishkingapp.com/cust/reservation/my/detail/" + orderId.toString();
 //        return "redirect:https://fishkingapp.com/cust/reservation/my/detail/2";
     }
