@@ -106,6 +106,9 @@ public class BoardingService {
 
         rider.setRide();
         rideShipRepository.save(rider);
+        Orders orders = rider.getOrdersDetail().getOrders();
+        orders.changeStatus(OrderStatus.fishingComplete);
+        ordersRepository.save(orders);
     }
 
     @Transactional

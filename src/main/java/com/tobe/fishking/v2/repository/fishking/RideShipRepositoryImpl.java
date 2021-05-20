@@ -80,7 +80,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                     .join(goods).on(orderDetails.goods.eq(goods))
                     .join(ship).on(goods.ship.eq(ship))
                 .where(ship.company.member.id.eq(memberId),
-                        isComplete(comp),
+                        rideShip.isRide.eq(comp),
                         (new CaseBuilder().when(goods.fishingEndTime.eq("2400"))
                                 .then(Expressions.dateTimeTemplate(LocalDateTime.class, "ADDDATE({0}, 1)", (Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d%H%i')",
                                         orders.fishingDate.concat("0000")
@@ -99,13 +99,14 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
         return responses;
     }
 
-    private BooleanExpression isComplete(Boolean comp) {
-        if (comp) {
-            return rideShip.isRide.eq(true);
-        } else {
-            return rideShip.isRide.eq(false);
-        }
-    }
+//    private BooleanExpression isComplete(Boolean comp) {
+//        if (comp) {
+//            return rideShip.isRide.eq(true);
+//        } else {
+//            return rideShip.isRide.eq(false);
+//        }
+//        return rideShip.isRide.eq(comp);
+//    }
 
     public Map<String, Object> dashboard(Long memberId) {
         String now = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -130,8 +131,8 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .where(ship.company.member.id.eq(memberId),
                         goods.fishingStartTime.lt(time),
                         rideShip.isRide.eq(false),
-//                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
-                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix),
+                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
+//                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix),
                         orderDetails.orders.fishingDate.eq(now))
                 .fetchCount();
 
