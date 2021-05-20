@@ -61,20 +61,23 @@ export default inject(
 
       checkCanApply = async () => {
         const { APIStore, PageStore } = this.props;
+        if(PageStore.loggedIn === false){
+          ModalStore.openModal("Alert", {
+            body: (
+                <React.Fragment>
+                  <p>로그인 후 신청가능합니다.</p>
+                </React.Fragment>
+            ),
+            onOk: () => {
+              PageStore.goBack();
+            },
+          });
+          return;
+        }
         await APIStore._get("/v2/api/company/checkRequestExist").then(
           (result) => {
-            if (result == "") {
-              ModalStore.openModal("Alert", {
-                body: (
-                  <React.Fragment>
-                    <p>로그인 후 신청가능합니다.</p>
-                  </React.Fragment>
-                ),
-                onOk: () => {
-                  PageStore.goBack();
-                },
-              });
-            } else if (result) {
+            if(result === false){return;}
+            else if (result) {
               ModalStore.openModal("Alert", {
                 body: (
                   <React.Fragment>

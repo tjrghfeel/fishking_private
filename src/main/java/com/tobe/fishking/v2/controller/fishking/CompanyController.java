@@ -154,11 +154,12 @@ public class CompanyController {
     @GetMapping("/company/checkRequestExist")
     public Boolean checkRequestExist(
             @RequestHeader("Authorization") String token
-    ){
+    ) throws ServiceLogicException {
         try {
             return companyService.checkRequestExist(token);
         } catch (Exception e) {
-            return null;
+            throw new ServiceLogicException("로그인이 필요합니다");
+//            return null;
         }
     }
 
