@@ -123,7 +123,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .fetchCount();
 
         Long failCount = queryFactory
-                .select()
+                .select(rideShip)
                 .from(rideShip)
                     .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
                     .join(goods).on(orderDetails.goods.eq(goods))
@@ -137,7 +137,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .fetchCount();
 
         Long confirmCount = queryFactory
-                .select()
+                .select(rideShip)
                 .from(rideShip)
                 .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
                 .join(goods).on(orderDetails.goods.eq(goods))
@@ -151,7 +151,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .fetchCount();
 
         Long waitCount = queryFactory
-                .select()
+                .select(rideShip)
                 .from(rideShip)
                 .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
                 .join(goods).on(orderDetails.goods.eq(goods))
