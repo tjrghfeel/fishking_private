@@ -14,7 +14,9 @@ public  enum QuestionType implements IEnumModel {
     use("이용방법"),
     order("예약/결제"),
     accuse("신고/건의"),
-    etc("기타");
+    etc("기타"),
+    cancel("취소/환불")
+    ;
 
     private String value;
 
