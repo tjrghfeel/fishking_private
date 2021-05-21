@@ -87,7 +87,7 @@ public class PayService {
                         Goods goods = orderDetails.getGoods();
                         Ship ship = goods.getShip();
                         GoodsFishingDate goodsFishingDate = goodsFishingDateRepository.findByGoodsIdAndDateString(goods.getId(), order.getFishingDate());
-                        order.paid(member, trno);
+                        order.paid(member, trno, authno, isscd, result);
 
                         resultId = order.getId();
 

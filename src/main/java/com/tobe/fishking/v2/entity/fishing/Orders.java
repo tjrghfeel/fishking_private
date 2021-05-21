@@ -80,8 +80,11 @@ public class Orders extends BaseTime {
     @Column(columnDefinition = "varchar(30) comment '거래번호' ")
     private String tradeNumber;
 
-    @Column(columnDefinition = "varchar(30) comment '카드사 승인번호' ")
+    @Column(columnDefinition = "varchar(30) comment '카드사 승인번호 또는 은행코드' ")
     private String confirmNumber;
+
+    @Column(columnDefinition = "varchar(30) comment '발급사 또는 계좌번호' ")
+    private String issueCode;
 
     @ManyToOne
     @JoinColumn(name = "goods", columnDefinition = "bigint comment '상품' ")
@@ -127,9 +130,17 @@ public class Orders extends BaseTime {
         this.orderStatus = status;
     }
 
-    public void paid(Member member, String tradeNumber) {
+    public void paid(Member member, String tradeNumber, String confirmNumber, String issueCode, String payMethod) {
         this.isPay = true;
         this.tradeNumber = tradeNumber;
+        this.confirmNumber = confirmNumber;
+        this.issueCode = issueCode;
+        for (PayMethod p : PayMethod.values()) {
+            if (p.getValue().equals(payMethod)) {
+                this.payMethod = p;
+                break;
+            }
+        }
         this.modifiedBy = member;
     }
 
