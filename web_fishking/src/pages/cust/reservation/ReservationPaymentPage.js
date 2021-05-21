@@ -936,15 +936,6 @@ export default inject(
                     >
                       계좌이체
                     </a>
-                    <a
-                      onClick={() => this.setState({ payMethod: "0000010000" })}
-                      className={
-                        "nav-link" +
-                        (this.state.payMethod === "0000010000" ? " active" : "")
-                      }
-                    >
-                      휴대폰결제
-                    </a>
                   </ul>
                 </div>
 
