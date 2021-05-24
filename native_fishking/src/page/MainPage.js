@@ -190,8 +190,8 @@ export default inject(
             if (request.url === 'about:blank') {
               return false;
             } else if (
-              request.url.search('https://') !== -1 ||
-              request.url.search('http://') !== -1
+              request.url.startsWith('https://') ||
+              request.url.startsWith('http://')
             ) {
               return true;
             } else {
