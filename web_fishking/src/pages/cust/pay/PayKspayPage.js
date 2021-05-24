@@ -411,10 +411,10 @@ export default inject("PageStore")(
                 />
                 <input type="hidden" name="sndGoodType" value="1" />
                 <input type="hidden" name="sndUseBonusPoint" value="" />
-                <input type="hidden" name="sndRtApp" value="" />
-                <input type="hidden" name="sndStoreCeoName" value="" />
-                <input type="hidden" name="sndStorePhoneNo" value="" />
-                <input type="hidden" name="sndStoreAddress" value="" />
+                <input type="hidden" name="sndRtApp" value="fishking://" />
+                <input type="hidden" name="sndStoreCeoName" value="조옥수" />
+                <input type="hidden" name="sndStorePhoneNo" value="15662996" />
+                <input type="hidden" name="sndStoreAddress" value="전라남도 목포시 연산백련로 1번길 8-11" />
               </table>
             </form>
           </React.Fragment>
