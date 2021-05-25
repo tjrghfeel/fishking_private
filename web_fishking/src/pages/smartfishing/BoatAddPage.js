@@ -927,11 +927,11 @@ export default inject(
                   <label htmlFor="InputVodFile">
                     선박사진 등록 <strong className="required"></strong>
                   </label>
-                  <span className="grey ml-2" style={{fontSize: '10px'}}>100mb 이하의 이미지 파일을 선택해주세요</span>
+                  <span className="grey ml-2" style={{fontSize: '10px'}}>100mb 이하의 jpg, png 파일을 선택해주세요</span>
                   <input
                     ref={this.profileImage}
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg, image/png"
                     className="form-control"
                     placeholder="선박사진을 등록하세요."
                     onChange={() => this.uploadFile("profileImage")}
@@ -944,11 +944,11 @@ export default inject(
                   <label htmlFor="InputVodFile">
                     녹화영상 파일등록
                   </label>
-                  <span className="grey ml-2" style={{fontSize: '10px'}}>100mb 이하의 동영상 파일을 선택해주세요</span>
+                  <span className="grey ml-2" style={{fontSize: '10px'}}>100mb 이하의 mp4 파일을 선택해주세요</span>
                   <input
                     ref={this.videoId}
                     type="file"
-                    accept="video/*"
+                    accept="video/mp4"
                     className="form-control"
                     placeholder="녹화영상을 등록하세요."
                     onChange={() => this.uploadFile("videoId")}
