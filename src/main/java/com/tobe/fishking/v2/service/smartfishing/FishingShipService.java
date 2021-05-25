@@ -519,7 +519,8 @@ public class FishingShipService {
                     if (newPlaces.contains(String.valueOf(p.getId()))) {
                         newPlaces.remove(String.valueOf(p.getId()));
                     } else {
-                        placesRepository.delete(p);
+                        ShipSeaRocks rocks = shipSeaRocksRepository.getShipSeaRocksByPlacesAndShip(p, ship);
+                        shipSeaRocksRepository.delete(rocks);
                     }
                 }
                 for (String position : newPlaces) {

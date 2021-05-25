@@ -309,6 +309,32 @@ export default inject(
           positions,
         } = this.state;
 
+        const { APIStore, ModalStore, PageStore } = this.props;
+        if (name === null || name === "") {
+          ModalStore.openModal("Alert", {
+            body: "선박명을 입력해주세요.",
+          });
+          return;
+        }
+        if (fishSpecies.length === 0) {
+          ModalStore.openModal("Alert", {
+            body: "어종을 선택해주세요.",
+          });
+          return;
+        }
+        if (profileImage === null || profileImage === '') {
+          ModalStore.openModal("Alert", {
+            body: "어종을 선택해주세요.",
+          });
+          return;
+        }
+        if (latitude === null) {
+          ModalStore.openModal("Alert", {
+            body: "승선위치를 입력해주세요.",
+          });
+          return;
+        }
+
         const params = {
           name,
           fishingType,
@@ -334,26 +360,25 @@ export default inject(
           boardingPerson,
           positions,
         };
-        const { APIStore, ModalStore, PageStore } = this.props;
-        ModalStore.openModal("Confirm", {
-          body: "저장하시겠습니까?",
-          onOk: async () => {
-            let resolve = null;
-            if (id) {
-              resolve = APIStore._put(`/v2/api/ship/update/${id}`, params);
-            } else {
-              resolve = APIStore._post(`/v2/api/ship/add`, params);
-            }
-            if (resolve) {
-              ModalStore.openModal("Alert", {
-                body: "저장되었습니다.",
-                onOk: () => {
-                  PageStore.push(`/boat`);
-                },
-              });
-            }
-          },
-        });
+        // ModalStore.openModal("Confirm", {
+        //   body: "저장하시겠습니까?",
+        //   onOk: async () => {
+        //     let resolve = null;
+        //     if (id) {
+        //       resolve = APIStore._put(`/v2/api/ship/update/${id}`, params);
+        //     } else {
+        //       resolve = APIStore._post(`/v2/api/ship/add`, params);
+        //     }
+        //     if (resolve) {
+        //       ModalStore.openModal("Alert", {
+        //         body: "저장되었습니다.",
+        //         onOk: () => {
+        //           PageStore.push(`/boat`);
+        //         },
+        //       });
+        //     }
+        //   },
+        // });
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -705,7 +730,7 @@ export default inject(
                     전체선택
                   </a>
                   <label htmlFor="InputGPrice" className="d-block">
-                    서비스제공 <strong className="required"></strong>
+                    서비스제공
                   </label>
                   {(this.state.arr_services || []).map((data, index) => (
                     <div key={index} className="row">
@@ -778,7 +803,7 @@ export default inject(
                     전체선택
                   </a>
                   <label htmlFor="InputGPrice" className="d-block">
-                    편의시설 <strong className="required"></strong>
+                    편의시설
                   </label>
                   {(this.state.arr_facilities || []).map((data, index) => (
                     <div key={index} className="row">
@@ -878,7 +903,7 @@ export default inject(
                 <div className="space mt-0 mb-4"></div>
                 <div className="form-group">
                   <label htmlFor="InputGPrice" className="d-block">
-                    공지사항 <strong className="required"></strong>
+                    공지사항
                   </label>
                   <input
                     type="text"
@@ -902,6 +927,7 @@ export default inject(
                   <label htmlFor="InputVodFile">
                     선박사진 등록 <strong className="required"></strong>
                   </label>
+                  <span className="grey ml-2" style={{fontSize: '10px'}}>100mb 이하의 이미지 파일을 선택해주세요</span>
                   <input
                     ref={this.profileImage}
                     type="file"
@@ -918,6 +944,7 @@ export default inject(
                   <label htmlFor="InputVodFile">
                     녹화영상 파일등록
                   </label>
+                  <span className="grey ml-2" style={{fontSize: '10px'}}>100mb 이하의 동영상 파일을 선택해주세요</span>
                   <input
                     ref={this.videoId}
                     type="file"
