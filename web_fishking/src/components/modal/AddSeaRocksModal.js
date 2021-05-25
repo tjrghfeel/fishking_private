@@ -168,7 +168,7 @@ export default inject(
       const onSubmit = useCallback(async () => {
         const sido = selSido.current.selectedOptions[0].value;
         const sigungu = selSigungu.current.selectedOptions[0].value;
-        const dong = selDong.current.selectedOptions[0].value;
+        const dong = '';
         const points = [];
         for (let marker of arrMarker) {
           const position = marker.getPosition();
