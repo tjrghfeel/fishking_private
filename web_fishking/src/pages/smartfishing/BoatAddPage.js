@@ -360,25 +360,25 @@ export default inject(
           boardingPerson,
           positions,
         };
-        // ModalStore.openModal("Confirm", {
-        //   body: "저장하시겠습니까?",
-        //   onOk: async () => {
-        //     let resolve = null;
-        //     if (id) {
-        //       resolve = APIStore._put(`/v2/api/ship/update/${id}`, params);
-        //     } else {
-        //       resolve = APIStore._post(`/v2/api/ship/add`, params);
-        //     }
-        //     if (resolve) {
-        //       ModalStore.openModal("Alert", {
-        //         body: "저장되었습니다.",
-        //         onOk: () => {
-        //           PageStore.push(`/boat`);
-        //         },
-        //       });
-        //     }
-        //   },
-        // });
+        ModalStore.openModal("Confirm", {
+          body: "저장하시겠습니까?",
+          onOk: async () => {
+            let resolve = null;
+            if (id) {
+              resolve = APIStore._put(`/v2/api/ship/update/${id}`, params);
+            } else {
+              resolve = APIStore._post(`/v2/api/ship/add`, params);
+            }
+            if (resolve) {
+              ModalStore.openModal("Alert", {
+                body: "저장되었습니다.",
+                onOk: () => {
+                  PageStore.push(`/boat`);
+                },
+              });
+            }
+          },
+        });
       };
       /********** ********** ********** ********** **********/
       /** render */
