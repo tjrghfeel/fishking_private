@@ -76,13 +76,13 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - Permission-Camera (3.0.0):
+  - Permission-Camera (3.0.4):
     - RNPermissions
-  - Permission-LocationAlways (3.0.0):
+  - Permission-LocationAlways (3.0.4):
     - RNPermissions
-  - Permission-LocationWhenInUse (3.0.0):
+  - Permission-LocationWhenInUse (3.0.4):
     - RNPermissions
-  - Permission-PhotoLibrary (3.0.0):
+  - Permission-PhotoLibrary (3.0.4):
     - RNPermissions
   - PromisesObjC (1.2.12)
   - RCTRequired (0.63.4)
@@ -253,9 +253,9 @@ PODS:
   - React-jsinspector (0.63.4)
   - react-native-netinfo (6.0.0):
     - React-Core
-  - react-native-safe-area-context (3.1.9):
+  - react-native-safe-area-context (3.2.0):
     - React-Core
-  - react-native-webview (11.0.3):
+  - react-native-webview (11.6.1):
     - React-Core
   - React-RCTActionSheet (0.63.4):
     - React-Core/RCTActionSheetHeaders (= 0.63.4)
@@ -317,30 +317,30 @@ PODS:
     - React-Core (= 0.63.4)
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
-  - RNCAsyncStorage (1.13.2):
-    - React
-  - RNCClipboard (1.6.0):
+  - RNCAsyncStorage (1.15.4):
     - React-Core
-  - RNCMaskedView (0.1.10):
+  - RNCClipboard (1.7.0):
+    - React-Core
+  - RNCMaskedView (0.1.11):
     - React
   - RNCPushNotificationIOS (1.8.0):
     - React-Core
-  - RNFBApp (10.8.0):
+  - RNFBApp (10.8.1):
     - Firebase/CoreOnly (~> 7.6.0)
     - React-Core
-  - RNFBMessaging (10.8.0):
+  - RNFBMessaging (10.8.1):
     - Firebase/Messaging (~> 7.6.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (1.9.0):
+  - RNGestureHandler (1.10.3):
     - React-Core
-  - RNPermissions (3.0.0):
+  - RNPermissions (3.0.4):
     - React-Core
-  - RNReanimated (1.13.2):
+  - RNReanimated (1.13.3):
     - React-Core
-  - RNScreens (2.16.1):
+  - RNScreens (2.18.1):
     - React-Core
-  - RNSVG (12.1.0):
+  - RNSVG (12.1.1):
     - React
   - Yoga (1.14.0)
 
@@ -512,10 +512,10 @@ SPEC CHECKSUMS:
   GoogleDataTransport: cd9db2180fcecd8da1b561aea31e3e56cf834aa7
   GoogleUtilities: 284cddc7fffc14ae1907efb6f78ab95c1fccaedc
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  Permission-Camera: 119b01de97a5b3edb637999e38476b68143b9d17
-  Permission-LocationAlways: c083f45f28c4b78ddc6f9668cf1a984d879a80ec
-  Permission-LocationWhenInUse: e2b8c40ce0f3675a521f26787ab47ebb9bace503
-  Permission-PhotoLibrary: cb9cdc1e3744e26ab404297a8e289d50c8ee27e8
+  Permission-Camera: 74dc395c37a06ebe915069c5dca954c7a2a5a2e3
+  Permission-LocationAlways: d3ac15e4bf8f4f5f4e224b4fea6f84b14fa19132
+  Permission-LocationWhenInUse: ebef6bf8a123d382f25e9990468cfc8a76fbadf5
+  Permission-PhotoLibrary: 440f206f0d36e5951c4c9b28567f60471fdddfb5
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCTRequired: 082f10cd3f905d6c124597fd1c14f6f2655ff65e
   RCTTypeSafety: 8c9c544ecbf20337d069e4ae7fd9a377aadf504b
@@ -528,8 +528,8 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
-  react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
-  react-native-webview: 21fdfbdd5a2268195ca013174f8f656f3509de50
+  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
+  react-native-webview: e1cdf106c6f87b894214191c0a69831d5e44ea34
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0
@@ -540,17 +540,17 @@ SPEC CHECKSUMS:
   React-RCTText: 5c51df3f08cb9dedc6e790161195d12bac06101c
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
-  RNCAsyncStorage: 05bae7ecfab1cbd5441993f1ca098f7c3b3f8d0e
-  RNCClipboard: c9cf8b4eba73c55aa9726ed3536e05503bef441d
-  RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNCAsyncStorage: f47a7e8f927f7c9da947491fc55752eb9ce17f2d
+  RNCClipboard: 245417a78ab585e0d4d83926c28907e7b2bc24bd
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPushNotificationIOS: 61a7c72bd1ebad3568025957d001e0f0e7b32191
-  RNFBApp: 97b618641633d6d23187a9d0537c3893482c483f
-  RNFBMessaging: 9eae1103b79d94c6baa5bc43dabc9aba49dfb9da
-  RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
-  RNPermissions: 99dd8d4a30ff13509b949ca63cd1f69edc461775
-  RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
-  RNScreens: 45c457af3d2ee9e08fc01e70da87e653d46b1198
-  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
+  RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
+  RNFBMessaging: 1823217d31e942531cc3f51fb5367dcbc69c1e10
+  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNPermissions: c46788f4cd402287425983e04a4c9bb4356036eb
+  RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
+  RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
+  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
 PODFILE CHECKSUM: 0601100a07f4f90a446506fa4f06453383bdffe9

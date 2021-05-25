@@ -7,6 +7,7 @@ import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.QOrders;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.police.PoliceGoodsResponse;
 import com.tobe.fishking.v2.model.smartfishing.CalculateResponse;
@@ -81,18 +82,24 @@ public class QuerydslTest {
 //        List<TodayBoardingResponse> l = boardingService.getTodayBoarding(member, "shipName");
 
 //        List<Goods> goods = goodsRepository.getNeedConfirm("2021-05-06", "14");
-        List<Integer> goods = new ArrayList<>();
-        int idx = 2;
-        while (idx > 0) {
-            goods.add(idx);
-            idx -= 1;
+//        List<Integer> goods = new ArrayList<>();
+//        int idx = 2;
+//        while (idx > 0) {
+//            goods.add(idx);
+//            idx -= 1;
+//        }
+//        System.out.println(goods.size() + " " + goods.size()/2);
+//        goods = goods.subList(goods.size()/2, goods.size());
+//        System.out.println(goods.size());
+        PayMethod payMethod = null;
+        for (PayMethod p : PayMethod.values()) {
+            if (p.getValue().equals("신용카드")) {
+                payMethod = p;
+            }
         }
-        System.out.println(goods.size() + " " + goods.size()/2);
-        goods = goods.subList(goods.size()/2, goods.size());
-        System.out.println(goods.size());
-
+        System.out.println(payMethod.getKey() + ' ' + payMethod.getValue());
         //then
-        assertThat(goods.size(), is(2));
+        assertThat(payMethod.getKey(), is(0));
 //        System.out.println(r);
 //        assertThat(r.size(), is(0L));
     }

@@ -329,7 +329,7 @@ export default inject(
                     </a>
                   </div>
                 )}
-                {this.state.status !== "대기자 예약" &&
+                {this.state.status !== "출조 완료" &&
                   this.state.status !== "예약 취소" && (
                     <div
                       className={

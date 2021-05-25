@@ -123,7 +123,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .fetchCount();
 
         Long failCount = queryFactory
-                .select()
+                .select(rideShip)
                 .from(rideShip)
                     .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
                     .join(goods).on(orderDetails.goods.eq(goods))
@@ -137,7 +137,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .fetchCount();
 
         Long confirmCount = queryFactory
-                .select()
+                .select(rideShip)
                 .from(rideShip)
                 .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
                 .join(goods).on(orderDetails.goods.eq(goods))
@@ -151,7 +151,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .fetchCount();
 
         Long waitCount = queryFactory
-                .select()
+                .select(rideShip)
                 .from(rideShip)
                 .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
                 .join(goods).on(orderDetails.goods.eq(goods))
@@ -159,8 +159,8 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .where(ship.company.member.id.eq(memberId),
 //                        goods.fishingStartTime.gt(time),
                         rideShip.isRide.eq(false),
-//                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
-                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix),
+                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix).or(orderDetails.orders.orderStatus.eq(OrderStatus.fishingComplete)),
+//                        orderDetails.orders.orderStatus.eq(OrderStatus.bookFix),
                         orderDetails.orders.fishingDate.eq(now))
                 .fetchCount();
 
