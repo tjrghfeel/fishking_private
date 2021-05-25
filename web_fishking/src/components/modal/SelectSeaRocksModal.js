@@ -57,10 +57,12 @@ export default inject(
       });
       setArrSido(resolve);
       if (positions) {
+          let newSelected = selected.slice();
         for (let p of positions) {
-          setSelected(selected.concat(parseInt(p)));
+          newSelected = newSelected.concat(parseInt(p));
           document.querySelector(`#id-${p}`).checked = true;
         }
+          setSelected(newSelected);
       }
     }, [setList, setArrSido]);
     useEffect(() => {
