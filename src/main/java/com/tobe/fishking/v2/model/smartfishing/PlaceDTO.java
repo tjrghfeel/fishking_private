@@ -31,8 +31,8 @@ public class PlaceDTO {
     private @Valid String address;
     @ApiModelProperty(example = "평균수심")
     private @Valid Double averageDepth;
-    @ApiModelProperty(example = "저질")
-    private @Valid String floorMaterial;
+//    @ApiModelProperty(example = "저질")
+//    private @Valid String floorMaterial;
     @ApiModelProperty(example = "적정물때")
     private @Valid String tideTime;
     @ApiModelProperty(example = "소개")

@@ -336,18 +336,18 @@ export default inject(
                       onChange={(e) => setAverageDepth(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="">
-                      저질<strong className="required"></strong>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="저질을 입력하세요"
-                      value={floorMaterial}
-                      onChange={(e) => setFloorMaterial(e.target.value)}
-                    />
-                  </div>
+                  {/*<div className="form-group">*/}
+                  {/*  <label htmlFor="">*/}
+                  {/*    저질<strong className="required"></strong>*/}
+                  {/*  </label>*/}
+                  {/*  <input*/}
+                  {/*    type="text"*/}
+                  {/*    className="form-control"*/}
+                  {/*    placeholder="저질을 입력하세요"*/}
+                  {/*    value={floorMaterial}*/}
+                  {/*    onChange={(e) => setFloorMaterial(e.target.value)}*/}
+                  {/*  />*/}
+                  {/*</div>*/}
                   <div className="form-group">
                     <label htmlFor="">
                       적정물 때<strong className="required"></strong>

@@ -143,7 +143,7 @@ public class PlacesService {
                 .address(dto.getAddress())
                 .location(new Location(dto.getLatitude(), dto.getLongitude()))
                 .averageDepth(dto.getAverageDepth())
-                .floorMaterial(dto.getFloorMaterial())
+                .floorMaterial("")
                 .tideTime(dto.getTideTime())
                 .introduce(dto.getIntroduce())
                 .open(dto.getIsOpen())
