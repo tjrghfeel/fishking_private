@@ -186,10 +186,24 @@ export default inject(
         form.append("filePublish", "companyRequest");
 
         const { APIStore } = this.props;
+        ModalStore.openModal("Alert", {
+          body: (
+              <React.Fragment>
+                <p>파일 업로드 완료창이 뜰 때까지 잠시만 기다려주세요.</p>
+              </React.Fragment>
+          ),
+        });
         const upload = await APIStore._post_upload(
           "/v2/api/filePreUpload",
           form
         );
+        ModalStore.openModal("Alert", {
+          body: (
+              <React.Fragment>
+                <p>파일 업로드가 완료되었습니다.</p>
+              </React.Fragment>
+          ),
+        });
         if (upload && type === "bizNo") {
           this.setState({ bizNoFile: upload.fileId });
         } else if (upload && type === "represent") {
