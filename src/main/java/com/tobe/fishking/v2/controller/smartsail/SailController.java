@@ -115,7 +115,7 @@ public class SailController {
         try {
             boolean checked = boardingService.checkFingerprint(member, body);
             if (checked) {
-                response.put("status", "success");
+                response.put("status", checked ? "success" : "fail");
                 response.put("message", "확인되었습니다.");
             } else {
 //                response.put("status", "fail");

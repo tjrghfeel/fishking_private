@@ -82,9 +82,13 @@
                     alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
                 },
                 success: function (response) {
-                    console.log(JSON.stringify(response));
-                    alert('승선확인이 완료되었습니다.');
-                    window.location.href = '/boarding/dashboard';
+                    // console.log(JSON.stringify(response));
+                    if (response['status'] === 'success') {
+                      alert('승선확인이 완료되었습니다.');
+                      window.location.href = '/boarding/dashboard';
+                    } else {
+
+                    }
                 }
             })
         }
