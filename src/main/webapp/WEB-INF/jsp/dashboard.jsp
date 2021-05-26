@@ -95,8 +95,8 @@
                     </a>
                 </div>
                 <div class="col-4 text-right d-flex flex-column align-items-end justify-content-around">
-                    <a name="data-click" class="btn btn-round btn-dark data-finger-confirm" style="padding: 8px 10px; margin: 4px 0;"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">승선확인</a>
-                    <a name="data-click" class="btn btn-round btn-dark data-finger-regist" style="padding: 8px 10px; margin: 4px 0;"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">지문등록</a>
+                    <a name="data-click" class="btn btn-round btn-dark data-finger-confirm" style="padding: 8px 10px; margin: 4px 0;"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">지문/승선</a>
+<%--                    <a name="data-click" class="btn btn-round btn-dark data-finger-regist" style="padding: 8px 10px; margin: 4px 0;"><img src="/assets/smartsail/img/svg/icon-jimun.svg" class="vam">지문등록</a>--%>
                 </div>
             </div>
             <hr class="mt-1 mb-1"/>
@@ -256,14 +256,14 @@
                         fn_fingerprint_confirm(item, this.getAttribute('data-index'));
                     });
                     // ----- > 지문등록 이벤트
-                    clone.querySelector('.data-finger-regist').setAttribute('data-index', i);
-                    clone.querySelector('.data-finger-regist').addEventListener('click', function () {
-                        fn_fingerprint_regist(item, this.getAttribute('data-index'));
-                    });
+                    // clone.querySelector('.data-finger-regist').setAttribute('data-index', i);
+                    // clone.querySelector('.data-finger-regist').addEventListener('click', function () {
+                    //     fn_fingerprint_regist(item, this.getAttribute('data-index'));
+                    // });
                     // ----- > 최초 방문은 지문등록 버튼만 표시
-                    if ((item['visitCount'] || 0) == 0) {
-                        clone.querySelector('.data-finger-confirm').style.display = 'none';
-                    }
+                    // if ((item['visitCount'] || 0) == 0) {
+                    //     clone.querySelector('.data-finger-confirm').style.display = 'none';
+                    // }
                     document.getElementById('wait-container').appendChild(clone);
                     // document.body.appendChild(clone);
                 }

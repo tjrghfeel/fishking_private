@@ -22,8 +22,10 @@
 
 <!-- 안내 -->
 <div class="container nopadding mt-3">
-<%--    <h2><small>잠깐!!!</small><br/>--%>
-        <strong class="red" id="txt-finger-type">오른손 엄지</strong><small>를 이용해 주십시오.</small></h2>
+    <h2>
+        <small>잠깐!!!</small><br/>
+        <strong class="red" id="txt-finger-type">오른손 엄지</strong><small id="txt-finger-action">를 이용해 주십시오.</small>
+    </h2>
     <div class="card-round-grey mt-4">
         <div class="card card-sm">
             <div class="row no-gutters mt-5 mb-5 text-center">
@@ -57,6 +59,7 @@
     }
     // ----- > 지문 인식 결과
     function setFingerprintData(fingerprint) {
+        data = JSON.parse(decodeURIComponent(location.search.substr(6,location.search.length)));
         // console.log('----- > 지문 인식 결과 : ' + fingerprint);
         if ((fingerprint || '').length == 0) {
             alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
@@ -68,7 +71,8 @@
                     riderId : data['riderId'],
                     username: data['username'],
                     phone: data['phone'],
-                    fingerprint: fingerprint
+                    fingerprint: fingerprint,
+                    fingerTypeNum: 1
                 }),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
@@ -87,7 +91,13 @@
     }
     $(document).ready(function () {
         data = JSON.parse(decodeURIComponent(location.search.substr(6,location.search.length)));
-        document.getElementById('txt-finger-type').textContent = data['fingerType'];
+        if (data) {
+          document.getElementById('txt-finger-type').textContent = data['fingerType'];
+          document.getElementById('txt-finger-action').textContent = '를 이용해 주십시오.';
+        } else {
+          document.getElementById('txt-finger-type').textContent = '오른손 엄지';
+          document.getElementById('txt-finger-action').textContent = '를 권장합니다.';
+        }
     });
 </script>
 
