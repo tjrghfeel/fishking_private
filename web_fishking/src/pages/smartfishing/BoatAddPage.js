@@ -324,7 +324,7 @@ export default inject(
         }
         if (profileImage === null || profileImage === '') {
           ModalStore.openModal("Alert", {
-            body: "어종을 선택해주세요.",
+            body: "선박사진을 등록해주세요.",
           });
           return;
         }
