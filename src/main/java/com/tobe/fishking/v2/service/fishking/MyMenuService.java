@@ -314,8 +314,16 @@ public class MyMenuService {
 //                "&ResultType=json";
 
         LocalDateTime currentTime = LocalDateTime.now();
-        int temp = (currentTime.getHour()/3)*3 - 4;
-        temp = (temp < 0)? temp + 24 : temp;
+        int temp = currentTime.getHour();
+        if(temp >= 2 && temp < 5){temp = 20;}
+        else if(temp >= 5 && temp < 8){temp = 23;}
+        else if(temp >= 8&& temp < 11){temp = 2;}
+        else if(temp >= 11&& temp < 14){temp = 5;}
+        else if(temp >= 14&& temp < 17){temp = 8;}
+        else if(temp >= 17&& temp < 20){temp = 11;}
+        else if(temp >= 20&& temp < 23){temp = 14;}
+        else if(temp >= 23&& temp < 2){temp = 17;}
+//        temp = (temp < 0)? temp + 24 : temp;
         String baseTime = String.format("%02d",temp);
         String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String fcstTime = String.format("%02d",(currentTime.getHour()/3)*3) + "00";
@@ -343,7 +351,7 @@ public class MyMenuService {
                 if(item.get("category").equals("SKY")){ sky = Integer.parseInt((String)item.get("fcstValue"));}
                 else if(item.get("category").equals("PTY")){ pty = Integer.parseInt((String)item.get("fcstValue"));}
             }
-            else{break;}
+            if(sky != null && pty != null) { break; }
         }
 
         CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
