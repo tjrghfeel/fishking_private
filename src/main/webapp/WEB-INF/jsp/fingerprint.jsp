@@ -22,8 +22,10 @@
 
 <!-- 안내 -->
 <div class="container nopadding mt-3">
-<%--    <h2><small>잠깐!!!</small><br/>--%>
-        <strong class="red" id="txt-finger-type">오른손 엄지</strong><small>를 이용해 주십시오.</small></h2>
+    <h2>
+        <small>잠깐!!!</small><br/>
+        <strong class="red" id="txt-finger-type">오른손 엄지</strong><small id="txt-finger-action">를 이용해 주십시오.</small>
+    </h2>
     <div class="card-round-grey mt-4">
         <div class="card card-sm">
             <div class="row no-gutters mt-5 mb-5 text-center">
@@ -47,8 +49,28 @@
 </div>
 <!--// 하단버튼 -->
 
+<div id="complexConfirm" style="display: none">
+    등록했던 지문과 일치하지 않습니다. <br/>
+    기존에 등록했던 손가락으로 지문인식을 시도해 주시고, 그럴 수 없는 상황이라면 다른 손가락으로 등록을 선택해서 신규 지문으로 등록해 주세요.
+</div>
+
 <jsp:include page="cmm_foot.jsp" />
 <script>
+    function failConfirm() {
+    $("#complexConfirm").dialog({
+      modal: true,
+      resizeable : false,
+      buttons: {
+        "재시도": function() { $(this).dialog('close'); },
+        "다른 손가락 등록": function() {
+          $(this).dialog('close');
+          window.location.href = '/boarding/fingerprintregist?data=' + location.search.substr(6,location.search.length);
+        },
+      }
+    });
+    $('.ui-dialog-titlebar-close').hide()
+    }
+
     var data = null;
     // ----- > 지문 인식 시작
     function start () {
@@ -57,6 +79,7 @@
     }
     // ----- > 지문 인식 결과
     function setFingerprintData(fingerprint) {
+        data = JSON.parse(decodeURIComponent(location.search.substr(6,location.search.length)));
         // console.log('----- > 지문 인식 결과 : ' + fingerprint);
         if ((fingerprint || '').length == 0) {
             alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
@@ -68,7 +91,8 @@
                     riderId : data['riderId'],
                     username: data['username'],
                     phone: data['phone'],
-                    fingerprint: fingerprint
+                    fingerprint: fingerprint,
+                    fingerTypeNum: 1
                 }),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
@@ -78,16 +102,26 @@
                     alert('승선확인이 실패하였습니다.\n지문입력을 다시 시도바랍니다.');
                 },
                 success: function (response) {
-                    console.log(JSON.stringify(response));
-                    alert('승선확인이 완료되었습니다.');
-                    window.location.href = '/boarding/dashboard';
+                    // console.log(JSON.stringify(response));
+                    if (response['status'] === 'success') {
+                      alert('승선확인이 완료되었습니다.');
+                      window.location.href = '/boarding/dashboard';
+                    } else {
+                      failConfirm()
+                    }
                 }
             })
         }
     }
     $(document).ready(function () {
         data = JSON.parse(decodeURIComponent(location.search.substr(6,location.search.length)));
-        document.getElementById('txt-finger-type').textContent = data['fingerType'];
+        if (data) {
+          document.getElementById('txt-finger-type').textContent = data['fingerType'];
+          document.getElementById('txt-finger-action').textContent = '를 이용해 주십시오.';
+        } else {
+          document.getElementById('txt-finger-type').textContent = '오른손 엄지';
+          document.getElementById('txt-finger-action').textContent = '를 권장합니다.';
+        }
     });
 </script>
 

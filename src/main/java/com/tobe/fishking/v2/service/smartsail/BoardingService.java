@@ -112,14 +112,42 @@ public class BoardingService {
     }
 
     @Transactional
-    public boolean checkFingerprint(Map<String, Object> body) {
+    public boolean checkFingerprint(Member member, Map<String, Object> body) {
         RideShip rider = rideShipRepository.getOne(Long.parseLong(body.get("riderId").toString()));
         Orders orders = rider.getOrdersDetail().getOrders();
+
+        String username = body.get("username").toString();
+        String phone = body.get("phone").toString();
+        String fingerprint = body.get("fingerprint").toString();
+        Integer fingerTypeNum = (Integer) body.get("fingerTypeNum");
+        FingerType fingerType = FingerType.values()[fingerTypeNum - 1];
+
+        RiderFingerPrint print = rideShipRepository.getFingerPrint(username, phone);
+        boolean result = false;
+        if (print == null) {
+            riderFingerPrintRepository.save(
+                    RiderFingerPrint.builder()
+                            .finger(fingerType)
+                            .fingerprint(fingerprint)
+                            .phone(phone)
+                            .name(username)
+                            .member(member)
+                            .build()
+            );
+            result = true;
+        } else {
+            // TODO
+            // check fingerprint is correct
+            if (true) {
+                result = true;
+            }
+        }
+
         orders.changeStatus(OrderStatus.fishingComplete);
         ordersRepository.save(orders);
         rider.setRide();
         rideShipRepository.save(rider);
-        return true;
+        return result;
     }
 
     @Transactional

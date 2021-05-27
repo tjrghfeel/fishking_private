@@ -110,11 +110,12 @@ public class SailController {
         if (!memberService.checkAuth(token)) {
             throw new NotAuthException("권한이 없습니다.");
         }
+        Member member = memberService.getMemberBySessionToken(token);
         Map<String, Object> response = new HashMap<>();
         try {
-            boolean checked = boardingService.checkFingerprint(body);
+            boolean checked = boardingService.checkFingerprint(member, body);
             if (checked) {
-                response.put("status", "success");
+                response.put("status", checked ? "success" : "fail");
                 response.put("message", "확인되었습니다.");
             } else {
 //                response.put("status", "fail");
