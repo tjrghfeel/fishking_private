@@ -269,6 +269,7 @@ public class GoodsService {
                 .member(member)
                 .addGoods(addGoods)
                 .build();
+//        Goods goods = new Goods(ship, member, addGoods, species);
         goodsRepo.save(goods);
 
         for (String fishingDate : addGoods.getFishingDates()) {

@@ -170,6 +170,7 @@
         </div>
     </div>
 </div>
+
 <!--// Modal 예약승인 -->
 
 <jsp:include page="cmm_foot.jsp" />

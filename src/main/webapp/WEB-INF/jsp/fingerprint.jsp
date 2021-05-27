@@ -49,8 +49,28 @@
 </div>
 <!--// 하단버튼 -->
 
+<div id="complexConfirm" style="display: none">
+    등록했던 지문과 일치하지 않습니다. <br/>
+    기존에 등록했던 손가락으로 지문인식을 시도해 주시고, 그럴 수 없는 상황이라면 다른 손가락으로 등록을 선택해서 신규 지문으로 등록해 주세요.
+</div>
+
 <jsp:include page="cmm_foot.jsp" />
 <script>
+    function failConfirm() {
+    $("#complexConfirm").dialog({
+      modal: true,
+      resizeable : false,
+      buttons: {
+        "재시도": function() { $(this).dialog('close'); },
+        "다른 손가락 등록": function() {
+          $(this).dialog('close');
+          window.location.href = '/boarding/fingerprintregist?data=' + location.search.substr(6,location.search.length);
+        },
+      }
+    });
+    $('.ui-dialog-titlebar-close').hide()
+    }
+
     var data = null;
     // ----- > 지문 인식 시작
     function start () {
@@ -87,7 +107,7 @@
                       alert('승선확인이 완료되었습니다.');
                       window.location.href = '/boarding/dashboard';
                     } else {
-
+                      failConfirm()
                     }
                 }
             })
