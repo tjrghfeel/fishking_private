@@ -146,6 +146,10 @@ public class MapperUtility {
         if(date != null){return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
         else return null;
     }
+    public String transDateStringMinus9H(LocalDateTime time){
+        if(time != null){return time.minusHours(9).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
+        else return null;
+    }
     public String transDateTimeString(LocalDateTime dateTime){
         if(dateTime != null) { return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));}
         else return null;

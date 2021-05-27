@@ -34,5 +34,9 @@ public interface MemberManageDtoForPage {
     String getLocalNumber();
     Boolean getIsSuspended();
 
+    @Value("#{@mapperUtility.transDateStringMinus9H(target.createdDate)}")
+    String getCreatedDate();
+
+
 
 }
