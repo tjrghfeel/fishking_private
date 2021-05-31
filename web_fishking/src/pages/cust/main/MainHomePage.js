@@ -96,8 +96,9 @@ export default inject(
                           <img
                               src={item.imageUrl}
                               className="d-block w-100"
+                              style={{height:'37vh'}}
                               alt=""
-                              onClick={()=>{window.location.href = item.linkUrl;}}
+                              onClick={()=>{(item.linkUrl === null || item.linkUrl === '')? console.log() : window.location.href = item.linkUrl;}}
                           />
                       </div>
                   ))}
