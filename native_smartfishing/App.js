@@ -169,6 +169,7 @@ const App = inject()(
                   allowsFullscreenVideo={true}
                   allowsInlineMediaPlayback={true}
                   allowsBackForwardNavigationGestures={true}
+                  textZoom={100}
                   injectedJavaScript={`
                     window.isNative = true;
                     window.fcm_token = '${token}';
