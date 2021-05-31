@@ -24,19 +24,19 @@ public class    CompanyCreateDtoForManage {
     @NotNull(message = "업체명을 입력하세요")
     @Size(min=1, message = "업체명을 입력하세요")
     @Size(max=50, message = "업체명은 50자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "업체명은 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "업체명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String companyName;//
     
     @Size(max=50, message = "업주명은 50자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "업주명은 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "업주명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String shipowner;
 
     @Size(max=50, message = "주소(시도)는 50자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "주소(시,도)는 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "주소(시,도)는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String sido;
     
     @Size(max=50, message = "주소(군,구)는 50자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "주소(군,구)는 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "주소(군,구)는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String gungu;
 
     @Size(max=30, message = "업체전화번호는 30자 이하이어야합니다")
@@ -50,23 +50,23 @@ public class    CompanyCreateDtoForManage {
     private String phoneNumber;
     
     @Size(max=30, message = "사업자등록번호는 30자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "사업자등록번호는 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "사업자등록번호는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String bizNo;
     
     @Size(max=30, message = "항구명은 30자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "항구명은 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "항구명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String harbor;//
     
     @Size(max=10, message = "은행명은 10자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "은행명은 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "은행명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String bank ;
 
     @Size(max=20, message = "계좌번호는 20자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "계좌번호는 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "계좌번호는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String accountNo ;
     
     @Size(max=500, message = "사장님한마디는 500자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "사장님한마디는 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "사장님한마디는 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String ownerWording;//not null
     
     @Size(max=50, message = "SKB아이디는 50자 이하이어야합니다")
@@ -88,7 +88,7 @@ public class    CompanyCreateDtoForManage {
     @NotNull(message = "지역명을 입력하세요")
     @Size(min=1, message = "지역명을 입력하세요")
     @Size(max=100, message = "지역명은 100자 이하이어야합니다")
-    @Pattern(regexp = Constants.STRING, message = "지역명은 한글, 숫자 또는 영문자로 구성되어야합니다")
+//    @Pattern(regexp = Constants.STRING, message = "지역명은 한글, 숫자 또는 영문자로 구성되어야합니다")
     private String companyAddress;//
     
    /* @NotNull
