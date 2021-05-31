@@ -183,6 +183,7 @@ export default inject(
           allowsFullscreenVideo={true}
           allowsInlineMediaPlayback={true}
           allowsBackForwardNavigationGestures={true}
+          textZoom={100}
           onNavigationStateChange={(state) =>
             WebViewStore.setNavigationState(state)
           }

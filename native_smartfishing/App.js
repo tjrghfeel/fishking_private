@@ -176,6 +176,7 @@ const App = inject()(
                   `}
                   onNavigationStateChange={this.onNavigationStateChange}
                   onMessage={this.onMessage}
+                  textZoom={100}
                   onShouldStartLoadWithRequest={request => {
                     console.log(
                       `[onShouldStartLoadWithRequest] ${JSON.stringify(
