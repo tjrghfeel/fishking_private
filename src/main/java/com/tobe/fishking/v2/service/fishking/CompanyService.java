@@ -82,7 +82,7 @@ public class CompanyService {
                 .ownerWording("")
                 .isOpen(false)
                 .skbAccount(dto.getAdtId())
-                .skbPassword(HashUtil.sha256(dto.getAdtPw()))
+                .skbPassword((dto.getAdtPw() != null)?HashUtil.sha256(dto.getAdtPw()) : null)
                 .companyAddress(dto.getCompanyAddress())
                 .isRegistered(false)
                 .bizNoFileId(bizNoFileEntity)

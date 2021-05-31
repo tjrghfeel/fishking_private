@@ -29,16 +29,16 @@ export default inject(
           companyName: "",
           phoneNumber: "", // 휴대폰번호
           companyAddress: "", // 지역명
-          harbor: "",
-          memberName: "",
-          tel: "",
+          harbor: null,
+          memberName: null,
+          tel: null,
           bizNoFile: -1,
           representFile: -1,
           accountFile: -1,
-          adtId: "",
-          adtPw: "",
-          nhnId: "",
-          nhnPw: "",
+          adtId: null,
+          adtPw: null,
+          nhnId: null,
+          nhnPw: null,
         };
       }
       /********** ********** ********** ********** **********/
@@ -303,9 +303,10 @@ export default inject(
                           className="form-control"
                           placeholder="항구명을 입력하세요"
                           value={this.state.harbor}
-                          onChange={(e) =>
-                            this.setState({ harbor: e.target.value })
-                          }
+                          onChange={(e) =>{
+                              if(e.target.value === ''){this.setState({harbor: null})}
+                              else{this.setState({ harbor: e.target.value })}
+                          }}
                         />
                       </div>
                     </div>
@@ -324,9 +325,10 @@ export default inject(
                           className="form-control"
                           placeholder="대표자명을 입력하세요"
                           value={this.state.memberName}
-                          onChange={(e) =>
-                            this.setState({ memberName: e.target.value })
-                          }
+                          onChange={(e) =>{
+                              if(e.target.value===''){this.setState({memberName: null})}
+                              else{this.setState({memberName: e.target.value})}
+                          }}
                         />
                       </div>
                     </div>
@@ -342,9 +344,10 @@ export default inject(
                           className="form-control"
                           placeholder="전화번호를 입력하세요"
                           value={this.state.tel}
-                          onChange={(e) =>
-                            this.setState({ tel: e.target.value })
-                          }
+                          onChange={(e) =>{
+                            if(e.target.value === ''){this.setState({tel: null})}
+                            else{this.setState({tel: e.target.value})}
+                          }}
                         />
                       </div>
                     </div>
@@ -414,9 +417,10 @@ export default inject(
                           className="form-control"
                           placeholder="SKB 캡스 아이디를 입력하세요"
                           value={this.state.adtId}
-                          onChange={(e) =>
-                            this.setState({ adtId: e.target.value })
-                          }
+                          onChange={(e) =>{
+                            if(e.target.value === ''){this.setState({adtId: null})}
+                            else{this.setState({adtId: e.target.value})}
+                          }}
                         />
                       </div>
                     </div>
@@ -431,9 +435,10 @@ export default inject(
                           className="form-control"
                           placeholder="SKB 캡스 비밀번호를 입력하세요"
                           value={this.state.adtPw}
-                          onChange={(e) =>
-                            this.setState({ adtPw: e.target.value })
-                          }
+                          onChange={(e) =>{
+                            if(e.target.value === ''){this.setState({adtPw: null})}
+                            else{this.setState({adtPw: e.target.value})}
+                          }}
                         />
                       </div>
                     </div>
@@ -448,9 +453,10 @@ export default inject(
                           className="form-control"
                           placeholder="NHN 토스트캠 아이디를 입력하세요"
                           value={this.state.nhnId}
-                          onChange={(e) =>
-                            this.setState({ nhnId: e.target.value })
-                          }
+                          onChange={(e) =>{
+                            if(e.target.value === ''){this.setState({nhnId: null})}
+                            else{this.setState({nhnId: e.target.value})}
+                          }}
                         />
                       </div>
                     </div>
@@ -465,9 +471,10 @@ export default inject(
                           className="form-control"
                           placeholder="NHN 토스트캠 비밀번호를 입력하세요"
                           value={this.state.nhnPw}
-                          onChange={(e) =>
-                            this.setState({ nhnPw: e.target.value })
-                          }
+                          onChange={(e) =>{
+                            if(e.target.value === ''){this.setState({nhnPw: null})}
+                            else{this.setState({nhnPw: e.target.value})}
+                          }}
                         />
                       </div>
                     </div>
