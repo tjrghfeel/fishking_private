@@ -259,9 +259,20 @@ public class ShipsGoodsController {
 //        return result;
         try {
 //            Long shipId = fishingShipService.addShip(addShipDTO, token, fishSpecies, services, facilities, devices, events, positions, adtCameras, nhnCameras);
-            Long shipId = fishingShipService.addShip(addShipDTO, token);
+            if (addShipDTO.getFishingType().equals("all")) {
+                String shipName = addShipDTO.getName();
+                addShipDTO.setFishingType("ship");
+                addShipDTO.setName(shipName + " (선상)");
+                Long shipId_ship = fishingShipService.addShip(addShipDTO, token);
+                addShipDTO.setFishingType("seaRocks");
+                addShipDTO.setName(shipName + " (갯바위)");
+                Long shipId_seaRocks = fishingShipService.addShip(addShipDTO, token);
+                result.put("id", shipId_ship);
+            } else {
+                Long shipId = fishingShipService.addShip(addShipDTO, token);
+                result.put("id", shipId);
+            }
             result.put("result", "success");
-            result.put("id", shipId);
             return result;
         } catch (ResourceNotFoundException e) {
             throw e;

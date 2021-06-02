@@ -84,6 +84,7 @@ public class FishingShipService {
             Map<String, Object> r = new HashMap<>();
             r.put("id", t.get(0, Long.class));
             r.put("shipName", t.get(1, String.class));
+            r.put("canSelect", t.get(2, Boolean.class));
             response.add(r);
         }
         if (response.isEmpty()) {
@@ -271,7 +272,6 @@ public class FishingShipService {
 
         if (ship.getFishingType().equals(FishingType.seaRocks)) {
             for (String position : addShipDTO.getPositions()) {
-//            for (String position : positions) {
                 Places places = placesRepository.getOne(Long.parseLong(position));
                 shipSeaRocksRepository.save(
                         ShipSeaRocks.builder()
