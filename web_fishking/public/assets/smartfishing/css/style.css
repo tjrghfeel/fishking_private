@@ -4405,6 +4405,7 @@ ol.pay-step li.active {
 .box-round-grey .photo-img {
 	padding:0;
 	margin:0;
+	height:"100%";
 	text-align:center;
 	background-size: cover;
 	background-position:center center;

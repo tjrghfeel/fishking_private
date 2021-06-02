@@ -296,6 +296,9 @@ export default inject(
             return;
           }
 
+          ModalStore.openModal("Alert", {
+            body: file.name+"파일을 업로드하는 중입니다. 업로드 완료창이 뜰 때까지 잠시만 기다려주세요",
+          });
           const form = new FormData();
           form.append("file", file);
           form.append("filePublish", this.state.category);
@@ -309,8 +312,21 @@ export default inject(
           if (upload) {
             if (file.type?.includes("video")) {
               this.setState({ videoId: upload["fileId"] });
+              ModalStore.openModal("Alert", {
+                body: "파일 업로드가 완료되었습니다",
+              });
             }
-            else{this.setState({ uploaded: this.state.uploaded.concat(upload) });}
+            else{
+              this.setState({ uploaded: this.state.uploaded.concat(upload) });
+              ModalStore.openModal("Alert", {
+                body: file.name+"파일 업로드가 완료되었습니다",
+              });
+            }
+          }
+          else{
+            ModalStore.openModal("Alert", {
+              body: file.name+"파일 업로드에 실패하였습니다",
+            });
           }
           this.file.current.value = null;
         }
@@ -443,9 +459,12 @@ export default inject(
             {/** 카테고리 / 제목 */}
             <div className="container nopadding">
               <div className="card">
+
                 <form className="form-line mt-3">
                   <div className="form-group">
+                    <label style={{width:'10%', textAlign:'center'}}>제목&nbsp;<span className='red'>*</span></label>
                     <input
+                        style={{width:'90%', display:'inline-block'}}
                       ref={this.title}
                       type="text"
                       className="form-control"
@@ -579,6 +598,7 @@ export default inject(
             </div>
             {/** 선상 */}
             <div className="container nopadding mt-3">
+              <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>선박 또는 위치선택&nbsp;<span className='red'>*</span></div>
               <a data-toggle="modal" data-target="#selLocationModal">
                 <div className="card-round-box pt-0 pb-0 pl-0">
                   <div className="row no-gutters d-flex align-items-center">
@@ -631,6 +651,7 @@ export default inject(
             </div>
             {/** 문구 */}
             <div className="container nopadding mt-3">
+              <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>내용&nbsp;<span className='red'>*</span></div>
               <div className="row no-gutters">
                 <div className="form-group col-12">
                   <div className="input-group">
@@ -662,6 +683,7 @@ export default inject(
               onChange={this.uploadFile}
             />
             <div className="container nopadding mt-3">
+              <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>사진 또는 동영상&nbsp;<span className='red'>*</span></div>
               <div className="row no-gutters d-flex align-items-center">
                 <div className="col-3">
                   <a onClick={() => this.file.current?.click()}>
