@@ -136,6 +136,7 @@ export default inject(
                   value={this.state.selectedDate}
                   onChange={this.onChangeDate}
                   minDate={this.state.minDate}
+                  calendarType="Hebrew"
                 />
               </div>
 

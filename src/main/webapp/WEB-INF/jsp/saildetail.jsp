@@ -77,6 +77,7 @@
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
             },
             success: function (response) {
+                let reserveComment = (response['reserveComment'])? response['reserveComment'] : '없음';
                 document.getElementById('shipProfileImage').src = response['shipProfileImage'];
                 document.getElementById('shipHead').innerHTML =
                   response['shipName'] + ''
@@ -85,7 +86,8 @@
                   + response['personnel']
                   + '</strong>명</small><br/><small class="grey">'
                   + response['date']
-                  + '</small>';
+                  + '</small><br/>'
+                +'<small>요청사항 : '+ reserveComment + '</small>';
 
                 var container = document.body;
                 for (var i = 0; i < response['riders'].length; i++) {

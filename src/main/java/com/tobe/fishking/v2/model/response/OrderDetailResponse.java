@@ -31,6 +31,7 @@ public class OrderDetailResponse {
 
     private String reserveName;
     private String reservePhone;
+    private String reserveComment;
 
     private List<Map<String, Object>> rideList;
     private List<String> shipPositions;
@@ -54,6 +55,7 @@ public class OrderDetailResponse {
                                OrderStatus status,
                                String reserveName,
                                String reservePhone,
+                               String reserveComment,
                                LocalDateTime orderDate,
                                PayMethod payMethod,
                                Integer payTotalAmount,
@@ -69,6 +71,7 @@ public class OrderDetailResponse {
         this.status = status.getValue();
         this.reserveName = reserveName;
         this.reservePhone = addDashToPhoneNum(reservePhone);
+        this.reserveComment = reserveComment;
         this.orderDate = DateUtils.getDateTimeInFormat(orderDate);
         this.payMethod = payMethod.getValue();
         this.payTotalAmount = payTotalAmount;

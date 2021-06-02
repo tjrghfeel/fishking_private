@@ -447,6 +447,7 @@ public class ShipService {
                 .payMethod(payMethod)
                 .orderStatus(OrderStatus.book)
                 .goods(goods)
+                .reserveComment(reserveDTO.getReserveComment())
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();

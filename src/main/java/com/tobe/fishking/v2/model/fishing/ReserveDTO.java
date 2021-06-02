@@ -58,4 +58,7 @@ public class ReserveDTO {
 
     @ApiParam(value = "결제수단. 신용카드: '1000000000', 가상계좌: '0100000000', 계좌이체: '0010000000', 휴대폰결제: '0000010000'")
     private @Valid String payMethod;
+
+    @ApiParam(value = "예약 추가 요청사항")
+    private @Valid String reserveComment;
 }

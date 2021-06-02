@@ -96,6 +96,9 @@ public class Orders extends BaseTime {
     @Column(columnDefinition = "varchar(200) comment '취소번호' ")
     private String cancelNumber;
 
+    @Column(columnDefinition = "varchar(300) comment '추가 요청사항'")
+    private String reserveComment;
+
 /*
 
 - 결제수단

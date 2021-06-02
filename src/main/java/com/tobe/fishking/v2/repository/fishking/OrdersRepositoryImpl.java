@@ -194,6 +194,7 @@ public class OrdersRepositoryImpl implements OrdersRepositoryCustom {
                         orders.orderStatus,
                         orders.createdBy.memberName,
                         orders.createdBy.phoneNumber.areaCode.concat(orders.createdBy.phoneNumber.localNumber),
+                        orders.reserveComment,
                         orders.createdDate,
                         orders.payMethod,
                         orders.totalAmount,

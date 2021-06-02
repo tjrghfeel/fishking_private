@@ -309,8 +309,10 @@ public class MemberManageService {
         Boolean suspendValue = null;
         if(suspend.equals("false")){suspendValue = false;}
         else suspendValue = true;
+
         Member member = memberService.getMemberById(memberId);
         member.setIsSuspended(suspendValue);
+        if(suspendValue == true) {member.setSessionToken(null);}
         memberRepository.save(member);
 
         return true;
