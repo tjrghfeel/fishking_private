@@ -28,6 +28,7 @@ export default inject(
           date: "", // 예약날짜
           reservePersonName: "", // 예약자 이름
           reservePersonPhone: "", // 예약자 전화번호
+          reserveComment:'',//추가요청사항
           personCount: 1, // 승선자 수
           personsName: [], // 승선자 정보
           personsPhone: [], // 승선자 정보
@@ -336,6 +337,7 @@ export default inject(
             date,
             reservePersonName,
             reservePersonPhone,
+            reserveComment,
             personCount,
             personsName,
             personsPhone,
@@ -355,6 +357,7 @@ export default inject(
             date,
             reservePersonName,
             reservePersonPhone,
+            reserveComment,
             personCount,
             personsName,
             personsPhone,
@@ -594,6 +597,29 @@ export default inject(
                         </div>
                       </div>
                       <hr className="mt-0" />
+                    </form>
+                  </div>
+
+                  <div className="card-round-box-grey">
+                    <h6 className="card-header-white text-center">
+                      요청사항
+                    </h6>
+                    <form className="form-line mt-3">
+                      <div className="form-group">
+                        <label htmlFor="inputName" className="sr-only">
+                          요청사항
+                        </label>
+                        <input
+
+                            type="text"
+                            className="form-control"
+                            placeholder="요청사항을 입력하세요"
+                            value={this.state.reserveComment}
+                            onChange={(e) =>{
+                              if(e.target.value.length < 60){this.setState({reserveComment: e.target.value})}
+                            }}
+                        />
+                      </div>
                     </form>
                   </div>
                 </div>

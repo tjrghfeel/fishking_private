@@ -9,6 +9,7 @@ import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.entity.fishing.RiderFingerPrint;
 import com.tobe.fishking.v2.enums.fishing.FingerType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.smartsail.AddRiderDTO;
 import com.tobe.fishking.v2.model.smartsail.RiderGoodsListResponse;
 import com.tobe.fishking.v2.model.smartsail.RiderSearchDTO;
@@ -181,8 +182,10 @@ public class BoardingService {
     }
 
     @Transactional
-    public Map<String, Object> detailRiders(Long orderId) {
+    public Map<String, Object> detailRiders(Long orderId) throws ResourceNotFoundException {
         OrderDetails orderDetails = orderDetailsRepository.findByOrders(orderId);
+        Orders orders = ordersRepository.findById(orderId)
+                .orElseThrow(()->new ResourceNotFoundException("orders not found for this id :: "+orderId));
         List<Tuple> riders = rideShipRepository.getDetailRiders(orderId);
 
         Map<String, Object> response = new HashMap<>();
@@ -207,6 +210,7 @@ public class BoardingService {
             list.add(r);
         }
         response.put("riders", list);
+        response.put("reserveComment", orders.getReserveComment());
 
         return response;
     }

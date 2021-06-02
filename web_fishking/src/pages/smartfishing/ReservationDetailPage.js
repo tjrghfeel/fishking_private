@@ -251,6 +251,19 @@ export default inject(
             </div>
             <p className="space mt-2"></p>
 
+              {/** 추가 요청사항 */}
+              <div className="container nopadding">
+                  <div className="card">
+                      <h6>요청사항</h6>
+                      <hr className="full mt-1 mb-2" />
+                      <div  className="row no-gutters">
+                          {(this.state.reserveComment)?
+                               this.state.reserveComment : '요청사항이 없습니다' }
+                      </div>
+                  </div>
+              </div>
+              <p className="space mt-2"></p>
+
             {/** 선상위치 정보 */}
             <div className="container nopadding">
               <div className="card">
