@@ -46,16 +46,18 @@ export default inject(
             'https://fishkingapp.com/cust' +
             redirectUrl.split('?')[1],
         );
-        setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
+        // setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
+        setUri('http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1]);
       }
     }, []);
     const initiate = useCallback(async () => {
       const saved = await AsyncStorage.getItem('@initiated');
       if (saved === null) {
-        setUri('https://fishkingapp.com/cust/init/intro');
+        // setUri('https://fishkingapp.com/cust/init/intro');
+        setUri('http://112.220.72.178:3000/cust/main/home');
       } else {
-        setUri('https://fishkingapp.com/cust/main/home');
-        // setUri('http://192.168.0.50:3000/cust/main/home');
+        // setUri('https://fishkingapp.com/cust/main/home');
+        setUri('http://112.220.72.178:3000/cust/main/home');
       }
       const location = await AppStore.checkLocationPermissions();
       const storage = await AppStore.checkStoragePermissions();
@@ -87,7 +89,8 @@ export default inject(
                 'https://fishkingapp.com/cust' +
                 redirectUrl.split('?')[1],
             );
-            setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
+            // setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
+            setUri('http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1]);
           }
         })
         .catch((e) => {});
@@ -282,6 +285,18 @@ export default inject(
                     }
                   } else {
                     console.log(`Linking Error -> ${data}`);
+                  }
+                });
+                break;
+              }
+              case 'Browser': {
+                Linking.canOpenURL(data).then((supported) => {
+                  if (supported) {
+                    Linking.openURL(data);
+                  } else {
+                    console.log(
+                      "Don't know how to open URI: " + data,
+                    );
                   }
                 });
                 break;
