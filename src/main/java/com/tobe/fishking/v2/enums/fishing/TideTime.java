@@ -16,8 +16,8 @@ public enum TideTime   implements IEnumModel   {
     ten("10물"),
     eleven("11물"),
     twelve("12물"),
-    little("조금"),
-    ignore("무시");
+    thirteen("13물"),
+    little("조금");
 
     private String value;
     TideTime(String value) {

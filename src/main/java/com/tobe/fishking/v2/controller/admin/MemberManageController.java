@@ -113,14 +113,14 @@ public class MemberManageController {
     }
 
     //비밀번호 초기화
-//    @ApiOperation(value="비밀번호 초기화")
-//    @PutMapping("/manage/member/initialPw")
-//    public Boolean initialPw(
-//            @RequestBody @Valid InitialPwDto dto,
-//            @RequestHeader("Authorization") String token
-//    ) throws ServiceLogicException {
-//        return memberManageService.initialPw(dto, token);
-//    }
+    @ApiOperation(value="비밀번호 초기화")
+    @PutMapping("/manage/member/initialPw")
+    public Boolean initialPw(
+            @RequestBody @Valid InitialPwDto dto,
+            @RequestHeader("Authorization") String token
+    ) throws ServiceLogicException {
+        return memberManageService.initialPw(dto, token);
+    }
 
     //전체 푸시알림
     @ApiOperation(value = "전체 푸시 알림")
