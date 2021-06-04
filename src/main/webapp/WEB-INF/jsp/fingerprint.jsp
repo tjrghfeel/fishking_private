@@ -97,7 +97,7 @@
                     username: data['username'],
                     phone: data['phone'],
                     fingerprint: fingerprint,
-                    fingerTypeNum: 1
+                    fingerTypeNum: data['fingerTypeNum']
                 }),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));

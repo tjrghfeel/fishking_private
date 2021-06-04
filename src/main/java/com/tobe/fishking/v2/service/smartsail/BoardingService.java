@@ -18,6 +18,7 @@ import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
 import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
 import com.tobe.fishking.v2.repository.fishking.RideShipRepository;
 import com.tobe.fishking.v2.repository.fishking.RiderFingerPrintRepository;
+import com.tobe.fishking.v2.service.HttpRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +26,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -42,6 +47,7 @@ public class BoardingService {
     private final OrderDetailsRepository orderDetailsRepository;
     private final RideShipRepository rideShipRepository;
     private final RiderFingerPrintRepository riderFingerPrintRepository;
+    private final HttpRequestService httpRequestService;
 
     @Transactional
     public List<TodayBoardingResponse> getTodayBoarding(Member member, String orderBy) {
@@ -51,9 +57,11 @@ public class BoardingService {
             if (print == null) {
                 r.setFingerType(null);
                 r.setVisitCount(null);
+                r.setFingerTypeNum(1);
             } else {
                 r.setFingerType(print.getFinger().getValue());
                 r.setVisitCount(print.getCount());
+                r.setFingerTypeNum(print.getFinger().ordinal() + 1);
             }
         }
         return responses;
@@ -135,20 +143,32 @@ public class BoardingService {
                             .member(member)
                             .build()
             );
+            orders.changeStatus(OrderStatus.fishingComplete);
+            ordersRepository.save(orders);
+            rider.setRide();
+            rideShipRepository.save(rider);
             result = true;
         } else {
             // TODO
             // check fingerprint is correct
-            if (true) {
-                result = true;
+            try {
+                Map<String, Object> data = httpRequestService.checkFingerPrint(fingerprint, print.getFingerprint());
+                if (data.get("match").toString().equals("1")) {
+                    orders.changeStatus(OrderStatus.fishingComplete);
+                    ordersRepository.save(orders);
+                    rider.setRide();
+                    rideShipRepository.save(rider);
+                    result = true;
+                }
+            } catch (Exception e) {
+                result = false;
             }
         }
-
         orders.changeStatus(OrderStatus.fishingComplete);
         ordersRepository.save(orders);
         rider.setRide();
         rideShipRepository.save(rider);
-        return result;
+        return true;
     }
 
     @Transactional

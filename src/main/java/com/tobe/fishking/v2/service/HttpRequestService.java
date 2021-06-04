@@ -355,4 +355,48 @@ public class HttpRequestService {
 
         return httpClientBuilder.build();
     }
+
+    public Map<String, Object> checkFingerPrint(String fingerprint1, String fingerprint2) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpPost httpPost = new HttpPost("http://1.234.82.63:7000/DSBioXEngine/rest/enginesvc/domatch.do");
+        httpPost.addHeader("User-Agent", USER_AGENT);
+
+        JsonObject data = new JsonObject();
+        data.addProperty("src1_method", 0);
+        data.addProperty("src1_b64_feature", fingerprint1);
+//        data.addProperty("src1_method", 1);
+//        data.addProperty("src1_b64_rawimage", fingerprint1);
+//        data.addProperty("src1_imgw", 300);
+//        data.addProperty("src1_imgh", 400);
+        data.addProperty("src2_method", 0);
+        data.addProperty("src2_b64_feature", fingerprint2);
+//        data.addProperty("src2_method", 1);
+//        data.addProperty("src2_b64_rawimage", fingerprint2);
+//        data.addProperty("src2_imgw", 300);
+//        data.addProperty("src2_imgh", 400);
+
+        httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
+
+        Map<String, Object> result = new HashMap<>();
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+//            System.out.println("Response Status: " + response.getStatusLine().getStatusCode());
+
+            String json = EntityUtils.toString(response.getEntity());
+
+            Gson gson = new Gson();
+            JsonObject res = gson.fromJson(json, JsonObject.class);
+            String code = res.get("resultCode").toString();
+            String match = res.getAsJsonObject("data").get("match").toString();
+
+            httpClient.close();
+
+            result.put("code", code);
+            result.put("match", match);
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = null;
+        }
+        return result;
+    }
 }
