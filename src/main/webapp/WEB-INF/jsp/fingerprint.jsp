@@ -44,7 +44,8 @@
 <!-- 하단버튼 -->
 <div class="fixed-bottom">
     <div class="row no-gutters">
-        <div class="col-12"><a onclick="javascript:start();" class="btn btn-primary btn-lg btn-block">지문 인식 시작</a></div>
+        <div class="col-6"><a onclick="javascript:start();" class="btn btn-primary btn-lg btn-block">지문 인식 시작</a></div>
+        <div class="col-6"><a onclick="javascript:moveToRegistOther();" class="btn btn-secondary btn-lg btn-block">다른 손가락으로 등록</a></div>
     </div>
 </div>
 <!--// 하단버튼 -->
@@ -56,6 +57,10 @@
 
 <jsp:include page="cmm_foot.jsp" />
 <script>
+    function moveToRegistOther () {
+        window.location.href = '/boarding/fingerprintother?data=' + encodeURIComponent(JSON.stringify(data));
+    }
+
     function failConfirm() {
     $("#complexConfirm").dialog({
       modal: true,
@@ -92,7 +97,7 @@
                     username: data['username'],
                     phone: data['phone'],
                     fingerprint: fingerprint,
-                    fingerTypeNum: 1
+                    fingerTypeNum: data['fingerTypeNum']
                 }),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
@@ -115,7 +120,7 @@
     }
     $(document).ready(function () {
         data = JSON.parse(decodeURIComponent(location.search.substr(6,location.search.length)));
-        if (data) {
+        if (data['fingerType']) {
           document.getElementById('txt-finger-type').textContent = data['fingerType'];
           document.getElementById('txt-finger-action').textContent = '를 이용해 주십시오.';
         } else {

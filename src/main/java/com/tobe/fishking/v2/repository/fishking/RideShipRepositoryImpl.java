@@ -81,6 +81,7 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                     .join(ship).on(goods.ship.eq(ship))
                 .where(ship.company.member.id.eq(memberId),
                         rideShip.isRide.eq(comp),
+                        orders.orderStatus.ne(OrderStatus.bookCancel),
                         (new CaseBuilder().when(goods.fishingEndTime.eq("2400"))
                                 .then(Expressions.dateTimeTemplate(LocalDateTime.class, "ADDDATE({0}, 1)", (Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d%H%i')",
                                         orders.fishingDate.concat("0000")

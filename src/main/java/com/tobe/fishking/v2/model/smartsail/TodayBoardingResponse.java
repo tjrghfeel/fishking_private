@@ -21,6 +21,7 @@ public class TodayBoardingResponse {
     private String emergencyPhone;
     private Integer visitCount;
     private String fingerType;
+    private Integer fingerTypeNum;
     private String status;
 
     @QueryProjection

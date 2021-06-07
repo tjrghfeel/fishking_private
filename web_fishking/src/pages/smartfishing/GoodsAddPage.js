@@ -51,6 +51,8 @@ export default inject(
           arr_species: [],
           minDate: null,
           arr_dates: [],
+
+          canSel: true,
         };
         this.arr_hour = [];
         for (let i = 0; i < 24; i++) {
@@ -78,7 +80,6 @@ export default inject(
           arr_ship: resolve,
           arr_species: [...arr80, ...arr161, ...arr162],
         });
-
         const { id } = PageStore.getQueryParams();
         if (id) {
           this.setState({ id });
@@ -221,8 +222,7 @@ export default inject(
         }
         if (
           fishingStartTime === null ||
-          fishingEndTime === null ||
-          fishingStartTime.replace(":", "") > fishingEndTime.replace(":", "")
+          fishingEndTime === null
         ) {
           ModalStore.openModal("Alert", {
             body: "운항시간을 확인해주세요.",
@@ -332,13 +332,15 @@ export default inject(
                     className="form-control"
                     onChange={(e) =>
                       this.setState({
-                        shipId: e.target.selectedOptions[0].value,
+                        shipId: this.state.arr_ship[e.target.selectedOptions[0].value]['id'],
+                        canSel: this.state.arr_ship[e.target.selectedOptions[0].value]['canSelect'],
                       })
                     }
                   >
                     <option value={""}>선상명을 선택하세요</option>
                     {this.state.arr_ship?.map((data, index) => (
-                      <option value={data["id"]}>{data["shipName"]}</option>
+                      // <option value={data["id"]}>{data["shipName"]}</option>
+                      <option value={index}>{data["shipName"]}</option>
                     ))}
                   </select>
                 </div>
@@ -595,13 +597,19 @@ export default inject(
                             ref={this.positionSelectTrue}
                             className="nav-link btn btn-on"
                             id="nav-home-tab"
-                            data-toggle="tab"
+                            // data-toggle="tab"
                             role="tab"
                             aria-controls="nav-on"
                             aria-selected="true"
-                            onClick={() =>
-                              this.setState({ positionSelect: true })
-                            }
+                            onClick={() => {
+                              if (!this.state.canSel) {
+                                alert('위치선정이 불가능한 선박입니다')
+                              } else {
+                                this.setState({ positionSelect: true })
+                                document.getElementById('nav-home-tab').classList.add('active');
+                                document.getElementById('nav-profile-tab').classList.remove('active');
+                              }
+                            }}
                           >
                             ON
                           </a>
@@ -609,13 +617,15 @@ export default inject(
                             ref={this.positionSelectFalse}
                             className="nav-link active btn btn-off"
                             id="nav-profile-tab"
-                            data-toggle="tab"
+                            // data-toggle="tab"
                             role="tab"
                             aria-controls="nav-off"
                             aria-selected="false"
-                            onClick={() =>
-                              this.setState({ positionSelect: false })
-                            }
+                            onClick={() => {
+                              this.setState({ positionSelect: false });
+                              document.getElementById('nav-home-tab').classList.remove('active');
+                              document.getElementById('nav-profile-tab').classList.add('active');
+                            }}
                           >
                             OFF
                           </a>

@@ -47,6 +47,7 @@ public class SailController {
             "\n     emergencyPhone: 비상연락처" +
             "\n     visitCount: 이용횟수" +
             "\n     fingerType: 지문의 손가락" +
+            "\n     fingerTypeNum: 지문의 손가락 타입 숫자" +
             "\n }, ... ]" +
             "\n } " +
             "\n 현황: " +

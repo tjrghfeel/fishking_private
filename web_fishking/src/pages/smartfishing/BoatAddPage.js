@@ -29,7 +29,7 @@ export default inject(
         this.shipType9 = React.createRef(null);
         this.state = {
           name: "", // 선박명
-          fishingType: "ship", // 구분 : 선상 = ship , 갯바위 = seaRocks
+          fishingType: "all", // 구분 : 선상 = ship , 갯바위 = seaRocks
           fishSpecies: [],
           services: [],
           facilities: [],
@@ -57,6 +57,7 @@ export default inject(
           arr_nhnCameras: [],
           isUpdate: false,
           rockData: null,
+          beforeId: null
         };
       }
       /********** ********** ********** ********** **********/
@@ -92,6 +93,7 @@ export default inject(
         const { id } = PageStore.getQueryParams();
         if (id) {
           const resolve = await APIStore._get(`/v2/api/ship/detail/${id}`);
+          await this.setState({ beforeId: id });
           await this.setState({ ...resolve });
           // console.log(this.state.positions)
           // 주소 설정
@@ -410,6 +412,32 @@ export default inject(
                   <label htmlFor="InputGPrice" className="d-block">
                     구분 <strong className="required"></strong>
                   </label>
+                  {!this.state.beforeId && (
+                    <React.Fragment>
+                      <label className="control radio">
+                        <input
+                          name={"checkFishingType"}
+                          type="radio"
+                          value={"all"}
+                          className="add-contrast"
+                          data-role="collar"
+                          defaultChecked={this.state.fishingType}
+                          onChange={(e) => {
+                            if (e.target.checked)
+                              this.setState({
+                                fishingType: "all",
+                                positions: [],
+                                boardingPerson: 0,
+                                weight: null,
+                              });
+                          }}
+                        />
+                        <span className="control-indicator"></span>
+                        <span className="control-text">모두</span>
+                      </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                    </React.Fragment>
+                  )}
                   <label className="control radio">
                     <input
                       name={"checkFishingType"}
@@ -417,7 +445,6 @@ export default inject(
                       value={"ship"}
                       className="add-contrast"
                       data-role="collar"
-                      defaultChecked={this.state.fishingType}
                       onChange={(e) => {
                         if (e.target.checked)
                           this.setState({
@@ -453,10 +480,10 @@ export default inject(
                     <span className="control-text">갯바위</span>
                   </label>
                 </div>
-                <div className="space mt-1 mb-4"></div>
                 {/** 선상 / 갯바위 선택 */}
                 {this.state.fishingType === "ship" && (
                   <React.Fragment>
+                    <div className="space mt-1 mb-4"></div>
                     <div className="form-group">
                       <label className="d-block">
                         선상 예약 위치 설정{" "}
@@ -557,6 +584,7 @@ export default inject(
                 )}
                 {this.state.fishingType === "seaRocks" && (
                   <React.Fragment>
+                    <div className="space mt-1 mb-4"></div>
                     <SelectSeaRocksModal
                       id={"selRocksModal"}
                       positions={this.state.positions}

@@ -16,6 +16,7 @@ export default inject(
   "PageStore",
   "APIStore",
   "ModalStore",
+  "NativeStore"
 )(
   observer(
     class extends React.Component {
@@ -48,7 +49,7 @@ export default inject(
       /** render */
       /********** ********** ********** ********** **********/
       render() {
-        const { PageStore } = this.props;
+        const { PageStore, NativeStore } = this.props;
         return (
           <React.Fragment>
             {/** Navigation */}
@@ -98,7 +99,10 @@ export default inject(
                               className="d-block w-100"
                               style={{height:'37vh'}}
                               alt=""
-                              onClick={()=>{(item.linkUrl === null || item.linkUrl === '')? console.log() : window.location.href = item.linkUrl;}}
+                              onClick={() => {
+                                // (item.linkUrl === null || item.linkUrl === '')? console.log() : window.location.href = item.linkUrl;}
+                                (item.linkUrl === null || item.linkUrl === '')? console.log() : NativeStore.postMessage('Browser', item.linkUrl);}
+                              }
                           />
                       </div>
                   ))}

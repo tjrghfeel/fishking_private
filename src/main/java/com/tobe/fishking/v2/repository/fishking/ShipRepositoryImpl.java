@@ -6,10 +6,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringExpressions;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tobe.fishking.v2.entity.QFileEntity;
@@ -560,9 +557,13 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
     @Override
     public List<Tuple> getGoodsShips(Long memberId) {
         List<Tuple> response = queryFactory
-                .select(ship.id, ship.shipName)
+                .select(ship.id,
+                        ship.shipName,
+                        new CaseBuilder().when(ship.weight.isNotNull()).then(true).otherwise(false)
+                        )
                 .from(ship).join(company).on(ship.company.eq(company))
                 .where(company.member.id.eq(memberId))
+                .orderBy(ship.shipName.asc())
                 .fetch();
         return response;
     }
