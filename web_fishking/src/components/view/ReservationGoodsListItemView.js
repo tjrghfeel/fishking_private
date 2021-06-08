@@ -13,6 +13,7 @@ export default inject()(
         startTime = "",
         endTime = "",
         price = 0,
+        fishingEndDate = "",
       },
       data,
       onChange,
@@ -47,8 +48,14 @@ export default inject()(
                   최대인원 {Intl.NumberFormat().format(maxPersonnel)}명
                 </li>
                 <li>
-                  {startTime.formatTime01()} ~ {endTime.formatTime01()} (
-                  {endTime.substr(0, 2) - startTime.substr(0, 2)}시간)
+                  {startTime.formatTime01()} ~ {fishingEndDate} {endTime.formatTime01()} (
+                  {fishingEndDate !== "" && (
+                    +endTime.substr(0, 2) + 24 - startTime.substr(0, 2)
+                  )}
+                  {fishingEndDate === "" && (
+                    endTime.substr(0, 2) - startTime.substr(0, 2)
+                  )}
+                  시간)
                 </li>
                 <li>
                   어종:{" "}

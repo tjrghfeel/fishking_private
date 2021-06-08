@@ -58,6 +58,10 @@ export default inject(
         for (let i = 0; i < 24; i++) {
           this.arr_hour.push(i);
         }
+        this.to_arr_hour = [];
+        for (let i = 0; i < 24; i++) {
+          this.to_arr_hour.push(i);
+        }
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -431,8 +435,8 @@ export default inject(
                               : "".concat(data).concat("00")
                           }
                         >
+                          {data < 12 ? "오전 " : "오후 "}
                           {data}시
-                          {data < 12 ? "(오전)" : "(오후)"}
                         </option>
                       ))}
                     </select>
@@ -457,7 +461,20 @@ export default inject(
                               : "".concat(data).concat("00")
                           }
                         >
-                          {data < 12 ? "오전" : "오후"}
+                          {data < 12 ? "오전 " : "오후 "}
+                          {data}시
+                        </option>
+                      ))}
+                      {this.to_arr_hour.map((data, index) => (
+                        <option
+                          value={
+                            data < 10
+                              ? "익일 0".concat(data).concat("00")
+                              : "익일 ".concat(data).concat("00")
+                          }
+                        >
+                          익일
+                          {data < 12 ? " 오전 " : " 오후 "}
                           {data}시
                         </option>
                       ))}

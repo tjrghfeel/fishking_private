@@ -38,13 +38,15 @@ public class CommonCodeRepositoryImpl implements CommonCodeRepositoryCustom {
                     ExpressionUtils.as(JPAExpressions
                             .select(ship.count())
                             .from(ship)
-                            .where(ship.fishSpecies.contains(commonCode)
-                                    .and(ship.isActive.eq(true))
-                                    .and(ship.company.isOpen.eq(true))
+                            .where(ship.fishSpecies.contains(commonCode),
+                                    ship.isActive.eq(true),
+                                    ship.company.isOpen.eq(true),
+                                    ship.cheapestGoodsCost.gt(0)
                             ), aliasCount)
                 ))
                 .from(commonCode)
-                .where(commonCode.codeGroup.id.eq(80L), commonCode.isActive.eq(true))
+                .where(commonCode.codeGroup.id.eq(80L).or(commonCode.codeGroup.id.eq(161L)).or(commonCode.codeGroup.id.eq(162L)),
+                        commonCode.isActive.eq(true))
                 .orderBy(commonCode.orderBy.asc())
                 .fetchResults();
         return results.getResults();
@@ -60,6 +62,7 @@ public class CommonCodeRepositoryImpl implements CommonCodeRepositoryCustom {
                         ship.count()
                 ))
                 .from(ship).join(observerCode).on(ship.observerCode.eq(observerCode.code)).join(commonCode).on(observerCode.forecastCode.eq(commonCode.code))
+                .where(ship.isActive.eq(true), ship.company.isOpen.eq(true), ship.cheapestGoodsCost.gt(0))
                 .groupBy(observerCode.forecastCode)
                 .fetchResults();
         return results.getResults();

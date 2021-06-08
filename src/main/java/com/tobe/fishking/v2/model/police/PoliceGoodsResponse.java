@@ -31,16 +31,26 @@ public class PoliceGoodsResponse {
                                String shipName,
                                String fishingStartTime,
                                String fishingEndTime,
+                               String fishingEndDate,
                                Integer maxPersonnel,
                                Long ridePersonnel,
                                Double latitude,
                                Double longitude,
                                Long cameraCount) {
+        boolean isRun = false;
         LocalTime now = LocalTime.now();
         fishingStartTime = fishingStartTime.replaceAll("24:", "00:");
         fishingEndTime = fishingEndTime.replaceAll("24:", "00:");
         LocalTime from = LocalTime.of(Integer.parseInt(fishingStartTime.split(":")[0]), Integer.parseInt(fishingStartTime.split(":")[1]));
         LocalTime to = LocalTime.of(Integer.parseInt(fishingEndTime.split(":")[0]), Integer.parseInt(fishingEndTime.split(":")[1]));
+
+
+        if (fishingEndDate.equals("")) {
+            isRun = now.isAfter(from) && now.isBefore(to);
+        } else {
+            isRun = now.isBefore(to);
+        }
+
         this.shipId = shipId;
         this.goodsId = goodsId;
         this.shipName = shipName;
@@ -49,7 +59,7 @@ public class PoliceGoodsResponse {
         this.ridePersonnel = ridePersonnel;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.status = (now.isAfter(from) && now.isBefore(to)) ? "출항 중" : "출항 전";
+        this.status = isRun ? "출항 중" : "출항 전";
         this.hasCamera = (cameraCount != 0);
     }
 

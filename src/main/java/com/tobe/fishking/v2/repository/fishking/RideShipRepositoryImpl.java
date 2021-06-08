@@ -68,8 +68,8 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                         ship.shipName,
                         goods.name,
                         orders.fishingDate,
-                        goods.fishingStartTime,
-                        goods.fishingEndTime,
+                        goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
+                        goods.fishingEndDate.concat(goods.fishingEndTime.substring(0,2)).concat(":").concat(goods.fishingEndTime.substring(2,4)),
                         rideShip.phoneNumber,
                         rideShip.emergencyPhone,
                         rideShip.isRide
@@ -82,12 +82,13 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 .where(ship.company.member.id.eq(memberId),
                         rideShip.isRide.eq(comp),
                         orders.orderStatus.ne(OrderStatus.bookCancel),
-                        (new CaseBuilder().when(goods.fishingEndTime.eq("2400"))
+                        (new CaseBuilder()
+                                .when(goods.fishingStartTime.eq("2400"))
                                 .then(Expressions.dateTimeTemplate(LocalDateTime.class, "ADDDATE({0}, 1)", (Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d%H%i')",
                                         orders.fishingDate.concat("0000")
                                 ))))
                                 .otherwise(Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d%H%i')",
-                                        orders.fishingDate.concat(goods.fishingEndTime)
+                                        orders.fishingDate.concat(goods.fishingStartTime)
                                 ))
 //                        .goe(fromDate
                                 .after(Expressions.dateTimeTemplate(LocalDateTime.class, "STR_TO_DATE({0}, '%Y-%m-%d %H%i')", fromDate)

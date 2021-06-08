@@ -63,6 +63,9 @@ public class Goods extends BaseTime {
     @Column(columnDefinition = "varchar(4) comment  '낚시종료시간'  ")
     private String fishingEndTime;
 
+    @Column(columnDefinition = "varchar(4) default '' comment  '낚시종료일'  ")
+    private String fishingEndDate;
+
     // EXEC sp_addextendedproperty 'MS_Description', N'총가격', 'USER', DBO, 'TABLE', goods, 'COLUMN',  total_amount
     @Column(columnDefinition = "float comment '총가격'  ")
     private Integer totalAmount;
@@ -192,7 +195,13 @@ public class Goods extends BaseTime {
         this.ship = ship;
         this.name = addGoods.getName();
         this.fishingStartTime = addGoods.getFishingStartTime();
-        this.fishingEndTime = addGoods.getFishingEndTime();
+        if (addGoods.getFishingEndTime().contains("익일")) {
+            this.fishingEndTime = addGoods.getFishingEndTime().split(" ")[1];
+            this.fishingEndDate = addGoods.getFishingEndTime().split(" ")[0] + " ";
+        } else {
+            this.fishingEndTime = addGoods.getFishingEndTime();
+            this.fishingEndDate = "";
+        }
         this.totalAmount = addGoods.getAmount();
         this.minPersonnel = addGoods.getMinPersonnel();
         this.maxPersonnel = addGoods.getMaxPersonnel();
@@ -297,7 +306,14 @@ public class Goods extends BaseTime {
         this.ship = ship;
         this.name = updateGoods.getName();
         this.fishingStartTime = updateGoods.getFishingStartTime();
-        this.fishingEndTime = updateGoods.getFishingEndTime();
+        if (updateGoods.getFishingEndTime().contains("익일")) {
+            this.fishingEndTime = updateGoods.getFishingEndTime().split(" ")[1];
+            this.fishingEndDate = updateGoods.getFishingEndTime().split(" ")[0] + " ";
+        } else {
+            this.fishingEndTime = updateGoods.getFishingEndTime();
+            this.fishingEndDate = "";
+        }
+//        this.fishingEndTime = updateGoods.getFishingEndTime();
         this.totalAmount = updateGoods.getAmount();
         this.minPersonnel = updateGoods.getMinPersonnel();
         this.maxPersonnel = updateGoods.getMaxPersonnel();

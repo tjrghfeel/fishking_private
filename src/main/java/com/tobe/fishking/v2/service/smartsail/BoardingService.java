@@ -149,8 +149,6 @@ public class BoardingService {
             rideShipRepository.save(rider);
             result = true;
         } else {
-            // TODO
-            // check fingerprint is correct
             try {
                 Map<String, Object> data = httpRequestService.checkFingerPrint(fingerprint, print.getFingerprint());
                 if (data.get("match").toString().equals("1")) {
@@ -164,11 +162,7 @@ public class BoardingService {
                 result = false;
             }
         }
-        orders.changeStatus(OrderStatus.fishingComplete);
-        ordersRepository.save(orders);
-        rider.setRide();
-        rideShipRepository.save(rider);
-        return true;
+        return result;
     }
 
     @Transactional

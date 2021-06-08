@@ -932,38 +932,38 @@ export default inject(
                   </form>
                 </div>
 
-                <div className="card-round-box-grey">
-                  <h6 className="card-header-white text-center">결제수단</h6>
-                  <ul className="nav nav-pills nav-fill nav-sel nav-box mt-3 mb-3">
-                    <a
-                      onClick={() => this.setState({ payMethod: "1000000000" })}
-                      className={
-                        "nav-link" +
-                        (this.state.payMethod === "1000000000" ? " active" : "")
-                      }
-                    >
-                      신용카드
-                    </a>
-                    <a
-                      onClick={() => this.setState({ payMethod: "0100000000" })}
-                      className={
-                        "nav-link" +
-                        (this.state.payMethod === "0100000000" ? " active" : "")
-                      }
-                    >
-                      가상계좌
-                    </a>
-                    <a
-                      onClick={() => this.setState({ payMethod: "0010000000" })}
-                      className={
-                        "nav-link" +
-                        (this.state.payMethod === "0010000000" ? " active" : "")
-                      }
-                    >
-                      계좌이체
-                    </a>
-                  </ul>
-                </div>
+                {/*<div className="card-round-box-grey">*/}
+                {/*  <h6 className="card-header-white text-center">결제수단</h6>*/}
+                {/*  <ul className="nav nav-pills nav-fill nav-sel nav-box mt-3 mb-3">*/}
+                {/*    <a*/}
+                {/*      onClick={() => this.setState({ payMethod: "1000000000" })}*/}
+                {/*      className={*/}
+                {/*        "nav-link" +*/}
+                {/*        (this.state.payMethod === "1000000000" ? " active" : "")*/}
+                {/*      }*/}
+                {/*    >*/}
+                {/*      신용카드*/}
+                {/*    </a>*/}
+                {/*    <a*/}
+                {/*      onClick={() => this.setState({ payMethod: "0100000000" })}*/}
+                {/*      className={*/}
+                {/*        "nav-link" +*/}
+                {/*        (this.state.payMethod === "0100000000" ? " active" : "")*/}
+                {/*      }*/}
+                {/*    >*/}
+                {/*      가상계좌*/}
+                {/*    </a>*/}
+                {/*    <a*/}
+                {/*      onClick={() => this.setState({ payMethod: "0010000000" })}*/}
+                {/*      className={*/}
+                {/*        "nav-link" +*/}
+                {/*        (this.state.payMethod === "0010000000" ? " active" : "")*/}
+                {/*      }*/}
+                {/*    >*/}
+                {/*      계좌이체*/}
+                {/*    </a>*/}
+                {/*  </ul>*/}
+                {/*</div>*/}
 
                 <div className="card-round-box-grey">
                   <h6 className="card-header-white text-center">

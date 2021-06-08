@@ -34,6 +34,7 @@ public class GoodsResponse {
     private List<String> usedPositions;
     private String shipMaxPersonnel;
     private Boolean positionSelect;
+    private String fishingEndDate;
 
     @Builder
     public GoodsResponse(Goods goods, Integer rideMember) {
@@ -52,6 +53,7 @@ public class GoodsResponse {
         this.observerCode = goods.getShip().getObserverCode();
         this.shipMaxPersonnel = goods.getMaxPersonnel().toString();
         this.positionSelect = goods.getPositionSelect();
+        this.fishingEndDate = goods.getFishingEndDate();
     }
 
     public GoodsResponse(Goods goods) {
@@ -70,5 +72,6 @@ public class GoodsResponse {
         this.observerCode = goods.getShip().getObserverCode();
         this.shipMaxPersonnel = goods.getMaxPersonnel().toString();
         this.positionSelect = goods.getPositionSelect();
+        this.fishingEndDate = goods.getFishingEndDate();
     }
 }

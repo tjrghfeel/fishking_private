@@ -42,7 +42,7 @@ public class UpdateGoodsResponse {
         this.minPersonnel = goods.getMinPersonnel();
         this.maxPersonnel = goods.getMaxPersonnel();
         this.fishingStartTime = goods.getFishingStartTime();
-        this.fishingEndTime = goods.getFishingEndTime();
+        this.fishingEndTime = goods.getFishingEndDate() + goods.getFishingEndTime();
         this.isUse = goods.getIsUse();
         this.species = goods.getFishSpecies().stream().map(CommonCode::getCodeName).collect(Collectors.toList());
         this.fishingDates = goods.getFishingDates().stream().map(GoodsFishingDate::getFishingDateString).collect(Collectors.toList());

@@ -148,6 +148,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
     @Override
     public Long getNowRunGoods() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
         List<OrderStatus> statuses = new ArrayList<>();
         statuses.add(OrderStatus.bookConfirm);
@@ -155,9 +156,12 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         statuses.add(OrderStatus.fishingComplete);
         return queryFactory
                 .selectFrom(goods).join(orderDetails).on(goods.eq(orderDetails.goods))
-                .where(goods.fishingDates.any().fishingDateString.eq(today),
-                        Expressions.asTime(goods.fishingStartTime).before(time),
-                        Expressions.asTime(goods.fishingEndTime).after(time),
+                .where((goods.fishingDates.any().fishingDateString.eq(today).and(
+                        Expressions.asTime(goods.fishingStartTime).before(time)).and(
+                        Expressions.asTime(goods.fishingEndTime).after(time))),
+                        (goods.fishingDates.any().fishingDateString.eq(yesterday).and(
+                                goods.fishingEndDate.notEqualsIgnoreCase("")).and(
+                                Expressions.asTime(goods.fishingEndTime).after(time))),
                         goods.isUse.eq(true))
                 .groupBy(goods)
                 .fetchCount();
@@ -204,6 +208,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
     @Override
     public List<PoliceGoodsResponse> getPoliceAllGoods() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
         JPAQuery<PoliceGoodsResponse> query = queryFactory
                 .select(new QPoliceGoodsResponse(
@@ -212,6 +217,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                         ship.shipName,
                         goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
                         goods.fishingEndTime.substring(0,2).concat(":").concat(goods.fishingEndTime.substring(2,4)),
+                        goods.fishingEndDate,
                         goods.maxPersonnel,
                         ExpressionUtils.as(JPAExpressions
                                 .select(rideShip.count())
@@ -228,9 +234,13 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 ))
                 .from(goods).join(ship).on(goods.ship.eq(ship)).join(orders).on(orders.goods.eq(goods))
                 .where(goods.isUse.eq(true),
-                        goods.fishingDates.any().fishingDateString.eq(today),
-                        Expressions.asTime(goods.fishingStartTime).before(time),
-                        Expressions.asTime(goods.fishingEndTime).after(time))
+                        (goods.fishingDates.any().fishingDateString.eq(today).and(
+                                Expressions.asTime(goods.fishingStartTime).before(time)).and(
+                                Expressions.asTime(goods.fishingEndTime).after(time))),
+                        goods.fishingDates.any().fishingDateString.eq(yesterday).and(
+                                goods.fishingEndDate.notEqualsIgnoreCase("")).and(
+                                Expressions.asTime(goods.fishingEndTime).after(time))
+                )
                 .groupBy(goods);
             return query.fetch();
     }
@@ -238,6 +248,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
     @Override
     public Page<PoliceGoodsResponse> getPoliceGoods(Integer page) {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
         JPAQuery<PoliceGoodsResponse> query = queryFactory
                 .select(new QPoliceGoodsResponse(
@@ -246,6 +257,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                         ship.shipName,
                         goods.fishingStartTime.substring(0,2).concat(":").concat(goods.fishingStartTime.substring(2,4)),
                         goods.fishingEndTime.substring(0,2).concat(":").concat(goods.fishingEndTime.substring(2,4)),
+                        goods.fishingEndDate,
                         goods.maxPersonnel,
                         ExpressionUtils.as(JPAExpressions
                                         .select(rideShip.count())
@@ -262,7 +274,11 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                 ))
                 .from(goods).join(ship).on(goods.ship.eq(ship)).join(orders).on(orders.goods.eq(goods))
                 .where(goods.isUse.eq(true),
-                        goods.fishingDates.any().fishingDateString.eq(today))
+                        (goods.fishingDates.any().fishingDateString.eq(today).or(
+                                goods.fishingDates.any().fishingDateString.eq(yesterday)).and(
+                                        goods.fishingEndDate.notEqualsIgnoreCase(""))
+                        )
+                )
                 .groupBy(goods);
 
         Pageable pageable = PageRequest.of(page, 20, Sort.by("fishingStartTime"));

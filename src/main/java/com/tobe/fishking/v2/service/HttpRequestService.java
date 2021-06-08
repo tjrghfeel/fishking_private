@@ -362,18 +362,18 @@ public class HttpRequestService {
         httpPost.addHeader("User-Agent", USER_AGENT);
 
         JsonObject data = new JsonObject();
-        data.addProperty("src1_method", 0);
-        data.addProperty("src1_b64_feature", fingerprint1);
-//        data.addProperty("src1_method", 1);
-//        data.addProperty("src1_b64_rawimage", fingerprint1);
-//        data.addProperty("src1_imgw", 300);
-//        data.addProperty("src1_imgh", 400);
-        data.addProperty("src2_method", 0);
-        data.addProperty("src2_b64_feature", fingerprint2);
-//        data.addProperty("src2_method", 1);
-//        data.addProperty("src2_b64_rawimage", fingerprint2);
-//        data.addProperty("src2_imgw", 300);
-//        data.addProperty("src2_imgh", 400);
+//        data.addProperty("src1_method", 0);
+//        data.addProperty("src1_b64_feature", fingerprint1);
+        data.addProperty("src1_method", 3);
+        data.addProperty("src1_b64_rawimage", fingerprint1);
+        data.addProperty("src1_imgw", 300);
+        data.addProperty("src1_imgh", 400);
+//        data.addProperty("src2_method", 0);
+//        data.addProperty("src2_b64_feature", fingerprint2);
+        data.addProperty("src2_method", 3);
+        data.addProperty("src2_b64_rawimage", fingerprint2);
+        data.addProperty("src2_imgw", 300);
+        data.addProperty("src2_imgh", 400);
 
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
