@@ -63,14 +63,14 @@ public class CompanySearchConditionDto {
     private Boolean isOpen;//
 //    @Size(max=100, message = "SKB아이디는 100자 이하이어야합니다")
 //    @Pattern(regexp = Constants.STRING, message = "SKB아이디 한글,숫자,영문자로 구성되어야합니다")
-    private String skbAccount;//
+//    private String skbAccount;//
 //    @Size(max=100, message = "지역명은 100자 이하이어야합니다")
 //    @Pattern(regexp = Constants.STRING, message = "지역명은 한글,숫자,영문자로 구성되어야합니다")
     private String companyAddress;//
     private Boolean isRegistered;//
 //    @Size(max=100, message = "NHN아이디는 100자 이하이어야합니다")
 //    @Pattern(regexp = Constants.STRING, message = " 한글,숫자,영문자로 구성되어야합니다")
-    private String nhnId;
+//    private String nhnId;
     private Long createdBy;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate createdDateStart;//

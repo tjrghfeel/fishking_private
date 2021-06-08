@@ -67,15 +67,15 @@ public class CompanyModifyDtoForManage {
 
     private Boolean isOpen;//
 
-    @Size(max=50, message = "SKB아이디는 50자 이하이어야합니다")
-    private String  skbAccount;
-    @Size(max=150, message = "SKB비밀번호는 150자 이하이어야합니다")
-    private String skbPassword;
+//    @Size(max=50, message = "SKB아이디는 50자 이하이어야합니다")
+//    private String  skbAccount;
+//    @Size(max=150, message = "SKB비밀번호는 150자 이하이어야합니다")
+//    private String skbPassword;
 
-    @Size(max=20, message = "NHN아이디는 20자 이하이어야합니다")
-    private String nhnId;
-    @Size(max=20, message = "NHN비밀번호는 20자 이하이어야합니다")
-    private String nhnPw;
+//    @Size(max=20, message = "NHN아이디는 20자 이하이어야합니다")
+//    private String nhnId;
+//    @Size(max=20, message = "NHN비밀번호는 20자 이하이어야합니다")
+//    private String nhnPw;
     //    @Size(min=10,max=50)
 
     @NotNull(message = "지역명을 입력하세요")

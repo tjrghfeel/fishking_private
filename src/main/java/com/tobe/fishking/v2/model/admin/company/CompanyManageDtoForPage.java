@@ -21,7 +21,7 @@ public interface CompanyManageDtoForPage {
     String getAccountFileDownloadUrl();
     String getOwnerWording();
     Boolean getIsOpen();//
-    String getSkbAccount();
+//    String getSkbAccount();
     String getCompanyAddress();
     Boolean getIsRegistered();
     @Value("#{@mapperUtility.transDateString(target.createdDate)}")

@@ -204,12 +204,12 @@ public class FishingShipService {
         shipRepository.save(ship);
 
         int cameraNum = 0;
-        if (company.getNhnId() != null) {
-            List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
+        if (company.getNhnId() != null) {//ship으로 수정.
+            List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());//쿼리문 수정.
             String cameraToken;
             String expTime;
             if (allVideos.isEmpty()) {
-                Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());
+                Map<String, Object> nhnCameraToken = httpRequestService.getToken(company.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
                 cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
                 expTime = (String) nhnCameraToken.get("expireTime");
             } else {

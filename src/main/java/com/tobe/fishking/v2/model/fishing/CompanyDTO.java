@@ -32,11 +32,11 @@ public class CompanyDTO {
     private String accountNo ;
     private String ownerWording;//not null
     private Boolean isOpen;
-    private String  skbAccount;
+//    private String  skbAccount;
 //    private String skbPassword;
     private String companyAddress;//
     private Boolean isRegistered;
-    private String nhnId;
+//    private String nhnId;
     private Long createdBy;//not null, fk
     private Long modifiedBy;//not null, fk
     private String bizNoFilesUrl ;
@@ -68,11 +68,11 @@ public class CompanyDTO {
         accountNo = company.getAccountNo();
         ownerWording = company.getOwnerWording();
         isOpen = company.getIsOpen();
-        skbAccount = company.getSkbAccount();
+//        skbAccount = company.getSkbAccount();
 //        skbPassword = company.getSkbPassword();
         companyAddress = company.getCompanyAddress();
         isRegistered = company.getIsRegistered();
-        nhnId = company.getNhnId();
+//        nhnId = company.getNhnId();
         createdBy = company.getCreatedBy().getId();
         modifiedBy = company.getModifiedBy().getId();
         bizNoFilesUrl = url + company.getBizNoFileDownloadUrl();

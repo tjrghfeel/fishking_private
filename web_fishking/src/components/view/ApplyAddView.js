@@ -35,10 +35,10 @@ export default inject(
           bizNoFile: -1,
           representFile: -1,
           accountFile: -1,
-          adtId: null,
-          adtPw: null,
-          nhnId: null,
-          nhnPw: null,
+          // adtId: null,
+          // adtPw: null,
+          // nhnId: null,
+          // nhnPw: null,
         };
       }
       /********** ********** ********** ********** **********/
@@ -406,7 +406,7 @@ export default inject(
                       </div>
                     </div>
 
-                    <div className="form-group">
+                    {/*<div className="form-group">
                       <div className="input-group">
                         <label className="input-group-addon">
                           SKB 캡스 아이디
@@ -477,7 +477,7 @@ export default inject(
                           }}
                         />
                       </div>
-                    </div>
+                    </div>*/}
                   </div>
                 </div>
               </form>
