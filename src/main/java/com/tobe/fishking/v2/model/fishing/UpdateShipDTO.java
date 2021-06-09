@@ -90,8 +90,8 @@ public class UpdateShipDTO {
             if (profileImage.equals("")) {
                 profile = "/ship/defaultship.png";
             } else {
-//                profile = profileImage.split("resource")[1];
-                profile = profileImage.split("files")[1];
+                profile = profileImage.split("resource")[1];
+//                profile = profileImage.split("files")[1];
             }
         } else {
             profile = "/ship/defaultship.png";

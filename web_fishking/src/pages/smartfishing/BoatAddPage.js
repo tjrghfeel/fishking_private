@@ -1171,7 +1171,7 @@ export default inject(
                   </label>
                   <div className="input-group mb-3">
                     <div className="input-group-prepend">
-                      <span className="input-group-text">아이디</span>
+                      <span className="input-group-text">id</span>
                     </div>
                     <input
                         type="text"
@@ -1180,7 +1180,7 @@ export default inject(
                         ref={this.nhnId}
                     />
                     <div className="input-group-append">
-                      <span className="input-group-text">비밀번호</span>
+                      <span className="input-group-text">pw</span>
                     </div>
                     <input
                         type="password"
@@ -1190,6 +1190,8 @@ export default inject(
                         value={this.state.nhnPw}
                         onChange={(e)=>this.setState({nhnPw : e.target.value})}
                     />
+                    </div>
+                    <div className="input-group mb-3">
                       <button
                           style={{marginLeft:'1vw'}}
                           className="btn btn-third btn-sm"
@@ -1267,7 +1269,7 @@ export default inject(
                   </label>
                   <div className="input-group mb-3">
                     <div className="input-group-prepend">
-                      <span className="input-group-text">아이디</span>
+                      <span className="input-group-text">id</span>
                     </div>
                     <input
                         type="text"
@@ -1276,7 +1278,7 @@ export default inject(
                         ref={this.skbId}
                     />
                     <div className="input-group-append">
-                      <span className="input-group-text">비밀번호</span>
+                      <span className="input-group-text">pw</span>
                     </div>
                     <input
                         type="password"
@@ -1285,6 +1287,8 @@ export default inject(
                         placeholder=""
                         ref={this.skbPw}
                     />
+                  </div>
+                  <div className="input-group mb-3">
                     <button
                         style={{marginLeft:'1vw'}}
                         className="btn btn-third btn-sm"

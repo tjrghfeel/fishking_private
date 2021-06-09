@@ -288,13 +288,13 @@ public class ShipsGoodsController {
                 String shipName = addShipDTO.getName();
                 addShipDTO.setFishingType("ship");
                 addShipDTO.setName(shipName + " (선상)");
-                Long shipId_ship = fishingShipService.addShip(addShipDTO, token);
+                Long shipId_ship = fishingShipService.addShip(addShipDTO, token, null);
                 addShipDTO.setFishingType("seaRocks");
                 addShipDTO.setName(shipName + " (갯바위)");
-                Long shipId_seaRocks = fishingShipService.addShip(addShipDTO, token);
+                Long shipId_seaRocks = fishingShipService.addShip(addShipDTO, token, shipId_ship);
                 result.put("id", shipId_ship);
             } else {
-                Long shipId = fishingShipService.addShip(addShipDTO, token);
+                Long shipId = fishingShipService.addShip(addShipDTO, token,null);
                 result.put("id", shipId);
             }
             result.put("result", "success");

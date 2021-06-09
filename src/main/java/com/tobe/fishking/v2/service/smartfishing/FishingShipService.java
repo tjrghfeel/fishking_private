@@ -250,7 +250,8 @@ public class FishingShipService {
 
     @Transactional
     public Long addShip(UpdateShipDTO addShipDTO,
-                        String token
+                        String token,
+                        Long shipId_ship
     ) throws ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         Member member = memberRepo.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
@@ -320,9 +321,16 @@ public class FishingShipService {
             String cameraToken ;
             String expTime ;
 
-            Map<String, Object> nhnCameraToken = httpRequestService.getToken(ship.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
-            cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
-            expTime = (String) nhnCameraToken.get("expireTime");
+            if(shipId_ship != null){
+                List<RealTimeVideo> videos = realTimeVideoRepository.getNHNByShipsId(shipId_ship);
+                cameraToken = videos.get(0).getToken();
+                expTime = videos.get(0).getExpireTime();
+            }
+            else{
+                Map<String, Object> nhnCameraToken = httpRequestService.getToken(ship.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
+                cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+                expTime = (String) nhnCameraToken.get("expireTime");
+            }
 
             for (AddShipCamera addShipCamera : addShipDTO.getNhnCameras()) {
                 cameraNum += 1;

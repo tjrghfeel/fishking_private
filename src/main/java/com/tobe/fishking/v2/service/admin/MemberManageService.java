@@ -277,7 +277,7 @@ public class MemberManageService {
 
         member = Member.builder()
                 .uid(dto.getUid())
-                .memberName("***")//임시값. 수정필요.
+                .memberName("미인증회원")//임시값. 수정필요.
                 .nickName(dto.getNickName())
                 .password(encodedPw)
                 .email(dto.getUid())
