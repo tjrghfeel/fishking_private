@@ -4961,3 +4961,59 @@ body.full.bgintro {
 	text-align:center;
 	padding:7px;
 }
+
+
+
+/*추가 아이콘*/
+.icon-band {
+	width:24px;
+	height:24px;
+	text-align:center;
+	background-color:#fff;
+	margin-right: 10px;
+	border-radius:4px;
+	background:#fff url(../img/BAND_24.png) no-repeat 0px 0px;
+	-webkit-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	-moz-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.icon-naver {
+	width:24px;
+	height:24px;
+	text-align:center;
+	background-color:#fff;
+	margin-right: 10px;
+	border-radius:4px;
+	background:#fff url(../img/btn_navershare.png) no-repeat 0px 0px;
+	-webkit-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	-moz-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.icon-kakao {
+	width:24px;
+	height:24px;
+	text-align:center;
+	background-color:#fff;
+	margin-right: 10px;
+	border-radius:4px;
+	background-image:url(../img/svg/kakaotalk-logo-svg-vector.svg);
+	background-size: 24px;
+	-webkit-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	-moz-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.icon-fb {
+	width:24px;
+	height:24px;
+	text-align:center;
+	background-color:#fff;
+	margin-right: 10px;
+	border-radius:4px;
+	background:#fff url(../img/facebook_btn_icon.png) no-repeat 0px 0px;
+	-webkit-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	-moz-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+	box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
+}

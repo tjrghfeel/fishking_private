@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* native_smartfishingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* native_smartfishingTests.m */; };
+		048F03AC2671037C0060ABBC /* KakaoNavi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A62671037B0060ABBC /* KakaoNavi.framework */; };
+		048F03AD2671037C0060ABBC /* KakaoMessageTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A72671037C0060ABBC /* KakaoMessageTemplate.framework */; };
+		048F03AE2671037C0060ABBC /* KakaoOpenSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A82671037C0060ABBC /* KakaoOpenSDK.framework */; };
+		048F03AF2671037C0060ABBC /* KakaoCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A92671037C0060ABBC /* KakaoCommon.framework */; };
+		048F03B02671037C0060ABBC /* KakaoLink.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03AA2671037C0060ABBC /* KakaoLink.framework */; };
+		048F03B12671037C0060ABBC /* KakaoPlusFriend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03AB2671037C0060ABBC /* KakaoPlusFriend.framework */; };
 		04D23404263C085900C9FC10 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04D23403263C085900C9FC10 /* GoogleService-Info.plist */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -32,6 +38,12 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* native_smartfishingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = native_smartfishingTests.m; sourceTree = "<group>"; };
 		0456A518263C200F00A26300 /* native_smartfishing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = native_smartfishing.entitlements; path = native_smartfishing/native_smartfishing.entitlements; sourceTree = "<group>"; };
+		048F03A62671037B0060ABBC /* KakaoNavi.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoNavi.framework; sourceTree = "<group>"; };
+		048F03A72671037C0060ABBC /* KakaoMessageTemplate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoMessageTemplate.framework; sourceTree = "<group>"; };
+		048F03A82671037C0060ABBC /* KakaoOpenSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoOpenSDK.framework; sourceTree = "<group>"; };
+		048F03A92671037C0060ABBC /* KakaoCommon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoCommon.framework; sourceTree = "<group>"; };
+		048F03AA2671037C0060ABBC /* KakaoLink.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoLink.framework; sourceTree = "<group>"; };
+		048F03AB2671037C0060ABBC /* KakaoPlusFriend.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoPlusFriend.framework; sourceTree = "<group>"; };
 		04D23403263C085900C9FC10 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* native_smartfishing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = native_smartfishing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = native_smartfishing/AppDelegate.h; sourceTree = "<group>"; };
@@ -62,6 +74,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				048F03AF2671037C0060ABBC /* KakaoCommon.framework in Frameworks */,
+				048F03AC2671037C0060ABBC /* KakaoNavi.framework in Frameworks */,
+				048F03B12671037C0060ABBC /* KakaoPlusFriend.framework in Frameworks */,
+				048F03B02671037C0060ABBC /* KakaoLink.framework in Frameworks */,
+				048F03AE2671037C0060ABBC /* KakaoOpenSDK.framework in Frameworks */,
+				048F03AD2671037C0060ABBC /* KakaoMessageTemplate.framework in Frameworks */,
 				75F0BF370C7F876EDBBC7623 /* libPods-native_smartfishing.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +121,12 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				048F03A92671037C0060ABBC /* KakaoCommon.framework */,
+				048F03AA2671037C0060ABBC /* KakaoLink.framework */,
+				048F03A72671037C0060ABBC /* KakaoMessageTemplate.framework */,
+				048F03A62671037B0060ABBC /* KakaoNavi.framework */,
+				048F03A82671037C0060ABBC /* KakaoOpenSDK.framework */,
+				048F03AB2671037C0060ABBC /* KakaoPlusFriend.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				CFF18F2BFC78108B1C80090C /* libPods-native_smartfishing.a */,
 				9DE15E30DB1BA43DC0F37931 /* libPods-native_smartfishing-native_smartfishingTests.a */,
@@ -204,7 +228,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1210;
+				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
@@ -412,12 +436,16 @@
 			baseConfigurationReference = 5891B5BD6B937FEC543B0439 /* Pods-native_smartfishing-native_smartfishingTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = native_smartfishingTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -427,6 +455,7 @@
 					"-ObjC",
 					"-lc++",
 					"$(inherited)",
+					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -440,8 +469,12 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = native_smartfishingTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -451,6 +484,7 @@
 					"-ObjC",
 					"-lc++",
 					"$(inherited)",
+					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -468,7 +502,12 @@
 				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = WU6VCLFJT6;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = native_smartfishing/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -478,6 +517,7 @@
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishkingapp.nativeSmart;
 				PRODUCT_NAME = native_smartfishing;
@@ -496,7 +536,12 @@
 				CODE_SIGN_ENTITLEMENTS = native_smartfishing/native_smartfishing.entitlements;
 				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = WU6VCLFJT6;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = native_smartfishing/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -506,6 +551,7 @@
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishkingapp.nativeSmart;
 				PRODUCT_NAME = native_smartfishing;

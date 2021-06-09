@@ -9,7 +9,8 @@ const {
 export default inject(
   "PageStore",
   "APIStore",
-  "ModalStore"
+  "ModalStore",
+  "NativeStore",
 )(
   observer(
     withRouter(
@@ -143,11 +144,30 @@ export default inject(
             }
           }
         };
+        onClickShareSns = async (sns) => {
+          const { NativeStore } = this.props;
+          console.log(sns)
+          const domain = encodeURIComponent('https://fishkingapp.com/cust/main/home');
+          const curr_url = 'https://tiny.one/25r3whkw?action=' + window.location.href.split('cust')[1];
+          const curr_url_encode = encodeURIComponent(curr_url);
+          const title =encodeURIComponent(this.state.title);
+          console.log(curr_url)
+          if (sns === 'naver') {
+            NativeStore.postMessage('SNS', `https://share.naver.com/web/shareView?url=${curr_url_encode}&title=${title}`)
+          } else if (sns === 'band') {
+            NativeStore.postMessage('SNS', `bandapp://create/post?text=${curr_url_encode}&route=${domain}`)
+          } else if (sns === 'facebook') {
+            NativeStore.postMessage('SNS', `http://www.facebook.com/sharer.php?u=${curr_url_encode}`)
+          } else if (sns === 'kakao') {
+            NativeStore.postMessage('SNS-kakao', `${curr_url}`)
+          }
+        }
         /********** ********** ********** ********** **********/
         /** render */
         /********** ********** ********** ********** **********/
         render() {
-          const { ModalStore } = this.props;
+          const { ModalStore, PageStore } = this.props;
+          const { from = null } = PageStore.getQueryParams();
           return (
             <React.Fragment>
               <NavigationLayout
@@ -260,6 +280,25 @@ export default inject(
                       </React.Fragment>
                     ))}
                 </div>
+                {from == 'smartfishing' && (
+                  <React.Fragment>
+                    <hr />
+                    <div className="row justify-content-start align-items-center pl-3">
+                      {/*<a onClick={() => this.onClickShareSns('kakao')}>*/}
+                      {/*  <span className="icon icon-kakao"></span>*/}
+                      {/*</a>*/}
+                      <a onClick={() => this.onClickShareSns('facebook')}>
+                        <span className="icon icon-fb"></span>
+                      </a>
+                      <a onClick={() => this.onClickShareSns('naver')}>
+                        <span className="icon icon-naver"></span>
+                      </a>
+                      <a onClick={() => this.onClickShareSns('band')}>
+                        <span className="icon icon-band"></span>
+                      </a>
+                    </div>
+                  </React.Fragment>
+                )}
               </div>
               <p className="clearfix">
                 <br />

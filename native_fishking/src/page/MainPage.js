@@ -18,6 +18,7 @@ import {token} from '../../messaging';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {PERMISSIONS} from 'react-native-permissions';
 import NetInfo from '@react-native-community/netinfo';
+import RNKakaoLink from 'react-native-kakao-links';
 
 export default inject(
   'WebViewStore',
@@ -90,7 +91,9 @@ export default inject(
                 redirectUrl.split('?')[1],
             );
             // setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
-            setUri('http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1]);
+            setUri(
+              'http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1],
+            );
           }
         })
         .catch((e) => {});
@@ -131,6 +134,19 @@ export default inject(
         };
       }
     }, [backPressTime, setBackPressTime, initiate, WebViewStore, wokeUp]);
+
+    const kakaoLink = async (url) => {
+      try {
+        const options = {
+          objectType: 'scrap',
+          url: url,
+        };
+        const response = await RNKakaoLink.link(options);
+        console.log(response);
+      } catch (e) {
+        console.warn(e);
+      }
+    };
 
     /********** ********** **********/
     /********** render
@@ -294,9 +310,7 @@ export default inject(
                   if (supported) {
                     Linking.openURL(data);
                   } else {
-                    console.log(
-                      "Don't know how to open URI: " + data,
-                    );
+                    console.log("Don't know how to open URI: " + data);
                   }
                 });
                 break;

@@ -16,6 +16,7 @@ import {WebView} from 'react-native-webview';
 import * as SendIntentAndroid from 'react-native-send-intent';
 import {inject, observer, Provider} from 'mobx-react';
 import {token} from './messaging';
+import RNKakaoLink from 'react-native-kakao-links';
 
 const SplashScreen = () => {
   return (
@@ -50,8 +51,8 @@ const App = inject()(
         this.webview = React.createRef(null);
         this.state = {
           initiated: false,
-          uri: 'https://fishkingapp.com/smartfishing',
-          // uri: 'http://192.168.0.50:3000/smartfishing',
+          // uri: 'https://fishkingapp.com/smartfishing',
+          uri: 'http://112.220.72.178:3000/smartfishing',
           refreshEnabled: false,
           navigationState: null,
         };
@@ -92,6 +93,21 @@ const App = inject()(
       onNavigationStateChange = async state => {
         await this.setState({navigationState: state});
       };
+
+      kakaoLink = async url => {
+        console.log(url);
+        try {
+          const options = {
+            objectType: 'scrap',
+            url: url,
+          };
+          const response = await RNKakaoLink.link(options);
+          console.log(response);
+        } catch (e) {
+          console.warn(e);
+        }
+      };
+
       onMessage = async ({nativeEvent}) => {
         const {process, data} = JSON.parse(nativeEvent.data);
         switch (process) {
@@ -126,6 +142,21 @@ const App = inject()(
               console.error(`[Linking.openURL] ${JSON.stringify(err)}`);
             });
             break;
+          }
+          case 'SNS': {
+            Linking.canOpenURL(data).then((supported) => {
+              if (supported) {
+                Linking.openURL(data);
+              } else {
+                if (data.startsWith('bandapp')) {
+                  Linking.openURL(data.replace('bandapp://create/post?text', 'https://band.us/plugin/share?body'))
+                }
+              }
+            });
+            break;
+          }
+          case 'SNS-kakao': {
+            await this.kakaoLink(data);
           }
         }
       };

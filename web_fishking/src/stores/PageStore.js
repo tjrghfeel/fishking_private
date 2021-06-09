@@ -81,10 +81,16 @@ const PageStore = new (class {
           );
         } else {
           const redirectUrl = sessionStorage.getItem("@redirect-url");
+          const back2 = sessionStorage.getItem("@back2");
           sessionStorage.removeItem("@redirect-url");
+          sessionStorage.removeItem("@back2");
           sessionStorage.setItem("@goBack", "Y");
           if (redirectUrl === null) {
-            window.history.back();
+            if (back2 === null) {
+              window.history.back();
+            } else {
+              window.history.go(-2);
+            }
           } else {
             window.history.go(-2);
           }

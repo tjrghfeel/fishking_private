@@ -224,10 +224,10 @@ export default inject(
           ModalStore.openModal("Alert", { body: "내용을 입력해주세요." });
           return;
         }
-        if (fileList.length === 0) {
-          ModalStore.openModal("Alert", { body: "이미지를 업로드해주세요." });
-          return;
-        }
+        // if (fileList.length === 0) {
+        //   ModalStore.openModal("Alert", { body: "이미지를 업로드해주세요." });
+        //   return;
+        // }
 
         const params = {
           category,
@@ -255,12 +255,16 @@ export default inject(
         } else {
           resolve = await APIStore._post("/v2/api/fishingDiary", params);
         }
-
         if (resolve) {
           ModalStore.openModal("Alert", {
             body: "저장되었습니다.",
             onOk: () => {
-              PageStore.goBack();
+              if (this.state.category === 'fishingDiary') {
+                sessionStorage.setItem("@back2", "Y");
+                PageStore.push(`/story/diary/detail/${resolve}?from=smartfishing`)
+              } else {
+                PageStore.goBack();
+              }
             },
           });
         }
