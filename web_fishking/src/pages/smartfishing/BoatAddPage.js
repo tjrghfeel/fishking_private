@@ -27,6 +27,9 @@ export default inject(
         this.shipType3 = React.createRef(null);
         this.shipType5 = React.createRef(null);
         this.shipType9 = React.createRef(null);
+        this.nhnId = React.createRef(null);
+        this.skbId = React.createRef(null);
+        this.skbPw = React.createRef(null);
         this.state = {
           name: "", // 선박명
           fishingType: "all", // 구분 : 선상 = ship , 갯바위 = seaRocks
@@ -43,6 +46,10 @@ export default inject(
           sigungu: null,
           latitude: null,
           longitude: null,
+          nhnId: null,
+          nhnPw: null,
+          skbId: null,
+          skbPw: null,
           router: null,
           adtCameras: [],
           nhnCameras: [],
@@ -82,13 +89,13 @@ export default inject(
         const arr_facilities = await DataStore.getCodes("87", 3);
         this.setState({ arr_facilities });
         // 카메라 리스트
-        const cameras = await APIStore._get(`/v2/api/ship/cameras`);
-        await this.setState({
-          arr_adtCameras: cameras["adt"] || [],
-          adtCameras: cameras["adt"] || [],
-          arr_nhnCameras: cameras["nhn"] || [],
-          nhnCameras: cameras["nhn"] || [],
-        });
+        // const cameras = await APIStore._get(`/v2/api/ship/cameras`);
+        // await this.setState({
+        //   arr_adtCameras: cameras["adt"] || [],
+        //   adtCameras: cameras["adt"] || [],
+        //   arr_nhnCameras: cameras["nhn"] || [],
+        //   nhnCameras: cameras["nhn"] || [],
+        // });
         // 수정인경우 데이터 불러오기
         const { id } = PageStore.getQueryParams();
         if (id) {
@@ -174,6 +181,26 @@ export default inject(
               `[name="checkbox-facilities"][value="${item}"]`
             ).checked = true;
           }
+          //카메라 선택
+          if(this.state.nhnId !== null){
+            this.nhnId.current.value = this.state.nhnId;
+            let nhnCamera = await APIStore._post(`/v2/api/ship/cameras/nhn`, {id: this.state.nhnId, shipId: id});
+            if(resolve){
+              await this.setState({
+                arr_nhnCameras: nhnCamera || [],
+              });
+            }
+          }
+          if(this.state.skbId !== null){
+            this.skbId.current.value = this.state.skbId;
+            this.skbPw.current.value =this.state.skbPw;
+            let skbCamera = await APIStore._post(`/v2/api/ship/cameras/skb`, {id: this.state.skbId, pw: this.state.skbPw, shipId: id});
+            if(resolve){
+              await this.setState({
+                arr_adtCameras: skbCamera || [],
+              });
+            }
+          }
           // ADT카메라 선택
           for (let item of this.state.arr_adtCameras) {
             const serial = item["serial"];
@@ -184,6 +211,7 @@ export default inject(
                   document.querySelector(
                     `[name="adt-camera-${serial}"]`
                   ).value = "Y";
+                  break;
                 } else {
                   document.querySelector(
                     `[name="adt-camera-${serial}"]`
@@ -205,6 +233,7 @@ export default inject(
                   document.querySelector(
                     `[name="nhn-camera-${serial}"]`
                   ).value = "Y";
+                  break;
                 } else {
                   document.querySelector(
                     `[name="nhn-camera-${serial}"]`
@@ -286,6 +315,58 @@ export default inject(
         }).embed(this.ifrmAddress.current);
         this.ifrmAddress.current.style.display = "block";
       };
+
+      getNHNCamera = async ()=>{
+        const {APIStore, ModalStore} = this.props;
+        await this.setState({nhnId : this.nhnId.current.value})
+        const { nhnId, nhnPw } = this.state;
+        let params = {id : nhnId, pw : nhnPw};
+
+        try{
+          let resolve = await APIStore._post(`/v2/api/ship/cameras/nhn`, params);
+          if(resolve){
+            await this.setState({
+              arr_nhnCameras: resolve || [],
+              nhnCameras: resolve || [],
+            });
+          }
+        }
+        catch (err){
+          if(err.response.data.msg !== undefined){
+            ModalStore.openModal("Alert", { body: err.response.data.msg })
+          }
+          else {
+            ModalStore.openModal("Alert", {body: "카메라 검색에 실패하였습니다. "});
+          }
+        }
+
+      }
+      getSKBCamera = async ()=>{
+        const {APIStore, ModalStore} = this.props;
+        await this.setState({skbId: this.skbId.current.value, skbPw: this.skbPw.current.value})
+        const { skbId, skbPw } = this.state;
+        let params = {id : skbId, pw : skbPw};
+
+        try{
+          let resolve = await APIStore._post(`/v2/api/ship/cameras/skb`, params);
+          if(resolve){
+            await this.setState({
+              arr_adtCameras: resolve || [],
+              adtCameras: resolve || [],
+            });
+          }
+        }
+        catch (err){
+          if(err.response.data.msg !== undefined){
+            ModalStore.openModal("Alert", { body: err.response.data.msg })
+          }
+          else {
+            ModalStore.openModal("Alert", {body: "카메라 검색에 실패하였습니다. "});
+          }
+        }
+
+      }
+
       submit = async () => {
         const {
           id = null,
@@ -305,6 +386,10 @@ export default inject(
           longitude,
           router,
           adtCameras,
+          nhnId,
+          nhnPw,
+          skbId,
+          skbPw,
           nhnCameras,
           weight,
           boardingPerson,
@@ -357,6 +442,10 @@ export default inject(
           longitude,
           router,
           adtCameras,
+          nhnId,
+          nhnPw,
+          skbId,
+          skbPw,
           nhnCameras,
           weight,
           boardingPerson,
@@ -1074,97 +1163,223 @@ export default inject(
                     />
                   </div>
                 </div>
-                <div className="space mt-0 mb-4"></div>
-                <h6 className="mb-3 mt-3">SKB캡스 카메라등록</h6>
-
-                <div className="form-group">
-                  <label htmlFor="InputLTE">LTE 라우터 IMEI </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="LTE 라우터 IMEI를 입력하세요."
-                    value={this.state.router}
-                    onChange={(e) => this.setState({ router: e.target.value })}
-                  />
-                </div>
-                {this.state.arr_adtCameras.length > 0 && (
-                  <div className="form-group">
-                    <label className="d-block">카메라 </label>
-
-                    {this.state.arr_adtCameras?.map((data, index) => (
-                      <div className="input-group mb-2" key={index}>
-                        <select
-                          name={`adt-camera-${data["serial"]}`}
-                          className="form-control"
-                          onChange={(e) => {
-                            if (e.target.selectedOptions[0].value === "N") {
-                              this.setState({
-                                adtCameras: DataStore.removeItemOfArrayByKey(
-                                  this.state.adtCameras,
-                                  "serial",
-                                  data["serial"]
-                                ),
-                              });
-                            } else {
-                              this.setState({
-                                adtCameras: this.state.adtCameras.concat(data),
-                              });
-                            }
-                          }}
-                        >
-                          <option value={"Y"}>카메라 선택</option>
-                          <option value={"N"}>카메라 미선택</option>
-                        </select>
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="카메라 이름을 입력하세요"
-                          readOnly
-                          value={data["name"].concat(`[${data["serial"]}]`)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
 
                 <div className="space mt-0 mb-4"></div>
-                <h6 className="mb-3 mt-3">NHN토스트캠 카메라등록</h6>
                 <div className="form-group">
-                  {this.state.arr_nhnCameras?.map((data, index) => (
-                    <div className="input-group mb-2" key={index}>
-                      <select
-                        name={`nhn-camera-${data["serial"]}`}
-                        className="form-control"
-                        onChange={(e) => {
-                          if (e.target.selectedOptions[0].value === "N") {
-                            this.setState({
-                              nhnCameras: DataStore.removeItemOfArrayByKey(
-                                this.state.nhnCameras,
-                                "serial",
-                                data["serial"]
-                              ),
-                            });
-                          } else {
-                            this.setState({
-                              nhnCameras: this.state.nhnCameras.concat(data),
-                            });
-                          }
-                        }}
-                      >
-                        <option value={"Y"}>카메라 선택</option>
-                        <option value={"N"}>카메라 미선택</option>
-                      </select>
-                      <input
+                  <label className="d-block">
+                    NHN 카메라 계정
+                  </label>
+                  <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">id</span>
+                    </div>
+                    <input
                         type="text"
                         className="form-control"
-                        placeholder="카메라 이름을 입력하세요"
-                        readOnly
-                        value={data["name"].concat(`[${data["serial"]}]`)}
-                      />
+                        placeholder=""
+                        ref={this.nhnId}
+                    />
+                    <div className="input-group-append">
+                      <span className="input-group-text">pw</span>
                     </div>
-                  ))}
+                    <input
+                        type="password"
+                        autoComplete="new-password"
+                        className="form-control"
+                        placeholder=""
+                        value={this.state.nhnPw}
+                        onChange={(e)=>this.setState({nhnPw : e.target.value})}
+                    />
+                    </div>
+                    <div className="input-group mb-3">
+                      <button
+                          style={{marginLeft:'1vw'}}
+                          className="btn btn-third btn-sm"
+                          type="button"
+                          onClick={this.getNHNCamera}
+                      >
+                        카메라 검색
+                      </button>
+                      <button
+                          style={{marginLeft:'1vw'}}
+                          className="btn btn-third btn-sm"
+                          type="button"
+                          onClick={()=>{
+                            this.nhnId.current.value = '';
+                            this.setState({
+                              nhnId:null,
+                              nhnPw:null,
+                              nhnCameras:[],
+                              arr_nhnCameras:[]
+                            })
+                          }}
+                      >
+                        계정 제거
+                      </button>
+                  </div>
                 </div>
-                <div className="space mb-4"></div>
+
+                { (this.state.arr_nhnCameras.length > 0)? (
+                    <>
+                      <div className="space mt-0 mb-4"></div>
+                      <h6 className="mb-3 mt-3">NHN 카메라 등록</h6>
+                      <div className="form-group">
+                      {this.state.arr_nhnCameras?.map((data, index) => (
+                          <div className="input-group mb-2" key={index}>
+                            <select
+                                name={`nhn-camera-${data["serial"]}`}
+                                className="form-control"
+                                onChange={(e) => {
+                                  if (e.target.selectedOptions[0].value === "N") {
+                                    this.setState({
+                                      nhnCameras: DataStore.removeItemOfArrayByKey(
+                                          this.state.nhnCameras,
+                                          "serial",
+                                          data["serial"]
+                                      ),
+                                    });
+                                  } else {
+                                    this.setState({
+                                      nhnCameras: this.state.nhnCameras.concat(data),
+                                    });
+                                  }
+                                }}
+                            >
+                              <option value={"Y"}>카메라 선택</option>
+                              <option value={"N"}>카메라 미선택</option>
+                            </select>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="카메라 이름을 입력하세요"
+                                readOnly
+                                value={data["name"].concat(`[${data["serial"]}]`)}
+                            />
+                          </div>
+                      ))}
+                      </div>
+                    </>
+                  ) : null
+                }
+
+                <div className="space mt-0 mb-4"></div>
+                <div className="form-group">
+                  <label className="d-block">
+                    SK 카메라 계정
+                  </label>
+                  <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">id</span>
+                    </div>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder=""
+                        ref={this.skbId}
+                    />
+                    <div className="input-group-append">
+                      <span className="input-group-text">pw</span>
+                    </div>
+                    <input
+                        type="password"
+                        autoComplete="new-password"
+                        className="form-control"
+                        placeholder=""
+                        ref={this.skbPw}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <button
+                        style={{marginLeft:'1vw'}}
+                        className="btn btn-third btn-sm"
+                        type="button"
+                        onClick={this.getSKBCamera}
+                    >
+                      카메라 검색
+                    </button>
+                    <button
+                        style={{marginLeft:'1vw'}}
+                        className="btn btn-third btn-sm"
+                        type="button"
+                        onClick={()=>{
+                          this.skbId.current.value = '';
+                          this.skbPw.current.value = '';
+                          this.setState({
+                            skbId:null,
+                            skbPw:null,
+                            adtCameras:[],
+                            arr_adtCameras:[]
+                          })
+                        }}
+                    >
+                      계정 제거
+                    </button>
+                  </div>
+                </div>
+                <div className="space mt-0 mb-4"></div>
+
+                { (this.state.arr_adtCameras.length > 0)? (
+                    <>
+                      <h6 className="mb-3 mt-3">SK 카메라 등록</h6>
+
+                      <div className="form-group">
+                        <label htmlFor="InputLTE">LTE 라우터 IMEI </label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="LTE 라우터 IMEI를 입력하세요."
+                            value={this.state.router}
+                            onChange={(e) => this.setState({ router: e.target.value })}
+                        />
+                      </div>
+                      {this.state.arr_adtCameras.length > 0 && (
+                          <div className="form-group">
+                            <label className="d-block">SK 카메라</label>
+
+                            {this.state.arr_adtCameras?.map((data, index) => (
+                                <div className="input-group mb-2" key={index}>
+                                  <select
+                                      name={`adt-camera-${data["serial"]}`}
+                                      className="form-control"
+                                      onChange={(e) => {
+                                        if (e.target.selectedOptions[0].value === "N") {
+                                          this.setState({
+                                            adtCameras: DataStore.removeItemOfArrayByKey(
+                                                this.state.adtCameras,
+                                                "serial",
+                                                data["serial"]
+                                            ),
+                                          });
+                                        } else {
+                                          this.setState({
+                                            adtCameras: this.state.adtCameras.concat(data),
+                                          });
+                                        }
+                                      }}
+                                  >
+                                    <option value={"Y"}>카메라 선택</option>
+                                    <option value={"N"}>카메라 미선택</option>
+                                  </select>
+                                  <input
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="카메라 이름을 입력하세요"
+                                      readOnly
+                                      value={data["name"].concat(`[${data["serial"]}]`)}
+                                  />
+                                </div>
+                            ))}
+                          </div>
+                      )}
+                      <div className="space mt-0 mb-4"></div>
+                    </>
+                ) : null
+                }
+
+
+
+
+
               </form>
               <p className="clearfix">
                 <br />

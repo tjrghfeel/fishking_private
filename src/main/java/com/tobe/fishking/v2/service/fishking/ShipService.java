@@ -17,6 +17,7 @@ import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.enums.fishing.ReserveType;
 import com.tobe.fishking.v2.exception.EmptyListException;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.board.FishingDiarySmallResponse;
 import com.tobe.fishking.v2.model.common.FilesDTO;
 import com.tobe.fishking.v2.model.common.ReviewResponse;
@@ -201,7 +202,7 @@ public class ShipService {
 
     /* 선상, 갯바위 배 정보 */
     @Transactional
-    public ShipResponse getShipDetail(Long ship_id, String sessionToken) throws UnsupportedEncodingException {
+    public ShipResponse getShipDetail(Long ship_id, String sessionToken) throws UnsupportedEncodingException, ResourceNotFoundException {
         ShipResponse response = shipRepo.getDetail(ship_id);
         List<FishingDiary> diaries = fishingDiaryRepository.getDiaryByShipId(response.getId());
         List<FishingDiary> blogs = fishingDiaryRepository.getBlogByShipId(response.getId());
@@ -269,8 +270,10 @@ public class ShipService {
                     String token = "";
                     if (now.isAfter(expTime)) {
 //                        Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
-                        Company company = companyRepository.getCompanyByShip(response.getId());
-                        Map<String, Object> tokenData = httpRequestService.getToken(company.getNhnId());
+//                        Company company = companyRepository.getCompanyByShip(response.getId());
+                        Ship ship = shipRepo.findById(ship_id)
+                                .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+ship_id));
+                        Map<String, Object> tokenData = httpRequestService.getToken(ship.getNhnId());
                         token = ((String) tokenData.get("token")).replaceAll("\"", "");
                         String expireTime = (String) tokenData.get("expireTime");
                         realTimeVideoRepository.updateToken(token, expireTime, video.getToken());
@@ -303,13 +306,15 @@ public class ShipService {
 //                    e.printStackTrace();
                 }
             } else {
-                Company company = companyRepository.getCompanyByShip(ship_id);
+//                Company company = companyRepository.getCompanyByShip(ship_id);
+                Ship ship = shipRepo.findById(ship_id)
+                        .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+ship_id));
                 String token = null;
                 try {
                     if (sessionToken.equals("")) {
                         sessionToken = LocalTime.now().toString();
                     }
-                    token = httpRequestService.loginADT(company.getAdtId(), company.getAdtPw(), sessionToken).replaceAll("\"", "");
+                    token = httpRequestService.loginADT(ship.getSkbId(), ship.getSkbPw(), sessionToken).replaceAll("\"", "");
                     String videoUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
                     if (videoUrl != null) {
                         response.setLiveVideo(videoUrl);

@@ -59,12 +59,12 @@ public class CompanyWriteDTO {
     @NotNull(message = "정산통장사본을 입력하세요")
     private Long accountFile;
 
-    @Size(max=30, message = "ADT 아이디는 20자 이하이어야합니다")
-    private String adtId;
-    @Size(max=30, message = "ADT 비밀번호는 200자 이하이어야합니다")
-    private String adtPw;
-    @Size(max=30, message = "NHN 아이디는 20자 이하이어야합니다")
-    private String nhnId;
-    @Size(max=30, message = "NHN 비밀번호는 200자 이하이어야합니다")
-    private String nhnPw;
+//    @Size(max=30, message = "ADT 아이디는 20자 이하이어야합니다")
+//    private String adtId;
+//    @Size(max=30, message = "ADT 비밀번호는 200자 이하이어야합니다")
+//    private String adtPw;
+//    @Size(max=30, message = "NHN 아이디는 20자 이하이어야합니다")
+//    private String nhnId;
+//    @Size(max=30, message = "NHN 비밀번호는 200자 이하이어야합니다")
+//    private String nhnPw;
 }

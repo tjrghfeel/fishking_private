@@ -40,7 +40,10 @@ public class UpdateShipResponse {
     private String noticeTitle;
     private String notice;
     private List<AddShipCamera> adtCameras;
+    private String skbId;
+    private String skbPw;
     private List<AddShipCamera> nhnCameras;
+    private String nhnId;
     private String router;
     private Long videoId;
     private String video;

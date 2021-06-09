@@ -77,8 +77,6 @@ public class CompanyManageService {
             throws NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException,
             BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
 
-
-
         Pageable pageable = PageRequest.of(page, dto.getPageCount(), JpaSort.unsafe(Sort.Direction.DESC,"("+dto.getSort()+")"));
         return companyRepository.findCompanyListByConditions(
                 dto.getCompanyId(),
@@ -98,10 +96,10 @@ public class CompanyManageService {
                 dto.getAccountNum(),
                 dto.getBank(),
                 dto.getIsOpen(),
-                dto.getSkbAccount(),
+//                dto.getSkbAccount(),
                 dto.getCompanyAddress(),
                 dto.getIsRegistered(),
-                dto.getNhnId(),
+//                dto.getNhnId(),
                 dto.getCreatedBy(),
                 dto.getCreatedDateStart(),
                 dto.getCreatedDateEnd(),
@@ -158,12 +156,12 @@ public class CompanyManageService {
                 .accountNo(dto.getAccountNo())
                 .ownerWording(dto.getOwnerWording())
                 .isOpen(false)
-                .skbAccount(dto.getSkbAccount())
-                .skbPassword(dto.getSkbPassword())
+//                .skbAccount(dto.getSkbAccount())
+//                .skbPassword(dto.getSkbPassword())
                 .companyAddress(dto.getCompanyAddress())
                 .isRegistered(false)
-                .nhnId(dto.getNhnId())
-                .nhnPw(dto.getNhnPw())
+//                .nhnId(dto.getNhnId())
+//                .nhnPw(dto.getNhnPw())
                 .bizNoFileId(bizNoFileEntity)
                 .representFileId(representFileEntity)
                 .accountFileId(accountFileEntity)
@@ -203,7 +201,7 @@ public class CompanyManageService {
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getAccountFile()));
         accountFile.saveTemporaryFile(company.getId());
 
-        if(dto.getSkbPassword()!=null){dto.setSkbPassword(encoder.encode(dto.getSkbPassword()));}
+//        if(dto.getSkbPassword()!=null){dto.setSkbPassword(encoder.encode(dto.getSkbPassword()));}
 
         FileEntity[] fileEntityList = new FileEntity[3];
         fileEntityList[0] = bizNoFile;

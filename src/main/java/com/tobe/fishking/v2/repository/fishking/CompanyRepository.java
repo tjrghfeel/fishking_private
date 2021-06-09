@@ -118,10 +118,10 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   c.account_file_download_url accountFileDownloadUrl, " +
             "   c.owner_wording ownerWording, " +
             "   c.is_open isOpen, " +
-            "   c.skb_account skbAccount, " +
+//            "   c.skb_account skbAccount, " +
             "   c.company_address companyAddress, " +
             "   c.is_registered isRegistered, " +
-            "   c.nhn_id nhnId, " +
+//            "   c.nhn_id nhnId, " +
             "   c.created_by createdBy, " +
             "   c.registered_date registeredDate, " +
             "   c.created_date createdDate, " +
@@ -146,10 +146,10 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   and if(:accountNum is null, true,(c.account_no like %:accountNum%)) " +
             "   and if(:bank is null, true,(c.bank like %:bank%)) " +
             "   and if(:isOpen is null, true,(c.is_open = :isOpen)) " +
-            "   and if(:skbAccount is null, true,(c.skb_account like %:skbAccount%)) " +
+//            "   and if(:skbAccount is null, true,(c.skb_account like %:skbAccount%)) " +
             "   and if(:companyAddress is null, true,(c.company_address like %:companyAddress%)) " +
             "   and if(:isRegistered is null, true, (c.is_registered = :isRegistered)) " +
-            "   and if(:nhnId is null, true, (c.nhn_id like %:nhnId%)) " +
+//            "   and if(:nhnId is null, true, (c.nhn_id like %:nhnId%)) " +
             "   and if(:createdBy is null, true, (c.created_by = :createdBy)) " +
             "   and if(:createdDayStart is null, true, (c.created_date > :createdDayStart)) " +
             "   and if(:createdDayEnd is null, true, (c.created_date < :createdDayEnd)) " +
@@ -175,10 +175,10 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
                     "   and if(:accountNum is null, true,(c.account_no like %:accountNum%)) " +
                     "   and if(:bank is null, true,(c.bank like %:bank%)) " +
                     "   and if(:isOpen is null, true,(c.is_open = :isOpen)) " +
-                    "   and if(:skbAccount is null, true,(c.skb_account like %:skbAccount%)) " +
+//                    "   and if(:skbAccount is null, true,(c.skb_account like %:skbAccount%)) " +
                     "   and if(:companyAddress is null, true,(c.company_address like %:companyAddress%)) " +
                     "   and if(:isRegistered is null, true, (c.is_registered = :isRegistered)) " +
-                    "   and if(:nhnId is null, true, (c.nhn_id like %:nhnId%)) " +
+//                    "   and if(:nhnId is null, true, (c.nhn_id like %:nhnId%)) " +
                     "   and if(:createdBy is null, true, (c.created_by = :createdBy)) " +
                     "   and if(:createdDayStart is null, true, (c.created_date > :createdDayStart)) " +
                     "   and if(:createdDayEnd is null, true, (c.created_date < :createdDayEnd)) " +
@@ -204,10 +204,10 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             @Param("accountNum") String accountNum,
             @Param("bank") String bank,
             @Param("isOpen") Boolean isOpen,
-            @Param("skbAccount") String skbAccount,
+//            @Param("skbAccount") String skbAccount,
             @Param("companyAddress") String companyAddress,
             @Param("isRegistered") Boolean isRegistered,
-            @Param("nhnId") String nhnId,
+//            @Param("nhnId") String nhnId,
             @Param("createdBy") Long createdBy,
             @Param("createdDayStart") LocalDate createdDayStart,
             @Param("createdDayEnd") LocalDate createdDayEnd,

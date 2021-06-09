@@ -38,4 +38,11 @@ public interface RealTimeVideoRepository extends BaseRepository<RealTimeVideo, L
     @Modifying
     @Query("update RealTimeVideo v set v.isUse = false where v in :videos")
     void setNotUse(List<RealTimeVideo> videos);
+
+    @Query("select v from RealTimeVideo v where v.ships.nhnId = :nhnId and v.type = 'toast'")
+    List<RealTimeVideo> getNHNByNHNId(String nhnId);
+
+    @Modifying
+    @Query("update RealTimeVideo v set v.token = :newToken, v.expireTime = :time where v.ships.id = :shipId")
+    void updateToken(String newToken, String time, Long shipId);
 }

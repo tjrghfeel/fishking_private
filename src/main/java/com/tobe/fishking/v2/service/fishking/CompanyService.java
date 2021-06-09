@@ -53,7 +53,7 @@ public class CompanyService {
 
     /*업체 등록 요청 처리 메소드. */
     @Transactional
-    public Long handleCompanyRegisterReq(CompanyWriteDTO dto, String token) throws Exception {
+    public Long  handleCompanyRegisterReq(CompanyWriteDTO dto, String token) throws Exception {
         Member member = memberRepository.findBySessionToken(token)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
 
@@ -81,8 +81,8 @@ public class CompanyService {
                 .accountNo(dto.getAccountNo())
                 .ownerWording("")
                 .isOpen(false)
-                .skbAccount(dto.getAdtId())
-                .skbPassword((dto.getAdtPw() != null)?HashUtil.sha256(dto.getAdtPw()) : null)
+//                .skbAccount(dto.getAdtId())
+//                .skbPassword((dto.getAdtPw() != null)?HashUtil.sha256(dto.getAdtPw()) : null)
                 .companyAddress(dto.getCompanyAddress())
                 .isRegistered(false)
                 .bizNoFileId(bizNoFileEntity)
@@ -96,8 +96,8 @@ public class CompanyService {
                 .member(member)
                 .adtId(null)
                 .adtPw(null)
-                .nhnId(dto.getNhnId())
-                .nhnPw(dto.getNhnPw())
+//                .nhnId(dto.getNhnId())
+//                .nhnPw(dto.getNhnPw())
                 .build();
         company = companyRepository.save(company);
 
