@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.model.fishing.UpdateShipDTO;
+import com.tobe.fishking.v2.service.StringConverter;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
@@ -232,6 +233,23 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "bigint comment '상품 판매 수 ' ")
     private Long sellCount;
 
+    @Column(columnDefinition = "varchar(50) comment 'Skb계정' ")
+    private String  skbId;
+
+    // EXEC sp_addextendedproperty 'MS_Description', N'Skb패스워드', 'USER', DBO, 'TABLE', company, 'COLUMN',  skb_password
+    @Convert(converter = StringConverter.class)
+    @Column(columnDefinition = "varchar(150) comment 'Skb패스워드' ")
+    private String skbPw;
+
+    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 아이디'")
+    private String nhnId;
+
+    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 비번'")
+    private String nhnPw;
+
+//    @Column(columnDefinition = "varchar(20) comment '선상/갯바위 동시생성시 두 ship엔터티를 묶는 코드'")
+//    private String setCode;
+
 //    @Builder
 //    public Ship(Long id, String shipName, Company company, Member member, SeaDirection seaDirection ) {
 //        this.id = id;
@@ -262,7 +280,12 @@ public class Ship extends BaseTime {  //선상
                 String code,
                 String positions,
                 String router,
-                Long videoId) {
+                Long videoId,
+                String nhnId,
+                String nhnPw,
+                String skbId,
+                String skbPw
+    ) {
         this.shipName = name;
         this.fishingType = fishingType;
         this.address = address;
@@ -286,6 +309,10 @@ public class Ship extends BaseTime {  //선상
         this.observerCode = code;
         this.routerIMEI = router;
         this.videoId = videoId;
+        this.nhnId = nhnId;
+        this.nhnPw = nhnPw;
+        this.skbId = skbId;
+        this.skbPw = skbPw;
         this.cheapestGoodsCost = 0;
         this.zzimCount = 0L;
         this.sellCount = 0L;
@@ -369,5 +396,11 @@ public class Ship extends BaseTime {  //선상
         this.routerIMEI = dto.getRouter();
         this.observerCode = code.getCode();
         this.videoId = dto.getVideoId();
+        this.nhnId = dto.getNhnId();
+        this.nhnPw = dto.getNhnPw();
+        this.skbId = dto.getSkbId();
+        this.skbPw = dto.getSkbPw();
     }
+//
+//    public void setSetCode(String setCode){this.setCode = setCode;}
 }

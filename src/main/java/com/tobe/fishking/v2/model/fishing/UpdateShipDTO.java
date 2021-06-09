@@ -65,8 +65,16 @@ public class UpdateShipDTO {
     private @Valid String noticeTitle;
     @ApiParam(value = "공지사항")
     private @Valid String notice;
+    @ApiParam(value = "skb id", name = "skbId")
+    private @Valid String skbId;
+    @ApiParam(value = "skb pw", name = "skbPw")
+    private @Valid String skbPw;
     @ApiParam(value = "adt 카메라리스트", name = "adtCamerase[]")
     private @Valid List<AddShipCamera> adtCameras;
+    @ApiParam(value = "nhn id", name = "nhnId")
+    private @Valid String nhnId;
+    @ApiParam(value = "nhn pw", name = "nhnPw")
+    private @Valid String nhnPw;
     @ApiParam(value = "nhn 카메라리스트", name = "nhnCameras[]")
     private @Valid List<AddShipCamera> nhnCameras;
     private @Valid String router;
@@ -82,7 +90,8 @@ public class UpdateShipDTO {
             if (profileImage.equals("")) {
                 profile = "/ship/defaultship.png";
             } else {
-                profile = profileImage.split("resource")[1];
+//                profile = profileImage.split("resource")[1];
+                profile = profileImage.split("files")[1];
             }
         } else {
             profile = "/ship/defaultship.png";
@@ -108,6 +117,10 @@ public class UpdateShipDTO {
                 .code(code.getCode())
                 .router(router)
                 .videoId(videoId)
+                .nhnId(nhnId)
+                .nhnPw(nhnPw)
+                .skbId(skbId)
+                .skbPw(skbPw)
                 .build();
     }
 }

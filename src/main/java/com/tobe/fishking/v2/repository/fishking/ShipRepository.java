@@ -252,4 +252,9 @@ public interface ShipRepository extends BaseRepository<Ship, Long>, ShipReposito
         @Param("departStatus") Boolean departStatus,
         Pageable pageable
     );
+
+    @Query("select s from Ship s where s.nhnId = :nhnId")
+    Ship getByNhnId(String nhnId);
+    @Query("select s from Ship s where s.skbId = :skbId")
+    Ship getBySkbId(String skbId);
 }

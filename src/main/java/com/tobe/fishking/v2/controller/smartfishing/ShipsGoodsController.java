@@ -2,16 +2,14 @@ package com.tobe.fishking.v2.controller.smartfishing;
 
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.enums.ErrorCodes;
-import com.tobe.fishking.v2.exception.ApiException;
-import com.tobe.fishking.v2.exception.EmptyListException;
-import com.tobe.fishking.v2.exception.NotAuthException;
-import com.tobe.fishking.v2.exception.ResourceNotFoundException;
+import com.tobe.fishking.v2.exception.*;
 import com.tobe.fishking.v2.model.fishing.AddGoods;
 import com.tobe.fishking.v2.model.fishing.UpdateGoods;
 import com.tobe.fishking.v2.model.fishing.UpdateShipDTO;
 import com.tobe.fishking.v2.model.response.FishingShipResponse;
 import com.tobe.fishking.v2.model.response.UpdateGoodsResponse;
 import com.tobe.fishking.v2.model.response.UpdateShipResponse;
+import com.tobe.fishking.v2.model.smartfishing.CameraLoginDTO;
 import com.tobe.fishking.v2.model.smartfishing.PlaceDTO;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.fishking.GoodsService;
@@ -29,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -216,6 +215,32 @@ public class ShipsGoodsController {
         result.put("nhn", fishingShipService.getNHNCameraList(member));
         result.put("adt", fishingShipService.getADTCameraList(member));
         return result;
+    }
+
+    @ApiOperation(value = "선박등록 > NHN 로그인")
+    @PostMapping("/ship/cameras/nhn")
+    public List<Map<String, Object>> getNHNCameras(
+            @RequestHeader("Authorization") String token,
+            @RequestBody CameraLoginDTO dto
+    ) throws ResourceNotFoundException, NotAuthException, KeyManagementException, EmptyListException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException, ServiceLogicException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+
+        return fishingShipService.getNHNCameraList2(dto, token);
+    }
+    @ApiOperation(value = "선박등록 > SKB 로그인")
+    @PostMapping("/ship/cameras/skb")
+    public List<Map<String, Object>> getSKBCameras(
+            @RequestHeader("Authorization") String token,
+            @RequestBody CameraLoginDTO dto
+    ) throws ResourceNotFoundException, NotAuthException, KeyManagementException, EmptyListException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException, ServiceLogicException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+
+        return fishingShipService.getADTCameraList2(dto, member.getId());
     }
 
     @ApiOperation(value = "선박등록", notes = "선박등록 아래는 요청데이터의 일부입니" +

@@ -247,7 +247,7 @@ public class ShipController {
     @GetMapping("/ship/{ship_id}")
     public ShipResponse shipDetail(
             @RequestHeader(name = "Authorization") String sessionToken,
-            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) throws UnsupportedEncodingException {
+            @ApiParam(value = "배 id", required = true, example = "0") @PathVariable Long ship_id) throws UnsupportedEncodingException, ResourceNotFoundException {
         return shipService.getShipDetail(ship_id, sessionToken);
     }
 

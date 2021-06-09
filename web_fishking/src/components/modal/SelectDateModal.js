@@ -79,7 +79,7 @@ export default inject("DataStore")(
                   value={selected}
                   onChange={onChange}
                   maxDate={until}
-                  calendarType="Hebrew"
+                  calendarType="US"
                 />
               </div>
               <div className="info-btm">
