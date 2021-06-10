@@ -623,7 +623,8 @@ public class ShipService {
                     Ship ship = video.getShips();
                     c.put("id", video.getId());
                     c.put("name", video.getName());
-                    c.put("thumbnailUrl", "/resource" + ship.getProfileImage());
+                    c.put("thumbnailUrl", "/resource/" + video.getShips().getProfileImage().split("/")[1] + "/thumb_" +
+                            video.getShips().getProfileImage().split("/")[2]);
                     c.put("liveVideo", "");
                     c.put("species", ship.getFishSpecies().stream().map(CommonCode::getCodeName).collect(Collectors.joining(",")));
                     c.put("address", ship.getAddress());
@@ -674,7 +675,9 @@ public class ShipService {
                 } else {
                     c.put("id", video.getId());
                     c.put("name", video.getName());
-                    c.put("thumbnailUrl", "/resource" + video.getShips().getProfileImage());
+//                    c.put("thumbnailUrl", "/resource" + video.getShips().getProfileImage());
+                    c.put("thumbnailUrl", "/resource/" + video.getShips().getProfileImage().split("/")[1] + "/thumb_" +
+                            video.getShips().getProfileImage().split("/")[2]);
                     c.put("liveVideo", "");
                 }
                 cameraList.add(c);
