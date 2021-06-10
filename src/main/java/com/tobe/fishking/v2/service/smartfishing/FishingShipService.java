@@ -446,6 +446,8 @@ public class FishingShipService {
             String cameraToken;
             String expTime ;
 
+            //동시생성하여 같은 카메라를 사용하고있는 경우처ㅣㄹ
+
             Map<String, Object> nhnCameraToken = httpRequestService.getToken(ship.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
             cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
             expTime = (String) nhnCameraToken.get("expireTime");

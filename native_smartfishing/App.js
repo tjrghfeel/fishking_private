@@ -51,8 +51,8 @@ const App = inject()(
         this.webview = React.createRef(null);
         this.state = {
           initiated: false,
-          // uri: 'https://fishkingapp.com/smartfishing',
-          uri: 'http://112.220.72.178:3000/smartfishing',
+          uri: 'https://fishkingapp.com/smartfishing',
+          // uri: 'http://112.220.72.178:3000/smartfishing',
           refreshEnabled: false,
           navigationState: null,
         };
