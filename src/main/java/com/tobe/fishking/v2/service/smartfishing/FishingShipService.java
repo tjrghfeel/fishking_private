@@ -149,19 +149,20 @@ public class FishingShipService {
         List<Map<String, Object>> response =  new ArrayList<>();
         String token = "";
 
-        if(dto.getShipId() == null){//수정페이지의 첫 조회가 아니면,
-            // 해당 nhn id가 사용중인지 확인.
-            Ship ship = shipRepository.getByNhnId(dto.getId());//현재 RealTimeVideo에서 검색하여 중복확인하고있는데, ship에 저장하기로하였으므로, ship에서 검색하여 중복확인하다.
-            if(ship != null){throw new ServiceLogicException("해당 아이디는 이미 사용 중 입니다");}
-            else{
-                token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
-            }
-        }
-        else{//수정페이지의 첫 조회이면,
-            Ship ship = shipRepository.findById(dto.getShipId())
-                    .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+dto.getShipId() ));
-            if(ship.getNhnId().equals(dto.getId())){//카메라조회하려는 nhnId와 현재 ship의 nhnId가 같다면, 등록된 realtimevideo가 있으면 거기서 token가져와 반환. 없으면 새 토큰발금.
-                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByShipsId(ship.getId());
+//        if(dto.getShipId() == null){//수정페이지의 첫 조회가 아니면,
+//             해당 nhn id가 사용중인지 확인.
+//            Ship ship = shipRepository.getByNhnId(dto.getId());//현재 RealTimeVideo에서 검색하여 중복확인하고있는데, ship에 저장하기로하였으므로, ship에서 검색하여 중복확인하다.
+//            if(ship != null){throw new ServiceLogicException("해당 아이디는 이미 사용 중 입니다");}
+//            else{
+//                token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
+//            }
+//        }
+//        else{//수정페이지의 첫 조회이면,
+//            Ship ship = shipRepository.findById(dto.getShipId())
+//                    .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+dto.getShipId() ));
+//            if(ship.getNhnId().equals(dto.getId())){//카메라조회하려는 nhnId와 현재 ship의 nhnId가 같다면, 등록된 realtimevideo가 있으면 거기서 token가져와 반환. 없으면 새 토큰발금.
+                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByNHNId(dto.getId());
+//                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByShipsId(ship.getId());
                 if (preVideos.size() > 0) {
                     RealTimeVideo video = preVideos.get(0);
                     LocalDateTime now = LocalDateTime.now();
@@ -182,8 +183,8 @@ public class FishingShipService {
                 } else {
                     token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
                 }
-            }
-        }
+//            }
+//        }
 
 //        token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyMzkwMTMiLCJleHAiOjE2MjM5OTYyNTksImF1ZCI6ImJhODQ5Y2IwLTY5Y2MtMTFlYi04NDFhLTAwNTA1NmFjN2YwMiIsImlzcyI6ImRldkB0by1iZS5rciJ9.xn0ftEIMnL-Vg2LMQ16DSQ9Juy866J96ZI7I8rPh-44";
         if (!token.equals("")) {
@@ -231,11 +232,11 @@ public class FishingShipService {
         List<Map<String, Object>> response =  new ArrayList<>();
         String token = "";
 
-        if(dto.getShipId() == null){
-            //중복확인
-            Ship ship = shipRepository.getBySkbId(dto.getId());
-            if(ship != null){ throw new ServiceLogicException("해당 아이디는 이미 사용 중 입니다");}
-        }
+//        if(dto.getShipId() == null){
+//            중복확인
+//            Ship ship = shipRepository.getBySkbId(dto.getId());
+//            if(ship != null){ throw new ServiceLogicException("해당 아이디는 이미 사용 중 입니다");}
+//        }
 
         token = httpRequestService.loginADT(dto.getId(), dto.getPw(), memberId.toString());
         List<Map<String, Object>> cameras = httpRequestService.getADTList(token);
@@ -250,11 +251,10 @@ public class FishingShipService {
 
     @Transactional
     public Long addShip(UpdateShipDTO addShipDTO,
-                        String token,
-                        Long shipId_ship
+                        String sessionToken
     ) throws ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-        Member member = memberRepo.findBySessionToken(token)
-                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+token));
+        Member member = memberRepo.findBySessionToken(sessionToken)
+                .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken ::"+sessionToken));
         Company company = companyRepository.findByMember(member);
         List<ObserverCode> codes = observerCodeRepository.findAll();
         Ship ship = addShipDTO.toEntity(member, company, codes, addShipDTO.getPositions());
@@ -321,15 +321,41 @@ public class FishingShipService {
             String cameraToken ;
             String expTime ;
 
-            if(shipId_ship != null){
-                List<RealTimeVideo> videos = realTimeVideoRepository.getNHNByShipsId(shipId_ship);
-                cameraToken = videos.get(0).getToken();
-                expTime = videos.get(0).getExpireTime();
-            }
-            else{
+//            if(shipId_ship != null){
+//                List<RealTimeVideo> videos = realTimeVideoRepository.getNHNByShipsId(shipId_ship);
+//                cameraToken = videos.get(0).getToken();
+//                expTime = videos.get(0).getExpireTime();
+//            }
+//            else{
+//                Map<String, Object> nhnCameraToken = httpRequestService.getToken(ship.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
+//                cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+//                expTime = (String) nhnCameraToken.get("expireTime");
+//            }
+
+            List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByNHNId(ship.getNhnId());
+//                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByShipsId(ship.getId());
+            if (preVideos.size() > 0) {
+                RealTimeVideo video = preVideos.get(0);
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime expTime2 = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                        TimeZone.getDefault().toZoneId()
+                );
+                String expireTime = "";
+                if (now.isAfter(expTime2)) {
+                    Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                    cameraToken = tokenData.get("token");
+                    expTime = tokenData.get("expireTime");
+                    realTimeVideoRepository.updateToken(cameraToken, expTime, video.getToken());
+                } else {
+                    cameraToken = video.getToken();
+                    expTime = video.getExpireTime();
+                }
+            } else {
                 Map<String, Object> nhnCameraToken = httpRequestService.getToken(ship.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
                 cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
                 expTime = (String) nhnCameraToken.get("expireTime");
+//                token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
             }
 
             for (AddShipCamera addShipCamera : addShipDTO.getNhnCameras()) {
@@ -446,11 +472,31 @@ public class FishingShipService {
             String cameraToken;
             String expTime ;
 
-            //동시생성하여 같은 카메라를 사용하고있는 경우처ㅣㄹ
-
-            Map<String, Object> nhnCameraToken = httpRequestService.getToken(ship.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
-            cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
-            expTime = (String) nhnCameraToken.get("expireTime");
+            List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByNHNId(ship.getNhnId());
+//                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByShipsId(ship.getId());
+            if (preVideos.size() > 0) {
+                RealTimeVideo video = preVideos.get(0);
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime expTime2 = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                        TimeZone.getDefault().toZoneId()
+                );
+                String expireTime = "";
+                if (now.isAfter(expTime2)) {
+                    Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                    cameraToken = tokenData.get("token");
+                    expTime = tokenData.get("expireTime");
+                    realTimeVideoRepository.updateToken(cameraToken, expTime, video.getToken());
+                } else {
+                    cameraToken = video.getToken();
+                    expTime = video.getExpireTime();
+                }
+            } else {
+                Map<String, Object> nhnCameraToken = httpRequestService.getToken(ship.getNhnId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
+                cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+                expTime = (String) nhnCameraToken.get("expireTime");
+//                token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
+            }
 
             for (AddShipCamera addShipCamera : updateShipDTO.getNhnCameras()) {
                 cameraNum += 1;
@@ -469,7 +515,7 @@ public class FishingShipService {
         }
 
 //        List<RealTimeVideo> videos = realTimeVideoRepository.getNHNByShipsId(shipId);
-//        List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByMemberId(member.getId());
+//        List<RealTimeVideo> allVideos = realTimeVideoRepository.getNHNByNHNId(ship.getNhnId());
 //        String cameraToken;
 //        String expTime;
 //
@@ -554,7 +600,6 @@ public class FishingShipService {
                     .build();
             realTimeVideoRepository.save(video);
         }
-
 //        if (adtVideos.isEmpty()) {
 //            if (updateShipDTO.getAdtCameras() != null) {
 //                for (AddShipCamera addShipCamera : updateShipDTO.getAdtCameras()) {
