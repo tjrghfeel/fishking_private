@@ -95,11 +95,10 @@ const App = inject()(
       };
 
       kakaoLink = async url => {
-        console.log(url);
         try {
           const options = {
-            objectType: 'scrap',
-            url: url,
+            objectType: 'scrap', //required
+            url: url, //required
           };
           const response = await RNKakaoLink.link(options);
           console.log(response);

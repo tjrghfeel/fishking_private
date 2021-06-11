@@ -45,22 +45,22 @@ PODS:
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (~> 1.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.4.0):
+  - GoogleUtilities/AppDelegateSwizzler (7.4.1):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.4.0):
+  - GoogleUtilities/Environment (7.4.1):
     - PromisesObjC (~> 1.2)
-  - GoogleUtilities/Logger (7.4.0):
+  - GoogleUtilities/Logger (7.4.1):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.4.0):
+  - GoogleUtilities/Network (7.4.1):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.4.0)"
-  - GoogleUtilities/Reachability (7.4.0):
+  - "GoogleUtilities/NSData+zlib (7.4.1)"
+  - GoogleUtilities/Reachability (7.4.1):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.4.0):
+  - GoogleUtilities/UserDefaults (7.4.1):
     - GoogleUtilities/Logger
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -554,7 +554,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: 4b9b2850fcfcaac2820097ee3703ba6cfff3df84
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   GoogleDataTransport: cd9db2180fcecd8da1b561aea31e3e56cf834aa7
-  GoogleUtilities: 284cddc7fffc14ae1907efb6f78ab95c1fccaedc
+  GoogleUtilities: f8a43108b38a68eebe8b3540e1f4f2d28843ce20
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   Permission-Camera: b2e50546c095139bb1264be9c34c796332340d32
   Permission-Contacts: db364c0086fc1fa1d5af33256cf9ab6ff2336ed1
@@ -598,6 +598,6 @@ SPEC CHECKSUMS:
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
-PODFILE CHECKSUM: 468dbfd683ddb673edec932d3b9deffd7026b838
+PODFILE CHECKSUM: f3850f8e10539eb60533fe7f96f7b62718afbfc1
 
 COCOAPODS: 1.10.1
