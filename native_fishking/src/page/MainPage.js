@@ -18,7 +18,6 @@ import {token} from '../../messaging';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {PERMISSIONS} from 'react-native-permissions';
 import NetInfo from '@react-native-community/netinfo';
-import RNKakaoLink from 'react-native-kakao-links';
 
 export default inject(
   'WebViewStore',
@@ -47,18 +46,18 @@ export default inject(
             'https://fishkingapp.com/cust' +
             redirectUrl.split('?')[1],
         );
-        // setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
-        setUri('http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1]);
+        setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
+        // setUri('http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1]);
       }
     }, []);
     const initiate = useCallback(async () => {
       const saved = await AsyncStorage.getItem('@initiated');
       if (saved === null) {
-        // setUri('https://fishkingapp.com/cust/init/intro');
-        setUri('http://112.220.72.178:3000/cust/main/home');
+        setUri('https://fishkingapp.com/cust/init/intro');
+        // setUri('http://112.220.72.178:3000/cust/main/home');
       } else {
-        // setUri('https://fishkingapp.com/cust/main/home');
-        setUri('http://112.220.72.178:3000/cust/main/home');
+        setUri('https://fishkingapp.com/cust/main/home');
+        // setUri('http://112.220.72.178:3000/cust/main/home');
       }
       const location = await AppStore.checkLocationPermissions();
       const storage = await AppStore.checkStoragePermissions();
@@ -90,10 +89,10 @@ export default inject(
                 'https://fishkingapp.com/cust' +
                 redirectUrl.split('?')[1],
             );
-            // setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
-            setUri(
-              'http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1],
-            );
+            setUri('https://fishkingapp.com/cust' + redirectUrl.split('?')[1]);
+            // setUri(
+            //   'http://112.220.72.178:3000/cust' + redirectUrl.split('?')[1],
+            // );
           }
         })
         .catch((e) => {});
@@ -134,19 +133,6 @@ export default inject(
         };
       }
     }, [backPressTime, setBackPressTime, initiate, WebViewStore, wokeUp]);
-
-    const kakaoLink = async (url) => {
-      try {
-        const options = {
-          objectType: 'scrap',
-          url: url,
-        };
-        const response = await RNKakaoLink.link(options);
-        console.log(response);
-      } catch (e) {
-        console.warn(e);
-      }
-    };
 
     /********** ********** **********/
     /********** render

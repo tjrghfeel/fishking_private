@@ -8,12 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* native_smartfishingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* native_smartfishingTests.m */; };
-		048F03AC2671037C0060ABBC /* KakaoNavi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A62671037B0060ABBC /* KakaoNavi.framework */; };
-		048F03AD2671037C0060ABBC /* KakaoMessageTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A72671037C0060ABBC /* KakaoMessageTemplate.framework */; };
-		048F03AE2671037C0060ABBC /* KakaoOpenSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A82671037C0060ABBC /* KakaoOpenSDK.framework */; };
-		048F03AF2671037C0060ABBC /* KakaoCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03A92671037C0060ABBC /* KakaoCommon.framework */; };
-		048F03B02671037C0060ABBC /* KakaoLink.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03AA2671037C0060ABBC /* KakaoLink.framework */; };
-		048F03B12671037C0060ABBC /* KakaoPlusFriend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048F03AB2671037C0060ABBC /* KakaoPlusFriend.framework */; };
+		0497314326731F5300E83AE6 /* swiftsfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0497314226731F5300E83AE6 /* swiftsfile.swift */; };
 		04D23404263C085900C9FC10 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04D23403263C085900C9FC10 /* GoogleService-Info.plist */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -38,12 +33,8 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* native_smartfishingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = native_smartfishingTests.m; sourceTree = "<group>"; };
 		0456A518263C200F00A26300 /* native_smartfishing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = native_smartfishing.entitlements; path = native_smartfishing/native_smartfishing.entitlements; sourceTree = "<group>"; };
-		048F03A62671037B0060ABBC /* KakaoNavi.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoNavi.framework; sourceTree = "<group>"; };
-		048F03A72671037C0060ABBC /* KakaoMessageTemplate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoMessageTemplate.framework; sourceTree = "<group>"; };
-		048F03A82671037C0060ABBC /* KakaoOpenSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoOpenSDK.framework; sourceTree = "<group>"; };
-		048F03A92671037C0060ABBC /* KakaoCommon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoCommon.framework; sourceTree = "<group>"; };
-		048F03AA2671037C0060ABBC /* KakaoLink.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoLink.framework; sourceTree = "<group>"; };
-		048F03AB2671037C0060ABBC /* KakaoPlusFriend.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoPlusFriend.framework; sourceTree = "<group>"; };
+		0497313F26731E9700E83AE6 /* native_smartfishing-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "native_smartfishing-Bridging-Header.h"; sourceTree = "<group>"; };
+		0497314226731F5300E83AE6 /* swiftsfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftsfile.swift; sourceTree = "<group>"; };
 		04D23403263C085900C9FC10 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* native_smartfishing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = native_smartfishing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = native_smartfishing/AppDelegate.h; sourceTree = "<group>"; };
@@ -74,12 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				048F03AF2671037C0060ABBC /* KakaoCommon.framework in Frameworks */,
-				048F03AC2671037C0060ABBC /* KakaoNavi.framework in Frameworks */,
-				048F03B12671037C0060ABBC /* KakaoPlusFriend.framework in Frameworks */,
-				048F03B02671037C0060ABBC /* KakaoLink.framework in Frameworks */,
-				048F03AE2671037C0060ABBC /* KakaoOpenSDK.framework in Frameworks */,
-				048F03AD2671037C0060ABBC /* KakaoMessageTemplate.framework in Frameworks */,
 				75F0BF370C7F876EDBBC7623 /* libPods-native_smartfishing.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,6 +99,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				0497313F26731E9700E83AE6 /* native_smartfishing-Bridging-Header.h */,
+				0497314226731F5300E83AE6 /* swiftsfile.swift */,
 			);
 			name = native_smartfishing;
 			sourceTree = "<group>";
@@ -121,12 +108,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				048F03A92671037C0060ABBC /* KakaoCommon.framework */,
-				048F03AA2671037C0060ABBC /* KakaoLink.framework */,
-				048F03A72671037C0060ABBC /* KakaoMessageTemplate.framework */,
-				048F03A62671037B0060ABBC /* KakaoNavi.framework */,
-				048F03A82671037C0060ABBC /* KakaoOpenSDK.framework */,
-				048F03AB2671037C0060ABBC /* KakaoPlusFriend.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				CFF18F2BFC78108B1C80090C /* libPods-native_smartfishing.a */,
 				9DE15E30DB1BA43DC0F37931 /* libPods-native_smartfishing-native_smartfishingTests.a */,
@@ -232,10 +213,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						LastSwiftMigration = 1250;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1250;
 					};
 				};
 			};
@@ -416,6 +398,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				0497314326731F5300E83AE6 /* swiftsfile.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,7 +418,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5891B5BD6B937FEC543B0439 /* Pods-native_smartfishing-native_smartfishingTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -459,6 +444,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "native_smartfishingTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/native_smartfishing.app/native_smartfishing";
 			};
 			name = Debug;
@@ -467,7 +455,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E347F6B1F73E0F29BB24662C /* Pods-native_smartfishing-native_smartfishingTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -488,6 +478,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "native_smartfishingTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/native_smartfishing.app/native_smartfishing";
 			};
 			name = Release;
@@ -507,7 +499,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = native_smartfishing/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -521,6 +513,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishkingapp.nativeSmart;
 				PRODUCT_NAME = native_smartfishing;
+				SWIFT_OBJC_BRIDGING_HEADER = "native_smartfishing-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -541,7 +534,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = native_smartfishing/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -555,6 +548,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishkingapp.nativeSmart;
 				PRODUCT_NAME = native_smartfishing;
+				SWIFT_OBJC_BRIDGING_HEADER = "native_smartfishing-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -609,7 +603,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -667,7 +661,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",

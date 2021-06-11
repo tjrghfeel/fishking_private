@@ -16,7 +16,7 @@ import {WebView} from 'react-native-webview';
 import * as SendIntentAndroid from 'react-native-send-intent';
 import {inject, observer, Provider} from 'mobx-react';
 import {token} from './messaging';
-import RNKakaoLink from 'react-native-kakao-links';
+import KakaoSDK from '@actbase/react-kakaosdk';
 
 const SplashScreen = () => {
   return (
@@ -95,17 +95,9 @@ const App = inject()(
       };
 
       kakaoLink = async url => {
-        console.log(url);
-        try {
-          const options = {
-            objectType: 'scrap',
-            url: url,
-          };
-          const response = await RNKakaoLink.link(options);
-          console.log(response);
-        } catch (e) {
-          console.warn(e);
-        }
+        KakaoSDK.link().sendURL(url)
+          .then(r => console.log('success'))
+          .catch(e => console.log(e));
       };
 
       onMessage = async ({nativeEvent}) => {
