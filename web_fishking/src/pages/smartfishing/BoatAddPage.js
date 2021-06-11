@@ -1193,7 +1193,7 @@ export default inject(
                     </div>
                     <div className="input-group mb-3">
                       <button
-                          style={{marginLeft:'1vw'}}
+                          style={{width:'45%', margin:'auto'}}
                           className="btn btn-third btn-sm"
                           type="button"
                           onClick={this.getNHNCamera}
@@ -1201,7 +1201,7 @@ export default inject(
                         카메라 검색
                       </button>
                       <button
-                          style={{marginLeft:'1vw'}}
+                          style={{width:'45%', margin:'auto'}}
                           className="btn btn-third btn-sm"
                           type="button"
                           onClick={()=>{
@@ -1214,7 +1214,7 @@ export default inject(
                             })
                           }}
                       >
-                        계정 제거
+                        계정 초기화
                       </button>
                   </div>
                 </div>
@@ -1290,7 +1290,7 @@ export default inject(
                   </div>
                   <div className="input-group mb-3">
                     <button
-                        style={{marginLeft:'1vw'}}
+                        style={{width:'45%', margin:'auto'}}
                         className="btn btn-third btn-sm"
                         type="button"
                         onClick={this.getSKBCamera}
@@ -1298,7 +1298,7 @@ export default inject(
                       카메라 검색
                     </button>
                     <button
-                        style={{marginLeft:'1vw'}}
+                        style={{width:'45%', margin:'auto'}}
                         className="btn btn-third btn-sm"
                         type="button"
                         onClick={()=>{
@@ -1312,7 +1312,7 @@ export default inject(
                           })
                         }}
                     >
-                      계정 제거
+                      계정 초기화
                     </button>
                   </div>
                 </div>
