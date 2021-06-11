@@ -15,6 +15,7 @@ export default inject()(
         reservePersonnel = 0,
         totalAmount = 0,
         status,
+        reserveComment,
       },
       data,
       onClick,
@@ -54,6 +55,10 @@ export default inject()(
                       예약인원: {Intl.NumberFormat().format(reservePersonnel)}명
                       <br />
                       결제금액: {Intl.NumberFormat().format(totalAmount)}원
+                      <br />
+                      요청사항: {(reserveComment)?
+                                  (reserveComment.length > 20)? reserveComment.substring(0,20) + '...' : reserveComment
+                                  : '없음'}
                     </p>
                   </div>
                 </div>

@@ -30,6 +30,7 @@ public class OrderListResponse {
     private String profileImage;
     private String username;
     private Boolean isExtra;
+    private String reserveComment;
 
     @QueryProjection
     public OrderListResponse(Long id,
@@ -45,7 +46,8 @@ public class OrderListResponse {
                              OrderStatus status,
                              String profileImage,
                              String username,
-                             Boolean isExtraRun) {
+                             Boolean isExtraRun,
+                             String reserveComment) {
         LocalDate date = DateUtils.getDateFromString(fishingDate);
         this.id = id;
         this.shipName = shipName;
@@ -60,6 +62,7 @@ public class OrderListResponse {
         this.profileImage = "/resource" + profileImage;
         this.username = username;
         this.isExtra = isExtraRun;
+        this.reserveComment = reserveComment;
     }
 
 }

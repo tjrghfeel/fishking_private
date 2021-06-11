@@ -204,7 +204,8 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                         orders.orderNumber,
                         orders.createdBy.memberName,
                         orders.createdBy.email,
-                        orderDetails.personnel
+                        orderDetails.personnel,
+                        orders.reserveComment
                 ))
                 .from(orders).join(orderDetails).on(orderDetails.orders.eq(orders))
                 .join(goods).on(orders.goods.eq(goods))
