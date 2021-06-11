@@ -24,7 +24,8 @@ export default inject(
           const resolve = await APIStore._delete(
             "/v2/api/profileManage/delete"
           );
-          if (resolve === 0) {
+          if (resolve >= 0) {
+              PageStore.setAccessToken(null, "cust");
             PageStore.push(`/main/home`);
           }
         }
