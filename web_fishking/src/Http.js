@@ -12,8 +12,8 @@ const http = axios.create({
 http.defaults.headers.common["Authorization"] =
   localStorage.getItem("@accessToken") || "";
 http.defaults.headers.common["Accept"] = "application/json";
-// http.defaults.timeout = 20000;
-http.defaults.timeout = 1000000;
+http.defaults.timeout = 20000;
+// http.defaults.timeout = 1000000;
 
 export default (() => {
   const request = (url, method, headers = {}, params, data) => {

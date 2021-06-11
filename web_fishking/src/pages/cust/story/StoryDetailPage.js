@@ -284,9 +284,9 @@ export default inject(
                   <React.Fragment>
                     <hr />
                     <div className="row justify-content-start align-items-center pl-3">
-                      {/*<a onClick={() => this.onClickShareSns('kakao')}>*/}
-                      {/*  <span className="icon icon-kakao"></span>*/}
-                      {/*</a>*/}
+                      <a onClick={() => this.onClickShareSns('kakao')}>
+                        <span className="icon icon-kakao"></span>
+                      </a>
                       <a onClick={() => this.onClickShareSns('facebook')}>
                         <span className="icon icon-fb"></span>
                       </a>

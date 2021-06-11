@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* native_smartfishingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* native_smartfishingTests.m */; };
 		0497314326731F5300E83AE6 /* swiftsfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0497314226731F5300E83AE6 /* swiftsfile.swift */; };
+		0497314826732EAD00E83AE6 /* KakaoCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314426732EAC00E83AE6 /* KakaoCommon.framework */; };
+		0497314926732EAD00E83AE6 /* KakaoCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314426732EAC00E83AE6 /* KakaoCommon.framework */; };
+		0497314A26732EAD00E83AE6 /* KakaoMessageTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314526732EAC00E83AE6 /* KakaoMessageTemplate.framework */; };
+		0497314B26732EAD00E83AE6 /* KakaoMessageTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314526732EAC00E83AE6 /* KakaoMessageTemplate.framework */; };
+		0497314C26732EAD00E83AE6 /* KakaoLink.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314626732EAC00E83AE6 /* KakaoLink.framework */; };
+		0497314D26732EAD00E83AE6 /* KakaoLink.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314626732EAC00E83AE6 /* KakaoLink.framework */; };
+		0497314E26732EAD00E83AE6 /* KakaoOpenSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314726732EAD00E83AE6 /* KakaoOpenSDK.framework */; };
+		0497314F26732EAD00E83AE6 /* KakaoOpenSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0497314726732EAD00E83AE6 /* KakaoOpenSDK.framework */; };
 		04D23404263C085900C9FC10 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04D23403263C085900C9FC10 /* GoogleService-Info.plist */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -35,6 +43,10 @@
 		0456A518263C200F00A26300 /* native_smartfishing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = native_smartfishing.entitlements; path = native_smartfishing/native_smartfishing.entitlements; sourceTree = "<group>"; };
 		0497313F26731E9700E83AE6 /* native_smartfishing-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "native_smartfishing-Bridging-Header.h"; sourceTree = "<group>"; };
 		0497314226731F5300E83AE6 /* swiftsfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftsfile.swift; sourceTree = "<group>"; };
+		0497314426732EAC00E83AE6 /* KakaoCommon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoCommon.framework; sourceTree = "<group>"; };
+		0497314526732EAC00E83AE6 /* KakaoMessageTemplate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoMessageTemplate.framework; sourceTree = "<group>"; };
+		0497314626732EAC00E83AE6 /* KakaoLink.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoLink.framework; sourceTree = "<group>"; };
+		0497314726732EAD00E83AE6 /* KakaoOpenSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoOpenSDK.framework; sourceTree = "<group>"; };
 		04D23403263C085900C9FC10 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* native_smartfishing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = native_smartfishing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = native_smartfishing/AppDelegate.h; sourceTree = "<group>"; };
@@ -57,7 +69,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0497314D26732EAD00E83AE6 /* KakaoLink.framework in Frameworks */,
 				5641FA0F58A4BB9589192B80 /* libPods-native_smartfishing-native_smartfishingTests.a in Frameworks */,
+				0497314F26732EAD00E83AE6 /* KakaoOpenSDK.framework in Frameworks */,
+				0497314B26732EAD00E83AE6 /* KakaoMessageTemplate.framework in Frameworks */,
+				0497314926732EAD00E83AE6 /* KakaoCommon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,7 +81,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0497314C26732EAD00E83AE6 /* KakaoLink.framework in Frameworks */,
 				75F0BF370C7F876EDBBC7623 /* libPods-native_smartfishing.a in Frameworks */,
+				0497314E26732EAD00E83AE6 /* KakaoOpenSDK.framework in Frameworks */,
+				0497314A26732EAD00E83AE6 /* KakaoMessageTemplate.framework in Frameworks */,
+				0497314826732EAD00E83AE6 /* KakaoCommon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +128,10 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0497314426732EAC00E83AE6 /* KakaoCommon.framework */,
+				0497314626732EAC00E83AE6 /* KakaoLink.framework */,
+				0497314526732EAC00E83AE6 /* KakaoMessageTemplate.framework */,
+				0497314726732EAD00E83AE6 /* KakaoOpenSDK.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				CFF18F2BFC78108B1C80090C /* libPods-native_smartfishing.a */,
 				9DE15E30DB1BA43DC0F37931 /* libPods-native_smartfishing-native_smartfishingTests.a */,
