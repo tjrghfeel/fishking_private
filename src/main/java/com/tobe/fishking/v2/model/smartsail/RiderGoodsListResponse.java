@@ -26,6 +26,7 @@ public class RiderGoodsListResponse {
     private String orderName;
     private String orderEmail;
     private Integer personnel;
+    private String reserveComment;
 
     @QueryProjection
     public RiderGoodsListResponse(
@@ -39,7 +40,8 @@ public class RiderGoodsListResponse {
             String orderNumber,
             String orderName,
             String orderEmail,
-            Integer personnel
+            Integer personnel,
+            String reserveComment
     ) {
         LocalDateTime times = LocalDateTime.parse(date+time, DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm"));
         LocalDateTime now = LocalDateTime.now();
@@ -55,5 +57,6 @@ public class RiderGoodsListResponse {
         this.orderName = orderName;
         this.orderEmail = orderEmail;
         this.personnel = personnel;
+        this.reserveComment = reserveComment;
     }
 }

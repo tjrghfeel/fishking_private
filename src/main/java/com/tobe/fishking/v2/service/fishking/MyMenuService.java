@@ -501,6 +501,7 @@ public class MyMenuService {
                     .receiver(member)
                     .alertTime(alertTime)
                     .createdBy(member)
+                    .type("c")
                     .build();
             alerts = alertsRepository.save(alerts);
         }
