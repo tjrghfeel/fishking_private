@@ -143,12 +143,17 @@ const App = inject()(
             break;
           }
           case 'SNS': {
-            Linking.canOpenURL(data).then((supported) => {
+            Linking.canOpenURL(data).then(supported => {
               if (supported) {
                 Linking.openURL(data);
               } else {
                 if (data.startsWith('bandapp')) {
-                  Linking.openURL(data.replace('bandapp://create/post?text', 'https://band.us/plugin/share?body'))
+                  Linking.openURL(
+                    data.replace(
+                      'bandapp://create/post?text',
+                      'https://band.us/plugin/share?body',
+                    ),
+                  );
                 }
               }
             });
