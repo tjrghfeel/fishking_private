@@ -337,7 +337,7 @@ public class MyMenuService {
         else if(currentHour >= 12 && currentHour < 15){ baseTime = "0800"; }
         else if(currentHour >= 15 && currentHour < 18){ baseTime = "1100"; }
         else if(currentHour >= 18 && currentHour < 21){ baseTime = "1400"; }
-        else if(currentHour >= 21 && currentHour < 0){ baseTime = "1700"; }
+        else if(currentHour >= 21){ baseTime = "1700"; }
 
 //        temp = (temp < 0)? temp + 24 : temp;
 //        String baseTime = String.format("%02d",temp);
