@@ -313,19 +313,34 @@ public class MyMenuService {
 //                "&Type=SF" +
 //                "&ResultType=json";
 
+//        LocalDateTime currentTime = LocalDateTime.now();
+//        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        int temp = currentTime.getHour();
+//        if(temp >= 2 && temp < 5){temp = 20; currentDate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+//        else if(temp >= 5 && temp < 8){temp = 23; currentDate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+//        else if(temp >= 8&& temp < 11){temp = 2;}
+//        else if(temp >= 11&& temp < 14){temp = 5;}
+//        else if(temp >= 14&& temp < 17){temp = 8;}
+//        else if(temp >= 17&& temp < 20){temp = 11;}
+//        else if(temp >= 20&& temp < 23){temp = 14;}
+//        else if(temp >= 23){temp = 17;}
+//        else if(temp < 2){temp = 17; currentDate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+
         LocalDateTime currentTime = LocalDateTime.now();
-        int temp = currentTime.getHour();
-        if(temp >= 2 && temp < 5){temp = 20;}
-        else if(temp >= 5 && temp < 8){temp = 23;}
-        else if(temp >= 8&& temp < 11){temp = 2;}
-        else if(temp >= 11&& temp < 14){temp = 5;}
-        else if(temp >= 14&& temp < 17){temp = 8;}
-        else if(temp >= 17&& temp < 20){temp = 11;}
-        else if(temp >= 20&& temp < 23){temp = 14;}
-        else if(temp >= 23&& temp < 2){temp = 17;}
+        int currentHour = currentTime.getHour();
+        String baseTime = null;
+        String baseDate = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        if(currentHour >= 0 && currentHour < 3){ baseTime = "2000"; baseDate = currentTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+        else if(currentHour >= 3 && currentHour < 6){ baseTime = "2300"; baseDate = currentTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+        else if(currentHour >= 6 && currentHour < 9){ baseTime = "0200"; }
+        else if(currentHour >= 9 && currentHour < 12){ baseTime = "0500"; }
+        else if(currentHour >= 12 && currentHour < 15){ baseTime = "0800"; }
+        else if(currentHour >= 15 && currentHour < 18){ baseTime = "1100"; }
+        else if(currentHour >= 18 && currentHour < 21){ baseTime = "1400"; }
+        else if(currentHour >= 21 && currentHour < 0){ baseTime = "1700"; }
+
 //        temp = (temp < 0)? temp + 24 : temp;
-        String baseTime = String.format("%02d",temp);
-        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        String baseTime = String.format("%02d",temp);
         String fcstTime = String.format("%02d",(currentTime.getHour()/3)*3) + "00";
 
         String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
@@ -333,8 +348,8 @@ public class MyMenuService {
                 "&pageNo=1" +
                 "&numOfRows=100" +
                 "&dataType=JSON" +
-                "&base_date=" + currentDate +
-                "&base_time=" + baseTime + "00" +
+                "&base_date=" + baseDate +
+                "&base_time=" + baseTime +
                 "&nx=" + observer.getXGrid() +
                 "&ny=" + observer.getYGrid();
         String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
@@ -601,7 +616,7 @@ public class MyMenuService {
         int time = currentTime.getHour();
         String tmFc = null;
         if(time < 6){
-            currentTime.minusDays(1);
+            currentTime = currentTime.minusDays(1);
             tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "1800";
         }
         else if(time < 18 || time > 6){tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "0600";}
