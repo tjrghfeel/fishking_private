@@ -72,7 +72,8 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                         goods.fishingEndDate.concat(goods.fishingEndTime.substring(0,2)).concat(":").concat(goods.fishingEndTime.substring(2,4)),
                         rideShip.phoneNumber,
                         rideShip.emergencyPhone,
-                        rideShip.isRide
+                        rideShip.isRide,
+                        orders.reserveComment
                 ))
                 .from(rideShip)
                     .join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))

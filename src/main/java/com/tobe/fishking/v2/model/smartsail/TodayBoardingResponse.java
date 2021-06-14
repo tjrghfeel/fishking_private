@@ -23,6 +23,7 @@ public class TodayBoardingResponse {
     private String fingerType;
     private Integer fingerTypeNum;
     private String status;
+    private String reserveComment;
 
     @QueryProjection
     public TodayBoardingResponse(
@@ -35,7 +36,8 @@ public class TodayBoardingResponse {
             String fishingEndTime,
             String phone,
             String emergencyPhone,
-            Boolean isRide
+            Boolean isRide,
+            String reserveComment
     ) {
         this.riderId = riderId;
         this.username = username;
@@ -47,6 +49,7 @@ public class TodayBoardingResponse {
         this.phone = phone;
         this.emergencyPhone = emergencyPhone;
         this.status = isRide ? "금일 승선 확인" : "확인 전";
+        this.reserveComment = reserveComment;
     }
 
 }
