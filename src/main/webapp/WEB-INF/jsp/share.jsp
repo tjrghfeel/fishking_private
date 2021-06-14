@@ -43,6 +43,7 @@
     $(document).ready(function () {
         var ua = navigator.userAgent;
         var param = location.search.split('?action=')[1];
+        if (param.includes('%2F')) param = decodeURIComponent(param);
         if (ua.indexOf('Android') !== -1 || ua.indexOf('android') !== -1) {
             // location.href = 'intent://action/#Intent;scheme=fishking;package=com.native_fishking;end';
             location.href = 'fishking://action?' + param;
