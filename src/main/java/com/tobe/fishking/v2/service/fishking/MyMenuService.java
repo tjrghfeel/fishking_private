@@ -245,18 +245,9 @@ public class MyMenuService {
                 .orElseThrow(()->new ResourceNotFoundException("observer not found for this id :: "+observerId));
         Boolean isAlerted = alertsRepository.existsByAlertTimeGreaterThanAndReceiverAndPidAndEntityTypeAndAlertTypeAndIsSent(
                 LocalDateTime.now(), member, observerId, EntityType.observerCode, AlertType.tideLevel, false);
-        /*tideTimeList*/
-//        ArrayList<String> tideTimeList = new ArrayList<>();
-//        ArrayList<String> tideLevelList = new ArrayList<>();
-//        List<TidalLevel> tideList = tidalLevelRepository.findAllByDateAndIsHighWaterAndIsLowWaters(LocalDate.now(), observer);
+
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         List<TidalLevelResponse> tideList = tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), observer.getCode());
-//        for(int i=0; i<tideList.size(); i++){
-//            String tideTime = tideList.get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-//            String tideLevel = tideList.get(i).getLevel().toString();
-//            tideTimeList.add(tideTime);
-//            tideLevelList.add(tideLevel);
-//        }
 
         result = TodayTideDto.builder()
                 .observerId(observerId)
@@ -264,8 +255,6 @@ public class MyMenuService {
                 .isAlerted(isAlerted)
                 .date(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .tideList(tideList)
-//                .tideTimeList(tideTimeList)
-//                .tideLevelList(tideLevelList)
                 .build();
 
         /*알림 리스트*/
@@ -277,30 +266,6 @@ public class MyMenuService {
             Alerts alert = preAlertList.get(i);
             List<CommonCode> alertSet = alert.getAlert_sets();
             tidalAlertTimeList.add(alertSet.get(0).getCode());
-
-//            String content = preAlertList.get(i).getContent();
-//            String[] contentToken = content.split(" ");
-//            String highLow = contentToken[1];
-//            Integer time = Integer.parseInt(contentToken[2]);
-//
-//            if(highLow.equals("high")){
-//                switch (time){
-//                    case -2: result.setHighWaterBefore2(true);break;
-//                    case -1: result.setHighWaterBefore1(true);break;
-//                    case 0: result.setHighWater(true);break;
-//                    case 1: result.setHighWaterAfter1(true);break;
-//                    case 2: result.setHighWaterAfter2(true);break;
-//                }
-//            }
-//            else if(highLow.equals("low")){
-//                switch (time){
-//                    case -2: result.setLowWaterBefore2(true);break;
-//                    case -1: result.setLowWaterBefore1(true);break;
-//                    case 0: result.setLowWater(true);break;
-//                    case 1: result.setLowWaterAfter1(true);break;
-//                    case 2: result.setLowWaterAfter2(true);break;
-//                }
-//            }
         }
         result.setTidalAlertTimeList(tidalAlertTimeList);
 
@@ -343,78 +308,88 @@ public class MyMenuService {
 //        String baseTime = String.format("%02d",temp);
         String fcstTime = String.format("%02d",(currentTime.getHour()/3)*3) + "00";
 
-        String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
-                "serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +
-                "&pageNo=1" +
-                "&numOfRows=100" +
-                "&dataType=JSON" +
-                "&base_date=" + baseDate +
-                "&base_time=" + baseTime +
-                "&nx=" + observer.getXGrid() +
-                "&ny=" + observer.getYGrid();
-        String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
-        System.out.println("result>>> "+response);
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
-        Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
-        Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
-        Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
-        ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
-        for(int i=0; i<dataList.size(); i++){
-            Map<String,Object> item = dataList.get(i);
-            if(item.get("fcstTime").equals(fcstTime) ){
-                if(item.get("category").equals("SKY")){ sky = Integer.parseInt((String)item.get("fcstValue"));}
-                else if(item.get("category").equals("PTY")){ pty = Integer.parseInt((String)item.get("fcstValue"));}
+        //동네예보 api 호출.
+        try{
+            String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
+                    "serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +//
+                    "&pageNo=1" +
+                    "&numOfRows=100" +
+                    "&dataType=JSON" +
+                    "&base_date=" + baseDate +
+                    "&base_time=" + baseTime +
+                    "&nx=" + observer.getXGrid() +
+                    "&ny=" + observer.getYGrid();
+            String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
+            System.out.println("result>>> "+response);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
+            Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
+            Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
+            Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
+            ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+            for(int i=0; i<dataList.size(); i++){
+                Map<String,Object> item = dataList.get(i);
+                if(item.get("fcstTime").equals(fcstTime) ){
+                    if(item.get("category").equals("SKY")){ sky = Integer.parseInt((String)item.get("fcstValue"));}
+                    else if(item.get("category").equals("PTY")){ pty = Integer.parseInt((String)item.get("fcstValue"));}
+                }
+                if(sky != null && pty != null) { break; }
             }
-            if(sky != null && pty != null) { break; }
-        }
 
-        CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
-        ArrayList<String> weather = new ArrayList<>();
-        String imgUrl=null;
+            //api에서받아온 날씨 코드값에 따라 날씨 데이터 설정.
+            CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
+            ArrayList<String> weather = new ArrayList<>();
+            String imgUrl=null;
 
-        if(sky ==1){//맑음
-            weather.add("맑음");
-        }
-        else if(sky == 3){//구름많음
-            switch (pty){
-                case 0:
-                    weather.add("구름많음");break;
-                case 1: case 5:
-                    weather.add("구름많고 비");break;
-                case 2: case 6:
-                    weather.add("구름많고 비/눈");break;
-                case 3: case 7:
-                    weather.add("구름많고 눈");break;
-                case 4:
-                    weather.add("구름많고 소나기");break;
-                default: weather = null;
+            if(sky ==1){//맑음
+                weather.add("맑음");
             }
-        }
-        else if(sky == 4){//흐림
-            switch (pty){
-                case 0:
-                    weather.add("흐림");break;
-                case 1: case 5:
-                    weather.add("흐리고 비");break;
-                case 2: case 6:
-                    weather.add("흐리고 비/눈");break;
-                case 3: case 7:
-                    weather.add("흐리고 눈");break;
-                case 4:
-                    weather.add("흐리고 소나기");break;
-                default: weather = null;
+            else if(sky == 3){//구름많음
+                switch (pty){
+                    case 0:
+                        weather.add("구름많음");break;
+                    case 1: case 5:
+                        weather.add("구름많고 비");break;
+                    case 2: case 6:
+                        weather.add("구름많고 비/눈");break;
+                    case 3: case 7:
+                        weather.add("구름많고 눈");break;
+                    case 4:
+                        weather.add("구름많고 소나기");break;
+                    default: weather = null;
+                }
             }
+            else if(sky == 4){//흐림
+                switch (pty){
+                    case 0:
+                        weather.add("흐림");break;
+                    case 1: case 5:
+                        weather.add("흐리고 비");break;
+                    case 2: case 6:
+                        weather.add("흐리고 비/눈");break;
+                    case 3: case 7:
+                        weather.add("흐리고 눈");break;
+                    case 4:
+                        weather.add("흐리고 소나기");break;
+                    default: weather = null;
+                }
+            }
+            else{
+                weather = null;
+            }
+
+            if(weather != null) {
+                imgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, weather.get(0)).getExtraValue1();
+                imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
+                weather.add(imgUrl);
+            }
+            result.setWeather(weather);
         }
-        else{
-            weather = null;
+        catch (Exception e){
+            e.printStackTrace();
+            result.setWeather(null);
+            return result;
         }
-        if(weather != null) {
-            imgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, weather.get(0)).getExtraValue1();
-            imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
-            weather.add(imgUrl);
-        }
-        result.setWeather(weather);
 
         return result;
     }
@@ -619,56 +594,61 @@ public class MyMenuService {
             currentTime = currentTime.minusDays(1);
             tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "1800";
         }
-        else if(time < 18 || time > 6){tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "0600";}
+        else if(time < 18 && time >= 6){tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "0600";}
         else{tmFc = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "1800";}
 
+        try{
+            String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidSeaFcst?" +
+                    "serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +//
+                    "&pageNo=1" +
+                    "&numOfRows=50" +
+                    "&dataType=JSON" +
+                    "&regId=" + observer.getForecastCode() +
+                    "&tmFc=" + tmFc;
+            String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
+            System.out.println("result>>> "+response);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
+            Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
+            Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
+            Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
+            ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+            Map<String,Object> data = dataList.get(0);
 
-        String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidSeaFcst?" +
-                "serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +
-                "&pageNo=1" +
-                "&numOfRows=50" +
-                "&dataType=JSON" +
-                "&regId=" + observer.getForecastCode() +
-                "&tmFc=" + tmFc;
-        String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
-        System.out.println("result>>> "+response);
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
-        Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
-        Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
-        Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
-        ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
-        Map<String,Object> data = dataList.get(0);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            long today = (sdf.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))).getTime();
+            long inputDay = (sdf.parse(DateUtils.getDateFromString(dateString).format(DateTimeFormatter.ofPattern("yyyyMMdd")))).getTime();
+            long dayDiff = (inputDay - today) / (24*60*60*1000);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        long today = (sdf.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))).getTime();
-        long inputDay = (sdf.parse(DateUtils.getDateFromString(dateString).format(DateTimeFormatter.ofPattern("yyyyMMdd")))).getTime();
-        long dayDiff = (inputDay - today) / (24*60*60*1000);
+            CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
 
-        CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
+            if(dayDiff < 3 || dayDiff > 10){result=null;}
+            else if(dayDiff <8){
+                String morningWeather = (String)data.get("wf"+dayDiff+"Am");
+                String afternoonWeather = (String)data.get("wf"+dayDiff+"Pm");
+                result.add(morningWeather);
+                String morningWeatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, morningWeather).getExtraValue1();
+                morningWeatherImgUrl = env.getProperty("file.downloadUrl") + morningWeatherImgUrl;
+                result.add(morningWeatherImgUrl);
 
-        if(dayDiff < 3 || dayDiff > 10){result=null;}
-        else if(dayDiff <8){
-            String morningWeather = (String)data.get("wf"+dayDiff+"Am");
-            String afternoonWeather = (String)data.get("wf"+dayDiff+"Pm");
-            result.add(morningWeather);
-            String morningWeatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, morningWeather).getExtraValue1();
-            morningWeatherImgUrl = env.getProperty("file.downloadUrl") + morningWeatherImgUrl;
-            result.add(morningWeatherImgUrl);
-
-            result.add(afternoonWeather);
-            String afternoonWeatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, afternoonWeather).getExtraValue1();
-            afternoonWeatherImgUrl = env.getProperty("file.downloadUrl") + afternoonWeatherImgUrl;
-            result.add(afternoonWeatherImgUrl);
+                result.add(afternoonWeather);
+                String afternoonWeatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, afternoonWeather).getExtraValue1();
+                afternoonWeatherImgUrl = env.getProperty("file.downloadUrl") + afternoonWeatherImgUrl;
+                result.add(afternoonWeatherImgUrl);
+            }
+            else{
+                String weather = data.get("wf"+dayDiff) +"";
+                result.add(weather);
+                String weatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, weather).getExtraValue1();
+                weatherImgUrl = env.getProperty("file.downloadUrl") + weatherImgUrl;
+                result.add(weatherImgUrl);
+            }
+            return result;
         }
-        else{
-            String weather = data.get("wf"+dayDiff) +"";
-            result.add(weather);
-            String weatherImgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, weather).getExtraValue1();
-            weatherImgUrl = env.getProperty("file.downloadUrl") + weatherImgUrl;
-            result.add(weatherImgUrl);
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
-        return result;
     }
 
     /*물때 알림 추가*/
