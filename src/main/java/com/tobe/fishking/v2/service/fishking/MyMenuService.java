@@ -311,7 +311,7 @@ public class MyMenuService {
         //동네예보 api 호출.
         try{
             String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
-                    "serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +//
+                    "serviceKey=EU1VFa5ptjvV1eaOpB9bnBKBxJxBGaZ%2BqthSuo3%2FZxGfQ%2BrHHiKxf%2Bt1a13VCLBfj1eBv%2BwElgABiGOyIIWDpA%3D%3D" +//
                     "&pageNo=1" +
                     "&numOfRows=100" +
                     "&dataType=JSON" +
@@ -599,7 +599,7 @@ public class MyMenuService {
 
         try{
             String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidSeaFcst?" +
-                    "serviceKey=Cnd72OYCx%2BsOLJ1xCdGngFgZUPJBj3ULqLX%2Fj%2BKW2JOtoAxQLjZ4wU%2Fc8hUf4DL7mAHx0USlJ9K0K1tUd6QP%2BA%3D%3D" +//
+                    "serviceKey=EU1VFa5ptjvV1eaOpB9bnBKBxJxBGaZ%2BqthSuo3%2FZxGfQ%2BrHHiKxf%2Bt1a13VCLBfj1eBv%2BwElgABiGOyIIWDpA%3D%3D" +//
                     "&pageNo=1" +
                     "&numOfRows=50" +
                     "&dataType=JSON" +
