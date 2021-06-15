@@ -407,10 +407,12 @@ public class MyMenuService {
         /*간조,만조 알람 구분*/
         ArrayList<String> highTideAlert = new ArrayList<>();
         ArrayList<String> lowTideAlert = new ArrayList<>();
-        for(int i=0; i<alertTimeList.size(); i++){
-            String time = alertTimeList.get(i);
-            if(time.contains("high")){  highTideAlert.add(time); }
-            else if(time.contains("low")){lowTideAlert.add(time);}
+        for (String time : alertTimeList) {
+            if (time.contains("high")) {
+                highTideAlert.add(time);
+            } else if (time.contains("low")) {
+                lowTideAlert.add(time);
+            }
         }
 
         CodeGroup codeGroup = codeGroupRepository.findByCode("tidalLevelAlert");
@@ -464,27 +466,28 @@ public class MyMenuService {
         );
         if(list.size() < 0){throw new RuntimeException("조위데이터가 없습니다.");}
 
-        for(int i=0; i<lowTideAlertCodeList.size();  i++){
-            CommonCode commonCode = lowTideAlertCodeList.get(i);
+        for (CommonCode commonCode : lowTideAlertCodeList) {
             Integer time = Integer.parseInt(commonCode.getExtraValue1());
             LocalDateTime alertTime = list.get(0).getDateTime();
             alertTime = alertTime.plusHours(time);
-            for(int j=1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++){
-                if(list.size() < j){ throw new RuntimeException("알림을 설정할 수 없습니다.");}
+            for (int j = 1; (alertTime.compareTo(LocalDateTime.now()) < 0); j++) {
+                if (list.size() < j) {
+                    throw new RuntimeException("알림을 설정할 수 없습니다.");
+                }
                 alertTime = list.get(j).getDateTime();
                 alertTime = alertTime.plusHours(time);
             }
             List<CommonCode> alertSet = new ArrayList<>();
             alertSet.add(commonCode);
 
-            String sentence = "\'"+observer.getName() + "\' \'" + commonCode.getCodeName() + "\'입니다.";
+            String sentence = "\'" + observer.getName() + "\' \'" + commonCode.getCodeName() + "\'입니다.";
 
             Alerts alerts = Alerts.builder()
                     .alert_sets(alertSet)
                     .alertType(AlertType.tideLevel)
                     .entityType(EntityType.observerCode)
                     .pid(observerId)
-                    .content(observer.getName()+" low "+time)
+                    .content(observer.getName() + " low " + time)
                     .sentence(sentence)
                     .isRead(false)
                     .isSent(false)
@@ -534,31 +537,49 @@ public class MyMenuService {
 
         List<Alerts> preAlertList = alertsRepository.findAllByAlertTimeGreaterThanAndReceiverAndAlertTypeAndPidAndIsSent(
                 LocalDateTime.now(), member, AlertType.tide, observerId,false);
-        for(int i=0; i<preAlertList.size(); i++){
-            Alerts alert = preAlertList.get(i);
+        for (Alerts alert : preAlertList) {
             List<CommonCode> commonCodeList = alert.getAlert_sets();
-            for(int j=0; j<commonCodeList.size(); j++){
-                CommonCode commonCode = commonCodeList.get(j);
-                if(commonCode.getCodeGroup().getCode().equals("tideAlertTide8")) {
-                    boolean exist = false;
-                    for(int l=0; l<alertTideList.size(); l++){
-                        if(alertTideList.get(l).equals(commonCode.getCode())){ exist = true; }
+            for (CommonCode commonCode : commonCodeList) {
+                switch (commonCode.getCodeGroup().getCode()) {
+                    case "tideAlertTide8": {
+                        boolean exist = false;
+                        for (String s : alertTideList) {
+                            if (s.equals(commonCode.getCode())) {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        if (!exist) {
+                            alertTideList.add(commonCode.getCode());
+                        }
+                        break;
                     }
-                    if(exist ==false){alertTideList.add(commonCode.getCode());}
-                }
-                else if(commonCode.getCodeGroup().getCode().equals("tideAlertDay")) {
-                    boolean exist = false;
-                    for(int l=0; l<alertDayList.size(); l++){
-                        if(alertDayList.get(l).equals(commonCode.getCode())){ exist = true; }
+                    case "tideAlertDay": {
+                        boolean exist = false;
+                        for (String s : alertDayList) {
+                            if (s.equals(commonCode.getCode())) {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        if (!exist) {
+                            alertDayList.add(commonCode.getCode());
+                        }
+                        break;
                     }
-                    if(exist ==false){alertDayList.add(commonCode.getCode());}
-                }
-                else if(commonCode.getCodeGroup().getCode().equals("tideAlertTime")){
-                    boolean exist = false;
-                    for(int l=0; l<alertTimeList.size(); l++){
-                        if(alertTimeList.get(l).equals(commonCode.getCode())){ exist = true; }
+                    case "tideAlertTime": {
+                        boolean exist = false;
+                        for (String s : alertTimeList) {
+                            if (s.equals(commonCode.getCode())) {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        if (!exist) {
+                            alertTimeList.add(commonCode.getCode());
+                        }
+                        break;
                     }
-                    if(exist ==false){alertTimeList.add(commonCode.getCode());}
                 }
             }
         }
@@ -577,8 +598,12 @@ public class MyMenuService {
                 .build();
 
         /*날씨*/
-
-        result.setWeather(getWeather(observer,dateString));
+        try {
+            ArrayList<String> w = getWeather(observer,dateString);
+            result.setWeather(w);
+        } catch (Exception e) {
+            result.setWeather(null);
+        }
 
         return result;
     }
