@@ -105,22 +105,22 @@ export default inject(
                   </React.Fragment>
                 ))}
                 <hr className="full mt-3 mb-3" />
-                <a>
-                  <div className="row no-gutters align-items-center">
-                    <div className="col-3 pl-2">버전정보</div>
-                    <div className="col-8 text-right">
-                      <strong>1.7.7</strong> &nbsp;{" "}
-                      <span className="status-icon status6">최신버전</span>
-                    </div>
-                    <div className="col-1 text-right pl-1">
-                      <img
-                        src="/assets/cust/img/svg/cal-arrow-right.svg"
-                        alt=""
-                      />
-                    </div>
-                  </div>
-                </a>
-                <hr className="full mt-3 mb-3" />
+                {/*<a>*/}
+                {/*  <div className="row no-gutters align-items-center">*/}
+                {/*    <div className="col-3 pl-2">버전정보</div>*/}
+                {/*    <div className="col-8 text-right">*/}
+                {/*      <strong>1.7.7</strong> &nbsp;{" "}*/}
+                {/*      <span className="status-icon status6">최신버전</span>*/}
+                {/*    </div>*/}
+                {/*    <div className="col-1 text-right pl-1">*/}
+                {/*      <img*/}
+                {/*        src="/assets/cust/img/svg/cal-arrow-right.svg"*/}
+                {/*        alt=""*/}
+                {/*      />*/}
+                {/*    </div>*/}
+                {/*  </div>*/}
+                {/*</a>*/}
+                {/*<hr className="full mt-3 mb-3" />*/}
               </div>
             </div>
           </React.Fragment>
