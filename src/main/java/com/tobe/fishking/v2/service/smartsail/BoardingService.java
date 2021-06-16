@@ -156,6 +156,7 @@ public class BoardingService {
                     ordersRepository.save(orders);
                     rider.setRide();
                     rideShipRepository.save(rider);
+                    print.updateCount(member);
                     result = true;
                 }
             } catch (Exception e) {

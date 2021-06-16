@@ -64,6 +64,7 @@ public class RiderFingerPrint extends BaseTime {
     public void updateFingerprint(FingerType finger, String fingerprint, Member member) {
         this.finger = finger;
         this.fingerprint = fingerprint;
+        this.count += 1;
         this.modifiedBy = member;
     }
 }
