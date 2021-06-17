@@ -667,9 +667,13 @@ public class ShipService {
                             }
                         }
                     } else {
-                        String token = httpRequestService.loginADT(ship.getCompany().getAdtId(), ship.getCompany().getAdtPw(), video.getId().toString());
-                        String liveUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
-                        c.put("liveVideo", Objects.requireNonNullElse(liveUrl, ""));
+                        try {
+                            String token = httpRequestService.loginADT(ship.getCompany().getAdtId(), ship.getCompany().getAdtPw(), video.getId().toString());
+                            String liveUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
+                            c.put("liveVideo", Objects.requireNonNullElse(liveUrl, ""));
+                        } catch (Exception e) {
+                            c.put("liveVideo", Objects.requireNonNullElse("rtsp://novideo", "rtsp://novideo"));
+                        }
                     }
                     response.put("cameraData", c);
                 } else {

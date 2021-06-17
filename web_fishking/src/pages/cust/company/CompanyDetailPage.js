@@ -46,13 +46,13 @@ export default inject(
             NativeStore,
           } = this.props;
 
-          NativeStore.postMessage('Connections', {});
-          document.addEventListener("message", event => {
-            this.setState({ connectionType: event.data });
-          });
-          window.addEventListener("message", event => {
-            this.setState({ connectionType: event.data });
-          });
+          // NativeStore.postMessage('Connections', {});
+          // document.addEventListener("message", event => {
+          //   this.setState({ connectionType: event.data });
+          // });
+          // window.addEventListener("message", event => {
+          //   this.setState({ connectionType: event.data });
+          // });
 
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           await this.setState({
@@ -79,9 +79,9 @@ export default inject(
               //     "ws://116.125.120.90:9000/streams/52fd554cc3ab32e99ed6e29f812cc6e2",
               // });
 
-              if (this.state.connectionType === 'wifi') {
-                player.start();
-              }
+              // if (this.state.connectionType === 'wifi') {
+              //   player.start();
+              // }
             } else if (Hls.isSupported()) {
               if (url.includes('fishkingapp')) {
                 const liveMark = document.querySelector("#live-mark");

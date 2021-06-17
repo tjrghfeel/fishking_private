@@ -109,7 +109,7 @@ export default inject(
                 {/*      <img*/}
                 {/*        src="/assets/cust/img/svg/cal-arrow-right.svg"*/}
                 {/*        alt=""*/}
-                {/*      />*/}
+                {/*      />*/}보
                 {/*    </div>*/}
                 {/*  </div>*/}
                 {/*</a>*/}

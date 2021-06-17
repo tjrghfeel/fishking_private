@@ -10,6 +10,7 @@ export default inject(
   "PageStore",
   "APIStore",
   "NativeStore",
+  "ModalStore",
 )(
   observer(
     class extends React.Component {
@@ -18,6 +19,7 @@ export default inject(
         this.video = React.createRef(null);
         this.state = {
           connectionType: '',
+          liveVideo: '',
         };
       }
       /********** ********** ********** ********** **********/
@@ -30,18 +32,19 @@ export default inject(
         const {
           APIStore,
           NativeStore,
+          ModalStore,
           match: {
             params: { shipId, cameraId },
           },
         } = this.props;
 
-        NativeStore.postMessage('Connections', {});
-        document.addEventListener("message", event => {
-          this.setState({ connectionType: event.data });
-        });
-        window.addEventListener("message", event => {
-          this.setState({ connectionType: event.data });
-        });
+        // NativeStore.postMessage('Connections', {});
+        // document.addEventListener("message", event => {
+        //   this.setState({ connectionType: event.data });
+        // });
+        // window.addEventListener("message", event => {
+        //   this.setState({ connectionType: event.data });
+        // });
 
         const resolve = await APIStore._get(`/v2/api/tv/live`, {
           shipId,
@@ -54,10 +57,16 @@ export default inject(
           const video = this.video.current;
           video.setAttribute("poster", cameraData.thumbnailUrl);
           const url = cameraData.liveVideo;
+          this.setState({ liveVideo: url });
           if (url.startsWith("rtsp://")) {
-            const player = new Player({ streamUrl: url });
-            if (this.state.connectionType === 'wifi') {
-              player.start();
+            if (url.includes("novideo")) {
+                ModalStore.openModal("Alert", { body: "해당 영상이 일시적으로 제공되지 않습니다." });
+            } else {
+              const player = new Player({ streamUrl: url });
+              player.init();
+              if (this.state.connectionType === 'wifi') {
+                player.start();
+              }
             }
           } else if (Hls.isSupported()) {
             const hls = new Hls({
@@ -132,6 +141,15 @@ export default inject(
               </div>
               <div className="carousel-inner">
                 <div className="carousel-item active">
+                  <canvas
+                    id="videoCanvas"
+                    style={{
+                      width: "100%",
+                      display: this.state.liveVideo?.startsWith("rtsp://")
+                        ? "block"
+                        : "none",
+                    }}
+                  />
                   <video
                     ref={this.video}
                     id="video"
@@ -139,7 +157,11 @@ export default inject(
                     playsInline
                     controls
                     // autoPlay
-                    style={{ width: "100%" }}
+                    style={{ width: "100%",
+                      display: !this.state.liveVideo?.startsWith("rtsp://")
+                        ? "block"
+                        : "none",
+                    }}
                   ></video>
                   <span
                     className="play-live"
