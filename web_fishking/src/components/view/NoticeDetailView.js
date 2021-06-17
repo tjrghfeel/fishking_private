@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
+import ContentView from "./ContentView";
 
 export default inject(
   "PageStore",
@@ -65,7 +66,7 @@ export default inject(
                   <hr className="full mt-3 mb-3" />
                   <a>
                     <div className="row no-gutters align-items-center">
-                      <div className="col-12 pl-2">{this.state.contents}</div>
+                      <div className="col-12 pl-2"><ContentView content={this.state.contents}/></div>
                     </div>
                   </a>
                   <hr className="full mt-3 mb-3" />

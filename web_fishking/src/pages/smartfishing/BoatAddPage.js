@@ -1179,7 +1179,7 @@ export default inject(
                         placeholder=""
                         ref={this.nhnId}
                     />
-                    <div className="input-group-append">
+                    {/*<div className="input-group-append">
                       <span className="input-group-text">pw</span>
                     </div>
                     <input
@@ -1189,7 +1189,7 @@ export default inject(
                         placeholder=""
                         value={this.state.nhnPw}
                         onChange={(e)=>this.setState({nhnPw : e.target.value})}
-                    />
+                    />*/}
                     </div>
                     <div className="input-group mb-3">
                       <button
