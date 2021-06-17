@@ -38,13 +38,13 @@ export default inject(
           },
         } = this.props;
 
-        // NativeStore.postMessage('Connections', {});
-        // document.addEventListener("message", event => {
-        //   this.setState({ connectionType: event.data });
-        // });
-        // window.addEventListener("message", event => {
-        //   this.setState({ connectionType: event.data });
-        // });
+        NativeStore.postMessage('Connections', {});
+        document.addEventListener("message", event => {
+          this.setState({ connectionType: event.data });
+        });
+        window.addEventListener("message", event => {
+          this.setState({ connectionType: event.data });
+        });
 
         const resolve = await APIStore._get(`/v2/api/tv/live`, {
           shipId,
