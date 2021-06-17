@@ -2,6 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
+import ContentView from "../../../components/view/ContentView";
 const {
   LAYOUT: { NavigationLayout, StoryDetailTab },
 } = Components;
@@ -267,7 +268,7 @@ export default inject(
                   <hr />
                 </div>
                 <div className="container nopadding mt-3">
-                  <p>{this.state.content}</p>
+                  <p><ContentView content={this.state.content}/></p>
                   <br />
                   {this.state.videoUrl !== null && (
                     <video width={"100%"} controls src={this.state.videoUrl} />

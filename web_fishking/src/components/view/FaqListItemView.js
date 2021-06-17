@@ -1,5 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
+import ContentView from "./ContentView";
 
 export default inject()(
   observer(
@@ -26,7 +27,7 @@ export default inject()(
             aria-labelledby={"heading" + id}
             data-parent="#accordionFaq"
           >
-            <div className="card-body">{contents}</div>
+            <div className="card-body"><ContentView content={contents}/></div>
           </div>
         </div>
       );

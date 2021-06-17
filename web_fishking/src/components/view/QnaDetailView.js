@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
+import ContentView from "./ContentView";
 
 export default inject(
   "PageStore",
@@ -59,14 +60,14 @@ export default inject(
                         this.state.date.substr(0, 10).replace(/[-]/g, ".")}
                     </dd>
                     <dt>문의 내용</dt>
-                    <dd>{this.state.contents}</dd>
+                    <dd><ContentView content={this.state.contents}/></dd>
                   </dl>
                   <hr className="space mt-4 mb-4" />
                   {this.state.replied && (
                     <React.Fragment>
                       <dl className="dl-horizontal-round">
                         <dt>답변 내용</dt>
-                        <dd>{this.state.replyContents}</dd>
+                        <dd><ContentView content={this.state.replyContents}/></dd>
                       </dl>
                       <hr className="space mt-4 mb-4" />
                     </React.Fragment>
