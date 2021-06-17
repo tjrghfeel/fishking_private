@@ -113,6 +113,7 @@ export default inject(
           },
         } = this.props;
         PageStore.push(`/story/tv/${shipId}/${item.id}`);
+        window.location.reload();
       };
       /********** ********** ********** ********** **********/
       /** render */
@@ -165,7 +166,10 @@ export default inject(
                   ></video>
                   <span
                     className="play-live"
-                    style={{ marginBottom: "8px", marginRight: "8px" }}
+                    style={{ marginBottom: "8px", marginRight: "8px",
+                      display: !this.state.liveVideo?.includes("novideo")
+                        ? "block"
+                        : "none",}}
                   >
                     LIVE
                   </span>
