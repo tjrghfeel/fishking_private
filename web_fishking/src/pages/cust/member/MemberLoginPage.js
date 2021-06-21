@@ -182,56 +182,56 @@ export default inject(
                     <a
                       onClick={() => this.onLoginBySNS("kakao")}
                       class="btn btn-sns-kakao btn-yellow btn-lg btn-block"
-                      style={{padding: '11px 13px'}}
+                      style={{padding: '11px 13px', fontSize:10}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-kakao.svg"
                         alt=""
                         class="vam"
                       />
-                      &nbsp;시작
+                      &nbsp;카카오로 로그인
                     </a>
                   </div>
                   <div class="col-3">
                     <a
                       onClick={() => this.onLoginBySNS("facebook")}
                       class="btn btn-sns-facebook btn-lg btn-block"
-                      style={{padding: '11px 13px'}}
+                      style={{padding: '11px 13px', fontSize:10}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-facebook.svg"
                         alt=""
                         class="vam"
                       />
-                      &nbsp;시작
+                      &nbsp;Facebook으로 로그인
                     </a>
                   </div>
                   <div class="col-3">
                     <a
                       onClick={() => this.onLoginBySNS("naver")}
                       class="btn btn-sns-naver btn-lg btn-block"
-                      style={{padding: '11px 13px'}}
+                      style={{padding: '11px 13px', fontSize:10}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-naver.svg"
                         alt=""
                         class="vam"
                       />
-                      &nbsp;시작
+                      &nbsp;네이버로 로그인
                     </a>
                   </div>
                   <div class="col-3">
                     <a
                       onClick={() => this.onLoginBySNS("apple")}
                       class="btn btn-sns-apple btn-lg btn-block"
-                      style={{padding: '11px 13px'}}
+                      style={{padding: '11px 13px', fontSize:10}}
                     >
                       <img
                         src="/assets/cust/img/svg/icon-sns-apple.svg"
                         alt=""
                         class="vam"
                       />
-                      &nbsp;시작
+                      &nbsp;Apple로 로그인
                     </a>
                   </div>
                 </div>
