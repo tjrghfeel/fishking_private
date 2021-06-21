@@ -300,8 +300,9 @@ public class HttpRequestService {
                 result = res.get("liveUri").toString();
             } else {
                 LocalDateTime today = LocalDateTime.now();
+                String fromDate = today.minusMinutes(10L).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
                 String toDate = today.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-                httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "/" + camId + "/timeline?maxCount=0&fromDateTime=20181205155534&toDateTime=" + toDate);
+                httpGet = new HttpGet(ADT_BASE_URL + ADT_CAMERA_URL + "/" + camId + "/timeline?maxCount=0&fromDateTime=" + fromDate + "&toDateTime=" + toDate);
                 httpGet.addHeader("X-Scq-Auth-Key", token);
                 httpGet.addHeader("User-Agent", USER_AGENT);
                 httpGet.addHeader("Accept-Language", "ko");

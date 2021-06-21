@@ -130,11 +130,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.native_fishking"
+        applicationId "com.tobe.native_fishking"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.0"
         multiDexEnabled true
     }
     splits {
