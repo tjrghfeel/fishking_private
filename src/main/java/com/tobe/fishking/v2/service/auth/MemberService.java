@@ -716,6 +716,21 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
+            }
+
             Member newMember = Member.builder()
                     .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName("미인증회원")//임시값. 수정필요.
@@ -732,6 +747,8 @@ public class MemberService {
                     .snsType(SNSType.kakao)
                     .snsId(usrId.toString())
                     .phoneNumber(new PhoneNumber("***","********"))
+                    .alertSet(alertSet)
+                    .videoSetting(videoSetting)
                     .build();
             newMember = memberRepository.save(newMember);
 
@@ -878,6 +895,21 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
+            }
+
             Member newMember = Member.builder()
                     .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName("미인증회원")//임시값. 수정필요.
@@ -894,15 +926,17 @@ public class MemberService {
                     .snsType(SNSType.facebook)
                     .snsId(usrId)
                     .phoneNumber(new PhoneNumber("***","********"))
+                    .alertSet(alertSet)
+                    .videoSetting(videoSetting)
                     .build();
             newMember = memberRepository.save(newMember);
 
             //토큰 생성.
-            String rawToken = member.getUid() + LocalDateTime.now();
+            String rawToken = newMember.getUid() + LocalDateTime.now();
             String sessionToken = encoder.encode(rawToken);
 
             String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
-            member.setSessionToken(sessionToken);
+            newMember.setSessionToken(sessionToken);
             resultDto.setSessionToken(encodingToken);
 
             resultDto.setMemberId(newMember.getId());
@@ -1054,6 +1088,21 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
+            }
+
             Member newMember = Member.builder()
                     .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
                     .memberName("미인증회원")//임시값. 수정필요.
@@ -1070,15 +1119,17 @@ public class MemberService {
                     .snsType(SNSType.naver)
                     .snsId(usrId)
                     .phoneNumber(new PhoneNumber("***","********"))
+                    .alertSet(alertSet)
+                    .videoSetting(videoSetting)
                     .build();
             newMember = memberRepository.save(newMember);
 
             //토큰 생성.
-            String rawToken = member.getUid() + LocalDateTime.now();
+            String rawToken = newMember.getUid() + LocalDateTime.now();
             String sessionToken = encoder.encode(rawToken);
 
             String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
-            member.setSessionToken(sessionToken);
+            newMember.setSessionToken(sessionToken);
             resultDto.setSessionToken(encodingToken);
 
             resultDto.setMemberId(newMember.getId());
@@ -1169,10 +1220,25 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
+            }
+
             Member newMember = Member.builder()
-                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName("미인증회원")//임시값. 수정필요.
-                    .nickName("애플"+usrId.substring(usrId.length()-5))
+                .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+                .memberName("미인증회원")//임시값. 수정필요.
+                .nickName("애플"+usrId.substring(usrId.length()-5))
                 .password("***")//임시값. 수정필요.
                 .email("***")//임시값. 수정필요.
 //                    .gender(gender)
@@ -1185,8 +1251,18 @@ public class MemberService {
                 .snsType(SNSType.apple)
                 .snsId(usrId)
                 .phoneNumber(new PhoneNumber("***","********"))
+                .alertSet(alertSet)
+                .videoSetting(videoSetting)
                 .build();
             newMember = memberRepository.save(newMember);
+
+            //토큰 생성.
+            String rawToken = newMember.getUid() + LocalDateTime.now();
+            String sessionToken = encoder.encode(rawToken);
+
+            String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+            newMember.setSessionToken(sessionToken);
+            resultDto.setSessionToken(encodingToken);
 
             resultDto.setMemberId(newMember.getId());
             return resultDto;
