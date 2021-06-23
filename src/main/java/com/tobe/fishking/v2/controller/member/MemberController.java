@@ -831,7 +831,7 @@ public class MemberController {
     /*kakao 인증코드 받는 메소드. */
     @ApiOperation(value = "kakao 로그인 인증코드 받는 api",notes = "")
     @RequestMapping("/kakaoAuthCode")
-    public String getKakaoAuthCode(
+    public void getKakaoAuthCode(
             @RequestParam(value = "code",required = false) String code,
             @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "error",required = false) String error,
@@ -845,13 +845,14 @@ public class MemberController {
             response.sendRedirect("/cust/member/login?error="+dto.getErrorCode()+"&errorMessage="+dto.getErrorMessage());
         }
         else if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+//            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());
         }
         else{
             model.addAttribute("accessToken",dto.getSessionToken());
             response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력. ~/member/signup로 보내라고함.
         }
-        return "";
+        return;
     }
     /*페이스북 인증코드 받는 메소드*/
     @ApiOperation(value = "페이스북 인증 코드 받는 api",notes = "" +
@@ -874,7 +875,8 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForFacebook(code);
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+//            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());
         }
         else{
             response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
@@ -912,7 +914,8 @@ public class MemberController {
             response.sendRedirect("/cust/member/login?error="+dto.getErrorCode()+"&errorMessage="+dto.getErrorMessage());
         }
         else if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+//            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());
         }
         else{
             response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
@@ -931,24 +934,13 @@ public class MemberController {
         SnsLoginResponseDto dto = memberService.snsLoginForApple(request.getId_token());
 
         if(dto.getResultType().equals("signUp")){
-            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+//            response.sendRedirect("/cust/member/signup?memberId="+dto.getMemberId());//!!!!!리액트 서버에서 돌아가도록 세팅 필요.
+            response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());
         }
         else{
             response.sendRedirect("/cust/main/home?loggedIn=true&accesstoken="+dto.getSessionToken());//!!!!!sns로그인 완료후 보낼페이지 입력.
         }
         return;
-
-
-//        String code = dto.getCode();
-//        String client_secret = appleService.getAppleClientSecret(dto.getId_token());
-//
-//        logger.debug("================================");
-//        logger.debug("id_token ‣ " + dto.getId_token());
-//        logger.debug("payload ‣ " + appleService.getPayload(dto.getId_token()));
-//        logger.debug("client_secret ‣ " + client_secret);
-//        logger.debug("================================");
-//
-//        return appleService.requestCodeValidations(client_secret, code, null);
     }
 
     /*사용자 프로필 정보 페이지 조회
