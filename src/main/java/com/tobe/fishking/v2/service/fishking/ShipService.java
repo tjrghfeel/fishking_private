@@ -28,6 +28,7 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.repository.fishking.specs.ShipSpecs;
 import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.utils.DateUtils;
+import com.tobe.fishking.v2.utils.HashUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.*;
@@ -314,7 +315,7 @@ public class ShipService {
                     if (sessionToken.equals("")) {
                         sessionToken = LocalTime.now().toString();
                     }
-                    token = httpRequestService.loginADT(ship.getSkbId(), ship.getSkbPw(), sessionToken).replaceAll("\"", "");
+                    token = httpRequestService.loginADT(ship.getSkbId(), HashUtil.sha256(ship.getSkbPw()), sessionToken).replaceAll("\"", "");
                     String videoUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
                     if (videoUrl != null) {
                         response.setLiveVideo(videoUrl);
@@ -668,7 +669,7 @@ public class ShipService {
                         }
                     } else {
                         try {
-                            String token = httpRequestService.loginADT(ship.getSkbId(), ship.getSkbPw(), video.getId().toString());
+                            String token = httpRequestService.loginADT(ship.getSkbId(), HashUtil.sha256(ship.getSkbPw()), video.getId().toString());
                             String liveUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
                             c.put("liveVideo", Objects.requireNonNullElse(liveUrl, ""));
                         } catch (Exception e) {
