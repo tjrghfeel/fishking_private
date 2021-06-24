@@ -668,7 +668,7 @@ public class ShipService {
                         }
                     } else {
                         try {
-                            String token = httpRequestService.loginADT(ship.getCompany().getAdtId(), ship.getCompany().getAdtPw(), video.getId().toString());
+                            String token = httpRequestService.loginADT(ship.getSkbId(), ship.getSkbPw(), video.getId().toString());
                             String liveUrl = httpRequestService.getADTCameraLive(video.getSerial(), token);
                             c.put("liveVideo", Objects.requireNonNullElse(liveUrl, ""));
                         } catch (Exception e) {
