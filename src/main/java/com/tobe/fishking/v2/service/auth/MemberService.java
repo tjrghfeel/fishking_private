@@ -579,6 +579,7 @@ public class MemberService {
         resultDto.setSnsType("kakao");
         String clientId = "f0685b27f74d3f456d396195ca40796e";
         String redirectUrl = "https://www.fishkingapp.com/v2/api/kakaoAuthCode";
+//        String redirectUrl = "http://localhost:8083/v2/api/kakaoAuthCode";
 //        String clientSecret = "LhhI6bSQYOCzBf7FLfnLGA0Ud2qsGTkV";
 
         /*받은 응답이 에러가있을경우 예외처리.*/
@@ -655,7 +656,7 @@ public class MemberService {
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
         Member member = memberRepository.findBySnsIdAndSnsType(usrId.toString(), SNSType.kakao);
         /*이미 가입된 회원일 경우, 로그인 처리. */
-        if(member !=null && member.getIsCertified()==true){
+        if(member !=null && member.getIsSignedUp()==true){
             resultDto.setResultType("login");
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
@@ -675,35 +676,35 @@ public class MemberService {
             return resultDto;
         }
         /*회원가입 중간에 나갔었던 경우. */
-        else if(member !=null && member.getIsCertified()==false){
-            memberRepository.deleteById(member.getId());
-
-            resultDto.setResultType("signUp");
-
-            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
-            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
-
-            Member newMember = Member.builder()
-                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-                    .password("tempPassword")//임시값. 수정필요.
-                    .email("tempEmail")//임시값. 수정필요.
-                    .roles(Role.member)
-                    .profileImage(noProfileImage.getExtraValue1())
-                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
-                    .isCertified(false)
-                    .isSignedUp(false)
-                    .snsType(SNSType.kakao)
-                    .snsId(usrId.toString())
-                    .build();
-            newMember = memberRepository.save(newMember);
-
-            resultDto.setMemberId(newMember.getId());
-            return resultDto;
-        }
+//        else if(member !=null && member.getIsCertified()==false){
+//            memberRepository.deleteById(member.getId());
+//
+//            resultDto.setResultType("signUp");
+//
+//            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+//            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+//            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+//            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+//
+//            Member newMember = Member.builder()
+//                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+//                    .memberName(null)//임시값. 수정필요.
+//                    .password("tempPassword")//임시값. 수정필요.
+//                    .email("tempEmail")//임시값. 수정필요.
+//                    .roles(Role.member)
+//                    .profileImage(noProfileImage.getExtraValue1())
+//                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+//                    .isActive(false)
+//                    .isCertified(false)
+//                    .isSignedUp(false)
+//                    .snsType(SNSType.kakao)
+//                    .snsId(usrId.toString())
+//                    .build();
+//            newMember = memberRepository.save(newMember);
+//
+//            resultDto.setMemberId(newMember.getId());
+//            return resultDto;
+//        }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
          * - 회원가입페이지로 라다이렉트.
          * - sns api에서 넘겨준 sns연동id를 반환. */
@@ -715,24 +716,48 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
+            }
+
             Member newMember = Member.builder()
                     .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                    .password("tempPassword")//임시값. 수정필요.
-                    .email("tempEmail")//임시값. 수정필요.
+                    .memberName("미인증회원")//임시값. 수정필요.
+                    .nickName("카카오"+usrId.toString().substring(usrId.toString().length()-5))
+                    .password("***")//임시값. 수정필요.
+                    .email("***")//임시값. 수정필요.
 //                    .gender(gender)
                     .roles(Role.member)
                     .profileImage(noProfileImage.getExtraValue1())
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
+                    .isActive(true)
                     .isCertified(false)
-                    .isSignedUp(false)
+                    .isSignedUp(true)
                     .snsType(SNSType.kakao)
                     .snsId(usrId.toString())
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .phoneNumber(new PhoneNumber("***","********"))
+                    .alertSet(alertSet)
+                    .videoSetting(videoSetting)
                     .build();
             newMember = memberRepository.save(newMember);
+
+            String rawToken = newMember.getUid() + LocalDateTime.now();
+            String sessionToken = encoder.encode(rawToken);
+
+            String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+            newMember.setSessionToken(sessionToken);
+            resultDto.setSessionToken(encodingToken);
 
             resultDto.setMemberId(newMember.getId());
             return resultDto;
@@ -808,7 +833,7 @@ public class MemberService {
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
         Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.facebook);
         /*이미 가입된 회원일 경우, 로그인 처리. */
-        if(member !=null && member.getIsCertified() == true){
+        if(member !=null && member.getIsSignedUp() == true){
             resultDto.setResultType("login");
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
@@ -827,38 +852,38 @@ public class MemberService {
             }
             return resultDto;
         }
-        else if(member != null && member.getIsCertified() == false){
-            memberRepository.delete(member);
-
-            resultDto.setResultType("signUp");
-
-            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
-            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
-
-            Member newMember = Member.builder()
-                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                    .password("tempPassword")//임시값. 수정필요.
-                    .email("tempEmail")//임시값. 수정필요.
-//                    .gender(gender)
-                    .roles(Role.member)
-                    .profileImage(noProfileImage.getExtraValue1())
-                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
-                    .isCertified(false)
-                    .isSignedUp(false)
-                    .snsType(SNSType.facebook)
-                    .snsId(usrId)
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
-                    .build();
-            newMember = memberRepository.save(newMember);
-
-            resultDto.setMemberId(newMember.getId());
-            return resultDto;
-        }
+//        else if(member != null && member.getIsCertified() == false){
+//            memberRepository.delete(member);
+//
+//            resultDto.setResultType("signUp");
+//
+//            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+//            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+//            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+//            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+//
+//            Member newMember = Member.builder()
+//                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+//                    .memberName(null)//임시값. 수정필요.
+////                    .nickName(usrNickName)
+//                    .password("tempPassword")//임시값. 수정필요.
+//                    .email("tempEmail")//임시값. 수정필요.
+////                    .gender(gender)
+//                    .roles(Role.member)
+//                    .profileImage(noProfileImage.getExtraValue1())
+//                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+//                    .isActive(false)
+//                    .isCertified(false)
+//                    .isSignedUp(false)
+//                    .snsType(SNSType.facebook)
+//                    .snsId(usrId)
+////                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+//                    .build();
+//            newMember = memberRepository.save(newMember);
+//
+//            resultDto.setMemberId(newMember.getId());
+//            return resultDto;
+//        }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
          * - 회원가입페이지로 라다이렉트.
          * - sns api에서 넘겨준 sns연동id를 반환. */
@@ -870,24 +895,49 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
+            }
+
             Member newMember = Member.builder()
                     .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                    .password("tempPassword")//임시값. 수정필요.
-                    .email("tempEmail")//임시값. 수정필요.
+                    .memberName("미인증회원")//임시값. 수정필요.
+                    .nickName("페이스북"+usrId.substring(usrId.length()-5))
+                    .password("***")//임시값. 수정필요.
+                    .email("***")//임시값. 수정필요.
 //                    .gender(gender)
                     .roles(Role.member)
                     .profileImage(noProfileImage.getExtraValue1())
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
+                    .isActive(true)
                     .isCertified(false)
-                    .isSignedUp(false)
+                    .isSignedUp(true)
                     .snsType(SNSType.facebook)
                     .snsId(usrId)
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .phoneNumber(new PhoneNumber("***","********"))
+                    .alertSet(alertSet)
+                    .videoSetting(videoSetting)
                     .build();
             newMember = memberRepository.save(newMember);
+
+            //토큰 생성.
+            String rawToken = newMember.getUid() + LocalDateTime.now();
+            String sessionToken = encoder.encode(rawToken);
+
+            String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+            newMember.setSessionToken(sessionToken);
+            resultDto.setSessionToken(encodingToken);
 
             resultDto.setMemberId(newMember.getId());
             return resultDto;
@@ -976,7 +1026,7 @@ public class MemberService {
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
         Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.naver);
         /*이미 가입된 회원일 경우, 로그인 처리. */
-        if(member !=null && member.getIsCertified() == true){
+        if(member !=null && member.getIsSignedUp() == true){
             resultDto.setResultType("login");
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
@@ -995,38 +1045,38 @@ public class MemberService {
             }
             return resultDto;
         }
-        else if(member != null && member.getIsCertified() == false){
-            memberRepository.delete(member);
-
-            resultDto.setResultType("signUp");
-
-            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
-            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
-
-            Member newMember = Member.builder()
-                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                    .password(usrId)//임시값. 수정필요.
-                    .email(usrId)//임시값. 수정필요.
-//                    .gender(gender)
-                    .roles(Role.member)
-                    .profileImage(noProfileImage.getExtraValue1())
-                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
-                    .isCertified(false)
-                    .isSignedUp(false)
-                    .snsType(SNSType.naver)
-                    .snsId(usrId)
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
-                    .build();
-            newMember = memberRepository.save(newMember);
-
-            resultDto.setMemberId(newMember.getId());
-            return resultDto;
-        }
+//        else if(member != null && member.getIsCertified() == false){
+//            memberRepository.delete(member);
+//
+//            resultDto.setResultType("signUp");
+//
+//            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+//            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+//            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+//            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+//
+//            Member newMember = Member.builder()
+//                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+//                    .memberName(null)//임시값. 수정필요.
+////                    .nickName(usrNickName)
+//                    .password(usrId)//임시값. 수정필요.
+//                    .email(usrId)//임시값. 수정필요.
+////                    .gender(gender)
+//                    .roles(Role.member)
+//                    .profileImage(noProfileImage.getExtraValue1())
+//                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+//                    .isActive(false)
+//                    .isCertified(false)
+//                    .isSignedUp(false)
+//                    .snsType(SNSType.naver)
+//                    .snsId(usrId)
+////                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+//                    .build();
+//            newMember = memberRepository.save(newMember);
+//
+//            resultDto.setMemberId(newMember.getId());
+//            return resultDto;
+//        }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
          * - 회원가입페이지로 라다이렉트.
          * - sns api에서 넘겨준 sns연동id를 반환. */
@@ -1038,65 +1088,52 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
-            Member newMember = Member.builder()
-                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                    .password(usrId)//임시값. 수정필요.
-                    .email(usrId)//임시값. 수정필요.
-//                    .gender(gender)
-                    .roles(Role.member)
-                    .profileImage(noProfileImage.getExtraValue1())
-                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
-                    .isCertified(false)
-                    .isSignedUp(false)
-                    .snsType(SNSType.naver)
-                    .snsId(usrId)
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
-                    .build();
-            newMember = memberRepository.save(newMember);
-
-            resultDto.setMemberId(newMember.getId());
-            return resultDto;
-            /*String[] phoneNumber = convertPhoneNumber(usrMobile);
-            if(memberRepository.existsByAreaCodeAndLocalNumber(phoneNumber[0], phoneNumber[1])>0){
-                throw new RuntimeException("이미 가입한 전화번호입니다.");
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
             }
 
-            *//*저장할 회원정보 변환*//*
-             *//*Gender gender=null;
-            if(usrGender.equals("F")){gender=Gender.girl;}
-            else if(usrGender.equals("M")){gender=Gender.boy;}
-            else if(usrGender.equals("U")){gender=null;}*//*
-
-             *//*기본 프로필 이미지url들 가져옴*//*
-            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
-
             Member newMember = Member.builder()
-                    .uid(SNSType.naver.getValue()+usrId)
-                    .memberName(usrName)
-//                    .nickName(usrNickName)
-                    .email(usrEmail)
+                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+                    .memberName("미인증회원")//임시값. 수정필요.
+                    .nickName("네이버"+usrId.substring(usrId.length()-5))
+                    .password("***")//임시값. 수정필요.
+                    .email("***")//임시값. 수정필요.
 //                    .gender(gender)
                     .roles(Role.member)
                     .profileImage(noProfileImage.getExtraValue1())
                     .profileBackgroundImage(noBackgroundImage.getExtraValue1())
                     .isActive(true)
-                    .isCertified(true)
+                    .isCertified(false)
+                    .isSignedUp(true)
                     .snsType(SNSType.naver)
                     .snsId(usrId)
-                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                    .phoneNumber(new PhoneNumber("***","********"))
+                    .alertSet(alertSet)
+                    .videoSetting(videoSetting)
                     .build();
             newMember = memberRepository.save(newMember);
 
+            //토큰 생성.
             String rawToken = newMember.getUid() + LocalDateTime.now();
             String sessionToken = encoder.encode(rawToken);
 
+            String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
             newMember.setSessionToken(sessionToken);
-            return sessionToken;*/
+            resultDto.setSessionToken(encodingToken);
+
+            resultDto.setMemberId(newMember.getId());
+            return resultDto;
         }
 
     }
@@ -1121,7 +1158,7 @@ public class MemberService {
         /*이미 가입된 회원이 존재하면 로그인처리, 아니면 회원가입처리. */
         Member member = memberRepository.findBySnsIdAndSnsType(usrId, SNSType.apple);
         /*이미 가입된 회원일 경우, 로그인 처리. */
-        if(member !=null && member.getIsCertified() == true){
+        if(member !=null && member.getIsSignedUp() == true){
             resultDto.setResultType("login");
 
             /*세션토큰이 이미 존재하면 해당세션토큰반환*/
@@ -1140,38 +1177,38 @@ public class MemberService {
             }
             return resultDto;
         }
-        else if(member != null && member.getIsCertified() == false){
-            memberRepository.delete(member);
-
-            resultDto.setResultType("signUp");
-
-            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
-            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
-            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
-            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
-
-            Member newMember = Member.builder()
-                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                    .password(usrId)//임시값. 수정필요.
-                    .email(usrId)//임시값. 수정필요.
-//                    .gender(gender)
-                    .roles(Role.member)
-                    .profileImage(noProfileImage.getExtraValue1())
-                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                    .isActive(false)
-                    .isCertified(false)
-                    .isSignedUp(false)
-                    .snsType(SNSType.apple)
-                    .snsId(usrId)
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
-                    .build();
-            newMember = memberRepository.save(newMember);
-
-            resultDto.setMemberId(newMember.getId());
-            return resultDto;
-        }
+//        else if(member != null && member.getIsCertified() == false){
+//            memberRepository.delete(member);
+//
+//            resultDto.setResultType("signUp");
+//
+//            /*sns관련 필드를 저장하여 임시 member 엔터티 생성. */
+//            CodeGroup codeGroup = codeGroupRepository.findByCode("profileImg");
+//            CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
+//            CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
+//
+//            Member newMember = Member.builder()
+//                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+//                    .memberName(null)//임시값. 수정필요.
+////                    .nickName(usrNickName)
+//                    .password(usrId)//임시값. 수정필요.
+//                    .email(usrId)//임시값. 수정필요.
+////                    .gender(gender)
+//                    .roles(Role.member)
+//                    .profileImage(noProfileImage.getExtraValue1())
+//                    .profileBackgroundImage(noBackgroundImage.getExtraValue1())
+//                    .isActive(false)
+//                    .isCertified(false)
+//                    .isSignedUp(false)
+//                    .snsType(SNSType.apple)
+//                    .snsId(usrId)
+////                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+//                    .build();
+//            newMember = memberRepository.save(newMember);
+//
+//            resultDto.setMemberId(newMember.getId());
+//            return resultDto;
+//        }
         /*처음 sns로 로그인한 회원인 경우, 회원가입처리.
          * - 회원가입페이지로 라다이렉트.
          * - sns api에서 넘겨준 sns연동id를 반환. */
@@ -1183,24 +1220,49 @@ public class MemberService {
             CommonCode noProfileImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noImg");
             CommonCode noBackgroundImage = commonCodeRepository.findByCodeGroupAndCode(codeGroup,"noBackImg");
 
+            //알림 설정정보
+            CodeGroup alertSetCodeGroup = codeGroupRepository.findByCode("alertSet");
+            List<CommonCode> alertSetList = commonCodeRepository.findAllByCodeGroup(alertSetCodeGroup);
+            Set<CommonCode> alertSet = new HashSet<>();
+            for(int i=0; i<alertSetList.size(); i++){
+                alertSet.add(alertSetList.get(i));
+            }
+            //동영상 설정정보
+            CodeGroup videoSettingCodeGroup = codeGroupRepository.findByCode("videoSetting");
+            List<CommonCode> videoSettingList = commonCodeRepository.findAllByCodeGroup(videoSettingCodeGroup);
+            Set<CommonCode> videoSetting = new HashSet<>();
+            for(int i=0; i<videoSettingList.size(); i++){
+                videoSetting.add(videoSettingList.get(i));
+            }
+
             Member newMember = Member.builder()
-                    .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
-                    .memberName(null)//임시값. 수정필요.
-//                    .nickName(usrNickName)
-                .password(usrId)//임시값. 수정필요.
-                .email(usrId)//임시값. 수정필요.
+                .uid(LocalDateTime.now().toString() + (int)Math.random()*1000)//임시값. 수정필요.
+                .memberName("미인증회원")//임시값. 수정필요.
+                .nickName("애플"+usrId.substring(usrId.length()-5))
+                .password("***")//임시값. 수정필요.
+                .email("***")//임시값. 수정필요.
 //                    .gender(gender)
                 .roles(Role.member)
                 .profileImage(noProfileImage.getExtraValue1())
                 .profileBackgroundImage(noBackgroundImage.getExtraValue1())
-                .isActive(false)
+                .isActive(true)
                 .isCertified(false)
-                .isSignedUp(false)
+                .isSignedUp(true)
                 .snsType(SNSType.apple)
                 .snsId(usrId)
-//                    .phoneNumber(new PhoneNumber(phoneNumber[0],phoneNumber[1]))
+                .phoneNumber(new PhoneNumber("***","********"))
+                .alertSet(alertSet)
+                .videoSetting(videoSetting)
                 .build();
             newMember = memberRepository.save(newMember);
+
+            //토큰 생성.
+            String rawToken = newMember.getUid() + LocalDateTime.now();
+            String sessionToken = encoder.encode(rawToken);
+
+            String encodingToken = AES.aesEncode(sessionToken,env.getProperty("encrypKey.key"));
+            newMember.setSessionToken(sessionToken);
+            resultDto.setSessionToken(encodingToken);
 
             resultDto.setMemberId(newMember.getId());
             return resultDto;
