@@ -32,6 +32,7 @@ import com.tobe.fishking.v2.repository.common.ObserverCodeRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.utils.HashUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -237,8 +238,9 @@ public class FishingShipService {
 //            Ship ship = shipRepository.getBySkbId(dto.getId());
 //            if(ship != null){ throw new ServiceLogicException("해당 아이디는 이미 사용 중 입니다");}
 //        }
-
-        token = httpRequestService.loginADT(dto.getId(), dto.getPw(), memberId.toString());
+//        if(dto.getShipId() == null){token = httpRequestService.loginADT(dto.getId(), HashUtil.sha256(dto.getPw()), memberId.toString());}
+//        else{token = httpRequestService.loginADT(dto.getId(), dto.getPw(), memberId.toString());}
+        token = httpRequestService.loginADT(dto.getId(), HashUtil.sha256(dto.getPw()), memberId.toString());
         List<Map<String, Object>> cameras = httpRequestService.getADTList(token);
         for (Map<String, Object> camera : cameras) {
             Map<String, Object> c = new HashMap<>();
