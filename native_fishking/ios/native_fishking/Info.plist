@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>ko_KR</string>
 	<key>CFBundleDisplayName</key>
 	<string>어복황제</string>
 	<key>CFBundleExecutable</key>
@@ -59,15 +59,17 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Camera</string>
+	<string>사진/동영상 촬영 및 유저조행기, 프로필 등록 등을 위해 필요한 기능입니다.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Location Always And When In Use</string>
+	<string>내 주변 낚시 업체 정보 제공 및 출조점 위치 정보 제공을 위해 필요한 기능입니다.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location Always</string>
+	<string>내 주변 낚시 업체 정보 제공 및 출조점 위치 정보 제공을 위해 필요한 기능입니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location When In Use</string>
+	<string>내 주변 낚시 업체 정보 제공 및 출조점 위치 정보 제공을 위해 필요한 기능입니다.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>예약 및 업체와의 비상연락을 위해 필요한 기능입니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Photo Library</string>
+	<string>사진/동영상 촬영 및 유저조행기, 프로필 등록 등을 위해 필요한 기능입니다.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

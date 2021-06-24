@@ -136,6 +136,9 @@ android {
         versionCode 3
         versionName "1.0.0"
         multiDexEnabled true
+        ndk {
+            debugSymbolLevel 'FULL'
+        }
     }
     splits {
         abi {
