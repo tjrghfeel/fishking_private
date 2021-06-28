@@ -308,7 +308,7 @@ export default inject(
                             />
                           </figure>
                           <span className="large">
-                            물때 <strong className="point">5물</strong>
+                            물때 <strong className="point">{this.state.location?.tide}</strong>
                           </span>
                         </div>
                         {this.state.location?.weather && (
@@ -331,10 +331,20 @@ export default inject(
                         {this.state.location?.tideList && (
                           <div className="tide-graph">
                             <figure>
-                              <img
-                                src="/assets/cust/img/svg/tine-line1.svg"
-                                alt=""
-                              />
+                              {(this.state.location?.tideList && this.state.location?.tideList[0] &&
+                                  this.state.location?.tideList[0]['peak'] === 'high')?
+                                      (<img
+                                        src="/assets/cust/img/svg/tine-line1.svg"
+                                        alt=""
+                                    />)
+                                      :
+                              (<img
+                                      src="/assets/cust/img/svg/tine-line1.svg"
+                                      alt=""
+                                      style={{transform:'scaleX(-1)'}}
+                                  />)
+                              }
+
                             </figure>
                             <div className="tide-graph-time-col">
                               {this.state.location?.tideList &&
@@ -355,14 +365,14 @@ export default inject(
                                   .map((data, index) => {
                                     if (index % 2 === 0) {
                                       return (
-                                        <div className="col up">
+                                        <div className={(data['peak']==='high')? 'col up':'col down'}>
                                           {data === null && ""}
                                           {data !== null && data["level"]}
                                         </div>
                                       );
                                     } else {
                                       return (
-                                        <div className="col down">
+                                        <div className={(data['peak']==='high')? 'col up':'col down'}>
                                           {data === null && ""}
                                           {data !== null && data["level"]}
                                         </div>

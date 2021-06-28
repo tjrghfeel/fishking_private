@@ -21,7 +21,7 @@ public class TidalLevelResponse {
                               LocalDateTime dateTime,
                               String peak) {
         this.level = level;
-        this.dateTime = DateUtils.getDateTimeInFormat(dateTime);
+        this.dateTime = dateTime != null ? DateUtils.getDateTimeInFormat(dateTime.minusHours(9L)) : "";
         this.peak = peak == null ? "" : peak;
     }
 
