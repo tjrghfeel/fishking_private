@@ -11,12 +11,14 @@ import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.model.common.ShareStatus;
 import com.tobe.fishking.v2.model.fishing.UpdateShipDTO;
 import com.tobe.fishking.v2.service.StringConverter;
+import com.tobe.fishking.v2.utils.HashUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -371,7 +373,7 @@ public class Ship extends BaseTime {  //선상
 
     public void setIsActive(Boolean isActive){this.isActive = isActive;}
 
-    public void updateShip(UpdateShipDTO dto, List<ObserverCode> codes, Member member) {
+    public void updateShip(UpdateShipDTO dto, List<ObserverCode> codes, Member member) throws NoSuchAlgorithmException {
         Location loc = Location.builder().latitude(dto.getLatitude()).longitude(dto.getLongitude()).build();
         ObserverCode code = codes.stream()
                 .sorted(Comparator.comparing(e -> e.distanceFrom(loc)))
@@ -399,7 +401,7 @@ public class Ship extends BaseTime {  //선상
         this.nhnId = dto.getNhnId();
         this.nhnPw = dto.getNhnPw();
         this.skbId = dto.getSkbId();
-        this.skbPw = dto.getSkbPw();
+        this.skbPw = dto.getSkbPw();//(dto.getSkbPw() != null)? HashUtil.sha256(dto.getSkbPw()) : null;
     }
 //
 //    public void setSetCode(String setCode){this.setCode = setCode;}

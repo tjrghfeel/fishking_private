@@ -16,7 +16,7 @@ public class TodayTideDto {
     private String observerName;
     private Boolean isAlerted;
     private String date;
-//    private String tide;
+    private String tide;
     private ArrayList<String> weather;
     private List<TidalLevelResponse> tideList;
 //    private ArrayList<String> tideTimeList;

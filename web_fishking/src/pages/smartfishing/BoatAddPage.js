@@ -318,14 +318,15 @@ export default inject(
 
       getNHNCamera = async ()=>{
         const {APIStore, ModalStore} = this.props;
-        await this.setState({nhnId : this.nhnId.current.value})
-        const { nhnId, nhnPw } = this.state;
-        let params = {id : nhnId, pw : nhnPw};
+        // await this.setState({nhnId : this.nhnId.current.value})
+        // const { nhnId, nhnPw } = this.state;
+        let params = {id : this.nhnId.current.value, pw : null};
 
         try{
           let resolve = await APIStore._post(`/v2/api/ship/cameras/nhn`, params);
           if(resolve){
             await this.setState({
+              nhnId: this.nhnId.current.value,
               arr_nhnCameras: resolve || [],
               nhnCameras: resolve || [],
             });
@@ -343,14 +344,16 @@ export default inject(
       }
       getSKBCamera = async ()=>{
         const {APIStore, ModalStore} = this.props;
-        await this.setState({skbId: this.skbId.current.value, skbPw: this.skbPw.current.value})
-        const { skbId, skbPw } = this.state;
-        let params = {id : skbId, pw : skbPw};
+        // await this.setState({skbId: this.skbId.current.value, skbPw: this.skbPw.current.value})
+        // const { skbId, skbPw } = this.state;
+        let params = {id : this.skbId.current.value, pw : this.skbPw.current.value};
 
         try{
           let resolve = await APIStore._post(`/v2/api/ship/cameras/skb`, params);
           if(resolve){
             await this.setState({
+              skbId: this.skbId.current.value,
+              skbPw: this.skbPw.current.value,
               arr_adtCameras: resolve || [],
               adtCameras: resolve || [],
             });

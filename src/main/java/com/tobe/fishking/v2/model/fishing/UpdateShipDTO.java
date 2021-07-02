@@ -6,12 +6,14 @@ import com.tobe.fishking.v2.entity.fishing.Company;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.model.common.Location;
+import com.tobe.fishking.v2.utils.HashUtil;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,7 +81,7 @@ public class UpdateShipDTO {
     private @Valid List<AddShipCamera> nhnCameras;
     private @Valid String router;
 
-    public Ship toEntity(Member member, Company company, List<ObserverCode> codes, List<String> positions) {
+    public Ship toEntity(Member member, Company company, List<ObserverCode> codes, List<String> positions) throws NoSuchAlgorithmException {
         Location loc = Location.builder().latitude(latitude).longitude(longitude).build();
         ObserverCode code = codes.stream()
                 .sorted(Comparator.comparing(e -> e.distanceFrom(loc)))
@@ -121,6 +123,7 @@ public class UpdateShipDTO {
                 .nhnPw(nhnPw)
                 .skbId(skbId)
                 .skbPw(skbPw)
+//                .skbPw((skbPw != null)? HashUtil.sha256(skbPw) : null)
                 .build();
     }
 }

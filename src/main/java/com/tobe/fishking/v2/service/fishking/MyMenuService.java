@@ -18,6 +18,7 @@ import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,8 @@ public class MyMenuService {
     CodeGroupRepository codeGroupRepository;
     @Autowired
     CommonCodeRepository commonCodeRepository;
+    @Autowired
+    CommonService commonService;
 
     HolidayUtil holidayUtil;
 
@@ -248,6 +251,12 @@ public class MyMenuService {
 
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         List<TidalLevelResponse> tideList = tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), observer.getCode());
+        if(tideList.size() > 0 && tideList.size() < 4){
+            for(; tideList.size() != 4;){ tideList.add(new TidalLevelResponse(null, null, null));}
+        }
+
+        //물때 계산.
+        Map<String, Object> tide = commonService.findTideTime(date);
 
         result = TodayTideDto.builder()
                 .observerId(observerId)
@@ -255,6 +264,7 @@ public class MyMenuService {
                 .isAlerted(isAlerted)
                 .date(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .tideList(tideList)
+                .tide((String)tide.get("tideTime"))
                 .build();
 
         /*알림 리스트*/
@@ -529,6 +539,9 @@ public class MyMenuService {
 //            tideLevelList.add(tideLevel);
 //        }
         List<TidalLevelResponse> tideList = tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(dateString), observer.getCode());
+        if(tideList.size() > 0 && tideList.size() < 4){
+            for(; tideList.size() != 4;){ tideList.add(new TidalLevelResponse(null, null, null));}
+        }
 
         /*알림 리스트*/
         ArrayList<String> alertTideList = new ArrayList<String>();
@@ -584,6 +597,9 @@ public class MyMenuService {
             }
         }
 
+        //물때 계산.
+        Map<String, Object> tide = commonService.findTideTime(dateString);
+
         result = TideByDateDto.builder()
                 .observerId(observerId)
                 .observerName(observer.getName())
@@ -595,6 +611,7 @@ public class MyMenuService {
                 .alertTideList(alertTideList)
                 .alertDayList(alertDayList)
                 .alertTimeList(alertTimeList)
+                .tide((String)tide.get("tideTime"))
                 .build();
 
         /*날씨*/
