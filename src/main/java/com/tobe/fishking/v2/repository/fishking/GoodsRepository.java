@@ -150,6 +150,6 @@ public interface GoodsRepository extends BaseRepository<Goods, Long>, GoodsRepos
             "from Goods g2 ")
     List<Map<String, Long>> getDashBoardGoods(Pageable pageable);
 
-    @Query("select min(g.totalAmount) from Goods g where g.isUse = true and g.ship.id = :shipId")
-    Integer getCheapestGoods(Long shipId);
+    @Query("select min(g.totalAmount) from Goods g where g.isUse = true and g.ship.id = :shipId and g.id <> :goodsId")
+    Integer getCheapestGoods(Long shipId, Long goodsId);
 }

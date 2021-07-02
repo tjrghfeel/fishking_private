@@ -287,18 +287,18 @@ public class GoodsService {
                 ship.changeCheapest(member, addGoods.getAmount());
                 shipRepo.save(ship);
             } else {
-                if (addGoods.getIsUse() && ship.getCheapestGoodsCost() > addGoods.getAmount()) {
+                if (ship.getCheapestGoodsCost() > addGoods.getAmount()) {
                     ship.changeCheapest(member, addGoods.getAmount());
                     shipRepo.save(ship);
                 }
             }
         }
 
-        if (!addGoods.getIsUse() && ship.getCheapestGoodsCost() > addGoods.getAmount()) {
-            Integer c = goodsRepo.getCheapestGoods(ship.getId());
-            ship.changeCheapest(member, c);
-            shipRepo.save(ship);
-        }
+//        if (!addGoods.getIsUse() && ship.getCheapestGoodsCost() > addGoods.getAmount()) {
+//            Integer c = goodsRepo.getCheapestGoods(ship.getId(), goods.getId());
+//            ship.changeCheapest(member, c);
+//            shipRepo.save(ship);
+//        }
 
         return goods.getId();
     }
@@ -336,15 +336,26 @@ public class GoodsService {
             goodsFishingDateRepository.save(goodsFishingDate);
         }
 
-        if (!updateGoods.getIsUse() && ship.getCheapestGoodsCost() > updateGoods.getAmount()) {
-            Integer c = goodsRepo.getCheapestGoods(ship.getId());
-            ship.changeCheapest(member, c);
+        if (!updateGoods.getIsUse()) {
+            Integer c = goodsRepo.getCheapestGoods(ship.getId(), goods.getId());
+            ship.changeCheapest(member, c == null ? 0 : c);
             shipRepo.save(ship);
         }
 
-        if (updateGoods.getIsUse() && ship.getCheapestGoodsCost() > updateGoods.getAmount()) {
-            ship.changeCheapest(member, updateGoods.getAmount());
-            shipRepo.save(ship);
+        if (updateGoods.getIsUse()) {
+            if (ship.getCheapestGoodsCost() == 0) {
+                ship.changeCheapest(member, updateGoods.getAmount());
+                shipRepo.save(ship);
+            } else {
+                Integer c = goodsRepo.getCheapestGoods(ship.getId(), goods.getId());
+                if (c == null) {
+                    ship.changeCheapest(member, updateGoods.getAmount());
+                    shipRepo.save(ship);
+                } else if (ship.getCheapestGoodsCost() > updateGoods.getAmount()) {
+                    ship.changeCheapest(member, updateGoods.getAmount());
+                    shipRepo.save(ship);
+                }
+            }
         }
 
         return true;
