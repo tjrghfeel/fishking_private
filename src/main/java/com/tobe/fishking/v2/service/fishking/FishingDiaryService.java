@@ -520,6 +520,13 @@ public class FishingDiaryService {
                 );
             }
         }
+        else if(sort.equals("accuseLast")){
+            return fishingDiaryRepo.getFishingDiaryListOrderByAccuseCountLast(
+                    filePublish,district1Regex, district2Regex, fishSpeciesRegex, searchKey, null,
+                    memberId,myPost,searchTarget,shipId,shipName,nickName,title,content, createdDateStart,createdDateEnd,
+                    hasShipData, true, pageable
+            );
+        }
         else if(sort.equals("likeCount")){
             return fishingDiaryRepo.getFishingDiaryListOrderByLikeCount(
                     filePublish, district1Regex, district2Regex, fishSpeciesRegex, searchKey, null, memberId,myPost,searchTarget,shipId,pageable);}
