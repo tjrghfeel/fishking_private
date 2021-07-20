@@ -46,13 +46,13 @@ export default inject(
             NativeStore,
           } = this.props;
 
-          // NativeStore.postMessage('Connections', {});
-          // document.addEventListener("message", event => {
-          //   this.setState({ connectionType: event.data });
-          // });
-          // window.addEventListener("message", event => {
-          //   this.setState({ connectionType: event.data });
-          // });
+          NativeStore.postMessage('Connections', {});
+          document.addEventListener("message", event => {
+            this.setState({ connectionType: event.data });
+          });
+          window.addEventListener("message", event => {
+            this.setState({ connectionType: event.data });
+          });
 
           let resolve = await APIStore._get(`/v2/api/ship/${id}`);
           await this.setState({
@@ -367,6 +367,14 @@ export default inject(
                               : "none",
                           }}
                         ></video>
+                        {/*<iframe width="560" height="315" src='https://vgai.capslive.co.kr/video/adt/MTkwMzg3'*/}
+                        {/*        frameborder="0"*/}
+                        {/*        allow="acceleroeter; autoplay; encrypted-media; gyroscope; picture-in-picture"*/}
+                        {/*        sandbox="allow-forms allow-modals allow-same-origin allow-script"*/}
+                        {/*        allowfullscreen*/}
+                        {/*        title='video'*/}
+                        {/*>*/}
+                        {/*</iframe>*/}
                         <span
                           id="live-mark"
                           className="play-live"
