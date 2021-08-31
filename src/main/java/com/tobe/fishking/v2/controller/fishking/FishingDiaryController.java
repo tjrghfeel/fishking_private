@@ -279,8 +279,9 @@ public class FishingDiaryController {
             @RequestParam(value = "hasShipData",required = false) Boolean hasShipData,
             @RequestParam(value = "pageCount",required = false,defaultValue = "20") Integer pageCount
     ) throws ResourceNotFoundException, EmptyListException {
-        if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount") || sort.equals("accuseCount"))){
-            throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount' 중 하나만 가능합니다.");
+        if(!(sort.equals("createdDate") || sort.equals("likeCount") || sort.equals("commentCount") || sort.equals("accuseCount")
+         || sort.equals("accuseLast"))){
+            throw new RuntimeException("sort값에는 'createdDate', 'likeCount', 'commentCount', 'accuseLast' 중 하나만 가능합니다.");
         }
         if(category!=null) {
             if (  !(category.equals("fishingDiary") || category.equals("fishingBlog"))) {

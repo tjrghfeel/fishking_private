@@ -337,6 +337,134 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
     );
     /*어복스토리 - 조항일지 목록 조회용 메소드 - 신고순*/
     @Query(
+            value = "select * from (select " +
+                    "   d.id id, " +
+                    "   s.id shipId, " +
+                    "   m.id memberId, " +
+                    "   d.created_date as createdDate, " +
+                    "   m.profile_image profileImage, " +
+                    "   (select case " +
+                    "       when d.file_publish = 5 then m.nick_name " +
+                    "       when d.file_publish = 6 then if(d.fishing_diary_ship_id is null, m.nick_name, s.ship_name)  " +
+                    "       else m.nick_name " +
+                    "       end " +
+                    "   ) nickName, " +
+                    "   if(d.fishing_diary_ship_id is null, d.fishing_location, s.address) address, " +
+                    "   if(:isManager = true or d.is_hidden = false, d.title, '숨김처리된 글입니다.') title, " +
+                    "   d.fishing_type fishingType, " +
+                    "   if(:isManager = true or d.is_hidden = false, LEFT(d.contents,50), '숨김처리된 글입니다.') contents, " +
+                    "   d.file_publish fishingDiaryType, " +
+                    "   (select case when exists (select v.id from realtime_video as v " +
+                    "       where v.rtvideos_ship_id=s.id) then 'true' else 'false' end) hasLiveCam, " +
+                    "   (select case when exists (select l.id from loveto as l " +
+                    "       where l.created_by=:memberId and (l.take_type=2 or l.take_type=3) and link_id=d.id) then 'true' else 'false' end) isLikeTo, " +
+                    "   (select case when exists (select dm.fishing_diary_id from fishing_diary_scrap_members dm " +
+                    "       where dm.scrap_members_id = :memberId and dm.fishing_diary_id = d.id) then 'true' else 'false' end) isScraped, " +
+                    "   d.like_count likeCount, " +
+                    "   d.comment_count commentCount, " +
+                    "   d.share_count scrapCount, " +
+                    "   if(:isManager = true or d.is_hidden = false, (select GROUP_CONCAT(f2.stored_file separator ',') " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
+                    "       group by f2.pid order by f2.file_no), null) fileNameList, " +
+                    "   if(:isManager = true or d.is_hidden = false, (select GROUP_CONCAT(f2.file_url separator ',') " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=0 and f2.is_delete = false " +
+                    "       group by f2.pid order by f2.file_no), null) filePathList, " +
+                    "   if(:isManager = true or d.is_hidden = false, (select f2.id " +
+                    "       from files f2 where f2.pid = d.id and f2.file_publish = d.file_publish and file_type=3 and f2.is_delete = false ), null) videoId, " +
+                    //관리자페이지에서 추가로 사용할 항목들
+                    "   d.is_active isActive, " +
+                    "   s.ship_name shipName, " +
+                    "   m.nick_name memberNickName, " +
+                    "   d.is_deleted isDelete, " +
+                    "   d.is_hidden isHidden,  " +
+                    "   (select count(a.id) from accuse a where a.link_id=d.id and a.target_type=11) accuseCount " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "where  " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
+                    "   and d.fishing_diary_member_id = m.id " +
+                    "   and if(:myPost, m.id = :memberId, true) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
+                    "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
+                    "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
+                    "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
+                    "   and if(:isManager = true, true, d.is_active = true) " +
+                    //관리자 조회시 사용되는 조건들.
+                    "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "   and if(:nickName is null, true, m.nick_name like %:nickName%) " +
+                    "   and if(:title is null, true, d.title like %:title%) " +
+                    "   and if(:content is null, true, d.contents like %:content%) " +
+                    "   and if(:createdDateStart is null, true, d.created_date >= :createdDateStart) " +
+                    "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
+                    "   and if(:hasShipData is null, true, " +
+                    "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
+                    "   and (select count(a.id) from accuse a where a.link_id=d.id and a.target_type=11) > 0 " +
+                    " group by d.id) v " +
+                    "order by v.accuseCount desc ",
+            countQuery = "select * from (select d.id " +
+                    "from fishing_diary d left join ship s on d.fishing_diary_ship_id=s.id, member m " +
+                    "where  " +
+                    "   if(:category is null, true, d.file_publish = :category) " +
+                    "   and d.fishing_diary_member_id = m.id " +
+                    "   and if(:myPost, m.id = :memberId, true) " +
+                    "   and if(:userId is null, true, m.id = :userId) "+
+                    "   and ( if(:district1 is null, true, s.address regexp :district1) " +
+                    "           or if(:district1 is null, true, d.fishing_location regexp :district1)) "+
+                    "   and ( if(:district2Regex is null, true, s.address regexp :district2Regex) " +
+                    "           or if(:district2Regex is null, true, d.fishing_location regexp :district2Regex)) " +
+                    "   and if(:fishSpeciesRegex is null, true, d.fishing_species_name regexp :fishSpeciesRegex) " +
+                    "   and if(:searchTarget = 'address',(s.address like %:searchKey%) or (d.fishing_location like %:searchKey%),true) " +
+                    "   and if(:searchTarget = 'title',d.title like %:searchKey%,true) " +
+                    "   and if(:searchTarget = 'content',d.contents like %:searchKey%, true) " +
+                    "   and if(:shipId is null, true, s.id = :shipId) " +
+                    "   and d.is_deleted = false " +
+                    "   and m.is_active = true " +
+                    "   and if(:isManager = true, true, d.is_active = true) " +
+                    //관리자 조회시 사용되는 조건들.
+                    "   and if(:shipName is null, true, s.ship_name like %:shipName%) " +
+                    "   and if(:nickName is null, true, m.nick_name like %:nickName%) " +
+                    "   and if(:title is null, true, d.title like %:title%) " +
+                    "   and if(:content is null, true, d.contents like %:content%) " +
+                    "   and if(:createdDateStart is null, true, d.created_date >= :createdDateStart) " +
+                    "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
+                    "   and if(:hasShipData is null, true, " +
+                    "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
+                    "   and (select count(a.id) from accuse a where a.link_id=d.id and a.target_type=11) > 0 " +
+                    " group by d.id) v " +
+                    "order by v.accuseCount desc ",
+            nativeQuery = true
+    )
+    Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByAccuseCount(
+            @Param("category") Integer category,
+            @Param("district1") String district1,
+            @Param("district2Regex") String district2Regex,
+            @Param("fishSpeciesRegex") String fishSpeciesRegex,
+            @Param("searchKey") String searchKey,
+            @Param("userId") Long userId,
+            @Param("memberId") Long memberId,
+            @Param("myPost") Boolean myPost,
+            @Param("searchTarget") String searchTarget,
+            @Param("shipId") Long shipId,
+            //아래는 관리자에서 조회시 사용되는 인자들.
+            @Param("shipName") String shipName,
+            @Param("nickName") String nickName,
+            @Param("title") String title,
+            @Param("content") String content,
+            @Param("createdDateStart") LocalDate createdDateStart,
+            @Param("createdDateEnd") LocalDate createdDateEnd,
+            @Param("hasShipData") Boolean hasShipData,
+            @Param("isManager") Boolean isManager,
+            Pageable pageable
+    );
+    /*어복스토리 - 조항일지 목록 조회용 메소드 - 신고순*/
+    @Query(
             value = "select " +
                     "   d.id id, " +
                     "   s.id shipId, " +
@@ -405,6 +533,7 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
                     "   and if(:hasShipData is null, true, " +
                     "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
+                    "   and (select count(a.id) from accuse a where a.link_id=d.id and a.target_type=11) > 0 " +
                     " group by d.id " +
                     "order by d.created_date desc ",
             countQuery = "select d.id " +
@@ -435,11 +564,12 @@ public interface FishingDiaryRepository extends BaseRepository<FishingDiary, Lon
                     "   and if(:createdDateEnd is null, true, d.created_date <= :createdDateEnd) " +
                     "   and if(:hasShipData is null, true, " +
                     "       if(:hasShipData = true, d.fishing_diary_ship_id is not null, d.fishing_diary_ship_id is null)) " +
+                    "   and (select count(a.id) from accuse a where a.link_id=d.id and a.target_type=11) > 0 " +
                     " group by d.id " +
-                    "order by d.created_date desc ",
+                    "order by d.created_date desc",
             nativeQuery = true
     )
-    Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByAccuseCount(
+    Page<FishingDiaryDtoForPage> getFishingDiaryListOrderByAccuseCountLast(
             @Param("category") Integer category,
             @Param("district1") String district1,
             @Param("district2Regex") String district2Regex,

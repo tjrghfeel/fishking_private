@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.entity.common;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
@@ -43,11 +44,13 @@ public class CodeGroup extends BaseTime {
         // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  created_by
         @ManyToOne
         @JoinColumn(name="created_by" ,    updatable= false , columnDefinition  = "bigint NOT NULL   comment '생성자'  ")
+        @JsonIgnore
         private    Member createdBy;
 
         // EXEC sp_addextendedproperty 'MS_Description', N'수정자', 'USER', DBO, 'TABLE', code_group, 'COLUMN',  modified_by
         @ManyToOne
         @JoinColumn(name="modified_by" ,  columnDefinition = "bigint NOT NULL   comment '수정자'  ")
+        @JsonIgnore
         private Member modifiedBy;
 
         public CodeGroup(String code, String name, String description, Member createdBy) {
