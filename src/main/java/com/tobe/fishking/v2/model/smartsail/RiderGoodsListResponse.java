@@ -57,6 +57,6 @@ public class RiderGoodsListResponse {
         this.orderName = orderName;
         this.orderEmail = orderEmail;
         this.personnel = personnel;
-        this.reserveComment = reserveComment;
+        this.reserveComment = reserveComment == null ? "" : reserveComment;
     }
 }

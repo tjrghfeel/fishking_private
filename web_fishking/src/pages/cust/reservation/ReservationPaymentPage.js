@@ -34,6 +34,8 @@ export default inject(
           personsPhone: [], // 승선자 정보
           emergencyPhone: [], // 승선자 정보
           personsBirthdate: [], // 승선자 정보
+          personsSex: [], // 승선자 정보
+          personsAddr: [], // 승선자 정보
           positions: [], // 승선위치 정보
           payMethod: "1000000000", // 결제수단
           discountPrice: 0, // 할인가격
@@ -188,11 +190,15 @@ export default inject(
           const personsPhone = [];
           const emergencyPhone = [];
           const personsBirthdate = [];
+          const personsSex = [];
+          const personsAddr = [];
           for (let i = 0; i < this.state.personCount; i++) {
             const name = document.querySelector(`#person-name-${i}`);
             const phone = document.querySelector(`#person-phone-${i}`);
             const emergency = document.querySelector(`#person-emergency-${i}`);
             const birthdate = document.querySelector(`#person-birthdate-${i}`);
+            const sex = document.querySelector(`#person-gender-${i}`);
+            const addr = document.querySelector(`#person-addr-${i}`);
 
             if (name.value === "") {
               name.classList.add("is-invalid");
@@ -230,11 +236,28 @@ export default inject(
             } else {
               birthdate.classList.remove("is-invalid");
             }
+            console.log(sex.value)
+            if (sex.value === "") {
+              sex.classList.add("is-invalid");
+              sex.focus();
+              return;
+            } else {
+              sex.classList.remove("is-invalid");
+            }
+            if (addr.value === "") {
+              addr.classList.add("is-invalid");
+              addr.focus();
+              return;
+            } else {
+              addr.classList.remove("is-invalid");
+            }
 
             personsName.push(name.value);
             personsPhone.push(phone.value);
             emergencyPhone.push(emergency.value);
             personsBirthdate.push(birthdate.value);
+            personsSex.push(sex.value);
+            personsAddr.push(addr.value);
           }
           // >>>>> Step-3 :: prepare
           const resolve = await APIStore._get(
@@ -253,6 +276,8 @@ export default inject(
                 personsPhone,
                 emergencyPhone,
                 personsBirthdate,
+                personsSex,
+                personsAddr,
                 step: 4,
                 positions: [],
                 coupons: resolve2,
@@ -268,6 +293,8 @@ export default inject(
                 personsPhone,
                 emergencyPhone,
                 personsBirthdate,
+                personsSex,
+                personsAddr,
                 step: 3,
               });
             }
@@ -279,6 +306,8 @@ export default inject(
               personsPhone,
               emergencyPhone,
               personsBirthdate,
+              personsSex,
+              personsAddr,
               step: 4,
               positions: [],
               coupons: resolve2,
@@ -343,6 +372,8 @@ export default inject(
             personsPhone,
             emergencyPhone,
             personsBirthdate,
+            personsSex,
+            personsAddr,
             positions,
             payMethod,
             discountPrice,
@@ -363,6 +394,8 @@ export default inject(
             personsPhone,
             emergencyPhone,
             personsBirthdate,
+            personsSex,
+            personsAddr,
             positions,
             payMethod,
             discountPrice,
@@ -740,6 +773,33 @@ export default inject(
                             className="form-control"
                             id={`person-birthdate-${index}`}
                             placeholder="생년 월일을 입력해 주세요."
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="inputBirth" className="sr-only">
+                            성별을 선택해 주세요.
+                          </label>
+                          <select
+                            // type="text"
+                            // minLength={1}
+                            // maxLength={2}
+                            className="form-control"
+                            id={`person-gender-${index}`}
+                            placeholder="성별을 입력해 주세요."
+                          >
+                            <option value="M">남</option>
+                            <option value="F">여</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="inputBirth" className="sr-only">
+                            주소를 입력해 주세요.
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id={`person-addr-${index}`}
+                            placeholder="주소를 입력해 주세요."
                           />
                         </div>
                       </form>

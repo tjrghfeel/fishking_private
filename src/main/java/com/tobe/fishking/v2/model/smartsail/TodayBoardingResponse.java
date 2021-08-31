@@ -19,6 +19,9 @@ public class TodayBoardingResponse {
     private String fishingEndTime;
     private String phone;
     private String emergencyPhone;
+    private String birthday;
+    private String sex;
+    private String addr;
     private Integer visitCount;
     private String fingerType;
     private Integer fingerTypeNum;
@@ -36,6 +39,9 @@ public class TodayBoardingResponse {
             String fishingEndTime,
             String phone,
             String emergencyPhone,
+            String birthday,
+            String sex,
+            String residenceAddr,
             Boolean isRide,
             String reserveComment
     ) {
@@ -48,6 +54,9 @@ public class TodayBoardingResponse {
         this.fishingEndTime = fishingEndTime;
         this.phone = phone;
         this.emergencyPhone = emergencyPhone;
+        this.birthday = birthday;
+        this.sex = sex.equals("M") ? "남" : "여";
+        this.addr = residenceAddr;
         this.status = isRide ? "금일 승선 확인" : "확인 전";
         this.reserveComment = reserveComment;
     }

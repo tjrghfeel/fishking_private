@@ -357,9 +357,16 @@ public class ShipController {
     public OrderResponse Reserve(
             @RequestHeader(name = "Authorization") String token,
             @RequestBody ReserveDTO reserveDTO) {
-        OrderResponse response = shipService.reserve(reserveDTO, token, reserveDTO.getPersonsName(), reserveDTO.getPersonsPhone(), reserveDTO.getEmergencyPhone(), reserveDTO.getPersonsBirthdate());
-//        model.addAttribute("pay", response);
-//        return "pay_request";
+        OrderResponse response = shipService.reserve(
+                reserveDTO,
+                token,
+                reserveDTO.getPersonsName(),
+                reserveDTO.getPersonsPhone(),
+                reserveDTO.getEmergencyPhone(),
+                reserveDTO.getPersonsBirthdate(),
+                reserveDTO.getPersonsSex(),
+                reserveDTO.getPersonsAddr()
+        );
         return response;
     }
 

@@ -175,6 +175,8 @@ public class BoardingService {
                 dto.getBirthDate().contains("-") ? dto.getBirthDate() : dto.getBirthDate().substring(0,4) + "-" + dto.getBirthDate().substring(4,6) + "-" + dto.getBirthDate().substring(6),
                 dto.getPhone().contains("-") ? dto.getPhone() : CommonAddon.addDashToPhoneNum(dto.getPhone()),
                 dto.getEmergencyPhone().contains("-") ? dto.getEmergencyPhone() : CommonAddon.addDashToPhoneNum(dto.getEmergencyPhone()),
+                dto.getSex(),
+                dto.getAddr(),
                 member);
         orderDetails.plusPersonnel(member);
         orderDetailsRepository.save(orderDetails);
@@ -221,6 +223,9 @@ public class BoardingService {
             r.put("name", tuple.get(1, String.class));
             r.put("phone", tuple.get(2, String.class));
             r.put("emergencyPhone", tuple.get(3, String.class));
+            r.put("birthday", tuple.get(6, String.class));
+            r.put("sex", tuple.get(7, String.class).equals("M") ? "남" : "여");
+            r.put("addr", tuple.get(8, String.class));
             r.put("isRide", rideString);
             list.add(r);
         }

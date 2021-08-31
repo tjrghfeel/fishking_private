@@ -48,6 +48,9 @@ public class RideShip extends BaseTime {
     @Column(columnDefinition = "varchar(50)   comment '거주지-군구'  ")
     private String residenceGungu;
 
+    @Column(columnDefinition = "varchar(300)   comment '거주지-주소'  ")
+    private String residenceAddr;
+
     @Column(columnDefinition = "varchar(15)   comment '핸드폰번호'  ")
     private String phoneNumber;
 
@@ -95,7 +98,8 @@ public class RideShip extends BaseTime {
     private String emergencyPhone;
 
     @Builder
-    public RideShip(OrderDetails ordersDetail, String name, String birthday, String phoneNumber, String emergencyPhone, Member member) {
+    public RideShip(OrderDetails ordersDetail, String name, String birthday, String phoneNumber, String emergencyPhone, 
+                    String sex, String addr, Member member) {
         this.ordersDetail = ordersDetail;
         this.name = name;
         this.birthday = birthday;
@@ -103,6 +107,8 @@ public class RideShip extends BaseTime {
         this.createdBy = member;
         this.modifiedBy = member;
         this.emergencyPhone = emergencyPhone;
+        this.sex = sex;
+        this.residenceAddr = addr;
     }
 
     public void updateFingerPrint(String fingerPrint, Member member) {

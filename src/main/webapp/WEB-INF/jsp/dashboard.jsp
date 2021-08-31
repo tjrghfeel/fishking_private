@@ -90,6 +90,9 @@
                             출조일:    <span class="" name="data-date">우럭(오전)</span><br/>
                             연락처:    <span name="data-phone">010-1234-5678</span><br/>
                             비상시:    <span name="data-emergency">010-1234-5678</span><br/>
+                            생년월일:   <span name="data-birthday">010-1234-5678</span><br/>
+                            성별:     <span name="data-sex">남</span><br/>
+                            주소:     <span name="data-addr">서울시 송파구</span><br/>
                             상태:     <span name="data-st">010-1234-5678</span><br />
                             요구사항:  <span name="data-comment">010-1234-5678</span>
                         </p>
@@ -137,6 +140,9 @@
                             출조일:    <span class="" name="data-date2">우럭(오전)</span><br/>
                             연락처:    <span name="data-phone2">010-1234-5678</span><br/>
                             비상시:    <span name="data-emergency2">010-1234-5678</span><br/>
+                            생년월일:   <span name="data-birthday2">010-1234-5678</span><br/>
+                            성별:     <span name="data-sex2">남</span><br/>
+                            주소:     <span name="data-addr2">서울시 송파구</span><br/>
                             상태:     <span name="data-st2">010-1234-5678</span>
                             요구사항:  <span name="data-comment2">010-1234-5678</span>
                         </p>
@@ -250,6 +256,9 @@
                     clone.querySelector('[name="data-date"]').textContent = item['fishingDate']  + ' ' + item['fishingStartTime'] + '~' + item['fishingEndTime'];
                     clone.querySelector('[name="data-phone"]').textContent = item['phone'];
                     clone.querySelector('[name="data-emergency"]').textContent = item['emergencyPhone'];
+                    clone.querySelector('[name="data-birthday"]').textContent = item['birthday'];
+                    clone.querySelector('[name="data-sex"]').textContent = item['sex'];
+                    clone.querySelector('[name="data-addr"]').textContent = item['addr'];
                     clone.querySelector('[name="data-st"]').textContent = item['status'];
                     clone.querySelector('[name="data-comment"]').textContent = item['reserveComment'];
                     clone.querySelector('[name="data-visitCount"]').textContent = item['visitCount'] || 0;
@@ -290,6 +299,9 @@
                     clone.querySelector('[name="data-date2"]').textContent = item['fishingDate']  + ' ' + item['fishingStartTime'] + '~' + item['fishingEndTime'];
                     clone.querySelector('[name="data-phone2"]').textContent = item['phone'];
                     clone.querySelector('[name="data-emergency2"]').textContent = item['emergencyPhone'];
+                    clone.querySelector('[name="data-birthday2"]').textContent = item['birthday'];
+                    clone.querySelector('[name="data-sex2"]').textContent = item['sex'];
+                    clone.querySelector('[name="data-addr2"]').textContent = item['addr'];
                     clone.querySelector('[name="data-st2"]').textContent = item['status'];
                     clone.querySelector('[name="data-comment2"]').textContent = item['reserveComment'];
                     clone.querySelector('[name="data-visitCount2"]').textContent = item['visitCount'] || 0;
