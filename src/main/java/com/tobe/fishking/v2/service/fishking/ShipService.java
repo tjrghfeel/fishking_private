@@ -413,7 +413,7 @@ public class ShipService {
 
     /* 선상 예약 */
     @Transactional
-    public OrderResponse reserve(ReserveDTO reserveDTO, String token, String[] names, String[] phones, String[] emergencyPhones, String[] birthdates) {
+    public OrderResponse reserve(ReserveDTO reserveDTO, String token, String[] names, String[] phones, String[] emergencyPhones, String[] birthdates, String[] sexes, String[] addrs) {
         Member member = null;
 //        member = memberRepo.getOne(Objects.requireNonNullElse(member_id, 22L));
         Optional<Member> memberOpt = memberRepo.findBySessionToken(token);
@@ -479,6 +479,8 @@ public class ShipService {
             String birthdate;
             String phone;
             String emergencyPhone;
+            String sex = sexes[idx];
+            String addr = addrs[idx];
             if (birthdates[idx].contains("-")) {
                 birthdate = birthdates[idx];
             } else {
@@ -494,7 +496,7 @@ public class ShipService {
             } else {
                 emergencyPhone = CommonAddon.addDashToPhoneNum(phones[idx]);
             }
-            RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, emergencyPhone, member);
+            RideShip rideShip =  new RideShip(details, names[idx], birthdate, phone, emergencyPhone, sex, addr, member);
             rideShipRepository.save(rideShip);
         }
 

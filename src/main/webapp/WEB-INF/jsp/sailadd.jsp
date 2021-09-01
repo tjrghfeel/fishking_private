@@ -127,7 +127,9 @@
                 phone: phone,
                 emergencyPhone: emergencyPhone,
                 birthDate: birthDate,
-                orderId: orderId
+                orderId: orderId,
+                sex: orderId,
+                addr: orderId
             }),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));

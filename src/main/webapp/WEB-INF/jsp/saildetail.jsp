@@ -102,7 +102,10 @@
                                                             <p> \
                                                                 승선자명: <strong class="large">' + item['name'] + '</strong><br/> \
                                                                 연락처: ' + item['phone'] + '<br/> \
-                                                                비상시: ' + item['emergencyPhone'] + ' \
+                                                                비상시: ' + item['emergencyPhone'] + '<br/> \
+                                                                생년월일: ' + item['birthday'] + '<br/> \
+                                                                성별: ' + item['sex'] + '<br/> \
+                                                                주소: ' + item['addr'] + ' \
                                                             </p> \
                                                         </a> \
                                                     </div> \

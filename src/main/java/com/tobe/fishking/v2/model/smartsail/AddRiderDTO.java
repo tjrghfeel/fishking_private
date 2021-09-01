@@ -22,5 +22,9 @@ public class AddRiderDTO {
     private @Valid String phone = "";
     @ApiParam(value = "비상연락처")
     private @Valid String emergencyPhone;
+    @ApiParam(value = "성별")
+    private @Valid String sex;
+    @ApiParam(value = "주소")
+    private @Valid String addr;
 
 }

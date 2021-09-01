@@ -72,6 +72,9 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                         goods.fishingEndDate.concat(goods.fishingEndTime.substring(0,2)).concat(":").concat(goods.fishingEndTime.substring(2,4)),
                         rideShip.phoneNumber,
                         rideShip.emergencyPhone,
+                        rideShip.birthday,
+                        rideShip.sex,
+                        rideShip.residenceAddr,
                         rideShip.isRide,
                         orders.reserveComment
                 ))
@@ -267,7 +270,15 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
     @Override
     public List<Tuple> getDetailRiders(Long orderId) {
         return queryFactory
-                .select(rideShip.id, rideShip.name, rideShip.phoneNumber, rideShip.emergencyPhone, rideShip.isRide, rideShip.bFingerPrint)
+                .select(rideShip.id,                // 0
+                        rideShip.name,              // 1
+                        rideShip.phoneNumber,       // 2
+                        rideShip.emergencyPhone,    // 3
+                        rideShip.isRide,            // 4
+                        rideShip.bFingerPrint,      // 5
+                        rideShip.birthday,          // 6
+                        rideShip.sex,               // 7
+                        rideShip.residenceAddr)     // 8
                 .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq(orderDetails))
                 .where(orderDetails.orders.id.eq(orderId))
                 .fetch();
