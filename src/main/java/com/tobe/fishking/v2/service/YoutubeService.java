@@ -101,6 +101,9 @@ public class YoutubeService {
         }
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<FishingTube> fishingTubeList = fishingTubeRepo.findAll(pageable);
+        if(fishingTubeList.getTotalPages() > page+1){
+            result.put("nextPageToken",page+1+"");
+        }
         StringJoiner sj = new StringJoiner(",");
         for(int i=0; i<fishingTubeList.getContent().size(); i++){
             String videoId = fishingTubeList.getContent().get(i).getVideoId();
