@@ -49,8 +49,11 @@ public class TvController {
             "\n playUrl: 영상주소. https://www.youtube.com/watch?v= 뒤에 각 영상의 id를 붙이면 해당 영상의 주소가 됩니다." +
             "\n nextPageToken: 다음 페이지 토큰, 다음페이지 없는 경우 null. " +
             "\n")
-    public Map<String, Object> getYoutubeList(@RequestParam(required = false, defaultValue = "") String nextPageToken) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        return youtubeService.getYoutube(nextPageToken);
+    public Map<String, Object> getYoutubeList(
+            @RequestParam(required = false, defaultValue = "") String nextPageToken,
+            @RequestParam(required = false, defaultValue = "10") int pageSize
+    ) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
+        return youtubeService.getYoutube(nextPageToken, pageSize);
     }
 
     @ApiOperation(value = "어복TV 라이브 리스트", notes = "어복TV 라이브 리스트. {" +
@@ -129,4 +132,22 @@ public class TvController {
         return shipService.getLiveDetail(shipId, cameraId);
     }
 
+    @ApiOperation(value = "어복tude 목록 삭제", notes = "" +
+            "req args ) \n" +
+            "\t videoId : String / youtube video의 id\n" +
+            "return ) boolean")
+    @DeleteMapping("/tv/{videoId}")
+    public Boolean deleteFishingTube(@PathVariable("videoId") String videoId, @RequestHeader("Authorization") String token){
+        return youtubeService.deleteFishingTube(videoId, token);
+    }
+
+    @ApiOperation(value = "어복tude 목록 추가", notes = "" +
+            "req args ) \n" +
+            "\t videoId : String / youtube video의 id\n" +
+            "return ) boolean")
+    @PostMapping("/tv/{videoId}")
+    public Boolean addFishingTube(@PathVariable("videoId") String videoId, @RequestHeader("Authorization") String token)
+            throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        return youtubeService.addFishingTube(videoId, token);
+    }
 }

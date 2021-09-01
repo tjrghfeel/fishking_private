@@ -10,7 +10,7 @@ export default inject()(
             high: { url },
           },
           title,
-          description,
+          description="",
           publishedAt = "",
         },
         statistics: { viewCount = 0 },
@@ -32,13 +32,13 @@ export default inject()(
                       <h6>{title}</h6>
                       <p>
                         <span className="grey">
-                          {viewCount === 0 && "조회수 없음 "}
+                          조회수 {viewCount === 0 && "없음 "}
                           {viewCount > 0 &&
-                            Intl.NumberFormat().format(viewCount).concat(" ")}
+                            Intl.NumberFormat().format(viewCount).concat(" ")}회
                           | {publishedAt.substr(0, 10).replace(/[-]/g, ".")}
                         </span>
                       </p>
-                      <p>{description}</p>
+                      <p>{(description.length > 80)?description.substring(0,80)+"..." : description}</p>
                     </div>
                   </div>
                 </div>
