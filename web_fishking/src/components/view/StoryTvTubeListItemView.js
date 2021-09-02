@@ -38,7 +38,7 @@ export default inject()(
                           | {publishedAt.substr(0, 10).replace(/[-]/g, ".")}
                         </span>
                       </p>
-                      <p>{(description.length > 80)?description.substring(0,80)+"..." : description}</p>
+                      <p>{(description.length > 40)?description.substring(0,40)+"..." : description}</p>
                     </div>
                   </div>
                 </div>
