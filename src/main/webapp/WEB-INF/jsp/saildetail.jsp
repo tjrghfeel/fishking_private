@@ -14,11 +14,6 @@
 <!-- 상품이미지 -->
 <div id="carousel-visual-detail" class="carousel slide" data-ride="carousel">
     <div class="float-top-left"><a href="javascript:history.back();"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a></div>
-    <!-- <ol class="carousel-indicators">
-        <li data-target="#carousel-visual-detail" data-slide-to="0" class="active"></li>
-        <li data-target="#carousel-visual-detail" data-slide-to="1"></li>
-        <li data-target="#carousel-visual-detail" data-slide-to="2"></li>
-    </ol>-->
     <div class="carousel-inner">
         <div class="carousel-item active">
             <img id="shipProfileImage" src="/assets/smartsail/img/sample/boat1.jpg" class="d-block w-100" alt="">
@@ -51,7 +46,7 @@
           method: 'POST',
           dataType: 'json',
           data: JSON.stringify({
-            riderId: riderId
+            riderId: riderId,
           }),
           beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
@@ -77,7 +72,7 @@
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
             },
             success: function (response) {
-                let reserveComment = (response['reserveComment'])? response['reserveComment'] : '없음';
+                var reserveComment = (response['reserveComment']) != '' ? response['reserveComment'] : '없음';
                 document.getElementById('shipProfileImage').src = response['shipProfileImage'];
                 document.getElementById('shipHead').innerHTML =
                   response['shipName'] + ''
@@ -120,6 +115,7 @@
                                         </div> \
                                     </div> \
                     ');
+                    $(tags).data('item', item);
                     $(container).append(tags);
                 }
             }

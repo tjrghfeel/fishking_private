@@ -163,7 +163,8 @@
                                                     <hr class="mt-1 mb-1"/> \
                                                     <div class="row no-gutters"> \
                                                         <div class="col-2 padding-sm"><small class="grey">이용일<br/>예약자<br/>요청사항</small></div> \
-                                                        <div class="col-10 padding-sm"><small>' + item['date'] + ' ~<br/>' + item['orderName'] + ' <span class="grey">|</span> ' + item['orderEmail'] + '<br/>'+item['reserveComment'].substring(0,20)+'...'+'</small></div> \
+                                                        <div class="col-10 padding-sm"><small>' + item['date'] + ' ~<br/>' + item['orderName'] + ' <span class="grey">|</span> ' + item['orderEmail'] + '<br/> \
+                                                        '+(item['reserveComment'] == '' ? item['reserveComment'].substring(0,20)+'...' : "없음")+'</small></div> \
                                                     </div> \
                                                 </div> \
                                             </a> \

@@ -223,9 +223,9 @@ public class BoardingService {
             r.put("name", tuple.get(1, String.class));
             r.put("phone", tuple.get(2, String.class));
             r.put("emergencyPhone", tuple.get(3, String.class));
-            r.put("birthday", tuple.get(6, String.class));
-            r.put("sex", tuple.get(7, String.class).equals("M") ? "남" : "여");
-            r.put("addr", tuple.get(8, String.class));
+            r.put("birthday", tuple.get(6, String.class) == null ? "" : tuple.get(6, String.class));
+            r.put("sex", tuple.get(7, String.class) == null ? "" :tuple.get(7, String.class).equals("M") ? "남" : "여");
+            r.put("addr", tuple.get(8, String.class) == null ? "" : tuple.get(8, String.class));
             r.put("isRide", rideString);
             list.add(r);
         }

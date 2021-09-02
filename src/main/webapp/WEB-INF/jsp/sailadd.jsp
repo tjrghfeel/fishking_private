@@ -44,26 +44,18 @@
             <label for="birthDate">생년월일 <strong class="required"></strong></label>
             <input type="number" class="form-control" id="birthDate" placeholder="생년월일을 입력해 주세요.(예: 19800707)">
         </div>
-<%--        <div class="form-group">--%>
-<%--            <label for="">성별선택 <strong class="required"></strong></label>--%>
-<%--            <select class="form-control" id="">--%>
-<%--                <option>성별을 선택하세요</option>--%>
-<%--                <option>남성</option>--%>
-<%--                <option>여성</option>--%>
-<%--            </select>--%>
-<%--        </div>--%>
-
-<%--        <div class="form-group">--%>
-<%--            <label  class="d-block">거주지역 <strong class="required"></strong></label>--%>
-<%--            <div class="input-group mb-3">--%>
-<%--                <select class="form-control" id="">--%>
-<%--                    <option>시도선택</option>--%>
-<%--                </select>--%>
-<%--                <select class="form-control" id="">--%>
-<%--                    <option>시군구선택</option>--%>
-<%--                </select>--%>
-<%--            </div>--%>
-<%--        </div>--%>
+        <div class="form-group">
+            <label for="sex">성별선택 <strong class="required"></strong></label>
+            <select class="form-control" id="sex">
+                <option value="">성별을 선택하세요</option>
+                <option value="M">남성</option>
+                <option value="F">여성</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="addr">주소 <strong class="required"></strong></label>
+            <input type="text" class="form-control" id="addr" placeholder="주소를 입력해 주세요.">
+        </div>
         <div class="space mb-4"></div>
         <div class="form-group mt-0 mb-0">
             <label for="chkagree" class="d-block"><a href="/boarding/cssetpolicyterms" class="text-primary">이용약관</a> 및 <a href="/boarding/cssetpolicyprivacy" class="text-primary">개인정보 수집/이용</a><br/>개인정보 제 3자 이용약관, 취소규정 동의(필수)</small></a></label>
@@ -99,6 +91,8 @@
         var name = $('#name').val();
         var phone = $('#phone').val();
         var emergencyPhone = $('#emergencyPhone').val();
+        var sex = $('#sex').val();
+        var addr = $('#addr').val();
         var birthDate = $('#birthDate').val();
         var checked = $('#chkagree').is(':checked');
 
@@ -114,6 +108,12 @@
         }else if (birthDate.length == 0) {
             alert('생년월일을 입력해주세요.');
             return;
+        }else if (sex == "") {
+          alert('성별을 선택해주세요.');
+          return;
+        }else if (addr.length == 0) {
+          alert('주소를 입력해주세요.');
+          return;
         }else if (!checked) {
             alert('약관 내용을 확인하고 동의해주세요.');
             return;
@@ -128,8 +128,8 @@
                 emergencyPhone: emergencyPhone,
                 birthDate: birthDate,
                 orderId: orderId,
-                sex: orderId,
-                addr: orderId
+                sex: sex,
+                addr: addr
             }),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
