@@ -308,7 +308,7 @@ export default inject(
               <h6 className="float-left mt-2">어복 Tube</h6>
               <div className="float-right">
                 <div className="custom-control custom-radio custom-control-inline">
-                  <input
+                  {/*<input
                     type="radio"
                     id="customRadioInline1"
                     name="customRadioInline1"
@@ -319,10 +319,10 @@ export default inject(
                     htmlFor="customRadioInline1"
                   >
                     최신순
-                  </label>
+                  </label>*/}
                 </div>
                 <div className="custom-control custom-radio custom-control-inline">
-                  <input
+                  {/*<input
                     type="radio"
                     id="customRadioInline2"
                     name="customRadioInline1"
@@ -333,7 +333,7 @@ export default inject(
                     htmlFor="customRadioInline2"
                   >
                     인기순
-                  </label>
+                  </label>*/}
                 </div>
               </div>
             </div>
