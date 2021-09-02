@@ -83,6 +83,7 @@
 </div>
 <!--// 하단버튼 -->
 
+<div id="mask" style="z-index: 999; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
 <jsp:include page="cmm_foot.jsp" />
 <script>
     function fn_submit () {
@@ -119,6 +120,8 @@
             return;
         }
 
+        $('#mask').show()
+        alert('등록중입니다. 잠시만 기다려주세요');
         $.ajax('/v2/api/sail/riders/add', {
             method: 'POST',
             dataType: 'json',
@@ -136,6 +139,7 @@
                 xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
             },
             success: function (response) {
+                $('#mask').hide()
                 alert(response['message']);
                 if (response['status'] == 'success') {
                     history.back();

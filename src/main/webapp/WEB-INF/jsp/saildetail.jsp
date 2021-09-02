@@ -31,8 +31,8 @@
 <!--// 상품타이틀 -->
 
 
-<a onclick="javascript:moveToAdd();" class="add-circle"><img src="/assets/smartsail/img/svg/icon-add-user.svg" alt="" class="add-icon"/></a>
-
+<a onclick="javascript:moveToAdd();" class="add-circle" style="z-index: 50"><img src="/assets/smartsail/img/svg/icon-add-user.svg" alt="" class="add-icon"/></a>
+<div id="mask" style="z-index: 999; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
 <jsp:include page="cmm_foot.jsp" />
 <script>
     function moveToAdd () {
@@ -42,6 +42,8 @@
     }
     function fn_delete (riderId) {
       if (confirm("정말 삭제하시겠습니까?")) {
+        $('#mask').show()
+        alert('삭제중입니다. 잠시만 기다려주세요');
         $.ajax('/v2/api/sail/riders/del', {
           method: 'POST',
           dataType: 'json',
@@ -53,6 +55,7 @@
             xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
           },
           success: function (response, status, xhr) {
+            $('#mask').hide()
             if (response.status != 'fail') {
               location.reload();
             }else{
