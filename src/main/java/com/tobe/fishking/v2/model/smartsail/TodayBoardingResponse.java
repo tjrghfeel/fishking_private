@@ -54,9 +54,9 @@ public class TodayBoardingResponse {
         this.fishingEndTime = fishingEndTime;
         this.phone = phone;
         this.emergencyPhone = emergencyPhone;
-        this.birthday = birthday;
-        this.sex = sex.equals("M") ? "남" : "여";
-        this.addr = residenceAddr;
+        this.birthday = birthday == null ? "" : birthday;
+        this.sex = sex == null ? "" : sex.equals("M") ? "남" : "여";
+        this.addr = residenceAddr == null ? "" : residenceAddr;
         this.status = isRide ? "금일 승선 확인" : "확인 전";
         this.reserveComment = reserveComment;
     }

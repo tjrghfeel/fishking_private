@@ -14,11 +14,6 @@
 <!-- 상품이미지 -->
 <div id="carousel-visual-detail" class="carousel slide" data-ride="carousel">
     <div class="float-top-left"><a href="javascript:history.back();"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a></div>
-    <!-- <ol class="carousel-indicators">
-        <li data-target="#carousel-visual-detail" data-slide-to="0" class="active"></li>
-        <li data-target="#carousel-visual-detail" data-slide-to="1"></li>
-        <li data-target="#carousel-visual-detail" data-slide-to="2"></li>
-    </ol>-->
     <div class="carousel-inner">
         <div class="carousel-item active">
             <img id="shipProfileImage" src="/assets/smartsail/img/sample/boat1.jpg" class="d-block w-100" alt="">
@@ -36,8 +31,8 @@
 <!--// 상품타이틀 -->
 
 
-<a onclick="javascript:moveToAdd();" class="add-circle"><img src="/assets/smartsail/img/svg/icon-add-user.svg" alt="" class="add-icon"/></a>
-
+<a onclick="javascript:moveToAdd();" class="add-circle" style="z-index: 50"><img src="/assets/smartsail/img/svg/icon-add-user.svg" alt="" class="add-icon"/></a>
+<div id="mask" style="z-index: 999; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
 <jsp:include page="cmm_foot.jsp" />
 <script>
     function moveToAdd () {
@@ -47,17 +42,20 @@
     }
     function fn_delete (riderId) {
       if (confirm("정말 삭제하시겠습니까?")) {
+        $('#mask').show()
+        alert('삭제중입니다. 잠시만 기다려주세요');
         $.ajax('/v2/api/sail/riders/del', {
           method: 'POST',
           dataType: 'json',
           data: JSON.stringify({
-            riderId: riderId
+            riderId: riderId,
           }),
           beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
             xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
           },
           success: function (response, status, xhr) {
+            $('#mask').hide()
             if (response.status != 'fail') {
               location.reload();
             }else{
@@ -77,7 +75,7 @@
                 xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
             },
             success: function (response) {
-                let reserveComment = (response['reserveComment'])? response['reserveComment'] : '없음';
+                var reserveComment = (response['reserveComment']) != '' ? response['reserveComment'] : '없음';
                 document.getElementById('shipProfileImage').src = response['shipProfileImage'];
                 document.getElementById('shipHead').innerHTML =
                   response['shipName'] + ''
@@ -120,6 +118,7 @@
                                         </div> \
                                     </div> \
                     ');
+                    $(tags).data('item', item);
                     $(container).append(tags);
                 }
             }
