@@ -43,6 +43,44 @@ public class ShipRepositoryImpl implements ShipRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    public List<ShipListResponse> newHome() {
+        List<OrderSpecifier> ORDERS = new ArrayList<>();
+//        OrderSpecifier<?> orderDistance = aliasDistance.asc();
+//        ORDERS.add(orderDistance);
+        ORDERS.add(getSortedColumn(Order.DESC, ship, "createdDate"));
+
+        QueryResults<ShipListResponse> results = queryFactory
+                .select(new QShipListResponse(
+                        ship.cheapestGoodsCost,
+                        ship.sellCount,
+                        ship.zzimCount,
+//                        ExpressionUtils.as(
+//                                acos(
+//                                    cos(radians(Expressions.constant(shipSearchDTO.getLatitude())))
+//                                    .multiply(cos(radians(ship.location.latitude)))
+//                                    .multiply(cos(radians(ship.location.longitude).subtract(radians(Expressions.constant(shipSearchDTO.getLongitude())))))
+//                                    .add(sin(radians(Expressions.constant(shipSearchDTO.getLatitude()))).multiply(sin(radians(ship.location.latitude))))
+//                                ).multiply(Expressions.constant(6371)), aliasDistance),
+                        ship.id,
+                        ship.profileImage,
+                        ship.shipName,
+                        ship.sido,
+                        ship.sigungu,
+                        ship.location,
+                        ship.address,
+                        ship.fishingType
+                ))
+                .from(ship)
+                .where(
+                        ship.isActive.eq(true),
+                        ship.company.isOpen.eq(true),
+                        ship.cheapestGoodsCost.gt(0)
+                )
+                .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
+                .fetchResults();
+        return results.getResults();
+    }
+
     @Override
     public Page<ShipListResponse> searchAll(ShipSearchDTO shipSearchDTO, Pageable pageable) {
         List<OrderSpecifier> ORDERS = new ArrayList<>();

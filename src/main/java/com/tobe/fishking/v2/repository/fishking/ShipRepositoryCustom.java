@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ShipRepositoryCustom {
+    List<ShipListResponse> newHome();
     Page<ShipListResponse> searchAll(ShipSearchDTO shipSearchDTO, Pageable pageable);
     Page<ShipListResponse> searchMain(String keyword, String type, Double lat, Double lng, Pageable pageable);
     Page<ShipListResponse> searchMainWithType(String keyword, String type, Double lat, Double lng, Pageable pageable);

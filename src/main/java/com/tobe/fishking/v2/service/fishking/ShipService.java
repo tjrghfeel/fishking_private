@@ -694,4 +694,15 @@ public class ShipService {
         response.putIfAbsent("cameraData", null);
         return response;
     }
+
+    public List<ShipListResponse> getNewHomeData() {
+        List<ShipListResponse> list = shipRepo.newHome();
+//        List<ShipListResponse> newList = new ArrayList<>();
+//        for(ShipListResponse r : list) {
+//            List<CommonCode> fish = commonCodeRepository.getShipSpeciesName(r.getId());
+//            r.setSpecies(fish);
+//            newList.add(r);
+//        }
+        return list;
+    }
 }

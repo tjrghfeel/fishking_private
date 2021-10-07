@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import { Switch, Route, withRouter } from "react-router-dom";
 
 import MainHomePage from "../../pages/cust/main/MainHomePage";
+import MainNewHomePage from "../../pages/cust/main/MainNewHomePage";
 import MainCompanyBoatPage from "../../pages/cust/main/MainCompanyBoatPage";
 import MainCompanyRockPage from "../../pages/cust/main/MainCompanyRockPage"
 import MainRockPage from "../../pages/cust/main/MainRockPage";
@@ -17,7 +18,8 @@ export default inject()(
       return (
         <Switch>
           {/** 메인 > 홈 */}
-          <Route exact path={`${match.url}/home`} component={MainHomePage} />
+          <Route exact path={`${match.url}/home/old`} component={MainHomePage} />
+          <Route exact path={`${match.url}/home`} component={MainNewHomePage} />
           {/** 메인 > 업체 > 선상 */}
           <Route
             exact

@@ -1,0 +1,83 @@
+#content {
+  color: #000;
+}
+
+#content .map {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+}
+
+#content ol.on {
+  height: calc(100vh - 100px);
+}
+
+#content ol {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+  padding-top: 20px;
+  border-radius: 20px 20px 0 0;
+  background-color: #fff;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+  overflow-y: scroll;
+  -ms-overflow-y: scroll;
+}
+
+#content ol::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 42%;
+  top: 10px;
+  width: 16%;
+  height: 2px;
+  background-color: #000;
+}
+
+#content ol li {
+  width: 96%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin: 20px auto;
+  text-align: left;
+  padding-bottom: 10px;
+  border-bottom-style: solid;
+  border-bottom-width: thin;
+  border-bottom-color: rgba(10, 10, 10, 0.1);
+}
+
+#content ol li .img_wrap {
+  width: 45%;
+}
+
+#content ol li .img_wrap img {
+  width: 100%;
+}
+
+#content ol li .text_part {
+  margin-left: 20px;
+  width: 55%;
+}
+
+#content ol li .text_part h3 {
+  margin-bottom: 10px;
+}
+
+#content ol li .text_part a.more_btn {
+  float: right;
+  width: 50%;
+  height: auto;
+  margin-top: 15px;
+  margin-right: 10px;
+  padding: 2px 20px;
+  border-radius: 10px;
+  background-color: #c6c5c3;
+  text-align: center;
+}
+/*# sourceMappingURL=map.css.map */

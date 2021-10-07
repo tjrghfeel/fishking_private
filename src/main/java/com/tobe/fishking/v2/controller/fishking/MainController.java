@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.GoodsDTO;
 import com.tobe.fishking.v2.model.fishing.OrdersInfoDTO;
 import com.tobe.fishking.v2.model.fishing.RiderShipDTO;
+import com.tobe.fishking.v2.model.fishing.ShipListResponse;
 import com.tobe.fishking.v2.model.response.ListResult;
 import com.tobe.fishking.v2.model.response.SingleResult;
 import com.tobe.fishking.v2.service.ResponseService;
@@ -476,6 +477,11 @@ public class MainController {
         Map<String, Object> result;
         result = commonService.getMainScreenData();
         return result;
+    }
+
+    @GetMapping(value = "/main/new")
+    public List<ShipListResponse> newHome(@RequestHeader(name = "Authorization") String token) {
+        return shipService.getNewHomeData();
     }
 
     @GetMapping("envTest")

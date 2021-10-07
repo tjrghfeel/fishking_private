@@ -6,6 +6,7 @@ import Components from "../../../components";
 const {
   VIEW: { CompanyGoodListItemView, GoodsBlogListItemView },
   MODAL: { CompanyGoodsDetailModal },
+  LAYOUT: { NavigationLayout }
 } = Components;
 
 export default inject(
@@ -46,7 +47,7 @@ export default inject(
             NativeStore,
           } = this.props;
 
-          NativeStore.postMessage('Connections', {});
+          // NativeStore.postMessage('Connections', {});
           document.addEventListener("message", event => {
             this.setState({ connectionType: event.data });
           });
@@ -264,6 +265,7 @@ export default inject(
               params: { id },
             },
           } = this.props;
+          console.log(this.state)
           return (
             <React.Fragment>
               <CompanyGoodsDetailModal
@@ -271,20 +273,25 @@ export default inject(
                 data={this.state.goodsDetail || {}}
               />
 
+              <NavigationLayout
+                title={ this.state.name }
+                showBackIcon={true}
+              />
               {/** 상품이미지 */}
               <div
                 id="carousel-visual-detail"
                 className="carousel slide"
                 data-ride="carousel"
+                style={{marginTop: "45px"}}
               >
-                <div className="float-top-left">
-                  <a onClick={() => PageStore.goBack()}>
-                    <img
-                      src="/assets/cust/img/svg/navbar-back.svg"
-                      alt="뒤로가기"
-                    />
-                  </a>
-                </div>
+                {/*<div className="float-top-left">*/}
+                {/*  <a onClick={() => PageStore.goBack()}>*/}
+                {/*    <img*/}
+                {/*      src="/assets/cust/img/svg/navbar-back.svg"*/}
+                {/*      alt="뒤로가기"*/}
+                {/*    />*/}
+                {/*  </a>*/}
+                {/*</div>*/}
                 <div className="carousel-inner">
                   <div className="carousel-item active">
                     {this.state.liveVideo === "" &&
