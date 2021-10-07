@@ -21,6 +21,7 @@ import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.utils.DateUtils;
 import com.tobe.fishking.v2.utils.HolidayUtil;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -783,5 +784,201 @@ public class MyMenuService {
         return shipRepository.getLiveShipList(pageable);
     }
 
+    //선박 위치에 해당하는 현재 날씨 데이터 가져오기.
+    @Transactional
+    public Map<String, Object> getShipWeather(String shipId) throws ResourceNotFoundException {
+        Map<String, Object> weather = new HashMap<>();
+
+        Ship ship = shipRepository.findById(Long.parseLong(shipId))
+                .orElseThrow(()->new ResourceNotFoundException("ship not found for this id ::"+shipId));
+
+        ObserverCode observer = observerCodeRepository.getObserverCodeByCode(ship.getObserverCode());
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        Integer sky = null;//하늘상태
+        Integer pty = null;//강수형태
+        Integer pop = null;//강수확률
+        Integer reh = null;//습도
+        Double tmp = null;//기온
+        Double tmn = null;//일 최저기온
+        Double tmx = null; //일 최고기온
+        Double uuu = null;//풍속(동남)
+        Double vvv = null;//풍속(남북)
+        Double wav = null;//파고
+        Integer vec = null;//풍향
+        Double wsd = null; //풍속
+
+        String todayDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        int currentHour = currentTime.getHour();
+        String baseTime = null;
+        String baseDate = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        if(currentHour >= 0 && currentHour < 3){ baseTime = "2000"; baseDate = currentTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+        else if(currentHour >= 3 && currentHour < 6){ baseTime = "2300"; baseDate = currentTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+        else if(currentHour >= 6 && currentHour < 9){ baseTime = "0200"; }
+        else if(currentHour >= 9 && currentHour < 12){ baseTime = "0500"; }
+        else if(currentHour >= 12 && currentHour < 15){ baseTime = "0800"; }
+        else if(currentHour >= 15 && currentHour < 18){ baseTime = "1100"; }
+        else if(currentHour >= 18 && currentHour < 21){ baseTime = "1400"; }
+        else if(currentHour >= 21){ baseTime = "1700"; }
+
+//        temp = (temp < 0)? temp + 24 : temp;
+//        String baseTime = String.format("%02d",temp);
+        String fcstTime = String.format("%02d",(currentTime.getHour()/3)*3) + "00";
+        String fcstNextTime = String.format("%02d",(currentTime.plusHours(3).getHour()/3)*3) + "00";
+
+        //동네예보 api 호출.
+        try{
+            String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
+                    "serviceKey=EU1VFa5ptjvV1eaOpB9bnBKBxJxBGaZ%2BqthSuo3%2FZxGfQ%2BrHHiKxf%2Bt1a13VCLBfj1eBv%2BwElgABiGOyIIWDpA%3D%3D" +//
+                    "&pageNo=1" +
+                    "&numOfRows=100" +
+                    "&dataType=JSON" +
+                    "&base_date=" + baseDate +
+                    "&base_time=" + baseTime +
+                    "&nx=" + observer.getXGrid() +
+                    "&ny=" + observer.getYGrid();
+            String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
+            System.out.println("result>>> "+response);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
+            Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
+            Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
+            Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
+            ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+            for(int i=0; i<dataList.size(); i++){
+                Map<String,Object> item = dataList.get(i);
+                if( (item.get("fcstTime").equals(fcstTime) || item.get("fcstTime").equals(fcstNextTime))
+                        && (item.get("fcstDate").equals(todayDate)) ){
+                    String category = (String)item.get("category");
+                    switch (category){
+                        case "SKY":
+                            if(sky == null){ sky = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "PTY":
+                            if(pty == null){ pty = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "POP":
+                            if(pop == null){ pop = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "REH":
+                            if(reh == null){ reh = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "TMP": case "T3H": case "T1H":
+                            if(tmp == null){ tmp = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                        case "TMN":
+                            if(tmn == null){ tmn = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                        case "TMX":
+                            if(tmx == null){ tmx = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                        case "VEC":
+                            if(vec == null){ vec = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "WSD":
+                            if(wsd == null){ wsd = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                    }
+                }
+            }
+
+            //api에서받아온 날씨 코드값에 따라 날씨 데이터 설정.
+            CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
+            String imgUrl=null;
+
+            if(sky ==1){//맑음
+//                weather.put("weather", "맑음");
+                switch (pty){
+                    case 0:
+                        weather.put("weather", "맑음");break;
+                    case 1: case 5:
+                        weather.put("weather", "구름많고 비");break;
+                    case 2: case 6:
+                        weather.put("weather", "구름많고 비/눈");break;
+                    case 3: case 7:
+                        weather.put("weather", "구름많고 눈");break;
+                    case 4:
+                        weather.put("weather", "구름많고 소나기");break;
+                    default: weather.put("weather", "맑음");
+                }
+            }
+            else if(sky == 3){//구름많음
+                switch (pty){
+                    case 0:
+                        weather.put("weather", "구름많음");break;
+                    case 1: case 5:
+                        weather.put("weather", "구름많고 비");break;
+                    case 2: case 6:
+                        weather.put("weather", "구름많고 비/눈");break;
+                    case 3: case 7:
+                        weather.put("weather", "구름많고 눈");break;
+                    case 4:
+                        weather.put("weather", "구름많고 소나기");break;
+                    default: weather.put("weather","구름많음");
+                }
+            }
+            else if(sky == 4){//흐림
+                switch (pty){
+                    case 0:
+                        weather.put("weather", "흐림");break;
+                    case 1: case 5:
+                        weather.put("weather", "흐리고 비");break;
+                    case 2: case 6:
+                        weather.put("weather", "흐리고 비/눈");break;
+                    case 3: case 7:
+                        weather.put("weather", "흐리고 눈");break;
+                    case 4:
+                        weather.put("weather", "흐리고 소나기");break;
+                    default: weather.put("weather","흐림");
+                }
+            }
+            else{
+                weather.put("weather", null);
+            }
+
+            if(weather.get("weather")!=null) {
+                imgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, (String)weather.get("weather")).getExtraValue1();
+                imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
+                weather.put("weatherImg", imgUrl);
+            }
+
+            //강수 확률
+            weather.put("rainProbability", pop);
+            //습도
+            weather.put("humidity", reh);
+            //온도
+            weather.put("tmp", tmp);
+            //일 최저기온
+            weather.put("tmpMin", tmn);
+            //일 최고기온
+            weather.put("tmpMax", tmx);
+            //풍향
+            if(vec != null){
+                int windDirection = (int)((vec + 22.5 * 0.5) / 22.5);
+                String[] windDirectionString = new String[]{
+                        "북", "북북동", "북동", "동북동", "동", "동남동", "남동", "남남동", "남", "남남서", "남서", "서남서", "서",
+                        "서북서","북서","북북서","북"
+                };
+                weather.put("windDirection", windDirectionString[windDirection]);
+            }
+            else{ weather.put("windDirection", null);}
+            //풍속
+            weather.put("windSpeed", wsd);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return weather;
+    }
+
+    @Transactional
+    public String getSeaCode(String shipId){
+        String observerCode = shipRepository.findById(Long.parseLong(shipId)).get().getObserverCode();
+        ObserverCode observer = observerCodeRepository.getObserverCodeByCode(observerCode);
+        return observer.getForecastCode();
+    }
 
 }

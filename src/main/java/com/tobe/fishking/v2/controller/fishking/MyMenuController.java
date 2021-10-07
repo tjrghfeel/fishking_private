@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /*마이메뉴 안에 있더라도 찜, 쿠폰 등과 같은 다룰 api가 좀있는 것들은 컨트롤러를 따로 빼내었고
  * 여기엔 그 이외의 것들이 있다. */
@@ -436,4 +437,33 @@ public class MyMenuController {
 //    ) throws ResourceNotFoundException {
 //        return myMenuService.getLiveShipList(page);
 //    }
+
+//    선박 상세 날씨 조회
+    @ApiOperation(value = "선박 위치에 대한 현재 날씨 정보 조회.",
+            notes = "요청필드)\n" +
+                    "- shipId : Long / 필수 / 선박 id\n" +
+                    "응답필드)\n" +
+                    "- weather : String / 날씨\n" +
+                    "- weatherImg : String / 날씨 이미지\n" +
+                    "- rainProbability : Integer / 강수확률(%)\n" +
+                    "- humidity : Integer / 습도(%)\n" +
+                    "- tmp : Double / 온도(섭씨)\n" +
+                    "- tmpMin : Double / 일 최저온도(섭씨)\n" +
+                    "- tmpMax : Double / 일 최고온도(섭씨)\n" +
+                    "- windDirection : String / 풍향\n" +
+                    "- windSpeed : Double / 풍속(m/s)\n"
+    )
+    @GetMapping(value = "/ship/{shipId}/weather")
+    public Map<String, Object> getShipWeather(@PathVariable("shipId") String shipId) throws ResourceNotFoundException {
+        return myMenuService.getShipWeather(shipId);
+    }
+
+    // 선박에 대한 해양 코드 반환.
+    @ApiOperation(value = "",
+        notes = ""
+    )
+    @GetMapping("/ship/{shipId}/seaCode")
+    public String getSeaCode(@PathVariable("shipId") String shipId){
+        return myMenuService.getSeaCode(shipId);
+    }
 }
