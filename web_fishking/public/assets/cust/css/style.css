@@ -5021,3 +5021,273 @@ body.full.bgintro {
 	-moz-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
 	box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.1);
 }
+
+/*수정된 로그인 페이지 css.*/
+.loginPage_content {
+	/*외주 퍼블에서 전체 body에 적용되었었던 부분. */
+	max-width: 1920px;
+	font-family: "font-family", "font-family";
+	font-size: 14px;
+	color: #000;
+	line-height: 1.6;
+	text-align: center;
+	/*외주 퍼블에서 전체 * 태그(와일드 카드)에 적용되었던 부분. */
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background-color: transparent;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: cover;
+	/*외주 퍼블에서 body아래 최상위 div(id=loginPage_content)에 적용되었던 부분. */
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	min-height: 100vh;
+	background-image: url(../img/login_bg.png);
+	font-size: 12px;
+	color: #fff;
+
+	/*max-width: none !important*/
+
+}
+
+.loginPage_content *{
+	/*외주 퍼블에서 전체 * 태그(와일드 카드)에 적용되었던 부분. */
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background-color: transparent;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+}
+
+.loginPage_logo {
+	margin-top: 80px;
+	margin-bottom: 40px;
+}
+
+.loginPage_logo img {
+	width: 50vw;
+}
+
+.loginPage_logo h1 {
+	color: #fff;
+	font-size: 12vw;
+}
+
+.loginPage_input_box {
+	width: 90vw;
+	height: 230px;
+	margin-top: auto;
+	margin-bottom: 30px;
+	padding-top: 30px;
+	background-color: #23264e;
+	border-radius: 10px;
+}
+
+.loginPage_input_box input {
+	width: 90%;
+	padding: 0.5rem 1rem;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #0f5993;
+	color: #fff;
+}
+
+.loginPage_input_box input::-webkit-input-placeholder {
+	color: #0f5993;
+	font-size: 12px;
+}
+
+.loginPage_input_box input:-ms-input-placeholder {
+	color: #0f5993;
+	font-size: 12px;
+}
+
+.loginPage_input_box input::-ms-input-placeholder {
+	color: #0f5993;
+	font-size: 12px;
+}
+
+.loginPage_input_box input::placeholder {
+	color: #0f5993;
+	font-size: 12px;
+}
+
+.loginPage_submit_btn {
+	width: 90%;
+	padding: 0.5rem 1rem;
+	margin: auto;
+	margin-bottom: 10px;
+	background-color: #0f5993;
+	color: #fff;
+	font-weight: 300;
+	border-radius: 8px;
+	font-size: 14px;
+}
+
+.loginPage_bottom_btns {
+	width: 90%;
+	margin: auto;
+	padding: 15px 0;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+	justify-content: space-between;
+}
+
+.loginPage_bottom_btns p {
+	color: #fff;
+}
+
+
+/*#loginPage_content * {*/
+/*	margin: 0;*/
+/*	padding: 0;*/
+/*	border: 0;*/
+/*	outline: 0;*/
+/*	background-color: transparent;*/
+/*	box-sizing: border-box;*/
+/*	-webkit-box-sizing: border-box;*/
+/*	background-position: 50% 50%;*/
+/*	background-repeat: no-repeat;*/
+/*	background-size: cover;*/
+/*}*/
+.loginPage_content header,
+.loginPage_content footer,
+.loginPage_content nav,
+.loginPage_content aside,
+.loginPage_content section,
+.loginPage_content article {
+	display: block;
+}
+/*#loginPage_content body {*/
+/*	max-width: 1920px;*/
+/*	font-family: "font-family", "font-family";*/
+/*	font-size: 14px;*/
+/*	color: #000;*/
+/*	line-height: 1.6;*/
+/*	text-align: center;*/
+/*}*/
+.loginPage_content ol,
+.loginPage_content ul {
+	list-style-type: none;
+}
+.loginPage_content a,
+.loginPage_content a:hover {
+	color: #000;
+	text-decoration: none;
+}
+.loginPage_content img {
+	width: 50%;
+	border: 0;
+}
+.loginPage_content table {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+.loginPage_content td,
+.loginPage_content th {
+	border: 1px solid #ccc;
+	border-width: 1px 0;
+}
+.loginPage_content .blind {
+	position: absolute;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+	left: -9999px;
+	top: -9999px;
+}
+.loginPage_content .clearfix::after {
+	content: "";
+	display: block;
+	clear: both;
+}
+.loginPage_content .wrap {
+	width: 94%;
+	max-width: 1500px;
+	margin: auto;
+}
+
+.loginPage_content .bg_attach {
+	background-attachment: fixed;
+}
+.loginPage_content .tp_on_pc {
+	display: none;
+}
+@media all and (min-width: 768px) {
+	.wrap {
+		width: 80%;
+	}
+	body {
+		font-size: 16px;
+	}
+}
+:root {
+	--swiper-theme-color: #000;
+}
+@media all and (min-width: 1280px) {
+	.tp_on_pc {
+		display: inherit;
+	}
+	.tp_on_mo {
+		display: none;
+	}
+}
+
+.loginPage_content .is-invalid {
+
+	border-color: #dc3545;
+	padding-right: calc(1.5em + 0.75rem);
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right calc(0.375em + 0.1875rem) center;
+	background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+	/**/
+	border-bottom-color: #dc3545;
+}
+.shipDetail-weather{
+	padding-top: 20px;
+}
+.shipDetail-weather table{
+	margin: 10px auto;
+
+}
+.shipDetail-weather img{
+	height: 60px;
+}
+.shipDetail-weather tr{
+	font-size: 16px;
+}
+.shipDetail-weather tr:nth-child(1){
+	font-size: 23px;
+	font-weight: bold;
+}
+.shipDetail-weather td{
+	padding: 3px 10px;
+	text-align: center;
+}

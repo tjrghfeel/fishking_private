@@ -20,7 +20,9 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.utils.DateUtils;
+import com.tobe.fishking.v2.utils.HashUtil;
 import com.tobe.fishking.v2.utils.HolidayUtil;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -38,6 +40,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
 
 @Service
 public class MyMenuService {
@@ -783,5 +786,381 @@ public class MyMenuService {
         return shipRepository.getLiveShipList(pageable);
     }
 
+    //선박 위치에 해당하는 현재 날씨 데이터 가져오기.
+    @Transactional
+    public Map<String, Object> getShipWeather(String shipId) throws ResourceNotFoundException {
+        Map<String, Object> weather = new HashMap<>();
+
+        Ship ship = shipRepository.findById(Long.parseLong(shipId))
+                .orElseThrow(()->new ResourceNotFoundException("ship not found for this id ::"+shipId));
+
+        ObserverCode observer = observerCodeRepository.getObserverCodeByCode(ship.getObserverCode());
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        //위경도->x,y격자 좌표 변환.
+        Map<String, Float> xyGrid = transLatLonToXY(0, Float.parseFloat(ship.getLocation().getLongitude().toString()),
+                Float.parseFloat(ship.getLocation().getLatitude().toString()));
+//        transLatLonToXY(1, Float.parseFloat("53"),
+//                Float.parseFloat("127"));
+
+        Integer sky = null;//하늘상태
+        Integer pty = null;//강수형태
+        Integer pop = null;//강수확률
+        Integer reh = null;//습도
+        Double tmp = null;//기온
+        Double tmn = null;//일 최저기온
+        Double tmx = null; //일 최고기온
+        Double uuu = null;//풍속(동남)
+        Double vvv = null;//풍속(남북)
+        Double wav = null;//파고
+        Integer vec = null;//풍향
+        Double wsd = null; //풍속
+
+        String todayDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        int currentHour = currentTime.getHour();
+        String baseTime = null;
+        String baseDate = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        if(currentHour >= 0 && currentHour < 3){ baseTime = "2000"; baseDate = currentTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+        else if(currentHour >= 3 && currentHour < 6){ baseTime = "2300"; baseDate = currentTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));}
+        else if(currentHour >= 6 && currentHour < 9){ baseTime = "0200"; }
+        else if(currentHour >= 9 && currentHour < 12){ baseTime = "0500"; }
+        else if(currentHour >= 12 && currentHour < 15){ baseTime = "0800"; }
+        else if(currentHour >= 15 && currentHour < 18){ baseTime = "1100"; }
+        else if(currentHour >= 18 && currentHour < 21){ baseTime = "1400"; }
+        else if(currentHour >= 21){ baseTime = "1700"; }
+
+//        temp = (temp < 0)? temp + 24 : temp;
+//        String baseTime = String.format("%02d",temp);
+        String fcstTime = String.format("%02d",(currentTime.getHour()/3)*3) + "00";
+        String fcstNextTime = String.format("%02d",(currentTime.plusHours(3).getHour()/3)*3) + "00";
+
+        //동네예보 api 호출.
+        try{
+            String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
+                    "serviceKey=EU1VFa5ptjvV1eaOpB9bnBKBxJxBGaZ%2BqthSuo3%2FZxGfQ%2BrHHiKxf%2Bt1a13VCLBfj1eBv%2BwElgABiGOyIIWDpA%3D%3D" +//
+                    "&pageNo=1" +
+                    "&numOfRows=100" +
+                    "&dataType=JSON" +
+                    "&base_date=" + baseDate +
+                    "&base_time=" + baseTime +
+                    "&nx=" + Math.round(xyGrid.get("x")) +
+                    "&ny=" + Math.round(xyGrid.get("y"));
+            String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
+            System.out.println("result>>> "+response);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
+            Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
+            Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
+            Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
+            ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+            for(int i=0; i<dataList.size(); i++){
+                Map<String,Object> item = dataList.get(i);
+                if( (item.get("fcstTime").equals(fcstTime) || item.get("fcstTime").equals(fcstNextTime))
+                        && (item.get("fcstDate").equals(todayDate)) ){
+                    String category = (String)item.get("category");
+                    switch (category){
+                        case "SKY":
+                            if(sky == null){ sky = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "PTY":
+                            if(pty == null){ pty = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "POP":
+                            if(pop == null){ pop = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "REH":
+                            if(reh == null){ reh = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "TMP": case "T3H": case "T1H":
+                            if(tmp == null){ tmp = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                        case "TMN":
+                            if(tmn == null){ tmn = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                        case "TMX":
+                            if(tmx == null){ tmx = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                        case "VEC":
+                            if(vec == null){ vec = Integer.parseInt((String)item.get("fcstValue")); }
+                            break;
+                        case "WSD":
+                            if(wsd == null){ wsd = Double.parseDouble((String)item.get("fcstValue")); }
+                            break;
+                    }
+                }
+            }
+
+            //api에서받아온 날씨 코드값에 따라 날씨 데이터 설정.
+            CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
+            String imgUrl=null;
+
+            if(sky ==1){//맑음
+//                weather.put("weather", "맑음");
+                switch (pty){
+                    case 0:
+                        weather.put("weather", "맑음");break;
+                    case 1: case 5:
+                        weather.put("weather", "구름많고 비");break;
+                    case 2: case 6:
+                        weather.put("weather", "구름많고 비/눈");break;
+                    case 3: case 7:
+                        weather.put("weather", "구름많고 눈");break;
+                    case 4:
+                        weather.put("weather", "구름많고 소나기");break;
+                    default: weather.put("weather", "맑음");
+                }
+            }
+            else if(sky == 3){//구름많음
+                switch (pty){
+                    case 0:
+                        weather.put("weather", "구름많음");break;
+                    case 1: case 5:
+                        weather.put("weather", "구름많고 비");break;
+                    case 2: case 6:
+                        weather.put("weather", "구름많고 비/눈");break;
+                    case 3: case 7:
+                        weather.put("weather", "구름많고 눈");break;
+                    case 4:
+                        weather.put("weather", "구름많고 소나기");break;
+                    default: weather.put("weather","구름많음");
+                }
+            }
+            else if(sky == 4){//흐림
+                switch (pty){
+                    case 0:
+                        weather.put("weather", "흐림");break;
+                    case 1: case 5:
+                        weather.put("weather", "흐리고 비");break;
+                    case 2: case 6:
+                        weather.put("weather", "흐리고 비/눈");break;
+                    case 3: case 7:
+                        weather.put("weather", "흐리고 눈");break;
+                    case 4:
+                        weather.put("weather", "흐리고 소나기");break;
+                    default: weather.put("weather","흐림");
+                }
+            }
+            else{
+                weather.put("weather", null);
+            }
+
+            if(weather.get("weather")!=null) {
+                imgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, (String)weather.get("weather")).getExtraValue1();
+//                imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
+                imgUrl = "https://fishkingapp.com/resource"+imgUrl;
+                weather.put("weatherImg", imgUrl);
+            }
+
+            //강수 확률
+            weather.put("rainProbability", pop);
+            //습도
+            weather.put("humidity", reh);
+            //온도
+            weather.put("tmp", tmp);
+            //일 최저기온
+            weather.put("tmpMin", tmn);
+            //일 최고기온
+            weather.put("tmpMax", tmx);
+            //풍향
+            if(vec != null){
+                int windDirection = (int)((vec + 22.5 * 0.5) / 22.5);
+                String[] windDirectionString = new String[]{
+                        "북", "북북동", "북동", "동북동", "동", "동남동", "남동", "남남동", "남", "남남서", "남서", "서남서", "서",
+                        "서북서","북서","북북서","북"
+                };
+                weather.put("windDirection", windDirectionString[windDirection]);
+            }
+            else{ weather.put("windDirection", null);}
+            //풍속
+            weather.put("windSpeed", wsd);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return weather;
+    }
+
+    //위,경도로부터 기상청 단기예보 api에 필요한 x,y격자 좌표 변환.
+    //mode인자 0이면, 위경도=>좌표. 1이면, 좌표=>위경도.
+
+    int NX = 149;/* X축 격자점 수 */
+    int NY = 253;/* Y축 격자점 수 */
+
+    class lamc_parameter{
+        float Re; /* 사용할 지구반경 [ km ] */
+        float grid; /* 격자간격 [ km ] */
+        float slat1; /* 표준위도 [degree] */
+        float slat2; /* 표준위도 [degree] */
+        float olon; /* 기준점의 경도 [degree] */
+        float olat; /* 기준점의 위도 [degree] */
+        float xo; /* 기준점의 X좌표 [격자거리] */
+        float yo; /* 기준점의 Y좌표 [격자거리] */
+        int first; /* 시작여부 (0 = 시작) */
+    }
+
+    public Map<String, Float> transLatLonToXY(int mode, Float lonOrX, Float latOrY){
+        Map<String, Float> result = new HashMap<>();
+        int NX = 149;/* X축 격자점 수 */
+        int NY = 253;/* Y축 격자점 수 */
+
+        MyMenuService.lamc_parameter map = new MyMenuService.lamc_parameter();
+
+        Float lon= null, lat= null, x= null, y = null;
+//
+        if (mode == 1) {
+            x = lonOrX;
+            y = latOrY;
+
+        }
+        else if (mode == 0){
+            lon = lonOrX;
+            lat = latOrY;
+        }
+
+        // 동네예보 지도 정보
+
+        map.Re = (float)6371.00877; // 지도반경
+        map.grid = (float)5.0; // 격자간격 (km)
+        map.slat1 = (float)30.0; // 표준위도 1
+        map.slat2 = (float)60.0; // 표준위도 2
+        map.olon = (float)126.0; // 기준점 경도
+        map.olat = (float)38.0; // 기준점 위도
+        map.xo = 210/map.grid; // 기준점 X좌표
+        map.yo = 675/map.grid; // 기준점 Y좌표
+        map.first = 0;
+
+        // 동네예보
+
+        result = map_conv(lon, lat, x, y, mode, map);
+
+        return result;
+    }
+
+    /*============================================================================*
+     * 좌표변환
+     *============================================================================*/
+    private HashMap<String,Float> map_conv (
+        Float lon, // 경도(degree)
+        Float lat, // 위도(degree)
+        Float x, // X격자 (grid)
+        Float y, // Y격자 (grid)
+        int code, // 0 (격자->위경도), 1 (위경도->격자)
+        lamc_parameter map // 지도정보
+    ) {
+        HashMap<String,Float> result = new HashMap<>();
+        Float lon1=null, lat1=null, x1=null, y1=null;
+
+        // 위경도 -> (X,Y)
+
+        if (code == 0) {
+            lon1 = lon;
+            lat1 = lat;
+            HashMap<String,Float> transValue = lamcproj(lon1, lat1, x1, y1, 0, map);
+            x = (float)(int)(transValue.get("x") + 1.5);
+            y = (float)(int)(transValue.get("y") + 1.5);
+            result.put("x", x);
+            result.put("y",y);
+        }
+
+        // (X,Y) -> 위경도
+
+        if (code == 1) {
+            x1 = x - 1;
+            y1 = y - 1;
+            HashMap<String,Float> transValue = lamcproj(lon1, lat1, x1, y1, 1, map);
+            lon = transValue.get("lon");
+            lat = transValue.get("lat");
+            result.put("lon", lon);
+            result.put("lat", lat);
+        }
+        return result;
+    }
+
+    /***************************************************************************
+    *
+    * [ Lambert Conformal Conic Projection ]
+    *
+    * olon, lat : (longitude,latitude) at earth [degree]
+    * o x, y : (x,y) cordinate in map [grid]
+    * o code = 0 : (lon,lat) --> (x,y)
+    * 1 : (x,y) --> (lon,lat)
+    *
+    ***************************************************************************/
+    static double PI, DEGRAD, RADDEG;
+    static double re, olon, olat, sn, sf, ro;
+
+    private HashMap<String, Float> lamcproj(Float lon, Float lat, Float x, Float y, int code, lamc_parameter map)
+    {
+        HashMap<String, Float> result = new HashMap<>();
+        double slat1, slat2, alon, alat, xn, yn, ra, theta;
+
+        if ((map).first == 0) {
+            PI = Math.asin(1.0)*2.0;
+            DEGRAD = PI/180.0;
+            RADDEG = 180.0/PI;
+
+            re = (map).Re/(map).grid;
+            slat1 = (map).slat1 * DEGRAD;
+            slat2 = (map).slat2 * DEGRAD;
+            olon = (map).olon * DEGRAD;
+            olat = (map).olat * DEGRAD;
+
+            sn = Math.tan(PI*0.25 + slat2*0.5)/Math.tan(PI*0.25 + slat1*0.5);
+            sn = Math.log(Math.cos(slat1)/Math.cos(slat2))/Math.log(sn);
+            sf = Math.tan(PI*0.25 + slat1*0.5);
+            sf = Math.pow(sf,sn)*Math.cos(slat1)/sn;
+            ro = Math.tan(PI*0.25 + olat*0.5);
+            ro = re*sf/Math.pow(ro,sn);
+            (map).first = 1;
+        }
+
+        if (code == 0) {
+            ra = Math.tan(PI*0.25+(lat)*DEGRAD*0.5);
+            ra = re*sf/Math.pow(ra,sn);
+            theta = (lon)*DEGRAD - olon;
+            if (theta > PI) theta -= 2.0*PI;
+            if (theta < -PI) theta += 2.0*PI;
+            theta *= sn;
+            x = (float)(ra*Math.sin(theta)) + (map).xo;
+            y = (float)(ro - ra*Math.cos(theta)) + (map).yo;
+            result.put("x",x);
+            result.put("y",y);
+        }
+        else {
+            xn = x - (map).xo;
+            yn = ro - y + (map).yo;
+            ra = Math.sqrt(xn*xn+yn*yn);
+            if (sn< 0.0) ra = -ra;
+            alat = Math.pow((re*sf/ra),(1.0/sn));
+            alat = 2.0*Math.atan(alat) - PI*0.5;
+            if (Math.abs(xn) <= 0.0) {
+                theta = 0.0;
+            }
+            else {
+                if (Math.abs(yn) <= 0.0) {
+                    theta = PI*0.5;
+                    if(xn< 0.0 ) theta = -theta;
+                }
+                else
+                    theta = Math.atan2(xn,yn);
+            }
+            alon = theta/sn + olon;
+            lat = (float)(alat*RADDEG);
+            lon = (float)(alon*RADDEG);
+            result.put("lon",lon);
+            result.put("lat",lat);
+        }
+        return result;
+    }
+
+    @Transactional
+    public String getSeaCode(String shipId){
+        String observerCode = shipRepository.findById(Long.parseLong(shipId)).get().getObserverCode();
+        ObserverCode observer = observerCodeRepository.getObserverCodeByCode(observerCode);
+        return observer.getForecastCode();
+    }
 
 }
