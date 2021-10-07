@@ -5101,14 +5101,14 @@ body.full.bgintro {
 	height: 230px;
 	margin-top: auto;
 	margin-bottom: 30px;
-	padding-top: 50px;
+	padding-top: 30px;
 	background-color: #23264e;
 	border-radius: 10px;
 }
 
 .loginPage_input_box input {
 	width: 90%;
-	padding: 5px 10px;
+	padding: 0.5rem 1rem;
 	margin-bottom: 10px;
 	border-bottom: 1px solid #0f5993;
 	color: #fff;
@@ -5136,7 +5136,7 @@ body.full.bgintro {
 
 .loginPage_submit_btn {
 	width: 90%;
-	padding: 0.7rem 1rem;;
+	padding: 0.5rem 1rem;
 	margin: auto;
 	margin-bottom: 10px;
 	background-color: #0f5993;
@@ -5269,4 +5269,25 @@ body.full.bgintro {
 	background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 	/**/
 	border-bottom-color: #dc3545;
+}
+.shipDetail-weather{
+	padding-top: 20px;
+}
+.shipDetail-weather table{
+	margin: 10px auto;
+
+}
+.shipDetail-weather img{
+	height: 60px;
+}
+.shipDetail-weather tr{
+	font-size: 16px;
+}
+.shipDetail-weather tr:nth-child(1){
+	font-size: 23px;
+	font-weight: bold;
+}
+.shipDetail-weather td{
+	padding: 3px 10px;
+	text-align: center;
 }

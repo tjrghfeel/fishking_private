@@ -438,7 +438,7 @@ public class MyMenuController {
 //        return myMenuService.getLiveShipList(page);
 //    }
 
-//    선박 상세 날씨 조회
+    //선박 상세 날씨 조회
     @ApiOperation(value = "선박 위치에 대한 현재 날씨 정보 조회.",
             notes = "요청필드)\n" +
                     "- shipId : Long / 필수 / 선박 id\n" +

@@ -20,6 +20,7 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.utils.DateUtils;
+import com.tobe.fishking.v2.utils.HashUtil;
 import com.tobe.fishking.v2.utils.HolidayUtil;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
 
 @Service
 public class MyMenuService {
@@ -795,6 +797,12 @@ public class MyMenuService {
         ObserverCode observer = observerCodeRepository.getObserverCodeByCode(ship.getObserverCode());
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
+        //위경도->x,y격자 좌표 변환.
+        Map<String, Float> xyGrid = transLatLonToXY(0, Float.parseFloat(ship.getLocation().getLongitude().toString()),
+                Float.parseFloat(ship.getLocation().getLatitude().toString()));
+//        transLatLonToXY(1, Float.parseFloat("53"),
+//                Float.parseFloat("127"));
+
         Integer sky = null;//하늘상태
         Integer pty = null;//강수형태
         Integer pop = null;//강수확률
@@ -837,8 +845,8 @@ public class MyMenuService {
                     "&dataType=JSON" +
                     "&base_date=" + baseDate +
                     "&base_time=" + baseTime +
-                    "&nx=" + observer.getXGrid() +
-                    "&ny=" + observer.getYGrid();
+                    "&nx=" + Math.round(xyGrid.get("x")) +
+                    "&ny=" + Math.round(xyGrid.get("y"));
             String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
             System.out.println("result>>> "+response);
             ObjectMapper mapper = new ObjectMapper();
@@ -940,7 +948,8 @@ public class MyMenuService {
 
             if(weather.get("weather")!=null) {
                 imgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, (String)weather.get("weather")).getExtraValue1();
-                imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
+//                imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
+                imgUrl = "https://fishkingapp.com/resource"+imgUrl;
                 weather.put("weatherImg", imgUrl);
             }
 
@@ -972,6 +981,179 @@ public class MyMenuService {
             return null;
         }
         return weather;
+    }
+
+    //위,경도로부터 기상청 단기예보 api에 필요한 x,y격자 좌표 변환.
+    //mode인자 0이면, 위경도=>좌표. 1이면, 좌표=>위경도.
+
+    int NX = 149;/* X축 격자점 수 */
+    int NY = 253;/* Y축 격자점 수 */
+
+    class lamc_parameter{
+        float Re; /* 사용할 지구반경 [ km ] */
+        float grid; /* 격자간격 [ km ] */
+        float slat1; /* 표준위도 [degree] */
+        float slat2; /* 표준위도 [degree] */
+        float olon; /* 기준점의 경도 [degree] */
+        float olat; /* 기준점의 위도 [degree] */
+        float xo; /* 기준점의 X좌표 [격자거리] */
+        float yo; /* 기준점의 Y좌표 [격자거리] */
+        int first; /* 시작여부 (0 = 시작) */
+    }
+
+    public Map<String, Float> transLatLonToXY(int mode, Float lonOrX, Float latOrY){
+        Map<String, Float> result = new HashMap<>();
+        int NX = 149;/* X축 격자점 수 */
+        int NY = 253;/* Y축 격자점 수 */
+
+        MyMenuService.lamc_parameter map = new MyMenuService.lamc_parameter();
+
+        Float lon= null, lat= null, x= null, y = null;
+//
+        if (mode == 1) {
+            x = lonOrX;
+            y = latOrY;
+
+        }
+        else if (mode == 0){
+            lon = lonOrX;
+            lat = latOrY;
+        }
+
+        // 동네예보 지도 정보
+
+        map.Re = (float)6371.00877; // 지도반경
+        map.grid = (float)5.0; // 격자간격 (km)
+        map.slat1 = (float)30.0; // 표준위도 1
+        map.slat2 = (float)60.0; // 표준위도 2
+        map.olon = (float)126.0; // 기준점 경도
+        map.olat = (float)38.0; // 기준점 위도
+        map.xo = 210/map.grid; // 기준점 X좌표
+        map.yo = 675/map.grid; // 기준점 Y좌표
+        map.first = 0;
+
+        // 동네예보
+
+        result = map_conv(lon, lat, x, y, mode, map);
+
+        return result;
+    }
+
+    /*============================================================================*
+     * 좌표변환
+     *============================================================================*/
+    private HashMap<String,Float> map_conv (
+        Float lon, // 경도(degree)
+        Float lat, // 위도(degree)
+        Float x, // X격자 (grid)
+        Float y, // Y격자 (grid)
+        int code, // 0 (격자->위경도), 1 (위경도->격자)
+        lamc_parameter map // 지도정보
+    ) {
+        HashMap<String,Float> result = new HashMap<>();
+        Float lon1=null, lat1=null, x1=null, y1=null;
+
+        // 위경도 -> (X,Y)
+
+        if (code == 0) {
+            lon1 = lon;
+            lat1 = lat;
+            HashMap<String,Float> transValue = lamcproj(lon1, lat1, x1, y1, 0, map);
+            x = (float)(int)(transValue.get("x") + 1.5);
+            y = (float)(int)(transValue.get("y") + 1.5);
+            result.put("x", x);
+            result.put("y",y);
+        }
+
+        // (X,Y) -> 위경도
+
+        if (code == 1) {
+            x1 = x - 1;
+            y1 = y - 1;
+            HashMap<String,Float> transValue = lamcproj(lon1, lat1, x1, y1, 1, map);
+            lon = transValue.get("lon");
+            lat = transValue.get("lat");
+            result.put("lon", lon);
+            result.put("lat", lat);
+        }
+        return result;
+    }
+
+    /***************************************************************************
+    *
+    * [ Lambert Conformal Conic Projection ]
+    *
+    * olon, lat : (longitude,latitude) at earth [degree]
+    * o x, y : (x,y) cordinate in map [grid]
+    * o code = 0 : (lon,lat) --> (x,y)
+    * 1 : (x,y) --> (lon,lat)
+    *
+    ***************************************************************************/
+    static double PI, DEGRAD, RADDEG;
+    static double re, olon, olat, sn, sf, ro;
+
+    private HashMap<String, Float> lamcproj(Float lon, Float lat, Float x, Float y, int code, lamc_parameter map)
+    {
+        HashMap<String, Float> result = new HashMap<>();
+        double slat1, slat2, alon, alat, xn, yn, ra, theta;
+
+        if ((map).first == 0) {
+            PI = Math.asin(1.0)*2.0;
+            DEGRAD = PI/180.0;
+            RADDEG = 180.0/PI;
+
+            re = (map).Re/(map).grid;
+            slat1 = (map).slat1 * DEGRAD;
+            slat2 = (map).slat2 * DEGRAD;
+            olon = (map).olon * DEGRAD;
+            olat = (map).olat * DEGRAD;
+
+            sn = Math.tan(PI*0.25 + slat2*0.5)/Math.tan(PI*0.25 + slat1*0.5);
+            sn = Math.log(Math.cos(slat1)/Math.cos(slat2))/Math.log(sn);
+            sf = Math.tan(PI*0.25 + slat1*0.5);
+            sf = Math.pow(sf,sn)*Math.cos(slat1)/sn;
+            ro = Math.tan(PI*0.25 + olat*0.5);
+            ro = re*sf/Math.pow(ro,sn);
+            (map).first = 1;
+        }
+
+        if (code == 0) {
+            ra = Math.tan(PI*0.25+(lat)*DEGRAD*0.5);
+            ra = re*sf/Math.pow(ra,sn);
+            theta = (lon)*DEGRAD - olon;
+            if (theta > PI) theta -= 2.0*PI;
+            if (theta < -PI) theta += 2.0*PI;
+            theta *= sn;
+            x = (float)(ra*Math.sin(theta)) + (map).xo;
+            y = (float)(ro - ra*Math.cos(theta)) + (map).yo;
+            result.put("x",x);
+            result.put("y",y);
+        }
+        else {
+            xn = x - (map).xo;
+            yn = ro - y + (map).yo;
+            ra = Math.sqrt(xn*xn+yn*yn);
+            if (sn< 0.0) ra = -ra;
+            alat = Math.pow((re*sf/ra),(1.0/sn));
+            alat = 2.0*Math.atan(alat) - PI*0.5;
+            if (Math.abs(xn) <= 0.0) {
+                theta = 0.0;
+            }
+            else {
+                if (Math.abs(yn) <= 0.0) {
+                    theta = PI*0.5;
+                    if(xn< 0.0 ) theta = -theta;
+                }
+                else
+                    theta = Math.atan2(xn,yn);
+            }
+            alon = theta/sn + olon;
+            lat = (float)(alat*RADDEG);
+            lon = (float)(alon*RADDEG);
+            result.put("lon",lon);
+            result.put("lat",lat);
+        }
+        return result;
     }
 
     @Transactional
