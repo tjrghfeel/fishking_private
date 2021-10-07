@@ -120,7 +120,7 @@ export default inject(
           return (function() {
             const latlng = component.map.getCenter();
             let list = component.state.resolve.slice(0)
-            console.log(latlng)
+            // console.log(latlng)
             list.sort(function (a, b) {
               const distance_a = new kakao.maps.Polyline({
                 path: [
@@ -149,7 +149,7 @@ export default inject(
       sortByDistance = (component) => {
         const latlng = component.map.getCenter();
         let list = component.state.resolve.slice(0)
-        console.log(latlng)
+        // console.log(latlng)
         list.sort(function (a, b) {
           const distance_a = new kakao.maps.Polyline({
             path: [
@@ -229,7 +229,7 @@ export default inject(
       render() {
         const { PageStore, NativeStore } = this.props;
         const list = this.state.resolve
-        console.log(list)
+        // console.log(list)
         return (
           <React.Fragment>
             <header>
