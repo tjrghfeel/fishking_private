@@ -5284,10 +5284,13 @@ body.full.bgintro {
 	font-size: 16px;
 }
 .shipDetail-weather tr:nth-child(1){
-	font-size: 23px;
+	font-size: 25px;
 	font-weight: bold;
+}
+.shipDetail-weather tr:nth-child(1) td:nth-child(1){
+	text-align: right;
 }
 .shipDetail-weather td{
 	padding: 3px 10px;
-	text-align: center;
+	text-align: left;
 }
