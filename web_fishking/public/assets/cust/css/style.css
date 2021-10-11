@@ -52,7 +52,7 @@ body {
 	font-size:13px;
 	margin:0 auto;
 	color:#333333;	
-	padding-top:43px !important;
+	padding-top:60px !important;
 	padding-bottom:45px !important;
 	background-color:#fff;
 	overflow-x:hidden;
@@ -264,7 +264,7 @@ a.skyblue:active {
 .navbar.fixed-top {
   padding: 0.3rem 1rem 0.5rem 1rem !important;
 	margin:0 auto !important;
-	height:43px;
+	height:60px;
 	text-align:center;
 }
 .navbar.fixed-top .navbar-brand {
@@ -286,12 +286,12 @@ a.skyblue:active {
 .navbar.fixed-top .fixed-top-right {
 	position:absolute;
 	right:10px;
-	top:10px;
+	top:17px;
 }
 .navbar.fixed-top .fixed-top-right-two {
 	position:absolute;
 	right:45px;
-	top:10px;
+	top:17px;
 }
 .navbar.fixed-top .form-inline {
 	border-bottom:1px solid #fff;
@@ -2384,7 +2384,7 @@ ul.sel_num li h4 {
   border-bottom: 0px solid #dee2e6;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-	height:43px;
+	height:60px;
 	text-align:center;
 	position:relative;
 	padding:5px 0 0 0;
@@ -2398,21 +2398,21 @@ ul.sel_num li h4 {
 	text-align:center;
 	line-height:17px;
 	font-size:15px;
-	margin:7px 0;
+	margin:15px 0;
 }
 .modal-full .modal-header .nav-left {
 	position:absolute;
-	top:10px;
+	top:17px;
 	left:12px;
 }
 .nav-left {
 	position:absolute;
-	top:10px;
+	top:17px;
 	left:12px;
 }
 .nav-right {
 	position:absolute;
-	top:10px;
+	top:17px;
 	right:12px;
 }
 .nav-right span {
