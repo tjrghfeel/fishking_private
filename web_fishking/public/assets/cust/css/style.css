@@ -5340,6 +5340,7 @@ body.full.bgintro {
 }
 #reservePage-content h2{
 	font-size: 1.5em;
+	margin: 0px;
 }
 .reservePage-calender_part{
 	width: 100%;
@@ -5370,6 +5371,7 @@ body.full.bgintro {
 	width: 70%;
 	margin: auto;
 	margin-bottom: 15px;
+	color: #ffffff;
 }
 .reservePage-schedule_part > li {
 	width: 96%;

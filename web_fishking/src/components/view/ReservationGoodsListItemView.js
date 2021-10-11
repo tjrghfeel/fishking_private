@@ -21,7 +21,16 @@ export default inject()(
         selectedDate,
     }) => {
       return (
-          <li className="clearfix">
+          <li className="clearfix"
+              onClick={()=>{
+                  const { PageStore } = props;
+                  PageStore.push(
+                      `/reservation/goods/payment/${
+                          data.id
+                      }/${selectedDate.format()}`
+                  );
+              }}
+          >
             <div className="list_main">
               <h2>{name}</h2>
               <h2 className="cal_price">
@@ -65,14 +74,14 @@ export default inject()(
                 </div>
               </li>
             </ol>
-            <a onClick={()=>{
-                const { PageStore } = props;
-                PageStore.push(
-                    `/reservation/goods/payment/${
-                        data.id
-                    }/${selectedDate.format()}`
-                );
-            }} className="cal_submit_btn">상품 바로 결제하기</a>
+            {/*<a onClick={()=>{*/}
+            {/*    const { PageStore } = props;*/}
+            {/*    PageStore.push(*/}
+            {/*        `/reservation/goods/payment/${*/}
+            {/*            data.id*/}
+            {/*        }/${selectedDate.format()}`*/}
+            {/*    );*/}
+            {/*}} className="cal_submit_btn">상품 바로 결제하기</a>*/}
           </li>
 
         // <div className="container nopadding mt-2">
