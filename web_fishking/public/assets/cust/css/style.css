@@ -5294,3 +5294,134 @@ body.full.bgintro {
 	padding: 3px 10px;
 	text-align: left;
 }
+
+/*예약 날짜 선택 페이지*/
+#reservePage-content{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background-color: transparent;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	max-width: 1920px;
+	font-family: "font-family", "font-family";
+	font-size: 14px;
+	color: #000;
+	line-height: 1.6;
+	text-align: center;
+
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	/*min-height: 100vh;*/
+	font-size: 12px;
+	/*color: #fff;*/
+
+	display: block;
+	/*padding-top: 90px;*/
+	background-image: none;
+}
+#reservePage-content h2{
+	font-size: 1.5em;
+}
+.reservePage-calender_part{
+	width: 100%;
+	min-height: 250px;
+	color: #3683d5;
+	background-color: #eee;
+}
+.reservePage-list_part{
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: calc(100% - 320px);
+	border-radius: 20px 20px 0 0;
+	background-color: #3683d5;
+	overflow: scroll;
+}
+.reservePage-date_part{
+	width: 96%;
+	margin: 15px auto;
+	padding: 10px;
+	border-radius: 30px;
+	background-color: #fff;
+	color: #3683d5;
+	font-size: 1.4em;
+}
+.reservePage-notice_part{
+	width: 70%;
+	margin: auto;
+	margin-bottom: 15px;
+}
+.reservePage-schedule_part > li {
+	width: 96%;
+	margin: auto;
+	padding: 15px 5%;
+	border-radius: 10px;
+	margin-bottom: 15px;
+	background-color: #fff;
+	color: #000;
+}
+
+.reservePage-schedule_part > li .list_main {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+	justify-content: space-between;
+}
+
+.reservePage-schedule_part > li .list_main h2 {
+	font-weight: 400;
+}
+
+.reservePage-schedule_part > li .cal_price {
+	color: #3683d5;
+}
+
+.reservePage-schedule_part > li .cal_price p {
+	color: #000;
+	font-size: 12px;
+}
+
+.reservePage-schedule_part > li .list_sub {
+	margin-left: 15px;
+	text-align: left;
+	list-style: disc;
+}
+
+.reservePage-schedule_part > li .list_sub li > div {
+	color: #3683d5;
+}
+
+.reservePage-schedule_part > li .list_sub li::marker {
+	color: #3683d5;
+}
+
+.reservePage-schedule_part > li .cal_submit_btn {
+	float: right;
+	margin-top: 5px;
+	padding: 2px 30px;
+	border-radius: 10px;
+	background-color: #c4c3c1;
+	color: #000;
+}
