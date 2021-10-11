@@ -38,7 +38,7 @@ export default inject("DataStore")(
                                     scrolling="yes"
                                     style={{
                                         "border":"none",
-                                        "width":"600px",
+                                        "width":"700px",
                                         "height":"170vh",
                                     }}
                                 ></iframe>
