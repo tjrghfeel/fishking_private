@@ -294,7 +294,6 @@ export default inject(
                 id="carousel-visual-detail"
                 className="carousel slide"
                 data-ride="carousel"
-                style={{marginTop: "45px"}}
               >
                 {/*<div className="float-top-left">*/}
                 {/*  <a onClick={() => PageStore.goBack()}>*/}

@@ -125,17 +125,35 @@ header > a i.fas {
   line-height: 30px;
 }
 
-header input {
-  width: calc(100% - 100px);
+header form {
+  width: calc(100% - 70px);
   height: 30px;
-  margin-left: 5px;
-  padding: 5px;
-  padding-left: 25px;
+  margin-left: 20px;
+  /*padding: 5px;*/
+  /*padding-left: 25px;*/
   border: 1px solid #000;
   border-radius: 12px;
-  background-image: url(../images/tp_search.png);
-  background-size: 15px;
-  background-position: 5px 50%;
+  /*background-image: url(../images/tp_search.png);*/
+  /*background-size: 15px;*/
+  /*background-position: 5px 50%;*/
+}
+
+header input {
+  width: calc(100% - 60px);
+  height: 28px;
+  margin: 0 0 0 25px;
+  border: none;
+  outline: none;
+  /*background-image: url(../images/tp_search.png);*/
+  /*background-size: 15px;*/
+  /*background-position: 5px 50%;*/
+}
+
+header form a {
+  width: auto;
+  height: 28px;
+  padding: 5px;
+  border-radius: 12px;
 }
 
 header input::-webkit-input-placeholder {
@@ -258,3 +276,7 @@ header input::placeholder {
   width: 160px;
 }
 /*# sourceMappingURL=common_1.css.map */
+
+#map > div > div > div > div {
+  border-radius: 10px;
+}
