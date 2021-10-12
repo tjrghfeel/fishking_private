@@ -43,25 +43,15 @@ export default inject(
         }
 
         // 마커 이미지 생성
-        const imgSize = new kakao.maps.Size(30, 30),
-          imgOption = {offset: new kakao.maps.Point(15, 15)},
-          imgOverSize = new kakao.maps.Size(46, 46),
-          imgOverOption = {offset: new kakao.maps.Point(23, 23)},
+        const imgSize = new kakao.maps.Size(18, 18),
+          imgOption = {offset: new kakao.maps.Point(9, 9)},
           imgSrcShip = "/assets/cust/img/pin_ship.png",
-          imgOverSrcShip = "/assets/cust/img/pin_ship_over.png",
-          imgSrcRock = "/assets/cust/img/pin_rock.png",
-          imgOverSrcRock = "/assets/cust/img/pin_rock_over.png"
+          imgSrcRock = "/assets/cust/img/pin_rock.png";
 
         this.setState({
           markerImgShip: new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption),
-          markerOverImgShip: new kakao.maps.MarkerImage(imgOverSrcShip, imgOverSize, imgOverOption),
           markerImgRock: new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption),
-          markerOverImgRock: new kakao.maps.MarkerImage(imgOverSrcRock, imgOverSize, imgOverOption),
         })
-        // const markerImgShip = new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption)
-        // const markerOverImgShip = new kakao.maps.MarkerImage(imgOverSrcShip, imgOverSize, imgOverOption)
-        // const markerImgRock = new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption)
-        // const markerOverImgRock = new kakao.maps.MarkerImage(imgOverSrcRock, imgOverSize, imgOverOption)
 
         // # 지도표시
         const options = {
