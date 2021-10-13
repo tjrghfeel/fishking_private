@@ -13,7 +13,7 @@ export default inject()(
             {list.map((data, index) => (
               <li>
                 <div className="img_wrap">
-                  <img src={data.shipImageFileUrl} alt=""/>
+                  <img src={"https://www.fishkingapp.com"+data.shipImageFileUrl} alt=""/>
                 </div>
                 <div className="text_part">
                   <h3>{data.shipName}</h3>

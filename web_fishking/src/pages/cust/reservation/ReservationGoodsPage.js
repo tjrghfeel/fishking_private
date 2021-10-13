@@ -170,76 +170,7 @@ export default inject(
                                     props = {this.props}
                                     selectedDate = {this.state.selectedDate}
                                 />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
-                                <ReservationGoodsListItemView
-                                key={index}
-                                data={data}
-                                onChange={this.onChange}
-                                props = {this.props}
-                                selectedDate = {this.state.selectedDate}
-                                />
+
                                 </React.Fragment>
                             ))}
                             {/*<li className="clearfix">*/}

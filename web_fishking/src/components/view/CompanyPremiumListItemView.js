@@ -22,7 +22,7 @@ export default inject()(
             <div className="card card-lg">
               <div className="card-img">
                 <img
-                  src={shipImageFileUrl}
+                  src={"https://www.fishkingapp.com"+shipImageFileUrl}
                   className="card-img-top img-fluid"
                   alt=""
                 />

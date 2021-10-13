@@ -23,7 +23,7 @@ export default inject()(
             <div className="card card-sm">
               <div className="row no-gutters">
                 <div className="cardimgWrap">
-                  <img src={shipImageFileUrl} className="img-fluid" alt="" />
+                  <img src={"https://www.fishkingapp.com"+shipImageFileUrl} className="img-fluid" alt="" />
                   {/*<span className="play">*/}
                   {/*  <img src="/assets/cust/img/svg/live-play.svg" alt="" />*/}
                   {/*</span>*/}

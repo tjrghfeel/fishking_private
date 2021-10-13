@@ -266,6 +266,8 @@ a.skyblue:active {
 	margin:0 auto !important;
 	height:60px;
 	text-align:center;
+	background-image: url("../img/TitleBG.svg");
+	background-size: cover;
 }
 .navbar.fixed-top .navbar-brand {
   padding-top: 0rem;
@@ -2342,6 +2344,8 @@ ul.sel_num li h4 {
   justify-content: space-between;
   padding: 3px 1rem 15px 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	background-image: url("../img/TitleBG.svg");
+	background-size: cover;
 }
 .modal-sm {
 	max-width: 300px;
