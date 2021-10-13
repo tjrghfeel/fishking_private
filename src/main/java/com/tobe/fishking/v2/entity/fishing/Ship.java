@@ -249,6 +249,50 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 비번'")
     private String nhnPw;
 
+    @Column(columnDefinition = "varchar(100) comment '선박번호'")
+    private String shipNumber;
+
+    // 선장정보들
+    @Column(columnDefinition = "varchar(20) comment '선장 이름'")
+    private String capName;
+
+    @Column(columnDefinition = "varchar(10) comment '선장 생년월일'")
+    private String capBirth;
+
+    @Column(columnDefinition = "varchar(1) comment '선장 성별'")
+    private String capSex;
+
+    @Column(columnDefinition = "varchar(15) comment '선장 전화번호'")
+    private String capPhone;
+
+    @Column(columnDefinition = "varchar(300) comment '선장 주소'")
+    private String capAddr;
+
+    @Column(columnDefinition = "varchar(15) comment '선장 비상연락처'")
+    private String capEmerNum;
+
+    @Column(columnDefinition = "varchar(100) comment '선장 해기사번호'")
+    private String capNumber;
+
+    // 선원정보들
+    @Column(columnDefinition = "varchar(20) comment '선원 이름'")
+    private String crewName;
+
+    @Column(columnDefinition = "varchar(10) comment '선원 생년월일'")
+    private String crewBirth;
+
+    @Column(columnDefinition = "varchar(1) comment '선원 성별'")
+    private String crewSex;
+
+    @Column(columnDefinition = "varchar(15) comment '선원 전화번호'")
+    private String crewPhone;
+
+    @Column(columnDefinition = "varchar(300) comment '선원 주소'")
+    private String crewAddr;
+
+    @Column(columnDefinition = "varchar(15) comment '선원 비상연락처'")
+    private String crewEmerNum;
+
 //    @Column(columnDefinition = "varchar(20) comment '선상/갯바위 동시생성시 두 ship엔터티를 묶는 코드'")
 //    private String setCode;
 

@@ -5,6 +5,7 @@ import Components from "../../../components";
 const {
   VIEW: {
     NewMainShipListView,
+    NewSideMenu,
   },
 } = Components;
 
@@ -42,25 +43,15 @@ export default inject(
         }
 
         // 마커 이미지 생성
-        const imgSize = new kakao.maps.Size(30, 30),
-          imgOption = {offset: new kakao.maps.Point(15, 15)},
-          imgOverSize = new kakao.maps.Size(46, 46),
-          imgOverOption = {offset: new kakao.maps.Point(23, 23)},
+        const imgSize = new kakao.maps.Size(18, 18),
+          imgOption = {offset: new kakao.maps.Point(9, 9)},
           imgSrcShip = "/assets/cust/img/pin_ship.png",
-          imgOverSrcShip = "/assets/cust/img/pin_ship_over.png",
-          imgSrcRock = "/assets/cust/img/pin_rock.png",
-          imgOverSrcRock = "/assets/cust/img/pin_rock_over.png"
+          imgSrcRock = "/assets/cust/img/pin_rock.png";
 
         this.setState({
           markerImgShip: new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption),
-          markerOverImgShip: new kakao.maps.MarkerImage(imgOverSrcShip, imgOverSize, imgOverOption),
           markerImgRock: new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption),
-          markerOverImgRock: new kakao.maps.MarkerImage(imgOverSrcRock, imgOverSize, imgOverOption),
         })
-        // const markerImgShip = new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption)
-        // const markerOverImgShip = new kakao.maps.MarkerImage(imgOverSrcShip, imgOverSize, imgOverOption)
-        // const markerImgRock = new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption)
-        // const markerOverImgRock = new kakao.maps.MarkerImage(imgOverSrcRock, imgOverSize, imgOverOption)
 
         // # 지도표시
         const options = {
@@ -171,15 +162,18 @@ export default inject(
       }
 
       markingOnMap = () => {
+        const { PageStore } = this.props;
         const { resolve, markerImgShip, markerImgRock } = this.state
         // 지도에 마커 생성
         for (const point of resolve) {
-          let markerImg, markerOverImg
+          let markerImg, markerOverImg, type
           if (point.type == "갯바위") {
             markerImg = markerImgRock
+            type = 'rock'
             // markerOverImg = markerOverImgRock
           } else {
             markerImg = markerImgShip
+            type = 'boat'
             // markerOverImg = markerOverImgShip
           }
           const marker = new kakao.maps.Marker({
@@ -192,12 +186,27 @@ export default inject(
             title: point.shipName,
             clickable: true,
           });
+          const content = '<div style="border-radius: 5px; ' +
+            'display:flex; ' +
+            'flex-direction: column;' +
+            'padding: 15px 5px;' +
+            'width: 200px;">' +
+            '<div style="width: 40%;"><img src="'+point.shipImageFileUrl+'" style="object-fit: contain; width: 190px;"></div>' +
+            '<div style="flex-direction: column">' +
+            '<div>선박명: '+point.shipName+' ('+point.type+')</div>' +
+            '<div>위치: '+point.address+'</div>' +
+            '<div style="margin-top:10px;">' +
+            '<button ' +
+            'style="border-radius: 10px; ' +
+            'width: 100%; ' +
+            'border: none; ' +
+            'background: #c6c5c3;"' +
+            'onclick="goDetail(\''+type+'\',\''+point.id+'\')">상 세 보 기</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
           const infoWindow = new kakao.maps.InfoWindow({
-            content: '<div style="padding: 5px;">' +
-              point.shipName + '<br/>' +
-              point.type + '<br/>' +
-              point.address +
-              '</div>',
+            content: content,
             removable: true,
           })
           kakao.maps.event.addListener(marker, 'click', clickListener(this.map, marker, infoWindow));
@@ -233,8 +242,41 @@ export default inject(
         return (
           <React.Fragment>
             <header>
-              <a href="#"><i className="fas fa-chevron-left"></i></a>
-              <input type="text" style={{ backgroundColor: "rgba(255,255,255,0.7)" }} placeholder="Search anything"/>
+              {/*<a href="#"><i className="fas fa-chevron-left"></i></a>*/}
+              <form
+                style={{ backgroundColor: "rgba(255,255,255,0.7)" }}>
+                <input
+                  type="text"
+                  style={{ backgroundColor: "rgba(255,255,255,0.7)" }}
+                  placeholder="어떤 낚시를 찾고 있나요?"
+                  onChange={(e) =>
+                    this.setState({ keyword: e.target.value })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.keyCode === 13) {
+                      if (e.target.value == "") return;
+                      PageStore.push(
+                        `/search/keyword/all?keyword=${e.target.value}`
+                      );
+                      // this.onSubmit(e.target.value);
+                      e.preventDefault();
+                    }
+                  }}
+                />
+                <a
+                  onClick={() => {
+                    if (this.state.keyword == "") return;
+                    PageStore.push(
+                      `/search/keyword/all?keyword=${this.state.keyword}`
+                    );
+                  }}
+                >
+                  <img
+                    src="/assets/cust/img/svg/form-search.svg"
+                    alt="Search"
+                  />
+                </a>
+              </form>
               <div className="modal_btn">
                 <a href="#" className="menu-button">
                   <svg
@@ -251,60 +293,7 @@ export default inject(
                   </svg>
                 </a>
               </div>
-              <div className="side_menu">
-                <ol>
-                  <li>
-                    <a onClick={() => PageStore.push(`/main/home`)}>
-                      <img
-                        src="/assets/cust/img/svg/ico_1_home.svg"
-                        alt="홈 메뉴"
-                        className="side_img"
-                      />
-                      <span>홈</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a onClick={() => PageStore.push(`/main/company/boat`)}>
-                      <img
-                        src="/assets/cust/img/svg/ico_2_boat.svg"
-                        alt="선상 메뉴"
-                        className="side_img"
-                      />
-                      <span>선상</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a onClick={() => PageStore.push(`/main/company/rock`)}>
-                      <img
-                        src="/assets/cust/img/svg/ico_3_rock.svg"
-                        alt="갯바위 메뉴"
-                        className="side_img"
-                      />
-                      <span>갯바위</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a onClick={() => PageStore.push(`/main/story/diary`)}>
-                      <img
-                        src="/assets/cust/img/svg/ico_4_chat.svg"
-                        alt="어복스토리 메뉴"
-                        className="side_img"
-                      />
-                      <span>어복스토리</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a onClick={() => PageStore.push(`/main/my`)}>
-                      <img
-                        src="/assets/cust/img/svg/ico_5_my.svg"
-                        alt="마이메뉴"
-                        className="side_img"
-                      />
-                      <span>마이메뉴</span>
-                    </a>
-                  </li>
-                </ol>
-              </div>
+              <NewSideMenu />
             </header>
             <div
               ref={this.container}

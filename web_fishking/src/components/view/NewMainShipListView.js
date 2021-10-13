@@ -30,7 +30,7 @@ export default inject()(
                     </p>
                   )}
                   <p>{data.address}</p>
-                  <a onClick={() => onClick(data)} className="more_btn">상세보기</a>
+                  <a onClick={() => onClick(data)} className="more_btn">상 세 보 기</a>
                 </div>
               </li>
             ))}

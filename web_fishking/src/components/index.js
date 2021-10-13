@@ -110,6 +110,7 @@ import SmartsailCameraListItemView from "./view/SmartsailCameraListItemView";
 import SmartsailCameraSetListItemView from "./view/SmartsailCameraSetListItemView";
 import NewMainShipListView from "./view/NewMainShipListView";
 import CompanyDetailWeatherModal from "./modal/CompanyDetailWeatherModal";
+import NewSideMenu from "./view/NewSideMenu";
 
 export default {
   /********** MODAL **********/
@@ -219,5 +220,6 @@ export default {
     SmartsailCameraListItemView,
     SmartsailCameraSetListItemView,
     NewMainShipListView,
+    NewSideMenu,
   },
 };
