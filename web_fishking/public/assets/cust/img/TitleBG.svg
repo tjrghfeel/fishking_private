@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1412.76 199"><defs><style>.cls-1{fill:#2097d5;}.cls-2{fill:#3683d5;fill-rule:evenodd;}</style></defs><g id="레이어_2" data-name="레이어 2"><g id="레이어_2-2" data-name="레이어 2"><rect class="cls-1" x="0.01" width="1412.74" height="199"/><path class="cls-2" d="M0,0V85.65c60.31,2.46,127.27,8.21,189.46,20.17h0c18.37,3.53,36.31,7.61,53.56,12.3,180,49,430.39,119.22,872.05,55.37,79.56-11.5,163.22-19.43,248.32-24.42h0q24.58-1.44,49.34-2.56V0h0"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1412.76 199">
+    <defs>
+        <style>.cls-1{fill:#2097d5;}.cls-2{fill:#3683d5;fill-rule:evenodd;}</style>
+    </defs>
+    <g id="레이어_2" data-name="레이어 2">
+        <g id="레이어_2-2" data-name="레이어 2">
+            <rect class="cls-1" x="0.01" width="1412.74" height="199"/>
+            <path class="cls-2"
+                  d="M0,0V85.65c60.31,2.46,127.27,8.21,189.46,20.17h0c18.37,3.53,36.31,7.61,53.56,12.3,180,49,430.39,119.22,872.05,55.37,79.56-11.5,163.22-19.43,248.32-24.42h0q24.58-1.44,49.34-2.56V0h0"/>
+        </g>
+    </g>
+</svg>

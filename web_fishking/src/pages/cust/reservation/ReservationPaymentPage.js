@@ -1,4 +1,4 @@
-/* global $ */
+/* global daum, kakao, $ */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
@@ -59,6 +59,7 @@ export default inject(
         this.personCount = React.createRef(null);
         this.ship = React.createRef(null);
         this.selCoupon = React.createRef(null);
+        this.ifrmAddress = React.createRef(null);
       }
       /********** ********** ********** ********** **********/
       /** function */
@@ -157,6 +158,32 @@ export default inject(
         this.setState({ firstPhone: e.target.value })
       }
 
+      openFindAddress = (index) => {
+        if (this.ifrmAddress.current.style.display === "block") return;
+        console.log(index)
+        const currentScroll = Math.max(
+          document.body.scrollTop,
+          document.documentElement.scrollTop
+        );
+        new daum.Postcode({
+          width: "100%",
+          height: "100%",
+          oncomplete: (data) => {
+            const addr = data.roadAddress;
+            this.setState({
+              sido: addr.split(" ")[0],
+              sigungu: addr.split(" ")[1],
+            });
+            // console.log(addr)
+            // this.textAddr.current.value = addr;
+            document.getElementById(`person-addr-${index}`).value = addr;
+            this.ifrmAddress.current.style.display = "none";
+            document.body.scrollTop = currentScroll;
+          },
+        }).embed(this.ifrmAddress.current);
+        this.ifrmAddress.current.style.display = "block";
+      };
+
       onSubmit = async () => {
         if (this.state.step === 1) {
           // >>>>> Step-1 :: validate
@@ -236,7 +263,6 @@ export default inject(
             } else {
               birthdate.classList.remove("is-invalid");
             }
-            console.log(sex.value)
             if (sex.value === "") {
               sex.classList.add("is-invalid");
               sex.focus();
@@ -444,6 +470,35 @@ export default inject(
         const { DataStore, PageStore } = this.props;
         return (
           <React.Fragment>
+            <div
+              ref={this.ifrmAddress}
+              style={{
+                display: "none",
+                border: "1px solid",
+                height: "600px",
+                width: "90%",
+                margin: "5px 5%",
+                position: "fixed",
+                zIndex: "999",
+              }}
+            >
+              <img
+                src="//t1.daumcdn.net/postcode/resource/images/close.png"
+                id="btnFoldWrap"
+                style={{
+                  cursor: "pointer",
+                  position: "absolute",
+                  right: "0px",
+                  top: "-1px",
+                  zIndex: "1",
+                }}
+                onClick={() =>
+                  (this.ifrmAddress.current.style.display = "none")
+                }
+                alt="접기 버튼"
+              />
+            </div>
+
             <NavigationLayout title={"예약하기"} showBackIcon={true} />
 
             {/** 정보 */}
@@ -753,9 +808,9 @@ export default inject(
                             type="number"
                             inputMode="numeric"
                             pattern="\d*"
-                            className="form-control"
                             minLength={10}
                             maxLength={11}
+                            className="form-control"
                             id={`person-emergency-${index}`}
                             placeholder="비상연락처(본인 휴대폰 아닌 비상연락처)를 입력해 주세요."
                           />
@@ -791,7 +846,7 @@ export default inject(
                             <option value="F">여</option>
                           </select>
                         </div>
-                        <div className="form-group">
+                        <div className="form-group" onClick={() => this.openFindAddress(index)}>
                           <label htmlFor="inputBirth" className="sr-only">
                             주소를 입력해 주세요.
                           </label>

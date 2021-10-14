@@ -274,25 +274,6 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(100) comment '선장 해기사번호'")
     private String capNumber;
 
-    // 선원정보들
-    @Column(columnDefinition = "varchar(20) comment '선원 이름'")
-    private String crewName;
-
-    @Column(columnDefinition = "varchar(10) comment '선원 생년월일'")
-    private String crewBirth;
-
-    @Column(columnDefinition = "varchar(1) comment '선원 성별'")
-    private String crewSex;
-
-    @Column(columnDefinition = "varchar(15) comment '선원 전화번호'")
-    private String crewPhone;
-
-    @Column(columnDefinition = "varchar(300) comment '선원 주소'")
-    private String crewAddr;
-
-    @Column(columnDefinition = "varchar(15) comment '선원 비상연락처'")
-    private String crewEmerNum;
-
 //    @Column(columnDefinition = "varchar(20) comment '선상/갯바위 동시생성시 두 ship엔터티를 묶는 코드'")
 //    private String setCode;
 
@@ -330,7 +311,15 @@ public class Ship extends BaseTime {  //선상
                 String nhnId,
                 String nhnPw,
                 String skbId,
-                String skbPw
+                String skbPw,
+                String capName,
+                String capBirth,
+                String capSex,
+                String capPhone,
+                String capAddr,
+                String capEmerNum,
+                String capNumber,
+                String shipNumber
     ) {
         this.shipName = name;
         this.fishingType = fishingType;
@@ -362,6 +351,14 @@ public class Ship extends BaseTime {  //선상
         this.cheapestGoodsCost = 0;
         this.zzimCount = 0L;
         this.sellCount = 0L;
+        this.capName = capName;
+        this.capBirth = capBirth;
+        this.capSex = capSex;
+        this.capPhone = capPhone;
+        this.capAddr = capAddr;
+        this.capEmerNum = capEmerNum;
+        this.capNumber = capNumber;
+        this.shipNumber = shipNumber;
     }
 
     /*리뷰 평점 적용*/

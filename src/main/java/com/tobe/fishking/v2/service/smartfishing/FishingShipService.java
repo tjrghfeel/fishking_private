@@ -848,6 +848,14 @@ public class FishingShipService {
         response.setAdtCameras(skbCameras);
         response.setSkbId(ship.getSkbId());
         response.setSkbPw(ship.getSkbPw());
+        response.setCapName(ship.getCapName());
+        response.setCapBirth(ship.getCapBirth());
+        response.setCapSex(ship.getCapSex());
+        response.setCapPhone(ship.getCapPhone());
+        response.setCapAddr(ship.getCapAddr());
+        response.setCapEmerNum(ship.getCapEmerNum());
+        response.setCapNumber(ship.getCapNumber());
+        response.setShipNumber(ship.getShipNumber());
 
         return response;
     }

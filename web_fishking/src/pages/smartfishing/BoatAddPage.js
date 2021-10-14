@@ -21,6 +21,8 @@ export default inject(
         this.profileImage = React.createRef(null);
         this.videoId = React.createRef(null);
         this.ifrmAddress = React.createRef(null);
+        this.ifrmAddress2 = React.createRef(null);
+        this.ifrmAddress3 = React.createRef(null);
         this.zonecode = React.createRef(null);
         this.textAddr = React.createRef(null);
         this.textAddrDet = React.createRef(null);
@@ -32,6 +34,7 @@ export default inject(
         this.skbPw = React.createRef(null);
         this.state = {
           name: "", // 선박명
+          shipNumber: null, // 선박번호
           fishingType: "all", // 구분 : 선상 = ship , 갯바위 = seaRocks
           fishSpecies: [],
           services: [],
@@ -62,6 +65,13 @@ export default inject(
           arr_facilities: [],
           arr_adtCameras: [],
           arr_nhnCameras: [],
+          capName: null,
+          capBirth: null,
+          capSex: 'M',
+          capPhone: null,
+          capAddr: null,
+          capEmerNum: null,
+          capNumber: null,
           isUpdate: false,
           rockData: null,
           beforeId: null
@@ -316,6 +326,47 @@ export default inject(
         this.ifrmAddress.current.style.display = "block";
       };
 
+      openFindAddress2 = () => {
+        if (this.ifrmAddress2.current.style.display === "block") return;
+
+        const currentScroll = Math.max(
+          document.body.scrollTop,
+          document.documentElement.scrollTop
+        );
+        new daum.Postcode({
+          width: "100%",
+          height: "100%",
+          oncomplete: (data) => {
+            const addr = data.roadAddress;
+            const dong = data.bname;
+            this.ifrmAddress2.current.style.display = "none";
+            document.body.scrollTop = currentScroll;
+          },
+        }).embed(this.ifrmAddress2.current);
+        this.ifrmAddress2.current.style.display = "block";
+      };
+
+      openFindAddress3 = () => {
+        if (this.ifrmAddress3.current.style.display === "block") return;
+
+        const currentScroll = Math.max(
+          document.body.scrollTop,
+          document.documentElement.scrollTop
+        );
+        new daum.Postcode({
+          width: "100%",
+          height: "100%",
+          oncomplete: (data) => {
+            let addr = data.roadAddress;
+            this.setState({capAddr: addr})
+            document.getElementById('cap-addr').value = addr;
+            this.ifrmAddress3.current.style.display = "none";
+            document.body.scrollTop = currentScroll;
+          },
+        }).embed(this.ifrmAddress3.current);
+        this.ifrmAddress3.current.style.display = "block";
+      };
+
       getNHNCamera = async ()=>{
         const {APIStore, ModalStore} = this.props;
         // await this.setState({nhnId : this.nhnId.current.value})
@@ -374,6 +425,7 @@ export default inject(
         const {
           id = null,
           name,
+          shipNumber,
           fishingType,
           fishSpecies,
           services,
@@ -397,12 +449,24 @@ export default inject(
           weight,
           boardingPerson,
           positions,
+          capName,
+          capBirth,
+          capSex,
+          capPhone,
+          capAddr,
+          capEmerNum,
+          capNumber,
         } = this.state;
-
         const { APIStore, ModalStore, PageStore } = this.props;
         if (name === null || name === "") {
           ModalStore.openModal("Alert", {
             body: "선박명을 입력해주세요.",
+          });
+          return;
+        }
+        if (shipNumber === null || shipNumber === "") {
+          ModalStore.openModal("Alert", {
+            body: "선박번호를 입력해주세요.",
           });
           return;
         }
@@ -421,6 +485,18 @@ export default inject(
         if (latitude === null) {
           ModalStore.openModal("Alert", {
             body: "승선위치를 입력해주세요.",
+          });
+          return;
+        }
+        if (capName === null
+          || capBirth === null
+          || capPhone === null
+          || capAddr === null
+          || capEmerNum === null
+          || capNumber === null
+        ) {
+          ModalStore.openModal("Alert", {
+            body: "선장정보를 모두 입력해주세요.",
           });
           return;
         }
@@ -453,6 +529,14 @@ export default inject(
           weight,
           boardingPerson,
           positions,
+          capName,
+          capBirth,
+          capSex,
+          capPhone,
+          capAddr,
+          capEmerNum,
+          capNumber,
+          shipNumber,
         };
         ModalStore.openModal("Confirm", {
           body: "저장하시겠습니까?",
@@ -488,7 +572,7 @@ export default inject(
                 <strong className="required"></strong> 필수입력
               </p>
               <form>
-                <div className="form-group">
+                <div className="form-group mb-3">
                   <label htmlFor="InputGName">
                     선박명 <strong className="required"></strong>
                   </label>
@@ -498,6 +582,18 @@ export default inject(
                     placeholder="선박명을 입력하세요"
                     value={this.state.name}
                     onChange={(e) => this.setState({ name: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputGName">
+                    선박번호 <strong className="required"></strong>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="선박번호를 입력하세요"
+                    value={this.state.shipNumber}
+                    onChange={(e) => this.setState({ shipNumber: e.target.value })}
                   />
                 </div>
                 <div className="form-group mb-1">
@@ -1058,6 +1154,8 @@ export default inject(
                   />
                   <br />
                   {this.state.profileImage}
+                  <img style={{width: "100%", height: "auto"}}
+                    src={`/resource${this.state.profileImage}`} />
                 </div>
                 <div className="space mt-0 mb-4"></div>
                 <div className="form-group">
@@ -1378,11 +1476,118 @@ export default inject(
                     </>
                 ) : null
                 }
-
-
-
-
-
+                <div className="form-group">
+                  <label className="d-block">
+                    선장정보 <strong className="required"></strong>
+                  </label>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="선장이름"
+                      onChange={(e) => this.setState({ capName: e.target.value })}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      minLength={6}
+                      maxLength={6}
+                      className="form-control"
+                      placeholder="생년월일"
+                      onChange={(e) => this.setState({ capBirth: e.target.value })}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <select
+                      // type="text"
+                      className="form-control"
+                      placeholder="성별"
+                      onChange={(e) => this.setState({ capSex: e.target.value })}
+                    >
+                      <option value="M">남</option>
+                      <option value="F">여</option>
+                    </select>
+                  </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      minLength={10}
+                      maxLength={11}
+                      className="form-control"
+                      placeholder="핸드폰번호"
+                      onChange={(e) => this.setState({ capPhone: e.target.value })}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="주소"
+                      id="cap-addr"
+                      readOnly={true}
+                    />
+                    <div className="input-group-append">
+                      <button
+                        className="btn btn-third btn-sm"
+                        type="button"
+                        onClick={this.openFindAddress3}
+                      >
+                        주소찾기
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    ref={this.ifrmAddress3}
+                    style={{
+                      display: "none",
+                      border: "1px solid",
+                      height: "300px",
+                      margin: "5px 0",
+                      position: "relative",
+                    }}
+                  >
+                    <img
+                      src="//t1.daumcdn.net/postcode/resource/images/close.png"
+                      id="btnFoldWrap"
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        right: "0px",
+                        top: "-1px",
+                        zIndex: "1",
+                      }}
+                      onClick={() =>
+                        (this.ifrmAddress3.current.style.display = "none")
+                      }
+                      alt="접기 버튼"
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      minLength={10}
+                      maxLength={11}
+                      className="form-control"
+                      placeholder="비상연락처"
+                      onChange={(e) => this.setState({ capEmerNum: e.target.value })}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="해기사번호"
+                      onChange={(e) => this.setState({ capNumber: e.target.value })}
+                    />
+                  </div>
+                </div>
               </form>
               <p className="clearfix">
                 <br />

@@ -268,6 +268,14 @@ public class ShipsGoodsController {
             "\n adtCameras[] adt 카메라리스트 [{serial: 시리얼번호, name: 카메라명}, .. ] " +
             "\n nhnCameras[] nhn 카메라리스트 [{serial: 시리얼번호, name: 카메라명}, .. ] " +
             "\n router: LTE 라우터 IMEI" +
+            "\n capName: 선장이름" +
+            "\n capBirth: 선장 생년월일" +
+            "\n capSex: 선장 성별" +
+            "\n capPhone: 선장 전화번호" +
+            "\n capAddr: 선장 주소" +
+            "\n capEmerNum: 선장 비상연락처" +
+            "\n capNumber: 선장 해기사번호" +
+            "\n shipNumber: 선박번호" +
             "\n 메인화면 노출은 빠집니다" +
             "\n 녹화영상은 파일 업로드 시 filePublish: ship 으로 이미지와 같은 방법으로 업로드 하시면 됩니다. " +
             "\n 주소 아래의 좌표는 위경도로 변경해주세요. 사용자 입력이 아닌 주소 검색결과값 넣어주시면 됩니다" +

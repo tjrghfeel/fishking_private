@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.model.fishing;
 
+import com.tobe.fishking.v2.addon.CommonAddon;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
 import com.tobe.fishking.v2.entity.fishing.Company;
@@ -80,6 +81,22 @@ public class UpdateShipDTO {
     @ApiParam(value = "nhn 카메라리스트", name = "nhnCameras[]")
     private @Valid List<AddShipCamera> nhnCameras;
     private @Valid String router;
+    @ApiParam(value = "선장 이름")
+    private @Valid String capName;
+    @ApiParam(value = "선장 생년월일")
+    private @Valid String capBirth;
+    @ApiParam(value = "선장 성별")
+    private @Valid String capSex;
+    @ApiParam(value = "선장 전화번호")
+    private @Valid String capPhone;
+    @ApiParam(value = "선장 주소")
+    private @Valid String capAddr;
+    @ApiParam(value = "선장 비상연락처")
+    private @Valid String capEmerNum;
+    @ApiParam(value = "선장 해기사번호")
+    private @Valid String capNumber;
+    @ApiParam(value = "선박번호")
+    private @Valid String shipNumber;
 
     public Ship toEntity(Member member, Company company, List<ObserverCode> codes, List<String> positions) throws NoSuchAlgorithmException {
         Location loc = Location.builder().latitude(latitude).longitude(longitude).build();
@@ -98,6 +115,17 @@ public class UpdateShipDTO {
         } else {
             profile = "/ship/defaultship.png";
         }
+
+        if (!capPhone.contains("-")) {
+            capPhone = CommonAddon.addDashToPhoneNum(capPhone);
+        }
+        if (!capEmerNum.contains("-")) {
+            capEmerNum = CommonAddon.addDashToPhoneNum(capEmerNum);
+        }
+        if (!capBirth.contains("-")) {
+            capBirth = capBirth.substring(0,4) + "-" + capBirth.substring(4,6) + "-" + capBirth.substring(6);
+        }
+
         return Ship.builder()
                 .name(name)
                 .fishingType(FishingType.valueOf(fishingType))
@@ -123,6 +151,14 @@ public class UpdateShipDTO {
                 .nhnPw(nhnPw)
                 .skbId(skbId)
                 .skbPw(skbPw)
+                .capName(capName)
+                .capBirth(capBirth)
+                .capSex(capSex)
+                .capPhone(capPhone)
+                .capAddr(capAddr)
+                .capEmerNum(capEmerNum)
+                .capNumber(capNumber)
+                .shipNumber(shipNumber)
 //                .skbPw((skbPw != null)? HashUtil.sha256(skbPw) : null)
                 .build();
     }

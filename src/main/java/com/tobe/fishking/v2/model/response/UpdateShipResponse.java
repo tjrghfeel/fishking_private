@@ -47,5 +47,13 @@ public class UpdateShipResponse {
     private String router;
     private Long videoId;
     private String video;
+    private String capName;
+    private String capBirth;
+    private String capSex;
+    private String capPhone;
+    private String capAddr;
+    private String capEmerNum;
+    private String capNumber;
+    private String shipNumber;
 
 }
