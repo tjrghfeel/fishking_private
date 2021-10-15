@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -226,6 +228,19 @@ public class CommonService {
     @Transactional
     public List<TidalLevelResponse> findAllByDateAndCode(String date, String code) {
         return tidalLevelRepository.findAllByDateAndCode(DateUtils.getDateFromString(date), code);
+    }
+
+    @Transactional
+    public List<TidalLevelResponse> findAllByDateAndCode2(String id) {
+        LocalDateTime startDateTime = LocalDateTime.now();
+        LocalDateTime endDateTime = LocalDateTime.now().plusDays(1);
+
+//        startDateTime = LocalDateTime.parse("2021-02-090000", DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm"));
+//        endDateTime = LocalDateTime.parse("2021-02-090000", DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm")).plusDays(1);
+        List<TidalLevelResponse> tidalLevelList = tidalLevelRepository.findAllByDateAndCode2(startDateTime, endDateTime, Long.parseLong(id));
+
+
+        return tidalLevelList;
     }
 
     public Map<String, Object> findTideTime(String date) {

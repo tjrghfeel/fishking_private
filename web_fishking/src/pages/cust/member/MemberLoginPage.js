@@ -85,7 +85,7 @@ export default inject(
           //render함수 첫 부분에 주석 참고.
           document.getElementsByTagName("body")[0].style.cssText=""
           document.getElementsByTagName("body")[0].style.setProperty("margin","0 auto");
-          document.getElementsByTagName("body")[0].style.setProperty("padding-top", "43px", "important")
+          document.getElementsByTagName("body")[0].style.setProperty("padding-top", "60px", "important")
           document.getElementsByTagName("body")[0].style.setProperty("padding-bottom","45px","important")
           document.getElementsByTagName("body")[0].style.maxWidth = "640px";
       }
