@@ -117,7 +117,8 @@ export default inject(
           await this.setState({ ...resolve });
           // console.log(this.state.positions)
           // 주소 설정
-          this.textAddr.current.value = resolve["address"];
+          this.textAddr.current.value = resolve["address"]
+          console.log(resolve)
           // 선상위치 선택
           if (this.state.weight === 3) {
             this.shipType3.current.onSetSelected(this.state.positions);
@@ -1297,6 +1298,7 @@ export default inject(
                       type="text"
                       className="form-control"
                       placeholder="항구명"
+                      value={this.state.harborName}
                       onChange={(e) => this.setState({ harborName: e.target.value })}
                     />
                   </div>
@@ -1306,6 +1308,7 @@ export default inject(
                       className="form-control"
                       placeholder="주소"
                       id="harbor-addr"
+                      value={this.state.harborAddr}
                       readOnly={true}
                     />
                     <div className="input-group-append">
@@ -1565,6 +1568,7 @@ export default inject(
                       type="text"
                       className="form-control"
                       placeholder="선장이름"
+                      value={this.state.capName}
                       onChange={(e) => this.setState({ capName: e.target.value })}
                     />
                   </div>
@@ -1577,6 +1581,7 @@ export default inject(
                       maxLength={6}
                       className="form-control"
                       placeholder="생년월일"
+                      value={this.state.capBirth}
                       onChange={(e) => this.setState({ capBirth: e.target.value })}
                     />
                   </div>
@@ -1585,6 +1590,7 @@ export default inject(
                       // type="text"
                       className="form-control"
                       placeholder="성별"
+                      value={this.state.capSex}
                       onChange={(e) => this.setState({ capSex: e.target.value })}
                     >
                       <option value="M">남</option>
@@ -1600,6 +1606,7 @@ export default inject(
                       maxLength={11}
                       className="form-control"
                       placeholder="핸드폰번호"
+                      value={this.state.capPhone}
                       onChange={(e) => this.setState({ capPhone: e.target.value })}
                     />
                   </div>
@@ -1609,6 +1616,7 @@ export default inject(
                       className="form-control"
                       placeholder="주소"
                       id="cap-addr"
+                      value={this.state.capAddr}
                       readOnly={true}
                     />
                     <div className="input-group-append">
@@ -1656,6 +1664,7 @@ export default inject(
                       maxLength={11}
                       className="form-control"
                       placeholder="비상연락처"
+                      value={this.state.capEmerNum}
                       onChange={(e) => this.setState({ capEmerNum: e.target.value })}
                     />
                   </div>
@@ -1664,6 +1673,7 @@ export default inject(
                       type="text"
                       className="form-control"
                       placeholder="해기사번호"
+                      value={this.state.capNumber}
                       onChange={(e) => this.setState({ capNumber: e.target.value })}
                     />
                   </div>
