@@ -74,7 +74,10 @@ export default inject(
           capNumber: null,
           isUpdate: false,
           rockData: null,
-          beforeId: null
+          beforeId: null,
+          harborName: null,
+          harborAddr: null,
+          harborDong: null,
         };
       }
       /********** ********** ********** ********** **********/
@@ -339,6 +342,9 @@ export default inject(
           oncomplete: (data) => {
             const addr = data.roadAddress;
             const dong = data.bname;
+            this.setState({harborAddr: addr})
+            this.setState({harborDong: dong})
+            document.getElementById('harbor-addr').value = addr;
             this.ifrmAddress2.current.style.display = "none";
             document.body.scrollTop = currentScroll;
           },
@@ -425,7 +431,6 @@ export default inject(
         const {
           id = null,
           name,
-          shipNumber,
           fishingType,
           fishSpecies,
           services,
@@ -456,6 +461,10 @@ export default inject(
           capAddr,
           capEmerNum,
           capNumber,
+          shipNumber,
+          harborName,
+          harborAddr,
+          harborDong,
         } = this.state;
         const { APIStore, ModalStore, PageStore } = this.props;
         if (name === null || name === "") {
@@ -485,6 +494,18 @@ export default inject(
         if (latitude === null) {
           ModalStore.openModal("Alert", {
             body: "승선위치를 입력해주세요.",
+          });
+          return;
+        }
+        if (harborName === null || harborName === "") {
+          ModalStore.openModal("Alert", {
+            body: "출항 항구 이름을 입력해주세요.",
+          });
+          return;
+        }
+        if (harborAddr === null || harborAddr === "") {
+          ModalStore.openModal("Alert", {
+            body: "출항 항구 주소를 입력해주세요.",
           });
           return;
         }
@@ -537,6 +558,9 @@ export default inject(
           capEmerNum,
           capNumber,
           shipNumber,
+          harborName,
+          harborAddr,
+          harborDong,
         };
         ModalStore.openModal("Confirm", {
           body: "저장하시겠습니까?",
@@ -1264,7 +1288,63 @@ export default inject(
                     />
                   </div>
                 </div>
-
+                <div className="form-group">
+                  <label>
+                    출항항구 <strong className="required"></strong>
+                  </label>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="항구명"
+                      onChange={(e) => this.setState({ harborName: e.target.value })}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="주소"
+                      id="harbor-addr"
+                      readOnly={true}
+                    />
+                    <div className="input-group-append">
+                      <button
+                        className="btn btn-third btn-sm"
+                        type="button"
+                        onClick={this.openFindAddress2}
+                      >
+                        주소찾기
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    ref={this.ifrmAddress2}
+                    style={{
+                      display: "none",
+                      border: "1px solid",
+                      height: "300px",
+                      margin: "5px 0",
+                      position: "relative",
+                    }}
+                  >
+                    <img
+                      src="//t1.daumcdn.net/postcode/resource/images/close.png"
+                      id="btnFoldWrap"
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        right: "0px",
+                        top: "-1px",
+                        zIndex: "1",
+                      }}
+                      onClick={() =>
+                        (this.ifrmAddress2.current.style.display = "none")
+                      }
+                      alt="접기 버튼"
+                    />
+                  </div>
+                </div>
                 <div className="space mt-0 mb-4"></div>
                 <div className="form-group">
                   <label className="d-block">

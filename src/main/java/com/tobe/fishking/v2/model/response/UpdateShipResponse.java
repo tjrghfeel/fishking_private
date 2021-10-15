@@ -55,5 +55,8 @@ public class UpdateShipResponse {
     private String capEmerNum;
     private String capNumber;
     private String shipNumber;
+    private String harborName;
+    private String harborAddr;
+    private String harborDong;
 
 }

@@ -274,6 +274,15 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(100) comment '선장 해기사번호'")
     private String capNumber;
 
+    @Column(columnDefinition = "varchar(100) comment '항구명'")
+    private String harborName;
+
+    @Column(columnDefinition = "varchar(100) comment '항구 주소'")
+    private String harborAddr;
+
+    @Column(columnDefinition = "varchar(100) comment '항구 법정동'")
+    private String harborDong;
+
 //    @Column(columnDefinition = "varchar(20) comment '선상/갯바위 동시생성시 두 ship엔터티를 묶는 코드'")
 //    private String setCode;
 
@@ -319,7 +328,10 @@ public class Ship extends BaseTime {  //선상
                 String capAddr,
                 String capEmerNum,
                 String capNumber,
-                String shipNumber
+                String shipNumber,
+                String harborName,
+                String harborAddr,
+                String harborDong
     ) {
         this.shipName = name;
         this.fishingType = fishingType;
@@ -359,6 +371,9 @@ public class Ship extends BaseTime {  //선상
         this.capEmerNum = capEmerNum;
         this.capNumber = capNumber;
         this.shipNumber = shipNumber;
+        this.harborName = harborName;
+        this.harborAddr = harborAddr;
+        this.harborDong = harborDong;
     }
 
     /*리뷰 평점 적용*/
@@ -443,6 +458,17 @@ public class Ship extends BaseTime {  //선상
         this.nhnPw = dto.getNhnPw();
         this.skbId = dto.getSkbId();
         this.skbPw = dto.getSkbPw();//(dto.getSkbPw() != null)? HashUtil.sha256(dto.getSkbPw()) : null;
+        this.capName = dto.getCapName();
+        this.capBirth = dto.getCapBirth();
+        this.capSex = dto.getCapSex();
+        this.capPhone = dto.getCapPhone();
+        this.capAddr = dto.getCapAddr();
+        this.capEmerNum = dto.getCapEmerNum();
+        this.capNumber = dto.getCapNumber();
+        this.shipNumber = dto.getShipNumber();
+        this.harborName = dto.getHarborName();
+        this.harborAddr = dto.getHarborAddr();
+        this.harborDong = dto.getHarborDong();
     }
 //
 //    public void setSetCode(String setCode){this.setCode = setCode;}

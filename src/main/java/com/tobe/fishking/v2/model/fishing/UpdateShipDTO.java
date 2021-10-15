@@ -97,6 +97,12 @@ public class UpdateShipDTO {
     private @Valid String capNumber;
     @ApiParam(value = "선박번호")
     private @Valid String shipNumber;
+    @ApiParam(value = "출항항구명")
+    private @Valid String harborName;
+    @ApiParam(value = "출항항구주소")
+    private @Valid String harborAddr;
+    @ApiParam(value = "출항항구법정동")
+    private @Valid String harborDong;
 
     public Ship toEntity(Member member, Company company, List<ObserverCode> codes, List<String> positions) throws NoSuchAlgorithmException {
         Location loc = Location.builder().latitude(latitude).longitude(longitude).build();
@@ -159,6 +165,9 @@ public class UpdateShipDTO {
                 .capEmerNum(capEmerNum)
                 .capNumber(capNumber)
                 .shipNumber(shipNumber)
+                .harborName(harborName)
+                .harborAddr(harborAddr)
+                .harborDong(harborDong)
 //                .skbPw((skbPw != null)? HashUtil.sha256(skbPw) : null)
                 .build();
     }
