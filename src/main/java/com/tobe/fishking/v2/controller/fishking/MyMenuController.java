@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -455,8 +457,34 @@ public class MyMenuController {
     )
     @GetMapping(value = "/ship/{shipId}/weather")
     public Map<String, Object> getShipWeather(@PathVariable("shipId") String shipId) throws ResourceNotFoundException {
-        return myMenuService.getShipWeather(shipId);
+        return myMenuService.getShipWeather(shipId, null);
     }
+    //항구 현재 날씨 조회.
+    @ApiOperation(value = "항구 위치에 대한 현재 날씨 정보 조회.",
+            notes = "요청필드)\n" +
+                    "- shipId : Long / 필수 / 선박 id\n" +
+                    "응답필드)\n" +
+                    "- weather : String / 날씨\n" +
+                    "- weatherImg : String / 날씨 이미지\n" +
+                    "- rainProbability : Integer / 강수확률(%)\n" +
+                    "- humidity : Integer / 습도(%)\n" +
+                    "- tmp : Double / 온도(섭씨)\n" +
+                    "- tmpMin : Double / 일 최저온도(섭씨)\n" +
+                    "- tmpMax : Double / 일 최고온도(섭씨)\n" +
+                    "- windDirection : String / 풍향\n" +
+                    "- windSpeed : Double / 풍속(m/s)\n"
+    )
+    @GetMapping(value = "/harbor/{harborId}/weather")
+    public Map<String, Object> getHarborWeather(@PathVariable("harborId") String harborId) throws ResourceNotFoundException {
+        return myMenuService.getShipWeather(null, harborId);
+    }
+    //항구 주간 날씨 조회.
+    @ApiOperation(value = "항구 위치에 대한 주간 날씨 조회")
+    @GetMapping(value="/harbor/{harborId}/dailyWeather")
+    public ArrayList<Map<String, Object>> getHarborDailyWeather(@PathVariable("harborId") Long harborId){
+        return myMenuService.getHarborDailyWeather(harborId);
+    }
+
 
     // 선박에 대한 해양 코드 반환.
     @ApiOperation(value = "",
@@ -466,4 +494,6 @@ public class MyMenuController {
     public String getSeaCode(@PathVariable("shipId") String shipId){
         return myMenuService.getSeaCode(shipId);
     }
+
+    //
 }

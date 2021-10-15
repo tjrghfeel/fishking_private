@@ -8,10 +8,7 @@ import com.tobe.fishking.v2.service.fishking.MyMenuService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -83,5 +80,12 @@ public class TidalController {
     @GetMapping("/observers")
     public List<ObserverCodeResponse> getObserver() {
         return commonService.getAllObserverCode();
+    }
+
+    //관측소 조위 모든 데이터 리스트 조회
+    @ApiOperation(value = "관측소 조위 모든 데이터 조회")
+    @GetMapping("/allTideList/{observerId}")
+    public List<TidalLevelResponse> getAllTideList(@PathVariable("observerId") String observerId){
+        return commonService.findAllByDateAndCode2(observerId);
     }
 }

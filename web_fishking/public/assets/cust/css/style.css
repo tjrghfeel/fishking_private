@@ -5086,6 +5086,10 @@ body.full.bgintro {
 
 }
 
+.loginPage_content .navbar.fixed-top{
+	background-image: none;
+}
+
 .loginPage_logo {
 	margin-top: 80px;
 	margin-bottom: 40px;
@@ -5297,6 +5301,31 @@ body.full.bgintro {
 .shipDetail-weather td{
 	padding: 3px 10px;
 	text-align: left;
+}
+/*항구 상세 페이지 > 시간대별 날씨 부분. */
+.harborDetail-timelyWeather{
+	overflow-x: scroll;
+}
+.harborDetail-timelyWeather table{
+	margin: 10px auto;
+}
+.harborDetail-timelyWeather img{
+	height: 35px;
+}
+.harborDetail-timelyWeather tr{
+	font-size: 12px;
+	text-align: center;
+}
+.harborDetail-timelyWeather td{
+	padding: 3px 10px;
+}
+/*항구 상세 페이지 > 조위 부분. */
+.harborDetail-tidal{
+	margin: 0 auto;
+	height: 35vh;
+	width: 200vw;
+	/*max-width: 600px;*/
+	/*overflow-x: scroll;*/
 }
 
 /*예약 날짜 선택 페이지*/
