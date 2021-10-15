@@ -1,7 +1,9 @@
 package com.tobe.fishking.v2.service;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.ContentType;
@@ -11,14 +13,20 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
+import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -29,7 +37,7 @@ public class NaksihaeService {
     private final String ID = "devtobe";
     private final String SECRET_KEY = "asfe";
 
-    public void getToken() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    public Map<String, Object> getToken() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         String uri = BASE_URL + "api/auth/token.do";
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(uri);
@@ -41,6 +49,35 @@ public class NaksihaeService {
         data.addProperty("apiReqstTy", "10");
 
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_FORM_URLENCODED));
+
+        Map<String, Object> result = new HashMap<>();
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+
+            String json = EntityUtils.toString(response.getEntity());
+
+            Gson gson = new Gson();
+            JsonObject res = gson.fromJson(json, JsonObject.class);
+            String token = res.getAsJsonObject("responseJson")
+                    .getAsJsonObject("resultDomain")
+                    .get("tkn").toString();
+            String expires = res.getAsJsonObject("responseJson")
+                    .getAsJsonObject("resultDomain")
+                    .get("expiresIn").toString();
+            String created = res.getAsJsonObject("responseJson")
+                    .getAsJsonObject("resultDomain")
+                    .get("tknCreatDt").toString();
+            httpClient.close();
+            LocalDateTime date = LocalDateTime.parse(created, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss."));
+            date.plusSeconds(Long.parseLong(expires));
+
+            result.put("token", token);
+            result.put("expireDate", date);
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = null;
+        }
+        return result;
     }
 
     private CloseableHttpClient getHttpClient() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
