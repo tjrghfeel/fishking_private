@@ -2411,8 +2411,11 @@ ul.sel_num li h4 {
 }
 .nav-left {
 	position:absolute;
-	top:17px;
+	top:7px;
 	left:12px;
+	height:40px;
+	width: 40px;
+	padding: 12px;
 }
 .nav-right {
 	position:absolute;
