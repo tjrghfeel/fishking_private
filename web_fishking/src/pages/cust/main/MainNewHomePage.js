@@ -46,11 +46,13 @@ export default inject(
         const imgSize = new kakao.maps.Size(18, 18),
           imgOption = {offset: new kakao.maps.Point(9, 9)},
           imgSrcShip = "/assets/cust/img/pin_ship.png",
-          imgSrcRock = "/assets/cust/img/pin_rock.png";
+          imgSrcRock = "/assets/cust/img/pin_rock.png",
+          imgSrcHarbor = "/assets/cust/img/pin_har.png";
 
         this.setState({
           markerImgShip: new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption),
           markerImgRock: new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption),
+          markerImgHarbor: new kakao.maps.MarkerImage(imgSrcHarbor, imgSize, imgOption),
         })
 
         // # 지도표시
@@ -63,10 +65,11 @@ export default inject(
 
         // 하단 리스트 토글
         $(function () {
-          $("#content ol").click(function () {
+          $("#content-list").click(function () {
             $(this).toggleClass("on");
+            $("#scroll-list").toggleClass("on");
           });
-          $("#content ol.on li").click(function (e) {
+          $("#content-list.on li").click(function (e) {
             e.stopPropagation();
           });
         });
@@ -200,7 +203,8 @@ export default inject(
             'style="border-radius: 10px; ' +
             'width: 100%; ' +
             'border: none; ' +
-            'background: #c6c5c3;"' +
+            'background: #29ABE2;' +
+            'color: #ffffff;"' +
             'onclick="goDetail(\''+type+'\',\''+point.id+'\')">상 세 보 기</button>' +
             '</div>' +
             '</div>' +
@@ -303,32 +307,6 @@ export default inject(
             ></div>
             <div id="content">
               <NewMainShipListView list={list} onClick={this.onClick} />
-              {/*<ol>*/}
-              {/*  {list.map((data, index) => (*/}
-              {/*    <li>*/}
-              {/*      <div className="img_wrap">*/}
-              {/*        <img src={data.shipImageFileUrl} alt=""/>*/}
-              {/*      </div>*/}
-              {/*      <div className="text_part">*/}
-              {/*        <h3>{data.shipName}</h3>*/}
-              {/*        {data.fishSpeciesCount > 0 && (*/}
-              {/*          <p>*/}
-              {/*            {data.fishSpecies.map((s, index) => {*/}
-              {/*              if (index < 1) {*/}
-              {/*                return (<span>{s.codeName}, </span>)*/}
-              {/*              }*/}
-              {/*              if (index == 1) {*/}
-              {/*                return (<span>{s.codeName} 외 {data.fishSpeciesCount - 2}종 </span>)*/}
-              {/*              }*/}
-              {/*            })}*/}
-              {/*          </p>*/}
-              {/*        )}*/}
-              {/*        <p>{data.address}</p>*/}
-              {/*        <a onClick={() => this.onClick(data)} className="more_btn">상세보기</a>*/}
-              {/*      </div>*/}
-              {/*    </li>*/}
-              {/*  ))}*/}
-              {/*</ol>*/}
             </div>
           </React.Fragment>
         )

@@ -1,7 +1,9 @@
 package com.tobe.fishking.v2.service;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -38,7 +40,7 @@ public class NaksihaeService {
     private final String SECRET_KEY = "asfe";
 
     public Map<String, Object> getToken() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        String uri = BASE_URL + "api/auth/token.do";
+        String uri = BASE_URL + "auth/token.do";
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
@@ -77,6 +79,36 @@ public class NaksihaeService {
             e.printStackTrace();
             result = null;
         }
+        return result;
+    }
+
+    public Map<String, Object> reportRegistration(Ship ship) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        String uri = BASE_URL + "tkoff/reg.do";
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpPost httpPost = new HttpPost(uri);
+        httpPost.addHeader("User-Agent", USER_AGENT);
+
+        JsonObject data = new JsonObject();
+
+        JsonObject shipInfo = new JsonObject();
+        shipInfo.addProperty("fshhpSn", ship.getShipNumber());
+        shipInfo.addProperty("fshhpNm", ship.getShipName());
+        shipInfo.addProperty("fshhpSttusCd", "1");
+        shipInfo.addProperty("tkoffDt", ship.getShipName());
+        shipInfo.addProperty("clppCd", ship.getShipName());
+        shipInfo.addProperty("etryptPrearngeDt", ship.getShipName());
+        shipInfo.addProperty("etryptPrearngePrtCd", "1");
+        shipInfo.addProperty("nowEmbrkNmpr", "4");
+
+        JsonArray embarkList = new JsonArray();
+
+        data.addProperty("userId", ID);
+        data.addProperty("scrtky", SECRET_KEY);
+        data.addProperty("apiReqstTy", "10");
+
+        httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
+
+        Map<String, Object> result = new HashMap<>();
         return result;
     }
 
