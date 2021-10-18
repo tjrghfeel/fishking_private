@@ -475,15 +475,20 @@ public class MyMenuController {
                     "- windSpeed : Double / 풍속(m/s)\n"
     )
     @GetMapping(value = "/harbor/{harborId}/weather")
-    public Map<String, Object> getHarborWeather(@PathVariable("harborId") String harborId) throws ResourceNotFoundException {
+    public Map<String, Object> getHarborWeather(@PathVariable("harborId") Long harborId) throws ResourceNotFoundException {
         return myMenuService.getShipWeather(null, harborId);
     }
     //항구 주간 날씨 조회.
     @ApiOperation(value = "항구 위치에 대한 주간 날씨 조회")
     @GetMapping(value="/harbor/{harborId}/dailyWeather")
-    public ArrayList<Map<String, Object>> getHarborDailyWeather(@PathVariable("harborId") Long harborId){
+    public ArrayList<Map<String, Object>> getHarborDailyWeather(@PathVariable("harborId") Long harborId) throws ResourceNotFoundException {
         return myMenuService.getHarborDailyWeather(harborId);
     }
+//    @ApiOperation(value = "항구 위치에 대한 주간 날씨 조회")
+//    @PostMapping(value="/harbor/{harborId}/dailyWeather")
+//    public ArrayList<Map<String, Object>> getHarborDailyWeather(@PathVariable("harborId") Long harborId, String address) throws ResourceNotFoundException {
+//        return myMenuService.getHarborDailyWeather(harborId, address);
+//    }
 
 
     // 선박에 대한 해양 코드 반환.

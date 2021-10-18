@@ -80,6 +80,9 @@ public class MyMenuService {
     CommonCodeRepository commonCodeRepository;
     @Autowired
     CommonService commonService;
+    @Autowired
+    HarborRepository harborRepo;
+
 
     HolidayUtil holidayUtil;
 
@@ -788,12 +791,12 @@ public class MyMenuService {
 
     //선박 위치에 해당하는 현재 날씨 데이터 가져오기.
     @Transactional
-    public Map<String, Object> getShipWeather(String shipId, String observerId) throws ResourceNotFoundException {
+    public Map<String, Object> getShipWeather(String shipId, Long harborId) throws ResourceNotFoundException {
         Map<String, Object> weather = new HashMap<>();
         ArrayList<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
         Ship ship = null;
-        ObserverCode observer = null;
+        Harbor harbor = null;
         Map<String, Float> xyGrid = null;
         if(shipId != null) {
             ship = shipRepository.findById(Long.parseLong(shipId))
@@ -802,10 +805,10 @@ public class MyMenuService {
                     Float.parseFloat(ship.getLocation().getLatitude().toString()));
         }
         else {
-            observer = observerCodeRepository.findById(Long.parseLong(observerId))
-                    .orElseThrow(()->new ResourceNotFoundException("observer not found for this id ::"+observerId));
-            xyGrid = transLatLonToXY(0, Float.parseFloat(observer.getLocation().getLongitude().toString()),
-                    Float.parseFloat(observer.getLocation().getLatitude().toString()));
+            harbor = harborRepo.findById(harborId)
+                    .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
+            xyGrid = transLatLonToXY(0, Float.parseFloat(harbor.getLocation().getLongitude().toString()),
+                    Float.parseFloat(harbor.getLocation().getLatitude().toString()));
         }
         //위경도->x,y격자 좌표 변환.
 
@@ -1148,13 +1151,18 @@ public class MyMenuService {
 
     //항구 주간 날씨
     @Transactional
-    public ArrayList<Map<String, Object>> getHarborDailyWeather(Long harborId){
+    public ArrayList<Map<String, Object>> getHarborDailyWeather(Long harborId) throws ResourceNotFoundException {
         ArrayList<Map<String, Object>> result = new ArrayList<>();
 
-        //주간 최저,최고 기온 조회.
-        String tmpRegionCode = "11B10101";//'중기기온예보'에 필요한 구역코드. 항구 엔터티 추가된 후, 항구의 주소값으로 부터 코드 변환 필요.
-        String weatherRegionCode = "11B00000";//'중기육상예보'에 필요한 구역코드. 위와 동일한 처리 필요.
+        //코드 가져오기.
+        Harbor harbor = harborRepo.findById(harborId)
+                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
+        Map<String, String> fcstRegionCode = transRegionCodeFromAddress(harbor.getAddress());
+//        Map<String, String> fcstRegionCode = transRegionCodeFromAddress(address);
+        String tmpRegionCode = fcstRegionCode.get("tmpFcstRegionCode");
+        String weatherRegionCode = fcstRegionCode.get("landFcstRegionCode");
 
+        //주간 최저,최고 기온 조회.
         LocalDateTime currentTime = LocalDateTime.now();
         int time = currentTime.getHour();
         String tmFc = null;
@@ -1467,6 +1475,237 @@ public class MyMenuService {
             result.put("lon",lon);
             result.put("lat",lat);
         }
+        return result;
+    }
+
+    //주소로부터 기상청 예보 구역 코드 계산.
+    public Map<String, String> transRegionCodeFromAddress(String address){
+        Map<String, String> result = new HashMap<>();
+
+        String district1 = address.split(" ")[0];//주소의 첫 부분 : 행정구역1단계.
+        String district2 = address.split(" ")[1];//주소의 두 번째 부분 : 행정구역2단계.
+
+        CodeGroup tmpFcstRegionCodeGroup = codeGroupRepository.findByCode("tmpFcstRegion");
+        CodeGroup landFcstRegionCodeGroup = codeGroupRepository.findByCode("landFcstRegion");
+
+        String parsedDistrict1ForTmp = "";
+        String parsedDistrict2 = "";
+        String parsedDistrict1ForLand = "";
+
+        if(district1.contains("서울")){
+            parsedDistrict1ForTmp = "서울·인천·경기도";
+            parsedDistrict2 = "서울";
+            parsedDistrict1ForLand = "11B00000";
+        }
+        else if(district1.contains("인천")){
+            parsedDistrict1ForTmp = "서울·인천·경기도";
+            parsedDistrict1ForLand = "11B00000";
+            if(district2.contains("강화")){
+                parsedDistrict2 = "강화";
+            }
+            else if(address.contains("백령면")){
+                parsedDistrict2 = "백령도";
+            }
+            else{
+                parsedDistrict2 = "인천";
+            }
+        }
+        else if(district1.contains("경기")){
+            parsedDistrict1ForTmp = "서울·인천·경기도";
+            parsedDistrict1ForLand = "11B00000";
+            List<CommonCode> district2CommonCodeList =
+                    commonCodeRepository.findAllByExtraValue1AndCodeGroup("서울·인천·경기도", tmpFcstRegionCodeGroup);
+
+            for(int i=0; i<district2CommonCodeList.size(); i++){
+                CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                if(district2.contains(tmpFcstRegionCode.getCode())){
+                    parsedDistrict2 = tmpFcstRegionCode.getCode();
+                    break;
+                }
+            }
+        }
+        //부산,울산,경남
+        else if(district1.contains("부산")){
+            parsedDistrict1ForTmp = "부산.울산.경상남도";
+            parsedDistrict2 = "부산";
+            parsedDistrict1ForLand = "11H20000";
+        }
+        else if(district1.contains("울산")){
+            parsedDistrict1ForTmp = "부산.울산.경상남도";
+            parsedDistrict2 = "울산";
+            parsedDistrict1ForLand = "11H20000";
+        }
+        else if(district1.contains("경남")){
+            parsedDistrict1ForTmp = "부산.울산.경상남도";
+            parsedDistrict1ForLand = "11H20000";
+            List<CommonCode> district2CommonCodeList =
+                    commonCodeRepository.findAllByExtraValue1AndCodeGroup("부산.울산.경상남도", tmpFcstRegionCodeGroup);
+
+            for(int i=0; i<district2CommonCodeList.size(); i++){
+                CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                if(district2.contains(tmpFcstRegionCode.getCode())){
+                    parsedDistrict2 = tmpFcstRegionCode.getCode();
+                    break;
+                }
+            }
+        }
+        //대구,경북
+        else if(district1.contains("대구")){
+            parsedDistrict1ForTmp = "대구.경상북도";
+            parsedDistrict2 = "대구";
+            parsedDistrict1ForLand = "11H10000";
+        }
+        else if(district1.contains("경북")){
+            parsedDistrict1ForTmp = "대구.경상북도";
+            parsedDistrict1ForLand = "11H10000";
+
+            if(address.contains("독도리") || (address.contains("울릉읍") && address.contains("독도"))){
+                parsedDistrict2 = "독도";
+            }
+            else if(address.contains("울릉군")){
+                parsedDistrict2 = "울릉도";
+            }
+
+            else{
+                List<CommonCode> district2CommonCodeList =
+                        commonCodeRepository.findAllByExtraValue1AndCodeGroup("대구.경상북도", tmpFcstRegionCodeGroup);
+
+                for(int i=0; i<district2CommonCodeList.size(); i++){
+                    CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                    if(district2.contains(tmpFcstRegionCode.getCode())){
+                        parsedDistrict2 = tmpFcstRegionCode.getCode();
+                        break;
+                    }
+                }
+            }
+        }
+        //광주, 전남
+        else if(district1.contains("광주")){
+            parsedDistrict1ForTmp = "광주.전라남도";
+            parsedDistrict2 = "광주";
+            parsedDistrict1ForLand = "11F20000";
+        }
+        else if(district1.contains("전남")){
+            parsedDistrict1ForTmp = "광주.전라남도";
+            parsedDistrict1ForLand = "11F20000";
+
+            if(address.contains("흑산면")){
+                parsedDistrict2 = "흑산도";
+            }
+            else if(address.contains("완도군")){parsedDistrict2 = "완도";}
+            else{
+                List<CommonCode> district2CommonCodeList =
+                        commonCodeRepository.findAllByExtraValue1AndCodeGroup("광주.전라남도", tmpFcstRegionCodeGroup);
+
+                for(int i=0; i<district2CommonCodeList.size(); i++){
+                    CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                    if(district2.contains(tmpFcstRegionCode.getCode())){
+                        parsedDistrict2 = tmpFcstRegionCode.getCode();
+                        break;
+                    }
+                }
+            }
+        }
+        //전북
+        else if(district1.contains("전북")){
+            parsedDistrict1ForTmp = "전라북도";
+            parsedDistrict1ForLand = "11F10000";
+
+            List<CommonCode> district2CommonCodeList =
+                    commonCodeRepository.findAllByExtraValue1AndCodeGroup("전라북도", tmpFcstRegionCodeGroup);
+
+            for(int i=0; i<district2CommonCodeList.size(); i++){
+                CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                if(district2.contains(tmpFcstRegionCode.getCode())){
+                    parsedDistrict2 = tmpFcstRegionCode.getCode();
+                    break;
+                }
+            }
+        }
+        //대전,세종,충남
+        else if(district1.contains("대전")){
+            parsedDistrict1ForTmp = "대전.세종.충청남도";
+            parsedDistrict2 = "대전";
+            parsedDistrict1ForLand = "11C20000";
+        }
+        else if(district1.contains("세종특별자치시")){
+            parsedDistrict1ForTmp = "대전.세종.충청남도";
+            parsedDistrict2 = "세종";
+            parsedDistrict1ForLand = "11C20000";
+        }
+        else if(district1.contains("충남")){
+            parsedDistrict1ForTmp = "대전.세종.충청남도";
+            parsedDistrict1ForLand = "11C20000";
+
+            List<CommonCode> district2CommonCodeList =
+                    commonCodeRepository.findAllByExtraValue1AndCodeGroup("대전.세종.충청남도", tmpFcstRegionCodeGroup);
+
+            for(int i=0; i<district2CommonCodeList.size(); i++){
+                CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                if(district2.contains(tmpFcstRegionCode.getCode())){
+                    parsedDistrict2 = tmpFcstRegionCode.getCode();
+                    break;
+                }
+            }
+        }
+        //충북
+        else if(district1.contains("충북")){
+            parsedDistrict1ForTmp = "충청북도";
+            parsedDistrict1ForLand = "11C10000";
+
+            List<CommonCode> district2CommonCodeList =
+                    commonCodeRepository.findAllByExtraValue1AndCodeGroup("충청북도", tmpFcstRegionCodeGroup);
+
+            for(int i=0; i<district2CommonCodeList.size(); i++){
+                CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                if(district2.contains(tmpFcstRegionCode.getCode())){
+                    parsedDistrict2 = tmpFcstRegionCode.getCode();
+                    break;
+                }
+            }
+        }
+        //강원
+        else if(district1.contains("강원")){
+            parsedDistrict1ForTmp = "강원도";
+
+            List<CommonCode> district2CommonCodeList =
+                    commonCodeRepository.findAllByExtraValue1AndCodeGroup("강원도", tmpFcstRegionCodeGroup);
+
+            for(int i=0; i<district2CommonCodeList.size(); i++){
+                CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                if(district2.contains(tmpFcstRegionCode.getCode())){
+                    parsedDistrict2 = tmpFcstRegionCode.getCode();
+                    parsedDistrict1ForLand = tmpFcstRegionCode.getRemark().substring(0,4)+"0000";
+                    break;
+                }
+            }
+        }
+        //제주도
+        else if(district1.contains("제주특별자치도")){
+            parsedDistrict1ForTmp = "제주도";
+            parsedDistrict1ForLand = "11G00000";
+
+            if(address.contains("추자면")){
+                parsedDistrict2 = "추자도";
+            }
+            List<CommonCode> district2CommonCodeList =
+                    commonCodeRepository.findAllByExtraValue1AndCodeGroup("제주도", tmpFcstRegionCodeGroup);
+
+            for(int i=0; i<district2CommonCodeList.size(); i++){
+                CommonCode tmpFcstRegionCode = district2CommonCodeList.get(i);
+                if(district2.contains(tmpFcstRegionCode.getCode())){
+                    parsedDistrict2 = tmpFcstRegionCode.getCode(); break;
+                }
+            }
+        }
+
+        CommonCode tmpFcstRegionCommonCode =
+                commonCodeRepository.findAllByExtraValue1AndCodeGroupAndCode
+                        (parsedDistrict1ForTmp, tmpFcstRegionCodeGroup, parsedDistrict2).get(0);
+        String tmpCode = tmpFcstRegionCommonCode.getRemark();
+
+        result.put("tmpFcstRegionCode", tmpCode);
+        result.put("landFcstRegionCode", parsedDistrict1ForLand);
         return result;
     }
 

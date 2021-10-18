@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.controller.common;
 
 import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.service.common.CommonService;
@@ -85,7 +86,7 @@ public class TidalController {
     //관측소 조위 모든 데이터 리스트 조회
     @ApiOperation(value = "관측소 조위 모든 데이터 조회")
     @GetMapping("/allTideList/{observerId}")
-    public List<TidalLevelResponse> getAllTideList(@PathVariable("observerId") String observerId){
+    public List<TidalLevelResponse> getAllTideList(@PathVariable("observerId") Long observerId) throws ResourceNotFoundException {
         return commonService.findAllByDateAndCode2(observerId);
     }
 }

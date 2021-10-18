@@ -88,7 +88,10 @@ export default inject(
                     let tidalLevelData = await APIStore._get(`/v2/api/allTideList/${id}`)
                     let data = []
                     let dataX = []
+                    let tidalLevelMax = 0
                     for(var i=0; i<tidalLevelData.length; i++){
+                        if(tidalLevelData[i].level > tidalLevelMax){tidalLevelMax = tidalLevelData[i].level}
+
                         if(tidalLevelData[i].dateTime.substring(14,16)=="00"){
                             data.push({"x": tidalLevelData[i].dateTime.substring(11, 13), "y": tidalLevelData[i].level})
                         }
@@ -109,7 +112,11 @@ export default inject(
                             "data": data
                         },
                     ]
-                    await this.setState({"tidalLevelData": tidalLevelData, "tidalLevelDataX": dataX})
+                    await this.setState({
+                        "tidalLevelData": tidalLevelData,
+                        "tidalLevelDataX": dataX,
+                        "tidalLevelMax": tidalLevelMax,
+                    })
 
                     //항구 주간 날씨 데이터
                     let dailyWeather = await APIStore._get(`/v2/api/harbor/${id}/dailyWeather`);
@@ -672,7 +679,7 @@ export default inject(
                                                     margin={{ top: 0, right: 40, bottom: 50, left: 40 }}
                                                     xScale={{ type: 'point' }}
                                                     yScale={{
-                                                        type: 'linear', min: 0, max: 'auto', stacked: true, reverse: false,
+                                                        type: 'linear', min: 0, max: this.state.tidalLevelMax+100, stacked: true, reverse: false,
                                                     }}
                                                     yFormat=" >-.2f"
                                                     axisTop={null}
