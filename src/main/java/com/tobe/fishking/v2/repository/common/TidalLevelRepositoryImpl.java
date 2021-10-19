@@ -41,7 +41,9 @@ public class TidalLevelRepositoryImpl implements TidalLevelRepositoryCustom {
                 ))
                 .from(tidalLevel)
                 .where(tidalLevel.dateTime.before(endDateTime), tidalLevel.dateTime.after(startDateTime),
-                        tidalLevel.observerCode.id.eq(id))
+                        tidalLevel.observerCode.id.eq(id).and(tidalLevel.dateTime.minute().eq(0)
+                        .or(tidalLevel.dateTime.minute().mod(10).eq(0))))
+                .groupBy(tidalLevel.dateTime)
                 .fetchResults();
         return results.getResults();
     }

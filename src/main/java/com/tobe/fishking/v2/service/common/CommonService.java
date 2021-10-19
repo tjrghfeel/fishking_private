@@ -234,20 +234,13 @@ public class CommonService {
     }
 
     @Transactional
-    public List<TidalLevelResponse> findAllByDateAndCode2(Long id) throws ResourceNotFoundException {
-        Harbor harbor = harborRepo.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+id));
-        String observerCode = harbor.getObserverCode();
-        ObserverCode observer = observerCodeRepository.getObserverCodeByCode(observerCode);
-        Long observerId = observer.getId();
-
-        LocalDateTime startDateTime = LocalDateTime.now().plusHours(9);//tidal_level의 데이터들은 9시간 전으로 시간이 맞춰진 데이터가 아닌 현재 시간에 맞게 설정된 데이터이기 때문.
-        LocalDateTime endDateTime = LocalDateTime.now().plusDays(1).plusHours(9);
+    public List<TidalLevelResponse> findAllByDateAndCode2(Long observerId) throws ResourceNotFoundException {
+        LocalDateTime startDateTime = LocalDateTime.now().plusHours(9).minusHours(4);//tidal_level의 데이터들은 9시간 전으로 시간이 맞춰진 데이터가 아닌 현재 시간에 맞게 설정된 데이터이기 때문.
+        LocalDateTime endDateTime = LocalDateTime.now().plusDays(1).plusHours(9).minusHours(4);
 
 //        startDateTime = LocalDateTime.parse("2021-02-090000", DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm"));
 //        endDateTime = LocalDateTime.parse("2021-02-090000", DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm")).plusDays(1);
         List<TidalLevelResponse> tidalLevelList = tidalLevelRepository.findAllByDateAndCode2(startDateTime, endDateTime, observerId);
-
 
         return tidalLevelList;
     }

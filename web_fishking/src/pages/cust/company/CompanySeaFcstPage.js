@@ -72,16 +72,23 @@ export default inject(
                     // let seaCode = await APIStore._get(`/v2/api/ship/${id}/seaCode`);
                     // await this.setState({"seaCode": seaCode})
 
-                    //관측소 정보 조회.
-                    let observer = await APIStore._get(`/v2/api/harbor/${id}/observer`)
+                    let observer = await APIStore._get(`/v2/api/ship/${id}/observer`)
                     await this.setState({"observerName": observer["observerName"]})
 
+                    //관측소 정보 조회.
+                    // let observerList = await APIStore._get(`/v2/api/observers`);
+                    // for(var i=0; i<observerList.length; i++){
+                    //     if(observerList[i]["id"]==id){
+                    //         await this.setState({"observerName": observerList[i]["name"]})
+                    //     }
+                    // }
+
                     //선박 위치의 기상 정보 조회 api.
-                    let weather = await APIStore._get(`/v2/api/harbor/${id}/weather`);
+                    let weather = await APIStore._get(`/v2/api/ship/seaFcst/${id}/weather`);
                     await this.setState({"weather": weather});
 
                     //조위 데이터
-                    let tidalLevelData = await APIStore._get(`/v2/api/allTideList/harbor/${id}`)
+                    let tidalLevelData = await APIStore._get(`/v2/api/allTideList/ship/${id}`)
                     let data = []
                     let dataX = []
                     let tidalLevelMax = 0
@@ -96,6 +103,7 @@ export default inject(
                         }
 
                         //x축에 표시할 데이터 추출.
+                        // if(tidalLevelData[i].peak != ""){
                         if(
                             (tidalLevelData[i].dateTime.substring(14,16)=="00")
                             && (tidalLevelData[i].dateTime.substring(11, 13)%3==0)
@@ -123,8 +131,8 @@ export default inject(
                     })
 
                     //항구 주간 날씨 데이터
-                    let dailyWeather = await APIStore._get(`/v2/api/harbor/${id}/dailyWeather`);
-                    await this.setState({"dailyWeather": dailyWeather});
+                    // let dailyWeather = await APIStore._get(`/v2/api/harbor/${id}/dailyWeather`);
+                    // await this.setState({"dailyWeather": dailyWeather});
 
                     // resolve.liveVideo =
                     //   "rtsp://vc-net2-ss.sktelecom.com:8558/playback?authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC2kSQ6OUFJCPjU%2FhSkMr1KI3QKkWbD1KwEmcEWUkZ0WtGaNMhS07aCfSgmW0G1ng98VQ2TLOWUzJh1Kcn27AChFBKjs3Zz1NCiPTEbHeAXsWT9X%2B%2F6Aevf4CXVXGm2Mbf0hn9pXlWgR3W9gaL%2BSwmysMmxfkPzmnoHNM4MPp4y3ppO7PJAgWnHElymjo1gX7RFasyNGzcErx8fs2NZKG692&rtspURI=rtsp://222.237.231.101:8554/243757/Playback?sessionID=HdxPbOAfsj7Q7I2B8y8cfuufQkYr&dateTime=20210327T094125Z&scale=1";
@@ -338,23 +346,23 @@ export default inject(
                             />
 
                             <NavigationLayout
-                                title={this.state.observerName}
+                                title={this.state.observerName + " 관측소"}
                                 showBackIcon={true}
                             />
                             {/** 상품이미지 */}
-                            <div
+                            {/*<div
                                 id="carousel-visual-detail"
                                 className="carousel slide"
                                 data-ride="carousel"
                             >
-                                {/*<div className="float-top-left">*/}
-                                {/*  <a onClick={() => PageStore.goBack()}>*/}
-                                {/*    <img*/}
-                                {/*      src="/assets/cust/img/svg/navbar-back.svg"*/}
-                                {/*      alt="뒤로가기"*/}
-                                {/*    />*/}
-                                {/*  </a>*/}
-                                {/*</div>*/}
+                                <div className="float-top-left">
+                                  <a onClick={() => PageStore.goBack()}>
+                                    <img
+                                      src="/assets/cust/img/svg/navbar-back.svg"
+                                      alt="뒤로가기"
+                                    />
+                                  </a>
+                                </div>
                                 <div className="carousel-inner">
                                     <div className="carousel-item active">
                                         {this.state.liveVideo === "" &&
@@ -437,14 +445,14 @@ export default inject(
                                                             : "none",
                                                     }}
                                                 ></video>
-                                                {/*<iframe width="560" height="315" src='https://vgai.capslive.co.kr/video/adt/MTkwMzg3'*/}
-                                                {/*        frameborder="0"*/}
-                                                {/*        allow="acceleroeter; autoplay; encrypted-media; gyroscope; picture-in-picture"*/}
-                                                {/*        sandbox="allow-forms allow-modals allow-same-origin allow-script"*/}
-                                                {/*        allowfullscreen*/}
-                                                {/*        title='video'*/}
-                                                {/*>*/}
-                                                {/*</iframe>*/}
+                                                <iframe width="560" height="315" src='https://vgai.capslive.co.kr/video/adt/MTkwMzg3'
+                                                        frameborder="0"
+                                                        allow="acceleroeter; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                                        sandbox="allow-forms allow-modals allow-same-origin allow-script"
+                                                        allowfullscreen
+                                                        title='video'
+                                                >
+                                                </iframe>
                                                 <span
                                                     id="live-mark"
                                                     className="play-live"
@@ -456,7 +464,159 @@ export default inject(
                                         )}
                                     </div>
                                 </div>
+                            </div>*/}
+
+                            {/** 상품타이틀 */}
+                            {/*<div className="container nopadding">
+                                <div className="card mt-3">
+                                    <h4>{this.state.name}</h4>
+                                    <div className="rateit-wrap">
+                    <span className="float-left">
+                      {this.state.fishingType == "ship" && "선상"}
+                        {this.state.fishingType == "seaRocks" && "갯바위"}
+                    </span>{" "}
+                                        &nbsp;&nbsp;
+                                        <div
+                                            className="rateit float-left"
+                                            data-rateit-value={(this.state.avgReview || 0).toFixed(2)}
+                                            data-rateit-ispreset="true"
+                                            data-rateit-readonly="true"
+                                            data-rateit-starwidth="16"
+                                            data-rateit-starheight="16"
+                                        ></div>
+                                        <span>
+                      {" "}
+                                            <strong>{(this.state.avgReview || 0).toFixed(2)} </strong>
+                      ({Intl.NumberFormat().format(this.state.reviewCount || 0)}
+                                            ){" "}
+                    </span>{" "}
+                                        &nbsp;&nbsp;
+                                    </div>
+                                    <div className="float-top-right">
+                                        <a
+                                            onClick={this.requestLike}
+                                            style={{marginRight: "8px"}}
+                                        >
+                      <span
+                          className={
+                              "icon-heart" +
+                              (this.state.liked ? " active" : " float-left")
+                          }
+                      ></span>
+                                        </a>
+                                        <a onClick={() => this.modalSNS('ship')}>
+                                            <img src="/assets/cust/img/svg/icon-share.svg" alt=""/>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
+
+                            * Coupon
+                            <div className="container nopadding">
+                                <div className="couponWrap mt-3">
+                                    <a onClick={() => PageStore.push(`/coupon/available`)}>
+                                        <div className="couponDown">
+                                            <div className="row no-gutters align-items-center">
+                                                <div className="col-9">
+                                                    <img
+                                                        src="/assets/cust/img/svg/icon-coupon.svg"
+                                                        alt=""
+                                                        className="align-middle"
+                                                    />{" "}
+                                                    어복황제는 지금 할인중!
+                                                </div>
+                                                <div className="col-3 left-dline">쿠폰받기</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            * 판매상품
+                            <div className="container nopadding">
+                                <h5>판매상품</h5>
+                                {this.state.goods &&
+                                this.state.goods.map((data, index) => (
+                                    <CompanyGoodListItemView key={index} data={data}/>
+                                ))}
+                            </div>
+
+
+                            * 위치정보
+                            <div className="container nopadding">
+                                <h5>위치정보</h5>
+                                <ul className="notice">
+                                    <li>
+                                        <a
+                                            onClick={() =>
+                                                PageStore.push(
+                                                    `/common/mapview?name=${this.state.name}&lat=${this.state.latitude}&lon=${this.state.longitude}`
+                                                )
+                                            }
+                                            className="float-right-more"
+                                        >
+                                            <img
+                                                src="/assets/cust/img/svg/icon-location.svg"
+                                                alt=""
+                                                className="vam"
+                                            />
+                                            지도보기
+                                        </a>
+                                        {this.state.address}
+                                    </li>
+                                </ul>
+                                <input
+                                    type={"hidden"}
+                                    id={"map-address"}
+                                    value={this.state.address}
+                                />
+                                <div
+                                    ref={this.container}
+                                    id="map"
+                                    className="map-sm"
+                                    style={{width: "100%", height: "170px"}}
+                                ></div>
+                                <div className="row no-gutters align-items-center border-round-btm">
+                                    <div className="col-4 text-center align-self-center border-right">
+                                        <a onClick={() => this.findWay()}>
+                                            <div className="padding">
+                                                <img
+                                                    src="/assets/cust/img/svg/icon-map.svg"
+                                                    alt=""
+                                                    className="vam"
+                                                />{" "}
+                                                길찾기
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div className="col-4 text-center align-self-center border-right">
+                                        <a onClick={() => this.copyAddress()}>
+                                            <div className="padding">
+                                                <img
+                                                    src="/assets/cust/img/svg/icon-copy.svg"
+                                                    alt=""
+                                                    className="vam"
+                                                />{" "}
+                                                주소복사
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div className="col-4 text-center align-self-center">
+                                        <a onClick={() => this.modalSNS('map')}>
+                                            <a data-toggle="modal" data-target="#snsModal">
+                                            <div className="padding">
+                                                <img
+                                                    src="/assets/cust/img/svg/icon-share.svg"
+                                                    alt=""
+                                                    className="vam icon-xs"
+                                                />{" "}
+                                                공유하기
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="space"></div>
+                            </div>*/}
 
                             <div className="container nopadding">
                                 <h5>
@@ -608,29 +768,29 @@ export default inject(
                                 )}
 
                                 {/*날짜별 날씨 */}
-                                <h5>주간 날씨</h5>
-                                <ul>
-                                    <div className="harborDetail-timelyWeather">
-                                        <table>
-                                            <tr>
-                                                {this.state.dailyWeather && this.state.dailyWeather.map((data, index)=>(
-                                                    <td>{data.date}</td>
-                                                ))}
-                                            </tr>
-                                            <tr>
-                                                {this.state.dailyWeather && this.state.dailyWeather.map((data, index)=>(
-                                                    <td><img src={data.weatherPmImg || data.weatherImg}/></td>
-                                                ))}
-                                            </tr>
-                                            <tr>
-                                                {this.state.dailyWeather && this.state.dailyWeather.map((data, index)=>(
-                                                    <td>{data.tmpMin + "~" + data.tmpMax + " ℃"}</td>
-                                                ))}
-                                            </tr>
+                                {/*<h5>주간 날씨</h5>*/}
+                                {/*<ul>*/}
+                                {/*    <div className="harborDetail-timelyWeather">*/}
+                                {/*        <table>*/}
+                                {/*            <tr>*/}
+                                {/*                {this.state.dailyWeather && this.state.dailyWeather.map((data, index)=>(*/}
+                                {/*                    <td>{data.date}</td>*/}
+                                {/*                ))}*/}
+                                {/*            </tr>*/}
+                                {/*            <tr>*/}
+                                {/*                {this.state.dailyWeather && this.state.dailyWeather.map((data, index)=>(*/}
+                                {/*                    <td><img src={data.weatherPmImg || data.weatherImg}/></td>*/}
+                                {/*                ))}*/}
+                                {/*            </tr>*/}
+                                {/*            <tr>*/}
+                                {/*                {this.state.dailyWeather && this.state.dailyWeather.map((data, index)=>(*/}
+                                {/*                    <td>{data.tmpMin + "~" + data.tmpMax + " ℃"}</td>*/}
+                                {/*                ))}*/}
+                                {/*            </tr>*/}
 
-                                        </table>
-                                    </div>
-                                </ul>
+                                {/*        </table>*/}
+                                {/*    </div>*/}
+                                {/*</ul>*/}
 
 
                                 {/*<div className="space"></div>*/}

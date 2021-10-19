@@ -1,5 +1,8 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.entity.fishing.Harbor;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.Constants;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.exception.EmptyListException;
@@ -9,6 +12,9 @@ import com.tobe.fishking.v2.exception.TideException;
 import com.tobe.fishking.v2.model.TakeResponse;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
+import com.tobe.fishking.v2.repository.common.ObserverCodeRepository;
+import com.tobe.fishking.v2.repository.fishking.HarborRepository;
+import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
 import com.tobe.fishking.v2.service.fishking.MyMenuService;
 import io.swagger.annotations.Api;
@@ -23,6 +29,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +44,13 @@ public class MyMenuController {
     FishingDiaryService fishingDiaryService;
     @Autowired
     MyMenuService myMenuService;
+    @Autowired
+    HarborRepository harborRepo;
+    @Autowired
+    ShipRepository shipRepo;
+    @Autowired
+    ObserverCodeRepository observerCodeRepo;
+
 
     /*마이메뉴 처음 페이지 조회.
      * - member의 프사, nickname, 예약건수, 쿠폰 수를 dto에 담아서 반환. */
@@ -456,8 +470,11 @@ public class MyMenuController {
                     "- windSpeed : Double / 풍속(m/s)\n"
     )
     @GetMapping(value = "/ship/{shipId}/weather")
-    public Map<String, Object> getShipWeather(@PathVariable("shipId") String shipId) throws ResourceNotFoundException {
-        return myMenuService.getShipWeather(shipId, null);
+    public Map<String, Object> getShipWeather(@PathVariable("shipId") Long shipId) throws ResourceNotFoundException {
+        Ship ship = shipRepo.findById(shipId)
+                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+shipId));
+        return myMenuService.getTimelyWeather(Float.parseFloat(ship.getLocation().getLongitude().toString()),
+                Float.parseFloat(ship.getLocation().getLatitude().toString()));
     }
     //항구 현재 날씨 조회.
     @ApiOperation(value = "항구 위치에 대한 현재 날씨 정보 조회.",
@@ -476,19 +493,44 @@ public class MyMenuController {
     )
     @GetMapping(value = "/harbor/{harborId}/weather")
     public Map<String, Object> getHarborWeather(@PathVariable("harborId") Long harborId) throws ResourceNotFoundException {
-        return myMenuService.getShipWeather(null, harborId);
+        Harbor harbor = harborRepo.findById(harborId)
+                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
+        return myMenuService.getTimelyWeather(Float.parseFloat(harbor.getLocation().getLongitude().toString()),
+                Float.parseFloat(harbor.getLocation().getLatitude().toString()));
+    }
+    //선박 상세 > 해상 예보 페이지. 현재 날씨 조회.
+    @ApiOperation(value = "항구 위치에 대한 현재 날씨 정보 조회.",
+            notes = "요청필드)\n" +
+                    "- shipId : Long / 필수 / 선박 id\n" +
+                    "응답필드)\n" +
+                    "- weather : String / 날씨\n" +
+                    "- weatherImg : String / 날씨 이미지\n" +
+                    "- rainProbability : Integer / 강수확률(%)\n" +
+                    "- humidity : Integer / 습도(%)\n" +
+                    "- tmp : Double / 온도(섭씨)\n" +
+                    "- tmpMin : Double / 일 최저온도(섭씨)\n" +
+                    "- tmpMax : Double / 일 최고온도(섭씨)\n" +
+                    "- windDirection : String / 풍향\n" +
+                    "- windSpeed : Double / 풍속(m/s)\n"
+    )
+    @GetMapping(value = "/ship/seaFcst/{shipId}/weather")
+    public Map<String, Object> getObserverWeather(@PathVariable("shipId") Long shipId) throws ResourceNotFoundException {
+        Ship ship = shipRepo.findById(shipId)
+                .orElseThrow(()->new ResourceNotFoundException("ship not found for this id ::"+shipId));
+        ObserverCode observer = observerCodeRepo.getObserverCodeByCode(ship.getObserverCode());
+        return myMenuService.getTimelyWeather(
+                Float.parseFloat(observer.getLocation().getLongitude().toString()),
+                Float.parseFloat(observer.getLocation().getLatitude().toString())
+        );
     }
     //항구 주간 날씨 조회.
     @ApiOperation(value = "항구 위치에 대한 주간 날씨 조회")
     @GetMapping(value="/harbor/{harborId}/dailyWeather")
     public ArrayList<Map<String, Object>> getHarborDailyWeather(@PathVariable("harborId") Long harborId) throws ResourceNotFoundException {
-        return myMenuService.getHarborDailyWeather(harborId);
+        Harbor harbor = harborRepo.findById(harborId)
+                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
+        return myMenuService.getDailyWeather(harbor.getAddress());
     }
-//    @ApiOperation(value = "항구 위치에 대한 주간 날씨 조회")
-//    @PostMapping(value="/harbor/{harborId}/dailyWeather")
-//    public ArrayList<Map<String, Object>> getHarborDailyWeather(@PathVariable("harborId") Long harborId, String address) throws ResourceNotFoundException {
-//        return myMenuService.getHarborDailyWeather(harborId, address);
-//    }
 
 
     // 선박에 대한 해양 코드 반환.
@@ -500,5 +542,34 @@ public class MyMenuController {
         return myMenuService.getSeaCode(shipId);
     }
 
-    //
+    //선박과 매핑된 관측소 정보 반환
+    @ApiOperation(value = "선박과 매핑된 관측소 정보 반환")
+    @GetMapping("/ship/{shipId}/observer")
+    public Map<String, Object> getObserverInfo(@PathVariable("shipId") Long shipId){
+        Map<String, Object> result = new HashMap<>();
+
+        String observerCode = shipRepo.findById(shipId).get().getObserverCode();
+        ObserverCode observer = observerCodeRepo.getObserverCodeByCode(observerCode);
+
+        result.put("observerId", observer.getId());
+        result.put("observerCode", observer.getCode());
+        result.put("observerName", observer.getName());
+
+        return result;
+    }
+    //선박과 매핑된 관측소 정보 반환
+    @ApiOperation(value = "선박과 매핑된 관측소 정보 반환")
+    @GetMapping("/harbor/{harborId}/observer")
+    public Map<String, Object> getObserverInfoFromHarbor(@PathVariable("harborId") Long harborId){
+        Map<String, Object> result = new HashMap<>();
+
+        String observerCode = harborRepo.findById(harborId).get().getObserverCode();
+        ObserverCode observer = observerCodeRepo.getObserverCodeByCode(observerCode);
+
+        result.put("observerId", observer.getId());
+        result.put("observerCode", observer.getCode());
+        result.put("observerName", observer.getName());
+
+        return result;
+    }
 }

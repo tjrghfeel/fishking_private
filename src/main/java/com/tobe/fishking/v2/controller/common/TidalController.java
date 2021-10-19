@@ -1,9 +1,14 @@
 package com.tobe.fishking.v2.controller.common;
 
 import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.entity.fishing.Harbor;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.common.ObserverCodeResponse;
 import com.tobe.fishking.v2.model.response.TidalLevelResponse;
+import com.tobe.fishking.v2.repository.common.ObserverCodeRepository;
+import com.tobe.fishking.v2.repository.fishking.HarborRepository;
+import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.service.fishking.MyMenuService;
 import com.tobe.fishking.v2.service.fishking.ShipService;
@@ -27,6 +32,10 @@ public class TidalController {
     private final CommonService commonService;
     private final MyMenuService myMenuService;
     private final ShipService shipService;
+    private final HarborRepository harborRepo;
+    private final ObserverCodeRepository observerCodeRepo;
+    private final ShipRepository shipRepo;
+
 
     @ApiOperation(value = "날짜, 관측소 코드로 조위 데이터 ", notes = "date: yyyy-MM-dd" +
             "\n [{" +
@@ -83,10 +92,25 @@ public class TidalController {
         return commonService.getAllObserverCode();
     }
 
-    //관측소 조위 모든 데이터 리스트 조회
-    @ApiOperation(value = "관측소 조위 모든 데이터 조회")
-    @GetMapping("/allTideList/{observerId}")
-    public List<TidalLevelResponse> getAllTideList(@PathVariable("observerId") Long observerId) throws ResourceNotFoundException {
+    //항구와 연결된 관측소 조위 모든 데이터 리스트 조회
+    @ApiOperation(value = "항구와 연결된 관측소 조위 모든 데이터 조회")
+    @GetMapping("/allTideList/harbor/{harborId}")
+    public List<TidalLevelResponse> getAllTideListForHarbor(@PathVariable("harborId") Long harborId) throws ResourceNotFoundException {
+        Harbor harbor = harborRepo.findById(harborId)
+                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
+        String observerCode = harbor.getObserverCode();
+        ObserverCode observer = observerCodeRepo.getObserverCodeByCode(observerCode);
+        Long observerId = observer.getId();
+
         return commonService.findAllByDateAndCode2(observerId);
+    }
+    //선박 상세 > 해상 예보, 조위 모든 데이터 리스트 조회
+    @ApiOperation(value = "선박 상세 > 해상 예보. 조위 모든 데이터 조회")
+    @GetMapping("/allTideList/ship/{shipId}")
+    public List<TidalLevelResponse> getAllTideListForShip(@PathVariable("shipId") Long shipId) throws ResourceNotFoundException {
+        Ship ship = shipRepo.findById(shipId)
+                .orElseThrow(()->new ResourceNotFoundException("ship not found for this id ::"+shipId));
+        ObserverCode observer = observerCodeRepo.getObserverCodeByCode(ship.getObserverCode());
+        return commonService.findAllByDateAndCode2(observer.getId());
     }
 }

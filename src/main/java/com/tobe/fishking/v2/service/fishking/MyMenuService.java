@@ -791,25 +791,11 @@ public class MyMenuService {
 
     //선박 위치에 해당하는 현재 날씨 데이터 가져오기.
     @Transactional
-    public Map<String, Object> getShipWeather(String shipId, Long harborId) throws ResourceNotFoundException {
+    public Map<String, Object> getTimelyWeather(Float lon, Float lat) throws ResourceNotFoundException {
         Map<String, Object> weather = new HashMap<>();
         ArrayList<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
-        Ship ship = null;
-        Harbor harbor = null;
-        Map<String, Float> xyGrid = null;
-        if(shipId != null) {
-            ship = shipRepository.findById(Long.parseLong(shipId))
-                    .orElseThrow(() -> new ResourceNotFoundException("ship not found for this id ::" + shipId));
-            xyGrid = transLatLonToXY(0, Float.parseFloat(ship.getLocation().getLongitude().toString()),
-                    Float.parseFloat(ship.getLocation().getLatitude().toString()));
-        }
-        else {
-            harbor = harborRepo.findById(harborId)
-                    .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
-            xyGrid = transLatLonToXY(0, Float.parseFloat(harbor.getLocation().getLongitude().toString()),
-                    Float.parseFloat(harbor.getLocation().getLatitude().toString()));
-        }
+        Map<String, Float> xyGrid = transLatLonToXY(0, lon, lat);
         //위경도->x,y격자 좌표 변환.
 
 //        transLatLonToXY(1, Float.parseFloat("53"),
@@ -1151,13 +1137,10 @@ public class MyMenuService {
 
     //항구 주간 날씨
     @Transactional
-    public ArrayList<Map<String, Object>> getHarborDailyWeather(Long harborId) throws ResourceNotFoundException {
+    public ArrayList<Map<String, Object>> getDailyWeather(String address) throws ResourceNotFoundException {
         ArrayList<Map<String, Object>> result = new ArrayList<>();
 
-        //코드 가져오기.
-        Harbor harbor = harborRepo.findById(harborId)
-                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
-        Map<String, String> fcstRegionCode = transRegionCodeFromAddress(harbor.getAddress());
+        Map<String, String> fcstRegionCode = transRegionCodeFromAddress(address);
 //        Map<String, String> fcstRegionCode = transRegionCodeFromAddress(address);
         String tmpRegionCode = fcstRegionCode.get("tmpFcstRegionCode");
         String weatherRegionCode = fcstRegionCode.get("landFcstRegionCode");
@@ -1715,5 +1698,6 @@ public class MyMenuService {
         ObserverCode observer = observerCodeRepository.getObserverCodeByCode(observerCode);
         return observer.getForecastCode();
     }
+
 
 }
