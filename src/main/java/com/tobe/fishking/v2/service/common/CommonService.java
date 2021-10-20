@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.*;
+import com.tobe.fishking.v2.entity.fishing.Harbor;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
@@ -27,6 +28,7 @@ import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
+import com.tobe.fishking.v2.repository.fishking.HarborRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.service.admin.BannerManageService;
 import com.tobe.fishking.v2.utils.DateUtils;
@@ -63,6 +65,7 @@ public class CommonService {
     private final ShipRepository shipRepository;
     private final SearchKeywordRepository searchKeywordRepository;
     private final BannerManageService bannerManageService;
+    private final HarborRepository harborRepo;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,
@@ -231,14 +234,13 @@ public class CommonService {
     }
 
     @Transactional
-    public List<TidalLevelResponse> findAllByDateAndCode2(String id) {
-        LocalDateTime startDateTime = LocalDateTime.now();
-        LocalDateTime endDateTime = LocalDateTime.now().plusDays(1);
+    public List<TidalLevelResponse> findAllByDateAndCode2(Long observerId) throws ResourceNotFoundException {
+        LocalDateTime startDateTime = LocalDateTime.now().plusHours(9).minusHours(4);//tidal_level의 데이터들은 9시간 전으로 시간이 맞춰진 데이터가 아닌 현재 시간에 맞게 설정된 데이터이기 때문.
+        LocalDateTime endDateTime = LocalDateTime.now().plusDays(1).plusHours(9).minusHours(4);
 
 //        startDateTime = LocalDateTime.parse("2021-02-090000", DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm"));
 //        endDateTime = LocalDateTime.parse("2021-02-090000", DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm")).plusDays(1);
-        List<TidalLevelResponse> tidalLevelList = tidalLevelRepository.findAllByDateAndCode2(startDateTime, endDateTime, Long.parseLong(id));
-
+        List<TidalLevelResponse> tidalLevelList = tidalLevelRepository.findAllByDateAndCode2(startDateTime, endDateTime, observerId);
 
         return tidalLevelList;
     }

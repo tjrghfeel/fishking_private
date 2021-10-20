@@ -50,7 +50,7 @@ public class Harbor extends BaseTime{
 
     // EXEC sp_addextendedproperty 'MS_Description', N'주소', 'USER', DBO, 'TABLE', company, 'COLUMN',  address
     @Column(columnDefinition = "varchar(100)   comment '주소'  ")
-    private String companyAddress;
+    private String address;
 
     private Location location;
 

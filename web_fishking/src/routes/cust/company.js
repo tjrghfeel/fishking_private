@@ -5,6 +5,7 @@ import { Switch, Route, withRouter } from "react-router-dom";
 import CompanyDetailPage from "../../pages/cust/company/CompanyDetailPage";
 import CompanyReviewPage from "../../pages/cust/company/CompanyReviewPage";
 import HarborDetailPage from "../../pages/cust/company/HarborDetailPage";
+import CompanySeaFcstPage from "../../pages/cust/company/CompanySeaFcstPage";
 
 export default inject()(
   observer(
@@ -28,6 +29,12 @@ export default inject()(
               exact
               path={`${match.url}/harbor/:fishingType/detail/:id`}
               component={HarborDetailPage}
+          />
+          {/** 업체 > 해상예보 */}
+          <Route
+              exact
+              path={`${match.url}/:fishingType/seaFcst/:id`}
+              component={CompanySeaFcstPage}
           />
         </Switch>
       );

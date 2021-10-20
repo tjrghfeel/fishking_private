@@ -5326,9 +5326,12 @@ body.full.bgintro {
 .harborDetail-tidal{
 	margin: 0 auto;
 	height: 35vh;
-	width: 200vw;
-	/*max-width: 600px;*/
+	width: 95vw;
+	max-width: 600px;
 	/*overflow-x: scroll;*/
+}
+.harborDetail-tidal svg{
+	overflow: visible !important;/*그래프 현재 시간 표시 막대의 글귀 위치를 top으로 하면 정해진 svg크기 밖으로 나가 보이지 않는 이슈를 위해.*/
 }
 
 /*예약 날짜 선택 페이지*/

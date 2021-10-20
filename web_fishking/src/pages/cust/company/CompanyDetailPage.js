@@ -562,7 +562,7 @@ export default inject(
                 <h5>
                   <a
                     className="btn btn-round-grey btn-xs float-right-more"
-                    data-toggle="modal" data-target="#selPlaceModal"
+                    data-toggle="modal" /*data-target="#selPlaceModal"*/
                     style={{
                       // "border":"solid 1.5px #0069d9",
                       "border-radius": "5px",
@@ -570,6 +570,7 @@ export default inject(
                       "font-size": "15px",
                       "color": "#333",
                     }}
+                    onClick={() => PageStore.push(`/company/${this.state.fishingType}/seaFcst/${id}`)}
                   >
                     해상 예보
                   </a>
@@ -930,10 +931,10 @@ export default inject(
                 </div>
               </div>
 
-              <CompanyDetailWeatherModal
-                id={"selPlaceModal"}
-                seaCode={this.state.seaCode}
-              />
+              {/*<CompanyDetailWeatherModal*/}
+              {/*  id={"selPlaceModal"}*/}
+              {/*  seaCode={this.state.seaCode}*/}
+              {/*/>*/}
             </React.Fragment>
           );
         }
