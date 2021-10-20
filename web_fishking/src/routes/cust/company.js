@@ -4,8 +4,8 @@ import { Switch, Route, withRouter } from "react-router-dom";
 
 import CompanyDetailPage from "../../pages/cust/company/CompanyDetailPage";
 import CompanyReviewPage from "../../pages/cust/company/CompanyReviewPage";
-import HarborDetailPage from "../../pages/cust/company/HarborDetailPage";
 import CompanySeaFcstPage from "../../pages/cust/company/CompanySeaFcstPage";
+import CameraPointDetailPage from "../../pages/cust/company/CameraPointDetailPage";
 
 export default inject()(
   observer(
@@ -24,11 +24,11 @@ export default inject()(
             path={`${match.url}/review/:id`}
             component={CompanyReviewPage}
           />
-          {/** new메인홈 > 항구클릭 */}
+          {/** new메인홈 > 카메라 포인트 클릭 */}
           <Route
               exact
-              path={`${match.url}/harbor/:fishingType/detail/:id`}
-              component={HarborDetailPage}
+              path={`${match.url}/cameraPoint/:fishingType/detail/:id`}
+              component={CameraPointDetailPage}
           />
           {/** 업체 > 해상예보 */}
           <Route

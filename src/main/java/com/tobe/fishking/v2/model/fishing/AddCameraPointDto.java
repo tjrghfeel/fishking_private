@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddHarborDto {
+public class AddCameraPointDto {
     @NotNull(message = "항구명 항목이 비었습니다. ")
     @Size(max=30, message = "항구명은 30자를 넘을 수 없습니다. ")
     private String name;
@@ -23,7 +23,7 @@ public class AddHarborDto {
     @NotNull(message = "위도(latitude)항목이 비었습니다. ")
     private Double lat;
     @NotNull(message = "경도(longitude)항목이 비었습니다. ")
-    private Double log;
+    private Double lon;
 //    @NotNull(message = "")
 //    @Size(max=30, message = "")
     private String adtId;
