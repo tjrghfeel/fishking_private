@@ -95,6 +95,8 @@ public class UpdateShipDTO {
     private @Valid String capEmerNum;
     @ApiParam(value = "선장 해기사번호")
     private @Valid String capNumber;
+    @ApiParam(value = "선장 주민등록번호")
+    private @Valid String capIdNumber;
     @ApiParam(value = "선박번호")
     private @Valid String shipNumber;
     @ApiParam(value = "출항항구명")
@@ -128,10 +130,12 @@ public class UpdateShipDTO {
         if (!capEmerNum.contains("-")) {
             capEmerNum = CommonAddon.addDashToPhoneNum(capEmerNum);
         }
+        Integer sNumber = Integer.parseInt(capIdNumber.substring(6,7));
+        capSex = sNumber%2==0 ? "F" : "M";
+        capBirth = sNumber>2 ? "20" + capIdNumber.substring(0,6) : "19" + capIdNumber.substring(0,6);
         if (!capBirth.contains("-")) {
             capBirth = capBirth.substring(0,4) + "-" + capBirth.substring(4,6) + "-" + capBirth.substring(6);
         }
-
         return Ship.builder()
                 .name(name)
                 .fishingType(FishingType.valueOf(fishingType))
@@ -164,6 +168,7 @@ public class UpdateShipDTO {
                 .capAddr(capAddr)
                 .capEmerNum(capEmerNum)
                 .capNumber(capNumber)
+                .capIdNumber(capIdNumber)
                 .shipNumber(shipNumber)
                 .harborName(harborName)
                 .harborAddr(harborAddr)

@@ -72,6 +72,7 @@ export default inject(
           capAddr: null,
           capEmerNum: null,
           capNumber: null,
+          capIdNumber: null,
           isUpdate: false,
           rockData: null,
           beforeId: null,
@@ -462,6 +463,7 @@ export default inject(
           capAddr,
           capEmerNum,
           capNumber,
+          capIdNumber,
           shipNumber,
           harborName,
           harborAddr,
@@ -511,7 +513,7 @@ export default inject(
           return;
         }
         if (capName === null
-          || capBirth === null
+          || capIdNumber === null
           || capPhone === null
           || capAddr === null
           || capEmerNum === null
@@ -558,6 +560,7 @@ export default inject(
           capAddr,
           capEmerNum,
           capNumber,
+          capIdNumber,
           shipNumber,
           harborName,
           harborAddr,
@@ -1560,9 +1563,7 @@ export default inject(
                 ) : null
                 }
                 <div className="form-group">
-                  <label className="d-block">
-                    선장정보 <strong className="required"></strong>
-                  </label>
+                  <label className="d-block">선장이름 <strong className="required"></strong></label>
                   <div className="input-group mb-3">
                     <input
                       type="text"
@@ -1572,31 +1573,34 @@ export default inject(
                       onChange={(e) => this.setState({ capName: e.target.value })}
                     />
                   </div>
+                  <label className="d-block">주민등록번호 <strong className="required"></strong></label>
                   <div className="input-group mb-3">
                     <input
                       type="number"
                       inputMode="numeric"
                       pattern="\d*"
-                      minLength={6}
-                      maxLength={6}
+                      minLength={13}
+                      maxLength={13}
                       className="form-control"
-                      placeholder="생년월일"
-                      value={this.state.capBirth}
-                      onChange={(e) => this.setState({ capBirth: e.target.value })}
+                      placeholder="주민등록번호"
+                      value={this.state.capIdNumber}
+                      onChange={(e) => this.setState({ capIdNumber: e.target.value })}
                     />
                   </div>
-                  <div className="input-group mb-3">
-                    <select
-                      // type="text"
-                      className="form-control"
-                      placeholder="성별"
-                      value={this.state.capSex}
-                      onChange={(e) => this.setState({ capSex: e.target.value })}
-                    >
-                      <option value="M">남</option>
-                      <option value="F">여</option>
-                    </select>
-                  </div>
+                  {/*<label className="d-block">성별 <strong className="required"></strong></label>*/}
+                  {/*<div className="input-group mb-3">*/}
+                  {/*  <select*/}
+                  {/*    // type="text"*/}
+                  {/*    className="form-control"*/}
+                  {/*    placeholder="성별"*/}
+                  {/*    value={this.state.capSex}*/}
+                  {/*    onChange={(e) => this.setState({ capSex: e.target.value })}*/}
+                  {/*  >*/}
+                  {/*    <option value="M">남</option>*/}
+                  {/*    <option value="F">여</option>*/}
+                  {/*  </select>*/}
+                  {/*</div>*/}
+                  <label className="d-block">연락처 <strong className="required"></strong></label>
                   <div className="input-group mb-3">
                     <input
                       type="number"
@@ -1605,11 +1609,26 @@ export default inject(
                       minLength={10}
                       maxLength={11}
                       className="form-control"
-                      placeholder="핸드폰번호"
+                      placeholder="연락처"
                       value={this.state.capPhone}
                       onChange={(e) => this.setState({ capPhone: e.target.value })}
                     />
                   </div>
+                  <label className="d-block">비상연락처 <strong className="required"></strong></label>
+                  <div className="input-group mb-3">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      minLength={10}
+                      maxLength={11}
+                      className="form-control"
+                      placeholder="비상연락처"
+                      value={this.state.capEmerNum}
+                      onChange={(e) => this.setState({ capEmerNum: e.target.value })}
+                    />
+                  </div>
+                  <label className="d-block">주소 <strong className="required"></strong></label>
                   <div className="input-group mb-3">
                     <input
                       type="text"
@@ -1655,19 +1674,7 @@ export default inject(
                       alt="접기 버튼"
                     />
                   </div>
-                  <div className="input-group mb-3">
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      pattern="\d*"
-                      minLength={10}
-                      maxLength={11}
-                      className="form-control"
-                      placeholder="비상연락처"
-                      value={this.state.capEmerNum}
-                      onChange={(e) => this.setState({ capEmerNum: e.target.value })}
-                    />
-                  </div>
+                  <label className="d-block">해기사번호 <strong className="required"></strong></label>
                   <div className="input-group mb-3">
                     <input
                       type="text"

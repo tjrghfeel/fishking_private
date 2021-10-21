@@ -5,6 +5,7 @@ import com.tobe.fishking.v2.entity.BaseTime;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.CommonCode;
 import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.entity.converter.CryptoStringConverter;
 import com.tobe.fishking.v2.enums.fishing.FishingType;
 import com.tobe.fishking.v2.enums.fishing.SeaDirection;
 import com.tobe.fishking.v2.model.common.Location;
@@ -274,6 +275,10 @@ public class Ship extends BaseTime {  //선상
     @Column(columnDefinition = "varchar(100) comment '선장 해기사번호'")
     private String capNumber;
 
+    @Convert(converter = CryptoStringConverter.class)
+    @Column(columnDefinition = "varchar(300) comment '선장 주민등록번호'")
+    private String capIdNumber;
+
     @Column(columnDefinition = "varchar(100) comment '항구명'")
     private String harborName;
 
@@ -328,6 +333,7 @@ public class Ship extends BaseTime {  //선상
                 String capAddr,
                 String capEmerNum,
                 String capNumber,
+                String capIdNumber,
                 String shipNumber,
                 String harborName,
                 String harborAddr,
@@ -370,6 +376,7 @@ public class Ship extends BaseTime {  //선상
         this.capAddr = capAddr;
         this.capEmerNum = capEmerNum;
         this.capNumber = capNumber;
+        this.capIdNumber = capIdNumber;
         this.shipNumber = shipNumber;
         this.harborName = harborName;
         this.harborAddr = harborAddr;
@@ -436,6 +443,13 @@ public class Ship extends BaseTime {  //선상
                 .collect(Collectors.toList())
                 .get(0);
 
+        Integer sNumber = Integer.parseInt(dto.getCapIdNumber().substring(6,7));
+        String capSex = sNumber%2==0 ? "F" : "M";
+        String capBirth = sNumber>2 ? "20" + dto.getCapIdNumber().substring(0,6) : "19" + dto.getCapIdNumber().substring(0,6);
+        if (!capBirth.contains("-")) {
+            capBirth = capBirth.substring(0,4) + "-" + capBirth.substring(4,6) + "-" + capBirth.substring(6);
+        }
+
         this.shipName = dto.getName();
         this.fishingType = FishingType.valueOf(dto.getFishingType());
         this.address = dto.getAddr() == null ? "" : dto.getAddr();
@@ -459,12 +473,13 @@ public class Ship extends BaseTime {  //선상
         this.skbId = dto.getSkbId();
         this.skbPw = dto.getSkbPw();//(dto.getSkbPw() != null)? HashUtil.sha256(dto.getSkbPw()) : null;
         this.capName = dto.getCapName();
-        this.capBirth = dto.getCapBirth();
-        this.capSex = dto.getCapSex();
+        this.capBirth = capBirth;
+        this.capSex = capSex;
         this.capPhone = dto.getCapPhone();
         this.capAddr = dto.getCapAddr();
         this.capEmerNum = dto.getCapEmerNum();
         this.capNumber = dto.getCapNumber();
+        this.capIdNumber = dto.getCapIdNumber();
         this.shipNumber = dto.getShipNumber();
         this.harborName = dto.getHarborName();
         this.harborAddr = dto.getHarborAddr();

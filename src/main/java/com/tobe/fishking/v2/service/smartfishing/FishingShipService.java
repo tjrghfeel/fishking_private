@@ -859,6 +859,7 @@ public class FishingShipService {
         response.setHarborName(ship.getHarborName());
         response.setHarborAddr(ship.getHarborAddr());
         response.setHarborDong(ship.getHarborDong());
+        response.setCapIdNumber(ship.getCapIdNumber());
 
         return response;
     }
