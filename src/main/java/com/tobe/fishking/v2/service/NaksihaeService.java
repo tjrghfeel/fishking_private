@@ -94,7 +94,7 @@ public class NaksihaeService {
     }
 
     @Transactional(readOnly = true)
-    public boolean reportRegistration(Goods goods, List<RideShip> riders, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    public String reportRegistration(Goods goods, List<RideShip> riders, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         String uri = BASE_URL + "tkoff/reg.do";
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(uri);
@@ -160,7 +160,7 @@ public class NaksihaeService {
 
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
-        boolean result = false;
+        String result = "";
         try {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
@@ -170,7 +170,12 @@ public class NaksihaeService {
             JsonObject res = gson.fromJson(json, JsonObject.class);
 //            System.out.println(res);
             String resultCode = res.get("resultCode").getAsString();
-            result = resultCode.equals("S001");
+            String reportSerial = res.getAsJsonObject("resultDomain")
+                    .getAsJsonObject("tkoffSttemntInfo")
+                    .get("dclrtSn").getAsString();
+            if (resultCode.equals("S001")) {
+                result = reportSerial;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -236,6 +241,120 @@ public class NaksihaeService {
             e.printStackTrace();
         }
         return code;
+    }
+
+    /*
+        0.사전등록,1.신고제출, 2.신고확인, 3.입항, 4.출항취소, 5.운항중
+     */
+    public String checkReportStatus(String serial, Goods goods, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        String uri = BASE_URL + "tkoff/status.do";
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpPost httpPost = new HttpPost(uri);
+        httpPost.addHeader("User-Agent", USER_AGENT);
+        httpPost.addHeader("X-IBM-Client-id", ID);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("Authorization", token);
+
+        Ship ship = goods.getShip();
+
+        JsonObject data = new JsonObject();
+
+        JsonObject harborInfo = new JsonObject();
+        harborInfo.addProperty("dclrtSn", serial);
+        harborInfo.addProperty("fshhpSn", ship.getShipNumber());
+        harborInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
+
+        data.add("tkoffSttemntInfo", new Gson().toJsonTree(harborInfo));
+
+        httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
+
+        String status = "";
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+
+            String json = EntityUtils.toString(response.getEntity());
+            Gson gson = new Gson();
+            JsonObject res = gson.fromJson(json, JsonObject.class);
+
+            status = res.getAsJsonObject("resultDomain")
+                    .getAsJsonObject("tkoffSttemntInfo")
+                    .get("fshhpSttusCd").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    /*
+        0.사전등록,1.신고제출, 2.신고확인, 3.입항, 4.출항취소, 5.운항중
+     */
+    @Transactional
+    public boolean updateReportStatus(String serial, Goods goods, String status, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        String uri = BASE_URL + "tkoff/mod.do";
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpPost httpPost = new HttpPost(uri);
+        httpPost.addHeader("User-Agent", USER_AGENT);
+        httpPost.addHeader("X-IBM-Client-id", ID);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("Authorization", token);
+        Ship ship = goods.getShip();
+
+        String statusCode = "";
+        switch (status) {
+            case "출항":
+                statusCode = "5";
+                break;
+            case "입항":
+                statusCode = "3";
+                break;
+            case "취소":
+                statusCode = "4";
+                break;
+        }
+
+        if (statusCode.equals("")) {
+            return false;
+        }
+
+        JsonObject data = new JsonObject();
+
+        JsonObject harborInfo = new JsonObject();
+        harborInfo.addProperty("dclrtSn", serial);
+        harborInfo.addProperty("fshhpSn", ship.getShipNumber());
+        harborInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
+        harborInfo.addProperty("fshhpSttusCd", status);
+
+        if (statusCode.equals("3")) {
+            List<HarborCode> harborCode = harborCodeRepository.findAllByNameAndDong(ship.getHarborName(), ship.getHarborDong());
+            String code = harborCode.get(0).getCode();
+
+            LocalDate date = LocalDate.now();
+            if (goods.getFishingEndDate().equals("익일")) {
+                date = date.plusDays(1L);
+            }
+            String end = date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + goods.getFishingEndTime() + "00";
+
+            harborInfo.addProperty("etryptDt", end);
+            harborInfo.addProperty("etryptPrtCd", code);
+        }
+
+        data.add("tkoffSttemntInfo", new Gson().toJsonTree(harborInfo));
+
+        httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
+
+        String result = "";
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+
+            String json = EntityUtils.toString(response.getEntity());
+            Gson gson = new Gson();
+            JsonObject res = gson.fromJson(json, JsonObject.class);
+
+            result = res.getAsJsonObject("resultCode").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result.equals("S001");
     }
 
     private CloseableHttpClient getHttpClient() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
