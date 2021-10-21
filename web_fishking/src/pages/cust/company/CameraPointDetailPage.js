@@ -35,6 +35,8 @@ export default inject(
                         connectionType: '',
                         loaded: false,
                         tidalLevelData: [],
+                        liveVideo: "",
+                        profileImage: "",
                     };
 
 
@@ -72,9 +74,12 @@ export default inject(
                     // let seaCode = await APIStore._get(`/v2/api/ship/${id}/seaCode`);
                     // await this.setState({"seaCode": seaCode})
 
-                    //관측소 정보 조회.
+                    //카메라 포인트 정보 조회.
                     let cameraPoint = await APIStore._get(`/v2/api/cameraPoint/${id}`)
-                    await this.setState({"cameraPointName": cameraPoint["name"]})
+                    await this.setState({
+                        "cameraPointName": cameraPoint["name"],
+                        profileImage: cameraPoint["imgUrl"],
+                    })
 
                     //선박 위치의 기상 정보 조회 api.
                     let weather = await APIStore._get(`/v2/api/cameraPoint/${id}/weather`);

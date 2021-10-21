@@ -103,6 +103,7 @@ export default inject(
 
       loadPageData = async () => {
         const { APIStore, PageStore } = this.props;
+        //선박 리스트 세팅.
         const resolve = await APIStore._get("/v2/api/main/new");
         this.setState({resolve: resolve});
         this.sortByDistance(this)
@@ -136,16 +137,22 @@ export default inject(
           })
         }
 
+        //카메라 포인트 리스트 세팅.
+        const cameraPointList = await APIStore._get("/v2/api/cameraPoint/list");
+        this.setState({cameraPointList: cameraPointList});
+
+        //마커 표시.
         this.markingOnMap();
         PageStore.reloadSwipe();
       };
 
       sortByDistance = (component) => {
-        const latlng = component.map.getCenter();
+        const latlng = component.map.getCenter();// 현재 지도 중심 위경도.
         let list = component.state.resolve.slice(0)
         // console.log(latlng)
         list.sort(function (a, b) {
-          const distance_a = new kakao.maps.Polyline({
+          //지도 중심과 선박 위치 사이 거리 계산.
+          const distance_a = new kakao.maps.Polyline({// Polyline : 지도상의 선을 나타내는 객체.
             path: [
               latlng,
               new kakao.maps.LatLng(a.location.latitude, a.location.longitude),
@@ -166,8 +173,8 @@ export default inject(
 
       markingOnMap = () => {
         const { PageStore } = this.props;
-        const { resolve, markerImgShip, markerImgRock } = this.state
-        // 지도에 마커 생성
+        const { resolve, markerImgShip, markerImgRock, markerImgHarbor, cameraPointList } = this.state
+        // 지도에 마커 생성(선박)
         for (const point of resolve) {
           let markerImg, markerOverImg, type
           if (point.type == "갯바위") {
@@ -209,7 +216,48 @@ export default inject(
             '</div>' +
             '</div>' +
             '</div>'
-          const infoWindow = new kakao.maps.InfoWindow({
+          const infoWindow = new kakao.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
+            content: content,
+            removable: true,
+          })
+          kakao.maps.event.addListener(marker, 'click', clickListener(this.map, marker, infoWindow));
+        }
+
+        //지도에 마커 생성(카메라 포인트)
+        for (const point of cameraPointList) {
+          let markerImg = markerImgHarbor, markerOverImg, type
+          const marker = new kakao.maps.Marker({
+            map: this.map,
+            image: markerImg,
+            position: new kakao.maps.LatLng(
+                point.latitude,
+                point.longitude,
+            ),
+            title: point.name,
+            clickable: true,
+          });
+          const content = '<div style="border-radius: 5px; ' +
+              'display:flex; ' +
+              'flex-direction: column;' +
+              'padding: 15px 5px;' +
+              'width: 200px;">' +
+              '<div style="width: 40%;"><img src="'+point.thumbUrl+'" style="object-fit: contain; width: 190px;"></div>' +
+              '<div style="flex-direction: column">' +
+              '<div>포인트명: '+point.name+'</div>' +
+              '<div>위치: '+point.address+'</div>' +
+              '<div style="margin-top:10px;">' +
+              '<button ' +
+              'style="border-radius: 10px; ' +
+              'width: 100%; ' +
+              'border: none; ' +
+              'background: #29ABE2;' +
+              'color: #ffffff;"' +
+              // 'onclick="goDetail(\''+type+'\',\''+point.id+'\')">상 세 보 기</button>' +
+              'onclick="location.href=\'/cust/company/cameraPoint/boat/detail/'+point.id+'\'">상 세 보 기</button>' +
+              '</div>' +
+              '</div>' +
+              '</div>'
+          const infoWindow = new kakao.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
             removable: true,
           })

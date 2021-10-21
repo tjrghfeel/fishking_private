@@ -68,11 +68,20 @@ public class CameraPoint extends BaseTime{
     @JsonBackReference
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();
 
+    @Column(columnDefinition = "varchar(100) comment '대표 이미지 파일 ulr'")
+    private String imgUrl;
+
 //    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 아이디'")
 //    private String nhnId;
 
 //    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 비번'")
 //    private String nhnPw;
+
+    @Column(columnDefinition = "bit default 0 comment '삭제 여부'")
+    private Boolean isDeleted = false;
+
+    @Column(columnDefinition = "bit default 1 comment '활성화 여부'")
+    private Boolean isActive = true;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', company, 'COLUMN',  created_by
     @ManyToOne
@@ -90,9 +99,10 @@ public class CameraPoint extends BaseTime{
         this.modifiedBy =  member ;
     }
 
-    public void modify(
+    //정보 수정
+    public void modifyInfo(
             String name, String sido, String gungu, String address, Double lat, Double lon,
-            String adtId, String adtPw, Member modifiedBy
+            String adtId, String adtPw, String imgUrl, Member modifiedBy
 
     ){
         this.name = name;
@@ -105,9 +115,17 @@ public class CameraPoint extends BaseTime{
 
         this.adtId =adtId ;
         this.adtPw = adtPw;
+        this.imgUrl = imgUrl;
+//        this.isDeleted = isDeleted;
+//        this.isActive = isActive;
         this.modifiedBy = modifiedBy;
 
         return;
     }
+
+    //삭제처리
+    public void setIsDelete(){this.isDeleted = true;}
+    //활성화 처리
+    public void setIsActive(Boolean isActive){this.isActive = isActive;}
 
 }

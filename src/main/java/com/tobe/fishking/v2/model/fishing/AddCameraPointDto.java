@@ -30,5 +30,12 @@ public class AddCameraPointDto {
 //    @NotNull(message = "")
 //    @Size(max=30, message = "")
     private String adtPw;
+//    @NotNull(message = "대표 이미지 file id 항목이 비었습니다.")
+    private Long imgFileId;
+
+//    @NotNull(message = "삭제 여부 항목이 비었습니다.")
+//    private Boolean isDeleted;
+//    @NotNull(message = "활성화 여부 항목이 비었습니다.")
+//    private Boolean isActive;
 
 }

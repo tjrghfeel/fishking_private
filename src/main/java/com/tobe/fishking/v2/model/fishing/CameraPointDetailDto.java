@@ -21,4 +21,10 @@ public class CameraPointDetailDto {
     private String adtId;
     private String adtPw;
 
+    private Boolean isDeleted;
+    private Boolean isActive;
+
+    private String imgUrl;
+
+
 }
