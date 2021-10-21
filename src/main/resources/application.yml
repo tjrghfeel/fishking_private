@@ -30,6 +30,10 @@ server:
   ip: 127.0.0.1
   path: /localhost
 
+encrypKey :
+  key : fishking12345abcde
+  iv : )!fishkingdjqhr01
+
 #logging:
 #  #output to a temp_folder/file
 #  file:
@@ -40,5 +44,3 @@ server:
 #    downloadUrl : localhost:8082/files
 #  location :  /usr/local/tomcat/webapps/upload/data/file/
 #  downloadUrl : http://112.220.72.178:6081/resource
-encrypKey :
-  key : fishking12345abcde
