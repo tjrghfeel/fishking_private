@@ -15,8 +15,8 @@ import java.util.List;
 @Entity
 @Builder
 @AllArgsConstructor
-@Table(name = "harbor")
-public class Harbor extends BaseTime{
+@Table(name = "camera_point")
+public class CameraPoint extends BaseTime{
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE'
 
     // EXEC sp_addextendedproperty 'MS_Description', N'id', 'USER', DBO, 'TABLE', company, 'COLUMN',  id
@@ -31,7 +31,7 @@ public class Harbor extends BaseTime{
 //    private Member member;  //name이 없을 경우 member_id
 
     // EXEC sp_addextendedproperty 'MS_Description', N'업체명', 'USER', DBO, 'TABLE', company, 'COLUMN',  commany_name
-    @Column(columnDefinition = "varchar(50) not null comment '항구명'  ")
+    @Column(columnDefinition = "varchar(50) not null comment '위치명'  ")
     private String name;
 
     //공통코드
@@ -68,17 +68,20 @@ public class Harbor extends BaseTime{
     @JsonBackReference
     private final List<RealTimeVideo> shiipRealTimeVideos = new ArrayList<>();
 
-    @Column(columnDefinition = "varchar(7) comment '관측소 번호' ")
-    private String observerCode;
-
-    @Column(columnDefinition = "varchar(20) comment '낚시해 api 항구 목록의 항구 코드' ")
-    private String apiHarborCode;
+    @Column(columnDefinition = "varchar(100) comment '대표 이미지 파일 ulr'")
+    private String imgUrl;
 
 //    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 아이디'")
 //    private String nhnId;
 
 //    @Column(columnDefinition = "varchar(20) comment 'NHN토스트캠 비번'")
 //    private String nhnPw;
+
+    @Column(columnDefinition = "bit default 0 comment '삭제 여부'")
+    private Boolean isDeleted = false;
+
+    @Column(columnDefinition = "bit default 1 comment '활성화 여부'")
+    private Boolean isActive = true;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'생성자', 'USER', DBO, 'TABLE', company, 'COLUMN',  created_by
     @ManyToOne
@@ -90,15 +93,16 @@ public class Harbor extends BaseTime{
     @JoinColumn(name="modified_by", columnDefinition = "bigint NOT NULL   comment '수정자'  ")
     private Member modifiedBy;
 
-    public Harbor(String name, Member member) {
+    public CameraPoint(String name, Member member) {
         this.name = name;
         this.createdBy = member;
         this.modifiedBy =  member ;
     }
 
-    public void modify(
+    //정보 수정
+    public void modifyInfo(
             String name, String sido, String gungu, String address, Double lat, Double lon,
-            String adtId, String adtPw, String observerCode, Member modifiedBy
+            String adtId, String adtPw, String imgUrl, Member modifiedBy
 
     ){
         this.name = name;
@@ -111,10 +115,17 @@ public class Harbor extends BaseTime{
 
         this.adtId =adtId ;
         this.adtPw = adtPw;
-        this.observerCode = observerCode;
+        this.imgUrl = imgUrl;
+//        this.isDeleted = isDeleted;
+//        this.isActive = isActive;
         this.modifiedBy = modifiedBy;
 
         return;
     }
+
+    //삭제처리
+    public void setIsDelete(){this.isDeleted = true;}
+    //활성화 처리
+    public void setIsActive(Boolean isActive){this.isActive = isActive;}
 
 }

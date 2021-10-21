@@ -35,6 +35,8 @@ export default inject(
                         connectionType: '',
                         loaded: false,
                         tidalLevelData: [],
+                        liveVideo: "",
+                        profileImage: "",
                     };
 
 
@@ -72,58 +74,61 @@ export default inject(
                     // let seaCode = await APIStore._get(`/v2/api/ship/${id}/seaCode`);
                     // await this.setState({"seaCode": seaCode})
 
-                    //관측소 정보 조회.
-                    let observer = await APIStore._get(`/v2/api/harbor/${id}/observer`)
-                    await this.setState({"observerName": observer["observerName"]})
+                    //카메라 포인트 정보 조회.
+                    let cameraPoint = await APIStore._get(`/v2/api/cameraPoint/${id}`)
+                    await this.setState({
+                        "cameraPointName": cameraPoint["name"],
+                        profileImage: cameraPoint["imgUrl"],
+                    })
 
                     //선박 위치의 기상 정보 조회 api.
-                    let weather = await APIStore._get(`/v2/api/harbor/${id}/weather`);
+                    let weather = await APIStore._get(`/v2/api/cameraPoint/${id}/weather`);
                     await this.setState({"weather": weather});
 
                     //조위 데이터
-                    let tidalLevelData = await APIStore._get(`/v2/api/allTideList/harbor/${id}`)
-                    let data = []
-                    let dataX = []
-                    let tidalLevelMax = 0
-                    for(var i=0; i<tidalLevelData.length; i++){
-                        if(tidalLevelData[i].level > tidalLevelMax){tidalLevelMax = tidalLevelData[i].level}
-
-                        if(tidalLevelData[i].dateTime.substring(14,16)=="00"){
-                            data.push({"x": tidalLevelData[i].dateTime.substring(11, 13), "y": tidalLevelData[i].level})
-                        }
-                        else{
-                            data.push({"x": tidalLevelData[i].dateTime.substring(11, 16), "y": tidalLevelData[i].level})
-                        }
-
-                        //x축에 표시할 데이터 추출.
-                        if(
-                            (tidalLevelData[i].dateTime.substring(14,16)=="00")
-                            && (tidalLevelData[i].dateTime.substring(11, 13)%3==0)
-                        ){
-                            dataX.push(tidalLevelData[i].dateTime.substring(11, 13))
-                        }
-                        else if(
-                            (tidalLevelData[i].dateTime.substring(11, 13) == new Date().getHours())
-                            && (tidalLevelData[i].dateTime.substring(14, 16) == new Date().getMinutes())
-                        ){
-                            // dataX.push(tidalLevelData[i].dateTime.substring(11, 16))
-                        }
-                    }
-                    tidalLevelData = [
-                        {
-                            "id": "japan",
-                            "color": "hsl(200, 100%, 58%)",
-                            "data": data
-                        },
-                    ]
-                    await this.setState({
-                        "tidalLevelData": tidalLevelData,
-                        "tidalLevelDataX": dataX,
-                        "tidalLevelMax": tidalLevelMax,
-                    })
+                    // let tidalLevelData = await APIStore._get(`/v2/api/allTideList/cameraPoint/${id}`)
+                    // let data = []
+                    // let dataX = []
+                    // let tidalLevelMax = 0
+                    // for(var i=0; i<tidalLevelData.length; i++){
+                    //     if(tidalLevelData[i].level > tidalLevelMax){tidalLevelMax = tidalLevelData[i].level}
+                    //
+                    //     if(tidalLevelData[i].dateTime.substring(14,16)=="00"){
+                    //         data.push({"x": tidalLevelData[i].dateTime.substring(11, 13), "y": tidalLevelData[i].level})
+                    //     }
+                    //     else{
+                    //         data.push({"x": tidalLevelData[i].dateTime.substring(11, 16), "y": tidalLevelData[i].level})
+                    //     }
+                    //
+                    //     //x축에 표시할 데이터 추출.
+                    //     if(
+                    //         (tidalLevelData[i].dateTime.substring(14,16)=="00")
+                    //         && (tidalLevelData[i].dateTime.substring(11, 13)%3==0)
+                    //     ){
+                    //         dataX.push(tidalLevelData[i].dateTime.substring(11, 13))
+                    //     }
+                    //     else if(
+                    //         (tidalLevelData[i].dateTime.substring(11, 13) == new Date().getHours())
+                    //         && (tidalLevelData[i].dateTime.substring(14, 16) == new Date().getMinutes())
+                    //     ){
+                    //         // dataX.push(tidalLevelData[i].dateTime.substring(11, 16))
+                    //     }
+                    // }
+                    // tidalLevelData = [
+                    //     {
+                    //         "id": "japan",
+                    //         "color": "hsl(200, 100%, 58%)",
+                    //         "data": data
+                    //     },
+                    // ]
+                    // await this.setState({
+                    //     "tidalLevelData": tidalLevelData,
+                    //     "tidalLevelDataX": dataX,
+                    //     "tidalLevelMax": tidalLevelMax,
+                    // })
 
                     //항구 주간 날씨 데이터
-                    let dailyWeather = await APIStore._get(`/v2/api/harbor/${id}/dailyWeather`);
+                    let dailyWeather = await APIStore._get(`/v2/api/cameraPoint/${id}/dailyWeather`);
                     await this.setState({"dailyWeather": dailyWeather});
 
                     // resolve.liveVideo =
@@ -338,7 +343,7 @@ export default inject(
                             />
 
                             <NavigationLayout
-                                title={this.state.observerName}
+                                title={this.state.cameraPointName}
                                 showBackIcon={true}
                             />
                             {/** 상품이미지 */}

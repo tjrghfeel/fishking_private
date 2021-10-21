@@ -20,9 +20,7 @@ import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.common.CommonService;
 import com.tobe.fishking.v2.utils.DateUtils;
-import com.tobe.fishking.v2.utils.HashUtil;
 import com.tobe.fishking.v2.utils.HolidayUtil;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -31,9 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -81,7 +77,7 @@ public class MyMenuService {
     @Autowired
     CommonService commonService;
     @Autowired
-    HarborRepository harborRepo;
+    CameraPointRepository harborRepo;
 
 
     HolidayUtil holidayUtil;

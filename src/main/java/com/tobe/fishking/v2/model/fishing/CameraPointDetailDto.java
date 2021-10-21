@@ -1,4 +1,4 @@
-package com.tobe.fishking.v2.entity.fishing;
+package com.tobe.fishking.v2.model.fishing;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HarborDetailDto {
+public class CameraPointDetailDto {
     private Long id;
     private String name;
     private String sido;
@@ -15,10 +15,16 @@ public class HarborDetailDto {
     private String address;
     private Double lat;
     private Double lon;
-    private String observerCode;
-    private Long observerId;
+//    private String observerCode;
+//    private Long observerId;
 
     private String adtId;
     private String adtPw;
+
+    private Boolean isDeleted;
+    private Boolean isActive;
+
+    private String imgUrl;
+
 
 }

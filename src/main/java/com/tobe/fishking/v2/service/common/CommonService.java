@@ -1,12 +1,9 @@
 package com.tobe.fishking.v2.service.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.addon.UploadService;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.common.*;
-import com.tobe.fishking.v2.entity.fishing.Harbor;
-import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.enums.board.FilePublish;
 import com.tobe.fishking.v2.enums.board.FileType;
@@ -14,7 +11,6 @@ import com.tobe.fishking.v2.enums.common.AdType;
 import com.tobe.fishking.v2.enums.common.SearchPublish;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.CodeGroupWriteDTO;
 import com.tobe.fishking.v2.model.CommonCodeDTO;
 import com.tobe.fishking.v2.model.CommonCodeWriteDTO;
@@ -28,7 +24,7 @@ import com.tobe.fishking.v2.model.response.TidalLevelResponse;
 import com.tobe.fishking.v2.repository.auth.MemberRepository;
 import com.tobe.fishking.v2.repository.common.*;
 import com.tobe.fishking.v2.repository.fishking.FishingDiaryRepository;
-import com.tobe.fishking.v2.repository.fishking.HarborRepository;
+import com.tobe.fishking.v2.repository.fishking.CameraPointRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.service.admin.BannerManageService;
 import com.tobe.fishking.v2.utils.DateUtils;
@@ -44,7 +40,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,7 +60,7 @@ public class CommonService {
     private final ShipRepository shipRepository;
     private final SearchKeywordRepository searchKeywordRepository;
     private final BannerManageService bannerManageService;
-    private final HarborRepository harborRepo;
+    private final CameraPointRepository harborRepo;
 
     //검색 --
     public Page<FilesDTO> getFilesList(Pageable pageable,

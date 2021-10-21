@@ -1,19 +1,18 @@
 package com.tobe.fishking.v2.controller.fishking;
 
 import com.tobe.fishking.v2.entity.common.ObserverCode;
+import com.tobe.fishking.v2.entity.fishing.CameraPoint;
 import com.tobe.fishking.v2.entity.fishing.Harbor;
 import com.tobe.fishking.v2.entity.fishing.Ship;
-import com.tobe.fishking.v2.enums.Constants;
 import com.tobe.fishking.v2.enums.common.AlertType;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.exception.TideException;
-import com.tobe.fishking.v2.model.TakeResponse;
 import com.tobe.fishking.v2.model.common.ReviewDto;
 import com.tobe.fishking.v2.model.fishing.*;
 import com.tobe.fishking.v2.repository.common.ObserverCodeRepository;
-import com.tobe.fishking.v2.repository.fishking.HarborRepository;
+import com.tobe.fishking.v2.repository.fishking.CameraPointRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.service.fishking.FishingDiaryService;
 import com.tobe.fishking.v2.service.fishking.MyMenuService;
@@ -21,12 +20,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +41,7 @@ public class MyMenuController {
     @Autowired
     MyMenuService myMenuService;
     @Autowired
-    HarborRepository harborRepo;
+    CameraPointRepository cameraPointRepo;
     @Autowired
     ShipRepository shipRepo;
     @Autowired
@@ -491,12 +487,12 @@ public class MyMenuController {
                     "- windDirection : String / 풍향\n" +
                     "- windSpeed : Double / 풍속(m/s)\n"
     )
-    @GetMapping(value = "/harbor/{harborId}/weather")
-    public Map<String, Object> getHarborWeather(@PathVariable("harborId") Long harborId) throws ResourceNotFoundException {
-        Harbor harbor = harborRepo.findById(harborId)
-                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
-        return myMenuService.getTimelyWeather(Float.parseFloat(harbor.getLocation().getLongitude().toString()),
-                Float.parseFloat(harbor.getLocation().getLatitude().toString()));
+    @GetMapping(value = "/cameraPoint/{cameraPointId}/weather")
+    public Map<String, Object> getCameraPointWeather(@PathVariable("cameraPointId") Long cameraPointId) throws ResourceNotFoundException {
+        CameraPoint cameraPoint = cameraPointRepo.findById(cameraPointId)
+                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+cameraPointId));
+        return myMenuService.getTimelyWeather(Float.parseFloat(cameraPoint.getLocation().getLongitude().toString()),
+                Float.parseFloat(cameraPoint.getLocation().getLatitude().toString()));
     }
     //선박 상세 > 해상 예보 페이지. 현재 날씨 조회.
     @ApiOperation(value = "항구 위치에 대한 현재 날씨 정보 조회.",
@@ -523,14 +519,15 @@ public class MyMenuController {
                 Float.parseFloat(observer.getLocation().getLatitude().toString())
         );
     }
-    //항구 주간 날씨 조회.
-    @ApiOperation(value = "항구 위치에 대한 주간 날씨 조회")
-    @GetMapping(value="/harbor/{harborId}/dailyWeather")
-    public ArrayList<Map<String, Object>> getHarborDailyWeather(@PathVariable("harborId") Long harborId) throws ResourceNotFoundException {
-        Harbor harbor = harborRepo.findById(harborId)
-                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+harborId));
-        return myMenuService.getDailyWeather(harbor.getAddress());
+    //카메라 포인트 주간 날씨 조회.
+    @ApiOperation(value = "카메라 포인트 위치에 대한 주간 날씨 조회")
+    @GetMapping(value="/cameraPoint/{cameraPointId}/dailyWeather")
+    public ArrayList<Map<String, Object>> getCameraPointDailyWeather(@PathVariable("cameraPointId") Long cameraPointId) throws ResourceNotFoundException {
+        CameraPoint cameraPoint = cameraPointRepo.findById(cameraPointId)
+                .orElseThrow(()->new ResourceNotFoundException("cameraPoint not found for this id ::"+cameraPointId));
+        return myMenuService.getDailyWeather(cameraPoint.getAddress());
     }
+
 
 
     // 선박에 대한 해양 코드 반환.
@@ -557,19 +554,19 @@ public class MyMenuController {
 
         return result;
     }
-    //선박과 매핑된 관측소 정보 반환
-    @ApiOperation(value = "선박과 매핑된 관측소 정보 반환")
-    @GetMapping("/harbor/{harborId}/observer")
-    public Map<String, Object> getObserverInfoFromHarbor(@PathVariable("harborId") Long harborId){
-        Map<String, Object> result = new HashMap<>();
-
-        String observerCode = harborRepo.findById(harborId).get().getObserverCode();
-        ObserverCode observer = observerCodeRepo.getObserverCodeByCode(observerCode);
-
-        result.put("observerId", observer.getId());
-        result.put("observerCode", observer.getCode());
-        result.put("observerName", observer.getName());
-
-        return result;
-    }
+    //항구와 매핑된 관측소 정보 반환
+//    @ApiOperation(value = "항구와 매핑된 관측소 정보 반환")
+//    @GetMapping("/harbor/{harborId}/observer")
+//    public Map<String, Object> getObserverInfoFromHarbor(@PathVariable("harborId") Long harborId){
+//        Map<String, Object> result = new HashMap<>();
+//
+//        String observerCode = harborRepo.findById(harborId).get().getObserverCode();
+//        ObserverCode observer = observerCodeRepo.getObserverCodeByCode(observerCode);
+//
+//        result.put("observerId", observer.getId());
+//        result.put("observerCode", observer.getCode());
+//        result.put("observerName", observer.getName());
+//
+//        return result;
+//    }
 }
