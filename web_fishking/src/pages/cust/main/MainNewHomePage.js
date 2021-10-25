@@ -196,22 +196,29 @@ export default inject(
             title: point.shipName,
             clickable: true,
           });
-          const content = '<div style="border-radius: 5px; ' +
+          const content = '<div name="detailw"' +
+            'style="border-radius: 5px;' +
+            'border-style: none;' +
             'display:flex; ' +
             'flex-direction: column;' +
-            'padding: 15px 5px;' +
-            'width: 200px;">' +
-            '<div style="width: 40%;"><img src="'+point.shipImageFileUrl+'" style="object-fit: contain; width: 190px;"></div>' +
-            '<div style="flex-direction: column">' +
-            '<div>선박명: '+point.shipName+' ('+point.type+')</div>' +
-            '<div>위치: '+point.address+'</div>' +
-            '<div style="margin-top:10px;">' +
+            'width: 200px;"' +
+            'class="' + type + '">' +
+            '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
+            '<img src="'+point.shipImageFileUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
+            '</div>' +
+            '<div style="flex-direction: column;" >' +
+            '<div style="color: #fff; margin: 5px;">선박명: '+point.shipName+' ('+point.type+')</div>' +
+            '<div style="color: #fff; margin: 5px;">위치: '+point.address+'</div>' +
+            '<div style="margin-top:10px; border-radius: 5px; background-color: rgba(0,0,0,0);">' +
             '<button ' +
-            'style="border-radius: 10px; ' +
-            'width: 100%; ' +
+            'style="border-radius: 5px; ' +
+            'width: 190px; ' +
             'border: none; ' +
-            'background: #29ABE2;' +
-            'color: #ffffff;"' +
+            'background: #fff;' +
+            'color: #000;' +
+            'margin-bottom: 5px;' +
+            'margin-left: 5px;' +
+            'margin-right: 5px;"' +
             'onclick="goDetail(\''+type+'\',\''+point.id+'\')">상 세 보 기</button>' +
             '</div>' +
             '</div>' +
@@ -236,27 +243,34 @@ export default inject(
             title: point.name,
             clickable: true,
           });
-          const content = '<div style="border-radius: 5px; ' +
-              'display:flex; ' +
-              'flex-direction: column;' +
-              'padding: 15px 5px;' +
-              'width: 200px;">' +
-              '<div style="width: 40%;"><img src="'+point.thumbUrl+'" style="object-fit: contain; width: 190px;"></div>' +
-              '<div style="flex-direction: column">' +
-              '<div>포인트명: '+point.name+'</div>' +
-              '<div>위치: '+point.address+'</div>' +
-              '<div style="margin-top:10px;">' +
-              '<button ' +
-              'style="border-radius: 10px; ' +
-              'width: 100%; ' +
-              'border: none; ' +
-              'background: #29ABE2;' +
-              'color: #ffffff;"' +
-              // 'onclick="goDetail(\''+type+'\',\''+point.id+'\')">상 세 보 기</button>' +
-              'onclick="location.href=\'/cust/company/cameraPoint/boat/detail/'+point.id+'\'">상 세 보 기</button>' +
-              '</div>' +
-              '</div>' +
-              '</div>'
+          type = 'harbor';
+          const content = '<div name="detailw"' +
+            'style="border-radius: 5px;' +
+            'border-style: none;' +
+            'display:flex; ' +
+            'flex-direction: column;' +
+            'width: 200px;"' +
+            'class="' + type + '">' +
+            '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
+            '<img src="'+point.shipImageFileUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
+            '</div>' +
+            '<div style="flex-direction: column;" >' +
+            '<div style="color: #fff; margin: 5px;">포인트명: '+point.name+' ('+point.type+')</div>' +
+            '<div style="color: #fff; margin: 5px;">위치: '+point.address+'</div>' +
+            '<div style="margin-top:10px; border-radius: 5px; background-color: rgba(0,0,0,0);">' +
+            '<button ' +
+            'style="border-radius: 5px; ' +
+            'width: 190px; ' +
+            'border: none; ' +
+            'background: #fff;' +
+            'color: #000;' +
+            'margin-bottom: 5px;' +
+            'margin-left: 5px;' +
+            'margin-right: 5px;"' +
+            'onclick="location.href=\'/cust/company/cameraPoint/boat/detail/'+point.id+'\'">상 세 보 기</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
           const infoWindow = new kakao.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
             removable: true,
@@ -268,6 +282,9 @@ export default inject(
         function clickListener(map, marker, infowindow) {
           return function() {
             infowindow.open(map, marker);
+            document.getElementsByName("detailw").forEach((item, index) => {
+              item.parentElement.parentElement.style.border = 'none';
+            })
           };
         }
       }
