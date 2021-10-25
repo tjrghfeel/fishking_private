@@ -115,12 +115,6 @@ public class CameraPointService {
         CameraPoint cameraPoint = cameraPointRepo.findById(cameraPointId)
                 .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+cameraPointId));
 
-        Member member = memberService.getMemberBySessionToken(token);
-        //접속 회원이 관리자가 아니고, 해당 포인트가 비활성화나 삭제 되었다면, null반환.
-        if( (cameraPoint.getIsDeleted()==true || cameraPoint.getIsActive()==false) && member.getRoles()!=Role.admin){
-            return null;
-        }
-
         CameraPointDetailDto result = CameraPointDetailDto.builder()
                 .id(cameraPoint.getId())
                 .name(cameraPoint.getName())
@@ -134,12 +128,20 @@ public class CameraPointService {
                 .imgUrl(env.getProperty("file.downloadUrl")+cameraPoint.getImgUrl())
                 .build();
 
-        //관리자가 조회한 경우, 추가 정보 반환
-        if(member.getRoles() == Role.admin){
-            result.setAdtId(cameraPoint.getAdtId());
-            result.setAdtPw(cameraPoint.getAdtPw());
-            result.setIsDeleted(cameraPoint.getIsDeleted());
-            result.setIsActive(cameraPoint.getIsActive());
+        //로그인 계정에 따른 처리.
+        if(!token.equals("") && token != null){
+            Member member = memberService.getMemberBySessionToken(token);
+            //접속 회원이 관리자가 아니고, 해당 포인트가 비활성화나 삭제 되었다면, null반환.
+            if( (cameraPoint.getIsDeleted()==true || cameraPoint.getIsActive()==false) && member.getRoles()!=Role.admin){
+                return null;
+            }
+            //관리자가 조회한 경우, 추가 정보 반환
+            else if(member.getRoles() == Role.admin){
+                result.setAdtId(cameraPoint.getAdtId());
+                result.setAdtPw(cameraPoint.getAdtPw());
+                result.setIsDeleted(cameraPoint.getIsDeleted());
+                result.setIsActive(cameraPoint.getIsActive());
+            }
         }
 
         return result;
