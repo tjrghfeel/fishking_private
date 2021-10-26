@@ -1,12 +1,14 @@
 package com.tobe.fishking.v2.controller.smartsail;
 
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.fishing.Sailor;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.smartsail.AddRiderDTO;
 import com.tobe.fishking.v2.model.smartsail.RiderGoodsListResponse;
 import com.tobe.fishking.v2.model.smartsail.RiderSearchDTO;
+import com.tobe.fishking.v2.model.smartsail.SailorResponse;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.smartsail.BoardingService;
 import io.swagger.annotations.Api;
@@ -17,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -241,4 +244,58 @@ public class SailController {
         return boardingService.detailRiders(orderId);
     }
 
+    @ApiOperation(value = "선원등록", notes= "선원등록  " +
+            "\n {" +
+            "\n     sailors: 승선자 리스트 [{" +
+            "\n         name: 이름" +
+            "\n         phone: 연락처" +
+            "\n         emergencyPhone: 비상연락처" +
+            "\n         idNumber: 주민등록번호" +
+            "\n         address: 주소" +
+            "\n     }, ... ]" +
+            "\n }" +
+            "\n 연락처 아래에 비상연락처 추가해주세요" +
+            "")
+    @PostMapping("/sail/sailor/add")
+    public Map<String, Object> addSailor(@RequestHeader(name = "Authorization") String token,
+                                         @RequestBody Map<String, Object> body) throws ResourceNotFoundException, NotAuthException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            boardingService.addSailor(member, body);
+            response.put("status", "success");
+            response.put("message", "등록되었습니다.");
+        } catch (Exception e) {
+            response.put("status", "fail");
+            response.put("message", "등록에 실패했습니다.");
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "등록된 선원목록", notes= "등록된 선원 목록 " +
+            "\n [" +
+            "\n     {" +
+            "\n         name: 이름" +
+            "\n         phone: 연락처" +
+            "\n         emerPhone: 비상연락처" +
+            "\n         idNumber: 주민등록번호" +
+            "\n         addr: 주소" +
+            "\n         birth: 생년월일" +
+            "\n         sex: 성별" +
+            "\n     }, ... " +
+            "\n ]" +
+            "\n 연락처 아래에 비상연락처 추가해주세요" +
+            "")
+    @PostMapping("/sail/sailor")
+    public List<SailorResponse> getSailor(@RequestHeader(name = "Authorization") String token) throws ResourceNotFoundException, NotAuthException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+        List<SailorResponse> response = boardingService.getSailors(member);
+        return response;
+    }
 }

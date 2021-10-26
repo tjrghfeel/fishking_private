@@ -3,21 +3,12 @@ package com.tobe.fishking.v2.service.smartsail;
 import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.addon.CommonAddon;
 import com.tobe.fishking.v2.entity.auth.Member;
-import com.tobe.fishking.v2.entity.fishing.OrderDetails;
-import com.tobe.fishking.v2.entity.fishing.Orders;
-import com.tobe.fishking.v2.entity.fishing.RideShip;
-import com.tobe.fishking.v2.entity.fishing.RiderFingerPrint;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.fishing.FingerType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.smartsail.AddRiderDTO;
-import com.tobe.fishking.v2.model.smartsail.RiderGoodsListResponse;
-import com.tobe.fishking.v2.model.smartsail.RiderSearchDTO;
-import com.tobe.fishking.v2.model.smartsail.TodayBoardingResponse;
-import com.tobe.fishking.v2.repository.fishking.OrderDetailsRepository;
-import com.tobe.fishking.v2.repository.fishking.OrdersRepository;
-import com.tobe.fishking.v2.repository.fishking.RideShipRepository;
-import com.tobe.fishking.v2.repository.fishking.RiderFingerPrintRepository;
+import com.tobe.fishking.v2.model.smartsail.*;
+import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.HttpRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,6 +39,7 @@ public class BoardingService {
     private final RideShipRepository rideShipRepository;
     private final RiderFingerPrintRepository riderFingerPrintRepository;
     private final HttpRequestService httpRequestService;
+    private final SailorRepository sailorRepository;
 
     @Transactional
     public List<TodayBoardingResponse> getTodayBoarding(Member member, String orderBy) {
@@ -233,5 +225,35 @@ public class BoardingService {
         response.put("reserveComment", orders.getReserveComment());
 
         return response;
+    }
+
+    @Transactional
+    public List<SailorResponse> getSailors(Member member) {
+        return sailorRepository.findAllByCreatedBy(member);
+    }
+
+    @Transactional
+    public void addSailor(Member member, Map<String, Object> body) {
+        List<Map<String, Object>> sailors = (List<Map<String, Object>>) body.get("sailors");
+        sailors.forEach(sailor -> {
+            Integer sNumber = Integer.parseInt(sailor.get("idNumber").toString().substring(6,7));
+            String birth = sNumber>2 ? "20" + sailor.get("idNumber").toString().substring(0,6) : "19" + sailor.get("idNumber").toString().substring(0,6);
+            String sex = sNumber%2==0 ? "F" : "M";
+            if (!birth.contains("-")) {
+                birth = birth.substring(0,4) + "-" + birth.substring(4,6) + "-" + birth.substring(6);
+            }
+            sailorRepository.save(
+                    Sailor.builder()
+                            .name(sailor.get("name").toString())
+                            .birth(birth)
+                            .sex(sex)
+                            .idNumber(sailor.get("idNumber").toString())
+                            .addr(sailor.get("address").toString())
+                            .phone(sailor.get("phone").toString())
+                            .emerNum(sailor.get("emergencyPhone").toString())
+                            .member(member)
+                            .build()
+            );
+        });
     }
 }

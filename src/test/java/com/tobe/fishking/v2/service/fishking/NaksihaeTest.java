@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.service.fishking;
 
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
+import com.tobe.fishking.v2.entity.fishing.Sailor;
 import com.tobe.fishking.v2.repository.fishking.GoodsRepository;
 import com.tobe.fishking.v2.repository.fishking.RideShipRepository;
 import com.tobe.fishking.v2.service.NaksihaeService;
@@ -37,7 +38,7 @@ public class NaksihaeTest {
     @Autowired
     private RideShipRepository rideShipRepository;
 
-    private String token = "ba2634019abd4484a48c57d233e4d2b1";
+    private String token = "fa7a5c34e3fc41468be2b3970fe19e94";
 
     @Test
     public void getToken() {
@@ -78,11 +79,13 @@ public class NaksihaeTest {
     @Test
     @Transactional
     public void registration() {
-        Goods goods = goodsRepository.getOne(5L);
+        Goods goods = goodsRepository.getOne(15L);
         List<RideShip> riders = new ArrayList<>();
+        List<Sailor> sailors = new ArrayList<>();
         riders.add(rideShipRepository.getOne(11158L));
+        String result = "";
         try {
-            naksihaeService.reportRegistration(goods, riders, token);
+            result = naksihaeService.reportRegistration(goods, riders, sailors, token);
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -90,5 +93,6 @@ public class NaksihaeTest {
         } catch (KeyManagementException e) {
             e.printStackTrace();
         }
+        assertThat(result, is(""));
     }
 }

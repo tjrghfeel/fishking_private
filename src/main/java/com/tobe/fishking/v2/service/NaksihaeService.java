@@ -1,11 +1,10 @@
 package com.tobe.fishking.v2.service;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import com.tobe.fishking.v2.entity.common.HarborCode;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
+import com.tobe.fishking.v2.entity.fishing.Sailor;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.repository.common.HarborCodeRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,11 +74,11 @@ public class NaksihaeService {
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
             String token = res.getAsJsonObject("resultDomain")
-                    .get("tkn").toString();
+                    .get("tkn").getAsString();
             String expires = res.getAsJsonObject("resultDomain")
-                    .get("expiresIn").toString();
+                    .get("expiresIn").getAsString();
             String created = res.getAsJsonObject("resultDomain")
-                    .get("tknCreatDt").toString();
+                    .get("tknCreatDt").getAsString();
             httpClient.close();
             LocalDateTime date = LocalDateTime.parse(created, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss."));
             date.plusSeconds(Long.parseLong(expires));
@@ -94,7 +93,11 @@ public class NaksihaeService {
     }
 
     @Transactional(readOnly = true)
-    public String reportRegistration(Goods goods, List<RideShip> riders, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    public String reportRegistration(Goods goods,
+                                     List<RideShip> riders,
+                                     List<Sailor> sailors,
+                                     String token
+    ) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         String uri = BASE_URL + "tkoff/reg.do";
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(uri);
@@ -106,7 +109,7 @@ public class NaksihaeService {
         Ship ship = goods.getShip();
         List<HarborCode> harborCode = harborCodeRepository.findAllByNameAndDong(ship.getHarborName(), ship.getHarborDong());
         String code = harborCode.get(0).getCode();
-
+        System.out.println(code);
         JsonObject data = new JsonObject();
 
         LocalDate date = LocalDate.now();
@@ -135,11 +138,26 @@ public class NaksihaeService {
         capInfo.addProperty("rnadres", ship.getCapAddr());
         capInfo.addProperty("emgncTelno", ship.getCapEmerNum());
         capInfo.addProperty("embkrSeCd", "1");
-        capInfo.addProperty("mstrIhidnum", ship.getCapBirth().replaceAll("-", "").substring(2)+"1234567");
+        capInfo.addProperty("mstrIhidnum", ship.getCapIdNumber());
         capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
         capInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
         capInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
         embarkList.add(new Gson().toJsonTree(capInfo));
+
+        sailors.forEach(rider -> {
+            JsonObject riderInfo = new JsonObject();
+            riderInfo.addProperty("embkrNm", rider.getName());
+            riderInfo.addProperty("birthDe", rider.getBirth().replaceAll("-", ""));
+            riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
+            riderInfo.addProperty("mobilePhone", rider.getPhone());
+            riderInfo.addProperty("rnadres", rider.getAddr());
+            riderInfo.addProperty("emgncTelno", rider.getEmerNum());
+            riderInfo.addProperty("embkrSeCd", "2");
+            capInfo.addProperty("mstrIhidnum", rider.getId());
+            riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
+            riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
+            embarkList.add(new Gson().toJsonTree(riderInfo));
+        });
 
         riders.forEach(rider -> {
             JsonObject riderInfo = new JsonObject();
@@ -157,7 +175,7 @@ public class NaksihaeService {
 
         data.add("tkoffSttemntInfo", new Gson().toJsonTree(shipInfo));
         data.add("embkrList", new Gson().toJsonTree(embarkList));
-
+        System.out.println(data);
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
         String result = "";
