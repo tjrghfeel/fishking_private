@@ -478,7 +478,7 @@ export default inject(
         }
         if (shipNumber === null || shipNumber === "") {
           ModalStore.openModal("Alert", {
-            body: "선박번호를 입력해주세요.",
+            body: "선박등록번호를 입력해주세요.",
           });
           return;
         }
@@ -614,7 +614,7 @@ export default inject(
                 </div>
                 <div className="form-group">
                   <label htmlFor="InputGName">
-                    선박번호 <strong className="required"></strong>
+                    선박등록번호 (- 를 빼고 입력해주세요)<strong className="required"></strong>
                   </label>
                   <input
                     type="text"
