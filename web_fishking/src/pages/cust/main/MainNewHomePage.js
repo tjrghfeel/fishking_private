@@ -204,7 +204,7 @@ export default inject(
             'width: 200px;"' +
             'class="' + type + '">' +
             '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
-            '<img src="'+point.shipImageFileUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
+            '<img src="https://www.fishkingapp.com'+point.shipImageFileUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
             '</div>' +
             '<div style="flex-direction: column;" >' +
             '<div style="color: #fff; margin: 5px;">선박명: '+point.shipName+' ('+point.type+')</div>' +
@@ -252,7 +252,7 @@ export default inject(
             'width: 200px;"' +
             'class="' + type + '">' +
             '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
-            '<img src="'+point.shipImageFileUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
+            '<img src="'+point.thumbUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
             '</div>' +
             '<div style="flex-direction: column;" >' +
             '<div style="color: #fff; margin: 5px;">포인트명: '+point.name+' ('+point.type+')</div>' +
