@@ -287,6 +287,7 @@ public class NaksihaeService {
 
     /*
         0.사전등록,1.신고제출, 2.신고확인, 3.입항, 4.출항취소, 5.운항중
+        세종교육항
      */
     @Transactional
     public boolean updateReportStatus(String serial, Goods goods, String status, String token) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
