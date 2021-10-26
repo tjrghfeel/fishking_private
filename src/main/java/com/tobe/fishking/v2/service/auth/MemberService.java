@@ -329,7 +329,9 @@ public class MemberService {
 
     /*nice 성공*/
     @Transactional
-    public String niceSuccess(String inputMemberId, String certifiedNo, String name, String phnum, String inputGender) throws ResourceNotFoundException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public String niceSuccess(
+            String inputMemberId, String certifiedNo, String name, String phnum, String inputGender, String birthDate
+    ) throws ResourceNotFoundException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         System.out.println("================\n test >>> in niceSuccess() \n================");
         System.out.println("================\n test >>> memberId : "+inputMemberId+"\n================");
         String encodedSessionToken=null;
@@ -348,6 +350,7 @@ public class MemberService {
         member.setMemberName(name);
         member.setPhoneNumber(new PhoneNumber(areaCode,localNumber));
         member.setGender(gender);
+        member.setBirthDate(birthDate);
         member.setIsCertified(true);
         member.setCertifiedNo(certifiedNo);
         member.setIsActive(true);
@@ -1789,6 +1792,8 @@ public class MemberService {
                 .profileImage(env.getProperty("file.downloadUrl")+member.getProfileImage())
                 .profileBackgroundImage(env.getProperty("file.downloadUrl") + member.getProfileBackgroundImage())
                 .statusMessage((member.getStatusMessage()==null)?("없음"):(member.getStatusMessage()))
+                .birthDate(member.getBirthDate())
+                .gender((member.getGender()==null)? "" : member.getGender().getValue())
                 //!!!!!아래 전화번호는 nullable필드이지만 회원가입시 휴대폰인증을 하므로 무조건 있다고 판단.
 //                .areaCode(member.getPhoneNumber().getAreaCode())
 //                .localNumber(member.getPhoneNumber().getLocalNumber())

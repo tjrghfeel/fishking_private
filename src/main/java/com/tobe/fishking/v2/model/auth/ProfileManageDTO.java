@@ -43,6 +43,7 @@ public class ProfileManageDTO {
     private String areaCode;
     private String localNumber;
     //private PhoneNumberInfo phoneNumberInfo;
-
+    private String birthDate;
+    private String gender;
 
 }

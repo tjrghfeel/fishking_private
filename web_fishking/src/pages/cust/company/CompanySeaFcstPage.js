@@ -636,48 +636,67 @@ export default inject(
                                     날씨 정보
                                 </h5>
                                 <ul>
-                                    <div className="shipDetail-weather">
-                                        <table>
-                                            <tr>
-                                                <td><img src={this.state.weather && this.state.weather.weatherImg}/></td>
-                                                <td>{this.state.weather && this.state.weather.tmp} ℃</td>
-                                            </tr>
-                                            <tr>
-                                                <td>{this.state.weather && this.state.weather.weather}</td>
-                                                <td>강수 {this.state.weather && this.state.weather.rainProbability} %</td>
-                                            </tr>
-                                            <tr>
-                                                <td>습도 {this.state.weather && this.state.weather.humidity} %</td>
-                                                <td>{this.state.weather &&
-                                                (this.state.weather.windDirection + " " + this.state.weather.windSpeed)} m/s
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
+                                    {(this.state.weather==null)? (
+                                            <div  style={{
+                                                textAlign:"center",
+                                                margin:"40px auto",
+                                            }}>날씨 정보를 불러오는 중입니다...<br/>잠시만 기다려 주세요</div>
+                                        )
+                                        :
+                                        (
+                                            <div className="shipDetail-weather">
+                                                <table>
+                                                    <tr>
+                                                        <td><img src={this.state.weather && this.state.weather.weatherImg}/></td>
+                                                        <td>{this.state.weather && this.state.weather.tmp} ℃</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{this.state.weather && this.state.weather.weather}</td>
+                                                        <td>강수 {this.state.weather && this.state.weather.rainProbability} %</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>습도 {this.state.weather && this.state.weather.humidity} %</td>
+                                                        <td>{this.state.weather &&
+                                                        (this.state.weather.windDirection + " " + this.state.weather.windSpeed)} m/s
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        )}
                                 </ul>
                                 {/*시간대별 날씨 */}
                                 <h5>시간대별 날씨</h5>
                                 <ul>
-                                    <div className="harborDetail-timelyWeather">
-                                        <table>
-                                            <tr>
-                                                {this.state.weather && this.state.weather.weatherByTime.map((data, index)=>(
-                                                    <td>{data.time.substring(0,2)+":"+data.time.substring(2,4)}</td>
-                                                ))}
-                                            </tr>
-                                            <tr>
-                                                {this.state.weather && this.state.weather.weatherByTime.map((data, index)=>(
-                                                    <td><img src={data.weatherImg}/></td>
-                                                ))}
-                                            </tr>
-                                            <tr>
-                                                {this.state.weather && this.state.weather.weatherByTime.map((data, index)=>(
-                                                    <td>{data.tmp} ℃</td>
-                                                ))}
-                                            </tr>
+                                    {(this.state.weather==null)? (
+                                        <div  style={{
+                                            textAlign:"center",
+                                            margin:"40px auto",
+                                        }}>날씨 정보를 불러오는 중입니다...<br/>잠시만 기다려 주세요</div>
+                                    )
+                                    :
+                                    (
+                                        <div className="harborDetail-timelyWeather">
+                                            <table>
+                                                <tr>
+                                                    {this.state.weather && this.state.weather.weatherByTime.map((data, index)=>(
+                                                        <td>{data.time.substring(0,2)+":"+data.time.substring(2,4)}</td>
+                                                    ))}
+                                                </tr>
+                                                <tr>
+                                                    {this.state.weather && this.state.weather.weatherByTime.map((data, index)=>(
+                                                        <td><img src={data.weatherImg}/></td>
+                                                    ))}
+                                                </tr>
+                                                <tr>
+                                                    {this.state.weather && this.state.weather.weatherByTime.map((data, index)=>(
+                                                        <td>{data.tmp} ℃</td>
+                                                    ))}
+                                                </tr>
 
-                                        </table>
-                                    </div>
+                                            </table>
+                                        </div>
+                                    )}
+
                                 </ul>
                                 {/*시간대별 조위 */}
                                 { (this.state.tidalLevelData.length != 0) && (

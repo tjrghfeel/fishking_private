@@ -82,6 +82,8 @@ export default inject(
           reservePersonPhone: profile.areaCode.concat(profile.localNumber),
           firstName: profile.memberName || profile.nickName,
           firstPhone: profile.areaCode.concat(profile.localNumber),
+          firstBirthDate: profile.birthDate,
+          firstGender: profile.gender,
         });
 
         // >>>>> 상품정보
@@ -768,6 +770,65 @@ export default inject(
                                 onChange={this.onFistPhoneChange}
                               />
                             </div>
+                            <div className="form-group">
+                              <label htmlFor="inputPhone" className="sr-only">
+                                비상연락처
+                              </label>
+                              <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  pattern="\d*"
+                                  minLength={10}
+                                  maxLength={11}
+                                  className="form-control"
+                                  id={`person-emergency-${index}`}
+                                  placeholder="비상연락처(본인 휴대폰 아닌 비상연락처)를 입력해 주세요."
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputBirth" className="sr-only">
+                                생년 월일을 입력해 주세요.
+                              </label>
+                              <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  pattern="\d*"
+                                  minLength={6}
+                                  maxLength={6}
+                                  className="form-control"
+                                  value={this.state.firstBirthDate}
+                                  id={`person-birthdate-${index}`}
+                                  placeholder="생년 월일을 입력해 주세요."
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputBirth" className="sr-only">
+                                성별을 선택해 주세요.
+                              </label>
+                              <select
+                                  // type="text"
+                                  // minLength={1}
+                                  // maxLength={2}
+                                  className="form-control"
+                                  value={(this.state.firstGender=="남")? "M" : "F"}
+                                  id={`person-gender-${index}`}
+                                  placeholder="성별을 입력해 주세요."
+                              >
+                                <option value="M">남</option>
+                                <option value="F">여</option>
+                              </select>
+                            </div>
+                            <div className="form-group" onClick={() => this.openFindAddress(index)}>
+                              <label htmlFor="inputBirth" className="sr-only">
+                                주소를 입력해 주세요.
+                              </label>
+                              <input
+                                  type="text"
+                                  className="form-control"
+                                  id={`person-addr-${index}`}
+                                  placeholder="주소를 입력해 주세요."
+                              />
+                            </div>
                           </div>
                         )}
                         {index > 0 && (
@@ -798,65 +859,65 @@ export default inject(
                                 placeholder="휴대폰 번호를 입력해 주세요."
                               />
                             </div>
+                            <div className="form-group">
+                              <label htmlFor="inputPhone" className="sr-only">
+                                비상연락처
+                              </label>
+                              <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  pattern="\d*"
+                                  minLength={10}
+                                  maxLength={11}
+                                  className="form-control"
+                                  id={`person-emergency-${index}`}
+                                  placeholder="비상연락처(본인 휴대폰 아닌 비상연락처)를 입력해 주세요."
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputBirth" className="sr-only">
+                                생년 월일을 입력해 주세요.
+                              </label>
+                              <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  pattern="\d*"
+                                  minLength={6}
+                                  maxLength={6}
+                                  className="form-control"
+                                  id={`person-birthdate-${index}`}
+                                  placeholder="생년 월일을 입력해 주세요."
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputBirth" className="sr-only">
+                                성별을 선택해 주세요.
+                              </label>
+                              <select
+                                  // type="text"
+                                  // minLength={1}
+                                  // maxLength={2}
+                                  className="form-control"
+                                  id={`person-gender-${index}`}
+                                  placeholder="성별을 입력해 주세요."
+                              >
+                                <option value="M">남</option>
+                                <option value="F">여</option>
+                              </select>
+                            </div>
+                            <div className="form-group" onClick={() => this.openFindAddress(index)}>
+                              <label htmlFor="inputBirth" className="sr-only">
+                                주소를 입력해 주세요.
+                              </label>
+                              <input
+                                  type="text"
+                                  className="form-control"
+                                  id={`person-addr-${index}`}
+                                  placeholder="주소를 입력해 주세요."
+                              />
+                            </div>
                           </div>
                         )}
-                        <div className="form-group">
-                          <label htmlFor="inputPhone" className="sr-only">
-                            비상연락처
-                          </label>
-                          <input
-                            type="number"
-                            inputMode="numeric"
-                            pattern="\d*"
-                            minLength={10}
-                            maxLength={11}
-                            className="form-control"
-                            id={`person-emergency-${index}`}
-                            placeholder="비상연락처(본인 휴대폰 아닌 비상연락처)를 입력해 주세요."
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="inputBirth" className="sr-only">
-                            생년 월일을 입력해 주세요.
-                          </label>
-                          <input
-                            type="number"
-                            inputMode="numeric"
-                            pattern="\d*"
-                            minLength={6}
-                            maxLength={6}
-                            className="form-control"
-                            id={`person-birthdate-${index}`}
-                            placeholder="생년 월일을 입력해 주세요."
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="inputBirth" className="sr-only">
-                            성별을 선택해 주세요.
-                          </label>
-                          <select
-                            // type="text"
-                            // minLength={1}
-                            // maxLength={2}
-                            className="form-control"
-                            id={`person-gender-${index}`}
-                            placeholder="성별을 입력해 주세요."
-                          >
-                            <option value="M">남</option>
-                            <option value="F">여</option>
-                          </select>
-                        </div>
-                        <div className="form-group" onClick={() => this.openFindAddress(index)}>
-                          <label htmlFor="inputBirth" className="sr-only">
-                            주소를 입력해 주세요.
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id={`person-addr-${index}`}
-                            placeholder="주소를 입력해 주세요."
-                          />
-                        </div>
                       </form>
                     </div>
                   ))}

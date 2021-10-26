@@ -28,8 +28,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -835,62 +845,73 @@ public class MyMenuService {
             String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
                     "serviceKey=EU1VFa5ptjvV1eaOpB9bnBKBxJxBGaZ%2BqthSuo3%2FZxGfQ%2BrHHiKxf%2Bt1a13VCLBfj1eBv%2BwElgABiGOyIIWDpA%3D%3D" +//
                     "&pageNo=1" +
-                    "&numOfRows=300" +
-                    "&dataType=JSON" +
+                    "&numOfRows=120" +
+                    "&dataType=XML" +
                     "&base_date=" + baseDate +
                     "&base_time=" + baseTime +
                     "&nx=" + Math.round(xyGrid.get("x")) +
                     "&ny=" + Math.round(xyGrid.get("y"));
             String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
-            System.out.println("result>>> "+response);
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
-            Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
-            Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
-            Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
-            ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+//            System.out.println("result>>> "+response);
+
+            //xml데이터 파싱.
+            InputSource is = new InputSource(new StringReader(new String(response)));
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("item");
+
+            //기존 json으로 받아올때의 코드.
+//            ObjectMapper mapper = new ObjectMapper();
+//            Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
+//            Map<String,Object> tempResponse2 = (Map<String,Object>)tempResponse1.get("response");
+//            Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
+//            Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
+//            ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
 
             //시간대에 따라 날씨데이터 저장.
             for(int x=1; x<9; x++){
                 fcstTime = String.format("%02d",(currentTime.plusHours(3*x).getHour()/3)*3) + "00";
                 String fcstDate = currentTime.plusHours(3*x).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 fcstNextTime = String.format("%02d",(currentTime.plusHours(3*(x+1)).getHour()/3)*3) + "00";
-                result.add(getWeatherFromApiResult(dataList, fcstTime,fcstNextTime, fcstDate));
+//                result.add(getWeatherFromApiResult(dataList, fcstTime,fcstNextTime, fcstDate));
+                result.add(getWeatherFromApiResultFromXml(response, fcstTime, fcstNextTime, fcstDate));
             }
             weather.put("weatherByTime", result);
 
-            for(int i=0; i<dataList.size(); i++){
-                Map<String,Object> item = dataList.get(i);
-                if( (item.get("fcstTime").equals(fcstTime) || item.get("fcstTime").equals(fcstNextTime))
-                        && (item.get("fcstDate").equals(todayDate)) ){
-                    String category = (String)item.get("category");
+            for(int i=0; i<nodeList.getLength(); i++){
+//                Map<String,Object> item = dataList.get(i); //기존 json형태로 받아올때의 코드.
+                Element item = (Element)nodeList.item(i);
+                if( (item.getElementsByTagName("fcstTime").item(0).getTextContent().equals(fcstTime)
+                        || item.getElementsByTagName("fcstTime").item(0).getTextContent().equals(fcstNextTime))
+                        && (item.getElementsByTagName("fcstDate").item(0).getTextContent().equals(todayDate)) ){
+                    String category = (String)item.getElementsByTagName("category").item(0).getTextContent();
                     switch (category){
                         case "SKY":
-                            if(sky == null){ sky = Integer.parseInt((String)item.get("fcstValue")); }
+                            if(sky == null){ sky = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "PTY":
-                            if(pty == null){ pty = Integer.parseInt((String)item.get("fcstValue")); }
+                            if(pty == null){ pty = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "POP":
-                            if(pop == null){ pop = Integer.parseInt((String)item.get("fcstValue")); }
+                            if(pop == null){ pop = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "REH":
-                            if(reh == null){ reh = Integer.parseInt((String)item.get("fcstValue")); }
+                            if(reh == null){ reh = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "TMP": case "T3H": case "T1H":
-                            if(tmp == null){ tmp = Double.parseDouble((String)item.get("fcstValue")); }
+                            if(tmp == null){ tmp = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "TMN":
-                            if(tmn == null){ tmn = Double.parseDouble((String)item.get("fcstValue")); }
+                            if(tmn == null){ tmn = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "TMX":
-                            if(tmx == null){ tmx = Double.parseDouble((String)item.get("fcstValue")); }
+                            if(tmx == null){ tmx = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "VEC":
-                            if(vec == null){ vec = Integer.parseInt((String)item.get("fcstValue")); }
+                            if(vec == null){ vec = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                         case "WSD":
-                            if(wsd == null){ wsd = Double.parseDouble((String)item.get("fcstValue")); }
+                            if(wsd == null){ wsd = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                             break;
                     }
                 }
@@ -1039,6 +1060,169 @@ public class MyMenuService {
                         break;
                     case "WSD":
                         if(wsd == null){ wsd = Double.parseDouble((String)item.get("fcstValue")); }
+                        break;
+                }
+            }
+        }
+
+        //api에서받아온 날씨 코드값에 따라 날씨 데이터 설정.
+        CodeGroup codeGroup = codeGroupRepository.findByCode("etcImg");
+        String imgUrl=null;
+
+        if(sky ==1){//맑음
+//                weather.put("weather", "맑음");
+            switch (pty){
+                case 0:
+                    weather.put("weather", "맑음");break;
+                case 1: case 5:
+                    weather.put("weather", "구름많고 비");break;
+                case 2: case 6:
+                    weather.put("weather", "구름많고 비/눈");break;
+                case 3: case 7:
+                    weather.put("weather", "구름많고 눈");break;
+                case 4:
+                    weather.put("weather", "구름많고 소나기");break;
+                default: weather.put("weather", "맑음");
+            }
+        }
+        else if(sky == 3){//구름많음
+            switch (pty){
+                case 0:
+                    weather.put("weather", "구름많음");break;
+                case 1: case 5:
+                    weather.put("weather", "구름많고 비");break;
+                case 2: case 6:
+                    weather.put("weather", "구름많고 비/눈");break;
+                case 3: case 7:
+                    weather.put("weather", "구름많고 눈");break;
+                case 4:
+                    weather.put("weather", "구름많고 소나기");break;
+                default: weather.put("weather","구름많음");
+            }
+        }
+        else if(sky == 4){//흐림
+            switch (pty){
+                case 0:
+                    weather.put("weather", "흐림");break;
+                case 1: case 5:
+                    weather.put("weather", "흐리고 비");break;
+                case 2: case 6:
+                    weather.put("weather", "흐리고 비/눈");break;
+                case 3: case 7:
+                    weather.put("weather", "흐리고 눈");break;
+                case 4:
+                    weather.put("weather", "흐리고 소나기");break;
+                default: weather.put("weather","흐림");
+            }
+        }
+        else{
+            weather.put("weather", null);
+        }
+
+        if(weather.get("weather")!=null) {
+            imgUrl = commonCodeRepository.findByCodeGroupAndCode(codeGroup, (String)weather.get("weather")).getExtraValue1();
+//                imgUrl = env.getProperty("file.downloadUrl") + imgUrl;
+            imgUrl = "https://fishkingapp.com/resource"+imgUrl;
+            weather.put("weatherImg", imgUrl);
+        }
+
+        //강수 확률
+        weather.put("rainProbability", pop);
+        //습도
+        weather.put("humidity", reh);
+        //온도
+        weather.put("tmp", tmp);
+        //일 최저기온
+        weather.put("tmpMin", tmn);
+        //일 최고기온
+        weather.put("tmpMax", tmx);
+        //풍향
+        if(vec != null){
+            int windDirection = (int)((vec + 22.5 * 0.5) / 22.5);
+            String[] windDirectionString = new String[]{
+                    "북", "북북동", "북동", "동북동", "동", "동남동", "남동", "남남동", "남", "남남서", "남서", "서남서", "서",
+                    "서북서","북서","북북서","북"
+            };
+            weather.put("windDirection", windDirectionString[windDirection]);
+        }
+        else{ weather.put("windDirection", null);}
+        //풍속
+        weather.put("windSpeed", wsd);
+
+        return weather;
+    }
+    //api로부터 반환받은 배열으로부터 해당 시간대에 대한 날씨 정보 추출. XML파일 파싱.
+    private Map<String, Object> getWeatherFromApiResultFromXml(String dataList,
+                                                        String fcstTime, String fcstNextTime, String fcstDate)
+            throws ParserConfigurationException, IOException, SAXException {
+
+        InputSource is = new InputSource(new StringReader(new String(dataList)));
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+
+        document.getDocumentElement().normalize();
+        NodeList nodeList = document.getElementsByTagName("item");
+
+//        Node node = nodeList.item(0);
+//        node = (Element)node;
+//        Node x1 = ((Element) node).getElementsByTagName("fcstTime").item(0);
+//        System.out.println(x1.getTextContent());
+//        Node x2 = ((Element) node).getElementsByTagName("category").item(0);
+//        System.out.println(x2.getTextContent());
+
+        Map<String, Object> weather = new HashMap<>();
+        weather.put("date", fcstDate);
+        weather.put("time", fcstTime);
+
+        Integer sky = null;//하늘상태
+        Integer pty = null;//강수형태
+        Integer pop = null;//강수확률
+        Integer reh = null;//습도
+        Double tmp = null;//기온
+        Double tmn = null;//일 최저기온
+        Double tmx = null; //일 최고기온
+        Double uuu = null;//풍속(동남)
+        Double vvv = null;//풍속(남북)
+        Double wav = null;//파고
+        Integer vec = null;//풍향
+        Double wsd = null; //풍속
+
+//        for(int i=0; i<dataList.size(); i++){
+        for(int itemIdx=0; itemIdx< nodeList.getLength(); itemIdx++){
+
+            Element item = (Element)nodeList.item(itemIdx);
+
+//            Map<String,Object> item = dataList.get(i);
+            if( (item.getElementsByTagName("fcstTime").item(0).getTextContent().equals(fcstTime)
+                    || item.getElementsByTagName("fcstTime").item(0).getTextContent().equals(fcstNextTime))
+                    && (item.getElementsByTagName("fcstDate").item(0).getTextContent().equals(fcstDate)) ){
+                String category = (String)item.getElementsByTagName("category").item(0).getTextContent();
+                switch (category){
+                    case "SKY":
+                        if(sky == null){ sky = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "PTY":
+                        if(pty == null){ pty = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "POP":
+                        if(pop == null){ pop = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "REH":
+                        if(reh == null){ reh = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "TMP": case "T3H": case "T1H":
+                        if(tmp == null){ tmp = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "TMN":
+                        if(tmn == null){ tmn = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "TMX":
+                        if(tmx == null){ tmx = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "VEC":
+                        if(vec == null){ vec = Integer.parseInt((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
+                        break;
+                    case "WSD":
+                        if(wsd == null){ wsd = Double.parseDouble((String)item.getElementsByTagName("fcstValue").item(0).getTextContent()); }
                         break;
                 }
             }

@@ -134,75 +134,78 @@ export default inject(
                     // resolve.liveVideo =
                     //   "rtsp://vc-net2-ss.sktelecom.com:8558/playback?authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC2kSQ6OUFJCPjU%2FhSkMr1KI3QKkWbD1KwEmcEWUkZ0WtGaNMhS07aCfSgmW0G1ng98VQ2TLOWUzJh1Kcn27AChFBKjs3Zz1NCiPTEbHeAXsWT9X%2B%2F6Aevf4CXVXGm2Mbf0hn9pXlWgR3W9gaL%2BSwmysMmxfkPzmnoHNM4MPp4y3ppO7PJAgWnHElymjo1gX7RFasyNGzcErx8fs2NZKG692&rtspURI=rtsp://222.237.231.101:8554/243757/Playback?sessionID=HdxPbOAfsj7Q7I2B8y8cfuufQkYr&dateTime=20210327T094125Z&scale=1";
                     // # 비디오 표시
-                    // if (resolve.liveVideo && resolve.liveVideo !== "") {
-                    //     const video = document.querySelector("#video");
-                    //     let url =
-                    //         resolve.liveVideo ||
-                    //         "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
-                    //
-                    //     if (url.startsWith("rtsp://")) {
-                    //         const player = new Player({streamUrl: url});
-                    //         player.init();
-                    //         // video.src = url;
-                    //         // const player = Cloudcam.player("video", {
-                    //         //   socket:
-                    //         //     "ws://116.125.120.90:9000/streams/52fd554cc3ab32e99ed6e29f812cc6e2",
-                    //         // });
-                    //
-                    //         // if (this.state.connectionType === 'wifi') {
-                    //         //   player.start();
-                    //         // }
-                    //     } else if (Hls.isSupported()) {
-                    //         if (url.includes('fishkingapp')) {
-                    //             const liveMark = document.querySelector("#live-mark");
-                    //             liveMark.style.display = 'none';
-                    //             video.src = url;
-                    //         } else {
-                    //             const hls = new Hls({
-                    //                 capLevelToPlayerSize: true,
-                    //                 capLevelOnFPSDrop: true,
-                    //             });
-                    //             hls.attachMedia(video);
-                    //             hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                    //                 hls.loadSource(url);
-                    //                 hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
-                    //                     this.mediaError = false;
-                    //                     // setTimeout(() => {
-                    //                     //   video.play();
-                    //                     // }, 800);
-                    //                 });
-                    //                 hls.on(Hls.Events.ERROR, (e, data) => {
-                    //                     const {type, details, fatal} = data;
-                    //
-                    //                     if (type === Hls.ErrorTypes.NETWORK_ERROR) {
-                    //                         hls.startLoad();
-                    //                     } else if (type === Hls.ErrorTypes.MEDIA_ERROR) {
-                    //                         hls.detachMedia();
-                    //                         setTimeout(() => {
-                    //                             video.src = url;
-                    //                         }, 800);
-                    //                         this.mediaError = true;
-                    //                     } else {
-                    //                         console.error("MEDIA DESTROY");
-                    //                         hls.destroy();
-                    //                     }
-                    //                 });
-                    //             });
-                    //         }
-                    //         if (this.state.connectionType === 'wifi') {
-                    //             video.play();
-                    //         }
-                    //     } else {
-                    //         video.src = url;
-                    //         video.addEventListener("loadedmetadata", () => {
-                    //             // alert("video meta loaded");
-                    //             // video.play();
-                    //             if (this.state.connectionType === 'wifi') {
-                    //                 video.play();
-                    //             }
-                    //         });
-                    //     }
-                    // }
+                    let resolve = await APIStore._get(`/v2/api/ship/19`);
+                    await this.setState({liveVideo: resolve.liveVideo})
+                    let liveVideo = resolve.liveVideo
+                    if (liveVideo && liveVideo !== "") {
+                        const video = document.querySelector("#video");
+                        let url =
+                            liveVideo ||
+                            "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
+
+                        if (url.startsWith("rtsp://")) {
+                            const player = new Player({streamUrl: url});
+                            player.init();
+                            // video.src = url;
+                            // const player = Cloudcam.player("video", {
+                            //   socket:
+                            //     "ws://116.125.120.90:9000/streams/52fd554cc3ab32e99ed6e29f812cc6e2",
+                            // });
+
+                            // if (this.state.connectionType === 'wifi') {
+                            //   player.start();
+                            // }
+                        } else if (Hls.isSupported()) {
+                            if (url.includes('fishkingapp')) {
+                                const liveMark = document.querySelector("#live-mark");
+                                liveMark.style.display = 'none';
+                                video.src = url;
+                            } else {
+                                const hls = new Hls({
+                                    capLevelToPlayerSize: true,
+                                    capLevelOnFPSDrop: true,
+                                });
+                                hls.attachMedia(video);
+                                hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+                                    hls.loadSource(url);
+                                    hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
+                                        this.mediaError = false;
+                                        // setTimeout(() => {
+                                        //   video.play();
+                                        // }, 800);
+                                    });
+                                    hls.on(Hls.Events.ERROR, (e, data) => {
+                                        const {type, details, fatal} = data;
+
+                                        if (type === Hls.ErrorTypes.NETWORK_ERROR) {
+                                            hls.startLoad();
+                                        } else if (type === Hls.ErrorTypes.MEDIA_ERROR) {
+                                            hls.detachMedia();
+                                            setTimeout(() => {
+                                                video.src = url;
+                                            }, 800);
+                                            this.mediaError = true;
+                                        } else {
+                                            console.error("MEDIA DESTROY");
+                                            hls.destroy();
+                                        }
+                                    });
+                                });
+                            }
+                            if (this.state.connectionType === 'wifi') {
+                                video.play();
+                            }
+                        } else {
+                            video.src = url;
+                            video.addEventListener("loadedmetadata", () => {
+                                // alert("video meta loaded");
+                                // video.play();
+                                if (this.state.connectionType === 'wifi') {
+                                    video.play();
+                                }
+                            });
+                        }
+                    }
 
                     // # 별점 스크립트 로드
                     // PageStore.injectScript("/assets/cust/js/jquery.rateit.min.js", {
@@ -351,6 +354,9 @@ export default inject(
                                 id="carousel-visual-detail"
                                 className="carousel slide"
                                 data-ride="carousel"
+                                style={{
+                                    marginTop:"0px",
+                                }}
                             >
                                 {/*<div className="float-top-left">*/}
                                 {/*  <a onClick={() => PageStore.goBack()}>*/}

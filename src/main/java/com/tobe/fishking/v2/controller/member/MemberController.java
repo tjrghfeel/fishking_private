@@ -157,6 +157,7 @@ public class MemberController {
         // CheckPlus(본인인증) 처리 후, 결과 데이타를 리턴 받기위해 다음예제와 같이 http부터 입력합니다.
         //리턴url은 인증 전 인증페이지를 호출하기 전 url과 동일해야 합니다. ex) 인증 전 url : http://www.~ 리턴 url : http://www.~
         String sReturnUrl = "https://fishkingapp.com/v2/api/niceSuccess";      // 성공시 이동될 URL
+//        String sReturnUrl = "http://115.95.230.58:3333/v2/api/niceSuccess";
         String sErrorUrl = "https://fishkingapp.com/v2/api/niceFail";          // 실패시 이동될 URL
 
         // 입력될 plain 데이타를 만든다.
@@ -316,7 +317,7 @@ public class MemberController {
 
         if(!sMessage.equals("")){response.sendRedirect("https://fishkingapp.com/cust/member/signup?restore=Y&memberId="+session_sRequestNumber+"&msg=niceResultParsingError"); return;}
         /*데이터 저장*/
-        String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
+        String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender, sBirthDate);
         if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
             response.sendRedirect("https://fishkingapp.com/cust/member/signup?restore=Y&memberId="+session_sRequestNumber+"&msg=dupPhone"); return;
         }
@@ -599,7 +600,7 @@ public class MemberController {
             response.sendRedirect("https://fishkingapp.com/cust/member/signup?iscompany=Y&restore=Y&memberId="+session_sRequestNumber+"&msg=niceResultParsingError"); return;
         }
         /*데이터 저장*/
-        String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender);
+        String encodedSessionToken = memberService.niceSuccess(session_sRequestNumber, sResponseNumber, sName, sMobileNo, sGender, sBirthDate);
         if(encodedSessionToken == null){//해당 번호로 가입한회원이 이미 존재하는 경우.
 //            response.sendRedirect("/cust/member/signup?restore=Y&memberId="+session_sRequestNumber); return;
             response.sendRedirect("https://fishkingapp.com/cust/member/signup?iscompany=Y&restore=Y&memberId="+session_sRequestNumber+"&msg=dupPhone"); return;

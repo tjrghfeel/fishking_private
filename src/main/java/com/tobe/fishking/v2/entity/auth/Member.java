@@ -116,6 +116,9 @@ public class Member {
     @JoinColumn(name = "member_video_setting", columnDefinition = "comment '설정 - 동영상 설정")
     private Set<CommonCode> videoSetting;
 
+    @Column(columnDefinition = "varchar(8) comment '생년월일(yyyy-MM-dd)' ")
+    private String birthDate;
+
     @Builder
     public Member(Long id, String uid,
                   String memberName, String nickName,
@@ -195,4 +198,5 @@ public class Member {
         this.videoSetting.remove(alert);
     }
     public void setIsSuspended(Boolean isSuspended){this.isSuspended = isSuspended;}
+    public void setBirthDate(String birthDate){this.birthDate = birthDate;}
 }
