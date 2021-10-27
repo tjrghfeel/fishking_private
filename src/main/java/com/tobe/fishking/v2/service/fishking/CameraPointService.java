@@ -3,6 +3,8 @@ package com.tobe.fishking.v2.service.fishking;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.CameraPoint;
+import com.tobe.fishking.v2.entity.fishing.RealTimeVideo;
+import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
@@ -13,7 +15,11 @@ import com.tobe.fishking.v2.model.fishing.CameraPointDetailDtoForPage;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.ObserverCodeRepository;
 import com.tobe.fishking.v2.repository.fishking.CameraPointRepository;
+import com.tobe.fishking.v2.repository.fishking.RealTimeVideoRepository;
+import com.tobe.fishking.v2.repository.fishking.ShipRepository;
+import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.utils.HashUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -22,7 +28,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 @Service
 public class CameraPointService {
@@ -35,6 +46,12 @@ public class CameraPointService {
     MemberService memberService;
     @Autowired
     FileRepository fileRepo;
+    @Autowired
+    RealTimeVideoRepository realTimeVideoRepository;
+    @Autowired
+    ShipRepository shipRepo;
+    @Autowired
+    HttpRequestService httpRequestService;
     @Autowired
     Environment env;
 
@@ -127,6 +144,78 @@ public class CameraPointService {
                 .adtPw(null)
                 .imgUrl(env.getProperty("file.downloadUrl")+cameraPoint.getImgUrl())
                 .build();
+
+        //실시간 영상 가져오기.
+        Long ship_id = 19L; //'카이호'의 id. '지상 카메라'의 카메라 정책 결정 전까지 '지상 카메라'페이지에 임시로 카이호의 실시간 영상 연결.
+        String sessionToken = token;
+        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(ship_id);
+        if (videos.size() > 0) {
+            RealTimeVideo video = videos.get(0);
+            if (video.getType().equals("toast")) {
+                try {
+                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime expTime = LocalDateTime.ofInstant(
+                            Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                            TimeZone.getDefault().toZoneId()
+                    );
+//                LocalDateTime expTime = LocalDateTime.of(2100, 12, 31, 12, 12);
+                    String cameraApiToken = "";
+                    if (now.isAfter(expTime)) {
+//                        Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+//                        Company company = companyRepository.getCompanyByShip(response.getId());
+                        Ship ship = shipRepo.findById(ship_id)
+                                .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+ship_id));
+                        Map<String, Object> tokenData = httpRequestService.getToken(ship.getNhnId());
+                        cameraApiToken = ((String) tokenData.get("token")).replaceAll("\"", "");
+                        String expireTime = (String) tokenData.get("expireTime");
+                        realTimeVideoRepository.updateToken(cameraApiToken, expireTime, video.getToken());
+                    } else {
+                        cameraApiToken = video.getToken();
+                    }
+                    if (!cameraApiToken.equals("")) {
+                        List<Map<String, Object>> cameras = httpRequestService.getCameraList(cameraApiToken);
+                        for (Map<String, Object> camera : cameras) {
+                            String serial = camera.get("serialNo").toString();
+                            if (serial.equals(video.getSerial())) {
+                                String type = camera.get("recordType").toString();
+                                String streamStatus = camera.get("streamStatus").toString();
+                                String controlStatus = camera.get("controlStatus").toString();
+                                String liveUrl = "";
+                                if (type.equals("24h")) {
+                                    if (streamStatus.equals("on")) {
+                                        liveUrl = httpRequestService.getPlayUrl(cameraApiToken, serial);
+                                    }
+                                } else {
+                                    if (controlStatus.equals("on")) {
+                                        liveUrl = httpRequestService.getPlayUrl(cameraApiToken, serial);
+                                    }
+                                }
+                                result.setLiveVideo(liveUrl);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                }
+            } else {
+//                Company company = companyRepository.getCompanyByShip(ship_id);
+                Ship ship = shipRepo.findById(ship_id)
+                        .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+ship_id));
+                String cameraApiToken = null;
+                try {
+                    if (sessionToken.equals("")) {
+                        sessionToken = LocalTime.now().toString();
+                    }
+                    cameraApiToken = httpRequestService.loginADT(ship.getSkbId(), HashUtil.sha256(ship.getSkbPw()), sessionToken).replaceAll("\"", "");
+                    String videoUrl = httpRequestService.getADTCameraLive(video.getSerial(), cameraApiToken);
+                    if (videoUrl != null) {
+                        result.setLiveVideo(videoUrl);
+                    }
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                }
+            }
+        }
 
         //로그인 계정에 따른 처리.
         if(!token.equals("") && token != null){

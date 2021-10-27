@@ -25,6 +25,7 @@ public class CameraPointDetailDto {
     private Boolean isActive;
 
     private String imgUrl;
+    private String liveVideo;
 
 
 }
