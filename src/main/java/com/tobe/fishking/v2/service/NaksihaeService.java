@@ -80,7 +80,7 @@ public class NaksihaeService {
             String created = res.getAsJsonObject("resultDomain")
                     .get("tknCreatDt").getAsString();
             httpClient.close();
-            LocalDateTime date = LocalDateTime.parse(created, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss."));
+            LocalDateTime date = LocalDateTime.parse(created, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S"));
             date.plusSeconds(Long.parseLong(expires));
 
             result.put("token", token);

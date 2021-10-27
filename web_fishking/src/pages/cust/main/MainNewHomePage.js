@@ -201,24 +201,23 @@ export default inject(
             'border-style: none;' +
             'display:flex; ' +
             'flex-direction: column;' +
-            'width: 200px;"' +
-            'class="' + type + '">' +
+            'width: 200px;">' +
             '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
             '<img src="https://www.fishkingapp.com'+point.shipImageFileUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
             '</div>' +
             '<div style="flex-direction: column;" >' +
-            '<div style="color: #fff; margin: 5px;">선박명: '+point.shipName+' ('+point.type+')</div>' +
-            '<div style="color: #fff; margin: 5px;">위치: '+point.address+'</div>' +
+            '<div style="color: #000; margin: 5px;">선박명: '+point.shipName+' ('+point.type+')</div>' +
+            '<div style="color: #000; margin: 5px;">위치: '+point.address+'</div>' +
             '<div style="margin-top:10px; border-radius: 5px; background-color: rgba(0,0,0,0);">' +
             '<button ' +
             'style="border-radius: 5px; ' +
             'width: 190px; ' +
             'border: none; ' +
-            'background: #fff;' +
-            'color: #000;' +
+            'color: #fff;' +
             'margin-bottom: 5px;' +
             'margin-left: 5px;' +
             'margin-right: 5px;"' +
+            'class="' + type + '"' +
             'onclick="goDetail(\''+type+'\',\''+point.id+'\')">상 세 보 기</button>' +
             '</div>' +
             '</div>' +
@@ -249,24 +248,23 @@ export default inject(
             'border-style: none;' +
             'display:flex; ' +
             'flex-direction: column;' +
-            'width: 200px;"' +
-            'class="' + type + '">' +
+            'width: 200px;">' +
             '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
             '<img src="'+point.thumbUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
             '</div>' +
             '<div style="flex-direction: column;" >' +
-            '<div style="color: #fff; margin: 5px;">포인트명: '+point.name+' ('+point.type+')</div>' +
-            '<div style="color: #fff; margin: 5px;">위치: '+point.address+'</div>' +
+            '<div style="color: #000; margin: 5px;">포인트명: '+point.name+' ('+point.type+')</div>' +
+            '<div style="color: #000; margin: 5px;">위치: '+point.address+'</div>' +
             '<div style="margin-top:10px; border-radius: 5px; background-color: rgba(0,0,0,0);">' +
             '<button ' +
             'style="border-radius: 5px; ' +
             'width: 190px; ' +
             'border: none; ' +
-            'background: #fff;' +
-            'color: #000;' +
+            'color: #fff;' +
             'margin-bottom: 5px;' +
             'margin-left: 5px;' +
             'margin-right: 5px;"' +
+            'class="' + type + '"' +
             'onclick="location.href=\'/cust/company/cameraPoint/boat/detail/'+point.id+'\'">상 세 보 기</button>' +
             '</div>' +
             '</div>' +
