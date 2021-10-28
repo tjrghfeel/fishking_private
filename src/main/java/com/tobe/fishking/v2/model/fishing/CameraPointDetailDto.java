@@ -27,6 +27,7 @@ public class CameraPointDetailDto {
     private String imgUrl;
     private String liveVideo;
 
+    private String liveVideoSerial;
 
 
 }

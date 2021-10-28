@@ -264,6 +264,8 @@ public class CameraPointService {
                 .lon(cameraPoint.getLocation().getLongitude())
                 .adtId(null)
                 .adtPw(null)
+                .liveVideo("")
+                .liveVideoSerial(null)
                 .imgUrl(env.getProperty("file.downloadUrl")+cameraPoint.getImgUrl())
                 .build();
 
@@ -274,6 +276,7 @@ public class CameraPointService {
         List<CameraPointRealTimeVideo> videos = cameraPointRtVideoRepo.findAllByCameraPoint(cameraPoint);
         if (videos.size() > 0) {
             CameraPointRealTimeVideo video = videos.get(0);
+            result.setLiveVideoSerial(videos.get(0).getSerial());
             if (video.getType().equals("toast")) {
                 try {
                     LocalDateTime now = LocalDateTime.now();
