@@ -3,22 +3,28 @@ package com.tobe.fishking.v2.service.fishking;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.CameraPoint;
+import com.tobe.fishking.v2.entity.fishing.CameraPointRealTimeVideo;
 import com.tobe.fishking.v2.entity.fishing.RealTimeVideo;
 import com.tobe.fishking.v2.entity.fishing.Ship;
 import com.tobe.fishking.v2.enums.auth.Role;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.common.Location;
 import com.tobe.fishking.v2.model.fishing.AddCameraPointDto;
+import com.tobe.fishking.v2.model.fishing.AddShipCamera;
 import com.tobe.fishking.v2.model.fishing.CameraPointDetailDto;
 import com.tobe.fishking.v2.model.fishing.CameraPointDetailDtoForPage;
+import com.tobe.fishking.v2.model.smartfishing.CameraLoginDTO;
 import com.tobe.fishking.v2.repository.common.FileRepository;
 import com.tobe.fishking.v2.repository.common.ObserverCodeRepository;
+import com.tobe.fishking.v2.repository.fishking.CameraPointRealTimeVideoRepository;
 import com.tobe.fishking.v2.repository.fishking.CameraPointRepository;
 import com.tobe.fishking.v2.repository.fishking.RealTimeVideoRepository;
 import com.tobe.fishking.v2.repository.fishking.ShipRepository;
 import com.tobe.fishking.v2.service.HttpRequestService;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.service.smartfishing.FishingShipService;
 import com.tobe.fishking.v2.utils.HashUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -28,9 +34,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -47,17 +58,19 @@ public class CameraPointService {
     @Autowired
     FileRepository fileRepo;
     @Autowired
-    RealTimeVideoRepository realTimeVideoRepository;
+    CameraPointRealTimeVideoRepository cameraPointRtVideoRepo;
     @Autowired
     ShipRepository shipRepo;
     @Autowired
     HttpRequestService httpRequestService;
     @Autowired
+    FishingShipService fishingShipService;
+    @Autowired
     Environment env;
 
     //카메라 포인트 생성
     @Transactional
-    public void addCameraPoint(AddCameraPointDto dto, String token) throws ServiceLogicException, ResourceNotFoundException {
+    public void addCameraPoint(AddCameraPointDto dto, String token) throws ServiceLogicException, ResourceNotFoundException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnsupportedEncodingException, EmptyListException {
         Member member = memberService.getMemberBySessionToken(token);
         if (member.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다."); }
 
@@ -75,7 +88,7 @@ public class CameraPointService {
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id ::"+dto.getImgFileId()));
         String imgFileUlr = "/"+fileEntity.getFileUrl()+"/"+fileEntity.getStoredFile();
 
-        CameraPoint harbor = CameraPoint.builder()
+        CameraPoint cameraPoint = CameraPoint.builder()
                 .name(dto.getName())
                 .sido(dto.getSido())
                 .gungu(dto.getGungu())
@@ -90,14 +103,73 @@ public class CameraPointService {
                 .createdBy(member)
                 .modifiedBy(member)
                 .build();
-        harbor = cameraPointRepo.save(harbor);
-//        fileEntity.saveTemporaryFile(harbor.getId());
+        cameraPoint = cameraPointRepo.save(cameraPoint);
+//        fileEntity.saveTemporaryFile(cameraPoint.getId());
+
+        //실시간 영상 등록
+        //  nhnid로 카메라 목록 가져옴
+//        List<Map<String, Object>> cameraList = fishingShipService.getNHNCameraList2(new CameraLoginDTO(dto.getAdtId(), "", null), "");
+//        List<AddShipCamera> addShipCameraList = new LinkedList<>();
+//        for(int i=0; i<cameraList.size(); i++){
+//            AddShipCamera addShipCamera = new AddShipCamera();
+//            addShipCamera.setName((String)cameraList.get(i).get("name"));
+//            addShipCamera.setSerial((String)cameraList.get(i).get("serial"));
+//            addShipCameraList.add(addShipCamera);
+//        }
+
+
+        int cameraNum = 0;
+        if (cameraPoint.getAdtId() != null) {//ship으로 수정.
+            String cameraToken ;
+            String expTime ;
+
+            List<CameraPointRealTimeVideo> preVideos = cameraPointRtVideoRepo.getNHNByNHNId(cameraPoint.getAdtId());
+//                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByShipsId(ship.getId());
+            if (preVideos.size() > 0) {
+                CameraPointRealTimeVideo video = preVideos.get(0);
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime expTime2 = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                        TimeZone.getDefault().toZoneId()
+                );
+                String expireTime = "";
+                if (now.isAfter(expTime2)) {
+                    Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                    cameraToken = tokenData.get("token");
+                    expTime = tokenData.get("expireTime");
+                    cameraPointRtVideoRepo.updateToken(cameraToken, expTime, video.getToken());
+                } else {
+                    cameraToken = video.getToken();
+                    expTime = video.getExpireTime();
+                }
+            } else {
+                Map<String, Object> nhnCameraToken = httpRequestService.getToken(cameraPoint.getAdtId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
+                cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+                expTime = (String) nhnCameraToken.get("expireTime");
+//                token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
+            }
+
+            for (AddShipCamera addShipCamera : dto.getNhnCameras()) {
+                cameraNum += 1;
+                CameraPointRealTimeVideo video = CameraPointRealTimeVideo.builder()
+                        .rNo(cameraNum)
+                        .member(member)
+                        .cameraPoint(cameraPoint)
+                        .name(addShipCamera.getName())
+                        .serial(addShipCamera.getSerial())
+                        .token(cameraToken)
+                        .expireTime(expTime)
+                        .type("toast")
+                        .build();
+                cameraPointRtVideoRepo.save(video);
+            }
+        }
 
         return;
     }
     //카메라 포인트 정보 수정.
     @Transactional
-    public void modifyCameraPoint(Long cameraPointId, AddCameraPointDto dto, String token) throws ServiceLogicException, ResourceNotFoundException {
+    public void modifyCameraPoint(Long cameraPointId, AddCameraPointDto dto, String token) throws ServiceLogicException, ResourceNotFoundException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnsupportedEncodingException {
         Member member = memberService.getMemberBySessionToken(token);
         if (member.getRoles() != Role.admin){throw new ServiceLogicException("권한이 없습니다."); }
 
@@ -124,6 +196,56 @@ public class CameraPointService {
 
         cameraPointRepo.save(cameraPoint);
 
+        int cameraNum = 0;
+        List<CameraPointRealTimeVideo> preNhnVideos = cameraPointRtVideoRepo.getNHNByShipsId(cameraPointId);
+        cameraPointRtVideoRepo.deleteAll(preNhnVideos);
+
+        if (cameraPoint.getAdtId() != null) {//ship으로 수정.
+            String cameraToken ;
+            String expTime ;
+
+            List<CameraPointRealTimeVideo> preVideos = cameraPointRtVideoRepo.getNHNByNHNId(cameraPoint.getAdtId());
+//                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByShipsId(ship.getId());
+            if (preVideos.size() > 0) {
+                CameraPointRealTimeVideo video = preVideos.get(0);
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime expTime2 = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                        TimeZone.getDefault().toZoneId()
+                );
+                String expireTime = "";
+                if (now.isAfter(expTime2)) {
+                    Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                    cameraToken = tokenData.get("token");
+                    expTime = tokenData.get("expireTime");
+                    cameraPointRtVideoRepo.updateToken(cameraToken, expTime, video.getToken());
+                } else {
+                    cameraToken = video.getToken();
+                    expTime = video.getExpireTime();
+                }
+            } else {
+                Map<String, Object> nhnCameraToken = httpRequestService.getToken(cameraPoint.getAdtId());//company.getNhnId()가 아닌 ship.getNhnId()로 수정.
+                cameraToken = ((String) nhnCameraToken.get("token")).replaceAll("\"", "");
+                expTime = (String) nhnCameraToken.get("expireTime");
+//                token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
+            }
+
+            for (AddShipCamera addShipCamera : dto.getNhnCameras()) {
+                cameraNum += 1;
+                CameraPointRealTimeVideo video = CameraPointRealTimeVideo.builder()
+                        .rNo(cameraNum)
+                        .member(member)
+                        .cameraPoint(cameraPoint)
+                        .name(addShipCamera.getName())
+                        .serial(addShipCamera.getSerial())
+                        .token(cameraToken)
+                        .expireTime(expTime)
+                        .type("toast")
+                        .build();
+                cameraPointRtVideoRepo.save(video);
+            }
+        }
+
         return;
     }
 
@@ -148,9 +270,10 @@ public class CameraPointService {
         //실시간 영상 가져오기.
         Long ship_id = 19L; //'카이호'의 id. '지상 카메라'의 카메라 정책 결정 전까지 '지상 카메라'페이지에 임시로 카이호의 실시간 영상 연결.
         String sessionToken = token;
-        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(ship_id);
+//        List<RealTimeVideo> videos = realTimeVideoRepository.getRealTimeVideoByShipsId(ship_id);
+        List<CameraPointRealTimeVideo> videos = cameraPointRtVideoRepo.findAllByCameraPoint(cameraPoint);
         if (videos.size() > 0) {
-            RealTimeVideo video = videos.get(0);
+            CameraPointRealTimeVideo video = videos.get(0);
             if (video.getType().equals("toast")) {
                 try {
                     LocalDateTime now = LocalDateTime.now();
@@ -165,10 +288,10 @@ public class CameraPointService {
 //                        Company company = companyRepository.getCompanyByShip(response.getId());
                         Ship ship = shipRepo.findById(ship_id)
                                 .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+ship_id));
-                        Map<String, Object> tokenData = httpRequestService.getToken(ship.getNhnId());
+                        Map<String, Object> tokenData = httpRequestService.getToken(cameraPoint.getAdtId());
                         cameraApiToken = ((String) tokenData.get("token")).replaceAll("\"", "");
                         String expireTime = (String) tokenData.get("expireTime");
-                        realTimeVideoRepository.updateToken(cameraApiToken, expireTime, video.getToken());
+                        cameraPointRtVideoRepo.updateToken(cameraApiToken, expireTime, video.getToken());
                     } else {
                         cameraApiToken = video.getToken();
                     }

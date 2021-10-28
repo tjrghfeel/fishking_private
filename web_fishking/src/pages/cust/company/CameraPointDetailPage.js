@@ -75,16 +75,21 @@ export default inject(
                     // await this.setState({"seaCode": seaCode})
 
                     //카메라 포인트 정보 조회.
-                    let cameraPoint = await APIStore._get(`/v2/api/cameraPoint/${id}`)
+                    let cameraPoint = await APIStore._get(`/v2/api/cameraPointPage/${id}`)
                     await this.setState({
-                        "cameraPointName": cameraPoint["name"],
-                        profileImage: cameraPoint["imgUrl"],
-                        liveVideo: cameraPoint["liveVideo"],
+                        //카메라 포인트 정보
+                        "cameraPointName": cameraPoint["cameraPointDetail"]["name"],
+                        profileImage: cameraPoint["cameraPointDetail"]["imgUrl"],
+                        liveVideo: cameraPoint["cameraPointDetail"]["liveVideo"],
+                        //시간대별 날씨
+                        weather: cameraPoint["timelyWeather"],
+                        //주간 날씨
+                        dailyWeather: cameraPoint["dailyWeather"],
                     })
 
                     //선박 위치의 기상 정보 조회 api.
-                    let weather = await APIStore._get(`/v2/api/cameraPoint/${id}/weather`);
-                    await this.setState({"weather": weather});
+                    // let weather = await APIStore._get(`/v2/api/cameraPoint/${id}/weather`);
+                    // await this.setState({"weather": weather});
 
                     //조위 데이터
                     // let tidalLevelData = await APIStore._get(`/v2/api/allTideList/cameraPoint/${id}`)
@@ -129,8 +134,8 @@ export default inject(
                     // })
 
                     //항구 주간 날씨 데이터
-                    let dailyWeather = await APIStore._get(`/v2/api/cameraPoint/${id}/dailyWeather`);
-                    await this.setState({"dailyWeather": dailyWeather});
+                    // let dailyWeather = await APIStore._get(`/v2/api/cameraPoint/${id}/dailyWeather`);
+                    // await this.setState({"dailyWeather": dailyWeather});
 
                     // resolve.liveVideo =
                     //   "rtsp://vc-net2-ss.sktelecom.com:8558/playback?authtoken=DujPjs1larZJUObH%2FB7hbGGeGmnM7DWtBTgUPTIidC2kSQ6OUFJCPjU%2FhSkMr1KI3QKkWbD1KwEmcEWUkZ0WtGaNMhS07aCfSgmW0G1ng98VQ2TLOWUzJh1Kcn27AChFBKjs3Zz1NCiPTEbHeAXsWT9X%2B%2F6Aevf4CXVXGm2Mbf0hn9pXlWgR3W9gaL%2BSwmysMmxfkPzmnoHNM4MPp4y3ppO7PJAgWnHElymjo1gX7RFasyNGzcErx8fs2NZKG692&rtspURI=rtsp://222.237.231.101:8554/243757/Playback?sessionID=HdxPbOAfsj7Q7I2B8y8cfuufQkYr&dateTime=20210327T094125Z&scale=1";

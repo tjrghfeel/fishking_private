@@ -1,11 +1,15 @@
 package com.tobe.fishking.v2.controller.fishking;
 
+import com.tobe.fishking.v2.entity.fishing.CameraPoint;
+import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.exception.ServiceLogicException;
 import com.tobe.fishking.v2.model.fishing.AddCameraPointDto;
 import com.tobe.fishking.v2.model.fishing.CameraPointDetailDto;
 import com.tobe.fishking.v2.model.fishing.CameraPointDetailDtoForPage;
+import com.tobe.fishking.v2.repository.fishking.CameraPointRepository;
 import com.tobe.fishking.v2.service.fishking.CameraPointService;
+import com.tobe.fishking.v2.service.fishking.MyMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +17,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api(tags={"카메라 포인트"})
@@ -21,6 +32,10 @@ import java.util.List;
 public class CameraPointController {
     @Autowired
     CameraPointService cameraPointService;
+    @Autowired
+    MyMenuService myMenuService;
+    @Autowired
+    CameraPointRepository cameraPointRepo;
 
     //항구 생성
     @ApiOperation(value = "카메라 포인트 생성",
@@ -39,7 +54,7 @@ public class CameraPointController {
     public Boolean createHarbor(
             @RequestHeader("Authorization") String token,
             @RequestBody @Valid AddCameraPointDto dto
-    ) throws ServiceLogicException, ResourceNotFoundException {
+    ) throws ServiceLogicException, ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, EmptyListException {
         cameraPointService.addCameraPoint(dto, token);
 
         return true;
@@ -62,7 +77,7 @@ public class CameraPointController {
             @PathVariable("cameraPointId") Long cameraPointId,
             @RequestHeader("Authorization") String token,
             @RequestBody @Valid AddCameraPointDto dto
-    ) throws ServiceLogicException, ResourceNotFoundException {
+    ) throws ServiceLogicException, ResourceNotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         cameraPointService.modifyCameraPoint(cameraPointId, dto, token);
 
         return true;
@@ -82,8 +97,47 @@ public class CameraPointController {
                     "- adtPw : String / 카메라 pw\n" +
                     "- imgUrl : String / 대표 이미지 file url\n"
     )
+    @GetMapping("/cameraPointPage/{cameraPointId}")
+//    public CameraPointDetailDto getCameraPointDetail(
+    public Map<String, Object> getCameraPointDetail(
+            @PathVariable("cameraPointId") Long cameraPointId,
+            @RequestHeader("Authorization") String token
+    ) throws ResourceNotFoundException {
+        Map<String, Object> result = new HashMap<>();
+
+        CameraPoint cameraPoint = cameraPointRepo.findById(cameraPointId)
+                .orElseThrow(()->new ResourceNotFoundException("harbor not found for this id ::"+cameraPointId));
+
+        CameraPointDetailDto cameraPointDetailDto = cameraPointService.getCameraPointDetail(cameraPointId, token);
+
+        Map<String, Object> timelyWeather = myMenuService.getTimelyWeather(Float.parseFloat(cameraPoint.getLocation().getLongitude().toString()),
+                Float.parseFloat(cameraPoint.getLocation().getLatitude().toString()));
+
+        ArrayList<Map<String, Object>> dailyWeather = myMenuService.getDailyWeather(cameraPoint.getAddress());
+
+        result.put("cameraPointDetail", cameraPointDetailDto);
+        result.put("timelyWeather", timelyWeather);
+        result.put("dailyWeather", dailyWeather);
+
+        return result;
+    }
+    //카메라 포인트 정보 조회(관리자용)
+    @ApiOperation(value = "카메라 포인트 조회(관리자용)",
+            notes = "response )\n" +
+                    "- id : Long / 카메라 포인트 id\n" +
+                    "- name : String / 카메라 포인트명\n" +
+                    "- sido : String / 주소(시,도)\n" +
+                    "- gungu : String / 주소(군,구)\n" +
+                    "- address : String / 주소(도로명)\n" +
+                    "- lat : Double / 위도\n" +
+                    "- lon : Double / 경도\n" +
+                    "- adtId : String / 카메라 id\n" +
+                    "- adtPw : String / 카메라 pw\n" +
+                    "- imgUrl : String / 대표 이미지 file url\n"
+    )
     @GetMapping("/cameraPoint/{cameraPointId}")
-    public CameraPointDetailDto getCameraPointDetail(
+//    public CameraPointDetailDto getCameraPointDetail(
+    public CameraPointDetailDto getCameraPointDetailForManager(
             @PathVariable("cameraPointId") Long cameraPointId,
             @RequestHeader("Authorization") String token
     ) throws ResourceNotFoundException {

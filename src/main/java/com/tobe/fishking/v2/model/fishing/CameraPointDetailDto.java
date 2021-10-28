@@ -28,4 +28,5 @@ public class CameraPointDetailDto {
     private String liveVideo;
 
 
+
 }
