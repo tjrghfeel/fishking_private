@@ -30,7 +30,7 @@ export default inject(
         /********** ********** ********** ********** **********/
         async componentDidMount() {
           const minDate = new Date();
-          minDate.setDate(minDate.getDate() + 2);
+          minDate.setDate(minDate.getDate());
           await this.setState({ minDate, selectedDate: minDate });
           this.onChangeDate(minDate);
         }
