@@ -2,8 +2,10 @@ package com.tobe.fishking.v2.model.fishing;
 
 import lombok.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,9 +35,12 @@ public class AddCameraPointDto {
 //    @NotNull(message = "대표 이미지 file id 항목이 비었습니다.")
     private Long imgFileId;
 
+    private List<AddShipCamera> nhnCameras;
+
 //    @NotNull(message = "삭제 여부 항목이 비었습니다.")
 //    private Boolean isDeleted;
 //    @NotNull(message = "활성화 여부 항목이 비었습니다.")
 //    private Boolean isActive;
+
 
 }

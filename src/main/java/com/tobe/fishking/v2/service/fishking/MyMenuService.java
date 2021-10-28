@@ -842,10 +842,10 @@ public class MyMenuService {
 
         //동네예보 api 호출.
         try{
-            String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?" +
+            String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?" +
                     "serviceKey=EU1VFa5ptjvV1eaOpB9bnBKBxJxBGaZ%2BqthSuo3%2FZxGfQ%2BrHHiKxf%2Bt1a13VCLBfj1eBv%2BwElgABiGOyIIWDpA%3D%3D" +//
                     "&pageNo=1" +
-                    "&numOfRows=120" +
+                    "&numOfRows=360" +
                     "&dataType=XML" +
                     "&base_date=" + baseDate +
                     "&base_time=" + baseTime +
@@ -854,12 +854,6 @@ public class MyMenuService {
             String response = memberService.sendRequest(url,"GET",new HashMap<String,String>(),"");
 //            System.out.println("result>>> "+response);
 
-            //xml데이터 파싱.
-            InputSource is = new InputSource(new StringReader(new String(response)));
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("item");
-
             //기존 json으로 받아올때의 코드.
 //            ObjectMapper mapper = new ObjectMapper();
 //            Map<String, Object> tempResponse1 = mapper.readValue(response, Map.class);
@@ -867,6 +861,12 @@ public class MyMenuService {
 //            Map<String,Object> tempResponse3 = (Map<String,Object>)tempResponse2.get("body");
 //            Map<String,Object> tempResponse4 = (Map<String,Object>)tempResponse3.get("items");
 //            ArrayList<Map<String,Object>> dataList = (ArrayList<Map<String,Object>>)tempResponse4.get("item");
+
+            //xml데이터 파싱.
+            InputSource is = new InputSource(new StringReader(new String(response)));
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("item");
 
             //시간대에 따라 날씨데이터 저장.
             for(int x=1; x<9; x++){

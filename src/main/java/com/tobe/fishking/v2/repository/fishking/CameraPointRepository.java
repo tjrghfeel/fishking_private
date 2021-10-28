@@ -1,8 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
 import com.tobe.fishking.v2.entity.fishing.CameraPoint;
-import com.tobe.fishking.v2.entity.fishing.Harbor;
-import com.tobe.fishking.v2.model.fishing.CameraPointDetailDto;
 import com.tobe.fishking.v2.model.fishing.CameraPointDetailDtoForPage;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.domain.Page;

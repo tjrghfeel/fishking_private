@@ -59,6 +59,7 @@ public class FishingShipService {
     private final CompanyRepository companyRepository;
     private final HttpRequestService httpRequestService;
     private final RealTimeVideoRepository realTimeVideoRepository;
+    private final CameraPointRealTimeVideoRepository cameraPointRtVideoRepo;
     private final Environment env;
     private final EventRepository eventRepository;
     private final FileRepository fileRepo;
@@ -184,6 +185,66 @@ public class FishingShipService {
                 } else {
                     token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
                 }
+//            }
+//        }
+
+//        token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyMzkwMTMiLCJleHAiOjE2MjM5OTYyNTksImF1ZCI6ImJhODQ5Y2IwLTY5Y2MtMTFlYi04NDFhLTAwNTA1NmFjN2YwMiIsImlzcyI6ImRldkB0by1iZS5rciJ9.xn0ftEIMnL-Vg2LMQ16DSQ9Juy866J96ZI7I8rPh-44";
+        if (!token.equals("")) {
+            List<Map<String, Object>> cameras = httpRequestService.getCameraList(token);
+            for (Map<String, Object> camera : cameras) {
+                Map<String, Object> c = new HashMap<>();
+                String serial = camera.get("serialNo").toString();
+                String name = camera.get("labelName").toString();
+                c.put("serial", serial);
+                c.put("name", name);
+                response.add(c);
+            }
+//            if (response.isEmpty()) {
+//                throw new EmptyListException("결과리스트가 비어있습니다.");
+//            }
+        }
+        return response;
+    }
+
+    @Transactional
+    public List<Map<String, Object>> getNHNCameraList3(CameraLoginDTO dto, String sessionToken) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, EmptyListException, ServiceLogicException, ResourceNotFoundException {
+        List<Map<String, Object>> response =  new ArrayList<>();
+        String token = "";
+
+//        if(dto.getShipId() == null){//수정페이지의 첫 조회가 아니면,
+//             해당 nhn id가 사용중인지 확인.
+//            Ship ship = shipRepository.getByNhnId(dto.getId());//현재 RealTimeVideo에서 검색하여 중복확인하고있는데, ship에 저장하기로하였으므로, ship에서 검색하여 중복확인하다.
+//            if(ship != null){throw new ServiceLogicException("해당 아이디는 이미 사용 중 입니다");}
+//            else{
+//                token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
+//            }
+//        }
+//        else{//수정페이지의 첫 조회이면,
+//            Ship ship = shipRepository.findById(dto.getShipId())
+//                    .orElseThrow(()->new ResourceNotFoundException("ship not found for this id :: "+dto.getShipId() ));
+//            if(ship.getNhnId().equals(dto.getId())){//카메라조회하려는 nhnId와 현재 ship의 nhnId가 같다면, 등록된 realtimevideo가 있으면 거기서 token가져와 반환. 없으면 새 토큰발금.
+        List<CameraPointRealTimeVideo> preVideos = cameraPointRtVideoRepo.getNHNByNHNId(dto.getId());
+//                List<RealTimeVideo> preVideos = realTimeVideoRepository.getNHNByShipsId(ship.getId());
+        if (preVideos.size() > 0) {
+            CameraPointRealTimeVideo video = preVideos.get(0);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime expTime = LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(Long.parseLong(video.getExpireTime())),
+                    TimeZone.getDefault().toZoneId()
+            );
+            String expireTime = "";
+            if (now.isAfter(expTime)) {
+                Map<String, String> tokenData = httpRequestService.refreshToken(video.getToken());
+                token = tokenData.get("token");
+                expireTime = tokenData.get("expireTime");
+                cameraPointRtVideoRepo.updateToken(token, expireTime, video.getToken());
+            } else {
+                token = video.getToken();
+                expireTime = video.getExpireTime();
+            }
+        } else {
+            token = ((String) httpRequestService.getToken(dto.getId()).get("token")).replaceAll("\"", "");
+        }
 //            }
 //        }
 

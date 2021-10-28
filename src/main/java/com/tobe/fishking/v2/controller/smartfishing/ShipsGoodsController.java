@@ -229,6 +229,18 @@ public class ShipsGoodsController {
 
         return fishingShipService.getNHNCameraList2(dto, token);
     }
+    @ApiOperation(value = "지상 카메라 위치 생성 > NHN 로그인")
+    @PostMapping("/cameraPoint/cameras/nhn")
+    public List<Map<String, Object>> getNHNCamerasForCameraPoint(
+            @RequestHeader("Authorization") String token,
+            @RequestBody CameraLoginDTO dto
+    ) throws ResourceNotFoundException, NotAuthException, KeyManagementException, EmptyListException, NoSuchAlgorithmException, KeyStoreException, UnsupportedEncodingException, ServiceLogicException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+
+        return fishingShipService.getNHNCameraList3(dto, token);
+    }
     @ApiOperation(value = "선박등록 > SKB 로그인")
     @PostMapping("/ship/cameras/skb")
     public List<Map<String, Object>> getSKBCameras(
