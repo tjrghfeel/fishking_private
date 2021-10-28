@@ -221,7 +221,7 @@ public class FishkingScheduler {
         popularService.updatePopularKeyword();
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 4/5 * * * ?")
     @Transactional
     public void confirm() {
         Member manager = memberService.getMemberById(16L);
