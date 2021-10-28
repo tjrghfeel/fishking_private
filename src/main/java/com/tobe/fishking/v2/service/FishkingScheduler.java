@@ -221,11 +221,11 @@ public class FishkingScheduler {
         popularService.updatePopularKeyword();
     }
 
-    @Scheduled(cron = "30 10 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     @Transactional
     public void confirm() {
         Member manager = memberService.getMemberById(16L);
-        LocalDateTime targetDate = LocalDateTime.now().plusHours(12L);
+        LocalDateTime targetDate = LocalDateTime.now().plusMinutes(30L);
 
         String date = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
