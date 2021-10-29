@@ -117,6 +117,9 @@ export default inject(
               id="carousel-visual-detail"
               className="carousel slide"
               data-ride="carousel"
+              style={{
+                  marginTop:"-60px",
+              }}
             >
               <div className="float-top-left">
                 <a onClick={() => PageStore.push(`/main/story/tv`)}>

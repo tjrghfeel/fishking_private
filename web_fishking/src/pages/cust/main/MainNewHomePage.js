@@ -253,7 +253,7 @@ export default inject(
             '<img src="'+point.thumbUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
             '</div>' +
             '<div style="flex-direction: column;" >' +
-            '<div style="color: #000; margin: 5px;">포인트명: '+point.name+' ('+point.type+')</div>' +
+            '<div style="color: #000; margin: 5px;">지상 카메라명: '+point.name+'</div>' +
             '<div style="color: #000; margin: 5px;">위치: '+point.address+'</div>' +
             '<div style="margin-top:10px; border-radius: 5px; background-color: rgba(0,0,0,0);">' +
             '<button ' +
