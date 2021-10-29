@@ -1,5 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
+import ModalStore from "../../stores/ModalStore";
 
 export default inject()(
   observer(
@@ -17,14 +18,27 @@ export default inject()(
       },
       data,
       onChange,
-        props,
-        selectedDate,
+      props,
+      selectedDate,
     }) => {
       return (
           <li className="clearfix"
               onClick={()=>{
-                  const { PageStore } = props;
-                  PageStore.push(
+                const { PageStore, ModalStore } = props;
+
+                const d = new Date()
+                const n = new Date(d.getTime() + 30*60000)
+                const t = n.getHours() + "" + (n.getMinutes())
+                if (
+                  selectedDate == d.getDate() &&
+                  startTime <= t
+                ) {
+                  ModalStore.openModal("Alert", {
+                    body: "예약 가능 시간이 지난 상품입니다.",
+                  });
+                }
+
+                PageStore.push(
                       `/reservation/goods/payment/${
                           data.id
                       }/${selectedDate.format()}`

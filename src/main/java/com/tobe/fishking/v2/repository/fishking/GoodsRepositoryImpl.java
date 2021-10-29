@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -48,23 +49,22 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
 
     @Override
     public List<GoodsResponse> getShipGoods(Long ship_id, LocalDate date) {
+        LocalDateTime now = LocalDateTime.now().plusMinutes(30L);
+        String time = "0000";
+        if (now.toLocalDate().equals(date)) {
+            time = now.toLocalTime().format(DateTimeFormatter.ofPattern("HHmm"));
+        }
         NumberPath<Integer> countAlias = Expressions.numberPath(Integer.class, "count");
         QueryResults<GoodsResponse> result = queryFactory
                 .select(Projections.constructor(GoodsResponse.class,
                         goods,
-//                        ExpressionUtils.as(
-//                                JPAExpressions
-//                                        .select(orderDetails.personnel.sum())
-//                                        .from(orderDetails)
-//                                        .where(orderDetails.goods.id.eq(goods.id), orderDetails.orders.fishingDate.eq(DateUtils.getDateInFormat(date)))
-//                                , countAlias)
                         goodsFishingDate.reservedNumber
                 ))
                 .from(goods).join(goodsFishingDate).on(goods.eq(goodsFishingDate.goods))
                 .where(goods.ship.id.eq(ship_id),
                         goods.isUse.eq(true),
-                        goods.fishingDates.any().fishingDate.eq(date),
-                        goodsFishingDate.fishingDate.eq(date)
+                        goodsFishingDate.fishingDate.eq(date),
+                        goods.fishingStartTime.goe(time)
                 )
                 .fetchResults();
         return result.getResults();
