@@ -38,7 +38,7 @@ public class NaksihaeTest {
     @Autowired
     private RideShipRepository rideShipRepository;
 
-    private String token = "373cebd541b84ab8996ce4b96ae3e498";
+    private String token = "25a3a28bbffb4d6aa0acfc14ab75e076";
 
     @Test
     public void getToken() {
