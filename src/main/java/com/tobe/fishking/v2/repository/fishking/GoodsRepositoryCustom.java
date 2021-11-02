@@ -23,5 +23,5 @@ public interface GoodsRepositoryCustom {
     List<PoliceGoodsResponse> getPoliceAllGoods();
     Page<PoliceGoodsResponse> getPoliceGoods(Integer page);
     List<RiderResponse> getRiderData(Long goodsId);
-    List<Goods> getNeedConfirm(String date, String time);
+    List<Goods> getNeedConfirm(String date, String fromTime, String toTime);
 }

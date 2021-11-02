@@ -221,16 +221,17 @@ public class FishkingScheduler {
         popularService.updatePopularKeyword();
     }
 
-    @Scheduled(cron = "0 4/5 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     @Transactional
     public void confirm() {
         Member manager = memberService.getMemberById(16L);
         LocalDateTime targetDate = LocalDateTime.now().plusMinutes(30L);
 
         String date = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String time = targetDate.format(DateTimeFormatter.ofPattern("HH"));
+        String fromTime = targetDate.format(DateTimeFormatter.ofPattern("HHmm"));
+        String toTime = targetDate.plusMinutes(5L).format(DateTimeFormatter.ofPattern("HHmm"));
 
-        List<Goods> goodsList = goodsRepository.getNeedConfirm(date, time);
+        List<Goods> goodsList = goodsRepository.getNeedConfirm(date, fromTime, toTime);
 
         for (Goods goods : goodsList) {
             try {
@@ -336,7 +337,7 @@ public class FishkingScheduler {
                 goodsFishingDateRepository.save(goodsFishingDate);
                 String title = "시스템 예약확정";
                 String sentence = ship.getShipName() + "의 " + date + " "
-                        + time + ":" + goods.getFishingStartTime().substring(2,4)
+                        + goods.getFishingStartTime().substring(0,2) + ":" + goods.getFishingStartTime().substring(2,4)
                         + goods.getName() + "상품의 \n"
                         + "시스템예약확정시점이 도래하여 예약확정 " + confirmCount + "건,\n"
                         + "예약취소 " + cancelCount + "건이 발생하였습니다.";

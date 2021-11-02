@@ -297,12 +297,13 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
     }
 
     @Override
-    public List<Goods> getNeedConfirm(String date, String time) {
+    public List<Goods> getNeedConfirm(String date, String fromTime, String toTime) {
         List<Goods> responses = queryFactory
                 .select(goods)
                 .from(goods).join(ship).on(goods.ship.eq(ship)).join(goodsFishingDate).on(goods.eq(goodsFishingDate.goods))
                 .where(ship.isActive.eq(true),
-                        goods.fishingStartTime.substring(0,2).eq(time),
+                        goods.fishingStartTime.goe(fromTime),
+                        goods.fishingStartTime.lt(toTime),
                         goodsFishingDate.fishingDateString.eq(date),
                         goods.isUse.eq(true),
                         JPAExpressions
