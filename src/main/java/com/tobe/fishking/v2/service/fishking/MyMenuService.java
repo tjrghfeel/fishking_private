@@ -1356,7 +1356,7 @@ public class MyMenuService {
 
             for(int afterDayCount = 3; afterDayCount<=10; afterDayCount++){
                 Map<String, Object> tmp = new HashMap<>();
-                tmp.put("date", LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd(EEE)", Locale.KOREAN)));
+                tmp.put("date", LocalDate.now().plusDays(afterDayCount).format(DateTimeFormatter.ofPattern("MM/dd(EEE)", Locale.KOREAN)));
                 //해당 날 이후의 예보 데이터가 있으면,
                 if(tmpData.containsKey("taMin"+afterDayCount)){ tmp.put("tmpMin", tmpData.get("taMin"+afterDayCount)); }
                 else{tmp.put("tmpMin", "");}
