@@ -70,6 +70,7 @@ export default inject(
         this.map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: 34.9267, lng: 128.079 },
           zoom: 8,
+          disableDefaultUI: true,
         });
 
         // 하단 리스트 토글
