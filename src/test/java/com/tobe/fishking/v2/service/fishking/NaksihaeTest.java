@@ -38,7 +38,7 @@ public class NaksihaeTest {
     @Autowired
     private RideShipRepository rideShipRepository;
 
-    private String token = "25a3a28bbffb4d6aa0acfc14ab75e076";
+    private String token = "cf3ffc1e2e51469a951d58fe7bdecf65";
 
     @Test
     public void getToken() {
@@ -94,5 +94,22 @@ public class NaksihaeTest {
             e.printStackTrace();
         }
         assertThat(result, is(""));
+    }
+
+    @Test
+    @Transactional
+    public void run() {
+        Goods goods = goodsRepository.getOne(15L);
+        boolean result = false;
+        try {
+            result = naksihaeService.updateReportStatus("30179", goods, "취소", token);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+        assertThat(result, is(true));
     }
 }

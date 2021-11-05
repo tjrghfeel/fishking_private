@@ -109,7 +109,7 @@ public class NaksihaeService {
         Ship ship = goods.getShip();
         List<HarborCode> harborCode = harborCodeRepository.findAllByNameAndDong(ship.getHarborName(), ship.getHarborDong());
         String code = harborCode.get(0).getCode();
-        System.out.println(code);
+//        System.out.println(code);
         JsonObject data = new JsonObject();
 
         LocalDate date = LocalDate.now();
@@ -121,6 +121,10 @@ public class NaksihaeService {
         JsonObject shipInfo = new JsonObject();
         shipInfo.addProperty("fshhpSn", ship.getShipNumber());
         shipInfo.addProperty("fshhpNm", ship.getShipName());
+//        shipInfo.addProperty("fshhpSn", "1802003648240");
+//        shipInfo.addProperty("fshhpNm", "피싱파라다이스호");
+//        shipInfo.addProperty("fshhpSn", "17090016317100");
+//        shipInfo.addProperty("fshhpNm", "해적선");
         shipInfo.addProperty("fshhpSttusCd", "1");
         shipInfo.addProperty("tkoffDt", start);
         shipInfo.addProperty("clppCd", code);
@@ -131,17 +135,28 @@ public class NaksihaeService {
         JsonArray embarkList = new JsonArray();
 
         JsonObject capInfo = new JsonObject();
+
+//        capInfo.addProperty("embkrNm", "김환도");
+//        capInfo.addProperty("birthDe", "19710415");
+//        capInfo.addProperty("sexdstnCd", "0");
+//        capInfo.addProperty("mobilePhone", "01038898755");
+//        capInfo.addProperty("rnadres", "세종특별자치시 가름로 153");
+//        capInfo.addProperty("emgncTelno", "01062242504");
+//        capInfo.addProperty("mstrIhidnum", "7104151914417");
+//        capInfo.addProperty("mrntecnLcnsSn", "SPS7193062");
+
+        capInfo.addProperty("embkrSeCd", "1");
         capInfo.addProperty("embkrNm", ship.getCapName());
         capInfo.addProperty("birthDe", ship.getCapBirth().replaceAll("-", ""));
         capInfo.addProperty("sexdstnCd", ship.getCapSex().equals("M") ? "0" : "1");
-        capInfo.addProperty("mobilePhone", ship.getCapPhone());
+        capInfo.addProperty("mobilePhone", ship.getCapPhone().replaceAll("-", ""));
         capInfo.addProperty("rnadres", ship.getCapAddr());
-        capInfo.addProperty("emgncTelno", ship.getCapEmerNum());
-        capInfo.addProperty("embkrSeCd", "1");
+        capInfo.addProperty("emgncTelno", ship.getCapEmerNum().replaceAll("-", ""));
         capInfo.addProperty("mstrIhidnum", ship.getCapIdNumber());
         capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
         capInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
         capInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
+
         embarkList.add(new Gson().toJsonTree(capInfo));
 
         sailors.forEach(rider -> {
@@ -149,9 +164,9 @@ public class NaksihaeService {
             riderInfo.addProperty("embkrNm", rider.getName());
             riderInfo.addProperty("birthDe", rider.getBirth().replaceAll("-", ""));
             riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
-            riderInfo.addProperty("mobilePhone", rider.getPhone());
+            riderInfo.addProperty("mobilePhone", rider.getPhone().replaceAll("-", ""));
             riderInfo.addProperty("rnadres", rider.getAddr());
-            riderInfo.addProperty("emgncTelno", rider.getEmerNum());
+            riderInfo.addProperty("emgncTelno", rider.getEmerNum().replaceAll("-", ""));
             riderInfo.addProperty("embkrSeCd", "2");
             capInfo.addProperty("mstrIhidnum", rider.getId());
             riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
@@ -164,9 +179,9 @@ public class NaksihaeService {
             riderInfo.addProperty("embkrNm", rider.getName());
             riderInfo.addProperty("birthDe", rider.getBirthday().replaceAll("-", ""));
             riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
-            riderInfo.addProperty("mobilePhone", rider.getPhoneNumber());
+            riderInfo.addProperty("mobilePhone", rider.getPhoneNumber().replaceAll("-", ""));
             riderInfo.addProperty("rnadres", rider.getResidenceAddr());
-            riderInfo.addProperty("emgncTelno", rider.getEmergencyPhone());
+            riderInfo.addProperty("emgncTelno", rider.getEmergencyPhone().replaceAll("-", ""));
             riderInfo.addProperty("embkrSeCd", "0");
             riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
             riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
@@ -341,7 +356,8 @@ public class NaksihaeService {
         harborInfo.addProperty("dclrtSn", serial);
         harborInfo.addProperty("fshhpSn", ship.getShipNumber());
         harborInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
-        harborInfo.addProperty("fshhpSttusCd", status);
+//        harborInfo.addProperty("fshhpSn", "17090016317100");
+        harborInfo.addProperty("fshhpSttusCd", statusCode);
 
         if (statusCode.equals("3")) {
             List<HarborCode> harborCode = harborCodeRepository.findAllByNameAndDong(ship.getHarborName(), ship.getHarborDong());
@@ -358,7 +374,7 @@ public class NaksihaeService {
         }
 
         data.add("tkoffSttemntInfo", new Gson().toJsonTree(harborInfo));
-
+        System.out.println(data);
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
         String result = "";
@@ -366,10 +382,11 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
+            System.out.println(json);
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
 
-            result = res.getAsJsonObject("resultCode").getAsString();
+            result = res.get("resultCode").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
         }
