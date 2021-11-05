@@ -2,7 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
-  LAYOUT: { SearchNavigationLayout, SearchTab },
+  LAYOUT: { SearchNavigationLayout, SearchTab, MainTab },
   VIEW: { SearchCompanyListItem01View, SearchDiaryListItemView },
 } = Components;
 
@@ -166,6 +166,7 @@ export default inject(
                 <p className="space"></p>
               </div>
             )}
+            <MainTab activeIndex={5} />
           </React.Fragment>
         );
       }

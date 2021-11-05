@@ -1,7 +1,8 @@
-/* global daum, kakao, $ */
+/* global google, markerClusterer, daum, kakao, $ */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
+
 const {
   VIEW: {
     NewMainShipListView,
@@ -50,18 +51,26 @@ export default inject(
           imgSrcHarbor = "/assets/cust/img/pin_har.png";
 
         this.setState({
-          markerImgShip: new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption),
-          markerImgRock: new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption),
-          markerImgHarbor: new kakao.maps.MarkerImage(imgSrcHarbor, imgSize, imgOption),
+          // markerImgShip: new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption),
+          // markerImgRock: new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption),
+          // markerImgHarbor: new kakao.maps.MarkerImage(imgSrcHarbor, imgSize, imgOption),
+          markerImgShip: imgSrcShip,
+          markerImgRock: imgSrcRock,
+          markerImgHarbor: imgSrcHarbor,
         })
 
         // # 지도표시
-        const options = {
-          // center: new daum.maps.LatLng(resolve.latitude, resolve.longitude),
-          center: new kakao.maps.LatLng(34.9267, 128.079),
-          level: 6,
-        };
-        this.map = new kakao.maps.Map(this.container.current, options);
+        // const options = {
+        //   // center: new daum.maps.LatLng(resolve.latitude, resolve.longitude),
+        //   center: new kakao.maps.LatLng(34.9267, 128.079),
+        //   level: 6,
+        // };
+        // this.map = new kakao.maps.Map(this.container.current, options);
+
+        this.map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 34.9267, lng: 128.079 },
+          zoom: 8,
+        });
 
         // 하단 리스트 토글
         $(function () {
@@ -108,29 +117,26 @@ export default inject(
         this.setState({resolve: resolve});
         this.sortByDistance(this)
 
-        kakao.maps.event.addListener(this.map, 'dragend', dragListener(this))
+        this.map.addListener("dragend", dragListener(this));
+        this.map.addListener("zoom_changed", dragListener(this));
+        // kakao.maps.event.addListener(this.map, 'dragend', dragListener(this))
         // kakao.maps.event.addListener(this.map, 'zoom_changed', this.dragendListener(this.map, this.state.resolve))
 
         function dragListener(component) {
           return (function() {
             const latlng = component.map.getCenter();
             let list = component.state.resolve.slice(0)
-            // console.log(latlng)
             list.sort(function (a, b) {
-              const distance_a = new kakao.maps.Polyline({
-                path: [
-                  latlng,
-                  new kakao.maps.LatLng(a.location.latitude, a.location.longitude),
-                ],
-                strokeOpacity: 0
-              }).getLength()
-              const distance_b = new kakao.maps.Polyline({
-                path: [
-                  latlng,
-                  new kakao.maps.LatLng(b.location.latitude, b.location.longitude),
-                ],
-                strokeOpacity: 0
-              }).getLength()
+              const point_a = new google.maps.LatLng(a.location.latitude, a.location.longitude)
+              const point_b = new google.maps.LatLng(b.location.latitude, b.location.longitude)
+              const distance_a = google.maps.geometry.spherical.computeDistanceBetween(
+                latlng,
+                point_a,
+              )
+              const distance_b = google.maps.geometry.spherical.computeDistanceBetween(
+                latlng,
+                point_b,
+              )
               return distance_a < distance_b ? -1 : distance_a > distance_b ? 1 : 0;
             })
             component.setState({resolve: list})
@@ -149,31 +155,170 @@ export default inject(
       sortByDistance = (component) => {
         const latlng = component.map.getCenter();// 현재 지도 중심 위경도.
         let list = component.state.resolve.slice(0)
-        // console.log(latlng)
+        // console.log(latlng.lat(), latlng.lng())
         list.sort(function (a, b) {
           //지도 중심과 선박 위치 사이 거리 계산.
-          const distance_a = new kakao.maps.Polyline({// Polyline : 지도상의 선을 나타내는 객체.
-            path: [
-              latlng,
-              new kakao.maps.LatLng(a.location.latitude, a.location.longitude),
-            ],
-            strokeOpacity: 0
-          }).getLength()
-          const distance_b = new kakao.maps.Polyline({
-            path: [
-              latlng,
-              new kakao.maps.LatLng(b.location.latitude, b.location.longitude),
-            ],
-            strokeOpacity: 0
-          }).getLength()
+          const point_a = new google.maps.LatLng(a.location.latitude, a.location.longitude)
+          const point_b = new google.maps.LatLng(b.location.latitude, b.location.longitude)
+          const distance_a = google.maps.geometry.spherical.computeDistanceBetween(
+            latlng,
+            point_a,
+          )
+          const distance_b = google.maps.geometry.spherical.computeDistanceBetween(
+            latlng,
+            point_b,
+          )
           return distance_a < distance_b ? -1 : distance_a > distance_b ? 1 : 0;
         })
         component.setState({resolve: list})
       }
 
+      // sortByDistance = (component) => {
+      //   const latlng = component.map.getCenter();// 현재 지도 중심 위경도.
+      //   let list = component.state.resolve.slice(0)
+      //   // console.log(latlng)
+      //   list.sort(function (a, b) {
+      //     //지도 중심과 선박 위치 사이 거리 계산.
+      //     const distance_a = new kakao.maps.Polyline({// Polyline : 지도상의 선을 나타내는 객체.
+      //       path: [
+      //         latlng,
+      //         new kakao.maps.LatLng(a.location.latitude, a.location.longitude),
+      //       ],
+      //       strokeOpacity: 0
+      //     }).getLength()
+      //     const distance_b = new kakao.maps.Polyline({
+      //       path: [
+      //         latlng,
+      //         new kakao.maps.LatLng(b.location.latitude, b.location.longitude),
+      //       ],
+      //       strokeOpacity: 0
+      //     }).getLength()
+      //     return distance_a < distance_b ? -1 : distance_a > distance_b ? 1 : 0;
+      //   })
+      //   component.setState({resolve: list})
+      // }
+
+      // markingOnMap = () => {
+      //   const { PageStore } = this.props;
+      //   const { resolve, markerImgShip, markerImgRock, markerImgHarbor, cameraPointList } = this.state
+      //   // 지도에 마커 생성(선박)
+      //   for (const point of resolve) {
+      //     let markerImg, markerOverImg, type
+      //     if (point.type == "갯바위") {
+      //       markerImg = markerImgRock
+      //       type = 'rock'
+      //       // markerOverImg = markerOverImgRock
+      //     } else {
+      //       markerImg = markerImgShip
+      //       type = 'boat'
+      //       // markerOverImg = markerOverImgShip
+      //     }
+      //     const marker = new kakao.maps.Marker({
+      //       map: this.map,
+      //       image: markerImg,
+      //       position: new kakao.maps.LatLng(
+      //         point.location.latitude,
+      //         point.location.longitude,
+      //       ),
+      //       title: point.shipName,
+      //       clickable: true,
+      //     });
+      //     const content = '<div name="detailw"' +
+      //       'style="border-radius: 5px;' +
+      //       'border-style: none;' +
+      //       'display:flex; ' +
+      //       'flex-direction: column;' +
+      //       'width: 200px;">' +
+      //       '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
+      //       '<img src="https://www.fishkingapp.com'+point.shipImageFileUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
+      //       '</div>' +
+      //       '<div style="flex-direction: column;" >' +
+      //       '<div style="color: #000; margin: 5px;">선박명: '+point.shipName+' ('+point.type+')</div>' +
+      //       '<div style="color: #000; margin: 5px;">위치: '+point.address+'</div>' +
+      //       '<div style="margin-top:10px; border-radius: 5px; background-color: rgba(0,0,0,0);">' +
+      //       '<button ' +
+      //       'style="border-radius: 5px; ' +
+      //       'width: 190px; ' +
+      //       'border: none; ' +
+      //       'color: #fff;' +
+      //       'margin-bottom: 5px;' +
+      //       'margin-left: 5px;' +
+      //       'margin-right: 5px;"' +
+      //       'class="' + type + '"' +
+      //       'onclick="goDetail(\''+type+'\',\''+point.id+'\')">상 세 보 기</button>' +
+      //       '</div>' +
+      //       '</div>' +
+      //       '</div>'
+      //     const infoWindow = new kakao.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
+      //       content: content,
+      //       removable: true,
+      //     })
+      //     kakao.maps.event.addListener(marker, 'click', clickListener(this.map, marker, infoWindow));
+      //   }
+      //
+      //   //지도에 마커 생성(카메라 포인트)
+      //   for (const point of cameraPointList) {
+      //     let markerImg = markerImgHarbor, markerOverImg, type
+      //     const marker = new kakao.maps.Marker({
+      //       map: this.map,
+      //       image: markerImg,
+      //       position: new kakao.maps.LatLng(
+      //           point.latitude,
+      //           point.longitude,
+      //       ),
+      //       title: point.name,
+      //       clickable: true,
+      //     });
+      //     type = 'harbor';
+      //     const content = '<div name="detailw"' +
+      //       'style="border-radius: 5px;' +
+      //       'border-style: none;' +
+      //       'display:flex; ' +
+      //       'flex-direction: column;' +
+      //       'width: 200px;">' +
+      //       '<div style="border-radius: 5px; background-color: rgba(0,0,0,0);">' +
+      //       '<img src="'+point.thumbUrl+'" style="border-radius: 5px; object-fit: contain; width: 200px;">' +
+      //       '</div>' +
+      //       '<div style="flex-direction: column;" >' +
+      //       '<div style="color: #000; margin: 5px;">포인트명: '+point.name+' ('+point.type+')</div>' +
+      //       '<div style="color: #000; margin: 5px;">위치: '+point.address+'</div>' +
+      //       '<div style="margin-top:10px; border-radius: 5px; background-color: rgba(0,0,0,0);">' +
+      //       '<button ' +
+      //       'style="border-radius: 5px; ' +
+      //       'width: 190px; ' +
+      //       'border: none; ' +
+      //       'color: #fff;' +
+      //       'margin-bottom: 5px;' +
+      //       'margin-left: 5px;' +
+      //       'margin-right: 5px;"' +
+      //       'class="' + type + '"' +
+      //       'onclick="location.href=\'/cust/company/cameraPoint/boat/detail/'+point.id+'\'">상 세 보 기</button>' +
+      //       '</div>' +
+      //       '</div>' +
+      //       '</div>'
+      //     const infoWindow = new kakao.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
+      //       content: content,
+      //       removable: true,
+      //     })
+      //     kakao.maps.event.addListener(marker, 'click', clickListener(this.map, marker, infoWindow));
+      //   }
+      //
+      //   // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
+      //   function clickListener(map, marker, infowindow) {
+      //     return function() {
+      //       infowindow.open(map, marker);
+      //       document.getElementsByName("detailw").forEach((item, index) => {
+      //         item.parentElement.parentElement.style.border = 'none';
+      //       })
+      //     };
+      //   }
+      // }
+
       markingOnMap = () => {
         const { PageStore } = this.props;
         const { resolve, markerImgShip, markerImgRock, markerImgHarbor, cameraPointList } = this.state
+        let markers = []
+
         // 지도에 마커 생성(선박)
         for (const point of resolve) {
           let markerImg, markerOverImg, type
@@ -186,15 +331,13 @@ export default inject(
             type = 'boat'
             // markerOverImg = markerOverImgShip
           }
-          const marker = new kakao.maps.Marker({
+          const marker = new google.maps.Marker({
+            position: {
+              lat: point.location.latitude,
+              lng: point.location.longitude,
+            },
             map: this.map,
-            image: markerImg,
-            position: new kakao.maps.LatLng(
-              point.location.latitude,
-              point.location.longitude,
-            ),
-            title: point.shipName,
-            clickable: true,
+            icon: markerImg
           });
           const content = '<div name="detailw"' +
             'style="border-radius: 5px;' +
@@ -222,25 +365,32 @@ export default inject(
             '</div>' +
             '</div>' +
             '</div>'
-          const infoWindow = new kakao.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
+          const infoWindow = new google.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
-            removable: true,
           })
-          kakao.maps.event.addListener(marker, 'click', clickListener(this.map, marker, infoWindow));
+          marker.addListener("click", () => {
+            infoWindow.open({
+              anchor: marker,
+              map: this.map,
+              shouldFocus: false,
+            })
+            setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
+              item.parentElement.parentElement.parentElement.style.padding = '0';
+            }), 1)
+          })
+          markers.push(marker)
         }
 
         //지도에 마커 생성(카메라 포인트)
         for (const point of cameraPointList) {
           let markerImg = markerImgHarbor, markerOverImg, type
-          const marker = new kakao.maps.Marker({
+          const marker = new google.maps.Marker({
+            position: {
+              lat: point.latitude,
+              lng: point.longitude,
+            },
             map: this.map,
-            image: markerImg,
-            position: new kakao.maps.LatLng(
-                point.latitude,
-                point.longitude,
-            ),
-            title: point.name,
-            clickable: true,
+            icon: markerImgHarbor
           });
           type = 'harbor';
           const content = '<div name="detailw"' +
@@ -269,22 +419,38 @@ export default inject(
             '</div>' +
             '</div>' +
             '</div>'
-          const infoWindow = new kakao.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
+          const infoWindow = new google.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
-            removable: true,
           })
-          kakao.maps.event.addListener(marker, 'click', clickListener(this.map, marker, infoWindow));
+          marker.addListener("click", () => {
+            infoWindow.open({
+              anchor: marker,
+              map: this.map,
+              shouldFocus: false,
+            })
+            setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
+              item.parentElement.parentElement.parentElement.style.padding = '0';
+            }), 1)
+          })
+          markers.push(marker)
         }
 
+        // 마커 클러스터러
+        const boatClusterer = new markerClusterer.MarkerClusterer({map: this.map, markers: markers})
+
         // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
-        function clickListener(map, marker, infowindow) {
-          return function() {
-            infowindow.open(map, marker);
-            document.getElementsByName("detailw").forEach((item, index) => {
-              item.parentElement.parentElement.style.border = 'none';
-            })
-          };
-        }
+        // function clickListener(map, marker, infowindow) {
+        //   return function() {
+        //     infowindow.open({
+        //       anchor: marker,
+        //       map,
+        //       shouldFocus: false,
+        //     });
+        //     document.getElementsByName("detailw").forEach((item, index) => {
+        //       item.parentElement.parentElement.parentElement.style.padding = '0';
+        //     })
+        //   };
+        // }
       }
 
       onClick = async (item) => {
@@ -366,7 +532,7 @@ export default inject(
               ref={this.container}
               id="map"
               className="map"
-              style={{ width: "100%", height: "100%", position: "fixed", top: "0", left: "0" }}
+              style={{ width: "100%", height: "100%", position: "absolute", top: "0", left: "0" }}
             ></div>
             <div id="content">
               <NewMainShipListView list={list} onClick={this.onClick} />

@@ -2,7 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   MODAL: { SelectDateModal },
 } = Components;
 
@@ -132,6 +132,7 @@ export default inject("PageStore")(
                 </a>
               </div>
             </div>
+            <MainTab activeIndex={5} />
           </React.Fragment>
         );
       }
