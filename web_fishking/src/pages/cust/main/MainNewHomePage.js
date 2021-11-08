@@ -44,19 +44,38 @@ export default inject(
         }
 
         // 마커 이미지 생성
-        const imgSize = new kakao.maps.Size(18, 22),
-          imgOption = {offset: new kakao.maps.Point(9, 9)},
-          imgSrcShip = "/assets/cust/img/pin_boat.png",
-          imgSrcRock = "/assets/cust/img/pin_rock.png",
-          imgSrcHarbor = "/assets/cust/img/pin_point.png";
+        // const imgSize = new kakao.maps.Size(18, 22),
+        //   imgOption = {offset: new kakao.maps.Point(9, 9)},
+        // const imgSrcShip = "/assets/cust/img/pin_boat.png",
+        //   imgSrcRock = "/assets/cust/img/pin_rock.png",
+        //   imgSrcHarbor = "/assets/cust/img/pin_point.png";
+        const imgSrcShip = "/assets/cust/img/svg/pin_boat.svg",
+          imgSrcRock = "/assets/cust/img/svg/pin_rock.svg",
+          imgSrcHarbor = "/assets/cust/img/svg/pin_point.svg";
 
         this.setState({
           // markerImgShip: new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption),
           // markerImgRock: new kakao.maps.MarkerImage(imgSrcRock, imgSize, imgOption),
           // markerImgHarbor: new kakao.maps.MarkerImage(imgSrcHarbor, imgSize, imgOption),
-          markerImgShip: imgSrcShip,
-          markerImgRock: imgSrcRock,
-          markerImgHarbor: imgSrcHarbor,
+          // markerImgShip: imgSrcShip,
+          markerImgShip: {
+            url: imgSrcShip,
+            scaledSize: new google.maps.Size(18, 22),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(9, 22)
+          },
+          markerImgRock: {
+            url: imgSrcRock,
+            scaledSize: new google.maps.Size(18, 22),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(9, 22)
+          },
+          markerImgHarbor: {
+            url: imgSrcHarbor,
+            scaledSize: new google.maps.Size(18, 22),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(9, 22)
+          },
         })
 
         // # 지도표시
@@ -332,13 +351,15 @@ export default inject(
             type = 'boat'
             // markerOverImg = markerOverImgShip
           }
+          console.log(markerImg)
           const marker = new google.maps.Marker({
             position: {
               lat: point.location.latitude,
               lng: point.location.longitude,
             },
             map: this.map,
-            icon: markerImg
+            icon: markerImg,
+            optimized: false
           });
           const content = '<div name="detailw"' +
             'style="border-radius: 5px;' +
@@ -376,9 +397,9 @@ export default inject(
               map: this.map,
               shouldFocus: false,
             })
-            setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
-              item.parentElement.parentElement.parentElement.style.padding = '1px';
-            }), 1)
+            // setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
+            //   item.parentElement.parentElement.parentElement.style.padding = '1px';
+            // }), 1)
           })
           markers.push(marker)
         }
@@ -431,9 +452,9 @@ export default inject(
               map: this.map,
               shouldFocus: false,
             })
-            setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
-              item.parentElement.parentElement.parentElement.style.padding = '1px';
-            }), 1)
+            // setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
+            //   item.parentElement.parentElement.parentElement.style.padding = '1px';
+            // }), 1)
           })
           markers.push(marker)
         }
@@ -535,7 +556,6 @@ export default inject(
               ref={this.container}
               id="map"
               className="map"
-              style={{ width: "100%", height: "100%", position: "absolute", top: "0", left: "0" }}
             ></div>
             <div id="content">
               <NewMainShipListView list={list} onClick={this.onClick} />

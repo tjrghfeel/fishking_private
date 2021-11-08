@@ -276,7 +276,3 @@ header input::placeholder {
   width: 160px;
 }
 /*# sourceMappingURL=common_1.css.map */
-
-#map > div > div > div > div {
-  border-radius: 10px;
-}
