@@ -351,7 +351,7 @@ export default inject(
             type = 'boat'
             // markerOverImg = markerOverImgShip
           }
-          console.log(markerImg)
+          // console.log(markerImg)
           const marker = new google.maps.Marker({
             position: {
               lat: point.location.latitude,
@@ -390,6 +390,12 @@ export default inject(
           const infoWindow = new google.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
           })
+          infoWindow.addListener('domready', () => {
+            const l = $('div[name="detailw"]').parent().parent().parent();
+            for (let i = 0; i < l.length; i++) {
+              $(l[i]).css('padding', '0');
+            }
+          })
           marker.addListener("click", () => {
             infoWindow.close();
             infoWindow.open({
@@ -401,6 +407,7 @@ export default inject(
             //   item.parentElement.parentElement.parentElement.style.padding = '1px';
             // }), 1)
           })
+
           markers.push(marker)
         }
 
@@ -444,6 +451,12 @@ export default inject(
             '</div>'
           const infoWindow = new google.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
+          })
+          infoWindow.addListener('domready', () => {
+            const l = $('div[name="detailw"]').parent().parent().parent();
+            for (let i = 0; i < l.length; i++) {
+              $(l[i]).css('padding', '0');
+            }
           })
           marker.addListener("click", () => {
             infoWindow.close();
