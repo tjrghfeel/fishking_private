@@ -393,6 +393,7 @@ export default inject(
           infoWindow.addListener('domready', () => {
             const l = $('div[name="detailw"]').parent().parent().parent();
             for (let i = 0; i < l.length; i++) {
+              $(l[i]).css('max-width', '200px');
               $(l[i]).css('padding', '0');
             }
           })
@@ -455,6 +456,7 @@ export default inject(
           infoWindow.addListener('domready', () => {
             const l = $('div[name="detailw"]').parent().parent().parent();
             for (let i = 0; i < l.length; i++) {
+              $(l[i]).css('max-width', '200px');
               $(l[i]).css('padding', '0');
             }
           })
