@@ -44,11 +44,11 @@ export default inject(
         }
 
         // 마커 이미지 생성
-        const imgSize = new kakao.maps.Size(18, 18),
+        const imgSize = new kakao.maps.Size(18, 22),
           imgOption = {offset: new kakao.maps.Point(9, 9)},
-          imgSrcShip = "/assets/cust/img/pin_ship.png",
+          imgSrcShip = "/assets/cust/img/pin_boat.png",
           imgSrcRock = "/assets/cust/img/pin_rock.png",
-          imgSrcHarbor = "/assets/cust/img/pin_har.png";
+          imgSrcHarbor = "/assets/cust/img/pin_point.png";
 
         this.setState({
           // markerImgShip: new kakao.maps.MarkerImage(imgSrcShip, imgSize, imgOption),
@@ -370,13 +370,14 @@ export default inject(
             content: content,
           })
           marker.addListener("click", () => {
+            infoWindow.close();
             infoWindow.open({
               anchor: marker,
               map: this.map,
               shouldFocus: false,
             })
             setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
-              item.parentElement.parentElement.parentElement.style.padding = '0';
+              item.parentElement.parentElement.parentElement.style.padding = '1px';
             }), 1)
           })
           markers.push(marker)
@@ -424,13 +425,14 @@ export default inject(
             content: content,
           })
           marker.addListener("click", () => {
+            infoWindow.close();
             infoWindow.open({
               anchor: marker,
               map: this.map,
               shouldFocus: false,
             })
             setTimeout(() => document.getElementsByName("detailw").forEach((item, index) => {
-              item.parentElement.parentElement.parentElement.style.padding = '0';
+              item.parentElement.parentElement.parentElement.style.padding = '1px';
             }), 1)
           })
           markers.push(marker)
