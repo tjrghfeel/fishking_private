@@ -404,4 +404,25 @@ public class GoodsService {
 
         return result;
     }
+
+    @Transactional
+    public Page<Map<String, Object>>getDayFishing(String date, Member member, Integer page) {
+        Page<Goods> goods = goodsRepo.getDayFishing(date, member, page);
+        List<Map<String, Object>> results = new ArrayList<>();
+        goods.getContent().forEach(g -> {
+            Map<String, Object> map = new HashMap<>();
+            Integer p = rideShipRepository.countByGoods(g, date);
+            map.put("goodsId", g.getId());
+            map.put("shipName", g.getShip().getShipName());
+            map.put("goodsName", g.getName());
+            map.put("status", g.getId());
+            map.put("date", date);
+            map.put("ridePersonnel", g.getId());
+            map.put("maxPersonnel", g.getMaxPersonnel());
+            results.add(map);
+        });
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("fishingStartTime"));
+        Page<Map<String, Object>> result = new PageImpl<>(results, pageable, results.size());
+        return result;
+    }
 }

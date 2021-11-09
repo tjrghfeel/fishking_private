@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.repository.BaseRepository;
@@ -16,5 +17,8 @@ public interface RideShipRepository extends BaseRepository<RideShip, Long>, Ride
    // List<RideShip> findAll(Specification<RideShip> rideShipSpecification);
     @Query("select r from RideShip r where r.ordersDetail.orders.id = :orderId")
     List<RideShip> findRideByOrder(Long orderId);
+
+    @Query("select count(r) from RideShip r where r.ordersDetail.orders.goods = :goods and r.ordersDetail.orders.fishingDate = :date")
+    Integer countByGoods(Goods goods, String date);
 
 }

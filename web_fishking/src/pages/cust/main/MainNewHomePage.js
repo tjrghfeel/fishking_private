@@ -89,7 +89,10 @@ export default inject(
         this.map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: 34.9267, lng: 128.079 },
           zoom: 8,
+          gestureHandling: "greedy",
           disableDefaultUI: true,
+          zoomControl: false,
+          streetViewControl: false,
         });
 
         // 하단 리스트 토글
@@ -390,13 +393,12 @@ export default inject(
           const infoWindow = new google.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
           })
-          infoWindow.addListener('domready', () => {
-            const l = $('div[name="detailw"]').parent().parent().parent();
-            for (let i = 0; i < l.length; i++) {
-              $(l[i]).css('max-width', '200px');
-              $(l[i]).css('padding', '0');
-            }
-          })
+          // infoWindow.addListener('domready', () => {
+          //   const l = $('div[name="detailw"]').parent().parent().parent();
+          //   for (let i = 0; i < l.length; i++) {
+          //     $(l[i]).css('padding', '0px 18px 0px 18px');
+          //   }
+          // })
           marker.addListener("click", () => {
             infoWindow.close();
             infoWindow.open({
@@ -453,13 +455,12 @@ export default inject(
           const infoWindow = new google.maps.InfoWindow({//지도 위 포인트 클릭시 뜨는 정보창.
             content: content,
           })
-          infoWindow.addListener('domready', () => {
-            const l = $('div[name="detailw"]').parent().parent().parent();
-            for (let i = 0; i < l.length; i++) {
-              $(l[i]).css('max-width', '200px');
-              $(l[i]).css('padding', '0');
-            }
-          })
+          // infoWindow.addListener('domready', () => {
+          //   const l = $('div[name="detailw"]').parent().parent().parent();
+          //   for (let i = 0; i < l.length; i++) {
+          //     $(l[i]).css('padding', '0px 0px 0px 18px');
+          //   }
+          // })
           marker.addListener("click", () => {
             infoWindow.close();
             infoWindow.open({

@@ -331,8 +331,11 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
         return responses;
     }
 
-    public List<Goods> getDayFishing(String date, Member member) {
-        List<Goods> response = queryFactory
+    @Override
+    public Page<Goods> getDayFishing(String date, Member member, Integer page) {
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("fishingStartTime"));
+
+        QueryResults<Goods> results = queryFactory
                 .select(goods)
                 .from(goods).join(ship).on(goods.ship.eq(ship))
                 .where(ship.isActive.eq(true),
@@ -340,7 +343,10 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                         goods.fishingStartTime.substring(0,2).eq(date),
                         goodsFishingDate.fishingDateString.eq(date),
                         goods.isUse.eq(true))
-                .fetch();
-        return response;
+                .orderBy(goods.fishingStartTime.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 }

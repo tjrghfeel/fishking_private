@@ -58,7 +58,6 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
                 break;
             default:
                 order = getSortedColumn(Order.DESC, rideShip, "createdDate");
-
         }
 
         List<TodayBoardingResponse> responses = queryFactory

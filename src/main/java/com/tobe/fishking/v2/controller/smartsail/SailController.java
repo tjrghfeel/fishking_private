@@ -10,6 +10,7 @@ import com.tobe.fishking.v2.model.smartsail.RiderGoodsListResponse;
 import com.tobe.fishking.v2.model.smartsail.RiderSearchDTO;
 import com.tobe.fishking.v2.model.smartsail.SailorResponse;
 import com.tobe.fishking.v2.service.auth.MemberService;
+import com.tobe.fishking.v2.service.fishking.GoodsService;
 import com.tobe.fishking.v2.service.smartsail.BoardingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +31,7 @@ public class SailController {
 
     private final MemberService memberService;
     private final BoardingService boardingService;
+    private final GoodsService goodsService;
 
     @ApiOperation(value = "대시보드", notes= "대시보드 orderBy: 정렬, 최신순:new, 선박명순: shipName, 승선자명순: username " +
             "\n 응답데이터 : {" +
@@ -159,6 +161,34 @@ public class SailController {
         }
         Member member = memberService.getMemberBySessionToken(token);
         Page<RiderGoodsListResponse> riders = boardingService.searchRider(member, riderSearchDTO, page);
+        if (!riders.hasContent()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return riders;
+        }
+    }
+
+    @ApiOperation(value = "승선관리 탭", notes= "승선관리 탭 리스트" +
+            "\n [{" +
+            "\n     goodsId: 상품 id" +
+            "\n     shipName: 선박명" +
+            "\n     goodsName: 상품명" +
+            "\n     status: 상태" +
+            "\n     date: 날짜" +
+            "\n     ridePersonnel: 탑승 인원수" +
+            "\n     maxPersonnel: 최대 인원수" +
+            "\n }, ... ]" +
+            "\n 주소 거리 빼시고 해당 자리에 상품명 보여주세요" +
+            "\n 모든 데이터에대해서 예약번호 아래 예약자 정보 보여주세요")
+    @GetMapping("/sail/goods/{page}")
+    public Page<Map<String, Object>> searchGoods(@RequestHeader(name = "Authorization") String token,
+                                                    @PathVariable Integer page,
+                                                    RiderSearchDTO riderSearchDTO) throws NotAuthException, ResourceNotFoundException, EmptyListException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+        Page<Map<String, Object>> riders = goodsService.getDayFishing(riderSearchDTO.getStartDate(), member, page);
         if (!riders.hasContent()) {
             throw new EmptyListException("결과리스트가 비어있습니다.");
         } else {
