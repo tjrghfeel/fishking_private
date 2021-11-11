@@ -3,13 +3,16 @@ package com.tobe.fishking.v2.service.smartsail;
 import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.addon.CommonAddon;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.HarborCode;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.fishing.FingerType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.smartsail.*;
+import com.tobe.fishking.v2.repository.common.HarborCodeRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.HttpRequestService;
+import com.tobe.fishking.v2.service.NaksihaeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +25,12 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.tobe.fishking.v2.entity.fishing.QRideShip.rideShip;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,12 @@ public class BoardingService {
     private final RiderFingerPrintRepository riderFingerPrintRepository;
     private final HttpRequestService httpRequestService;
     private final SailorRepository sailorRepository;
+    private final EntryExitReportRepository entryExitReportRepository;
+    private final EntryExitAttendRepository entryExitAttendRepository;
+    private final GoodsRepository goodsRepository;
+    private final HarborCodeRepository harborCodeRepository;
+
+    private final NaksihaeService naksihaeService;
 
     @Transactional
     public List<TodayBoardingResponse> getTodayBoarding(Member member, String orderBy) {
@@ -255,5 +263,123 @@ public class BoardingService {
                             .build()
             );
         });
+    }
+
+    @Transactional
+    public List<ReportRiderResponse> getReportRiders(Long goodsId, String date) {
+        Goods goods = goodsRepository.getOne(goodsId);
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<EntryExitReport> reportList = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate);
+        List<ReportRiderResponse> response = new ArrayList<>();
+        if (reportList.size() > 0) {
+            EntryExitReport report = reportList.get(0);
+            response = entryExitAttendRepository.getRiders(report);
+        } else {
+            Ship ship = goods.getShip();
+            List<HarborCode> harborCode = harborCodeRepository.findAllByNameAndDong(ship.getHarborName(), ship.getHarborDong());
+            String code = harborCode.get(0).getCode();
+            LocalDateTime entryTime = null;
+            if (goods.getFishingEndDate().equals("익일")) {
+                entryTime = LocalDateTime.parse(
+                        date + " " + goods.getFishingEndTime(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+                );
+                entryTime = entryTime.plusDays(1L);
+            } else {
+                entryTime = LocalDateTime.parse(
+                        date + " " + goods.getFishingEndTime(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+                );
+
+            }
+            EntryExitReport report = EntryExitReport.builder()
+                    .serial("")
+                    .date(localDate)
+                    .goods(goods)
+                    .entryHarborCode(code)
+                    .entryTime(entryTime)
+                    .build();
+            report.updateStatus("0");
+            entryExitReportRepository.save(report);
+
+            // 선장등록
+            entryExitAttendRepository.save(
+                    EntryExitAttend.builder()
+                            .name(ship.getCapName())
+                            .birth(ship.getCapBirth())
+                            .sex(ship.getCapSex())
+                            .phone(ship.getCapPhone())
+                            .addr(ship.getCapAddr())
+                            .emerNum(ship.getCapEmerNum())
+                            .type("1")
+                            .idNumber(ship.getCapIdNumber())
+                            .rideShipId(null)
+                            .report(report)
+                            .build()
+            );
+            List<RideShip> rideShips = rideShipRepository.findByGoods(goods, date);
+            rideShips.forEach(r -> {
+                entryExitAttendRepository.save(
+                        EntryExitAttend.builder()
+                                .name(r.getName())
+                                .birth(r.getBirthday())
+                                .sex(r.getSex())
+                                .phone(r.getPhoneNumber().replaceAll("-", ""))
+                                .addr(r.getResidenceAddr())
+                                .emerNum(r.getEmergencyPhone().replaceAll("-", ""))
+                                .type("0")
+                                .idNumber("")
+                                .rideShipId(r.getId())
+                                .report(report)
+                                .build()
+                );
+            });
+            response = entryExitAttendRepository.getRiders(report);
+        }
+        return response;
+    }
+
+    @Transactional
+    public void sendReport(Long goodsId, String date) throws UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        Goods goods = goodsRepository.getOne(goodsId);
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        EntryExitReport report = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate).get(0);
+        List<EntryExitAttend> riders = entryExitAttendRepository.getEntryExitAttendsByReport(report);
+        String token = naksihaeService.getToken().get("token").toString();
+        String serial = naksihaeService.reportRegistration(goods, riders, token);
+        report.updateSerial(serial);
+        report.updateStatus("1");
+        entryExitReportRepository.save(report);
+    }
+
+    @Transactional
+    public void updateReport(Long goodsId, String date, String status) throws UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        Goods goods = goodsRepository.getOne(goodsId);
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        EntryExitReport report = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate).get(0);
+        List<EntryExitAttend> riders = entryExitAttendRepository.getEntryExitAttendsByReport(report);
+        String token = naksihaeService.getToken().get("token").toString();
+        boolean success = naksihaeService.updateReportStatus(
+                report.getSerial(),
+                goods,
+                status,
+                token
+        );
+        if (success) {
+            String statusCode = "";
+            switch (status) {
+                case "출항":
+                    statusCode = "5";
+                    break;
+                case "입항":
+                    statusCode = "3";
+                    break;
+                case "취소":
+                    statusCode = "4";
+                    break;
+            }
+            report.updateStatus(statusCode);
+            entryExitReportRepository.save(report);
+        }
     }
 }

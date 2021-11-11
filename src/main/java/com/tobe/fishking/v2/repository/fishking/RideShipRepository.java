@@ -21,4 +21,7 @@ public interface RideShipRepository extends BaseRepository<RideShip, Long>, Ride
     @Query("select count(r) from RideShip r where r.ordersDetail.orders.goods = :goods and r.ordersDetail.orders.fishingDate = :date")
     Integer countByGoods(Goods goods, String date);
 
+    @Query("select r from RideShip r where r.ordersDetail.orders.goods = :goods and r.ordersDetail.orders.fishingDate = :date")
+    List<RideShip> findByGoods(Goods goods, String date);
+
 }

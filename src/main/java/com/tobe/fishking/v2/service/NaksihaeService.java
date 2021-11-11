@@ -2,10 +2,7 @@ package com.tobe.fishking.v2.service;
 
 import com.google.gson.*;
 import com.tobe.fishking.v2.entity.common.HarborCode;
-import com.tobe.fishking.v2.entity.fishing.Goods;
-import com.tobe.fishking.v2.entity.fishing.RideShip;
-import com.tobe.fishking.v2.entity.fishing.Sailor;
-import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.repository.common.HarborCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.NameValuePair;
@@ -94,8 +91,9 @@ public class NaksihaeService {
 
     @Transactional(readOnly = true)
     public String reportRegistration(Goods goods,
-                                     List<RideShip> riders,
-                                     List<Sailor> sailors,
+                                     List<EntryExitAttend> riders,
+//                                     List<RideShip> riders,
+//                                     List<Sailor> sailors,
                                      String token
     ) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         String uri = BASE_URL + "tkoff/reg.do";
@@ -159,7 +157,7 @@ public class NaksihaeService {
 
         embarkList.add(new Gson().toJsonTree(capInfo));
 
-        sailors.forEach(rider -> {
+        riders.forEach(rider -> {
             JsonObject riderInfo = new JsonObject();
             riderInfo.addProperty("embkrNm", rider.getName());
             riderInfo.addProperty("birthDe", rider.getBirth().replaceAll("-", ""));
@@ -167,26 +165,31 @@ public class NaksihaeService {
             riderInfo.addProperty("mobilePhone", rider.getPhone().replaceAll("-", ""));
             riderInfo.addProperty("rnadres", rider.getAddr());
             riderInfo.addProperty("emgncTelno", rider.getEmerNum().replaceAll("-", ""));
-            riderInfo.addProperty("embkrSeCd", "2");
-            capInfo.addProperty("mstrIhidnum", rider.getId());
+            riderInfo.addProperty("embkrSeCd", rider.getType());
+            if (!rider.getType().equals("0")) {
+                riderInfo.addProperty("mstrIhidnum", rider.getId());
+                if (rider.getType().equals("1")) {
+                    riderInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
+                }
+            }
             riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
             riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
             embarkList.add(new Gson().toJsonTree(riderInfo));
         });
 
-        riders.forEach(rider -> {
-            JsonObject riderInfo = new JsonObject();
-            riderInfo.addProperty("embkrNm", rider.getName());
-            riderInfo.addProperty("birthDe", rider.getBirthday().replaceAll("-", ""));
-            riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
-            riderInfo.addProperty("mobilePhone", rider.getPhoneNumber().replaceAll("-", ""));
-            riderInfo.addProperty("rnadres", rider.getResidenceAddr());
-            riderInfo.addProperty("emgncTelno", rider.getEmergencyPhone().replaceAll("-", ""));
-            riderInfo.addProperty("embkrSeCd", "0");
-            riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
-            riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
-            embarkList.add(new Gson().toJsonTree(riderInfo));
-        });
+//        riders.forEach(rider -> {
+//            JsonObject riderInfo = new JsonObject();
+//            riderInfo.addProperty("embkrNm", rider.getName());
+//            riderInfo.addProperty("birthDe", rider.getBirthday().replaceAll("-", ""));
+//            riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
+//            riderInfo.addProperty("mobilePhone", rider.getPhoneNumber().replaceAll("-", ""));
+//            riderInfo.addProperty("rnadres", rider.getResidenceAddr());
+//            riderInfo.addProperty("emgncTelno", rider.getEmergencyPhone().replaceAll("-", ""));
+//            riderInfo.addProperty("embkrSeCd", "0");
+//            riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
+//            riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
+//            embarkList.add(new Gson().toJsonTree(riderInfo));
+//        });
 
         data.add("tkoffSttemntInfo", new Gson().toJsonTree(shipInfo));
         data.add("embkrList", new Gson().toJsonTree(embarkList));

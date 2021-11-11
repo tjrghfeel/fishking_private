@@ -353,4 +353,6 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
         }
         return response;
     }
+
+
 }

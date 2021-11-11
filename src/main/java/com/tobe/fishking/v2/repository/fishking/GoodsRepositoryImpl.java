@@ -337,10 +337,9 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
 
         QueryResults<Goods> results = queryFactory
                 .select(goods)
-                .from(goods).join(ship).on(goods.ship.eq(ship))
+                .from(goods).join(ship).on(goods.ship.eq(ship)).join(goodsFishingDate).on(goods.eq(goodsFishingDate.goods))
                 .where(ship.isActive.eq(true),
                         ship.company.member.eq(member),
-                        goods.fishingStartTime.substring(0,2).eq(date),
                         goodsFishingDate.fishingDateString.eq(date),
                         goods.isUse.eq(true))
                 .orderBy(goods.fishingStartTime.asc())

@@ -40,12 +40,15 @@ public class EntryExitAttend extends BaseTime {
     @Column(columnDefinition = "varchar(15) comment '비상연락처'")
     private String emerNum;
 
-    @Column(columnDefinition = "varchar(15) comment '승선자 구분코드 0:승선객, 2:선원'")
+    @Column(columnDefinition = "varchar(15) comment '승선자 구분코드 0:승선객, 1:선장, 2:선원'")
     private String type;
 
     @Convert(converter = CryptoStringConverter.class)
     @Column(columnDefinition = "varchar(300) comment '주민등록번호 승선객의 경우 빈문자열'")
     private String idNumber;
+
+    @Column(columnDefinition = "bigint comment '승선자 id'")
+    private Long rideShipId;
 
     @Builder
     public EntryExitAttend(String name,
@@ -55,7 +58,9 @@ public class EntryExitAttend extends BaseTime {
                            String addr,
                            String emerNum,
                            String type,
-                           String idNumber) {
+                           String idNumber,
+                           Long rideShipId,
+                           EntryExitReport report) {
         this.name = name;
         this.birth = birth;
         this.sex = sex;
@@ -64,6 +69,8 @@ public class EntryExitAttend extends BaseTime {
         this.emerNum = emerNum;
         this.type = type;
         this.idNumber = idNumber;
+        this.rideShipId = rideShipId;
+        this.report = report;
     }
 
     public void updateAttend(String name,

@@ -5,10 +5,7 @@ import com.tobe.fishking.v2.entity.fishing.Sailor;
 import com.tobe.fishking.v2.exception.EmptyListException;
 import com.tobe.fishking.v2.exception.NotAuthException;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
-import com.tobe.fishking.v2.model.smartsail.AddRiderDTO;
-import com.tobe.fishking.v2.model.smartsail.RiderGoodsListResponse;
-import com.tobe.fishking.v2.model.smartsail.RiderSearchDTO;
-import com.tobe.fishking.v2.model.smartsail.SailorResponse;
+import com.tobe.fishking.v2.model.smartsail.*;
 import com.tobe.fishking.v2.service.auth.MemberService;
 import com.tobe.fishking.v2.service.fishking.GoodsService;
 import com.tobe.fishking.v2.service.smartsail.BoardingService;
@@ -19,6 +16,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +197,33 @@ public class SailController {
         }
     }
 
+    @ApiOperation(value = "상품 승선자리스트", notes= "상품 승선자리스트" +
+            "\n [{" +
+            "\n     goodsId: 상품 id" +
+            "\n     shipName: 선박명" +
+            "\n     goodsName: 상품명" +
+            "\n     status: 상태" +
+            "\n     date: 날짜" +
+            "\n     ridePersonnel: 탑승 인원수" +
+            "\n     maxPersonnel: 최대 인원수" +
+            "\n }, ... ]" +
+            "\n 주소 거리 빼시고 해당 자리에 상품명 보여주세요" +
+            "\n 모든 데이터에대해서 예약번호 아래 예약자 정보 보여주세요")
+    @GetMapping("/sail/report/detail")
+    public List<ReportRiderResponse> searchGoods(@RequestHeader(name = "Authorization") String token,
+                                                 @RequestParam Map<String, Object> body) throws NotAuthException, ResourceNotFoundException, EmptyListException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        Member member = memberService.getMemberBySessionToken(token);
+        List<ReportRiderResponse> riders = boardingService.getReportRiders(Long.parseLong(body.get("goodsId").toString()), body.get("date").toString());
+        if (riders.isEmpty()) {
+            throw new EmptyListException("결과리스트가 비어있습니다.");
+        } else {
+            return riders;
+        }
+    }
+
     @ApiOperation(value = "승선자 추가", notes= "승선자 추가  " +
             "\n {" +
             "\n     orderId: 주문 아이디" +
@@ -327,5 +355,23 @@ public class SailController {
         Member member = memberService.getMemberBySessionToken(token);
         List<SailorResponse> response = boardingService.getSailors(member);
         return response;
+    }
+
+    @PostMapping("/sail/report/send")
+    public void sendReport(@RequestHeader(name = "Authorization") String token,
+                           @RequestBody Map<String, Object> body) throws ResourceNotFoundException, NotAuthException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        boardingService.sendReport(Long.parseLong(body.get("goodsId").toString()), body.get("date").toString());
+    }
+
+    @PostMapping("/sail/report/update")
+    public void changeReportStatus(@RequestHeader(name = "Authorization") String token,
+                                   @RequestBody Map<String, Object> body) throws ResourceNotFoundException, NotAuthException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        if (!memberService.checkAuth(token)) {
+            throw new NotAuthException("권한이 없습니다.");
+        }
+        boardingService.updateReport(Long.parseLong(body.get("goodsId").toString()), body.get("date").toString(), body.get("status").toString());
     }
 }

@@ -59,57 +59,57 @@ public class NaksihaeTest {
 
         assertThat(result, is(result != null));
     }
-
-    @Test
-    public void getHarborData() {
-        String code = null;
-        try {
-            code = naksihaeService.getHarborCode("", "", token);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-
-        assertThat(code, is(code != null));
-    }
-
-    @Test
-    @Transactional
-    public void registration() {
-        Goods goods = goodsRepository.getOne(15L);
-        List<RideShip> riders = new ArrayList<>();
-        List<Sailor> sailors = new ArrayList<>();
-        riders.add(rideShipRepository.getOne(11158L));
-        String result = "";
-        try {
-            result = naksihaeService.reportRegistration(goods, riders, sailors, token);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-        assertThat(result, is(""));
-    }
-
-    @Test
-    @Transactional
-    public void run() {
-        Goods goods = goodsRepository.getOne(15L);
-        boolean result = false;
-        try {
-            result = naksihaeService.updateReportStatus("30179", goods, "취소", token);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-        assertThat(result, is(true));
-    }
+//
+//    @Test
+//    public void getHarborData() {
+//        String code = null;
+//        try {
+//            code = naksihaeService.getHarborCode("", "", token);
+//        } catch (KeyStoreException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (KeyManagementException e) {
+//            e.printStackTrace();
+//        }
+//
+//        assertThat(code, is(code != null));
+//    }
+//
+//    @Test
+//    @Transactional
+//    public void registration() {
+//        Goods goods = goodsRepository.getOne(15L);
+//        List<RideShip> riders = new ArrayList<>();
+//        List<Sailor> sailors = new ArrayList<>();
+//        riders.add(rideShipRepository.getOne(11158L));
+//        String result = "";
+//        try {
+//            result = naksihaeService.reportRegistration(goods, riders, sailors, token);
+//        } catch (KeyStoreException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (KeyManagementException e) {
+//            e.printStackTrace();
+//        }
+//        assertThat(result, is(""));
+//    }
+//
+//    @Test
+//    @Transactional
+//    public void run() {
+//        Goods goods = goodsRepository.getOne(15L);
+//        boolean result = false;
+//        try {
+//            result = naksihaeService.updateReportStatus("30179", goods, "취소", token);
+//        } catch (KeyStoreException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (KeyManagementException e) {
+//            e.printStackTrace();
+//        }
+//        assertThat(result, is(true));
+//    }
 }

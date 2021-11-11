@@ -49,6 +49,7 @@ public class GoodsService {
     private final CommonCodeRepository codeRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final RideShipRepository rideShipRepository;
+    private final EntryExitReportRepository entryExitReportRepository;
 
 
     private static int searchSize = 0;
@@ -409,16 +410,42 @@ public class GoodsService {
     public Page<Map<String, Object>>getDayFishing(String date, Member member, Integer page) {
         Page<Goods> goods = goodsRepo.getDayFishing(date, member, page);
         List<Map<String, Object>> results = new ArrayList<>();
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         goods.getContent().forEach(g -> {
             Map<String, Object> map = new HashMap<>();
             Integer p = rideShipRepository.countByGoods(g, date);
+            List<EntryExitReport> report = entryExitReportRepository.getReportByGoodsAndDate(g, localDate);
+            if (report.size() == 0) {
+                map.put("status", "신고필요");
+            } else {
+                switch (report.get(0).getStatus()) {
+                    case "0":
+                        map.put("status", "신고필요");
+                        break;
+                    case "1":
+                        map.put("status", "신고제출");
+                        break;
+                    case "2":
+                        map.put("status", "신고확인");
+                        break;
+                    case "3":
+                        map.put("status", "입항");
+                        break;
+                    case "4":
+                        map.put("status", "출항취소");
+                        break;
+                    case "5":
+                        map.put("status", "운항중");
+                        break;
+                }
+            }
             map.put("goodsId", g.getId());
             map.put("shipName", g.getShip().getShipName());
             map.put("goodsName", g.getName());
-            map.put("status", g.getId());
             map.put("date", date);
-            map.put("ridePersonnel", g.getId());
+            map.put("ridePersonnel", p);
             map.put("maxPersonnel", g.getMaxPersonnel());
+            map.put("date", date);
             results.add(map);
         });
         Pageable pageable = PageRequest.of(page, 20, Sort.by("fishingStartTime"));
