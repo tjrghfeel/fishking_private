@@ -12,4 +12,5 @@ public interface SailorResponse {
     String getPhone();
     String getEmerNum();
     String getIdNumber();
+    String getId();
 }

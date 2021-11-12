@@ -18,10 +18,10 @@
 <!--  Filter -->
 <div class="filterlinewrap container nopadding">
     <div class="mt-3 mb-3" style="text-align: center">
-        <div><b>선박명 (상품명) 출항신고</b></div>
-        <div><b>출항시각: 2021-11-10 10:00</b></div>
-        <div><b>입항예정: 2021-11-10 22:00</b></div>
-        <div>승선인원: <b>1명</b> (선장 1명, 선원 0명 포함)</div>
+        <div><b id="shipname"></b></div>
+        <div><b>출항시각: <span id="starttime"></span></b></div>
+        <div><b>입항예정: <span id="endtime"></span></b></div>
+        <div>승선인원: <span id="countStr"></span></div>
     </div>
     <div id="container">
     </div>
@@ -29,13 +29,13 @@
 <!-- /end Filter -->
 
 <!-- 하단버튼 -->
-<div class="fixed-bottom">
+<div class="fixed-bottom" id="btm-btn">
     <div class="row no-gutters">
         <div class="col-12"><a id="sendBtn" class="btn btn-primary btn-lg btn-block">신고서 전송</a></div>
     </div>
 </div>
 <!--// 하단버튼 -->
-
+<div id="mask" style="z-index: 999; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
 <jsp:include page="cmm_foot.jsp" />
 
 <script>
@@ -43,6 +43,10 @@
     pending = true;
     var goodsId = location.search.split("&")[0].split("=")[1]
     var date = location.search.split("&")[1].split("=")[1]
+    console.log(goodsId, date)
+    if (location.search.split("&").length > 2) {
+      $('#btm-btn').hide()
+    }
 
     $.ajax('/v2/api/sail/report/detail', {
       method: 'GET',
@@ -59,10 +63,13 @@
           alert('조회된 데이터가 없습니다.');
         } else {
           var container = $('#container');
-          for (var i = 0; i < response.length; i++) {
-            var item = response[i];
+          var sailorCount = 0
+          var rider = response['rider']
+          for (var i = 0; i < rider.length; i++) {
+            var item = rider[i];
             var status = item['status']
             if (status == "미승선") continue
+            if (status == "선원") sailorCount += 1
             var tags = $(' \
                             <div class="container nopadding mt-2" name="list-item" data-index="' + i + '"> \
                                 <div class="card-round-grey"> \
@@ -84,7 +91,15 @@
             $(tags).data('item', item);
             $(container).append(tags);
           }
+          var numberStr = '<b>'+rider.length+'명</b> (선장 1명, 선원 '+sailorCount+'명 포함)'
+          $('#shipname').text(response['shipName'] + ' (' + response['goodsName'] + ')');
+          $('#starttime').text(response['startTime']);
+          $('#endtime').text(response['endTime']);
+          $('#countStr').append(numberStr);
+
           $('#sendBtn').click(function () {
+            $('#mask').show()
+            alert('등록중입니다. 잠시만 기다려주세요');
             $.ajax('/v2/api/sail/report/send', {
               method: 'POST',
               dataType: 'json',
@@ -97,6 +112,7 @@
                 xhr.setRequestHeader('Content-Type', 'application/json');
               },
               complete: function(jqXHR) {
+                $('#mask').hide()
                 if (jqXHR.readyState == 4) {
                   window.location.href = '/boarding/sail'
                 } else {

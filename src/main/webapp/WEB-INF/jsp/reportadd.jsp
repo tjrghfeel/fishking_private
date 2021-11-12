@@ -19,10 +19,14 @@
 <div class="filterlinewrap container nopadding" id="container">
 </div>
 
+<a onclick="javascript:moveToAdd();" class="add-circle" style="z-index: 50; bottom: 60px;">
+    <img src="/assets/smartsail/img/svg/icon-add-user.svg" alt="" class="add-icon"/>
+</a>
+
 <!-- 하단버튼 -->
 <div class="fixed-bottom">
     <div class="row no-gutters">
-        <div class="col-6"><a onclick="javascript:moveToRegistOther();" class="btn btn-secondary btn-lg btn-block">선원추가</a></div>
+        <div class="col-6"><a onclick="javascript:addSailor();" class="btn btn-secondary btn-lg btn-block">선원추가</a></div>
         <div class="col-6"><a onclick="javascript:writeReport();" class="btn btn-primary btn-lg btn-block">출항신고서 작성</a></div>
     </div>
 </div>
@@ -31,6 +35,11 @@
 <jsp:include page="cmm_foot.jsp" />
 
 <script>
+  // 승선객등록
+  function moveToAdd () {
+
+    location.href = '/boarding/sailadd2' + location.search;
+  }
   // ----- > 승선 확인
   function fn_fingerprint_confirm (element) {
     var item = $(element.parentNode.parentNode.parentNode.parentNode).data('item');
@@ -44,6 +53,9 @@
       fingerTypeNum: 1
     }
     window.location.href = '/boarding/fingerprint?data=' + encodeURIComponent(JSON.stringify(data));
+  }
+  function addSailor () {
+    location.href = '/boarding/sailoradd' + location.search;
   }
   function writeReport () {
     location.href = '/boarding/report' + location.search;
@@ -68,9 +80,14 @@
           alert('조회된 데이터가 없습니다.');
         } else {
           var container = $('#container');
-          for (var i = 0; i < response.length; i++) {
-            var item = response[i];
+          var rider = response['rider']
+          for (var i = 0; i < rider.length; i++) {
+            var item = rider[i];
             var status = item['status']
+            var c = ''
+            if (status == '미승선') {
+              c = 'style="background-color: #101010;"'
+            }
             var tags = $(' \
                             <div class="container nopadding mt-2" name="list-item" data-index="' + i + '"> \
                                 <div class="card-round-grey"> \
@@ -83,7 +100,7 @@
                                             <p><small>주소: </small>' + item['address'] + '</p> \
                                         </div> \
                                         <div class="w-25"> \
-                                            <a class="btn btn-primary btn-lg btn-block rounded h-auto" onclick="javascript:fn_fingerprint_confirm(this)">' + status + '</a> \
+                                            <a class="btn btn-primary btn-lg btn-block rounded h-auto" onclick="javascript:fn_fingerprint_confirm(this)"'+c+'>' + status + '</a> \
                                         </div> \
                                     </div> \
                                 </div> \

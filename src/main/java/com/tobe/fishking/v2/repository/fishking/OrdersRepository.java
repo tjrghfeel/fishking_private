@@ -243,4 +243,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>, OrdersRep
             "from Orders o2 ")
     List<Map<String, Long>> countByOrderStatus(Pageable pageable);
 
+    @Query("select o from Orders o where o.fishingDate = :date and o.goods = :goods and o.createdBy = :member")
+    Orders getOrdersByGoodsAndDateAndMember(Goods goods, String date, Member member);
 }

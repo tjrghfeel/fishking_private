@@ -34,7 +34,7 @@ public class ReportRiderResponse {
             String type,
             Boolean status
     ) {
-        String idNum = birthday + "-";
+        String idNum = birthday.substring(2).replaceAll("-", "") + "-";
         if (Integer.parseInt(birthday.substring(0,2)) >= 20) {
             idNum = idNum + (sex.equals("M") ? "3" : "4");
         } else {

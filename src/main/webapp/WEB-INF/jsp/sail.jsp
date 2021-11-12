@@ -67,7 +67,7 @@
 </div>
 <!-- /end Filter -->
 <p class="clearfix"></p>
-
+<div id="mask" style="z-index: 999; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
 <jsp:include page="cmm_foot.jsp" />
 <script>
     var page = 0;
@@ -91,40 +91,43 @@
         // $('#keyword').val('');
     }
     function updateStatus (element) {
+      $('#mask').show()
       var item = $(element.parentNode.parentNode.parentNode.parentNode).data('item');
       if (item['status'] == "신고필요") {
         if (confirm("신고가 필요합니다 ")) {
+          $('#mask').hide()
           location.href = '/boarding/reportadd?goodsId=' + item['goodsId'] + '&date=' + item['date'];
-        } else {
-          var status = item['date']
-          if (status == '신고제출') {
-            status = '출항'
-          } else if (status == '운항중') {
-            status = '입항'
-          }
-            $.ajax('/v2/api/sail/report/update', {
-              method: 'POST',
-              dataType: 'json',
-              data: JSON.stringify({
-                goodsId: item['goodsId'],
-                date: item['date'],
-                status: status,
-              }),
-              beforeSend: function (xhr) {
-                xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
-                xhr.setRequestHeader('Content-Type', 'application/json');
-              },
-              complete: function(jqXHR) {
-                if (jqXHR.readyState == 4) {
-                  alert('변경되었습니다')
-                  window.location.reload(true);
-                } else {
-                  alert('잠시 후 다시 시도해주세요')
-                  window.location.reload(true);
-                }
-              }
-            })
         }
+      } else {
+        var status = item['status']
+        if (status == '신고제출') {
+          status = '출항'
+        } else if (status == '운항중') {
+          status = '입항'
+        }
+        $.ajax('/v2/api/sail/report/update', {
+          method: 'POST',
+          dataType: 'json',
+          data: JSON.stringify({
+            goodsId: item['goodsId'],
+            date: item['date'],
+            status: status,
+          }),
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', localStorage.getItem('@accessToken'));
+            xhr.setRequestHeader('Content-Type', 'application/json');
+          },
+          complete: function(jqXHR) {
+            $('#mask').hide()
+            if (jqXHR.readyState == 4) {
+              console.log(jqXHR)
+              alert(jqXHR.responseText)
+              window.location.reload(true);
+            } else {
+              alert('잠시 후 다시 시도해주세요')
+            }
+          }
+        })
       }
     }
     function onclick_item (element) {
@@ -133,7 +136,11 @@
     }
     function onclick_add (element) {
         var item = $(element.parentNode.parentNode.parentNode.parentNode).data('item');
-        location.href = '/boarding/reportadd?goodsId=' + item['goodsId'] + '&date=' + item['date'];
+        if (item['status'] !== '신고필요') {
+          location.href = '/boarding/report?goodsId=' + item['goodsId'] + '&date=' + item['date'] + '&s=2';
+        } else {
+          location.href = '/boarding/reportadd?goodsId=' + item['goodsId'] + '&date=' + item['date'];
+        }
     }
     function fn_loadPageData () {
         pending = true;
@@ -182,11 +189,13 @@
                                         <div class="row no-gutters"> \
                                             <div class="col-12 padding-sm"> \
                                                 <div class=""> \
-                                                    <p><h5>' + item['shipName'] + ' (' + item['goodsName'] + ')</h5></p> \
-                                                    <p>' + item['status'] + '</p> \
+                                                    <p style="font-size:16px;"><b>' + item['shipName'] + ' (' + item['goodsName'] + ')</b></p> \
                                                 </div> \
-                                                <p>2021-11-10 10:00 ~ 2021-11-10 22:00</p> \
-                                                <p>' + item['ridePersonnel'] + '/' + item['maxPersonnel'] +'명</p> \
+                                                <p> \
+                                                    <span style="width: 30%">승선 ' + item['ridePersonnel'] + ' / 정원 ' + item['maxPersonnel'] +'명</span> \
+                                                    <span style="color: #ff0000; width: 68%; display: inline-block; text-align: right;"><b>' + item['status'] + '</b></span> \
+                                                </p> \
+                                                <p>' + item['startTime'] + ' ~ ' + item['endTime'] + '</p> \
                                             </div> \
                                         </div> \
                                     </div> \

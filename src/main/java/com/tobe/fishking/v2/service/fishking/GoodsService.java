@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -446,6 +447,23 @@ public class GoodsService {
             map.put("ridePersonnel", p);
             map.put("maxPersonnel", g.getMaxPersonnel());
             map.put("date", date);
+
+            LocalDateTime start = LocalDateTime.parse(
+                    date + g.getFishingStartTime(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm")
+            );
+            LocalDateTime end = LocalDateTime.parse(
+                    date + g.getFishingEndTime(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm")
+            );
+
+            map.put("startTime", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm")));
+            if (g.getFishingEndTime().equals("익일")) {
+                map.put("endTime", end.plusDays(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm")));
+            } else {
+                map.put("endTime", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd a HH:mm")));
+            }
+
             results.add(map);
         });
         Pageable pageable = PageRequest.of(page, 20, Sort.by("fishingStartTime"));

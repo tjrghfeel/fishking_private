@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.repository.fishking;
 
+import com.tobe.fishking.v2.entity.auth.Member;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
 import com.tobe.fishking.v2.entity.fishing.Orders;
@@ -41,5 +42,9 @@ public interface OrderDetailsRepository extends BaseRepository<OrderDetails, Lon
 */
     @Query("select o from OrderDetails o where o.goods = :goods and o.orders.fishingDate = :date and o.orders.isPay = true and o.orders.orderStatus <> 4 order by o.createdDate asc")
     List<OrderDetails> getByGoodsAndDate(Goods goods, String date);
+
+
+    @Query("select o from OrderDetails o where o.goods = :goods and o.orders.fishingDate = :date and o.createdBy = :member")
+    OrderDetails getByGoodsAndDateAndMember(Goods goods, String date, Member member);
 
 }

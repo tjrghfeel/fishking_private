@@ -12,8 +12,8 @@ import javax.validation.Valid;
 @NoArgsConstructor
 public class AddRiderDTO {
 
-    @ApiParam(value = "주문아이디")
-    private @Valid Long orderId;
+//    @ApiParam(value = "주문아이디")
+//    private @Valid Long orderId;
     @ApiParam(value = "승선자 이름")
     private @Valid String name;
     @ApiParam(value = "생년월일")
@@ -26,5 +26,9 @@ public class AddRiderDTO {
     private @Valid String sex;
     @ApiParam(value = "주소")
     private @Valid String addr;
+    @ApiParam(value = "날짜")
+    private @Valid String date;
+    @ApiParam(value = "상품 id")
+    private @Valid Long goodsId;
 
 }
