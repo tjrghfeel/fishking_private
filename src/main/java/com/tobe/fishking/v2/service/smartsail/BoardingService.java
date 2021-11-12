@@ -499,7 +499,7 @@ public class BoardingService {
                 report.updateStatus(statusCode);
                 entryExitReportRepository.save(report);
             }
-            return "변경되었습니다.";
+            return "상태가 변경되었습니다.";
         } catch (Exception e) {
             e.printStackTrace();
             return "잠시 후 다시 시도 바랍니다.";
