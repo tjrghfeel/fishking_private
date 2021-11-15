@@ -34,11 +34,11 @@
         </div>
         <div class="form-group">
             <label for="phone">연락처 <strong class="required"></strong></label>
-            <input type="text" class="form-control" id="phone" placeholder="휴대폰번호를 입력해 주세요.">
+            <input type="text" class="form-control" id="phone" placeholder="휴대폰번호를 입력해 주세요. (예: 01012345678)">
         </div>
         <div class="form-group">
             <label for="emergencyPhone">비상연락처 <strong class="required"></strong></label>
-            <input type="text" class="form-control" id="emergencyPhone" placeholder="비상연락처를 입력해 주세요.">
+            <input type="text" class="form-control" id="emergencyPhone" placeholder="비상연락처를 입력해 주세요. (예: 01012345678)">
         </div>
         <div class="form-group">
             <label for="idNum">주민등록번호 <strong class="required"></strong></label>
@@ -50,6 +50,7 @@
                 <input type="text" class="form-control" style="width: 75%;" id="addr" placeholder="주소를 입력해 주세요." readonly>
                 <a class="btn btn-block btn-grey rounded-0" style="width: 25%; font-size: 12px; height: 33px; !important" onclick="javascript:postCode()">주소찾기</a>
             </div>
+            <input type="text" class="form-control" style="width: 100%;margin-top:2px;" id="addr_d" placeholder="상세주소를 입력해 주세요.">
             <%--주소찾기--%>
             <div id="wrap" style="display:none;border:1px solid;height:300px;margin:5px 0;position:relative">
                 <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
@@ -96,20 +97,21 @@
     var emergencyPhone = $('#emergencyPhone').val();
     var idNum = $('#idNum').val();
     var addr = $('#addr').val();
+    var addr_detail = $('#addr_d').val();
     var id = $('#sailorId').val();
     var checked = $('#chkagree').is(':checked');
 
     if (name.length == 0) {
       alert('선원이름을 입력해주세요.');
       return;
-    }else if (phone.length == 0) {
+    }else if (phone.length != 11) {
       alert('휴대폰번호를 입력해주세요.');
       return;
-    }else if (emergencyPhone.length == 0) {
+    }else if (emergencyPhone.length != 11) {
       alert('비상연락처를 입력해주세요.');
       return;
-    }else if (idNum == "") {
-      alert('성별을 선택해주세요.');
+    }else if (idNum.length != 13) {
+      alert('주민등록번호를 입력해주세요.');
       return;
     }else if (addr.length == 0) {
       alert('주소를 입력해주세요.');
@@ -131,7 +133,7 @@
         phone: phone,
         emergencyPhone: emergencyPhone,
         idNumber: idNum,
-        address: addr,
+        address: addr + ' ' + addr_detail,
         id: id,
       }),
       beforeSend: function (xhr) {
@@ -227,6 +229,7 @@
         addr = data.roadAddress;
 
         document.getElementById("addr").value = addr;
+        document.getElementById("addr_d").focus();
         element_wrap.style.display = 'none';
 
         document.body.scrollTop = currentScroll;

@@ -86,7 +86,7 @@ export default inject(
         // };
         // this.map = new kakao.maps.Map(this.container.current, options);
 
-        this.map = new google.maps.Map(document.getElementById("map"), {
+        this.map = new google.maps.Map(document.getElementById("mainmap"), {
           center: { lat: 34.9267, lng: 128.079 },
           zoom: 8,
           gestureHandling: "greedy",
@@ -570,7 +570,7 @@ export default inject(
             </header>
             <div
               ref={this.container}
-              id="map"
+              id="mainmap"
               className="map"
             ></div>
             <div id="content">

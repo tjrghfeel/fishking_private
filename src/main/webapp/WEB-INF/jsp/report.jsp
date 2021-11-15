@@ -75,14 +75,12 @@
                                 <div class="card-round-grey"> \
                                     <div class="card card-sm flex-row align-items-center" style="margin: 0;"> \
                                         <div class="w-75"> \
-                                            <p><small>승선자명: </small>' + item['name'] + '</p> \
-                                            <p><small>휴대전화: </small>' + item['phone'] + '</p> \
-                                            <p><small>비상연락: </small>' + item['emergencyPhone'] + '</p> \
-                                            <p><small>생년월일: </small>' + item['birthday'] + '</p> \
-                                            <p><small>주소: </small>' + item['address'] + '</p> \
+                                            <p style="margin:0;line-height:120%;"><small>승선자명: </small>' + item['name'] + ' (' + item['phone'] + ')</p> \
+                                            <p style="margin:0;line-height:120%;"><small>생년월일: </small>' + item['birthday'] + '</p> \
+                                            <p style="margin:0;line-height:120%;"><small>주소: </small>' + item['address'] + '</p> \
                                         </div> \
                                         <div class="w-25"> \
-                                            <a class="btn btn-primary btn-lg btn-block rounded h-auto" disabled="">' + status + '</a> \
+                                            <a class="btn btn-primary btn-lg btn-block rounded h-auto" style="font-size: 12px; padding: 11px 10px;" disabled="">' + status + '</a> \
                                         </div> \
                                     </div> \
                                 </div> \

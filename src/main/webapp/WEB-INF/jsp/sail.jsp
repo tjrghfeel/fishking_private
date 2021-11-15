@@ -105,6 +105,7 @@
         } else if (status == '운항중') {
           status = '입항'
         }
+        console.log(status)
         $.ajax('/v2/api/sail/report/update', {
           method: 'POST',
           dataType: 'json',
@@ -204,7 +205,7 @@
                                             <a onclick="javascript:onclick_add(this);" class="btn btn-info btn-block btn-sm mt-1 mb-1">상세보기</a> \
                                         </div> \
                                         <div style="width: 48%;"> \
-                                            <a onclick="javascript:updateStatus(this);" class="btn btn-info btn-block btn-sm mt-1 mb-1">상태변경</a> \
+                                            <a onclick="javascript:updateStatus(this);" class="btn btn-info btn-block btn-sm mt-1 mb-1">상태변경확인</a> \
                                         </div> \
                                     </div> \
                                 </div> \

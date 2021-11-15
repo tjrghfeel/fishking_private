@@ -12,4 +12,7 @@ import java.util.List;
 public interface EntryExitAttendRepository extends BaseRepository<EntryExitAttend, Long>, EntryExitAttendRepositoryCustom {
     @Query("select a from EntryExitAttend a where a.report = :report")
     List<EntryExitAttend> getEntryExitAttendsByReport(EntryExitReport report);
+
+    @Query("select count(a) from EntryExitAttend a where a.report = :report and a.type='2'")
+    Integer getSailorCount(EntryExitReport report);
 }

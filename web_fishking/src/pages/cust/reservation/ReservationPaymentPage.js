@@ -83,7 +83,7 @@ export default inject(
           firstName: profile.memberName || profile.nickName,
           firstPhone: profile.areaCode.concat(profile.localNumber),
           firstBirthDate: profile.birthDate,
-          firstGender: profile.gender,
+          firstGender: (profile.gender=="남")? "M" : "F",
         });
 
         // >>>>> 상품정보
@@ -160,6 +160,14 @@ export default inject(
         this.setState({ firstPhone: e.target.value })
       }
 
+      onFistBirthChange = (e) => {
+        this.setState({ firstBirthDate: e.target.value })
+      }
+
+      onFistSexChange = (e) => {
+        this.setState({ firstGender: e.target.value })
+      }
+
       openFindAddress = (index) => {
         if (this.ifrmAddress.current.style.display === "block") return;
         console.log(index)
@@ -179,6 +187,7 @@ export default inject(
             // console.log(addr)
             // this.textAddr.current.value = addr;
             document.getElementById(`person-addr-${index}`).value = addr;
+            document.getElementById(`person-addr-detail-${index}`).focus();
             this.ifrmAddress.current.style.display = "none";
             document.body.scrollTop = currentScroll;
           },
@@ -228,6 +237,7 @@ export default inject(
             const birthdate = document.querySelector(`#person-birthdate-${i}`);
             const sex = document.querySelector(`#person-gender-${i}`);
             const addr = document.querySelector(`#person-addr-${i}`);
+            const addr_detail = document.querySelector(`#person-addr-detail-${i}`);
 
             if (name.value === "") {
               name.classList.add("is-invalid");
@@ -285,7 +295,7 @@ export default inject(
             emergencyPhone.push(emergency.value);
             personsBirthdate.push(birthdate.value);
             personsSex.push(sex.value);
-            personsAddr.push(addr.value);
+            personsAddr.push(addr.value + ' ' + addr_detail.value);
           }
           // >>>>> Step-3 :: prepare
           const resolve = await APIStore._get(
@@ -749,7 +759,7 @@ export default inject(
                                 className="form-control"
                                 id={`person-name-${index}`}
                                 placeholder="이름을 입력하세요."
-                                value={this.state.firstName}
+                                value={this.state.reservePersonName}
                                 onChange={this.onFistNameChange}
                               />
                             </div>
@@ -766,7 +776,7 @@ export default inject(
                                 maxLength={11}
                                 id={`person-phone-${index}`}
                                 placeholder="휴대폰 번호를 입력해 주세요."
-                                value={this.state.firstPhone}
+                                value={this.state.reservePersonPhone}
                                 onChange={this.onFistPhoneChange}
                               />
                             </div>
@@ -799,6 +809,7 @@ export default inject(
                                   value={this.state.firstBirthDate}
                                   id={`person-birthdate-${index}`}
                                   placeholder="생년 월일을 입력해 주세요."
+                                  onChange={this.onFistBirthChange}
                               />
                             </div>
                             <div className="form-group">
@@ -810,9 +821,10 @@ export default inject(
                                   // minLength={1}
                                   // maxLength={2}
                                   className="form-control"
-                                  value={(this.state.firstGender=="남")? "M" : "F"}
+                                  value={this.state.firstGender}
                                   id={`person-gender-${index}`}
                                   placeholder="성별을 입력해 주세요."
+                                  onChange={this.onFistSexChange}
                               >
                                 <option value="M">남</option>
                                 <option value="F">여</option>
@@ -827,6 +839,17 @@ export default inject(
                                   className="form-control"
                                   id={`person-addr-${index}`}
                                   placeholder="주소를 입력해 주세요."
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputBirth" className="sr-only">
+                                상세 주소를 입력해 주세요.
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                id={`person-addr-detail-${index}`}
+                                placeholder="상세주소를 입력해 주세요."
                               />
                             </div>
                           </div>
@@ -914,6 +937,17 @@ export default inject(
                                   className="form-control"
                                   id={`person-addr-${index}`}
                                   placeholder="주소를 입력해 주세요."
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="inputBirth" className="sr-only">
+                                상세 주소를 입력해 주세요.
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                id={`person-addr-detail-${index}`}
+                                placeholder="상세주소를 입력해 주세요."
                               />
                             </div>
                           </div>

@@ -250,6 +250,7 @@ public class SailController {
             } else {
                 response.put("endTime", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd a HH:mm")));
             }
+            response.put("counts", goods.getMaxPersonnel());
             response.put("rider", riders);
             return response;
         }

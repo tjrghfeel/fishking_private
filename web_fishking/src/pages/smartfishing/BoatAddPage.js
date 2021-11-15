@@ -70,6 +70,7 @@ export default inject(
           capSex: 'M',
           capPhone: null,
           capAddr: null,
+          capAddrDetail: '',
           capEmerNum: null,
           capNumber: null,
           capIdNumber: null,
@@ -78,6 +79,7 @@ export default inject(
           beforeId: null,
           harborName: null,
           harborAddr: null,
+          harborAddrDetail: '',
           harborDong: null,
         };
       }
@@ -347,6 +349,7 @@ export default inject(
             this.setState({harborAddr: addr})
             this.setState({harborDong: dong})
             document.getElementById('harbor-addr').value = addr;
+            document.getElementById('harbor-addr-detail').focus();
             this.ifrmAddress2.current.style.display = "none";
             document.body.scrollTop = currentScroll;
           },
@@ -368,6 +371,7 @@ export default inject(
             let addr = data.roadAddress;
             this.setState({capAddr: addr})
             document.getElementById('cap-addr').value = addr;
+            document.getElementById('cap-addr-detail').focus();
             this.ifrmAddress3.current.style.display = "none";
             document.body.scrollTop = currentScroll;
           },
@@ -461,12 +465,14 @@ export default inject(
           capSex,
           capPhone,
           capAddr,
+          capAddrDetail,
           capEmerNum,
           capNumber,
           capIdNumber,
           shipNumber,
           harborName,
           harborAddr,
+          harborAddrDetail,
           harborDong,
         } = this.state;
         const { APIStore, ModalStore, PageStore } = this.props;
@@ -524,7 +530,8 @@ export default inject(
           });
           return;
         }
-
+        const harborAddrStr = harborAddrDetail.concat(harborAddrDetail)
+        const capAddrStr = capAddr.concat(capAddrDetail)
         const params = {
           name,
           fishingType,
@@ -557,13 +564,13 @@ export default inject(
           capBirth,
           capSex,
           capPhone,
-          capAddr,
+          capAddr: capAddrStr,
           capEmerNum,
           capNumber,
           capIdNumber,
           shipNumber,
           harborName,
-          harborAddr,
+          harborAddr: harborAddrStr,
           harborDong,
         };
         ModalStore.openModal("Confirm", {
@@ -1324,6 +1331,17 @@ export default inject(
                       </button>
                     </div>
                   </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="상세주소"
+                      id="harbor-addr-detail"
+                      value={this.state.harborAddrDetail}
+                      onChange={(e) =>
+                        this.setState({ harborAddrDetail: e.target.value })}
+                    />
+                  </div>
                   <div
                     ref={this.ifrmAddress2}
                     style={{
@@ -1647,6 +1665,17 @@ export default inject(
                         주소찾기
                       </button>
                     </div>
+                  </div>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="상세주소"
+                      id="cap-addr-detail"
+                      value={this.state.capAddrDetail}
+                      onChange={(e) =>
+                        this.setState({ capAddrDetail: e.target.value })}
+                    />
                   </div>
                   <div
                     ref={this.ifrmAddress3}

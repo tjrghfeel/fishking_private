@@ -474,36 +474,67 @@ public class BoardingService {
                     goods,
                     token
             );
-            if (!str.equals("2")) {
+
+            String statusCode = "";
+            switch (status) {
+                case "출항":
+                    statusCode = "5";
+                    break;
+                case "입항":
+                    statusCode = "3";
+                    break;
+                case "취소":
+                    statusCode = "4";
+                    break;
+            }
+
+            if (str.equals("1")) {
                 return "신고가 승인되지 않았습니다. 잠시 후 다시 시도 바랍니다.";
-            }
-            boolean success = naksihaeService.updateReportStatus(
-                    report.getSerial(),
-                    goods,
-                    status,
-                    token
-            );
-            if (success) {
-                String statusCode = "";
-                switch (status) {
-                    case "출항":
-                        statusCode = "5";
-                        break;
-                    case "입항":
-                        statusCode = "3";
-                        break;
-                    case "취소":
-                        statusCode = "4";
-                        break;
+            } else if (str.equals("2")) {
+                if (statusCode.equals("5")) {
+                    boolean success = naksihaeService.updateReportStatus(
+                            report.getSerial(),
+                            goods,
+                            status,
+                            token
+                    );
+                    if (success) {
+                        report.updateStatus(statusCode);
+                        entryExitReportRepository.save(report);
+                    }
+                    return "상태가 운항중으로 변경되었습니다.";
+                } else {
+                    report.updateStatus(str);
+                    entryExitReportRepository.save(report);
+                    return "상태가 신고확인으로 변경되었습니다.";
                 }
-                report.updateStatus(statusCode);
+            } else if (str.equals("5")) {
+                if (statusCode.equals("3")) {
+                    boolean success = naksihaeService.updateReportStatus(
+                            report.getSerial(),
+                            goods,
+                            status,
+                            token
+                    );
+                    if (success) {
+                        report.updateStatus(statusCode);
+                        entryExitReportRepository.save(report);
+                    }
+                    return "상태가 입항으로 변경되었습니다.";
+                } else {
+                    report.updateStatus(str);
+                    entryExitReportRepository.save(report);
+                    return "상태가 운항중으로 변경되었습니다.";
+                }
+            } else if (str.equals("3")) {
+                report.updateStatus(str);
                 entryExitReportRepository.save(report);
+                return "상태가 입항으로 변경되었습니다.";
             }
-            return "상태가 변경되었습니다.";
+            return "잠시 후 다시 시도 바랍니다.";
         } catch (Exception e) {
             e.printStackTrace();
             return "잠시 후 다시 시도 바랍니다.";
         }
-
     }
 }

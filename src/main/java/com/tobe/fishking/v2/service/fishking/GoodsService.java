@@ -51,6 +51,7 @@ public class GoodsService {
     private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final RideShipRepository rideShipRepository;
     private final EntryExitReportRepository entryExitReportRepository;
+    private final EntryExitAttendRepository entryExitAttendRepository;
 
 
     private static int searchSize = 0;
@@ -440,12 +441,24 @@ public class GoodsService {
                         break;
                 }
             }
+            Integer sailorCount = entryExitAttendRepository.getSailorCount(report.get(0));
             map.put("goodsId", g.getId());
             map.put("shipName", g.getShip().getShipName());
             map.put("goodsName", g.getName());
             map.put("date", date);
-            map.put("ridePersonnel", p);
-            map.put("maxPersonnel", g.getMaxPersonnel());
+            map.put("ridePersonnel", p + 1 + sailorCount);
+            if (g.getShip().getWeight() == null) {
+                map.put("maxPersonnel", g.getMaxPersonnel());
+            } else {
+                Double weight = g.getShip().getWeight();
+                if (weight.equals(Double.parseDouble("3.00"))) {
+                    map.put("maxPersonnel", 8);
+                } else if(weight.equals(Double.parseDouble("5.00"))) {
+                    map.put("maxPersonnel", 18);
+                } else {
+                    map.put("maxPersonnel", 22);
+                }
+            }
             map.put("date", date);
 
             LocalDateTime start = LocalDateTime.parse(

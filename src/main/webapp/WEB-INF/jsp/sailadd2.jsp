@@ -30,11 +30,11 @@
         </div>
         <div class="form-group">
             <label for="phone">휴대폰번호 <strong class="required"></strong></label>
-            <input type="text" class="form-control" id="phone" placeholder="휴대폰번호를 입력해 주세요.">
+            <input type="text" class="form-control" id="phone" placeholder="휴대폰번호를 입력해 주세요. (예: 01012345678)">
         </div>
         <div class="form-group">
             <label for="emergencyPhone">비상연락처 <strong class="required"></strong></label>
-            <input type="text" class="form-control" id="emergencyPhone" placeholder="비상연락처를 입력해 주세요.">
+            <input type="text" class="form-control" id="emergencyPhone" placeholder="비상연락처를 입력해 주세요. (예: 01012345678)">
         </div>
         <div class="form-group">
             <label for="birthDate">생년월일 <strong class="required"></strong></label>
@@ -54,6 +54,7 @@
                 <input type="text" class="form-control" style="width: 75%;" id="addr" placeholder="주소를 입력해 주세요." readonly>
                 <a class="btn btn-block btn-grey rounded-0" style="width: 25%; font-size: 12px; height: 33px; !important" onclick="javascript:postCode()">주소찾기</a>
             </div>
+            <input type="text" class="form-control" style="width: 100%;margin-top:2px;" id="addr_d" placeholder="상세주소를 입력해 주세요.">
             <%--주소찾기--%>
             <div id="wrap" style="display:none;border:1px solid;height:300px;margin:5px 0;position:relative">
                 <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
@@ -90,6 +91,15 @@
 <jsp:include page="cmm_foot.jsp" />
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
+  function check_date_valid(date) {
+    if (date.length != 8) {
+      return false
+    } else {
+      date = date.substring(0,4) + "-" + date.substring(4,6) + "-" + date.substring(6)
+      return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+    }
+  }
+
   function fn_submit () {
     // var orderId = new URLSearchParams(location.search).get('orderId');
     var goodsId = location.search.split("&")[0].split("=")[1]
@@ -99,19 +109,20 @@
     var emergencyPhone = $('#emergencyPhone').val();
     var sex = $('#sex').val();
     var addr = $('#addr').val();
+    var addr_detail = $('#addr_d').val();
     var birthDate = $('#birthDate').val();
     var checked = $('#chkagree').is(':checked');
 
     if (name.length == 0) {
       alert('승선자명을 입력해주세요.');
       return;
-    }else if (phone.length == 0) {
+    }else if (phone.length != 11) {
       alert('휴대폰번호를 입력해주세요.');
       return;
-    }else if (emergencyPhone.length == 0) {
+    }else if (emergencyPhone.length != 11) {
       alert('비상연락처를 입력해주세요.');
       return;
-    }else if (birthDate.length == 0) {
+    }else if (!check_date_valid(birthDate)) {
       alert('생년월일을 입력해주세요.');
       return;
     }else if (sex == "") {
@@ -136,7 +147,7 @@
         emergencyPhone: emergencyPhone,
         birthDate: birthDate,
         sex: sex,
-        addr: addr,
+        addr: addr + ' ' + addr_detail,
         date: date,
         goodsId: goodsId
       }),
@@ -197,6 +208,7 @@
         addr = data.roadAddress;
 
         document.getElementById("addr").value = addr;
+        document.getElementById("addr_d").focus();
         element_wrap.style.display = 'none';
 
         document.body.scrollTop = currentScroll;
