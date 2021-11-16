@@ -31,14 +31,17 @@
     </div>
 </div>
 <!--// 하단버튼 -->
-
+<input id="canadd" type="hidden" />
 <jsp:include page="cmm_foot.jsp" />
 
 <script>
   // 승선객등록
   function moveToAdd () {
-
-    location.href = '/boarding/sailadd2' + location.search;
+    if ($('#canadd').val() == 'true') {
+      location.href = '/boarding/sailadd2' + location.search;
+    } else {
+      alert('배의 최대 승선인원을 초과하여 추가할 수 없습니다.')
+    }
   }
   // ----- > 승선 확인
   function fn_fingerprint_confirm (element) {
@@ -55,7 +58,11 @@
     window.location.href = '/boarding/fingerprint?data=' + encodeURIComponent(JSON.stringify(data));
   }
   function addSailor () {
-    location.href = '/boarding/sailoradd' + location.search;
+    if ($('#canadd').val() == 'true') {
+      location.href = '/boarding/sailoradd' + location.search;
+    } else {
+      alert('배의 최대 승선인원을 초과하여 추가할 수 없습니다.')
+    }
   }
   function writeReport () {
     location.href = '/boarding/report' + location.search;
@@ -81,6 +88,7 @@
         } else {
           var container = $('#container');
           var rider = response['rider']
+          $('#canadd').val(response['counts'] > rider.length)
           for (var i = 0; i < rider.length; i++) {
             var item = rider[i];
             var status = item['status']

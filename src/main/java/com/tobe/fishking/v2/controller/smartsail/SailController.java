@@ -250,7 +250,18 @@ public class SailController {
             } else {
                 response.put("endTime", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd a HH:mm")));
             }
-            response.put("counts", goods.getMaxPersonnel());
+            if (goods.getShip().getWeight() == null) {
+                response.put("counts", goods.getMaxPersonnel());
+            } else {
+                Double weight = goods.getShip().getWeight();
+                if (weight.equals(Double.parseDouble("3.00"))) {
+                    response.put("counts", 8);
+                } else if(weight.equals(Double.parseDouble("5.00"))) {
+                    response.put("counts", 18);
+                } else {
+                    response.put("counts", 22);
+                }
+            }
             response.put("rider", riders);
             return response;
         }

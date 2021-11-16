@@ -87,6 +87,7 @@
 </div>
 <!--// 하단버튼 -->
 
+<input type="hidden" id="openmap" value="0" />
 <div id="mask" style="z-index: 1500; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
 <jsp:include page="cmm_foot.jsp" />
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -158,10 +159,11 @@
       success: function (response) {
         $('#mask').hide()
         alert(response['message']);
-        history.back();
-        // if (response['status'] == 'success') {
-        //   history.back();
-        // }
+        if (response['status'] == 'success') {
+          var count = document.getElementById('openmap').value * -1 - 1
+          history.go(count);
+          // location.href = '/boarding/reportadd' + location.search;
+        }
       }
     });
   }
@@ -195,6 +197,8 @@
   }
 
   function postCode() {
+    var count = document.getElementById('openmap').value * 1 + 1
+    document.getElementById('openmap').value = count
     // 현재 scroll 위치를 저장해놓는다.
     var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
     new daum.Postcode({
