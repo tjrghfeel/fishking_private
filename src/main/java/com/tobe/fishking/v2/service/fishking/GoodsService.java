@@ -441,7 +441,10 @@ public class GoodsService {
                         break;
                 }
             }
-            Integer sailorCount = entryExitAttendRepository.getSailorCount(report.get(0));
+            Integer sailorCount = 0;
+            if (report.size()>0) {
+                sailorCount = entryExitAttendRepository.getSailorCount(report.get(0));
+            }
             map.put("goodsId", g.getId());
             map.put("shipName", g.getShip().getShipName());
             map.put("goodsName", g.getName());

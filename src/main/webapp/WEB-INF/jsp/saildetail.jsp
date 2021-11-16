@@ -32,7 +32,7 @@
 
 
 <a onclick="javascript:moveToAdd();" class="add-circle" style="z-index: 50"><img src="/assets/smartsail/img/svg/icon-add-user.svg" alt="" class="add-icon"/></a>
-<div id="mask" style="z-index: 999; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
+<div id="mask" style="z-index: 1500; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
 <jsp:include page="cmm_foot.jsp" />
 <script>
     function moveToAdd () {
