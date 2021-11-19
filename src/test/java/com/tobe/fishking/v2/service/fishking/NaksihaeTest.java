@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.service.fishking;
 
+import com.tobe.fishking.v2.entity.fishing.EntryExitAttend;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.entity.fishing.Sailor;
@@ -38,7 +39,7 @@ public class NaksihaeTest {
     @Autowired
     private RideShipRepository rideShipRepository;
 
-    private String token = "cf3ffc1e2e51469a951d58fe7bdecf65";
+    private String token = "d87a4ad8edc84a54a71e687075f65ee8";
 
     @Test
     public void getToken() {
@@ -76,25 +77,26 @@ public class NaksihaeTest {
 //        assertThat(code, is(code != null));
 //    }
 //
-//    @Test
-//    @Transactional
-//    public void registration() {
-//        Goods goods = goodsRepository.getOne(15L);
-//        List<RideShip> riders = new ArrayList<>();
-//        List<Sailor> sailors = new ArrayList<>();
-//        riders.add(rideShipRepository.getOne(11158L));
-//        String result = "";
-//        try {
-//            result = naksihaeService.reportRegistration(goods, riders, sailors, token);
-//        } catch (KeyStoreException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        } catch (KeyManagementException e) {
-//            e.printStackTrace();
-//        }
-//        assertThat(result, is(""));
-//    }
+    // 20
+    @Test
+    @Transactional
+    public void registration() {
+        Goods goods = goodsRepository.getOne(5L);
+        List<EntryExitAttend> riders = new ArrayList<>();
+        List<Sailor> sailors = new ArrayList<>();
+//        riders.add(rideShipRepository.getOne(8362));
+        String result = "";
+        try {
+            result = naksihaeService.reportRegistration(goods, riders, token);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+        assertThat(result, is(""));
+    }
 //
 //    @Test
 //    @Transactional

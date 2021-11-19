@@ -46,7 +46,8 @@ public class NaksihaeService {
     private final String USER_AGENT = "Mozilla/5.0";
     private final String BASE_URL = "https://ext.fips.go.kr/ffb/api/";
     private final String ID = "devtobe";
-    private final String SECRET_KEY = "41a28f7890b44c9492d1fcf4e15f04e2";
+    private final String SECRET_KEY = "4a97cefb14c4494c9240a527ed9efef6";
+    private final String SECRET_KEY_DEV = "41a28f7890b44c9492d1fcf4e15f04e2";
 
     public Map<String, Object> getToken() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
         String uri = BASE_URL + "auth/token.do";
@@ -57,7 +58,7 @@ public class NaksihaeService {
 
         List<NameValuePair> data = new ArrayList<>();
         data.add(new BasicNameValuePair("userId", (ID)));
-        data.add(new BasicNameValuePair("scrtky", (SECRET_KEY)));
+        data.add(new BasicNameValuePair("scrtky", (SECRET_KEY_DEV)));
         data.add(new BasicNameValuePair("apiReqstTy", ("10")));
 
         httpPost.setEntity(new UrlEncodedFormEntity(data, "UTF-8"));
@@ -67,7 +68,7 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println(json);
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
             String token = res.getAsJsonObject("resultDomain")
@@ -101,7 +102,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
 
         Ship ship = goods.getShip();
@@ -126,8 +127,10 @@ public class NaksihaeService {
         shipInfo.addProperty("fshhpSttusCd", "1");
         shipInfo.addProperty("tkoffDt", start);
         shipInfo.addProperty("clppCd", code);
+//        shipInfo.addProperty("clppCd", "4459");
         shipInfo.addProperty("etryptPrearngeDt", end);
         shipInfo.addProperty("etryptPrearngePrtCd", code);
+//        shipInfo.addProperty("etryptPrearngePrtCd", "4459");
         shipInfo.addProperty("nowEmbrkNmpr", riders.size()+1);
 
         JsonArray embarkList = new JsonArray();
@@ -142,7 +145,10 @@ public class NaksihaeService {
 //        capInfo.addProperty("emgncTelno", "01062242504");
 //        capInfo.addProperty("mstrIhidnum", "7104151914417");
 //        capInfo.addProperty("mrntecnLcnsSn", "SPS7193062");
-
+//        System.out.println(ship.getShipName());
+//        System.out.println(ship.getCapName());
+//        System.out.println(ship.getCapIdNumber());
+//        System.out.println(ship.getCapNumber());
 //        capInfo.addProperty("embkrSeCd", "1");
 //        capInfo.addProperty("embkrNm", ship.getCapName());
 //        capInfo.addProperty("birthDe", ship.getCapBirth().replaceAll("-", ""));
@@ -151,11 +157,11 @@ public class NaksihaeService {
 //        capInfo.addProperty("rnadres", ship.getCapAddr());
 //        capInfo.addProperty("emgncTelno", ship.getCapEmerNum().replaceAll("-", ""));
 //        capInfo.addProperty("mstrIhidnum", ship.getCapIdNumber());
-//        capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
+//        capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber().strip().replaceAll("-", ""));
 //        capInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
 //        capInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
 
-//        embarkList.add(new Gson().toJsonTree(capInfo));
+        embarkList.add(new Gson().toJsonTree(capInfo));
 
         riders.forEach(rider -> {
             JsonObject riderInfo = new JsonObject();
@@ -169,7 +175,7 @@ public class NaksihaeService {
             if (!rider.getType().equals("0")) {
                 riderInfo.addProperty("mstrIhidnum", rider.getIdNumber());
                 if (rider.getType().equals("1")) {
-                    riderInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
+                    riderInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber().strip().replaceAll("-", ""));
                 }
             }
             riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
@@ -227,7 +233,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
 
         JsonObject data = new JsonObject();
@@ -249,10 +255,10 @@ public class NaksihaeService {
             JsonObject res = gson.fromJson(json, JsonObject.class);
             JsonArray harbors = res.getAsJsonObject("resultDomain")
                     .getAsJsonArray("clppList");
-            System.out.println(harbors.size());
+//            System.out.println(harbors.size());
 
             harbors.forEach(harbor -> {
-                System.out.println(harbor);
+//                System.out.println(harbor);
                 String code1 = ((JsonObject) harbor).get("clppCd").getAsString();
                 String name = ((JsonObject) harbor).get("clppNm").getAsString();
                 String dongCode = ((JsonObject) harbor).get("legaldongCd") == JsonNull.INSTANCE ? "" : ((JsonObject) harbor).get("legaldongCd").getAsString();
@@ -287,7 +293,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
 
         Ship ship = goods.getShip();
@@ -308,7 +314,7 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println(json);
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
 
@@ -332,7 +338,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
         Ship ship = goods.getShip();
 
@@ -377,7 +383,7 @@ public class NaksihaeService {
         }
 
         data.add("tkoffSttemntInfo", new Gson().toJsonTree(harborInfo));
-        System.out.println(data);
+//        System.out.println(data);
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
         String result = "";
@@ -385,9 +391,9 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println("--------------------");
-            System.out.println(json);
-            System.out.println("--------------------");
+//            System.out.println("--------------------");
+//            System.out.println(json);
+//            System.out.println("--------------------");
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
 

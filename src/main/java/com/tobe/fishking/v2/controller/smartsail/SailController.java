@@ -284,7 +284,7 @@ public class SailController {
             throw new NotAuthException("권한이 없습니다.");
         }
         Member member = memberService.getMemberBySessionToken(token);
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>(); 
         try {
             boardingService.addNewRider(member, body);
             response.put("status", "success");

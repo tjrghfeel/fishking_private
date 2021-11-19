@@ -94,7 +94,7 @@
             var status = item['status']
             var c = ''
             if (status == '미승선') {
-              c = 'style="background-color: #101010;"'
+              c = 'background-color: #101010;'
             }
             var tags = $(' \
                             <div class="container nopadding mt-2" name="list-item" data-index="' + i + '"> \
@@ -106,7 +106,7 @@
                                             <p style="margin:0;line-height:120%;"><small>주소: </small>' + item['address'] + '</p> \
                                         </div> \
                                         <div class="w-25"> \
-                                            <a class="btn btn-primary btn-lg btn-block rounded h-auto" style="font-size: 12px; padding: 11px 10px;" onclick="javascript:fn_fingerprint_confirm(this)"'+c+'>' + status + '</a> \
+                                            <a class="btn btn-primary btn-lg btn-block rounded h-auto" style="font-size: 12px; padding: 11px 10px;' + c + '" onclick="javascript:fn_fingerprint_confirm(this)">' + status + '</a> \
                                         </div> \
                                     </div> \
                                 </div> \
