@@ -160,8 +160,7 @@ public class NaksihaeService {
 //        capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber().strip().replaceAll("-", ""));
 //        capInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
 //        capInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
-
-        embarkList.add(new Gson().toJsonTree(capInfo));
+//        embarkList.add(new Gson().toJsonTree(capInfo));
 
         riders.forEach(rider -> {
             JsonObject riderInfo = new JsonObject();
