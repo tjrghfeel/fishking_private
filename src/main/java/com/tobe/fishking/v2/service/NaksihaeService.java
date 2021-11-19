@@ -198,7 +198,7 @@ public class NaksihaeService {
 
         data.add("tkoffSttemntInfo", new Gson().toJsonTree(shipInfo));
         data.add("embkrList", new Gson().toJsonTree(embarkList));
-        System.out.println(data);
+//        System.out.println(data);
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
         String result = "";
@@ -206,7 +206,7 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println(json);
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
             String resultCode = res.get("resultCode").getAsString();
