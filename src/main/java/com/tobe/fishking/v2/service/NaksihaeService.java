@@ -118,8 +118,8 @@ public class NaksihaeService {
         String start = date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + goods.getFishingStartTime() + "00";
         String end = date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + goods.getFishingEndTime() + "00";
         JsonObject shipInfo = new JsonObject();
-        shipInfo.addProperty("fshhpSn", ship.getShipNumber());
-        shipInfo.addProperty("fshhpNm", ship.getShipName());
+        shipInfo.addProperty("fshhpSn", ship.getShipNumber().strip());
+        shipInfo.addProperty("fshhpNm", ship.getShipName().strip());
 //        shipInfo.addProperty("fshhpSn", "1802003648240");
 //        shipInfo.addProperty("fshhpNm", "피싱파라다이스호");
 //        shipInfo.addProperty("fshhpSn", "17090016317100");
@@ -146,17 +146,20 @@ public class NaksihaeService {
 //        capInfo.addProperty("mstrIhidnum", "7104151914417");
 //        capInfo.addProperty("mrntecnLcnsSn", "SPS7193062");
 //        System.out.println(ship.getShipName());
+//        System.out.println(ship.getShipNumber());
 //        System.out.println(ship.getCapName());
 //        System.out.println(ship.getCapIdNumber());
 //        System.out.println(ship.getCapNumber());
+//        System.out.println(ship.getCapPhone());
+//        System.out.println(ship.getCapEmerNum());
 //        capInfo.addProperty("embkrSeCd", "1");
-//        capInfo.addProperty("embkrNm", ship.getCapName());
-//        capInfo.addProperty("birthDe", ship.getCapBirth().replaceAll("-", ""));
+//        capInfo.addProperty("embkrNm", ship.getCapName().strip());
+//        capInfo.addProperty("birthDe", ship.getCapBirth().strip().replaceAll("-", ""));
 //        capInfo.addProperty("sexdstnCd", ship.getCapSex().equals("M") ? "0" : "1");
-//        capInfo.addProperty("mobilePhone", ship.getCapPhone().replaceAll("-", ""));
+//        capInfo.addProperty("mobilePhone", ship.getCapPhone().strip().replaceAll("-", ""));
 //        capInfo.addProperty("rnadres", ship.getCapAddr());
-//        capInfo.addProperty("emgncTelno", ship.getCapEmerNum().replaceAll("-", ""));
-//        capInfo.addProperty("mstrIhidnum", ship.getCapIdNumber());
+//        capInfo.addProperty("emgncTelno", ship.getCapEmerNum().strip().replaceAll("-", ""));
+//        capInfo.addProperty("mstrIhidnum", ship.getCapIdNumber().strip().replaceAll("-", ""));
 //        capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber().strip().replaceAll("-", ""));
 //        capInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
 //        capInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
@@ -164,15 +167,15 @@ public class NaksihaeService {
 
         riders.forEach(rider -> {
             JsonObject riderInfo = new JsonObject();
-            riderInfo.addProperty("embkrNm", rider.getName());
-            riderInfo.addProperty("birthDe", rider.getBirth().replaceAll("-", ""));
+            riderInfo.addProperty("embkrNm", rider.getName().strip());
+            riderInfo.addProperty("birthDe", rider.getBirth().strip().replaceAll("-", ""));
             riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
-            riderInfo.addProperty("mobilePhone", rider.getPhone().replaceAll("-", ""));
+            riderInfo.addProperty("mobilePhone", rider.getPhone().strip().replaceAll("-", ""));
             riderInfo.addProperty("rnadres", rider.getAddr());
-            riderInfo.addProperty("emgncTelno", rider.getEmerNum().replaceAll("-", ""));
+            riderInfo.addProperty("emgncTelno", rider.getEmerNum().strip().replaceAll("-", ""));
             riderInfo.addProperty("embkrSeCd", rider.getType());
             if (!rider.getType().equals("0")) {
-                riderInfo.addProperty("mstrIhidnum", rider.getIdNumber());
+                riderInfo.addProperty("mstrIhidnum", rider.getIdNumber().strip().replaceAll("-", ""));
                 if (rider.getType().equals("1")) {
                     riderInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber().strip().replaceAll("-", ""));
                 }
