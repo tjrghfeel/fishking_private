@@ -153,11 +153,11 @@ export default inject(
       };
 
       onFistNameChange = (e) => {
-        this.setState({ firstName: e.target.value })
+        this.setState({ reservePersonName: e.target.value })
       }
 
       onFistPhoneChange = (e) => {
-        this.setState({ firstPhone: e.target.value })
+        this.setState({ reservePersonPhone: e.target.value })
       }
 
       onFistBirthChange = (e) => {
