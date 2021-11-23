@@ -1,0 +1,108 @@
+.menu-icon path {
+  stroke: #62c2ce;
+}
+
+.menu-button:hover path,
+.menu-button:active path {
+  stroke: #62c2ce;
+}
+
+header *, header *:hover {
+  color: #62c2ce;
+}
+
+#content {
+  display: block;
+  padding-top: 90px;
+  background-image: none;
+}
+
+.calendar_part {
+  width: 100%;
+  min-height: 250px;
+  color: #62c2ce;
+  background-color: #eee;
+}
+
+.list_part {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: calc(100% - 320px);
+  border-radius: 20px 20px 0 0;
+  background-color: #62c2ce;
+  overflow: scroll;
+}
+
+.date_part {
+  width: 96%;
+  margin: 15px auto;
+  padding: 10px;
+  border-radius: 30px;
+  background-color: #fff;
+  color: #62c2ce;
+  font-size: 1.4em;
+}
+
+.notice_part {
+  width: 70%;
+  margin: auto;
+  margin-bottom: 15px;
+}
+
+.schedule_part > li {
+  width: 96%;
+  margin: auto;
+  padding: 15px 5%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  color: #000;
+}
+
+.schedule_part > li .list_main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.schedule_part > li .list_main h2 {
+  font-weight: 400;
+}
+
+.schedule_part > li .cal_price {
+  color: #62c2ce;
+}
+
+.schedule_part > li .cal_price p {
+  color: #000;
+  font-size: 12px;
+}
+
+.schedule_part > li .list_sub {
+  margin-left: 15px;
+  text-align: left;
+  list-style: disc;
+}
+
+.schedule_part > li .list_sub li > div {
+  color: #62c2ce;
+}
+
+.schedule_part > li .list_sub li::marker {
+  color: #62c2ce;
+}
+
+.schedule_part > li .cal_submit_btn {
+  float: right;
+  margin-top: 5px;
+  padding: 2px 30px;
+  border-radius: 10px;
+  background-color: #c4c3c1;
+  color: #000;
+}
+/*# sourceMappingURL=calendar.css.map */

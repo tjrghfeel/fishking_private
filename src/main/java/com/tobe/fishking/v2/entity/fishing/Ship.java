@@ -339,7 +339,7 @@ public class Ship extends BaseTime {  //선상
                 String harborAddr,
                 String harborDong
     ) {
-        this.shipName = name;
+        this.shipName = name.strip();
         this.fishingType = fishingType;
         this.address = address;
         this.sido = sido;
@@ -369,15 +369,15 @@ public class Ship extends BaseTime {  //선상
         this.cheapestGoodsCost = 0;
         this.zzimCount = 0L;
         this.sellCount = 0L;
-        this.capName = capName;
-        this.capBirth = capBirth;
+        this.capName = capName.strip().replaceAll("-", "");
+        this.capBirth = capBirth.strip().replaceAll("-", "");
         this.capSex = capSex;
-        this.capPhone = capPhone;
+        this.capPhone = capPhone.strip().replaceAll("-", "");
         this.capAddr = capAddr;
-        this.capEmerNum = capEmerNum;
-        this.capNumber = capNumber;
-        this.capIdNumber = capIdNumber;
-        this.shipNumber = shipNumber;
+        this.capEmerNum = capEmerNum.strip().replaceAll("-", "");
+        this.capNumber = capNumber.strip().replaceAll("-", "");
+        this.capIdNumber = capIdNumber.strip().replaceAll("-", "");
+        this.shipNumber = shipNumber.strip().replaceAll("-", "");
         this.harborName = harborName;
         this.harborAddr = harborAddr;
         this.harborDong = harborDong;

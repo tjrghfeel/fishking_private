@@ -3,13 +3,18 @@ package com.tobe.fishking.v2.service.smartsail;
 import com.querydsl.core.Tuple;
 import com.tobe.fishking.v2.addon.CommonAddon;
 import com.tobe.fishking.v2.entity.auth.Member;
+import com.tobe.fishking.v2.entity.common.HarborCode;
 import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.enums.fishing.FingerType;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
+import com.tobe.fishking.v2.enums.fishing.PayMethod;
 import com.tobe.fishking.v2.exception.ResourceNotFoundException;
 import com.tobe.fishking.v2.model.smartsail.*;
+import com.tobe.fishking.v2.repository.common.HarborCodeRepository;
 import com.tobe.fishking.v2.repository.fishking.*;
 import com.tobe.fishking.v2.service.HttpRequestService;
+import com.tobe.fishking.v2.service.NaksihaeService;
+import com.tobe.fishking.v2.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +27,13 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.tobe.fishking.v2.entity.fishing.QRideShip.rideShip;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +45,12 @@ public class BoardingService {
     private final RiderFingerPrintRepository riderFingerPrintRepository;
     private final HttpRequestService httpRequestService;
     private final SailorRepository sailorRepository;
+    private final EntryExitReportRepository entryExitReportRepository;
+    private final EntryExitAttendRepository entryExitAttendRepository;
+    private final GoodsRepository goodsRepository;
+    private final HarborCodeRepository harborCodeRepository;
+
+    private final NaksihaeService naksihaeService;
 
     @Transactional
     public List<TodayBoardingResponse> getTodayBoarding(Member member, String orderBy) {
@@ -159,8 +170,12 @@ public class BoardingService {
     }
 
     @Transactional
-    public void addRider(Member member, AddRiderDTO dto) {
-        OrderDetails orderDetails = orderDetailsRepository.findByOrders(dto.getOrderId());
+    public void addNewRider(Member member, AddRiderDTO dto) {
+        Goods goods = goodsRepository.getOne(dto.getGoodsId());
+        LocalDate localDate = LocalDate.parse(dto.getDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        EntryExitReport report = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate).get(0);
+
+        OrderDetails orderDetails = orderDetailsRepository.getByGoodsAndDateAndMember(goods, dto.getDate(), member);
         RideShip rider = new RideShip(
                 orderDetails,
                 dto.getName(),
@@ -173,7 +188,39 @@ public class BoardingService {
         orderDetails.plusPersonnel(member);
         orderDetailsRepository.save(orderDetails);
         rideShipRepository.save(rider);
+
+        entryExitAttendRepository.save(
+                EntryExitAttend.builder()
+                        .report(report)
+                        .name(dto.getName())
+                        .birth(dto.getBirthDate().contains("-") ? dto.getBirthDate() : dto.getBirthDate().substring(0,4) + "-" + dto.getBirthDate().substring(4,6) + "-" + dto.getBirthDate().substring(6))
+                        .sex(dto.getSex())
+                        .type("0")
+                        .rideShipId(rider.getId())
+                        .idNumber("")
+                        .addr(dto.getAddr())
+                        .phone(dto.getPhone().contains("-") ? dto.getPhone() : CommonAddon.addDashToPhoneNum(dto.getPhone()))
+                        .emerNum(dto.getEmergencyPhone().contains("-") ? dto.getEmergencyPhone() : CommonAddon.addDashToPhoneNum(dto.getEmergencyPhone()))
+                        .build()
+        );
     }
+
+//    @Transactional
+//    public void addRider(Member member, AddRiderDTO dto) {
+//        OrderDetails orderDetails = orderDetailsRepository.findByOrders(dto.getOrderId());
+//        RideShip rider = new RideShip(
+//                orderDetails,
+//                dto.getName(),
+//                dto.getBirthDate().contains("-") ? dto.getBirthDate() : dto.getBirthDate().substring(0,4) + "-" + dto.getBirthDate().substring(4,6) + "-" + dto.getBirthDate().substring(6),
+//                dto.getPhone().contains("-") ? dto.getPhone() : CommonAddon.addDashToPhoneNum(dto.getPhone()),
+//                dto.getEmergencyPhone().contains("-") ? dto.getEmergencyPhone() : CommonAddon.addDashToPhoneNum(dto.getEmergencyPhone()),
+//                dto.getSex(),
+//                dto.getAddr(),
+//                member);
+//        orderDetails.plusPersonnel(member);
+//        orderDetailsRepository.save(orderDetails);
+//        rideShipRepository.save(rider);
+//    }
 
     @Transactional
     public void delRider(Member member, Long riderId) {
@@ -234,26 +281,260 @@ public class BoardingService {
 
     @Transactional
     public void addSailor(Member member, Map<String, Object> body) {
-        List<Map<String, Object>> sailors = (List<Map<String, Object>>) body.get("sailors");
-        sailors.forEach(sailor -> {
-            Integer sNumber = Integer.parseInt(sailor.get("idNumber").toString().substring(6,7));
-            String birth = sNumber>2 ? "20" + sailor.get("idNumber").toString().substring(0,6) : "19" + sailor.get("idNumber").toString().substring(0,6);
-            String sex = sNumber%2==0 ? "F" : "M";
-            if (!birth.contains("-")) {
-                birth = birth.substring(0,4) + "-" + birth.substring(4,6) + "-" + birth.substring(6);
-            }
-            sailorRepository.save(
-                    Sailor.builder()
-                            .name(sailor.get("name").toString())
+        Goods goods = goodsRepository.getOne(Long.parseLong(body.get("goodsId").toString()));
+        LocalDate localDate = LocalDate.parse(body.get("date").toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        EntryExitReport report = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate).get(0);
+        Integer sNumber = Integer.parseInt(body.get("idNumber").toString().substring(6,7));
+        String birth = sNumber>2 ? "20" + body.get("idNumber").toString().substring(0,6) : "19" + body.get("idNumber").toString().substring(0,6);
+        String sex = sNumber%2==0 ? "F" : "M";
+        if (!birth.contains("-")) {
+            birth = birth.substring(0,4) + "-" + birth.substring(4,6) + "-" + birth.substring(6);
+        }
+        if (Long.parseLong(body.get("id").toString()) == 0) {
+            Sailor sailor =  Sailor.builder()
+                    .name(body.get("name").toString())
+                    .birth(birth)
+                    .sex(sex)
+                    .idNumber(body.get("idNumber").toString())
+                    .addr(body.get("address").toString())
+                    .phone(body.get("phone").toString())
+                    .emerNum(body.get("emergencyPhone").toString())
+                    .member(member)
+                    .build();
+            sailorRepository.save(sailor);
+            entryExitAttendRepository.save(
+                    EntryExitAttend.builder()
+                            .report(report)
+                            .name(body.get("name").toString())
                             .birth(birth)
                             .sex(sex)
-                            .idNumber(sailor.get("idNumber").toString())
-                            .addr(sailor.get("address").toString())
-                            .phone(sailor.get("phone").toString())
-                            .emerNum(sailor.get("emergencyPhone").toString())
-                            .member(member)
+                            .type("2")
+                            .rideShipId(null)
+                            .idNumber(body.get("idNumber").toString())
+                            .addr(body.get("address").toString())
+                            .phone(body.get("phone").toString())
+                            .emerNum(body.get("emergencyPhone").toString())
                             .build()
             );
-        });
+        } else {
+            entryExitAttendRepository.save(
+                    EntryExitAttend.builder()
+                            .report(report)
+                            .name(body.get("name").toString())
+                            .birth(birth)
+                            .sex(sex)
+                            .type("2")
+                            .rideShipId(null)
+                            .idNumber(body.get("idNumber").toString())
+                            .addr(body.get("address").toString())
+                            .phone(body.get("phone").toString())
+                            .emerNum(body.get("emergencyPhone").toString())
+                            .build()
+            );
+        }
+    }
+
+    @Transactional
+    public List<ReportRiderResponse> getReportRiders(Long goodsId, String date, Member member) {
+        Goods goods = goodsRepository.getOne(goodsId);
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<EntryExitReport> reportList = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate);
+        List<ReportRiderResponse> response = new ArrayList<>();
+        Orders orders = ordersRepository.getOrdersByGoodsAndDateAndMember(goods, date, member);
+        if (orders == null) {
+            Orders order = Orders.builder()
+                    .orderDate(DateUtils.getDateInFormat(LocalDate.now()))
+                    .fishingDate(date)
+                    .totalAmount(0)
+                    .discountAmount(0)
+                    .paymentAmount(0)
+                    .isPay(false)
+                    .payMethod(PayMethod.CARD)
+                    .orderStatus(OrderStatus.book)
+                    .goods(goods)
+                    .reserveComment("현장 추가용")
+                    .createdBy(member)
+                    .modifiedBy(member)
+                    .build();
+            ordersRepository.save(order);
+            OrderDetails details = OrderDetails.builder()
+                    .goods(goods)
+                    .orders(order)
+                    .personnel(0)
+                    .price(0)
+                    .totalAmount(0)
+                    .positions("")
+                    .createdBy(member)
+                    .modifiedBy(member)
+                    .build();
+            orderDetailsRepository.save(details);
+        }
+        if (reportList.size() > 0) {
+            EntryExitReport report = reportList.get(0);
+            response = entryExitAttendRepository.getRiders(report);
+        } else {
+            Ship ship = goods.getShip();
+            List<HarborCode> harborCode = harborCodeRepository.findAllByNameAndDong(ship.getHarborName(), ship.getHarborDong());
+            String code = harborCode.get(0).getCode();
+            LocalDateTime entryTime = null;
+            if (goods.getFishingEndDate().equals("익일")) {
+                entryTime = LocalDateTime.parse(
+                        date + " " + goods.getFishingEndTime(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+                );
+                entryTime = entryTime.plusDays(1L);
+            } else {
+                entryTime = LocalDateTime.parse(
+                        date + " " + goods.getFishingEndTime(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+                );
+
+            }
+            EntryExitReport report = EntryExitReport.builder()
+                    .serial("")
+                    .date(localDate)
+                    .goods(goods)
+                    .entryHarborCode(code)
+                    .entryTime(entryTime)
+                    .build();
+            report.updateStatus("0");
+            entryExitReportRepository.save(report);
+
+            // 선장등록
+            entryExitAttendRepository.save(
+                    EntryExitAttend.builder()
+                            .name(ship.getCapName())
+                            .birth(ship.getCapBirth())
+                            .sex(ship.getCapSex())
+                            .phone(ship.getCapPhone())
+                            .addr(ship.getCapAddr())
+                            .emerNum(ship.getCapEmerNum())
+                            .type("1")
+                            .idNumber(ship.getCapIdNumber())
+                            .rideShipId(null)
+                            .report(report)
+                            .build()
+            );
+            List<RideShip> rideShips = rideShipRepository.findByGoods(goods, date);
+            rideShips.forEach(r -> {
+                entryExitAttendRepository.save(
+                        EntryExitAttend.builder()
+                                .name(r.getName())
+                                .birth(r.getBirthday())
+                                .sex(r.getSex())
+                                .phone(r.getPhoneNumber().replaceAll("-", ""))
+                                .addr(r.getResidenceAddr())
+                                .emerNum(r.getEmergencyPhone().replaceAll("-", ""))
+                                .type("0")
+                                .idNumber("")
+                                .rideShipId(r.getId())
+                                .report(report)
+                                .build()
+                );
+            });
+            response = entryExitAttendRepository.getRiders(report);
+        }
+        return response;
+    }
+
+    @Transactional
+    public EntryExitReport getReport(Long goodsId, String date) {
+        Goods goods = goodsRepository.getOne(goodsId);
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        EntryExitReport report = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate).get(0);
+        return report;
+    }
+
+    @Transactional
+    public void sendReport(Long goodsId, String date) throws UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        try {
+            Goods goods = goodsRepository.getOne(goodsId);
+            LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            EntryExitReport report = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate).get(0);
+            List<EntryExitAttend> riders = entryExitAttendRepository.getEntryExitAttendsByReport(report);
+            String token = naksihaeService.getToken().get("token").toString();
+            String serial = naksihaeService.reportRegistration(goods, riders, token);
+            report.updateSerial(serial);
+            report.updateStatus("1");
+            entryExitReportRepository.save(report);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public String updateReport(Long goodsId, String date, String status) throws UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        try {
+            Goods goods = goodsRepository.getOne(goodsId);
+            LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            EntryExitReport report = entryExitReportRepository.getReportByGoodsAndDate(goods, localDate).get(0);
+            String token = naksihaeService.getToken().get("token").toString();
+            String str = naksihaeService.checkReportStatus(
+                    report.getSerial(),
+                    goods,
+                    token
+            );
+
+            String statusCode = "";
+            switch (status) {
+                case "출항":
+                    statusCode = "5";
+                    break;
+                case "입항":
+                    statusCode = "3";
+                    break;
+                case "취소":
+                    statusCode = "4";
+                    break;
+            }
+
+            if (str.equals("1")) {
+                return "신고가 승인되지 않았습니다. 잠시 후 다시 시도 바랍니다.";
+            } else if (str.equals("2")) {
+                if (statusCode.equals("5")) {
+                    boolean success = naksihaeService.updateReportStatus(
+                            report.getSerial(),
+                            goods,
+                            status,
+                            token
+                    );
+                    if (success) {
+                        report.updateStatus(statusCode);
+                        entryExitReportRepository.save(report);
+                    }
+                    return "상태가 운항중으로 변경되었습니다.";
+                } else {
+                    report.updateStatus(str);
+                    entryExitReportRepository.save(report);
+                    return "상태가 신고확인으로 변경되었습니다.";
+                }
+            } else if (str.equals("5")) {
+                if (statusCode.equals("3")) {
+                    boolean success = naksihaeService.updateReportStatus(
+                            report.getSerial(),
+                            goods,
+                            status,
+                            token
+                    );
+                    if (success) {
+                        report.updateStatus(statusCode);
+                        entryExitReportRepository.save(report);
+                    }
+                    return "상태가 입항으로 변경되었습니다.";
+                } else {
+                    report.updateStatus(str);
+                    entryExitReportRepository.save(report);
+                    return "상태가 운항중으로 변경되었습니다.";
+                }
+            } else if (str.equals("3")) {
+                report.updateStatus(str);
+                entryExitReportRepository.save(report);
+                return "상태가 입항으로 변경되었습니다.";
+            }
+            return "잠시 후 다시 시도 바랍니다.";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "잠시 후 다시 시도 바랍니다.";
+        }
     }
 }

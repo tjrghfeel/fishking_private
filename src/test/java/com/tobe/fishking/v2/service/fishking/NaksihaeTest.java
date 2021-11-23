@@ -1,5 +1,6 @@
 package com.tobe.fishking.v2.service.fishking;
 
+import com.tobe.fishking.v2.entity.fishing.EntryExitAttend;
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.entity.fishing.Sailor;
@@ -38,7 +39,7 @@ public class NaksihaeTest {
     @Autowired
     private RideShipRepository rideShipRepository;
 
-    private String token = "cf3ffc1e2e51469a951d58fe7bdecf65";
+    private String token = "995a549105ea4f82a0ffe03b9f04e5e3";
 
     @Test
     public void getToken() {
@@ -59,33 +60,35 @@ public class NaksihaeTest {
 
         assertThat(result, is(result != null));
     }
-
-    @Test
-    public void getHarborData() {
-        String code = null;
-        try {
-            code = naksihaeService.getHarborCode("", "", token);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-
-        assertThat(code, is(code != null));
-    }
-
+//
+//    @Test
+//    public void getHarborData() {
+//        String code = null;
+//        try {
+//            code = naksihaeService.getHarborCode("", "", token);
+//        } catch (KeyStoreException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (KeyManagementException e) {
+//            e.printStackTrace();
+//        }
+//
+//        assertThat(code, is(code != null));
+//    }
+//
+    // 20
+    // 8362
     @Test
     @Transactional
     public void registration() {
-        Goods goods = goodsRepository.getOne(15L);
-        List<RideShip> riders = new ArrayList<>();
+        Goods goods = goodsRepository.getOne(5L);
+        List<EntryExitAttend> riders = new ArrayList<>();
         List<Sailor> sailors = new ArrayList<>();
-        riders.add(rideShipRepository.getOne(11158L));
+//        riders.add(rideShipRepository.getOne(8362));
         String result = "";
         try {
-            result = naksihaeService.reportRegistration(goods, riders, sailors, token);
+            result = naksihaeService.reportRegistration(goods, riders, token);
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -95,21 +98,21 @@ public class NaksihaeTest {
         }
         assertThat(result, is(""));
     }
-
-    @Test
-    @Transactional
-    public void run() {
-        Goods goods = goodsRepository.getOne(15L);
-        boolean result = false;
-        try {
-            result = naksihaeService.updateReportStatus("30179", goods, "취소", token);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-        assertThat(result, is(true));
-    }
+//
+//    @Test
+//    @Transactional
+//    public void run() {
+//        Goods goods = goodsRepository.getOne(15L);
+//        boolean result = false;
+//        try {
+//            result = naksihaeService.updateReportStatus("30179", goods, "취소", token);
+//        } catch (KeyStoreException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (KeyManagementException e) {
+//            e.printStackTrace();
+//        }
+//        assertThat(result, is(true));
+//    }
 }

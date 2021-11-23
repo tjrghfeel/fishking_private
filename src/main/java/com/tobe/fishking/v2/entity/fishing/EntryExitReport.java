@@ -8,6 +8,7 @@ import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -32,7 +33,7 @@ public class EntryExitReport extends BaseTime {
     private String entryHarborCode;
 
     @Column(columnDefinition = "datetime comment '입항시간'")
-    private LocalDate entryTime;
+    private LocalDateTime entryTime;
 
     // 1: 신고제출 2: 신고확인 3: 입항 4: 출항취소 5: 운항중
     @Column(columnDefinition = "varchar(10) comment '상태'")
@@ -43,7 +44,7 @@ public class EntryExitReport extends BaseTime {
                            LocalDate date,
                            Goods goods,
                            String entryHarborCode,
-                           LocalDate entryTime) {
+                           LocalDateTime entryTime) {
         this.serial = serial;
         this.date = date;
         this.goods = goods;
@@ -56,8 +57,12 @@ public class EntryExitReport extends BaseTime {
         this.status = status;
     }
 
+    public void updateSerial(String serial) {
+        this.serial = serial;
+    }
+
     public void updateEntryHarbor(String entryHarborCode,
-                                  LocalDate entryTime) {
+                                  LocalDateTime entryTime) {
         this.entryHarborCode = entryHarborCode;
         this.entryTime = entryTime;
     }

@@ -2,10 +2,7 @@ package com.tobe.fishking.v2.service;
 
 import com.google.gson.*;
 import com.tobe.fishking.v2.entity.common.HarborCode;
-import com.tobe.fishking.v2.entity.fishing.Goods;
-import com.tobe.fishking.v2.entity.fishing.RideShip;
-import com.tobe.fishking.v2.entity.fishing.Sailor;
-import com.tobe.fishking.v2.entity.fishing.Ship;
+import com.tobe.fishking.v2.entity.fishing.*;
 import com.tobe.fishking.v2.repository.common.HarborCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.NameValuePair;
@@ -49,7 +46,8 @@ public class NaksihaeService {
     private final String USER_AGENT = "Mozilla/5.0";
     private final String BASE_URL = "https://ext.fips.go.kr/ffb/api/";
     private final String ID = "devtobe";
-    private final String SECRET_KEY = "41a28f7890b44c9492d1fcf4e15f04e2";
+    private final String SECRET_KEY = "4a97cefb14c4494c9240a527ed9efef6";
+    private final String SECRET_KEY_DEV = "41a28f7890b44c9492d1fcf4e15f04e2";
 
     public Map<String, Object> getToken() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
         String uri = BASE_URL + "auth/token.do";
@@ -60,7 +58,7 @@ public class NaksihaeService {
 
         List<NameValuePair> data = new ArrayList<>();
         data.add(new BasicNameValuePair("userId", (ID)));
-        data.add(new BasicNameValuePair("scrtky", (SECRET_KEY)));
+        data.add(new BasicNameValuePair("scrtky", (SECRET_KEY_DEV)));
         data.add(new BasicNameValuePair("apiReqstTy", ("10")));
 
         httpPost.setEntity(new UrlEncodedFormEntity(data, "UTF-8"));
@@ -70,7 +68,7 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println(json);
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
             String token = res.getAsJsonObject("resultDomain")
@@ -94,8 +92,9 @@ public class NaksihaeService {
 
     @Transactional(readOnly = true)
     public String reportRegistration(Goods goods,
-                                     List<RideShip> riders,
-                                     List<Sailor> sailors,
+                                     List<EntryExitAttend> riders,
+//                                     List<RideShip> riders,
+//                                     List<Sailor> sailors,
                                      String token
     ) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         String uri = BASE_URL + "tkoff/reg.do";
@@ -103,7 +102,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
 
         Ship ship = goods.getShip();
@@ -119,8 +118,8 @@ public class NaksihaeService {
         String start = date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + goods.getFishingStartTime() + "00";
         String end = date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + goods.getFishingEndTime() + "00";
         JsonObject shipInfo = new JsonObject();
-        shipInfo.addProperty("fshhpSn", ship.getShipNumber());
-        shipInfo.addProperty("fshhpNm", ship.getShipName());
+        shipInfo.addProperty("fshhpSn", ship.getShipNumber().strip());
+        shipInfo.addProperty("fshhpNm", ship.getShipName().strip());
 //        shipInfo.addProperty("fshhpSn", "1802003648240");
 //        shipInfo.addProperty("fshhpNm", "피싱파라다이스호");
 //        shipInfo.addProperty("fshhpSn", "17090016317100");
@@ -128,8 +127,10 @@ public class NaksihaeService {
         shipInfo.addProperty("fshhpSttusCd", "1");
         shipInfo.addProperty("tkoffDt", start);
         shipInfo.addProperty("clppCd", code);
+//        shipInfo.addProperty("clppCd", "4459");
         shipInfo.addProperty("etryptPrearngeDt", end);
         shipInfo.addProperty("etryptPrearngePrtCd", code);
+//        shipInfo.addProperty("etryptPrearngePrtCd", "4459");
         shipInfo.addProperty("nowEmbrkNmpr", riders.size()+1);
 
         JsonArray embarkList = new JsonArray();
@@ -144,53 +145,63 @@ public class NaksihaeService {
 //        capInfo.addProperty("emgncTelno", "01062242504");
 //        capInfo.addProperty("mstrIhidnum", "7104151914417");
 //        capInfo.addProperty("mrntecnLcnsSn", "SPS7193062");
-
-        capInfo.addProperty("embkrSeCd", "1");
-        capInfo.addProperty("embkrNm", ship.getCapName());
-        capInfo.addProperty("birthDe", ship.getCapBirth().replaceAll("-", ""));
-        capInfo.addProperty("sexdstnCd", ship.getCapSex().equals("M") ? "0" : "1");
-        capInfo.addProperty("mobilePhone", ship.getCapPhone().replaceAll("-", ""));
-        capInfo.addProperty("rnadres", ship.getCapAddr());
-        capInfo.addProperty("emgncTelno", ship.getCapEmerNum().replaceAll("-", ""));
-        capInfo.addProperty("mstrIhidnum", ship.getCapIdNumber());
-        capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber());
-        capInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
-        capInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
-
-        embarkList.add(new Gson().toJsonTree(capInfo));
-
-        sailors.forEach(rider -> {
-            JsonObject riderInfo = new JsonObject();
-            riderInfo.addProperty("embkrNm", rider.getName());
-            riderInfo.addProperty("birthDe", rider.getBirth().replaceAll("-", ""));
-            riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
-            riderInfo.addProperty("mobilePhone", rider.getPhone().replaceAll("-", ""));
-            riderInfo.addProperty("rnadres", rider.getAddr());
-            riderInfo.addProperty("emgncTelno", rider.getEmerNum().replaceAll("-", ""));
-            riderInfo.addProperty("embkrSeCd", "2");
-            capInfo.addProperty("mstrIhidnum", rider.getId());
-            riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
-            riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
-            embarkList.add(new Gson().toJsonTree(riderInfo));
-        });
+//        System.out.println(ship.getShipName());
+//        System.out.println(ship.getShipNumber());
+//        System.out.println(ship.getCapName());
+//        System.out.println(ship.getCapIdNumber());
+//        System.out.println(ship.getCapNumber());
+//        System.out.println(ship.getCapPhone());
+//        System.out.println(ship.getCapEmerNum());
+//        capInfo.addProperty("embkrSeCd", "1");
+//        capInfo.addProperty("embkrNm", ship.getCapName().strip());
+//        capInfo.addProperty("birthDe", ship.getCapBirth().strip().replaceAll("-", ""));
+//        capInfo.addProperty("sexdstnCd", ship.getCapSex().equals("M") ? "0" : "1");
+//        capInfo.addProperty("mobilePhone", ship.getCapPhone().strip().replaceAll("-", ""));
+//        capInfo.addProperty("rnadres", ship.getCapAddr());
+//        capInfo.addProperty("emgncTelno", ship.getCapEmerNum().strip().replaceAll("-", ""));
+//        capInfo.addProperty("mstrIhidnum", ship.getCapIdNumber().strip().replaceAll("-", ""));
+//        capInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber().strip().replaceAll("-", ""));
+//        capInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
+//        capInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
+//        embarkList.add(new Gson().toJsonTree(capInfo));
 
         riders.forEach(rider -> {
             JsonObject riderInfo = new JsonObject();
-            riderInfo.addProperty("embkrNm", rider.getName());
-            riderInfo.addProperty("birthDe", rider.getBirthday().replaceAll("-", ""));
+            riderInfo.addProperty("embkrNm", rider.getName().strip());
+            riderInfo.addProperty("birthDe", rider.getBirth().strip().replaceAll("-", ""));
             riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
-            riderInfo.addProperty("mobilePhone", rider.getPhoneNumber().replaceAll("-", ""));
-            riderInfo.addProperty("rnadres", rider.getResidenceAddr());
-            riderInfo.addProperty("emgncTelno", rider.getEmergencyPhone().replaceAll("-", ""));
-            riderInfo.addProperty("embkrSeCd", "0");
+            riderInfo.addProperty("mobilePhone", rider.getPhone().strip().replaceAll("-", ""));
+            riderInfo.addProperty("rnadres", rider.getAddr());
+            riderInfo.addProperty("emgncTelno", rider.getEmerNum().strip().replaceAll("-", ""));
+            riderInfo.addProperty("embkrSeCd", rider.getType());
+            if (!rider.getType().equals("0")) {
+                riderInfo.addProperty("mstrIhidnum", rider.getIdNumber().strip().replaceAll("-", ""));
+                if (rider.getType().equals("1")) {
+                    riderInfo.addProperty("mrntecnLcnsSn", ship.getCapNumber().strip().replaceAll("-", ""));
+                }
+            }
             riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
             riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
             embarkList.add(new Gson().toJsonTree(riderInfo));
         });
 
+//        riders.forEach(rider -> {
+//            JsonObject riderInfo = new JsonObject();
+//            riderInfo.addProperty("embkrNm", rider.getName());
+//            riderInfo.addProperty("birthDe", rider.getBirthday().replaceAll("-", ""));
+//            riderInfo.addProperty("sexdstnCd", rider.getSex().equals("M") ? "0" : "1");
+//            riderInfo.addProperty("mobilePhone", rider.getPhoneNumber().replaceAll("-", ""));
+//            riderInfo.addProperty("rnadres", rider.getResidenceAddr());
+//            riderInfo.addProperty("emgncTelno", rider.getEmergencyPhone().replaceAll("-", ""));
+//            riderInfo.addProperty("embkrSeCd", "0");
+//            riderInfo.addProperty("indvdlinfoPrcuseAgreCd", "Y");
+//            riderInfo.addProperty("thptyIndvdlinfoAgreCd", "Y");
+//            embarkList.add(new Gson().toJsonTree(riderInfo));
+//        });
+
         data.add("tkoffSttemntInfo", new Gson().toJsonTree(shipInfo));
         data.add("embkrList", new Gson().toJsonTree(embarkList));
-        System.out.println(data);
+//        System.out.println(data);
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
         String result = "";
@@ -198,10 +209,9 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println(json);
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
-//            System.out.println(res);
             String resultCode = res.get("resultCode").getAsString();
             String reportSerial = res.getAsJsonObject("resultDomain")
                     .getAsJsonObject("tkoffSttemntInfo")
@@ -225,7 +235,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
 
         JsonObject data = new JsonObject();
@@ -247,10 +257,10 @@ public class NaksihaeService {
             JsonObject res = gson.fromJson(json, JsonObject.class);
             JsonArray harbors = res.getAsJsonObject("resultDomain")
                     .getAsJsonArray("clppList");
-            System.out.println(harbors.size());
+//            System.out.println(harbors.size());
 
             harbors.forEach(harbor -> {
-                System.out.println(harbor);
+//                System.out.println(harbor);
                 String code1 = ((JsonObject) harbor).get("clppCd").getAsString();
                 String name = ((JsonObject) harbor).get("clppNm").getAsString();
                 String dongCode = ((JsonObject) harbor).get("legaldongCd") == JsonNull.INSTANCE ? "" : ((JsonObject) harbor).get("legaldongCd").getAsString();
@@ -285,7 +295,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
 
         Ship ship = goods.getShip();
@@ -306,6 +316,7 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
+//            System.out.println(json);
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
 
@@ -329,7 +340,7 @@ public class NaksihaeService {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.addHeader("User-Agent", USER_AGENT);
         httpPost.addHeader("X-IBM-Client-id", ID);
-        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY);
+        httpPost.addHeader("X-IBM-Client-Secret", SECRET_KEY_DEV);
         httpPost.addHeader("Authorization", token);
         Ship ship = goods.getShip();
 
@@ -374,7 +385,7 @@ public class NaksihaeService {
         }
 
         data.add("tkoffSttemntInfo", new Gson().toJsonTree(harborInfo));
-        System.out.println(data);
+//        System.out.println(data);
         httpPost.setEntity(new StringEntity(data.toString(), ContentType.APPLICATION_JSON));
 
         String result = "";
@@ -382,7 +393,9 @@ public class NaksihaeService {
             CloseableHttpResponse response = httpClient.execute(httpPost);
 
             String json = EntityUtils.toString(response.getEntity());
-            System.out.println(json);
+//            System.out.println("--------------------");
+//            System.out.println(json);
+//            System.out.println("--------------------");
             Gson gson = new Gson();
             JsonObject res = gson.fromJson(json, JsonObject.class);
 

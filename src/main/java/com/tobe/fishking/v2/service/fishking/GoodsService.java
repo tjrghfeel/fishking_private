@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,6 +50,8 @@ public class GoodsService {
     private final CommonCodeRepository codeRepository;
     private final GoodsFishingDateRepository goodsFishingDateRepository;
     private final RideShipRepository rideShipRepository;
+    private final EntryExitReportRepository entryExitReportRepository;
+    private final EntryExitAttendRepository entryExitAttendRepository;
 
 
     private static int searchSize = 0;
@@ -402,6 +405,85 @@ public class GoodsService {
         result.put("riders", response);
         result.put("ridersCount", response.size());
 
+        return result;
+    }
+
+    @Transactional
+    public Page<Map<String, Object>>getDayFishing(String date, Member member, Integer page) {
+        Page<Goods> goods = goodsRepo.getDayFishing(date, member, page);
+        List<Map<String, Object>> results = new ArrayList<>();
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        goods.getContent().forEach(g -> {
+            Map<String, Object> map = new HashMap<>();
+            Integer p = rideShipRepository.countByGoods(g, date);
+            List<EntryExitReport> report = entryExitReportRepository.getReportByGoodsAndDate(g, localDate);
+            if (report.size() == 0) {
+                map.put("status", "신고필요");
+            } else {
+                switch (report.get(0).getStatus()) {
+                    case "0":
+                        map.put("status", "신고필요");
+                        break;
+                    case "1":
+                        map.put("status", "신고제출");
+                        break;
+                    case "2":
+                        map.put("status", "신고확인");
+                        break;
+                    case "3":
+                        map.put("status", "입항");
+                        break;
+                    case "4":
+                        map.put("status", "출항취소");
+                        break;
+                    case "5":
+                        map.put("status", "운항중");
+                        break;
+                }
+            }
+            Integer sailorCount = 0;
+            if (report.size()>0) {
+                sailorCount = entryExitAttendRepository.getSailorCount(report.get(0));
+            }
+            map.put("goodsId", g.getId());
+            map.put("shipName", g.getShip().getShipName());
+            map.put("goodsName", g.getName());
+            map.put("date", date);
+            map.put("ridePersonnel", p + 1 + sailorCount);
+            if (g.getShip().getWeight() == null) {
+                map.put("maxPersonnel", g.getMaxPersonnel());
+            } else {
+                Double weight = g.getShip().getWeight();
+                if (weight.equals(Double.parseDouble("3.00"))) {
+                    map.put("maxPersonnel", 8);
+                } else if(weight.equals(Double.parseDouble("5.00"))) {
+                    map.put("maxPersonnel", 18);
+                } else {
+                    map.put("maxPersonnel", 22);
+                }
+            }
+            map.put("date", date);
+
+            LocalDateTime start = LocalDateTime.parse(
+                    date + g.getFishingStartTime(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm")
+            );
+            LocalDateTime end = LocalDateTime.parse(
+                    date + g.getFishingEndTime(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-ddHHmm")
+            );
+
+            map.put("startTime", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm")));
+            if (g.getFishingEndTime().equals("익일")) {
+                map.put("endTime", end.plusDays(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm")));
+            } else {
+                map.put("endTime", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd a HH:mm")));
+            }
+
+            results.add(map);
+        });
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("fishingStartTime"));
+        Page<Map<String, Object>> result = new PageImpl<>(results, pageable, results.size());
         return result;
     }
 }

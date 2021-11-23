@@ -1,6 +1,7 @@
 package com.tobe.fishking.v2.repository.fishking;
 
 import com.querydsl.core.Tuple;
+import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.entity.fishing.RiderFingerPrint;
 import com.tobe.fishking.v2.model.smartsail.RiderGoodsListResponse;
 import com.tobe.fishking.v2.model.smartsail.RiderSearchDTO;
