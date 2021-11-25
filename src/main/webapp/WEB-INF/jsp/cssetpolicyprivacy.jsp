@@ -12,7 +12,7 @@
 <body>
 <!-- Navigation -->
 <nav class="navbar fixed-top navbar-dark bg-primary">
-    <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
+    <a href="javascript:history.back();" class="nav-left" style="width: 44px; height: 40px; padding-top: 7px; top: 2px; left: 4px;"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>
     <span class="navbar-title">개인정보처리방침</span>
 </nav>
 <!-- // Navigation -->

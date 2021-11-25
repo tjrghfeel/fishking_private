@@ -131,7 +131,7 @@ export default inject(
               title={"예약내역"}
               showBackIcon={true}
               backPathname={`/main/my`}
-              showSearchIcon={true}
+              showSearchIcon={false}
             />
 
             {/** Filter */}

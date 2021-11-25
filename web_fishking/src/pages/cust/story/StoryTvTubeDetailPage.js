@@ -3,6 +3,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
+  LAYOUT: { MainTab },
   VIEW: { StoryTvTubeListItemView },
 } = Components;
 
@@ -170,6 +171,9 @@ export default inject(
                   onClick={this.onClickTube}
                 />
               ))}
+            <div className="container nopadding" style={{height: '50px'}}>
+            </div>
+            <MainTab activeIndex={5} />
           </React.Fragment>
         );
       }

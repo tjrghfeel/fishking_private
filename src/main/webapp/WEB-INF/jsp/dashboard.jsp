@@ -12,7 +12,7 @@
 <body>
 <!-- Navigation -->
 <nav class="navbar fixed-top navbar-dark bg-primary">
-<%--    <a href="javascript:history.back();" class="nav-left"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>--%>
+<%--    <a href="javascript:history.back();" class="nav-left" style="width: 44px; height: 40px; padding-top: 7px; top: 2px; left: 4px;"><img src="/assets/smartsail/img/svg/navbar-back.svg" alt="뒤로가기"/></a>--%>
     <span class="navbar-title"><img src="/assets/smartsail/img/svg/navbar-logo-smartship.svg" alt="스마트승선"/></span>
 <%--<a href="my-alarm.html" class="fixed-top-right new"><strong>N</strong><img src="/assets/smartsail/img/svg/icon-alarm.svg" alt="알림내역"/><span class="sr-only">알림내역</span></a>--%>
 </nav>
@@ -113,15 +113,20 @@
 
 <p class="space mt-2"></p>
 <div class="container nopadding mt-2">
-    <div class="row mt-1 d-flex align-items-center">
-        <div class="col-5">
-            <h5>승선확인완료</h5>
+    <a onclick="javascript:toggleList()">
+        <div class="row mt-1 d-flex align-items-center justify-content-between">
+            <div class="col-5">
+                <h5>승선확인완료</h5>
+            </div>
+            <div style="height: 24px; max-width: 14px; overflow:hidden; margin-right: 15px;">
+                <img id="arrow" src="/assets/smartsail/img/svg/form-sel-down.svg" style="height: 12px;" />
+            </div>
         </div>
-    </div>
+    </a>
 </div>
 
 
-<div id="comp-container">
+<div id="comp-container" style="display: none;">
     <p class="mt-3 mb-4 text-center" id="comp_none">승선확인완료가 없습니다</p>
 </div>
 <p class="space mt-2"></p>
@@ -183,6 +188,21 @@
 
 <jsp:include page="cmm_foot.jsp" />
 <script>
+    // ----- > 확인완료 리스트 토글
+    function toggleList() {
+      var container = $('#comp-container')
+      if (container.css('display') == 'none') {
+        container.show();
+        document.getElementById('arrow').style.marginLeft = '0px;'
+        $('#arrow').css('transform', 'rotate(180deg)');
+        $('#arrow').css('margin-left', '-6px');
+      } else {
+        container.hide();
+        $('#arrow').css('transform', 'rotate(0deg)');
+        $('#arrow').css('margin-left', '0px');
+      }
+    }
+
     // ----- > 승선 확인
     function fn_fingerprint_confirm (item, index) {
         var data = pageData['boardingPeople'][index];

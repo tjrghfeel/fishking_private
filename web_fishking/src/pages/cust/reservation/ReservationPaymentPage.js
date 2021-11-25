@@ -4,7 +4,7 @@ import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 import APIStore from "../../../stores/APIStore";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   VIEW: {
     ShipType3PositionView,
     ShipType5PositionView,
@@ -3188,8 +3188,7 @@ export default inject(
               <br />
               <br />
             </p>
-
-            <div className="fixed-bottom">
+            <div className="fixed-bottom" style={{bottom: '50px'}}>
               <div className="row no-gutters">
                 <div className="col-12">
                   <a
@@ -3201,6 +3200,7 @@ export default inject(
                 </div>
               </div>
             </div>
+            <MainTab activeIndex={5} />
           </React.Fragment>
         );
       }

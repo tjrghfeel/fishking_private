@@ -12,7 +12,7 @@ import Chart from "apexcharts";
 const {
     VIEW: {CompanyGoodListItemView, GoodsBlogListItemView},
     MODAL: {CompanyGoodsDetailModal, CompanyDetailWeatherModal},
-    LAYOUT: {NavigationLayout}
+    LAYOUT: {NavigationLayout, MainTab}
 } = Components;
 
 export default inject(
@@ -869,6 +869,7 @@ export default inject(
                             {/*    id={"selPlaceModal"}*/}
                             {/*    seaCode={this.state.seaCode}*/}
                             {/*/>*/}
+                          <MainTab activeIndex={5} />
                         </React.Fragment>
                     );
                 }

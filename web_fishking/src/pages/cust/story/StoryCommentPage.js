@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   VIEW: { CommentListItemView },
 } = Components;
 
@@ -238,7 +238,8 @@ export default inject(
                     ))}
                 </React.Fragment>
               ))}
-
+              <div className="container nopadding" style={{height: '50px'}}>
+              </div>
               {/** Tab Menu */}
               {this.state.file !== null && (
                 <div className="tab_barwrap_photo">
@@ -257,7 +258,7 @@ export default inject(
                   </span>
                 </div>
               )}
-              <div className="tab_barwrap fixed-bottom">
+              <div className="tab_barwrap fixed-bottom" style={{bottom: '50px'}}>
                 {(this.state.parent !== null || this.state.isEdit) && (
                   <h6>
                     <div className="container nopadding">
@@ -330,6 +331,7 @@ export default inject(
                   </form>
                 </div>
               </div>
+              <MainTab activeIndex={3} />
             </React.Fragment>
           );
         }

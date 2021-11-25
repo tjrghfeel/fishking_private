@@ -167,7 +167,7 @@ export default inject(
               }}
             />
 
-            <NavigationLayout title={"바다낚시"} showSearchIcon={true} />
+            <NavigationLayout title={"바다낚시"} showSearchIcon={false} />
 
             <FilterListView
               list={[

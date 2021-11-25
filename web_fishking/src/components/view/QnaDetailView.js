@@ -76,7 +76,7 @@ export default inject(
               )}
 
               {/** 하단버튼 */}
-              <div className="fixed-bottom">
+              <div className="fixed-bottom" style={{bottom: '50px'}}>
                 <div className="row no-gutters">
                   <div className="col-12">
                     <a

@@ -2,7 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   VIEW: { CouponMyListItemView },
   MODAL: { AddCouponModal },
 } = Components;
@@ -145,6 +145,9 @@ export default inject(
                   />
                 </React.Fragment>
               ))}
+            <div className="container nopadding" style={{height: '50px'}}>
+            </div>
+            <MainTab activeIndex={4} />
           </React.Fragment>
         );
       }

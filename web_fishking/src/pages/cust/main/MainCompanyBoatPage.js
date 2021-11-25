@@ -313,7 +313,7 @@ export default inject(
                   ? "갯바위낚시"
                   : ""
               }
-              showSearchIcon={true}
+              showSearchIcon={false}
             />
 
             <FilterListView

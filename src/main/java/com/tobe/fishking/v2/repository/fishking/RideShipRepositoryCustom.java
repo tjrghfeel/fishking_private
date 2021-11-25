@@ -19,4 +19,5 @@ public interface RideShipRepositoryCustom {
     Page<RiderGoodsListResponse> searchRiders(Long memberId, RiderSearchDTO dto, Pageable pageable);
     List<Tuple> getDetailRiders(Long orderId);
     Map<String, Object> dashboardForManage();
+    List<RideShip> findByGoods(Long goodsId, String date);
 }

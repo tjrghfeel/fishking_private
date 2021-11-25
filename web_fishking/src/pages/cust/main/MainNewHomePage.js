@@ -4,6 +4,7 @@ import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 
 const {
+  LAYOUT: { MainTab },
   VIEW: {
     NewMainShipListView,
     NewSideMenu,
@@ -576,6 +577,7 @@ export default inject(
             <div id="content">
               <NewMainShipListView list={list} onClick={this.onClick} />
             </div>
+            <MainTab activeIndex={0} />
           </React.Fragment>
         )
       }

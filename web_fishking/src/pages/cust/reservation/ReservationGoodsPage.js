@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 import Calendar from "react-calendar";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   VIEW: { ReservationGoodsListItemView },
 } = Components;
 
@@ -153,7 +153,7 @@ export default inject(
                           />
                         </div>
                     </div>
-                    <div className="reservePage-list_part">
+                    <div className="reservePage-list_part"  style={{marginBottom: '50px'}}>
                         <div className="reservePage-date_part">{this.state.selectedDate?.toString()}</div>
                         <p className="reservePage-notice_part">
                             운행을 위한 최소 인원&#40;정원&#41;이 달성되지 않을 경우 운행이 취소될
@@ -358,6 +358,7 @@ export default inject(
               {/*    </div>*/}
               {/*  </div>*/}
               {/*</div>*/}
+              <MainTab activeIndex={0} />
             </React.Fragment>
           );
         }

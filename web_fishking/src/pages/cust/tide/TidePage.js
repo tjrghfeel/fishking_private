@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 import APIStore from "../../../stores/APIStore";
 const {
-  LAYOUT: { NavigationLayout, TideTab },
+  LAYOUT: { NavigationLayout, TideTab, MainTab },
   MODAL: { SelectTideAreaModal },
 } = Components;
 
@@ -530,7 +530,7 @@ export default inject(
                 </div>
               </React.Fragment>
             )}
-            {this.state.location && (<div className="fixed-bottom">
+            {this.state.location && (<div className="fixed-bottom" style={{bottom: '50px'}}>
               <div className="row no-gutters">
                 <div className="col-12">
                   <a
@@ -542,6 +542,9 @@ export default inject(
                 </div>
               </div>
             </div>)}
+            <div className="container nopadding" style={{height: '50px'}}>
+            </div>
+            <MainTab activeIndex={4} />
           </React.Fragment>
         );
       }

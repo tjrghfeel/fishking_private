@@ -4,7 +4,7 @@ import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   VIEW: { CompanyReviewListItemView },
 } = Components;
 
@@ -175,6 +175,7 @@ export default inject(
                 this.state.list.map((data, index) => (
                   <CompanyReviewListItemView key={index} data={data} />
                 ))}
+              <MainTab activeIndex={5} />
             </React.Fragment>
           );
         }

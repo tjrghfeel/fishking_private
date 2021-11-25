@@ -3,7 +3,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   MODAL: {
     SelectFishModal,
     SelectDateModal,
@@ -788,7 +788,7 @@ export default inject(
               <br />
             </p>
             {/** 하단버튼 */}
-            <div className="fixed-bottom">
+            <div className="fixed-bottom" style={{bottom: '50px'}}>
               <div className="row no-gutters">
                 <div className="col-12">
                   <a
@@ -800,6 +800,9 @@ export default inject(
                 </div>
               </div>
             </div>
+            <div className="container nopadding" style={{height: '50px'}}>
+            </div>
+            <MainTab activeIndex={3} />
           </React.Fragment>
         );
       }

@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 import Components from "../../../components";
 import ContentView from "../../../components/view/ContentView";
 const {
-  LAYOUT: { NavigationLayout, StoryDetailTab },
+  LAYOUT: { NavigationLayout, StoryDetailTab, MainTab },
 } = Components;
 
 export default inject(
@@ -315,6 +315,9 @@ export default inject(
                 onClickShare={this.onClickShare}
                 onClickReservation={this.onClickReservation}
               />
+              <div className="container nopadding" style={{height: '50px'}}>
+              </div>
+              <MainTab activeIndex={3} />
             </React.Fragment>
           );
         }

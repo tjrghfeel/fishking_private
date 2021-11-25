@@ -265,7 +265,7 @@ export default inject(
               onSelected={this.onSelectedSort}
             />
 
-            <NavigationLayout title={"어복스토리"} showSearchIcon={true} />
+            <NavigationLayout title={"어복스토리"} showSearchIcon={false} />
             <StoryTab activeIndex={2} />
 
             {/** Filter */}

@@ -2,7 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout, ZzimTab },
+  LAYOUT: { NavigationLayout, ZzimTab, MainTab },
   VIEW: { ZzimListView },
 } = Components;
 
@@ -27,6 +27,7 @@ export default inject(
             <ZzimTab activeIndex={1} />
 
             <ZzimListView fishingType={"seaRocks"} />
+            <MainTab activeIndex={4} />
           </React.Fragment>
         );
       }

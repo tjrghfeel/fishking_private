@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
 } = Components;
 
 export default inject(
@@ -85,6 +85,7 @@ export default inject(
                 </div>
               </div>
             </div>
+            <MainTab activeIndex={4} />
           </React.Fragment>
         );
       }

@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.entity.fishing.RiderFingerPrint;
 import com.tobe.fishking.v2.enums.fishing.OrderStatus;
 import com.tobe.fishking.v2.model.smartsail.*;
@@ -354,5 +355,23 @@ public class RideShipRepositoryImpl implements RideShipRepositoryCustom {
         return response;
     }
 
+    @Override
+    public List<RideShip> findByGoods(Long goodsId, String date) {
+        List<OrderStatus> statuses = new ArrayList<>();
+        statuses.add(OrderStatus.bookFix);
+        statuses.add(OrderStatus.fishingComplete);
+        statuses.add(OrderStatus.bookConfirm);
+
+        List<RideShip> response = queryFactory
+                .select(rideShip)
+                .from(rideShip).join(orderDetails).on(rideShip.ordersDetail.eq((orderDetails)))
+                .join(orders).on(orderDetails.orders.eq(orders))
+                .where(
+                        orders.fishingDate.eq(date),
+                        orders.goods.id.eq(goodsId),
+                        orders.orderStatus.in(statuses)
+                ).fetch();
+        return response;
+    }
 
 }

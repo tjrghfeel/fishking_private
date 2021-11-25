@@ -4,7 +4,7 @@ import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
 } = Components;
 
 export default inject(
@@ -292,7 +292,7 @@ export default inject(
                 <br />
               </p>
 
-              <div className="fixed-bottom">
+              <div className="fixed-bottom" style={{bottom: '50px'}}>
                 <div className="row no-gutters">
                   <div className="col-12">
                     <a
@@ -304,6 +304,9 @@ export default inject(
                   </div>
                 </div>
               </div>
+              <div className="container nopadding" style={{height: '50px'}}>
+              </div>
+              <MainTab activeIndex={4} />
             </React.Fragment>
           );
         }

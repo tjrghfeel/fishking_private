@@ -151,7 +151,7 @@ export default inject(
             <NavigationLayout
               title={"마이메뉴"}
               showSetIcon={true}
-              showSearchIcon={true}
+              showSearchIcon={false}
             />
 
             {/** 프로필 */}

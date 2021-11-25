@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import Components from "../../../components";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   VIEW: { EventListItemView },
 } = Components;
 
@@ -113,7 +113,7 @@ export default inject(
               </div>
 
               {/** Tab Menu */}
-              <div className="tab_barwrap fixed-bottom">
+              <div className="tab_barwrap fixed-bottom" style={{bottom: '50px'}}>
                 <div className="container nopadding">
                   <nav className="nav nav-pills nav-tab nav-justified">
                     <a
@@ -146,6 +146,9 @@ export default inject(
                   </nav>
                 </div>
               </div>
+              <div className="container nopadding" style={{height: '50px'}}>
+              </div>
+              <MainTab activeIndex={4} />
             </React.Fragment>
           );
         }

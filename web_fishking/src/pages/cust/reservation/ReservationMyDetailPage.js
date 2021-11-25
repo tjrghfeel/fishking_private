@@ -5,7 +5,7 @@ import { withRouter } from "react-router-dom";
 import Components from "../../../components";
 import PageStore from "../../../stores/PageStore";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   MODAL: { ConfirmReservationCancelModal, SelectReservationCancelReasonModal },
 } = Components;
 
@@ -484,7 +484,7 @@ export default inject(
 
               {(this.state.orderStatus === "출조 완료" ||
                 this.state.orderStatus === "취소 완료") && (
-                <div className="fixed-bottom">
+                <div className="fixed-bottom" style={{bottom: '50px'}}>
                   <div className="row no-gutters">
                     <div className="col-12">
                       <a
@@ -510,6 +510,9 @@ export default inject(
                 id={"reasonModal"}
                 onClick={this.requestCancel}
               />
+              <div className="container nopadding" style={{height: '50px'}}>
+              </div>
+              <MainTab activeIndex={4} />
             </React.Fragment>
           );
         }

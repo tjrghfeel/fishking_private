@@ -302,36 +302,21 @@ public class BoardingService {
                     .member(member)
                     .build();
             sailorRepository.save(sailor);
-            entryExitAttendRepository.save(
-                    EntryExitAttend.builder()
-                            .report(report)
-                            .name(body.get("name").toString())
-                            .birth(birth)
-                            .sex(sex)
-                            .type("2")
-                            .rideShipId(null)
-                            .idNumber(body.get("idNumber").toString())
-                            .addr(body.get("address").toString())
-                            .phone(body.get("phone").toString())
-                            .emerNum(body.get("emergencyPhone").toString())
-                            .build()
-            );
-        } else {
-            entryExitAttendRepository.save(
-                    EntryExitAttend.builder()
-                            .report(report)
-                            .name(body.get("name").toString())
-                            .birth(birth)
-                            .sex(sex)
-                            .type("2")
-                            .rideShipId(null)
-                            .idNumber(body.get("idNumber").toString())
-                            .addr(body.get("address").toString())
-                            .phone(body.get("phone").toString())
-                            .emerNum(body.get("emergencyPhone").toString())
-                            .build()
-            );
         }
+        entryExitAttendRepository.save(
+                EntryExitAttend.builder()
+                        .report(report)
+                        .name(body.get("name").toString())
+                        .birth(birth)
+                        .sex(sex)
+                        .type("2")
+                        .rideShipId(null)
+                        .idNumber(body.get("idNumber").toString())
+                        .addr(body.get("address").toString())
+                        .phone(body.get("phone").toString())
+                        .emerNum(body.get("emergencyPhone").toString())
+                        .build()
+        );
     }
 
     @Transactional
@@ -371,6 +356,26 @@ public class BoardingService {
         }
         if (reportList.size() > 0) {
             EntryExitReport report = reportList.get(0);
+            List<Long> rideShipIds = entryExitAttendRepository.getAttendRiderId(report);
+            List<RideShip> rideShips = rideShipRepository.findByGoods(goods.getId(), date);
+            rideShips.forEach(r -> {
+                if (!rideShipIds.contains(r.getId())) {
+                    entryExitAttendRepository.save(
+                            EntryExitAttend.builder()
+                                    .name(r.getName())
+                                    .birth(r.getBirthday())
+                                    .sex(r.getSex())
+                                    .phone(r.getPhoneNumber().replaceAll("-", ""))
+                                    .addr(r.getResidenceAddr())
+                                    .emerNum(r.getEmergencyPhone().replaceAll("-", ""))
+                                    .type("0")
+                                    .idNumber("")
+                                    .rideShipId(r.getId())
+                                    .report(report)
+                                    .build()
+                    );
+                }
+            });
             response = entryExitAttendRepository.getRiders(report);
         } else {
             Ship ship = goods.getShip();
@@ -415,7 +420,7 @@ public class BoardingService {
                             .report(report)
                             .build()
             );
-            List<RideShip> rideShips = rideShipRepository.findByGoods(goods, date);
+            List<RideShip> rideShips = rideShipRepository.findByGoods(goods.getId(), date);
             rideShips.forEach(r -> {
                 entryExitAttendRepository.save(
                         EntryExitAttend.builder()

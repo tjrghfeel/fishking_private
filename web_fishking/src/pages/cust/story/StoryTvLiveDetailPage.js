@@ -3,6 +3,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
 const {
+  LAYOUT: { MainTab },
   VIEW: { StoryTvLiveOtherListItemView },
 } = Components;
 
@@ -205,7 +206,7 @@ export default inject(
             )}
 
             {/** 하단버튼 */}
-            <div className="fixed-bottom">
+            <div className="fixed-bottom" style={{bottom: '50px'}}>
               <div className="row no-gutters">
                 <div className="col-6">
                   <a
@@ -227,6 +228,9 @@ export default inject(
                 </div>
               </div>
             </div>
+            <div className="container nopadding" style={{height: '50px'}}>
+            </div>
+            <MainTab activeIndex={5} />
           </React.Fragment>
         );
       }

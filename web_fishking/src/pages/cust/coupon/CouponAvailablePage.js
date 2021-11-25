@@ -4,7 +4,7 @@ import Components from "../../../components";
 import PageStore from "../../../stores/PageStore";
 import DataStore from "../../../stores/DataStore";
 const {
-  LAYOUT: { NavigationLayout },
+  LAYOUT: { NavigationLayout, MainTab },
   VIEW: { CouponAvailableListItemView },
 } = Components;
 
@@ -140,7 +140,7 @@ export default inject(
             </div>
 
             {PageStore.state.list && PageStore.state.list.length > 0 && (
-              <div className="fixed-bottom">
+              <div className="fixed-bottom" style={{bottom: '50px'}}>
                 <div className="row no-gutters">
                   <div className="col-12">
                     <a
@@ -153,6 +153,9 @@ export default inject(
                 </div>
               </div>
             )}
+            <div className="container nopadding" style={{height: '50px'}}>
+            </div>
+            <MainTab activeIndex={4} />
           </React.Fragment>
         );
       }

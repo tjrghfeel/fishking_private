@@ -7,7 +7,7 @@ import Components from "../../../components";
 const {
   VIEW: {CompanyGoodListItemView, GoodsBlogListItemView},
   MODAL: {CompanyGoodsDetailModal, CompanyDetailWeatherModal},
-  LAYOUT: {NavigationLayout}
+  LAYOUT: {NavigationLayout, MainTab}
 } = Components;
 
 export default inject(
@@ -908,8 +908,12 @@ export default inject(
                 </div>
               </div>
 
+              <div className="container nopadding" style={{height: '50px'}}>
+
+              </div>
+
               {/** 하단버튼 */}
-              <div className="fixed-bottom">
+              <div className="fixed-bottom" style={{bottom: '50px'}}>
                 <div className="row no-gutters">
                   <div className="col-3">
                     <a
@@ -938,6 +942,7 @@ export default inject(
               {/*  id={"selPlaceModal"}*/}
               {/*  seaCode={this.state.seaCode}*/}
               {/*/>*/}
+              <MainTab activeIndex={this.state.fishingType == null ? 5 : this.state.fishingType == "ship" ? 1 : 2 } />
             </React.Fragment>
           );
         }

@@ -15,4 +15,7 @@ public interface EntryExitAttendRepository extends BaseRepository<EntryExitAtten
 
     @Query("select count(a) from EntryExitAttend a where a.report = :report and a.type='2'")
     Integer getSailorCount(EntryExitReport report);
+
+    @Query("select a.rideShipId from EntryExitAttend a where a.report = :report and a.rideShipId is not null")
+    List<Long> getAttendRiderId(EntryExitReport report);
 }
