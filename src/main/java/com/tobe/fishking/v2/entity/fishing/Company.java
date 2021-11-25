@@ -77,17 +77,31 @@ public class Company extends BaseTime {  //선상
     private FileEntity representFileId ;
 
     @OneToOne
+    @JoinColumn(columnDefinition = "bigint null  comment '낚시어선업 신고확인증 파일'  ")
+    private FileEntity fishingBoatBizReportFileId ;
+
+    @OneToOne
+    @JoinColumn(columnDefinition = "bigint null  comment '해기사번호 확인 면허증 파일. '  ")
+    private FileEntity marineLicenseFileId ;
+
+    @OneToOne
     @JoinColumn(columnDefinition = "bigint  comment '정산 통장 사본'  ")
     private FileEntity accountFileId;
 
-    @Column(columnDefinition = "varchar(150)  comment '사업자등록파일 downloadUrl")
+    @Column(columnDefinition = "varchar(150)  comment '사업자등록파일 downloadUrl'")
     private String bizNoFileDownloadUrl;
 
-    @Column(columnDefinition = "varchar(150) comment '대표자신분증파일 downloadUrl")
+    @Column(columnDefinition = "varchar(150) comment '대표자신분증파일 downloadUrl'")
     private String representFileDownloadUrl;
 
-    @Column(columnDefinition = "varchar(150) comment '정산통장사본파일 downloadUrl")
+    @Column(columnDefinition = "varchar(150) comment '정산통장사본파일 downloadUrl'")
     private String accountFileDownloadUrl;
+
+    @Column(columnDefinition = "varchar(150) null comment '낚시어선업 신고확인증 downloadUrl'")
+    private String fishingBoatBizReportFileDownloadUrl;
+
+    @Column(columnDefinition = "varchar(150) null comment '해기사번호 확인 면허증 downloadUrl'")
+    private String marineLicenseFileDownloadUrl;
 
     // EXEC sp_addextendedproperty 'MS_Description', N'정산계좌은행 ', 'USER', DBO, 'TABLE', company, 'COLUMN',  bank
     @Column(columnDefinition = "varchar(10)   comment '정산계좌은행'  ")
@@ -185,9 +199,15 @@ public class Company extends BaseTime {  //선상
         bizNoFileId = (files[0]);
         representFileId = (files[1]);
         accountFileId = (files[2]);
+        fishingBoatBizReportFileId = (files[3]);
+        marineLicenseFileId = (files[4]);
         bizNoFileDownloadUrl = "/"+files[0].getFileUrl()+"/"+files[0].getStoredFile();
         representFileDownloadUrl = "/"+files[1].getFileUrl()+"/"+files[1].getStoredFile();
         accountFileDownloadUrl = "/"+files[2].getFileUrl()+"/"+files[2].getStoredFile();
+        if(fishingBoatBizReportFileId == null){fishingBoatBizReportFileDownloadUrl = "";}
+        else{fishingBoatBizReportFileDownloadUrl = "/"+files[3].getFileUrl()+"/"+files[3].getStoredFile();}
+        if(marineLicenseFileId == null){marineLicenseFileDownloadUrl = "";}
+        else{marineLicenseFileDownloadUrl = "/"+files[4].getFileUrl()+"/"+files[4].getStoredFile();}
         this.modifiedBy = (modifiedBy);
     }
 
@@ -213,9 +233,15 @@ public class Company extends BaseTime {  //선상
         bizNoFileId = (files[0]);
         representFileId = (files[1]);
         accountFileId = (files[2]);
+        fishingBoatBizReportFileId = files[3];
+        marineLicenseFileId = files[4];
         bizNoFileDownloadUrl = "/"+files[0].getFileUrl()+"/"+files[0].getStoredFile();
         representFileDownloadUrl = "/"+files[1].getFileUrl()+"/"+files[1].getStoredFile();
         accountFileDownloadUrl = "/"+files[2].getFileUrl()+"/"+files[2].getStoredFile();
+        if(fishingBoatBizReportFileId!= null){fishingBoatBizReportFileDownloadUrl = "/"+files[3].getFileUrl()+"/"+files[3].getStoredFile();}
+        else{fishingBoatBizReportFileDownloadUrl = "";}
+        if(marineLicenseFileId != null){marineLicenseFileDownloadUrl = "/"+files[4].getFileUrl()+"/"+files[4].getStoredFile();}
+        else{marineLicenseFileDownloadUrl = "";}
         modifiedBy = (manager);
         this.member = (member);
     }

@@ -116,6 +116,8 @@ public interface CompanyRepository extends BaseRepository<Company, Long> {
             "   c.biz_no_file_download_url bizNoFileDownloadUrl, " +
             "   c.represent_file_download_url representFileDownloadUrl, " +
             "   c.account_file_download_url accountFileDownloadUrl, " +
+            "   c.fishing_boat_biz_report_file_download_url fishingBoatBizReportFileDownloadUrl, " +
+            "   c.marine_license_file_download_url marineLicenseFileDownloadUrl, " +
             "   c.owner_wording ownerWording, " +
             "   c.is_open isOpen, " +
 //            "   c.skb_account skbAccount, " +

@@ -56,4 +56,6 @@ public class CompanyUpdateDTO {
     private Long representFile;
     @NotNull
     private Long accountFile;
+    private Long fishingBoatBizReportFile;
+    private Long marineLicenseFile;
 }

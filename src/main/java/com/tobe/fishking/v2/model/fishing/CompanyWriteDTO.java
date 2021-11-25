@@ -58,6 +58,8 @@ public class CompanyWriteDTO {
     private Long representFile;
     @NotNull(message = "정산통장사본을 입력하세요")
     private Long accountFile;
+    private Long fishingBoatBizReportFile;//낚시어선업 신고확인증.
+    private Long marineLicenseFile;//해기사번호 확인 면허증.
 
 //    @Size(max=30, message = "ADT 아이디는 20자 이하이어야합니다")
 //    private String adtId;

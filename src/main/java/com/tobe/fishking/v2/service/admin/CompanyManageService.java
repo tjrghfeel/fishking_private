@@ -140,6 +140,20 @@ public class CompanyManageService {
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getRepresentFile()));
         FileEntity accountFileEntity = fileRepository.findById(dto.getAccountFile())
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getAccountFile()));
+        FileEntity fishingBoatBizReportFileEntity = null;
+        String fishingBoatBizReportFileUrl = "";
+        if(dto.getFishingBoatBizReportFile() != null){
+            fishingBoatBizReportFileEntity = fileRepository.findById(dto.getFishingBoatBizReportFile())
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getFishingBoatBizReportFile()));
+            fishingBoatBizReportFileUrl = "/"+fishingBoatBizReportFileEntity.getFileUrl()+"/"+fishingBoatBizReportFileEntity.getStoredFile();
+        }
+        FileEntity marineLicenseFileEntity = null;
+        String marineLicenseFileUrl = "";
+        if(dto.getMarineLicenseFile() != null){
+            marineLicenseFileEntity = fileRepository.findById(dto.getMarineLicenseFile())
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getMarineLicenseFile()));
+            marineLicenseFileUrl = "/"+marineLicenseFileEntity.getFileUrl()+"/"+marineLicenseFileEntity.getStoredFile();
+        }
 
         /*Company 엔터티 등록. */
         Company company = Company.builder()
@@ -165,13 +179,25 @@ public class CompanyManageService {
                 .bizNoFileId(bizNoFileEntity)
                 .representFileId(representFileEntity)
                 .accountFileId(accountFileEntity)
+                .fishingBoatBizReportFileId(fishingBoatBizReportFileEntity)
+                .marineLicenseFileId(marineLicenseFileEntity)
                 .bizNoFileDownloadUrl("/"+bizNoFileEntity.getFileUrl()+"/"+bizNoFileEntity.getStoredFile())
                 .representFileDownloadUrl("/"+representFileEntity.getFileUrl()+"/"+representFileEntity.getStoredFile())
                 .accountFileDownloadUrl("/"+accountFileEntity.getFileUrl()+"/"+accountFileEntity.getStoredFile())
+                .fishingBoatBizReportFileDownloadUrl(fishingBoatBizReportFileUrl)
+                .marineLicenseFileDownloadUrl(marineLicenseFileUrl)
                 .createdBy(manager)
                 .modifiedBy(manager)
                 .build();
-        return companyRepository.save(company).getId();
+        company = companyRepository.save(company);
+
+        bizNoFileEntity.saveTemporaryFile(company.getId());
+        representFileEntity.saveTemporaryFile(company.getId());
+        accountFileEntity.saveTemporaryFile(company.getId());
+        if(fishingBoatBizReportFileEntity!= null){fishingBoatBizReportFileEntity.saveTemporaryFile(company.getId());}
+        if(marineLicenseFileEntity!= null){marineLicenseFileEntity.saveTemporaryFile(company.getId());}
+
+        return company.getId();
     }
 
     /*업체 수정*/
@@ -201,12 +227,27 @@ public class CompanyManageService {
                 .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getAccountFile()));
         accountFile.saveTemporaryFile(company.getId());
 
+        FileEntity fishingBoatBizReportFileEntity = null;
+        if(dto.getFishingBoatBizReportFile() != null){
+            fishingBoatBizReportFileEntity = fileRepository.findById(dto.getFishingBoatBizReportFile())
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getFishingBoatBizReportFile()));
+            fishingBoatBizReportFileEntity.saveTemporaryFile(company.getId());
+        }
+        FileEntity marineLicenseFileEntity = null;
+        if(dto.getMarineLicenseFile() != null){
+            marineLicenseFileEntity = fileRepository.findById(dto.getMarineLicenseFile())
+                    .orElseThrow(()->new ResourceNotFoundException("file not found for this id :: "+dto.getMarineLicenseFile()));
+            marineLicenseFileEntity.saveTemporaryFile(company.getId());
+        }
+
 //        if(dto.getSkbPassword()!=null){dto.setSkbPassword(encoder.encode(dto.getSkbPassword()));}
 
-        FileEntity[] fileEntityList = new FileEntity[3];
+        FileEntity[] fileEntityList = new FileEntity[5];
         fileEntityList[0] = bizNoFile;
         fileEntityList[1] = representFile;
         fileEntityList[2] = accountFile;
+        fileEntityList[3] = fishingBoatBizReportFileEntity;
+        fileEntityList[4] = marineLicenseFileEntity;
         company.updateCompanyForManage(dto,manager,member,fileEntityList);
         companyRepository.save(company);
 
