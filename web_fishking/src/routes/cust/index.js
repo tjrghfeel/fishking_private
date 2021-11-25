@@ -41,8 +41,16 @@ export default inject("PageStore")(
       // # >>>>> 접근 제한 및 리디렉션
       const goBack = sessionStorage.getItem("@goBack") || "N";
       const redirectUrl = sessionStorage.getItem("@redirect-url");
-      const isLoginPage =
-        history.location.pathname.indexOf(`/member/login`) !== -1;
+      const loginPage = [`/member/login`, `/member/signup`, `/member/findpw`]
+      let isLoginPage = false
+      for(let page of loginPage){
+          if (history.location.pathname.indexOf(page) !== -1) {
+              isLoginPage = true;
+              break;
+          }
+      }
+      // const isLoginPage =
+      //   history.location.pathname.indexOf(`/member/login`) !== -1;
       const blockPages = [`/reservation/goods/`, `/story/add`];
       let isBlock = false;
       for (let page of blockPages) {

@@ -1,4 +1,4 @@
-/* global daum, kakao */
+/* global daum, kakao, EXIF */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
@@ -278,6 +278,30 @@ export default inject(
           for(let fileIdx = 0; fileIdx<fileList.length; fileIdx++){
             // const file = this.file.current?.files[0];
             const file = fileList[fileIdx]
+            let orientation = 0
+
+            //이미지 회정 정보 확인
+            // async function getOrientation(img){
+            //   await EXIF.getData(file, ()=>{
+            //     orientation = EXIF.getTag(file, "Orientation")
+            //
+            //     switch (orientation){
+            //       case 1:
+            //         orientation = 0
+            //         break;
+            //       case 8://시계방향 90도
+            //         orientation = 90
+            //         break;
+            //       case 3://시계방향 180도
+            //         orientation = 180
+            //         break;
+            //       case 6://시계방향 270도
+            //         orientation = 270
+            //         break;
+            //     }
+            //   })
+            // }
+            // await getOrientation(file)
 
             if (!file.type?.includes("video")) {
               let imageCount = 0;
@@ -310,6 +334,7 @@ export default inject(
             const form = new FormData();
             form.append("file", file);
             form.append("filePublish", this.state.category);
+            // form.append("orientation", orientation)
 
             const { APIStore } = this.props;
             let upload = await APIStore._post_upload(
