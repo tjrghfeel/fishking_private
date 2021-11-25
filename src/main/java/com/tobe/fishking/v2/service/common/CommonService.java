@@ -198,7 +198,7 @@ public class CommonService {
     @Transactional
     public FilePreUploadResponseDto preUploadFile(MultipartFile file, String filePublish, String sessionToken)
             throws IOException, ResourceNotFoundException, JCodecException {
-        FileEntity fileEntity = uploadService.filePreUpload(file,FilePublish.valueOf(filePublish), sessionToken);
+        FileEntity fileEntity = uploadService.filePreUpload(file, FilePublish.valueOf(filePublish), sessionToken);
 
         FilePreUploadResponseDto dto = FilePreUploadResponseDto.builder()
                 .fileId(fileEntity.getId())

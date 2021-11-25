@@ -190,6 +190,11 @@ public class CouponController {
             throw new RuntimeException("발행 시작일이 발행 종료일보다 늦습니다.");
         }
 
+        //할인 가격 검증
+        if((dto.getSaleValue() < 1000) || ((dto.getSaleValue() % 1000) != 0)){
+            throw new RuntimeException("할인 금액은 1000원 단위이어야 합니다.");
+        }
+
         return couponService.makeCoupon(token, dto.getName(), dto.getSaleValue(), dto.getDescription(), dto.getMaxIssueCount(),
                 dto.getIssueStartDate(), dto.getIssueEndDate(), dto.getEffectiveStartDate(), dto.getEffectiveEndDate());
     }

@@ -42,9 +42,13 @@ public class CompanyDTO {
     private String bizNoFilesUrl ;
     private String representFilesUrl ;
     private String accountFileUrl;
+    private String fishingBoatBizReportFileUrl;
+    private String marineLicenseFileUrl;
     private Long bizNoFileId;
     private Long representFileId;
     private Long accountFileId;
+    private Long fishingBoatBizReportFileId;
+    private Long marineLicenseFileId;
     private String createdDate;
     private String registeredDate;
     //private Long bizNoFile;//not null
@@ -81,6 +85,22 @@ public class CompanyDTO {
         bizNoFileId = company.getBizNoFileId().getId();
         representFileId = company.getRepresentFileId().getId();
         accountFileId = company.getAccountFileId().getId();
+        if(company.getFishingBoatBizReportFileId()==null){
+            fishingBoatBizReportFileId = null;
+            fishingBoatBizReportFileUrl = null;
+        }
+        else{
+            fishingBoatBizReportFileId = company.getFishingBoatBizReportFileId().getId();
+            fishingBoatBizReportFileUrl = url + company.getFishingBoatBizReportFileDownloadUrl();
+        }
+        if(company.getMarineLicenseFileId() == null){
+            marineLicenseFileId = null;
+            marineLicenseFileUrl = null;
+        }
+        else{
+            marineLicenseFileId = company.getMarineLicenseFileId().getId();
+            marineLicenseFileUrl = url + company.getMarineLicenseFileDownloadUrl();
+        }
         createdDate = company.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if(company.getRegisteredDate()!=null){  registeredDate = company.getRegisteredDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));}
 

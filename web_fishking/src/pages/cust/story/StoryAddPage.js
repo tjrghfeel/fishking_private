@@ -1,4 +1,4 @@
-/* global daum, kakao */
+/* global daum, kakao, EXIF */
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Components from "../../../components";
@@ -273,65 +273,96 @@ export default inject(
         const { ModalStore } = this.props;
 
         if (this.file.current?.files.length > 0) {
-          const file = this.file.current?.files[0];
+          let fileList = this.file.current?.files
 
-          if (!file.type?.includes("video")) {
-            let imageCount = 0;
-            for (let item of this.state.uploaded) {
-              if (item.downloadUrl.endsWith(".mp4")) continue;
-              else imageCount = imageCount + 1;
-            }
+          for(let fileIdx = 0; fileIdx<fileList.length; fileIdx++){
+            // const file = this.file.current?.files[0];
+            const file = fileList[fileIdx]
+            let orientation = 0
 
-            if (imageCount >= 20) {
+            //이미지 회정 정보 확인
+            // async function getOrientation(img){
+            //   await EXIF.getData(file, ()=>{
+            //     orientation = EXIF.getTag(file, "Orientation")
+            //
+            //     switch (orientation){
+            //       case 1:
+            //         orientation = 0
+            //         break;
+            //       case 8://시계방향 90도
+            //         orientation = 90
+            //         break;
+            //       case 3://시계방향 180도
+            //         orientation = 180
+            //         break;
+            //       case 6://시계방향 270도
+            //         orientation = 270
+            //         break;
+            //     }
+            //   })
+            // }
+            // await getOrientation(file)
+
+            if (!file.type?.includes("video")) {
+              let imageCount = 0;
+              for (let item of this.state.uploaded) {
+                if (item.downloadUrl.endsWith(".mp4")) continue;
+                else imageCount = imageCount + 1;
+              }
+
+              if (imageCount >= 20) {
+                ModalStore.openModal("Alert", {
+                  body: "최대 20장까지 가능합니다.",
+                });
+                this.file.current.value = null;
+                return;
+              }
+            } else if (
+                file.type?.includes("video") &&
+                this.state.videoId !== null
+            ) {
               ModalStore.openModal("Alert", {
-                body: "최대 20장까지 가능합니다.",
+                body: "비디오는 1개만 업로드 가능합니다.",
               });
               this.file.current.value = null;
               return;
             }
-          } else if (
-            file.type?.includes("video") &&
-            this.state.videoId !== null
-          ) {
+
             ModalStore.openModal("Alert", {
-              body: "비디오는 1개만 업로드 가능합니다.",
+              body: file.name+"파일을 업로드하는 중입니다. 업로드 완료창이 뜰 때까지 잠시만 기다려주세요",
             });
-            this.file.current.value = null;
-            return;
-          }
+            const form = new FormData();
+            form.append("file", file);
+            form.append("filePublish", this.state.category);
+            // form.append("orientation", orientation)
 
-          ModalStore.openModal("Alert", {
-            body: file.name+"파일을 업로드하는 중입니다. 업로드 완료창이 뜰 때까지 잠시만 기다려주세요",
-          });
-          const form = new FormData();
-          form.append("file", file);
-          form.append("filePublish", this.state.category);
+            const { APIStore } = this.props;
+            let upload = await APIStore._post_upload(
+                "/v2/api/filePreUpload",
+                form
+            );
 
-          const { APIStore } = this.props;
-          let upload = await APIStore._post_upload(
-            "/v2/api/filePreUpload",
-            form
-          );
-
-          if (upload) {
-            if (file.type?.includes("video")) {
-              this.setState({ videoId: upload["fileId"] });
-              ModalStore.openModal("Alert", {
-                body: "파일 업로드가 완료되었습니다",
-              });
+            if (upload) {
+              if (file.type?.includes("video")) {
+                this.setState({ videoId: upload["fileId"] });
+                ModalStore.openModal("Alert", {
+                  body: "파일 업로드가 완료되었습니다",
+                });
+              }
+              else{
+                this.setState({ uploaded: this.state.uploaded.concat(upload) });
+                ModalStore.openModal("Alert", {
+                  body: file.name+"파일 업로드가 완료되었습니다",
+                });
+              }
             }
             else{
-              this.setState({ uploaded: this.state.uploaded.concat(upload) });
               ModalStore.openModal("Alert", {
-                body: file.name+"파일 업로드가 완료되었습니다",
+                body: file.name+"파일 업로드에 실패하였습니다",
               });
             }
           }
-          else{
-            ModalStore.openModal("Alert", {
-              body: file.name+"파일 업로드에 실패하였습니다",
-            });
-          }
+
           this.file.current.value = null;
         }
       };
@@ -685,6 +716,7 @@ export default inject(
               // capture="camera"
               style={{ display: "none" }}
               onChange={this.uploadFile}
+              multiple
             />
             <div className="container nopadding mt-3">
               <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>사진 또는 동영상&nbsp;<span className='red'>*</span></div>

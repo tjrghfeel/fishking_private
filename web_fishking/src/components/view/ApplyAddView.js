@@ -21,6 +21,8 @@ export default inject(
         this.bizNoFile = React.createRef(null);
         this.representFile = React.createRef(null);
         this.accountFile = React.createRef(null);
+        this.fishingBoatBizReportFile = React.createRef(null);
+        this.marineLicenseFile = React.createRef(null);
         this.adtId = React.createRef(null);
         this.adtPw = React.createRef(null);
         this.nhnId = React.createRef(null);
@@ -35,6 +37,8 @@ export default inject(
           bizNoFile: -1,
           representFile: -1,
           accountFile: -1,
+          fishingBoatBizReportFile: null,
+          marineLicenseFile: null,
           // adtId: null,
           // adtPw: null,
           // nhnId: null,
@@ -177,6 +181,16 @@ export default inject(
           this.accountFile.current?.files.length > 0
         ) {
           file = this.accountFile.current?.files[0];
+        } else if (
+            type === "fishingBoatBizReport" &&
+            this.fishingBoatBizReportFile.current?.files.length > 0
+        ) {
+          file = this.fishingBoatBizReportFile.current?.files[0];
+        } else if (
+            type === "marineLicense" &&
+            this.marineLicenseFile.current?.files.length > 0
+        ) {
+          file = this.marineLicenseFile.current?.files[0];
         }
 
         if (file === null) return;
@@ -210,6 +224,10 @@ export default inject(
           this.setState({ representFile: upload.fileId });
         } else if (upload && type === "account") {
           this.setState({ accountFile: upload.fileId });
+        } else if (upload && type === "fishingBoatBizReport") {
+          this.setState({ fishingBoatBizReportFile: upload.fileId });
+        } else if (upload && type === "marineLicense") {
+          this.setState({ marineLicenseFile: upload.fileId });
         }
       };
       /********** ********** ********** ********** **********/
@@ -402,6 +420,42 @@ export default inject(
                           className="form-control"
                           placeholder="정산 통장사본을 첨부하세요 "
                           onChange={() => this.uploadFile("account")}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <div className="input-group">
+                        <label
+                            className="input-group-addon"
+                            htmlFor="inputPhone"
+                        >
+                          낚시어선업 신고확인증
+                        </label>
+                        <input
+                            ref={this.fishingBoatBizReportFile}
+                            type="file"
+                            className="form-control"
+                            placeholder="낚시어선업 신고확인증을 첨부하세요 "
+                            onChange={() => this.uploadFile("fishingBoatBizReport")}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <div className="input-group">
+                        <label
+                            className="input-group-addon"
+                            htmlFor="inputPhone"
+                        >
+                          해기사번호 확인 면허증
+                        </label>
+                        <input
+                            ref={this.marineLicenseFile}
+                            type="file"
+                            className="form-control"
+                            placeholder="해기사번호 확인 면허증을 첨부하세요 "
+                            onChange={() => this.uploadFile("marineLicense")}
                         />
                       </div>
                     </div>

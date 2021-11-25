@@ -1,6 +1,11 @@
 package com.tobe.fishking.v2.addon;
 
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.jpeg.JpegDirectory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tobe.fishking.v2.entity.FileEntity;
 import com.tobe.fishking.v2.entity.auth.Member;
@@ -69,7 +74,8 @@ public class UploadService {
     /*파일 업로드 미리보기를 위한 파일 저장 메소드.
      * - FileEntity의 isDelete필드를 true로 둔상태로 생성.
      * - 생성한 FileEntity를 반환. */
-    public FileEntity filePreUpload(MultipartFile file, FilePublish filePublish, String sessionToken) throws IOException, ResourceNotFoundException, JCodecException {
+    public FileEntity filePreUpload(MultipartFile file, FilePublish filePublish, String sessionToken)
+            throws IOException, ResourceNotFoundException, JCodecException {
         Member member = memberRepository.findBySessionToken(sessionToken)
                 .orElseThrow(()->new ResourceNotFoundException("member not found for this sessionToken :: "+sessionToken));
 
@@ -242,6 +248,63 @@ public class UploadService {
         fileNames.add(uploadFilePath);
 
         if (thumbnail && file.getContentType().startsWith("image/")) {
+            //이미지 회전 정보 확인
+            int orientation2 = 1; // 회전정보, 1. 0도, 3. 180도, 6. 270도, 8. 90도 회전한 정보
+            int width = 0; // 이미지의 가로폭
+            int height = 0; // 이미지의 세로높이
+
+            Metadata metadata; // 이미지 메타 데이터 객체
+            Directory directory; // 이미지의 Exif 데이터를 읽기 위한 객체
+            JpegDirectory jpegDirectory; // JPG 이미지 정보를 읽기 위한 객체
+
+            try {
+                metadata = ImageMetadataReader.readMetadata(uploadFile);
+                directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+                jpegDirectory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
+                if(directory != null){
+                    orientation2 = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION); // 회전정보
+                }
+
+            }catch (Exception e) {
+                orientation2=1;
+            }
+
+            switch (orientation2) {
+                case 6://270도 회전.
+                    orientation2 = 360-270;
+//                    srcImg = Scalr.rotate(srcImg, Scalr.Rotation.CW_90, null);
+                    break;
+                case 1://0도 회전.
+                    orientation2 = 0;
+                    break;
+                case 3://180도 회전.
+                    orientation2 = 360 - 180;
+//                    srcImg = Scalr.rotate(srcImg, Scalr.Rotation.CW_180, null);
+                    break;
+                case 8://90도 회전.
+                    orientation2 = 360 - 90;
+//                    srcImg = Scalr.rotate(srcImg, Scalr.Rotation.CW_270, null);
+                    break;
+                default:
+                    orientation2=0;
+                    break;
+            }
+
+            //이미지 회전 저장.
+            BufferedImage originImg = ImageIO.read(uploadFile);
+            int widthOfImage = originImg.getWidth();
+            int heightOfImage = originImg.getHeight();
+            int typeOfImage = originImg.getType();
+
+            BufferedImage newImageFromBuffer = new BufferedImage(widthOfImage, heightOfImage, typeOfImage);
+
+            Graphics2D graphics2D = newImageFromBuffer.createGraphics();
+
+            graphics2D.rotate(Math.toRadians(orientation2), widthOfImage / 2, heightOfImage / 2);
+            graphics2D.drawImage(originImg, null, 0, 0);
+
+            ImageIO.write(newImageFromBuffer, "jpg", uploadFile);
+
             /*파일 크기가 4MB이상일 경우 용량줄이기. */
             uploadFile = resize(uploadFile, fileLocation, fileName);
 

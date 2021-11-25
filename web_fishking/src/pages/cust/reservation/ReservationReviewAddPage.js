@@ -54,33 +54,45 @@ export default inject(
         };
 
         uploadFile = async () => {
-          const { ModalStore } = this.props;
-          if (this.state.fileList.length >= 20) {
-            ModalStore.openModal("Alert", {
-              body: "최대 20장까지 가능합니다.",
-            });
-            this.file.current.value = null;
-            return;
-          }
+            const { ModalStore } = this.props;
 
-          if (this.file.current?.files.length > 0) {
-            const file = this.file.current?.files[0];
+            if (this.file.current?.files.length > 0) {
+                let fileList = this.file.current?.files
 
-            const form = new FormData();
-            form.append("file", file);
-            form.append("filePublish", "review");
+                for (let fileIdx = 0; fileIdx < fileList.length; fileIdx++) {
 
-            const { APIStore } = this.props;
-            const upload = await APIStore._post_upload(
-              "/v2/api/filePreUpload",
-              form
-            );
+                    const file = fileList[fileIdx]
+                    let orientation = 0
 
-            if (upload) {
-              this.setState({ fileList: this.state.fileList.concat(upload) });
+                    if (this.state.fileList.length >= 20) {
+                        ModalStore.openModal("Alert", {
+                            body: "최대 20장까지 가능합니다.",
+                        });
+                        this.file.current.value = null;
+                        return;
+                    }
+
+                    if (this.file.current?.files.length > 0) {
+                        const file = this.file.current?.files[0];
+
+                        const form = new FormData();
+                        form.append("file", file);
+                        form.append("filePublish", "review");
+
+                        const { APIStore } = this.props;
+                        const upload = await APIStore._post_upload(
+                            "/v2/api/filePreUpload",
+                            form
+                        );
+
+                        if (upload) {
+                            this.setState({ fileList: this.state.fileList.concat(upload) });
+                        }
+                    }
+                }
+                this.file.current.value = null;
             }
-            this.file.current.value = null;
-          }
+
         };
 
         removeUploadFile = (fileId) => {
@@ -225,6 +237,7 @@ export default inject(
                 accept="image/*"
                 style={{ display: "none" }}
                 onChange={this.uploadFile}
+                multiple
               />
               <div className="container nopadding mt-3">
                 <div className="row no-gutters d-flex align-items-center">

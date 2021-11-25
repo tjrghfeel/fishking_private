@@ -19,6 +19,8 @@ public interface CompanyManageDtoForPage {
     String getBizNoFileDownloadUrl();
     String getRepresentFileDownloadUrl();
     String getAccountFileDownloadUrl();
+    String getFishingBoatBizReportFileDownloadUrl();
+    String getMarineLicenseFileDownloadUrl();
     String getOwnerWording();
     Boolean getIsOpen();//
 //    String getSkbAccount();

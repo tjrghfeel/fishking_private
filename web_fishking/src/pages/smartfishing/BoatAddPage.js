@@ -42,6 +42,8 @@ export default inject(
           events: [],
           noticeTitle: null,
           notice: null,
+          ownerWordingTitle: null,
+          ownerWording: null,
           profileImage: null, // 선박사진
           videoId: null, // 녹화영상
           address: null,
@@ -444,6 +446,8 @@ export default inject(
           events,
           noticeTitle,
           notice,
+          ownerWordingTitle,
+          ownerWording,
           profileImage,
           videoId,
           sido,
@@ -541,6 +545,8 @@ export default inject(
           events,
           noticeTitle,
           notice,
+          ownerWordingTitle,
+          ownerWording,
           profileImage,
           videoId,
           addr: this.textAddr.current.value.concat(
@@ -1159,18 +1165,46 @@ export default inject(
                   <input
                     type="text"
                     className="form-control mt-3"
-                    placeholder="제목을 입력하세요"
+                    placeholder="제목을 입력하세요(100자 이내)"
                     value={this.state.noticeTitle}
-                    onChange={(e) =>
-                      this.setState({ noticeTitle: e.target.value })
+                    onChange={(e) => {
+                        if (e.target.value.length < 100) {
+                          this.setState({noticeTitle: e.target.value})
+                        }
+                      }
                     }
                   />
                   <textarea
                     className="form-control mt-2"
                     rows="7"
-                    placeholder="내용을 작성하세요"
+                    placeholder="내용을 작성하세요(500자 이내)"
                     value={this.state.notice}
-                    onChange={(e) => this.setState({ notice: e.target.value })}
+                    onChange={(e) => {if(e.target.value.length < 500){this.setState({ notice: e.target.value })}}}
+                  ></textarea>
+                </div>
+                <div className="space mt-0 mb-4"></div>
+                <div className="form-group">
+                  <label htmlFor="InputGPrice" className="d-block">
+                    사장님 한마디
+                  </label>
+                  <input
+                      type="text"
+                      className="form-control mt-3"
+                      placeholder="제목을 입력하세요(100자 이내)"
+                      value={this.state.ownerWordingTitle}
+                      onChange={(e) =>{
+                          if(e.target.value.length < 100){
+                            this.setState({ ownerWordingTitle: e.target.value })
+                          }
+                        }
+                      }
+                  />
+                  <textarea
+                      className="form-control mt-2"
+                      rows="7"
+                      placeholder="내용을 작성하세요(500자 이내)"
+                      value={this.state.ownerWording}
+                      onChange={(e) => {if(e.target.value.length<500){this.setState({ ownerWording: e.target.value })}}}
                   ></textarea>
                 </div>
                 <div className="space mt-0 mb-4"></div>

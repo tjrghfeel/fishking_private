@@ -105,5 +105,7 @@ public class    CompanyCreateDtoForManage {
     private Long representFile;
     @NotNull(message = "정산 통장사본을 입력하세요")
     private Long accountFile;
+    private Long fishingBoatBizReportFile;
+    private Long marineLicenseFile;
 
 }
