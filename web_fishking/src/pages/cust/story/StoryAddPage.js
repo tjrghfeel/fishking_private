@@ -728,7 +728,7 @@ export default inject(
             />
             <div className="container nopadding mt-3">
               <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>사진 또는 동영상&nbsp;<span className='red'>*</span>&nbsp;&nbsp;<br/>
-                (1회업로드허용 이미지 5개, 영상1개, 최대첨부 이미지 25개, 영상1개 입니다.)</div>
+                (1회 업로드 허용 이미지 5개, 영상1개, 최대첨부 이미지 25개, 영상1개 입니다.)</div>
               <div className="row no-gutters d-flex align-items-center">
                 <div className="col-3">
                   <a onClick={() => this.file.current?.click()}>
