@@ -1,0 +1,196 @@
+@charset "utf-8";
+/*프린트 플러그인 사용하면서 새로 css를 추가했습니다.*/
+#popup {
+    position:fixed;
+    left: 50%;
+    top:0;
+    z-index:50;
+    width:1240px;
+    height:1080px;
+    /*display:none;*/
+    transform: translateX(-50%);
+}
+#popup_outline {
+    width:1240px;
+
+    /*height:1480px;*/
+    height:980px;
+    background:#ffffff;
+    /*font-weight:bold;*/
+}
+
+/*A4-4*/
+#popup_outline #popup_inline .a4_4 {
+    width:1174px;
+    height:1440px;
+}
+#popup_outline #popup_inline .a4_4 .topbox_4{
+    text-align:center;
+    height:1440px;
+    padding:20px;
+}
+#popup_outline #popup_inline .a4_4 .topbox_4 .top_p1 {
+    font-size:50px;
+    padding-bottom:10px;
+    border-bottom:9px solid;
+    text-align:left;
+}
+#popup_outline #popup_inline .a4_4 .topbox_4 .top_p2 {
+    font-size:50px;
+}
+#popup_outline #popup_inline .a4_4 .middle_1 p{
+    font-size:24px;
+    /*height:80px;*/
+}
+#popup_outline #popup_inline .a4_4 .middle_1 .middle_p1 {
+    text-align:left;
+    margin: 15px 10px;
+    font-weight: normal;
+    /*margin-top:50px;*/
+}
+#popup_outline #popup_inline .a4_4 .middle_1 .middle_p2 {
+    text-align:center;
+    font-size: 50px;
+    font-weight: bold;
+    margin: 10px 10px 40px 10px;
+}
+.bottom_1 ul {
+    text-align:center;
+    font-size:0;
+    height:50px;
+    line-height:50px;
+    padding: 0;
+    margin: 0px 10px;
+}
+.bottom_1 ul li{
+    display:inline-block;
+    font-size:28px;
+    text-align:center;
+    /*width:250px;*/
+    width:175.4px;
+    height:50px;
+    line-height:50px;
+    vertical-align:top;
+    border:1px solid #000000;
+}
+.bottom_1 .head {
+    margin: 0px 10px;
+    font-weight: bold;
+    font-size: 28px;
+    height:32px;
+    line-height:32px;
+}
+.bottom_1 .head .head_left {
+    text-align: left;
+    float: left
+}
+.bottom_1 .head .head_right {
+    text-align: right;
+    float: right;
+}
+.foot {
+    margin: 10px 10px 15px 10px;
+    font-size: 20px;
+    height:20px;
+    line-height:20px;
+}
+.foot .foot_left {
+    text-align: left;
+    float: left
+}
+.bottom_1 ul.first li {
+    font-weight: bold;
+}
+.bottom_1 .li_1 {
+    width:5%;
+}
+.bottom_1 .li_2 {
+    width:9%;
+}
+.bottom_1 .li_3 {
+    width:11%;
+}
+.bottom_1 .li_4 {
+    width:5%;
+}
+.bottom_1 .li_5 {
+    width:20%;
+}
+.bottom_1 .li_6 {
+    width:20%;
+}
+.bottom_1 .li_7 {
+    width:28%;
+}
+
+.bottom_3 {
+    /*margin-top:50px;*/
+    height:100px;
+    /*position:absolute;*/
+    width:1240px;
+    /*left:0;*/
+    /*top:980px;*/
+    z-index:50;
+    background:#ffffff;
+}
+#popup .bottom_3 button{
+    width: 400px;
+    height:100px;
+    border-radius:15px;
+    font-size:40px;
+    outline:none;
+}
+#popup .bottom_3 .bottom_p1 {
+    margin-left:160.985px;
+    margin-right:20px;
+}
+#popup .bottom_3 .bottom_p2 {
+    margin-right:160.985px;
+    margin-left:20px;
+}
+
+
+@page {
+    size: A4;
+    margin:0;
+}
+
+@media print {
+    .a4 {
+        width: 210mm;
+        height: 891mm;
+    }
+    .a4_1 {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: avoid;
+        padding:0;
+    }
+    .a4_2 {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: always;
+        padding:0;
+
+    }
+    .a4_3 {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: always;
+    }
+}

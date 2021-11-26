@@ -13,6 +13,7 @@
 <script src="/assets/smartsail/js/jquery.touchSwipe.min.js"></script>
 <script src="/assets/smartsail/js/default.js"></script>
 <script src="/assets/smartsail/js/swiper.min.js"></script>
+<script src="/assets/smartsail/js/printThis.js"></script>
 <%--<script src="/assets/smartsail/js/chart.js"></script>--%>
 
 <script>//Navigation Menu Slider

@@ -19,6 +19,9 @@
 <div class="filterlinewrap container nopadding" id="container">
 </div>
 
+<a id="printbtn" class="add-circle" style="z-index: 50; bottom: 60px; right: 60px;">
+    <img src="/assets/smartsail/img/svg/icon-note-white.svg" alt="" class="add-icon"/>
+</a>
 <a onclick="javascript:moveToAdd();" class="add-circle" style="z-index: 50; bottom: 60px;">
     <img src="/assets/smartsail/img/svg/icon-add-user.svg" alt="" class="add-icon"/>
 </a>
@@ -32,6 +35,7 @@
 </div>
 <!--// 하단버튼 -->
 <input id="canadd" type="hidden" />
+<jsp:include page="reportprint.jsp" />
 <jsp:include page="cmm_foot.jsp" />
 
 <script>

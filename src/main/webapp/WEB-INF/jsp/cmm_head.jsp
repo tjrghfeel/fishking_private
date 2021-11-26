@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="/assets/smartsail/css/bootstrap.css" rel="stylesheet">
     <link href="/assets/smartsail/css/style.css" rel="stylesheet">
+    <link href="/assets/smartsail/css/printreport.css" rel="stylesheet">
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" href="/assets/smartsail/brand/apple-touch-icon.png" sizes="180x180">

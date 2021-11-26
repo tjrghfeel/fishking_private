@@ -199,8 +199,8 @@ public class BoardingService {
                         .rideShipId(rider.getId())
                         .idNumber("")
                         .addr(dto.getAddr())
-                        .phone(dto.getPhone().contains("-") ? dto.getPhone() : CommonAddon.addDashToPhoneNum(dto.getPhone()))
-                        .emerNum(dto.getEmergencyPhone().contains("-") ? dto.getEmergencyPhone() : CommonAddon.addDashToPhoneNum(dto.getEmergencyPhone()))
+                        .phone(dto.getPhone().replaceAll("-", ""))
+                        .emerNum(dto.getEmergencyPhone().replaceAll("-", ""))
                         .build()
         );
     }
@@ -295,10 +295,10 @@ public class BoardingService {
                     .name(body.get("name").toString())
                     .birth(birth)
                     .sex(sex)
-                    .idNumber(body.get("idNumber").toString())
+                    .idNumber(body.get("idNumber").toString().replaceAll("-", ""))
                     .addr(body.get("address").toString())
-                    .phone(body.get("phone").toString())
-                    .emerNum(body.get("emergencyPhone").toString())
+                    .phone(body.get("phone").toString().replaceAll("-", ""))
+                    .emerNum(body.get("emergencyPhone").toString().replaceAll("-", ""))
                     .member(member)
                     .build();
             sailorRepository.save(sailor);
@@ -311,10 +311,10 @@ public class BoardingService {
                         .sex(sex)
                         .type("2")
                         .rideShipId(null)
-                        .idNumber(body.get("idNumber").toString())
+                        .idNumber(body.get("idNumber").toString().replaceAll("-", ""))
                         .addr(body.get("address").toString())
-                        .phone(body.get("phone").toString())
-                        .emerNum(body.get("emergencyPhone").toString())
+                        .phone(body.get("phone").toString().replaceAll("-", ""))
+                        .emerNum(body.get("emergencyPhone").toString().replaceAll("-", ""))
                         .build()
         );
     }
@@ -411,11 +411,11 @@ public class BoardingService {
                             .name(ship.getCapName())
                             .birth(ship.getCapBirth())
                             .sex(ship.getCapSex())
-                            .phone(ship.getCapPhone())
+                            .phone(ship.getCapPhone().replaceAll("-", ""))
                             .addr(ship.getCapAddr())
-                            .emerNum(ship.getCapEmerNum())
+                            .emerNum(ship.getCapEmerNum().replaceAll("-", ""))
                             .type("1")
-                            .idNumber(ship.getCapIdNumber())
+                            .idNumber(ship.getCapIdNumber().replaceAll("-", ""))
                             .rideShipId(null)
                             .report(report)
                             .build()

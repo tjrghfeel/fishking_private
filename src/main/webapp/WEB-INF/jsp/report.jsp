@@ -28,6 +28,9 @@
 </div>
 <!-- /end Filter -->
 
+<a id="printbtn" class="add-circle" style="z-index: 50; bottom: 60px;">
+    <img src="/assets/smartsail/img/svg/icon-note-white.svg" alt="" class="add-icon"/>
+</a>
 <!-- 하단버튼 -->
 <div class="fixed-bottom" id="btm-btn">
     <div class="row no-gutters">
@@ -36,6 +39,7 @@
 </div>
 <!--// 하단버튼 -->
 <div id="mask" style="z-index: 1500; background-color: rgba(0,0,0,0.3); left:0; top:0; position: fixed; width: 100%; height: 100%; display: none; "></div>
+<jsp:include page="reportprint.jsp" />
 <jsp:include page="cmm_foot.jsp" />
 
 <script>
@@ -65,11 +69,20 @@
           var container = $('#container');
           var sailorCount = 0
           var rider = response['rider']
+          var c;
+          var r = []
           for (var i = 0; i < rider.length; i++) {
             var item = rider[i];
             var status = item['status']
             if (status == "미승선") continue
-            if (status == "선원") sailorCount += 1
+            if (status == "선원") {
+              sailorCount += 1
+              r.push(item)
+            } else if (status == "선장") {
+              c = item
+            } else {
+              r.push(item)
+            }
             var tags = $(' \
                             <div class="container nopadding mt-2" name="list-item" data-index="' + i + '"> \
                                 <div class="card-round-grey"> \
@@ -94,6 +107,23 @@
           $('#starttime').text(response['startTime']);
           $('#endtime').text(response['endTime']);
           $('#countStr').append(numberStr);
+
+          $('#shipname2').text(response['shipName']);
+          $('#n-c').text(c['name'])
+          var b = c['birthday'].substring(0,2) + '.' + c['birthday'].substring(2,4) + '.' + c['birthday'].substring(4,6)
+          $('#b-c').text(b)
+          $('#g-c').text(c['sex'])
+          $('#p-c').text(c['phone'])
+          $('#em-c').text(c['emergencyPhone'])
+          for (var i = 0; i < s.length; i++) {
+            $('#n-'+String(i+1)).text(r['name'])
+            var b = r['birthday'].split('-')[0].substring(2,4) + '.' + r['birthday'].split('-')[1] + '.' + r['birthday'].split('-')[2]
+            $('#b-'+String(i+1)).text(b)
+            $('#g-'+String(i+1)).text(r['sex'])
+            $('#p-'+String(i+1)).text(r['phone'])
+            $('#em-'+String(i+1)).text(r['emergencyPhone'])
+            if (r['status'] == '선원') $('#etc-'+String(i+1)).text('선원')
+          }
 
           $('#sendBtn').click(function () {
             $('#mask').show()

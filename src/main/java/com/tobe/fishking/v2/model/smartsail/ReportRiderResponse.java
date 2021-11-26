@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.tobe.fishking.v2.addon.CommonAddon.addDashToPhoneNum;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,9 +45,10 @@ public class ReportRiderResponse {
         this.riderId = riderId;
         this.reportRiderId = reportRiderId;
         this.name = name;
-        this.phone = phone;
-        this.emergencyPhone = emergencyPhone;
+        this.phone = addDashToPhoneNum(phone);
+        this.emergencyPhone = addDashToPhoneNum(emergencyPhone);
         this.birthday = idNum;
+        this.sex = sex.equals("M") ? "남" : "여";
         this.address = address;
         this.type = type.equals("0") ? "승선객" : type.equals("1") ? "선장" : "선원";
         this.status = !type.equals("0") ? type.equals("1") ? "선장" : "선원" : status ? "승선완료" : "미승선";

@@ -25,9 +25,9 @@
 #content ol {
   position: fixed;
   left: 0;
-  bottom: 0;
+  bottom:50px;
   width: 100%;
-  height: 70px;
+  height: 80px;
   padding-top: 30px;
   border-radius: 20px 20px 0 0;
   background-color: #fff;
@@ -38,7 +38,7 @@
 #scroll-list {
   position: fixed;
   left: 0;
-  bottom: 0;
+  bottom: 50px;
   width: 100%;
   height: 50px;
   /*border-radius: 20px 20px 0 0;*/
