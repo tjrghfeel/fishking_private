@@ -39,7 +39,7 @@ public class ModifyFishingDiaryDto {
     @Size(min=1,message="내용이 비었습니다.")
     @Size(max=1000, message = "내용은 1000자 이하이어야합니다")
     private String content;
-    @Size(min=1,max = 20, message = "사진 항목이 비었습니다.")
+    @Size(min=1,max = 25, message = "사진 항목이 비었습니다.")
     private Long[] fileList;
     private Long videoId;
 

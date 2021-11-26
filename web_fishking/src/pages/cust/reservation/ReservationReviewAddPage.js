@@ -56,7 +56,14 @@ export default inject(
         uploadFile = async () => {
             const { ModalStore } = this.props;
 
-            if (this.file.current?.files.length > 0) {
+            if(this.file.current?.files.length > 5){
+                ModalStore.openModal("Alert", {
+                    body: "1회 업로드 허용 이미지는 5개 입니다.",
+                });
+                this.file.current.value = null;
+                return;
+            }
+            else if (this.file.current?.files.length > 0) {
                 let fileList = this.file.current?.files
 
                 for (let fileIdx = 0; fileIdx < fileList.length; fileIdx++) {
@@ -64,9 +71,9 @@ export default inject(
                     const file = fileList[fileIdx]
                     let orientation = 0
 
-                    if (this.state.fileList.length >= 20) {
+                    if (this.state.fileList.length >= 25) {
                         ModalStore.openModal("Alert", {
-                            body: "최대 20장까지 가능합니다.",
+                            body: "최대 첨부 이미지는 25장까지 입니다.",
                         });
                         this.file.current.value = null;
                         return;
@@ -240,6 +247,8 @@ export default inject(
                 multiple
               />
               <div className="container nopadding mt-3">
+                <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>사진 또는 동영상&nbsp;&nbsp;<br/>
+                    (1회업로드허용 이미지 5개, 영상1개, 최대첨부 이미지 25개, 영상1개 입니다.)</div>
                 <div className="row no-gutters d-flex align-items-center">
                   <div className="col-3">
                     <a onClick={() => this.file.current?.click()}>
@@ -290,7 +299,7 @@ export default inject(
                         입력됩니다.
                       </li>
                       <li>
-                        사진은 최대 50장까지 등록 가능합니다. (GIF, 동영상 불가)
+                        사진은 최대 25장까지 등록 가능합니다. (GIF, 동영상 불가)
                       </li>
                       <li>
                         이용약관을 위반한 리뷰는 통보 없이 삭제 될 수 있습니다.
