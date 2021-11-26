@@ -33,6 +33,6 @@ public class ModifyReviewDto {
     @Size(min=1, message = "내용을 입력해야합니다")
     @Size(max=2000, message = "내용은 2000자 이하이어야합니다")
     private String content;
-    @Size(min=0,max=20,message = "가능한 사진 개수는 0~20개 입니다.")
+    @Size(min=0,max=25,message = "가능한 사진 개수는 0~25개 입니다.")
     private Long[] fileList;
 }

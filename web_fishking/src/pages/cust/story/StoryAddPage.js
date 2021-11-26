@@ -272,7 +272,15 @@ export default inject(
       uploadFile = async () => {
         const { ModalStore } = this.props;
 
-        if (this.file.current?.files.length > 0) {
+        if(this.file.current?.files.length > 5){
+          ModalStore.openModal("Alert", {
+            body: "1회 업로드 허용 이미지는 5개 입니다.",
+          });
+          this.file.current.value = null;
+          return;
+        }
+        else if (this.file.current?.files.length > 0) {
+
           let fileList = this.file.current?.files
 
           for(let fileIdx = 0; fileIdx<fileList.length; fileIdx++){
@@ -310,9 +318,9 @@ export default inject(
                 else imageCount = imageCount + 1;
               }
 
-              if (imageCount >= 20) {
+              if (imageCount >= 25) {
                 ModalStore.openModal("Alert", {
-                  body: "최대 20장까지 가능합니다.",
+                  body: "최대 첨부 이미지는 25장까지 입니다.",
                 });
                 this.file.current.value = null;
                 return;
@@ -719,7 +727,8 @@ export default inject(
               multiple
             />
             <div className="container nopadding mt-3">
-              <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>사진 또는 동영상&nbsp;<span className='red'>*</span></div>
+              <div style={{borderBottom:'1px solid #ccc', marginBottom:'1vh'}}>사진 또는 동영상&nbsp;<span className='red'>*</span>&nbsp;&nbsp;<br/>
+                (1회 업로드 허용 이미지 5개, 영상1개, 최대첨부 이미지 25개, 영상1개 입니다.)</div>
               <div className="row no-gutters d-flex align-items-center">
                 <div className="col-3">
                   <a onClick={() => this.file.current?.click()}>
@@ -804,7 +813,7 @@ export default inject(
                       글이 등록되지 않습니다.
                     </li>
                     <li>
-                      사진(필수항목)은 최대 50장 까지, 동영상(선택항목)은 1개만
+                      사진(필수항목)은 최대 25장 까지, 동영상(선택항목)은 1개만
                       등록 가능합니다.
                     </li>
                     <li>
