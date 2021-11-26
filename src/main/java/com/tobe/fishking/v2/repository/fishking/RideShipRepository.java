@@ -2,6 +2,7 @@ package com.tobe.fishking.v2.repository.fishking;
 
 import com.tobe.fishking.v2.entity.fishing.Goods;
 import com.tobe.fishking.v2.entity.fishing.OrderDetails;
+import com.tobe.fishking.v2.entity.fishing.Orders;
 import com.tobe.fishking.v2.entity.fishing.RideShip;
 import com.tobe.fishking.v2.repository.BaseRepository;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,4 +25,6 @@ public interface RideShipRepository extends BaseRepository<RideShip, Long>, Ride
 //    @Query("select r from RideShip r where r.ordersDetail.orders.goods = :goods and r.ordersDetail.orders.fishingDate = :date")
 //    List<RideShip> findByGoods(Goods goods, String date);
 
+    @Query("select r.id from RideShip r where r.ordersDetail.orders  = :orders")
+    List<Long> getRidersByOrder(Orders orders);
 }

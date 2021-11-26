@@ -39,6 +39,8 @@ public class PayService {
     private final AlertsRepository alertsRepository;
     private final MemberService memberService;
     private final RegistrationTokenRepository registrationTokenRepository;
+    private final RideShipRepository rideShipRepository;
+    private final EntryExitAttendRepository entryExitAttendRepository;
 
     private final String url = "https://fcm.googleapis.com/fcm/send";
 
@@ -242,6 +244,10 @@ public class PayService {
                 rMPIPositionType = ipg.MPIPositionType[0];      // K : KSNET, R : Remote, C : 제3기관, SPACE : 일반거래
                 rMPIReUseType = ipg.MPIReUseType[0];         // Y : 재사용, N : 재사용아님
                 rEncData = ipg.EncData[0];              // MPI, ISP 데이터
+
+                List<Long> ridersIdList = rideShipRepository.getRidersByOrder(orders);
+                List<EntryExitAttend> attends = entryExitAttendRepository.getByRideShipId(ridersIdList);
+                entryExitAttendRepository.deleteAll(attends);
 
                 orders.cancelled(member, rAuthNo);
                 ordersRepository.save(orders);

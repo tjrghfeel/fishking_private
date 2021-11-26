@@ -18,4 +18,7 @@ public interface EntryExitAttendRepository extends BaseRepository<EntryExitAtten
 
     @Query("select a.rideShipId from EntryExitAttend a where a.report = :report and a.rideShipId is not null")
     List<Long> getAttendRiderId(EntryExitReport report);
+
+    @Query("select a from EntryExitAttend a where a.rideShipId in :rideShipId")
+    List<EntryExitAttend> getByRideShipId(List<Long> rideShipId);
 }

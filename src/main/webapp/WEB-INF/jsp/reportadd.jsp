@@ -92,6 +92,8 @@
         } else {
           var container = $('#container');
           var rider = response['rider']
+          var cap;
+          var r = []
           $('#canadd').val(response['counts'] > rider.length)
           for (var i = 0; i < rider.length; i++) {
             var item = rider[i];
@@ -99,6 +101,11 @@
             var c = ''
             if (status == '미승선') {
               c = 'background-color: #101010;'
+            }
+            if (status == "선장") {
+              cap = item
+            } else if (status == "선원" || status == "승선완료") {
+              r.push(item)
             }
             var tags = $(' \
                             <div class="container nopadding mt-2" name="list-item" data-index="' + i + '"> \
@@ -119,6 +126,24 @@
             $(tags).data('item', item);
             $(container).append(tags);
           }
+
+          $('#shipname2').text(response['shipName']);
+          $('#n-c').text(cap['name'])
+          var b = cap['birthday'].substring(0,2) + '.' + cap['birthday'].substring(2,4) + '.' + cap['birthday'].substring(4,6)
+          $('#b-c').text(b)
+          $('#g-c').text(cap['sex'])
+          $('#p-c').text(cap['phone'])
+          $('#em-c').text(cap['emergencyPhone'])
+          for (var i = 0; i < s.length; i++) {
+            $('#n-'+String(i+1)).text(r['name'])
+            var b = r['birthday'].split('-')[0].substring(2,4) + '.' + r['birthday'].split('-')[1] + '.' + r['birthday'].split('-')[2]
+            $('#b-'+String(i+1)).text(b)
+            $('#g-'+String(i+1)).text(r['sex'])
+            $('#p-'+String(i+1)).text(r['phone'])
+            $('#em-'+String(i+1)).text(r['emergencyPhone'])
+            if (r['status'] == '선원') $('#etc-'+String(i+1)).text('선원')
+          }
+
           pending = false;
         }
       }
