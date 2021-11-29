@@ -6,12 +6,12 @@
       <div class="a4_4 a4">
         <div class="topbox_4">
           <div class="middle_1">
-            <p class="middle_p1">■ 낚시 관리 및 육성법 시행규칙 [별지 제16호서식] 	&lt;개정 2019. 3;. 13.&gt;</p>
+            <p class="middle_p1">■ 낚시 관리 및 육성법 시행규칙 [별지 제16호서식] 	&lt;개정 2019. 3. 13.&gt;</p>
             <p class="middle_p2">승선자 명부(<span id="shipname2"></span>)</p>
           </div>
           <div class="bottom_1">
             <div class="head">
-              <span class="head_left">· 승선일: 2021년 11월 26일</span>
+              <span class="head_left">· 승선일: <span id="date">2021년 11월 26일</span></span>
               <span class="head_right">※ 구명조끼 착용 의무화, 신분증 지참 요, 음주승선 금지</span>
             </div>
             <ul class="first">
@@ -220,6 +220,33 @@
               <li class="li_5" id="p-21">&nbsp</li>
               <li class="li_6" id="em-21">&nbsp</li>
               <li class="li_7" id="etc-21">&nbsp</li>
+            </ul>
+            <ul class="">
+              <li class="li_1">22</li>
+              <li class="li_2" id="n-22">&nbsp</li>
+              <li class="li_3" id="b-22">&nbsp</li>
+              <li class="li_4" id="g-22">&nbsp</li>
+              <li class="li_5" id="p-22">&nbsp</li>
+              <li class="li_6" id="em-22">&nbsp</li>
+              <li class="li_7" id="etc-22">&nbsp</li>
+            </ul>
+            <ul class="">
+              <li class="li_1">23</li>
+              <li class="li_2" id="n-23">&nbsp</li>
+              <li class="li_3" id="b-23">&nbsp</li>
+              <li class="li_4" id="g-23">&nbsp</li>
+              <li class="li_5" id="p-23">&nbsp</li>
+              <li class="li_6" id="em-23">&nbsp</li>
+              <li class="li_7" id="etc-23">&nbsp</li>
+            </ul>
+            <ul class="">
+              <li class="li_1">24</li>
+              <li class="li_2" id="n-24">&nbsp</li>
+              <li class="li_3" id="b-24">&nbsp</li>
+              <li class="li_4" id="g-24">&nbsp</li>
+              <li class="li_5" id="p-24">&nbsp</li>
+              <li class="li_6" id="em-24">&nbsp</li>
+              <li class="li_7" id="etc-24">&nbsp</li>
             </ul>
           </div>
           <div class="foot">

@@ -128,20 +128,22 @@
           }
 
           $('#shipname2').text(response['shipName']);
+          var dts = response['startTime'].split(' ')[0].split('-');
+          $('#date').text(dts[0] + '년 ' + dts[1] + '월 ' + dts[2] + '일');
           $('#n-c').text(cap['name'])
           var b = cap['birthday'].substring(0,2) + '.' + cap['birthday'].substring(2,4) + '.' + cap['birthday'].substring(4,6)
           $('#b-c').text(b)
           $('#g-c').text(cap['sex'])
           $('#p-c').text(cap['phone'])
           $('#em-c').text(cap['emergencyPhone'])
-          for (var i = 0; i < s.length; i++) {
-            $('#n-'+String(i+1)).text(r['name'])
-            var b = r['birthday'].split('-')[0].substring(2,4) + '.' + r['birthday'].split('-')[1] + '.' + r['birthday'].split('-')[2]
+          for (var i = 0; i < r.length; i++) {
+            $('#n-'+String(i+1)).text(r[i]['name'])
+            var b = r[i]['birthday'].substring(0,2) + '.' + r[i]['birthday'].substring(2,4) + '.' + r[i]['birthday'].substring(4,6)
             $('#b-'+String(i+1)).text(b)
-            $('#g-'+String(i+1)).text(r['sex'])
-            $('#p-'+String(i+1)).text(r['phone'])
-            $('#em-'+String(i+1)).text(r['emergencyPhone'])
-            if (r['status'] == '선원') $('#etc-'+String(i+1)).text('선원')
+            $('#g-'+String(i+1)).text(r[i]['sex'])
+            $('#p-'+String(i+1)).text(r[i]['phone'])
+            $('#em-'+String(i+1)).text(r[i]['emergencyPhone'])
+            if (r[i]['status'] == '선원') $('#etc-'+String(i+1)).text('선원')
           }
 
           pending = false;

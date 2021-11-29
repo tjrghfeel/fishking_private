@@ -39,7 +39,7 @@
     font-size:50px;
 }
 #popup_outline #popup_inline .a4_4 .middle_1 p{
-    font-size:24px;
+    font-size:14px;
     /*height:80px;*/
 }
 #popup_outline #popup_inline .a4_4 .middle_1 .middle_p1 {
@@ -64,7 +64,7 @@
 }
 .bottom_1 ul li{
     display:inline-block;
-    font-size:28px;
+    font-size:20px;
     text-align:center;
     /*width:250px;*/
     width:175.4px;
@@ -76,9 +76,9 @@
 .bottom_1 .head {
     margin: 0px 10px;
     font-weight: bold;
-    font-size: 28px;
+    font-size: 24px;
     height:32px;
-    line-height:32px;
+    line-height:26px;
 }
 .bottom_1 .head .head_left {
     text-align: left;
@@ -90,9 +90,9 @@
 }
 .foot {
     margin: 10px 10px 15px 10px;
-    font-size: 20px;
-    height:20px;
-    line-height:20px;
+    font-size: 14px;
+    height:14px;
+    line-height:14px;
 }
 .foot .foot_left {
     text-align: left;
