@@ -137,6 +137,7 @@
           $('#p-c').text(cap['phone'])
           $('#em-c').text(cap['emergencyPhone'])
           for (var i = 0; i < r.length; i++) {
+            if (i > 23) break
             $('#n-'+String(i+1)).text(r[i]['name'])
             var b = r[i]['birthday'].substring(0,2) + '.' + r[i]['birthday'].substring(2,4) + '.' + r[i]['birthday'].substring(4,6)
             $('#b-'+String(i+1)).text(b)
