@@ -211,10 +211,10 @@ export default inject(
           });
           return;
         }
-        if (new Number(amount) < 10000) {
+        if (new Number(amount) < 1000) {
           console.log(amount)
           ModalStore.openModal("Alert", {
-            body: "상품가격을 확인해주세요. 10000원 이상이어야 합니다.",
+            body: "상품가격을 확인해주세요. 1000원 이상이어야 합니다.",
           });
           return;
         }
